@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.component.StateObject;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.LoggingService;
@@ -67,44 +66,14 @@ import org.cougaar.util.UnaryPredicate;
  * thread is started.
  * </pre>
  */
-public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, StateObject {
-  /**
-   * Implemented for StateObject
-   * <p>
-   * Get the current state of the Component that is sufficient to
-   * reload the Component from a ComponentDescription.
-   *
-   * @return null if this Component currently has no state
-   */
-  public Object getState() {
-    if (originalAgentID == null)
-      return getAgentIdentifier();
-    else 
-      return originalAgentID;
-  }
+public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin {
 
-  protected MessageAddress getOriginalAgentID () {
-    return originalAgentID;
+  protected MessageAddress getOriginalAgentID() {
+    return null;
   }
-  
-  /**
-   * Implemented for StateObject
-   * <p>
-   * Set-state is called by the parent Container if the state
-   * is non-null.
-   * <p>
-   * The state Object is whatever this StateComponent provided
-   * in it's <tt>getState()</tt> implementation.
-   * @param o the state saved before
-   */
-  public void setState(Object o) {
-    originalAgentID = (MessageAddress) o;
-  }
-
-  /** true iff originalAgentID is not null -- i.e. setState got called */
-  protected boolean didSpawn () {
-    boolean val = (originalAgentID != null);
-    return val;
+  protected boolean didSpawn() {
+    // old state-object code (bug 3513)
+    return false;
   }
 
   /**
@@ -683,7 +652,6 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   protected boolean skipLowConfidence = true;
   protected double HIGH_CONFIDENCE = 0.99d;
   protected PersistentState persistentState;
-  private MessageAddress originalAgentID = null;
   protected String myName;
   protected LoggingService logger;
 

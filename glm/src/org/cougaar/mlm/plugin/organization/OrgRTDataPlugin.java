@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.cougaar.core.component.StateObject;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.GLMFactory;
@@ -92,7 +91,7 @@ import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.RemotePlanElement;
 */
 
-public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
+public class OrgRTDataPlugin extends SimplePlugin {
   private static TrivialTimeSpan ETERNITY = 
     new TrivialTimeSpan(TimeSpan.MIN_VALUE,
                         TimeSpan.MAX_VALUE);
@@ -116,9 +115,6 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
   private Vector organization_vector = new Vector();
   private Organization selfOrg;
   private GLMFactory aldmf;
-
-  /** for spawn support */
-  private String originalAgentID = null;
 
   // Used only for testing remote RFS/RFD
   /*
@@ -1158,42 +1154,10 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
     return newVal;
   }
 
-  /**
-   * Implemented for StateObject
-   * <p>
-   * Get the current state of the Component that is sufficient to
-   * reload the Component from a ComponentDescription.
-   *
-   * @return null if this Component currently has no state
-   */
-  public Object getState() {
-    if (originalAgentID == null)
-	  return getMessageAddress().getAddress();
-    else 
-	  return originalAgentID;
-  }
-
-  /**
-   * Implemented for StateObject
-   * <p>
-   * Set-state is called by the parent Container if the state
-   * is non-null.
-   * <p>
-   * The state Object is whatever this StateComponent provided
-   * in it's <tt>getState()</tt> implementation.
-   * @param o the state saved before
-   */
-  public void setState(Object o) {
-	originalAgentID = (String) o;
-  }
-
-  /** 
-   * true iff originalAgentID is not null -- i.e. setState got called 
-   * @return true if this agent was spawned
-   */
+  private static final MessageAddress originalAgentID = null;
   protected boolean didSpawn () {
-	boolean val = (originalAgentID != null);
-	return val;
+    // old state-object code (bug 3513)
+    return false;
   }
 
   public static class HomeLocationScheduleElement extends TaggedLocationScheduleElement {

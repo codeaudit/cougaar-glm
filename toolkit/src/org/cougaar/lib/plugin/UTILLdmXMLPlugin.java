@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.xerces.parsers.DOMParser;
-import org.cougaar.core.component.StateObject;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.lib.param.Param;
 import org.cougaar.lib.xml.parser.AggregateAssetParser;
@@ -72,11 +71,9 @@ import org.xml.sax.SAXParseException;
  * </pre>
  */
 
-public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM, StateObject {
+public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM {
   private boolean debug = "true".equals(System.getProperty("UTILLdmXMLPlugin.debug", "false"));
   private boolean showParserFeatures = "true".equals(System.getProperty("UTILLdmXMLPlugin.showParserFeatures", "false"));
-
-  private String originalAgentID = null;
 
   LoggingService logger; 
 
@@ -97,47 +94,9 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
    */
   protected LoggingService getLoggingService() {  return logger; }
   
-  /**
-   * Implemented for StateObject
-   * <p>
-   * Get the current state of the Component that is sufficient to
-   * reload the Component from a ComponentDescription.
-   *
-   * @return null if this Component currently has no state
-   */
-  public Object getState() {
-    if (logger.isDebugEnabled())
-      logger.debug ("UTILLdmXMLPlugin.getState called ");
-	
-    if (originalAgentID == null)
-      return getMessageAddress().getAddress();
-    else 
-      return originalAgentID;
-  }
-
-  /**
-   * Implemented for StateObject
-   * <p>
-   * Set-state is called by the parent Container if the state
-   * is non-null.
-   * <p>
-   * The state Object is whatever this StateComponent provided
-   * in it's <tt>getState()</tt> implementation.
-   * @param o the state saved before
-   */
-  public void setState(Object o) {
-    if (logger.isDebugEnabled())
-      logger.debug ("UTILLdmXMLPlugin.setState called ");
-
-    originalAgentID = (String) o;
-  }
-
-  /** true iff originalAgentID is not null -- i.e. setState got called */
   protected boolean didSpawn () {
-    boolean val = (originalAgentID != null);
-    if (logger.isDebugEnabled())
-      logger.debug ("UTILLdmXMLPlugin.didSpawn returns - " + val);
-    return val;
+    // old state-object code (bug 3513)
+    return false;
   }
 
   /**
