@@ -77,7 +77,7 @@ import org.cougaar.core.servlet.SimpleServletSupport;
  *
  * A typical URL would be :
  *
- * http://localhost:8800/$3-FSB/stimulator?inputFileName=Supply.dat.xml&numberOfBatches=1&interval=1000&format=html
+ * http://localhost:8800/$3-FSB/stimulator?inputFileName=Supply.dat.xml&tasksPerBatch=1&numberOfBatches=1&interval=1000&format=html
  *
  * It requires a special servlet component in the ini file (or equivalent CSMART entry) :
  *
@@ -98,10 +98,12 @@ public class GLMStimulatorServlet extends ServletBase {
     super(support);
   }
 
-  public static final String INPUT_FILE = "inputFileName";
-  public static final String NUM_BATCHES = "numberOfBatches";
-  public static final String INTERVAL   = "interval";
-  public static final String WAIT       = "wait";
+  public static final String INPUT_FILE      = "inputFileName";
+  public static final String NUM_BATCHES     = "numberOfBatches";
+  public static final String TASKS_PER_BATCH = "tasksPerBatch";
+  public static final String INTERVAL        = "interval";
+  public static final String WAIT_BEFORE     = "waitBefore";
+  public static final String WAIT_AFTER      = "waitAfter";
   public static final boolean DEBUG = false;
   public static boolean VERBOSE = false;
 
@@ -120,46 +122,38 @@ public class GLMStimulatorServlet extends ServletBase {
 	      "<FORM METHOD=\"GET\" ACTION=\"/$");
     out.print(support.getEncodedAgentName());
     out.print(support.getPath());
+    out.print("\">\n");
     // ask what task file 
-    out.print("\">\n"+
-	      "<font size=+1>Inject tasks into agent <b>" + support.getAgentIdentifier() + "</b></font><p>\n"+
+    out.print("<font size=+1>Inject tasks into agent <b>" + support.getAgentIdentifier() + "</b></font><p>\n"+
 	      "&nbsp;&nbsp;Input Task File <INPUT TYPE=\"text\" NAME=\"" + INPUT_FILE + "\" "+
-	      "SIZE=40>");
-    // get number of tasks to send 
-    out.print("<P>\n"+
-	      "&nbsp;&nbsp;Number of batches <INPUT TYPE=\"text\" NAME=\"" + NUM_BATCHES + "\" "+
-	      "VALUE=\"1\">");
+	      "SIZE=40><P>\n");
+    // get number of batches to send 
+    out.print("&nbsp;&nbsp;Number of batches <INPUT TYPE=\"text\" NAME=\"" + NUM_BATCHES + "\" "+
+	      "VALUE=\"1\"><P>\n");
+    // get number of tasks per batch
+    out.print("&nbsp;&nbsp;Tasks per batch <INPUT TYPE=\"text\" NAME=\"" + TASKS_PER_BATCH + "\" "+
+	      "VALUE=\"1\"><P>\n");
     // get periodicity 
-    out.print("<P>\n"+
-	      "&nbsp;&nbsp;Wait interval between batches<INPUT TYPE=\"text\" NAME=\"" + INTERVAL + "\" "+
-	      "VALUE=\"1000\">&nbsp;millis");
+    out.print("&nbsp;&nbsp;Wait interval between batches<INPUT TYPE=\"text\" NAME=\"" + INTERVAL + "\" "+
+	      "VALUE=\"1000\">&nbsp;millis<P>\n");
+    // choose whether to wait for batch completion, or not
+    out.print("&nbsp;&nbsp;Wait for each batch to complete before sending more" + 
+	      "<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_BEFORE + "\" VALUE=\"true\"><br>\n");
     // choose whether to wait for being done, or not
-    out.print("<P>\n"+
-	      "&nbsp;&nbsp;Wait for tasks to complete" + 
-	      "<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT + "\" VALUE=\"true\">&nbsp;" +
-	      "<br>&nbsp;&nbsp;(A complete task has a plan element with a 100% confidence reported allocation result.)");
+    out.print("&nbsp;&nbsp;Wait for all tasks to complete before terminating" + 
+	      "<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_AFTER + "\" VALUE=\"true\"><br>\n" +
+	      "&nbsp;&nbsp;(A complete task has a plan element with a 100% confidence reported allocation result.)<p>\n");
     // choose data format - html, xml, or java objects 
-    out.print("<P>\n&nbsp;&nbsp;Show results as "+
+    out.print("&nbsp;&nbsp;Show results as "+
 	      "&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"format\" "+
 	      "VALUE=\"html\" CHECKED>"+
-	      "&nbsp;html ");
+	      "&nbsp;html&nbsp;");
     out.print("<INPUT TYPE=\"radio\" NAME=\"format\" "+
-	      "VALUE=\"xml\">"+
-	      "&nbsp;xml ");
+	      "VALUE=\"xml\">&nbsp;xml&nbsp;");
     out.print("<INPUT TYPE=\"radio\" NAME=\"format\" "+
 	      "VALUE=\"data\">"+
-	      "&nbsp;serialized Java objects ");
-    out.print("<P>\n"+
-	      "<INPUT TYPE=\"submit\" NAME=\"Inject\">\n"+
+	      "&nbsp;serialized Java objects<p>\n");
+    out.print("<INPUT TYPE=\"submit\" NAME=\"Inject\">\n"+
 	      "</FORM></BODY></HTML>");
   }
 }
-
-
-
-
-
-
-
-
-

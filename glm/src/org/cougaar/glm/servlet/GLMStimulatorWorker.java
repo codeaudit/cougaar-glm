@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2002 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -25,6 +25,7 @@ import java.io.*;
 import java.util.*;
 
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.DynamicUnaryPredicate;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.SubscriptionWatcher;
@@ -52,15 +53,17 @@ import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.glm.parser.GLMTaskParser;
 
 import org.cougaar.core.service.SchedulerService;
+import org.cougaar.core.service.BlackboardService;
 
 /**
  * <pre>
  * One created for every URL access.
  *
- * Uses a blackboard service, a watcher, and a trigger to monitor published
- * tasks to see when they are complete, if the wait parameter is true.
+ * If either waitBefore or waitAfter is true, uses a blackboard
+ * service, a watcher, and a trigger to monitor published tasks to see
+ * when they are complete.
  * </pre>
- */
+ **/
 public class GLMStimulatorWorker
   extends ServletWorker {
 
@@ -77,12 +80,12 @@ public class GLMStimulatorWorker
    *
    * @see #blackboardChanged
    */
-  public void execute(HttpServletRequest request, 
-		      HttpServletResponse response,
-		      SimpleServletSupport support) throws IOException, ServletException {
+  public void execute(HttpServletRequest request,
+                      HttpServletResponse response,
+                      SimpleServletSupport support) throws IOException, ServletException {
     Enumeration params = request.getParameterNames ();
     for (;params.hasMoreElements();) {
-      String name  = (String) params.nextElement (); 
+      String name  = (String) params.nextElement ();
       String value = request.getParameter (name);
       getSettings (name, value);
     }
@@ -92,36 +95,39 @@ public class GLMStimulatorWorker
 
     this.support = (GLMStimulatorSupport) support;
 
-    if (wait) {
+    if (waitBefore || waitAfter) {
       // create a blackboard watcher
-      watcher = 
-	new SubscriptionWatcher() {
-	    public void signalNotify(int event) {
-	      // gets called frequently as the blackboard objects change
-	      super.signalNotify(event);
-	      tm.trigger ();
-	    }
-	    public String toString() {
-	      return "ThinWatcher("+GLMStimulatorWorker.this.toString()+")";
-	    }
-	  };
+      watcher =
+        new SubscriptionWatcher() {
+          public void signalNotify(int event) {
+            // gets called frequently as the blackboard objects change
+            super.signalNotify(event);
+            tm.trigger ();
+          }
+          public String toString() {
+            return "ThinWatcher("+GLMStimulatorWorker.this.toString()+")";
+          }
+        };
 
       // create a callback for running this component
-      Trigger myTrigger = 
-	new Trigger() {
-	    // no need to "sync" when using "SyncTriggerModel"
-	    public void trigger() {
-	      watcher.clearSignal(); 
-	      if (wait)
-		blackboardChanged ();
-	    }
-	    public String toString() {
-	      return "Trigger("+GLMStimulatorWorker.this.toString()+")";
-	    }
-	  };
+      Trigger myTrigger =
+        new Trigger() {
+          // no need to "sync" when using "SyncTriggerModel"
+          public void trigger() {
+            watcher.clearSignal();
+            blackboardChanged();
+          }
+          public String toString() {
+            return "Trigger("+GLMStimulatorWorker.this.toString()+")";
+          }
+        };
 
       this.tm = new SyncTriggerModelImpl(this.support.getSchedulerService(), myTrigger);
       this.support.getBlackboardService().registerInterest(watcher);
+      this.support.getBlackboardService().openTransaction();
+      planElementSubscription = (IncrementalSubscription)
+        this.support.getBlackboardService().subscribe(planElementPredicate);
+      this.support.getBlackboardService().closeTransaction();
       // activate the trigger model
       tm.initialize();
       tm.load();
@@ -134,22 +140,32 @@ public class GLMStimulatorWorker
 
     if (result != null)
       writeResponse (result, response.getOutputStream(), request, support, format);
+    if (waitBefore || waitAfter) {
+      BlackboardService bb = this.support.getBlackboardService();
+      bb.openTransaction();
+      for (Iterator i = rescindTasks.iterator(); i.hasNext(); ) {
+        bb.publishRemove(i.next());
+        i.remove();
+      }
+      bb.unsubscribe(planElementSubscription);
+      bb.closeTransaction();
+    }
   }
 
   // unused
   protected String getPrefix () { return "GLMStimulator at "; }
 
-  /** 
+  /**
    * <pre>
-   * Use a query parameter to set a field 
+   * Use a query parameter to set a field
    *
-   * Sets the recognized parameters : inputFile, debug, totalBatches, interval, and wait
+   * Sets the recognized parameters : inputFile, debug, totalBatches, tasksPerBatch, interval, and wait
    * </pre>
    */
   public void getSettings(String name, String value) {
     super.getSettings (name, value);
 
-    if (debug) 
+    if (debug)
       System.out.println ("GLMStimulatorWorker.getSettings - name " + name + " value " + value);
 
     if (eq (name, GLMStimulatorServlet.INPUT_FILE))
@@ -158,14 +174,18 @@ public class GLMStimulatorWorker
       debug = eq (value, "true");
     else if (eq (name, GLMStimulatorServlet.NUM_BATCHES))
       totalBatches = Integer.parseInt(value);
+    else if (eq (name, GLMStimulatorServlet.TASKS_PER_BATCH))
+      tasksPerBatch = Integer.parseInt(value);
     else if (eq (name, GLMStimulatorServlet.INTERVAL)) {
-      try { 
-	interval = Long.parseLong(value); 
-	if (interval < MIN_INTERVAL)
-	  interval = MIN_INTERVAL;
+      try {
+        interval = Long.parseLong(value);
+        if (interval < MIN_INTERVAL)
+          interval = MIN_INTERVAL;
       } catch (Exception e) { interval = 1000l; }
-    } else if (eq (name, GLMStimulatorServlet.WAIT)) {
-      wait = eq (value, "true");
+    } else if (eq (name, GLMStimulatorServlet.WAIT_BEFORE)) {
+      waitBefore = eq (value, "true");
+    } else if (eq (name, GLMStimulatorServlet.WAIT_AFTER)) {
+      waitAfter = eq (value, "true");
     }
   }
 
@@ -176,25 +196,25 @@ public class GLMStimulatorWorker
    */
   /*
   protected void rescindTasks (JLabel label) {
-    if (tasksSent.size() == 0){
+    if (sentTasks.size() == 0){
       label.setText("No tasks to Rescind.");
     } else {
       try {
-	support.getBlackboardService().openTransaction();
-	Iterator iter = tasksSent.iterator ();
-	Object removed = iter.next ();
-	iter.remove ();
-		
-	if (debug)
-	  System.out.println ("GLMStimulatorWorker - Removing " + removed);
-	publishRemove(removed);
-	tasksSent.remove(removed);
-	label.setText("Rescinded last task. " + tasksSent.size () + " left.");
+        support.getBlackboardService().openTransaction();
+        Iterator iter = sentTasks.iterator ();
+        Object removed = iter.next ();
+        iter.remove ();
+
+        if (debug)
+          System.out.println ("GLMStimulatorWorker - Removing " + removed);
+        publishRemove(removed);
+        sentTasks.remove(removed);
+        label.setText("Rescinded last task. " + sentTasks.size () + " left.");
       }catch (Exception exc) {
-	System.err.println(exc.getMessage());
-	exc.printStackTrace();
+        System.err.println(exc.getMessage());
+        exc.printStackTrace();
       } finally{
-	support.getBlackboardService().closeTransaction(false);
+        support.getBlackboardService().closeTransaction(false);
       }
     }
   }
@@ -206,7 +226,7 @@ public class GLMStimulatorWorker
    * Sends the first batch of tasks, and keeps sending until totalBatches have been
    * sent.  If should wait for completion, waits until notified by handleSuccessfulPlanElement (). <p>
    *
-   * Will wait <b>interval</b> milliseconds between batches if there are 
+   * Will wait <b>interval</b> milliseconds between batches if there are
    * more than one batches to send.
    *
    * @see #getSettings
@@ -217,46 +237,52 @@ public class GLMStimulatorWorker
     // Get name of XML data file
     if (support.getConfigFinder().locateFile (inputFile) == null) {
       if (debug)
-	System.out.println("GLMStimulatorWorker Could not find the file " + inputFile);
+        System.out.println("GLMStimulatorWorker Could not find the file " + inputFile);
       return new Message (inputFile);
     }
 
-    testStart = new Date();
+    testStart = System.currentTimeMillis(); // First send is immediate
+    nextSendTime = testStart;
 
-    sendTasks(true);
-
-    if (debug)
-      System.out.println ("GLMStimulatorWorker.getResult - batches sent " + batchesSent + " vs " +
-			  " total " + totalBatches);
-
-    while (batchesSent < totalBatches || 
-	   (wait && !tasksSent.isEmpty ())) {
+    while (batchesSent < totalBatches) {
       if (debug)
-	System.out.println ("GLMStimulatorWorker.getResult - batches so far " + batchesSent +
-			    " < total " + totalBatches + " tasksSent " + tasksSent.size());
-      if (wait) {
-	try {
-	  if (debug)
-	    System.out.println ("GLMStimulatorWorker.getResult - waiting for blackboard to notify.");
-	  synchronized (this) {
-	    this.wait ();
-	  }
-	} catch (Exception e) {}
-      } 
-      else {
-	if (System.currentTimeMillis () - sentTime > interval) {
-	  // recordTime ();
-	  if (debug)
-	    System.out.println ("GLMStimulatorWorker.getResult - current-sentTime " + 
-				(System.currentTimeMillis () - sentTime) +
-				" > interval " + interval + " so sending next task.");
-	  sendNextTask (true);
-	} else {
-	  long waitTime = interval - (System.currentTimeMillis () - sentTime);
-	  if (debug)
-	    System.out.println ("GLMStimulatorWorker.getResult - waiting wait time " + waitTime);
-	  try { Thread.sleep (waitTime); } catch (Exception e) {}
-	}
+        System.out.println ("GLMStimulatorWorker.getResult - batches so far " + batchesSent +
+                            " < total " + totalBatches + " sentTasks " + sentTasks.size());
+      if (waitBefore) {
+        synchronized (sentTasks) {
+          while (!sentTasks.isEmpty()) {
+            // Wait for previously sent tasks to complete
+            try {
+              if (debug)
+                System.out.println ("GLMStimulatorWorker.getResult - waiting for blackboard to notify.");
+              sentTasks.wait();
+            } catch (Exception e) {}
+          }
+        }
+      }
+      long waitTime = nextSendTime - System.currentTimeMillis();
+      if (waitTime > 0L) {
+        // Need to wait a while
+        if (debug)
+          System.out.println ("GLMStimulatorWorker.getResult - waiting wait time " + waitTime);
+        try {
+          Thread.sleep(waitTime);
+        } catch (Exception e) {
+        }
+      }
+      sendNextBatch(true);
+      nextSendTime += interval;
+    }
+
+    if (waitAfter || waitBefore) {
+      synchronized (sentTasks) {
+        while (!sentTasks.isEmpty()) {
+          try {
+            if (debug)
+              System.out.println ("GLMStimulatorWorker.getResult - waiting for tasks to complete.");
+            sentTasks.wait();
+          } catch (Exception e) {}
+        }
       }
     }
 
@@ -273,7 +299,7 @@ public class GLMStimulatorWorker
     }
   }
 
-  /** 
+  /**
    * Publishes the tasks created by readXmlTasks. <p>
    *
    * If we wait, makes a subscription for each published task.
@@ -283,30 +309,24 @@ public class GLMStimulatorWorker
    * @param withinTransaction - true when called from handleSuccessfulPlanElement
    *                            this avoids having nested transactions
    */
-  protected void sendTasks (boolean withinTransaction) {
-    batchStart = new Date();
+  protected void sendNextBatch(boolean withinTransaction) {
+    Date batchStart = new Date();
 
     if (debug) System.out.println ("GLMStimulatorWorker.sendTasks - batch start " + batchStart);
 
-    Collection tasks = null;
-    //    tasksSent.clear();
     batchesSent++;
 
     try {
       if (withinTransaction)
-	support.getBlackboardService().openTransaction();
-      // Get the tasks out of the XML file
-      tasks = readXmlTasks(inputFile);
-      tasksSent.addAll (tasks);
-      sentTime = System.currentTimeMillis ();
-      for (Iterator iter = tasks.iterator(); iter.hasNext();) {
-	Object task = iter.next ();
-	support.getBlackboardService().publishAdd (task);
-	if (wait) {
-	  if (debug)
-	    System.out.println ("GLMStimulatorWorker.sendTasks - subscribing for task " + task);
-	  subscriptions.add(support.getBlackboardService().subscribe (new PlanElementPredicate ((Task)task))); 
-	}
+        support.getBlackboardService().openTransaction();
+      for (int i = 0; i < tasksPerBatch; i++) {
+        // Get the tasks out of the XML file
+        Collection theseTasks = readXmlTasks(inputFile);
+        for (Iterator it = theseTasks.iterator(); it.hasNext(); ) {
+          Task task = (Task) it.next();
+          sentTasks.put(task, batchStart);
+          support.getBlackboardService().publishAdd(task);
+        }
       }
     } catch (Exception exc) {
       System.err.println("Could not publish tasks.");
@@ -315,7 +335,7 @@ public class GLMStimulatorWorker
     }
     finally{
       if (withinTransaction)
-	support.getBlackboardService().closeTransaction(false);
+        support.getBlackboardService().closeTransaction(false);
     }
   }
 
@@ -328,13 +348,13 @@ public class GLMStimulatorWorker
   protected Collection readXmlTasks(String xmlTaskFile) {
     Collection tasks = null;
     try {
-      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, 
-					   support.getLDMF(), 
-					   support.getAgentIdentifier(),
-					   support.getConfigFinder(),
-					   support.getLDM());
+      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile,
+                                           support.getLDMF(),
+                                           support.getAgentIdentifier(),
+                                           support.getConfigFinder(),
+                                           support.getLDM());
       tasks = UTILAllocate.enumToList (tp.getTasks());
-    } 
+    }
     catch( Exception ex ) {
       System.err.println(ex.getMessage());
       ex.printStackTrace();
@@ -342,40 +362,38 @@ public class GLMStimulatorWorker
     return tasks;
   }
 
-  /** 
-   * Called when one of the tasks that was added to the blackboard 
-   * has it's plan element change.
-   */
-  protected void blackboardChanged () {
+  /**
+   * Called when one of the tasks that was added to the blackboard has
+   * it's plan element change. If the task has been successfully
+   * disposed, it is removed from the sentTasks Map.
+   **/
+  protected void blackboardChanged() {
     try {
       support.getBlackboardService().openTransaction();
       Set toRemove = new HashSet (); // to avoid concurrent mod error
-      for (Iterator iter = subscriptions.iterator (); iter.hasNext(); ) {
-	IncrementalSubscription sub = (IncrementalSubscription) iter.next ();
-	if (sub.hasChanged ()) {
-	  boolean wasEmpty = true;
-	  Collection changedItems = sub.getChangedCollection();
-	  for (Iterator iter2 = changedItems.iterator (); iter2.hasNext();) {
-	    if (debug)
-	      System.out.println ("GLMStimulatorWorker.blackboard changed - found changed plan elements.");
-	    wasEmpty = false;
-	    PlanElement pe = (PlanElement) iter2.next();
-	    Task task = pe.getTask ();
-	    tasksSent.remove (task);
-	    handleSuccessfulPlanElement (pe);
-	  }
-
-	  if (!wasEmpty) {
-	    support.getBlackboardService().unsubscribe (sub);
-	    toRemove.add (sub);
-	  }
-	}
-      }
-      subscriptions.removeAll (toRemove); // we've been notified about these, no reason to keep them around
-      if (debug)
-	System.out.println ("GLMStimulatorWorker.blackboard changed - notifying.");
-      synchronized (this) {
-	this.notify ();
+      if (planElementSubscription.hasChanged()) {
+        boolean wasEmpty = true;
+        Collection changedItems = planElementSubscription.getChangedCollection();
+        synchronized (sentTasks) {
+          for (Iterator iter2 = changedItems.iterator (); iter2.hasNext();) {
+            if (debug)
+              System.out.println ("GLMStimulatorWorker.blackboard changed - found changed plan elements.");
+            wasEmpty = false;
+            PlanElement pe = (PlanElement) iter2.next();
+            Task task = pe.getTask();
+            Date timeSent = (Date) sentTasks.get(task);
+            if (timeSent != null) {
+              recordTime(task.getUID().toString(), timeSent);
+            }
+            sentTasks.remove(task);
+            rescindTasks.add(task);
+          }
+          if (debug)
+            System.out.println ("GLMStimulatorWorker.blackboard changed - notifying.");
+          synchronized (this) {
+            sentTasks.notify();
+          }
+        }
       }
     } catch (Exception exc) {
       System.err.println("Could not publish tasks.");
@@ -387,85 +405,23 @@ public class GLMStimulatorWorker
     }
   }
 
-  /**
-   * <pre>
-   * Everytime a successful allocation returns, we want to send a new batch of
-   * the same tasks until the desired total has been sent.  
-   *
-   * Also keep track of the time spent on each batch.
-   *
-   * Cache the already handled allocations by their UID's
-   * </pre>
-   */
-  public void handleSuccessfulPlanElement(PlanElement planElement) {
-    // we were rehydrated -- no guarantees across rehydration
-    if (batchStart == null || testStart == null)
-      return;
-
-    if (!handledPlanElements.contains(planElement.getUID())) {
-      // Cache the allocation UID
-      handledPlanElements.add(planElement.getUID());
-	
-      recordTime (planElement.getTask().getUID().toString());
-      if (tasksSent.isEmpty ()) // all in the batch have returned
-	sendNextTask (false);
-    }
-  }
-
   /** records the time taken for the task */
-  protected void recordTime (String taskUID) {
+  protected void recordTime (String taskUID, Date sentTime) {
     // Print timing information for the completed batch
-    String t = getElapsedTime(batchStart);
-    String total = getElapsedTime(testStart);
+    long now = System.currentTimeMillis();
+    long elapsed = now - sentTime.getTime();
+    String t = getElapsedTime(elapsed);
+    String total = getElapsedTime(now - testStart);
     if (debug)
-      System.out.println("\n*** Testing batch #" + (responseData.taskTimes.size() + 1) + 
-			 " completed in " + t + " total " + total);
+      System.out.println("\n*** Testing batch #" + (responseData.taskTimes.size() + 1) +
+                         " completed in " + t + " total " + total);
 
     // Cache the timing information
-    responseData.addTaskAndTime(taskUID, t);
+    responseData.addTaskAndTime(taskUID, t, elapsed);
   }
 
-  /** sent another task if any left to send or record the total time taken */
-  protected void sendNextTask (boolean withinTransaction) {
-    // Send another batch if needed
-    if (batchesSent < totalBatches) {
-      sendTasks(withinTransaction);
-    } else {
-      printTestingSummary();
-    }
-  }
-
-  /** 
-   * Matches tasks that are complete, i.e. have plan elements and 
-   * 100% confident reported allocation results.  Both Failure and Success are accepted.  
-   */
-  private static final class PlanElementPredicate implements UnaryPredicate {
-    Task forTask;
-    public PlanElementPredicate (Task forTask) { this.forTask = forTask; }
-    public boolean execute(Object o) {
-      if (!(o instanceof PlanElement))
-	return false;
-
-      PlanElement pe = (PlanElement) o;
-
-      boolean taskWereLookingFor = (pe.getTask () == forTask);
-      if (!taskWereLookingFor)
-	return false;
-      boolean hasReported = (pe.getReportedResult () != null);
-      if (!hasReported)
-	return false;
-      boolean highConfidence = (pe.getReportedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
-      if (!highConfidence)
-	return false;
-      return true;
-    }
-  };
-
-  /** encodes the date in a min:sec:millis format */
-  protected String getElapsedTime (Date start) {
-    Date end = new Date ();
-    long diff = end.getTime () - start.getTime ();
-
+  /** encodes a time interval in a min:sec:millis format */
+  protected String getElapsedTime(long diff) {
     long min  = diff/60000l;
     long sec  = (diff - (min*60000l))/1000l;
     long millis = diff - (min*60000l) - (sec*1000l);
@@ -475,21 +431,45 @@ public class GLMStimulatorWorker
 
   /** record the elapsed time */
   protected void printTestingSummary() {
-    String totalTime = getElapsedTime (testStart);
+    String totalTime = getElapsedTime(System.currentTimeMillis() - testStart);
     responseData.totalTime = totalTime;
 
     if (debug)
       System.out.println(responseData);
   }
 
-  // rely upon load-time introspection to set these services - 
+  // rely upon load-time introspection to set these services -
   //   don't worry about revokation.
   public final void setSchedulerService(SchedulerService ss) {
     scheduler = ss;
   }
 
+  /**
+   * Matches PlanElements for tasks that we have sent and which are
+   * complete, i.e. have plan elements and 100% confident reported
+   * allocation results. Both Failure and Success are accepted.
+   **/
+  private DynamicUnaryPredicate planElementPredicate = new DynamicUnaryPredicate() {
+    public boolean execute(Object o) {
+      if (o instanceof PlanElement) {
+        PlanElement pe = (PlanElement) o;
+        Task task = pe.getTask();
+        if (sentTasks.containsKey(task)) {
+          return true;          // Ignore confidence for now.
+        }
+      }
+      return false;
+    }
+  };
+
+  /**
+   * Subscription to PlanElements disposing of our tasks
+   **/
+  private IncrementalSubscription planElementSubscription;
+
   /** Collection of tasks that have been sent.  Needed for later rescinds */
-  protected Collection tasksSent = new HashSet();
+  protected Map sentTasks = new HashMap();
+  protected Set rescindTasks = new HashSet();
 
   /** for waiting for a subscription on the blackboard */
   protected SubscriptionWatcher watcher;
@@ -499,17 +479,15 @@ public class GLMStimulatorWorker
   private SchedulerService scheduler;
 
   /** start of the whole test */
-  protected Date testStart = null;
-  /** start of each batch */
-  protected Date batchStart = null;
-  /** plan elements we've seen */
-  protected Collection handledPlanElements = new HashSet();
+  protected long testStart;
 
   /** returned response */
   protected GLMStimulatorResponseData responseData=new GLMStimulatorResponseData();
 
   /** batches sent so far */
   protected int batchesSent = 0;
+  /** tasks per batch */
+  protected int tasksPerBatch = 1;
   /** total batches requested */
   protected int totalBatches = 0;
   /** millis between batches */
@@ -518,11 +496,15 @@ public class GLMStimulatorWorker
   protected boolean debug = false;
 
   /** wait for completion before publishing next batch */
-  protected boolean wait = false;
+  protected boolean waitBefore = false;
+
+  /** wait for completion after publishing everything */
+  protected boolean waitAfter = false;
+
   /** when was the last batch sent */
-  protected long sentTime;
+  protected long nextSendTime;
+
   protected String inputFile = "                     ";
 
   protected GLMStimulatorSupport support;
-  protected Set subscriptions = new HashSet();
 }
