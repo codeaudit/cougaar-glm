@@ -491,7 +491,7 @@ public class OplanFileReader {
 
   public void setOrgActivity(Node data, NamedNodeMap attributes) 
   {
-    OrgActivity oa = new OrgActivity(orgID, oplanUID);
+    OrgActivityImpl oa = OplanFactory.newOrgActivity(orgID, oplanUID);
     uids.registerUniqueObject(oa);
     oa.setOwner(cid);
 		     

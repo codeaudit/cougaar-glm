@@ -40,7 +40,9 @@ import org.cougaar.util.Parameters;
 import org.cougaar.util.TimeSpanSet;
 
 import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.glm.ldm.oplan.OplanFactory;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
+import org.cougaar.glm.ldm.oplan.OrgActivityImpl;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 
@@ -458,7 +460,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                                       OrgInfoElement location, 
                                       OrgInfoElement opTempo) {
 
-    OrgActivity orgActivity = new OrgActivity(orgName, myOplan.getUID());
+    OrgActivityImpl orgActivity = OplanFactory.newOrgActivity(orgName, myOplan.getUID());
     myComponent.getUIDServer().registerUniqueObject(orgActivity);
     orgActivity.setOwner(myMessageAddress);
     orgActivity.setTimeSpan(makeOplanTimeSpan(startTime, endTime));
