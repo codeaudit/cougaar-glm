@@ -66,7 +66,7 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
     CUSTOMER_SATISFACTION, READINESS, POD_DATE, POD};
 
   public AllocationResult calculate(Workflow wf, TaskScoreTable tst, AllocationResult currentar) {
-    AspectValue[] acc = new AspectValue[_ASPECT_COUNT+2];
+    AspectValue[] acc = new AspectValue[_UTIL_ASPECTS.length];
     
     acc[START_TIME] = AspectValue.newAspectValue(START_TIME, Long.MAX_VALUE);
     acc[END_TIME] =  AspectValue.newAspectValue(START_TIME, 0L);
