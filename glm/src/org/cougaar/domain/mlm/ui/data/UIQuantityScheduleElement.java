@@ -11,6 +11,7 @@
 package org.cougaar.domain.mlm.ui.data;
 
 import org.cougaar.util.TimeSpan;
+import org.cougaar.domain.glm.plugins.TimeUtils;
 import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
 import java.io.Serializable;
 
@@ -59,5 +60,10 @@ public class UIQuantityScheduleElement  implements TimeSpan,
 
   public Object clone() { 
       return (Object) new UIQuantityScheduleElement(startTime,endTime,quantity);
+  }
+
+  public String toString() {
+    return quantity + " from " + TimeUtils.dateString(startTime)
+      + " to " + TimeUtils.dateString(endTime);
   }
 }
