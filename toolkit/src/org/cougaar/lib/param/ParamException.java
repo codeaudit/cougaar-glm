@@ -22,7 +22,11 @@
 package org.cougaar.lib.param;
 
 /**
- * Exception  used for the Param package.
+ * Exception used for the Param package.<p>
+ * Mainly thrown when a parameter is asked for by name but there is 
+ * no parameter in the ParamTable with that name.
+ *
+ * @see org.cougaar.lib.param.ParamTable
  */
 public class ParamException extends Exception{
 

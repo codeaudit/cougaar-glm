@@ -22,7 +22,8 @@
 package org.cougaar.lib.util;
 
 /**
- * Exception class for the TOPS plugins.
+ * Runtime Exception thrown by UTIL plugins and their descendants.
+ * Mainly used in the TOPS tree.
  */
 public class UTILPlugInException extends RuntimeException{
 

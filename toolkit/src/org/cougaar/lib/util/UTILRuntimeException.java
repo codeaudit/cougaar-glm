@@ -22,7 +22,8 @@
 package org.cougaar.lib.util;
 
 /**
- * Runtime Exception used in the tops tree
+ * A general Runtime Exception thrown by UTIL classes and their descendants.  
+ * Mainly used in the tops tree.
  */
 public class UTILRuntimeException extends RuntimeException{
 

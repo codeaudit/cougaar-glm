@@ -50,7 +50,7 @@ import org.cougaar.lib.param.ParamMap;
  * a ParamException will be thrown. this is not a RuntimeException,
  * so clients must use the try{}catch{} trick.  The catch block is a 
  * good place to put "default" values for the parameters.
- *
+ * </pre>
  */
 public class ParamTable implements ParamMap {
 
