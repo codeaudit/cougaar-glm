@@ -2,7 +2,7 @@
 Driver=com.sybase.jdbc2.jdbc.SybDriver
 Database = jdbc:sybase:Tds:${tcaims.database}
 Username = ${tcaims.database.user}
-Username = ${tcaims.database.password}
+Password = ${tcaims.database.password}
 
 pacing = '2350010871095'
 
