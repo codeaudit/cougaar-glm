@@ -597,7 +597,7 @@ public class UTILExpand {
     for (Iterator i = subtasks.iterator (); i.hasNext ();) {
       plugin.publishAdd (i.next());
     }
-	plugin.publishAdd(wf);
+	//	plugin.publishAdd(wf); // Mike Thome says never publish the workflow
     plugin.publishAdd(exp);
 
     if (myExtraOutput){
