@@ -513,16 +513,21 @@ public abstract class InventoryBG implements PGDelegate {
     public int determineInventoryLevels() {
 	double reported_levels[] = getTimeOrderedReportedLevels();
 	double dueout, duein;
-	int size = dueIns_.size();
-	if (dueOut_.size() > size) {
-	    size = dueOut_.size();
-	}
-	if (reported_levels.length > size) {
-	    size = reported_levels.length;
-	}
+	int size = getToday() + 1;  // Always include tomorrow in the levels.
+	if (dueIns_.size() > size) size = dueIns_.size();
+	if (dueOut_.size() > size) size = dueOut_.size();
+	if (reported_levels.length > size) size = reported_levels.length;
 	double previous_level = reported_levels[0];
-	// 	GLMDebug.DEBUG("InventoryBG", "determineInventoryLevels(), Number of planning days is "+size+
-	// 		       ", DueOuts="+dueOut_.size()+", DueIns="+dueIns_.size()+", reported levels="+reported_levels.length);
+//          GLMDebug.DEBUG("InventoryBG", null,
+//                         "determineInventoryLevels(), Number of planning days is "
+//                         + size
+//                         + ", DueOuts="
+//                         + dueOut_.size()
+//                         + ", DueIns="
+//                         + dueIns_.size()
+//                         + ", reported levels="
+//                         + reported_levels.length,
+//                         1000);
 	level_ = new double[size];
 	for (int i=0; i < size; i++) {
 	    if ((reported_levels.length > i) && !Double.isNaN(reported_levels[i])) {
@@ -734,6 +739,9 @@ public abstract class InventoryBG implements PGDelegate {
 	Schedule sched = scp.getSchedule();
 	QuantityScheduleElement qse;
 	Vector new_elements = new Vector();
+	if (level_ == null) {
+            determineInventoryLevels();
+        }
 	if (level_ == null) {
 	    GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), No DueOuts or DueIns, resetting schedule.");
 	    clearContentSchedule(inventory);
