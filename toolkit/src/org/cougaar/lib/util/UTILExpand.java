@@ -325,31 +325,27 @@ public class UTILExpand {
 	logger.warn ("\t" + " NULL EST AR");
       else
 	showPreferences (subTask, 
-			 pe.getEstimatedResult().getAspectTypes (),
-			 pe.getEstimatedResult().getResult ());
+                         pe.getEstimatedResult().getAspectValueResults());
     }
   }
 
   public void showPreferences (Task t,
-			       int [] aspectTypes,
-			       double [] aspectValues) {
-    boolean prefExceeded = false;
+			       AspectValue[] aspects) {
     Enumeration prefs;
     synchronized (t) { prefs = t.getPreferences ();} // bug #2125
     Map map = new HashMap ();
-    int aspectType = -1;
 
     for (; prefs.hasMoreElements (); ) {
       Preference pref = (Preference) prefs.nextElement ();
       map.put (new Integer (pref.getAspectType ()), pref);
     }
 
-    for (int i = 0; i < aspectTypes.length; i++) {
-      aspectType = aspectTypes[i];
+    for (int i = 0; i < aspects.length; i++) {
+      AspectValue av = aspects[i];
+      int aspectType = av.getType();
       Integer aspectTypeInt = new Integer (aspectType);
       Preference pref = (Preference) map.remove (aspectTypeInt);
       if (pref != null) {
-	AspectValue av = AspectValue.newAspectValue (aspectType, aspectValues[i]);
 	if (aspectType == AspectType.END_TIME)
 	  logger.warn(printEndTime (t, av));
 	else
@@ -359,11 +355,9 @@ public class UTILExpand {
   }
 
   public void showPreferences (Task t) {
-    boolean prefExceeded = false;
     Enumeration prefs;
     synchronized (t) { prefs = t.getPreferences ();} // bug #2125
     Map map = new HashMap ();
-    int aspectType = -1;
 
     for (; prefs.hasMoreElements (); ) {
       Preference pref = (Preference) prefs.nextElement ();
@@ -383,23 +377,24 @@ public class UTILExpand {
     String intermediate = "";
 
     try {
-      double prefval = pref.getScoringFunction().getBest ().getValue ();
+      AspectValue prefav = 
+        pref.getScoringFunction().getBest().getAspectValue();
       switch (av.getAspectType ()) {
       case AspectType.START_TIME: 
 	type = "START";
 	value   = "" + new Date ((long) av.getValue ());
-	prefstr = "" + new Date ((long) prefval);
-	intermediate = (av.getValue () < prefval) ? " >" : "";
+	prefstr = "" + new Date ((long) prefav.getValue());
+	intermediate = (av.getValue () < prefav.getValue()) ? " >" : "";
 	break;
       case AspectType.END_TIME: 
 	type = "END  ";
 	value   = "" + new Date ((long) av.getValue ());
-	prefstr = "" + new Date ((long) prefval);
+	prefstr = "" + new Date ((long) prefav.getValue());
 	break;
       default:
 	type = "<" + av.getAspectType () + ">";
-	value   = "" + av.getValue ();
-	prefstr = "" + prefval;
+	value   = "" + av;
+	prefstr = "" + prefav;
 	break;
       }
     } catch (Exception e) {
@@ -414,19 +409,20 @@ public class UTILExpand {
     String value = null;
     String prefstr = null;
     try {
-      double prefval = pref.getScoringFunction().getBest ().getValue ();
+      AspectValue prefav = 
+        pref.getScoringFunction().getBest().getAspectValue();
       switch (pref.getAspectType ()) {
       case AspectType.START_TIME: 
 	type = "START";
-	prefstr = "" + new Date ((long) prefval);
+	prefstr = "" + new Date ((long) prefav.getValue());
 	break;
       case AspectType.END_TIME: 
 	type = "END  ";
-	prefstr = "" + new Date ((long) prefval);
+	prefstr = "" + new Date ((long) prefav.getValue());
 	break;
       default:
 	type = "<" + pref.getAspectType () + ">";
-	prefstr = "" + prefval;
+	prefstr = "" + prefav;
 	break;
       }
     } catch (Exception e) {
@@ -441,11 +437,9 @@ public class UTILExpand {
     String value = null;
     //    String prefstr = null;
 
-    //    double prefval = pref.getScoringFunction().getBest ().getValue ();
     type = "END  ";
     Date avDate = new Date ((long) av.getValue ());
     value   = "" + avDate;
-    //    prefstr = "" + new Date ((long) prefval);
     Date early = pref.getEarlyDate(t);
     Date best  = pref.getBestDate(t);
     Date late  = pref.getLateDate(t);
@@ -461,12 +455,9 @@ public class UTILExpand {
   protected String printEndTime (Task t) {
     String type = null;
     String value = null;
-    //    String prefstr = null;
 
-    //    double prefval = pref.getScoringFunction().getBest ().getValue ();
     type = "END  ";
 
-    //    prefstr = "" + new Date ((long) prefval);
     Date early = pref.getEarlyDate(t);
     Date best  = pref.getBestDate(t);
     Date late  = pref.getLateDate(t);
