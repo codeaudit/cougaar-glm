@@ -637,19 +637,19 @@ public class AssetPerturbationDisplay extends JPanel {
       setText(text);
       if (isSelected) {
         if (myDestroyed.get(assetInfo.getName()) != null)
-          setBackground (Color.red);
+          this.setBackground(Color.red);
         else
-          setBackground (list.getSelectionBackground());
-        setForeground(list.getSelectionForeground());
+          this.setBackground(list.getSelectionBackground());
+        this.setForeground(list.getSelectionForeground());
       }
       else if (myDestroyed.get (assetInfo.getName ()) != null) {
-        setBackground (Color.red);
+        this.setBackground (Color.red);
       } else {
-        setBackground(list.getBackground());
-        setForeground(list.getForeground());
+        this.setBackground(list.getBackground());
+        this.setForeground(list.getForeground());
       }
-      setEnabled(list.isEnabled());
-      setFont(list.getFont());
+      this.setEnabled(list.isEnabled());
+      this.setFont(list.getFont());
       
       return this;
     }
