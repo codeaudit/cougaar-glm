@@ -23,21 +23,20 @@ import org.cougaar.lib.param.ParamTable;
 import org.cougaar.lib.xml.parser.ParamParser;
 
 /**
+ * <pre>
  * This is a convenience class for the UTIL plugins.  This class
  * uses the ConfigFinder to find the param files.
  *
- * Generally the files are expected to be in the data directory, e.g.
- *
- * /opt/alp/plugins/TOPS/data/TRANSCOM.env.xml
- *
- * To find them there, add a system parameter like this to setarguments.csh:
+ * To look for the parameter files in a non-default location,
+ * add a system parameter like this to setarguments.csh:
  *
  * -Dorg.cougaar.config.path=$COUGAAR_INSTALL_PATH/plugins/TOPS/data;
  * 
- * NOTE : the trailing semi-colon is ABSOLUTELY necessary.
+ * WARNING : the trailing semi-colon is ABSOLUTELY necessary.
  *
  * Expects an extension of ".env.xml," which will be prefixed
- * with the name of the cluster, e.g. TRANSCOM.env.xml.
+ * with the name of the cluster, e.g. TRANSCOM.env.xml.  This can be
+ * overridden by setting the envFile parameter (see below).
  *
  * Supports plugin specific (as opposed to Cluster-specific)
  * env files by allowing the specification
@@ -51,8 +50,9 @@ import org.cougaar.lib.xml.parser.ParamParser;
  *   (envDir={String}../../tops/data, envFile={String}FortStewartAggregator.env.xml)
  *
  * The envDir can be used if there are two files of the same name in the 
- * config file finder path.
+ * config file finder path (which shouldn't happen...)
  *
+ * </pre>
  */
 public class UTILParamTable extends ParamTable {
 
