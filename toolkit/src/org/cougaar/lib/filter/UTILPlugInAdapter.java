@@ -31,7 +31,7 @@ import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.lib.callback.UTILFilterCallback;
-import org.cougaar.lib.param.ParamTable;
+import org.cougaar.lib.param.ParamMap;
 import org.cougaar.lib.param.Param;
 import org.cougaar.lib.util.UTILExpand;
 import org.cougaar.lib.util.UTILParamTable;
@@ -53,7 +53,8 @@ import java.util.Iterator;
 
 public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
   public final void load(Object object) throws StateModelException {
-    setThreadingChoice(SINGLE_THREAD);
+	setThreadingChoice(SINGLE_THREAD);
+	//	getBindingSite().setThreadingChoice(SINGLE_THREAD);
     super.load(object);
     getEnvData();
   }
@@ -231,7 +232,7 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
   /**
    * Subclass to return a different ParamTable.
    */
-  protected ParamTable createParamTable (Vector envParams, 
+  protected ParamMap createParamTable (Vector envParams, 
 					 ClusterIdentifier ident) {
     if (showParameters) {
       System.out.println (getName () + " - creating param table, identifier was " + ident);
@@ -277,7 +278,7 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
    * add additional parameters.
    * @return ParamTable
    */
-  public ParamTable getMyParams () { 
+  public ParamMap getMyParams () { 
     return myParams; 
   }
 
@@ -465,7 +466,7 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
   protected Plan realityPlan;
 
   // .env vars
-  protected ParamTable myParams;
+  protected ParamMap myParams;
   protected boolean myExtraOutput;
   protected boolean myExtraExtraOutput;
   protected boolean myExtraFilterOutput;

@@ -11,7 +11,7 @@
 package org.cougaar.lib.filter;
 
 import org.cougaar.lib.callback.UTILFilterCallback;
-import org.cougaar.lib.param.ParamTable;
+import org.cougaar.lib.param.ParamMap;
 
 /**
  * Plugins listen for organization changes.
@@ -43,7 +43,7 @@ public interface UTILPlugIn {
   void getEnvData ();
 
   /** params for this plugin */
-  ParamTable getMyParams ();
+  ParamMap getMyParams ();
 
   /**
    * turns on debugging info if a failed pe is encountered

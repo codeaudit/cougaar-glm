@@ -10,7 +10,7 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.lib.param.ParamTable;
+import org.cougaar.lib.param.ParamMap;
 
 import org.cougaar.lib.util.UTILPlugInException;
 
@@ -56,7 +56,7 @@ public class UTILBufferingThread implements Runnable {
    * Uses the plugin's params to set its parameters.
    */
   protected void getEnvData(){
-    ParamTable myParams = myPlugin.getMyParams ();
+    ParamMap myParams = myPlugin.getMyParams ();
 
     try {
       MINSIZE = myParams.getLongParam("MinSize");
