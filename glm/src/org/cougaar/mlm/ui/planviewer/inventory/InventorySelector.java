@@ -313,23 +313,43 @@ public class InventorySelector implements ActionListener {
       if (assetName == null)
         return;
 
-      // capture the clock time here in variable
-      long submit_time = java.lang.System.currentTimeMillis();
-
-      /*System.out.println("\n" + 
-	"Submit Begin Time: " + submit_time +
-	"\n");
-      */
-
       setupTimeStatusHandler();
+      
+      // capture the clock time here in variable
+      // setup logfile
+      long submit_time = java.lang.System.currentTimeMillis();
+      
+      FileWriter logFile = getDefaultLogFile();
+      
       new QueryHelper(new InventoryQuery(assetName),
                       hostAndPort + "$" + clusterName + "/",
                       isApplet, container, doDisplayTable,
 		      timeStatusHandler,
-		      submit_time);
+		      submit_time, 
+		      logFile);
     }
   }
-
+  
+  public static FileWriter getDefaultLogFile() {
+    String logFileName = System.getProperty("org.cougaar.log.loginventorytimes");
+    FileWriter logFile = null;
+    
+    if((logFileName != null) &
+       (!(logFileName.trim().equals("")))) {
+      try {
+	logFile = new FileWriter(logFileName,true);
+	logFile.write("   Timestamp,    Display time (milliseconds)\n");
+      }
+      catch(IOException except) {
+	System.err.println("Couldn't open file " + logFileName + " to log display times");
+	System.err.println("Error was: " + except);
+	logFile = null;
+      }
+    }
+    
+    return logFile;
+  }
+  
     public void updateInventoryBox() {
 	if (assetNameBox.getItemCount() != 0)
 	    assetNameBox.removeAllItems();

@@ -67,7 +67,8 @@ public class QueryHelper implements ActionListener,
 
   InventoryExecutionTimeStatusHandler timeStatusHandler;
   long submit_begin;
-  
+  private FileWriter logFile;
+
   /* Called by application or applet; if its an applet, then
      use the container passed as an argument.
    */
@@ -96,7 +97,6 @@ public class QueryHelper implements ActionListener,
    */
 
   public QueryHelper(Query query) {
-    System.out.println("********* INSIDE QueryHelper(query alone)***********");
     this.query = query;
     assetName = query.getQueryToSend();
     int indx = assetName.indexOf(":");
@@ -113,8 +113,10 @@ public class QueryHelper implements ActionListener,
                      boolean isApplet, Container container,
                      boolean doDisplayTable,
 		     InventoryExecutionTimeStatusHandler aTimeStatusHandler, 
-		     long submit_time) {
+		     long submit_time, 
+		     FileWriter thelogFile) {
     
+    this.logFile = thelogFile;
     this.submit_begin = submit_time;
     this.query = query;
     this.clusterURL = clusterURL;
@@ -128,7 +130,22 @@ public class QueryHelper implements ActionListener,
     createFrame(assetName+" at "+clusterName);
     PSP_package = XMLClientConfiguration.PSP_package;
     timeStatusHandler = aTimeStatusHandler;
+    
     doQuery();
+    
+    // determine time assessment and output to logfile
+    if(logFile != null) {
+      long submit_end = System.currentTimeMillis();
+      long diffTime = submit_end - submit_begin;
+      Date timestamp = new Date(submit_begin);
+      try {
+	logFile.write(timestamp + ", " + diffTime + "\n");
+	logFile.flush();
+      }
+      catch (IOException e) {
+	System.err.println(e);
+      }
+    }
   }
   
 
@@ -247,26 +264,6 @@ public class QueryHelper implements ActionListener,
       chart.setBorder(new BevelBorder(BevelBorder.LOWERED));
       container.add(createButtonsPanel(), BorderLayout.SOUTH);
       container.validate();
-      
-      // capture assessment time and output log file
-      long submit_end = java.lang.System.currentTimeMillis();
-      /*
-      System.out.println("\n" + 
-			 "Total Submission Time: " + (submit_end - submit_begin) +
-			 " Milliseconds" + 
-			 "\n");
-      */
-      try {
-	//create new log file and write time assessment
-	String cip = System.getProperty("org.cougaar.install.path");
-	File logfile = new File(cip+"/Inventory.log");
-	FileWriter logwriter = new FileWriter(logfile);
-	logwriter.write("Total Submission Time For Last Inventory Query: " + (submit_end - submit_begin) + " Milliseconds");
-	logwriter.close();
-      }catch(IOException e) {
-	System.out.println("Error creating time assessment log file, message is: " + e.getMessage());
-      }
-      
     } else
       displayErrorString("No data received");
     
