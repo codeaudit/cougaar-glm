@@ -234,7 +234,7 @@ public class TestDeletionPlugin extends SimplePlugin {
         testEnd = currentTimeMillis() + testDuration;
         setNewRootTimer();
         if (!Double.isNaN(clockRate)) {
-            getDemoControlService().setTimeRate(clockRate);
+            getDemoControlService().setSocietyTimeRate(clockRate);
         }
     }
 
