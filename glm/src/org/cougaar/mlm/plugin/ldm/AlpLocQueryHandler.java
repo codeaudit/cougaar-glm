@@ -73,9 +73,17 @@ public class AlpLocQueryHandler  extends SQLOplanQueryHandler {
 
     NewGeolocLocation geoloc = GLMFactory.newGeolocLocation();
     try {
-      geoloc.setName(new String ((byte[])rowData[1],"US-ASCII"));
-      geoloc.setGeolocCode(new String ((byte[])rowData[0],"US-ASCII"));
-      geoloc.setIcaoCode(new String ((byte[])rowData[0],"US-ASCII"));
+      if (rowData[1] instanceof String)
+	geoloc.setName((String) rowData[1]);
+      else
+	geoloc.setName(new String ((byte[])rowData[1],"US-ASCII"));
+      if (rowData[0] instanceof String) {
+	geoloc.setGeolocCode((String) rowData[0]);
+	geoloc.setIcaoCode((String) rowData[0]);
+      } else {
+	geoloc.setGeolocCode(new String ((byte[])rowData[0],"US-ASCII"));
+	geoloc.setIcaoCode(new String ((byte[])rowData[0],"US-ASCII"));
+      }
       //geoloc.setName((String) rowData[1]);
       //geoloc.setGeolocCode((String) rowData[0]);
       //geoloc.setIcaoCode((String) rowData[0]);
