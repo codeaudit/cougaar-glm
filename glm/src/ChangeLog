@@ -1,3 +1,24 @@
+2002-04-02  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/servlet/GLMStimulatorWorker.java: 
+	* org/cougaar/glm/servlet/GLMStimulatorServlet.java: 
+	* org/cougaar/glm/servlet/GLMStimulatorResponseData.java:
+	Allow multiple copies of the tasks per batch.
+	Add mode for injecting tasks without waiting for the previous
+	batch to complete
+	Use a single subscription for all tasks instead of one
+	subscription per task
+	Add histogram summary of completion times.
+
+2002-04-01  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/sample/AdaptiveUniversalAllocatorPlugin.java:
+	Use numeric operating mode values proportional to time per task
+	and add more modes to get finer grained control.
+
+	* org/cougaar/glm/ldm/GLMDomain.java: 
+	RelayLP has moved.
+
 2002-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/mlm/plugin/sample/AdaptiveUniversalAllocatorPlugin.java:
