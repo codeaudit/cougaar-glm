@@ -32,13 +32,13 @@ public class DataGrabberProducer extends ThreadedProducer {
 	this.host = host;
 
 	try {
-	  Class.forName(System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabber.Producer.dbDriverName"));
+	  Class.forName(System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabberProducer.dbDriverName"));
 	} catch (Exception e) {
 	  System.err.println("WARNING: Failed to Load Driver.\n"+e);
 	}
 
 	int connectionType = 0;
-	String connectionTypeName = System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabber.Producer.dbDriverType");
+	String connectionTypeName = System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabberProducer.dbDriverType");
 	if (connectionTypeName.equalsIgnoreCase("sql")) connectionType = DRIVER_TYPE_SQL;
 	else if (connectionTypeName.equalsIgnoreCase("oracle")) connectionType = DRIVER_TYPE_ORACLE;
 	else System.err.println("WARNING: Unknown dbDriverType");
@@ -82,16 +82,19 @@ public class DataGrabberProducer extends ThreadedProducer {
   }
   private Connection createDBConnection() {
 	Connection connect = null;
-	//	String dbURL = System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabber.Producer.dbURL"),
-	String dbURL = "jdbc:mysql://" + host + "/gatherer";
-	String user  = System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabber.Producer.dbUser",
+	String database = System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabberProducer.database",
+										 "gatherer");
+	
+	String dbURL = "jdbc:mysql://" + host + "/" + database;
+	
+	String user  = System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabberProducer.dbUser",
 									  "tops");
 	String password = 
-	  System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabber.Producer.dbPassword", 
+	  System.getProperty("org.cougaar.domain.mlm.ui.newtpfdd.producer.DataGrabberProducer.dbPassword", 
 						 "tops");
 	if (debug) 
-	  System.out.println ("DataGrabberProducer.createdDBConnection - connecting to \n\tdatabase at <" + 
-						  dbURL + ">\n\tuser <" + user + ">\n\tpassword <" + password + ">.");
+	  System.out.println ("DataGrabberProducer.createdDBConnection - connecting to \n\tdatabase at\t<" + 
+						  dbURL + ">\n\tuser\t<" + user + ">\n\tpassword\t<" + password + ">.");
 	
 	try {
 	  connect = DriverManager.getConnection(dbURL, user, password);
