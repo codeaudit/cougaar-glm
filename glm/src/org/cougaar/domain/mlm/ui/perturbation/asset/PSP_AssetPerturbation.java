@@ -302,9 +302,6 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       roleSchedule.getOverlappingRoleSchedule(startDate.getTime(), 
                                               endDate.getTime());
 
-    // Open transaction - open/close boundaries must not include subscribe call
-
-    psc.getServerPlugInSupport().openLogPlanTransaction();
     if (!overlapSchedule.isEmpty()) {
       Enumeration planElements = new Enumerator(overlapSchedule);
       if (debug) {
@@ -333,8 +330,11 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     RootFactory ldmFactory = 
       serverPluginSupport.getFactoryForPSP();
     
+    psc.getServerPlugInSupport().openLogPlanTransaction();
     NewTask newTask = createUnavailableTask(asset, startDate, endDate, 
                                             ldmFactory);
+    psc.getServerPlugInSupport().closeLogPlanTransaction();
+
     ClusterIdentifier clusterID = 
       ClusterIdentifier.getClusterIdentifier(serverPluginSupport.getClusterIDAsString());
     newTask.setSource(clusterID);
@@ -350,7 +350,6 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
                                   allocationResult,
                                   Constants.Role.OUTOFSERVICE);
     serverPluginSupport.publishAddForSubscriber(allocation);
-    psc.getServerPlugInSupport().closeLogPlanTransaction();
 
     if (debug) {
       System.out.println("\nSchedule immediately after publish.\n" + 
@@ -531,7 +530,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     newpp.setIndirectObject(loc);
     preps.add (newpp);
 
-    newTask.setPrepositionalPhrases (preps.elements ());
+    newTask.setPrepositionalPhrases(preps.elements());
 
     ScoringFunction startScoringFunc = 
       ScoringFunction.createStrictlyAtValue(new TimeAspectValue(AspectType.START_TIME, 
