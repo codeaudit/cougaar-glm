@@ -723,8 +723,14 @@ public class OplanFileReader {
       }
 
       if ( geoLoc != null) {   
-        if (obj instanceof DFSP) ((DFSP)obj).setGeoLoc(geoLoc);	   	 
-        if (obj instanceof OrgActivity) ((OrgActivity)obj).setGeoLoc(geoLoc);	    
+        if (obj instanceof DFSP) {
+          ((DFSP)obj).setGeoLoc(geoLoc);	   	 
+        } else if (obj instanceof OrgActivity) {
+          ((OrgActivity)obj).setGeoLoc(geoLoc);   
+        } else {
+          Class clazz = (obj == null)?null:obj.getClass();
+          System.err.println("OplanFileReader.setGeoLoc - Couldn't figure out how to set geoloc of target class "+clazz+" "+obj);
+        }
       } else {
         System.err.println("OplanFileReader:setGeoLoc - geoloc not specifed correctly in xml file.");
       }
