@@ -191,6 +191,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 
     panel.add(button);
     panel.add(button2);
+	frame.getRootPane().setDefaultButton(button); // hitting return sends the tasks
     panel.add(text);
 
     frame.getContentPane().add("Center", panel);
