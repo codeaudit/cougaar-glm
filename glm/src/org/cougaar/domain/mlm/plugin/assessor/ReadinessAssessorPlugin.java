@@ -36,11 +36,12 @@ import java.io.Serializable;
 
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
-
+import org.cougaar.core.society.UID;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.cluster.CollectionSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.LDMService;
+import org.cougaar.core.plugin.util.PlugInHelper;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
@@ -48,6 +49,7 @@ import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.plan.Allocation;
 import org.cougaar.domain.planning.ldm.plan.AllocationResult;
+import org.cougaar.domain.planning.ldm.plan.AllocationResultAggregator;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.AspectValue;
 import org.cougaar.domain.planning.ldm.plan.Expansion;
@@ -59,6 +61,7 @@ import org.cougaar.domain.planning.ldm.plan.Relationship;
 import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.domain.planning.ldm.plan.TaskScoreTable;
 import org.cougaar.domain.planning.ldm.plan.Verb;
 import org.cougaar.domain.planning.ldm.plan.NewWorkflow;
 import org.cougaar.domain.planning.ldm.plan.Workflow;
@@ -77,6 +80,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
   private long rollupSpan = 10;
   private StringBuffer debugStart = new StringBuffer();
+  private PhasedAggregated allocationAggregator = new PhasedAggregated();
 
   private IncrementalSubscription readinessTaskSub;
   private final UnaryPredicate readinessTaskPred = 
@@ -124,6 +128,27 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	}
       };
 
+
+  private IncrementalSubscription readinessPESub;
+  // this finds all expanded plan elements. we really only want the ones
+  // whose task's parent is in the readinessTaskSub
+  private final UnaryPredicate readinessPEPred = 
+    new UnaryPredicate() {
+	public boolean execute(Object o) {
+	  if (o instanceof Allocation) {
+	    Allocation pe = (Allocation) o;
+	    Task t = pe.getTask();
+	    if (t.getVerb().equals(Constants.Verb.AssessReadiness)) {
+	      if (!t.getPrepositionalPhrases().hasMoreElements()) {
+		return true;
+	      }
+	    }
+	  }
+	  return false;
+	}
+      };
+  
+
   protected RootFactory rootFactory;
 
   // called by introspection
@@ -135,6 +160,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     projectSupplyTaskSub = (IncrementalSubscription) blackboard.subscribe(projectSupplyTaskPred);
     readinessTaskSub = (IncrementalSubscription) blackboard.subscribe(readinessTaskPred);
     selfOrgSub = (IncrementalSubscription) blackboard.subscribe(selfOrgPred);
+    readinessPESub = (IncrementalSubscription) blackboard.subscribe(readinessPEPred);
 
     debugStart.append(getBindingSite().getAgentIdentifier());
     debugStart.append(" ReadinessAssessor");
@@ -143,91 +169,106 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
   protected void execute() {
 
-    // hack!
-    long earliest = Long.MAX_VALUE;
-    long latest = Long.MIN_VALUE;
 
     if (readinessTaskSub.hasChanged()) {
       // only do one per cycle
       Collection added  = readinessTaskSub.getAddedCollection();
-      if (added.size() < 1)
-	return;
-      Task readinessTask = (Task)added.iterator().next();
-      if (readinessTask == null)
-	return;
-
-      earliest = Math.round(readinessTask.getPreferredValue(AspectType.START_TIME));
-      rollupSpan = Math.round(readinessTask.getPreferredValue(AspectType.INTERVAL));
-      System.out.println(debugStart +" got earliest date: " 
-			 +new Date(earliest).toString() +
-			 " and rollupSpan: " + rollupSpan);
-
-      expandAndAllocateToSubordinates(readinessTask);
-      HashMap pacingItems = new HashMap(13);
-
-      // Sort project supply tasks by Maintained Item and OfType
-      System.out.println(debugStart +" sorting " + projectSupplyTaskSub.size() + " ProjectSupply tasks");
-      for (Iterator psIterator = projectSupplyTaskSub.iterator(); psIterator.hasNext();) {
-	Task psTask = (Task) psIterator.next();
-
-	// find the supply type of the task
-	Object directObject = psTask.getDirectObject();
-
-	// find the latest end times
-	long end = Math.round(psTask.getPreferredValue(AspectType.END_TIME));
-	if (end > latest) 
-	  latest = end;
-
-	// temporarily restrict to BulkPOL
-	if (!(directObject instanceof BulkPOL)){
-	  continue;
+      if (added.size() > 0) {
+	Task readinessTask = (Task)added.iterator().next();
+	if (readinessTask != null) {
+	  processReadinessTask(readinessTask);
 	}
-
-	// Do we really want to bail here, or should we count this task against our readiness?
-	if (psTask.getPlanElement() == null) 
-	  continue;
-
-	// find the asset (pacing item) this task is for
-	MaintainedItem pacing = ((MaintainedItem)psTask.getPrepositionalPhrase(Constants.Preposition.MAINTAINING).getIndirectObject());
-
-	// find the buckets for that asset
-	HashMap itemBuckets = (HashMap) pacingItems.get(pacing);
-	if (itemBuckets == null) {
-	  System.out.println(debugStart + ": adding new set of buckets for " + pacing.getTypeIdentification());
-	  itemBuckets = new HashMap(13);
-	  pacingItems.put(pacing, itemBuckets);
-	}
-
-
-	// find the bucket for that supply type
-	ArrayList results = (ArrayList) itemBuckets.get(directObject);
-
-	if (results == null) {
-	  System.out.println(debugStart + ": adding new bucket for " + directObject.getClass().getName());
-	  results = new ArrayList(13);
-	  itemBuckets.put(directObject, results);
-	}
-
-	// add the task's phased allocation result to the bucket
-	if (directObject instanceof BulkPOL) {
-	  
-	  ArrayList al = splitResult(psTask.getPlanElement().getReportedResult(),
-				     psTask.getPreferredValue(AlpineAspectType.DEMANDRATE));
-	  //System.out.println(debugStart + ": adding result to bucket " + al );
-	  results.addAll(al);
-	} else {
-	  //System.out.println(debugStart + ": ignoring non-BulkPOL result  ");   
-	  //results.add(psTask.getPlanElement().getReportedResult());
-	}
-      }	
-
-      if (pacingItems.size() > 0) {
-	ArrayList results = calcResults(readinessTask, pacingItems, earliest, latest);
-	System.out.println("\n\n" + debugStart + " - cluster readiness");
-	printResults(results);
-	// set the allocation result of the toplevel task
       }
     }
+
+    if (readinessPESub.hasChanged()) {
+
+      for (Iterator peIt = readinessPESub.getChangedCollection().iterator(); peIt.hasNext();) {
+	PlanElement pe = (PlanElement) peIt.next();
+	if (PlugInHelper.updatePlanElement(pe)) {
+	  blackboard.publishChange(pe);
+	}
+      }
+    }
+  }
+
+  private void processReadinessTask(Task readinessTask) {
+
+    // hack!
+    long earliest = Long.MAX_VALUE;
+    long latest = Long.MIN_VALUE;
+  
+    earliest = Math.round(readinessTask.getPreferredValue(AspectType.START_TIME));
+    rollupSpan = Math.round(readinessTask.getPreferredValue(AspectType.INTERVAL));
+    System.out.println(debugStart +" got earliest date: " 
+		       +new Date(earliest).toString() +
+		       " and rollupSpan: " + rollupSpan);
+
+    expandAndAllocateToSubordinates(readinessTask);
+    HashMap pacingItems = new HashMap(13);
+
+    // Sort project supply tasks by Maintained Item and OfType
+    System.out.println(debugStart +" sorting " + projectSupplyTaskSub.size() + " ProjectSupply tasks");
+    for (Iterator psIterator = projectSupplyTaskSub.iterator(); psIterator.hasNext();) {
+      Task psTask = (Task) psIterator.next();
+
+      // find the supply type of the task
+      Object directObject = psTask.getDirectObject();
+
+      // find the latest end times
+      long end = Math.round(psTask.getPreferredValue(AspectType.END_TIME));
+      if (end > latest) 
+	latest = end;
+
+      // temporarily restrict to BulkPOL
+      if (!(directObject instanceof BulkPOL)){
+	continue;
+      }
+
+      // Do we really want to bail here, or should we count this task against our readiness?
+      if (psTask.getPlanElement() == null) 
+	continue;
+
+      // find the asset (pacing item) this task is for
+      MaintainedItem pacing = ((MaintainedItem)psTask.getPrepositionalPhrase(Constants.Preposition.MAINTAINING).getIndirectObject());
+
+      // find the buckets for that asset
+      HashMap itemBuckets = (HashMap) pacingItems.get(pacing);
+      if (itemBuckets == null) {
+	System.out.println(debugStart + ": adding new set of buckets for " + pacing.getTypeIdentification());
+	itemBuckets = new HashMap(13);
+	pacingItems.put(pacing, itemBuckets);
+      }
+
+
+      // find the bucket for that supply type
+      ArrayList results = (ArrayList) itemBuckets.get(directObject);
+
+      if (results == null) {
+	System.out.println(debugStart + ": adding new bucket for " + directObject.getClass().getName());
+	results = new ArrayList(13);
+	itemBuckets.put(directObject, results);
+      }
+
+      // add the task's phased allocation result to the bucket
+      if (directObject instanceof BulkPOL) {
+	  
+	ArrayList al = splitResult(psTask.getPlanElement().getReportedResult(),
+				   psTask.getPreferredValue(AlpineAspectType.DEMANDRATE));
+	//System.out.println(debugStart + ": adding result to bucket " + al );
+	results.addAll(al);
+      } else {
+	//System.out.println(debugStart + ": ignoring non-BulkPOL result  ");   
+	//results.add(psTask.getPlanElement().getReportedResult());
+      }
+    }	
+
+    if (pacingItems.size() > 0) {
+      ArrayList results = calcResults(readinessTask, pacingItems, earliest, latest);
+      System.out.println("\n\n" + debugStart + " - cluster readiness");
+      printResults(results);
+      // set the allocation result of the toplevel task
+    } 
   }
 
   /**
@@ -311,11 +352,18 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     return overallResults;
   }
 
+
+  /**
+   * pick the minimum readiness value of each phase
+   * @param oldList running total of phased results
+   * @param newList new phased result to merge in
+   **/
   private void merge(ArrayList oldList, ArrayList newList) {
     // sure hope these cover the same time span!
 
     if (oldList.size() != newList.size()) {
       System.out.println(debugStart + ".merge() - bad assumption, Bub. The results have different cardinalities!");
+      return;
     }
 
     for (int i = 0; i < oldList.size(); i++) {
@@ -325,9 +373,11 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       // arrays should have the same three aspect types
       if (oldAV[0].getValue() != newAV[0].getValue()) {
 	System.out.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different start dates!");
+	return;
       }
       if (oldAV[1].getValue() != newAV[1].getValue()) {
 	System.out.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different end dates!");
+	return;
       }
 
       // You are the weekest link!
@@ -513,6 +563,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       wf.setParentTask(parent);
       wf.setIsPropagatingToSubtasks(true);
       wf.addTask(subtask);
+      wf.setAllocationResultAggregator(allocationAggregator);
       ((NewTask) subtask).setWorkflow(wf);
       // Build Expansion
       expansion = rootFactory.createExpansion(parent.getPlan(), parent, wf, null);
@@ -539,8 +590,10 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
    */
   private Collection findSubordinates(Organization org) {
 
-    Collection subordinates = org.getSubordinates(TimeSpan.MIN_VALUE,
-                                                  TimeSpan.MAX_VALUE);
+    Collection subordinates = 
+      org.getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.ADMINISTRATIVESUBORDINATE,
+										 TimeSpan.MIN_VALUE,
+										 TimeSpan.MAX_VALUE);
     return subordinates;
   }
 
@@ -548,7 +601,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     Organization selfOrg = getSelfOrg();
     RelationshipSchedule rs = selfOrg.getRelationshipSchedule();
 
-    Collection subordinates =  selfOrg.getSubordinates(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
+    Collection subordinates =  findSubordinates(selfOrg);
 
     for (Iterator subOrgIt = subordinates.iterator(); subOrgIt.hasNext();) {
 
@@ -568,6 +621,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 						    null,
 						    Constants.Role.BOGUS);
       blackboard.publishAdd(pe);
+      System.out.println(debugStart + " allocating task to subordinate organization " + subOrg);
     }
   }
 
@@ -575,6 +629,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     // better be something here!
     return (Organization)selfOrgSub.iterator().next();
   }
+
 
   private class RateScheduleElement {
     public long date;
@@ -605,4 +660,87 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     }
   }
 
+  private class PhasedAggregated implements AllocationResultAggregator {
+    public AllocationResult calculate(Workflow wf, TaskScoreTable tst, AllocationResult currentar) {
+      int count = 0;
+      boolean suc = true;
+      double rating = 0.0;
+      ArrayList mergedPhased = new ArrayList(13);
+      
+      Enumeration tasks = wf.getTasks();
+      if (tasks == null || (! tasks.hasMoreElements())) return null;
+      
+      while (tasks.hasMoreElements()) {
+        Task t = (Task) tasks.nextElement();
+        count++;
+        AllocationResult ar = tst.getAllocationResult(t);
+        if (ar == null) {
+          return null; // bail if undefined
+        }
+
+	ArrayList currentPhased = null;
+	// better be phased!
+	if (ar.isPhased()) {
+
+	  if (mergedPhased.isEmpty()) {
+	    mergedPhased.addAll(ar.getPhasedAspectValueResults());
+	  } else {
+	    currentPhased = new ArrayList(ar.getPhasedAspectValueResults());
+	    merge(mergedPhased, currentPhased);
+	  }
+	}
+
+        suc = suc && ar.isSuccess();
+        rating += ar.getConfidenceRating();
+      } // end of looping through all subtasks
+
+      AspectValue[] acc = calcRollup(mergedPhased);
+
+      rating /= count;
+
+      boolean delta = false;
+      
+      // only check the defined aspects and make sure that the currentar is not null
+      if (currentar == null) {
+        delta = true;		// if the current ar == null then set delta true
+      } else {
+        int[] caraspects = currentar.getAspectTypes();
+        if (caraspects.length != acc.length) {
+          //if the current ar length is different than the length of the new
+          // calculations (acc) there's been a change
+          delta = true;
+        } else {
+          for (int i = 0; i < caraspects.length; i++) {
+            int da = caraspects[i];
+	    for (int j = 0; j < acc.length; j++) {
+	      if (acc[j].getAspectType() == da) {
+		if (acc[j].getValue() != currentar.getValue(da)) {
+		  delta = true;
+		  break;
+		}
+	      }
+            }
+          }
+        }
+      
+        if (!delta) {
+	  if (currentar.isSuccess() != suc) {
+	    delta = true;
+	  } else if (Math.abs(currentar.getConfidenceRating() - rating) > SIGNIFICANT_CONFIDENCE_RATING_DELTA) {
+	    delta = true;
+	  }
+        }
+      }
+
+      if (delta) {
+        AllocationResult artoreturn =  
+	  rootFactory.newAVPhasedAllocationResult(1, true, 
+						  acc,
+						  mergedPhased);
+        return artoreturn;
+      } else {
+        return currentar;
+      }
+    }
+  }
 }
