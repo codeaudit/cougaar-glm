@@ -380,9 +380,10 @@ public abstract class InventoryBG implements PGDelegate {
 	return d;
     }
 
-//      public Scalar getNDaysDemand(int day, int days_of_demand) {
+    /** Get the average demand for the specified range. The
+        interval is shortened as necessary to yield valid results.
+    **/
     public Scalar getNDaysDemand(int day, int days_of_demand, int days_forward, int days_backward) {
-	// Needs work still (lost the 30 day buffer at either end)
 	int start = day - days_backward;
 	if (start < 0) {
 	    start = 0;
@@ -391,15 +392,25 @@ public abstract class InventoryBG implements PGDelegate {
 	if (end > dueOut_.size()) {
 	    end = dueOut_.size();
 	}
-	int period = end - start;
+	int nDays = 0;          // Counts the number of days for which valid demand is available
+        int today = getToday();
 	
 	double demand = 0.0;
 	for (int i = start; i<end; i++){
-	    demand+=getDueOutTotal((Vector)dueOut_,i);
+            double thisDemand = Double.NaN;
+            if (isDueOutValid(i)) {
+                thisDemand = getDueOutTotal(i);
+            } else {
+                // No valid historical demand available
+            }
+            if (!Double.isNaN(thisDemand)) {
+                demand += thisDemand;
+                nDays++;
+            }
 	}
 // 	GLMDebug.DEBUG("InventoryBG", "getNDaysDemand(), days of demand: "+days_of_demand+", start day: "+start+
 // 		       ", end day: "+end+", period: "+period+", demand: "+demand);
-	return getScalar((days_of_demand*demand)/period);
+	return getScalar((days_of_demand*demand) / nDays);
     }
 
     public int addPreviousRefillsToInventory(Task maintainInv) {
@@ -533,7 +544,8 @@ public abstract class InventoryBG implements PGDelegate {
     public int determineInventoryLevels() {
 	double reported_levels[] = getTimeOrderedReportedLevels();
 	double dueout, duein;
-	int size = getToday() + 1;  // Always include tomorrow in the levels.
+        int today = getToday();
+	int size = today + 1;  // Always include tomorrow in the levels.
 	if (dueIns_.size() > size) size = dueIns_.size();
 	if (dueOut_.size() > size) size = dueOut_.size();
 	if (reported_levels.length > size) size = reported_levels.length;
@@ -550,35 +562,33 @@ public abstract class InventoryBG implements PGDelegate {
 //                         1000);
 	level_ = new double[size];
 	for (int i=0; i < size; i++) {
+            dueout = getDueOutTotal(i);
 	    if ((reported_levels.length > i) && !Double.isNaN(reported_levels[i])) {
 		level_[i] = reported_levels[i];
 	    } else {
-                try {
-                    dueout = getDueOutTotal(dueOut_, i);
-                } catch (ArrayIndexOutOfBoundsException exception) {
-                    dueout = 0;
-                }
-                try {
-                    duein = getDueInTotal(dueIns_, i);
-                }
-                catch (ArrayIndexOutOfBoundsException exception) {
-                    duein = 0;
-                }
+                duein = getDueInTotal(i);
 		level_[i] = previous_level + duein - dueout;
 	    }
 	    previous_level = level_[i];
 
-	    //   	    GLMDebug.DEBUG("InventoryBG", "determineInventoryLevels(), day "+i+": level "+level_[i]+"= previous "+previous_level+
-	    //   			   " + duein "+duein+" - dueout "+dueout);
+//   	    GLMDebug.DEBUG("InventoryBG", "determineInventoryLevels(), day "+i+": level "+level_[i]+"= previous "+previous_level+
+//   			   " + duein "+duein+" - dueout "+dueout);
 	}
 	return 0;
     }
 
-    private double getDueOutTotal(Vector dueOutsVector, int day) {
-	Vector dueOuts = (Vector)dueOutsVector.get(day);
+    private boolean isDueOutValid(int day) {
+        if (day < 0) return false;
+        if (day >= dueOut_.size()) return false;
+        return true;
+    }
+
+    private double getDueOutTotal(int day) {
+        if (!isDueOutValid(day)) return 0.0;
+	Vector dueOuts = (Vector) dueOut_.get(day);
 	Enumeration e = dueOuts.elements();
-	double actualTotal = 0;
-	double projectedTotal = 0;
+	double actualTotal = 0.0;
+	double projectedTotal = 0.0;
 	InventoryTask t;
 	Task task;
 	int imputedDay = day + java.lang.Math.round((startTime_ -today_)/TimeUtils.MSEC_PER_DAY);
@@ -595,14 +605,16 @@ public abstract class InventoryBG implements PGDelegate {
 	}
 //  	GLMDebug.DEBUG("InventoryBG", null, "Demand on day: "+day+"; actual= "+actualTotal+
 //  		       ", projected= "+projectedTotal);
-	return actualTotal+projectedTotal;
+	return actualTotal + projectedTotal;
     }
 
-    private double getDueInTotal(Vector dueInsVector, int day) {
-	Vector dueIns = (Vector) dueInsVector.get(day);
+    private double getDueInTotal(int day) {
+        if (day < 0) return 0.0;
+        if (day >= dueIns_.size()) return 0.0;
+	Vector dueIns = (Vector) dueIns_.get(day);
 	Enumeration e = dueIns.elements();
-	double actualTotal = 0;
-	double projectedTotal = 0;
+	double actualTotal = 0.0;
+	double projectedTotal = 0.0;
 	InventoryTask t;
 	Task task;
 	int imputedDay = day + java.lang.Math.round((startTime_ -today_)/TimeUtils.MSEC_PER_DAY);
@@ -681,18 +693,30 @@ public abstract class InventoryBG implements PGDelegate {
 	return null;
     }
 
+    /**
+       Get _the_ refill for a particular day. This assumes that only
+       one refill exists for a particular day. In fact, we return the
+       smallest refill for a particular day.
+     **/
     public Task getRefillOnDay(int day) {
 	if (day < dueIns_.size()) {
 	    Vector refills = (Vector)dueIns_.get(day);
 	    Enumeration e = refills.elements();
 	    DueIn d;
-	    Task task;
+	    Task smallestRefill = null;
+            double smallestQuantity = Double.POSITIVE_INFINITY;
 	    while (e.hasMoreElements()) {
 		d = (DueIn) e.nextElement();
-		task = d.getTask();
-		if (task.getVerb().equals(Constants.Verb.WITHDRAW))
-		    return task;
-	    }
+		Task task = d.getTask();
+		if (task.getVerb().equals(Constants.Verb.SUPPLY)) {
+                    double q = TaskUtils.getRefillQuantity(task);
+                    if (q < smallestQuantity) {
+                        smallestQuantity = q;
+                        smallestRefill = task;
+                    }
+                }
+            }
+            return smallestRefill;
 	}
 	return null;
     }
@@ -918,7 +942,7 @@ public abstract class InventoryBG implements PGDelegate {
     private double[]  getTimeOrderedReportedLevels() {
 	double ordered_list[];
         InventoryReport[] reports;
-        synchronized (this) {   // Must be synchronized so reports can change while we process them
+        synchronized (this) {   // Must be synchronized so reports cannot change while we process them
             List list = getInventoryReportHistory();
             int size = list.size();
             reports = (InventoryReport[]) list.toArray(new InventoryReport[size]);
