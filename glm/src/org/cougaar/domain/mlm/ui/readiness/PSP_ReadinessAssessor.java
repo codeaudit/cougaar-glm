@@ -65,51 +65,53 @@ public class PSP_ReadinessAssessor
 {
 
 
-/******************************************************************************************************
-  <b>Description</b>: Default constructor.  This constructor simply calls its super class default constructor to ensure
-  										the instance is properly constructed.
-
-  <br><b>Notes</b>:<br>
+/**
+ *<b>Description</b>: Default constructor.  This constructor simply 
+ *calls its super class default constructor to ensure
+ *the instance is properly constructed.
+ *
+ *<br><b>Notes</b>:<br>
 	                  -
-	*********************************************************************************************************************/
+**/
   public PSP_ReadinessAssessor()
   {
     super();
   }
   
-  /*********************************************************************************************************************
-  <b>Description</b>: Constructor.  This constructor sets the PSP's resource location according to the parameters
-  										passed in.
+  /**
+   *<b>Description</b>: Constructor.  This constructor sets the PSP's 
+   *resource location according to the parameters  passed in.
 
-  <br><b>Notes</b>:<br>
-	                  -
-
-  <br>
-  @param pkg The package id
-  @param id The PSP name
-
-  @throws RuntimePSPException
-  *********************************************************************************************************************/
+   * <br><b>Notes</b>:<br>
+   *	                  -
+   *
+   *  <br>
+   *  @param pkg The package id
+   *  @param id The PSP name
+   *
+   *  @throws RuntimePSPException
+   ***/
   public PSP_ReadinessAssessor (String pkg, String id) throws org.cougaar.lib.planserver.RuntimePSPException
   {
     setResourceLocation(pkg, id);
   }
 
   /**************************************************************************************************
-												     <b>Description</b>: Main entry point for starting the BOL inventroy chart applet KeepAlive PSP connection.
-															
-															<br><b>Notes</b>:<br>
-	                  - Uses a BOLPSPState object to hold PSP configuration and HTTP request data<BR>
-	                  - Catches all Throwable objects and prints a stack trace to the HTTP response output
+   *<b>Description</b>: Main entry point for starting the BOL inventroy chart 
+   *applet KeepAlive PSP connection.
+   *	
+   * <br><b>Notes</b>:<br>
+   *    - Uses a BOLPSPState object to hold PSP configuration and HTTP request data<BR>
+   *    - Catches all Throwable objects and prints a stack trace to the HTTP response output
+   *
+   *  <br>
+   *  @param out HTTP response socket stream
+   *  @param queryParameters HTTP parameter data and connection information
+   *  @param psc Current Plan Service Context object
+   *  @param psu Utility functions for the PSP
 
-  <br>
-  @param out HTTP response socket stream
-  @param queryParameters HTTP parameter data and connection information
-  @param psc Current Plan Service Context object
-  @param psu Utility functions for the PSP
-
-  @throws Exception 
-	*********************************************************************************************************************/
+   *  @throws Exception 
+  ********************************************************************************************/
   public void execute(PrintStream out, HttpInput query_parameters, PlanServiceContext psc, PlanServiceUtilities psu) throws Exception
   {
 
@@ -165,16 +167,17 @@ public class PSP_ReadinessAssessor
 
   }
 
-	/*********************************************************************************************************************
-  <b>Description</b>: Creates applet parameters which represent the initial inventory list and counts.
-
-  <br><b>Notes</b>:<br>
-	                  -
-
-  <br>
-  @param out HTTP response socket stream
-  @param pspState Current state of the PSP including HTTP request parameters
-	*********************************************************************************************************************/
+  /*********************************************************************************************
+   *<b>Description</b>: Creates applet parameters which represent the initial 
+   *inventory list and counts.
+   *
+   *  <br><b>Notes</b>:<br>
+   *	                  -
+   *
+   *  <br>
+   *@param out HTTP response socket stream
+   *  @param pspState Current state of the PSP including HTTP request parameters
+   *******************************************************************************************/
   private void sendReadinessParameters(String cId, PlanServiceContext psc, PrintStream out)
   {
     Iterator itSet, itDOs;
@@ -248,11 +251,9 @@ public class PSP_ReadinessAssessor
 
       }
 
-          // Create the parameter for the number of book titles in the inventory
-//		      out.println("<PARAM NAME=columns VALUE='" + overviewList.size() + "'>");
     }
 
-	}
+  }
 
   /*********************************************************************************************************************
   <b>Description</b>: Creates applet parameters which represent the initial inventory list and counts.
@@ -264,8 +265,8 @@ public class PSP_ReadinessAssessor
   @param out HTTP response socket stream
   @param pspState Current state of the PSP including HTTP request parameters
 	*********************************************************************************************************************/
-	private void sendnetscapeReadinessParameters(String cId, PlanServiceContext psc, PrintStream out)
-	{
+  private void sendnetscapeReadinessParameters(String cId, PlanServiceContext psc, PrintStream out)
+  {
     Iterator itSet, itDOs;
     int ii, jj, kk;
 
@@ -337,11 +338,9 @@ public class PSP_ReadinessAssessor
 
       }
 
-          // Create the parameter for the number of book titles in the inventory
-//		      out.println("<PARAM NAME=columns VALUE='" + overviewList.size() + "'>");
     }
-
-	}
+    
+  }
   private long toYYYYMMDD (long millisecs)
   {
 
@@ -357,7 +356,6 @@ public class PSP_ReadinessAssessor
 
     return yyyymmdd;
   }
-
 
 
   private final UnaryPredicate readinessExpansionPred = new UnaryPredicate()
