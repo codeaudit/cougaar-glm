@@ -40,11 +40,6 @@ import org.cougaar.glm.ldm.lps.*;
  **/
 
 public class GLMDomain extends DomainAdapter {
-  private static final String GLM_NAME = "glm".intern();
-
-  public String getDomainName() {
-    return GLM_NAME;
-  }
 
   public GLMDomain() {
     super();
