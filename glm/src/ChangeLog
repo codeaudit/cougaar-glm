@@ -1,3 +1,40 @@
+2001-02-20  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* SubscriptionClient
+	ThreadLocal variable current can be set to record the current
+	SubscriptionClient being executed by a thread. This information
+	then becomes available to code running in the thread to reveal the
+	identity of the current SubscriptionClient. This is especially
+	useful when composing error messages.
+
+	* PlugInAdapter
+	Set the SubscriptionClient.current ThreadLocal variable to be the
+	current plugin. This variable is then accessible for additional
+	information in debug printouts.
+
+	* Subscriber
+	Catch PublishException and print error messages describing the
+	details of the publishing error.
+
+	* ALPPlan
+	Check that an object being added to the allObjects container is
+	not already in the container and that an object being removed from
+	the allObjects container is, in fact, in the container. In both
+	cases a PublishException is thrown. The exception may contain a
+	PublishStack from the prior activity that is in conflict with the
+	current, erroneous activity. This latter behavior is enabled by
+	the org.cougaar.core.cluster.savePriorPublisher system property
+	being true. The default is false since keeping the history is
+	expensive, but invaluable for debugging publishing errors.
+
+	* PublishStack
+	A Throwable having a SubscriptionClient field to record the state
+	of a SubscriptionClient publishing something.
+
+	* PublishException
+	RuntimeException signifying something wrong with the publishing of
+	an object. Used by ALPPlan.
+
 2001-02-15  Ray Tomlinson  <rtomlinson@bbn.com>
 
 	* InventoryPlugIn
