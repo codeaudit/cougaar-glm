@@ -32,7 +32,15 @@ public class UniversalAllocatorPlugIn extends SimplePlugIn {
 	// Subscribe for all tasks
 	allTasks = (IncrementalSubscription)subscribe(allTasksPredicate);
 
-	sink_asset = theLDMF.createPrototype("AbstractAsset", "UniversalSink");
+        StringBuffer assetName = new StringBuffer();
+        assetName.append("UniversalSink");
+	Vector params = getParameters();
+	for (Enumeration e = params.elements();e.hasMoreElements();) {
+	    String param = (String) e.nextElement();
+            assetName.append('_');
+            assetName.append(param);
+        }
+	sink_asset = theLDMF.createPrototype("AbstractAsset", assetName.substring(0));
 	publishAdd(sink_asset);
     }
 
