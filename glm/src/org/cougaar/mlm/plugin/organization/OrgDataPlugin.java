@@ -431,7 +431,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
     if (myLogger.isInfoEnabled()) {
       myLogger.info(getAgentIdentifier() + ": added relationship " +
-		    " other asser typeid = " + typeId + 
+		    " other asset typeid = " + typeId + 
 		    ", itemId = " + itemId +
 		    ", clusterId = " + otherClusterId +
 		    ", role = " + roleName + 
