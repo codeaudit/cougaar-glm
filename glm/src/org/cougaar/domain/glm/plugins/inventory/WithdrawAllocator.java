@@ -137,7 +137,7 @@ public class WithdrawAllocator extends InventoryProcessor {
 	Asset  item = t.getDirectObject();
 	if (item instanceof Consumable) {
 	    return Constants.Role.SPAREPARTSPROVIDER;
-	} else if (item instanceof BulkPOL) {
+	} else if ((item instanceof BulkPOL) || (item instanceof PackagedPOL)) {
 	    return Constants.Role.FUELSUPPLYPROVIDER;
 	} else if (item instanceof Ammunition) {
 	    return Constants.Role.AMMUNITIONPROVIDER;
