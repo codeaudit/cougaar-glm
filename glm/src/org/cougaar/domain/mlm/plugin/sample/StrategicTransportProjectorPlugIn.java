@@ -91,7 +91,13 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   protected IncrementalSubscription drTasksSub;
 
   /** Subscription to Transportable Assets **/
-  protected IncrementalSubscription transAssetsSub;
+  //  protected IncrementalSubscription transAssetsSub;
+
+  /** Subscription to Transportable Person Assets **/
+  protected IncrementalSubscription transAssetsPersonSub;
+
+  /** Subscription to Transportable Equipment Assets **/
+  protected IncrementalSubscription transAssetsEquipmentSub;
 
   /** Subscription to Failed Allocations **/
   protected IncrementalSubscription failedDRAllocsSub;
@@ -129,8 +135,14 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     drTasksSub = (IncrementalSubscription) 
       subscribe(newDRTasksPred());
                 
-    transAssetsSub = (IncrementalSubscription) 
-      subscribe(newTransAssetsPred());
+//      transAssetsSub = (IncrementalSubscription) 
+//        subscribe(newTransAssetsPred());
+
+    transAssetsPersonSub = (IncrementalSubscription) 
+      subscribe(newTransPersonPred());
+
+    transAssetsEquipmentSub = (IncrementalSubscription) 
+      subscribe(newTransEquipmentPred());
 
     failedDRAllocsSub = (IncrementalSubscription) 
       subscribe(newFailedDRAllocPred());
@@ -183,13 +195,31 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
           drTasksSub.getRemovedList());
     }
     
-    if (transAssetsSub.hasChanged()) {
+//      if (transAssetsSub.hasChanged()) {
+//        //if (DEBUG) {
+//        //  printDebug("Transportable Assets hasChanged");
+//        //}
+//        watchAddedTransportableAssets(transAssetsSub.getAddedList());
+//        watchChangedTransportableAssets(transAssetsSub.getChangedList());
+//        watchRemovedTransportableAssets(transAssetsSub.getRemovedList());
+//      }
+
+    if (transAssetsPersonSub.hasChanged()) {
       //if (DEBUG) {
       //  printDebug("Transportable Assets hasChanged");
       //}
-      watchAddedTransportableAssets(transAssetsSub.getAddedList());
-      watchChangedTransportableAssets(transAssetsSub.getChangedList());
-      watchRemovedTransportableAssets(transAssetsSub.getRemovedList());
+      watchAddedTransportableAssets(transAssetsPersonSub.getAddedList());
+      watchChangedTransportableAssets(transAssetsPersonSub.getChangedList());
+      watchRemovedTransportableAssets(transAssetsPersonSub.getRemovedList());
+    }
+
+    if (transAssetsEquipmentSub.hasChanged()) {
+      //if (DEBUG) {
+      //  printDebug("Transportable Assets hasChanged");
+      //}
+      watchAddedTransportableAssets(transAssetsEquipmentSub.getAddedList());
+      watchChangedTransportableAssets(transAssetsEquipmentSub.getChangedList());
+      watchRemovedTransportableAssets(transAssetsEquipmentSub.getRemovedList());
     }
 
     if (failedDRAllocsSub.hasChanged()) {
@@ -325,17 +355,19 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     // We don't know how long this task will take, so we
     // use the default task adjustment duration!
     int adjustDurationDays = defaultAdjustDurationDays;
-    Collection oplanCol = query(new OplanByUIDPred(selfOrgAct.getOplanUID()));
-    // Should be exactly one oplan for an OrgActivity
-    Oplan oplan = (Oplan) oplanCol.iterator().next();
-    Date startDate = null;
-    // If OffsetDays was specified as an input parameter, use Oplan C Day + offset as 
-    // start date for the Task
+    Date prepoStartDate = null;
+
     if (offsetDays > 0) {
-      startDate = new Date(oplan.getCday().getTime() + (MILLIS_PER_DAY * offsetDays));
+      // If OffsetDays was specified as an input parameter, use Oplan C Day + offset as 
+      // start date for the Task
+      Collection oplanCol = query(new OplanByUIDPred(selfOrgAct.getOplanUID()));
+      // Should be exactly one oplan for an OrgActivity
+      Oplan oplan = (Oplan) oplanCol.iterator().next();
+      prepoStartDate = new Date(oplan.getCday().getTime() + (MILLIS_PER_DAY * offsetDays));
     }
+
     DeployPlan newDP = 
-      new DeployPlan(selfOrg, selfOrgAct, adjustDurationDays, overrideFromLocation, startDate);
+      new DeployPlan(selfOrg, selfOrgAct, adjustDurationDays, overrideFromLocation,  prepoStartDate);
     if (DEBUG) {
       printDebug(newDP.toString());
     }
@@ -499,7 +531,15 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       killWorkflow(wf);
     }
     // create tasks for the assets
-    Enumeration eAssets = transAssetsSub.elements();
+    Enumeration eAssets = transAssetsPersonSub.elements();
+    if (eAssets.hasMoreElements()) {
+      expandDetermineRequirements(dp, drTask, eAssets);
+    } else {
+      if (DEBUG) {
+        printDebug("No assets to transport");
+      }
+    }
+    eAssets = transAssetsEquipmentSub.elements();
     if (eAssets.hasMoreElements()) {
       expandDetermineRequirements(dp, drTask, eAssets);
     } else {
@@ -843,6 +883,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     // get first and second assets from enumeration
     Asset firstAssetForTransport = null;
     Asset secondAssetForTransport = null;
+    boolean isPersonAsset = false;
     while (true) {
       if (!(assetsEnum.hasMoreElements())) {
         if (firstAssetForTransport != null) {
@@ -862,6 +903,13 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       if (firstAssetForTransport == null) {
         // the first of the assets
         firstAssetForTransport = a;
+
+	// Is this a Person or Equipment? Use first element to determine batch
+	Object o = a;
+	while (o instanceof AggregateAsset) {
+          o = ((AggregateAsset)o).getAsset();
+	}
+        isPersonAsset = o instanceof Person;
       } else {
         // okay, need to transport multiple assets
         secondAssetForTransport = a;
@@ -918,7 +966,12 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     //   FROM  (my home location)
     NewPrepositionalPhrase from = theLDMF.newPrepositionalPhrase();
     from.setPreposition(Constants.Preposition.FROM);
-    from.setIndirectObject(dp.fromLoc);
+    // HACK - assume that all the assets in the Enumeration are of the same type
+    if (isPersonAsset || (dp.fromPrepoLoc == null)) {
+      from.setIndirectObject(dp.fromLoc);
+    } else {
+      from.setIndirectObject(dp.fromPrepoLoc);
+    }
     prepphrases.addElement(from);
                 
     //   FOR  (me)
@@ -954,18 +1007,22 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     prepphrases.addElement(pp);
 
     // Kludge - add "PREPO" prepositional phrase if we are using aren't using the Org's from loc
-    if (dp.addPrepoPreposition) {
-      pp = theLDMF.newPrepositionalPhrase();
-      pp.setPreposition("PREPO");
-      prepphrases.add(pp);
+    if ((dp.fromPrepoLoc != null) &&  !isPersonAsset) {
+	pp = theLDMF.newPrepositionalPhrase();
+	pp.setPreposition("PREPO");
+	prepphrases.add(pp);
     }
 
     // PREFERENCES
     Vector prefs = new Vector();
 
     //   START DATE  (startTime)
-    AspectValue startAV = 
-      new AspectValue(AspectType.START_TIME, dp.startTime.getTime());
+    AspectValue startAV;
+    if (isPersonAsset) {
+      startAV = new AspectValue(AspectType.START_TIME, dp.startTime.getTime());
+    } else {
+      startAV = new AspectValue(AspectType.START_TIME, dp.prepoStartTime.getTime());
+    }
     ScoringFunction startSF = 
      ScoringFunction.createNearOrAbove(startAV, 0);
     Preference startPref = 
@@ -1285,17 +1342,35 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
    *<p>
    * These are the assets that we will transport.
    **/
-  protected static UnaryPredicate newTransAssetsPred() {
+//    protected static UnaryPredicate newTransAssetsPred() {
+//      return new UnaryPredicate() {
+//        public boolean execute(Object o) {
+//          while (o instanceof AggregateAsset)
+//            o = ((AggregateAsset)o).getAsset();
+//          return ((o instanceof Person) || 
+//                  (o instanceof ClassVIIMajorEndItem));
+//        }
+//      };
+//    }
+
+  protected static UnaryPredicate newTransPersonPred() {
     return new UnaryPredicate() {
       public boolean execute(Object o) {
         while (o instanceof AggregateAsset)
           o = ((AggregateAsset)o).getAsset();
-        return ((o instanceof Person) || 
-                (o instanceof ClassVIIMajorEndItem));
+        return (o instanceof Person);
       }
     };
   }
-
+  protected static UnaryPredicate newTransEquipmentPred() {
+    return new UnaryPredicate() {
+      public boolean execute(Object o) {
+        while (o instanceof AggregateAsset)
+          o = ((AggregateAsset)o).getAsset();
+        return (o instanceof ClassVIIMajorEndItem);
+      }
+    };
+  }
   /**
    * Pred for failed allocations of a expanded DetermineRequirements tasks we
    * published.  We use newDRTasksPred for testing the task.
@@ -1364,14 +1439,15 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
      * would first try starting on 10/21/99.
      */
     public UID oplanId;
-    public GeolocLocation fromLoc;
-    public GeolocLocation toLoc;
+    public GeolocLocation fromLoc = null;
+    public GeolocLocation fromPrepoLoc = null;
+    public GeolocLocation toLoc = null;
     public Organization forOrg;
     public Date startTime;
+    public Date prepoStartTime;
     public Date thruTime;
     public int thruRange = 1;
     public int adjustDurationDays;
-    public boolean addPrepoPreposition = false;
 
     /**
      * State info once detReqs tasks and asset changes take place.
@@ -1397,7 +1473,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
 		      OrgActivity orgAct, 
 		      int adjustDurationDays,
 		      GeolocLocation overrideFromLocation,
-		      Date startDate) {
+		      Date prepoStartDate) {
       if ((org == null) || 
           (orgAct == null)) {
         //if (DEBUG) {
@@ -1416,16 +1492,14 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       //   this is taken from the MilitaryOrgPG
       org.cougaar.domain.glm.ldm.asset.MilitaryOrgPG milPG = org.getMilitaryOrgPG();
       if (milPG != null) {
-	this.fromLoc = overrideFromLocation;
-	if (this.fromLoc == null) {
-	  this.fromLoc = (GeolocLocation)milPG.getHomeLocation();
-	  addPrepoPreposition = false;
-	} else
-	  addPrepoPreposition = true;
+	this.fromLoc = (GeolocLocation)milPG.getHomeLocation();
       }
       // get TO geographic location
       this.toLoc = orgAct.getGeoLoc();
-      
+
+      // Use this for equipment
+      this.fromPrepoLoc = overrideFromLocation;
+
       //  get organization activity information
 
       TimeSpan actTS = orgAct.getTimeSpan();
@@ -1433,17 +1507,18 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
         // do we want to fix dates to be after System time?
 	// startDate will be null if OffsetDays days wasn't an command line parameter
         this.thruTime = actTS.getThruDate();
+	this.startTime = actTS.getStartDate();
 
-	if (startDate == null) {
+	if (prepoStartDate == null) {
 	  // Use Deploy OrgActivity startDate instead
-	  this.startTime = actTS.getStartDate();
+	  this.prepoStartTime = actTS.getStartDate();
 	} else {
 	  // Use OrgActivity startDate if the oplan C day + offsetDays is later than
 	  // the Task thruDate.
-	  if (startDate.compareTo(this.thruTime) < 0)
-	    this.startTime = startDate;
+	  if (prepoStartDate.compareTo(this.thruTime) < 0)
+	    this.prepoStartTime = prepoStartDate;
 	  else
-	    this.startTime = actTS.getStartDate();
+	    this.prepoStartTime = actTS.getStartDate();
 	}
       }
   
@@ -1475,9 +1550,11 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       String s = "Deployment Plan:";
       s += "\n  PlanId: "+oplanId;
       s += "\n  fromLoc: "+ ((fromLoc != null) ? fromLoc.getGeolocCode(): "?");
+      s += "\n  fromPrepoLoc: "+ ((fromPrepoLoc != null) ? fromPrepoLoc.getGeolocCode(): "?");
       s += "\n  toLoc:   "+ ((toLoc != null) ? toLoc.getGeolocCode(): "?");
       s += "\n  for: "+getOrgID(forOrg);
       s += "\n  startTime: "+startTime;
+      s += "\n  prepoStartTime: "+prepoStartTime;
       s += "\n  thruTime:  "+thruTime;
       s += "\n  adjustDurationDays: "+adjustDurationDays;
       s += "\n";
@@ -1489,9 +1566,11 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
         return 
           (oplanId.equals(dp.oplanId) &&
            (fromLoc == dp.fromLoc) &&
+           (fromPrepoLoc == dp.fromPrepoLoc) &&
            (toLoc == dp.toLoc) &&
            (forOrg == dp.forOrg) &&
            startTime.equals(dp.startTime) &&
+           prepoStartTime.equals(dp.prepoStartTime) &&
            thruTime.equals(dp.thruTime) &&
            (adjustDurationDays == dp.adjustDurationDays));
       } catch (NullPointerException ne) {
