@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/gss/plugins/Attic/GLMGSSExpanderPlugin.java,v 1.1 2002-02-12 17:47:57 jwinston Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/gss/plugins/Attic/GLMGSSExpanderPlugin.java,v 1.2 2002-03-13 22:34:07 gvidaver Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -37,7 +37,6 @@ import org.cougaar.lib.gss.plugins.UTILGSSExpanderPlugin;
  * <UL>
  * <LI>getSubtasks()
  * </UL>
- * @see org.cougaar.lib.plugin.plugins.UTILSimpleExpanderPlugin
  */
 public abstract class GLMGSSExpanderPlugin extends UTILGSSExpanderPlugin {
   public GSSpecsHandler getSpecsHandler() { return new GLMSpecsHandler(); }
