@@ -23,6 +23,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -70,8 +71,11 @@ public class PSP_ExecutionWatcher
   private long theTimeStep = 10000L; // The minimum (real) time between non-time rate updates
   private double theExecutionRate = -1.0; // Insure not equal
   private ArrayList schedules = new ArrayList();
+  private ArrayList scheduleRescinds = new ArrayList();
   private ArrayList failureConsumptionRates = new ArrayList();
+  private ArrayList failureConsumptionRateRescinds = new ArrayList();
   private ArrayList taskEventReports = new ArrayList();
+  private ArrayList taskEventReportRescinds = new ArrayList();
   private IncrementalSubscription inventorySubscription;
   private IncrementalSubscription projectionTaskSubscription;
   private IncrementalSubscription peSubscription;
@@ -164,7 +168,7 @@ public class PSP_ExecutionWatcher
       case Change.CHANGE:
         break;                  // Ignore changes they never affect the report schedule
       case Change.REMOVE:
-        schedules.add(new InventoryReportSchedule.Rescind(id));
+        scheduleRescinds.add(new InventoryReportSchedule.Rescind(id));
         break;
       }
       notify();
@@ -190,11 +194,10 @@ public class PSP_ExecutionWatcher
 //          new Integer(AspectType.QUANTITY),
 //        })).elements();
 //        //+++++++++++ debug +++++++++++++//
-      TaskEventReport ter;
       while (observableAspects.hasMoreElements()) {
         int aspectType = ((Integer) observableAspects.nextElement()).intValue();
         if (kind == Change.REMOVE) {
-          ter = new TaskEventReport.Rescind(new TaskEventId(task.getUID(), aspectType));
+          taskEventReportRescinds.add(new TaskEventReport.Rescind(new TaskEventId(task.getUID(), aspectType)));
         } else {
           AllocationResult obsAR = pe.getObservedResult();
           if (obsAR != null) {
@@ -214,15 +217,14 @@ public class PSP_ExecutionWatcher
                                          TaskUtils.getEndTime(ar));
           String shortDescription =
             task.getVerb() + " " + task.getDirectObject().toString();
-          ter = new TaskEventReport(new TaskEventId(task.getUID(), aspectType),
-                                    task.getVerb().toString(),
-                                    value,
-                                    observationTime,  // reportDate
-                                    observationTime,
-                                    task.toString(),
-                                    shortDescription); // receivedDate
+          taskEventReports.add(new TaskEventReport(new TaskEventId(task.getUID(), aspectType),
+                                                   task.getVerb().toString(),
+                                                   value,
+                                                   observationTime,  // reportDate
+                                                   observationTime,  // receivedDate
+                                                   task.toString(),
+                                                   shortDescription));
         }
-        taskEventReports.add(ter);
       }
       notify();
     }
@@ -252,7 +254,7 @@ public class PSP_ExecutionWatcher
         if (kind == Change.REMOVE) {
           FailureConsumptionRate.Rescind fcrr =
             new FailureConsumptionRate.Rescind(task.getUID());
-          failureConsumptionRates.add(fcrr);
+          failureConsumptionRateRescinds.add(fcrr);
         } else {
           Rate rate = TaskUtils.getRate(task);
           String rateUnits = null;
@@ -361,21 +363,22 @@ public class PSP_ExecutionWatcher
     }
     changes.clear();
     synchronized (out) {        // Prevent the d..n harness from interrupting
-      if (schedules.size() > 0) {
-        writer.writeEGObject(new EGObjectArray(schedules));
-        schedules.clear();
-      }
-      if (failureConsumptionRates.size() > 0) {
-        writer.writeEGObject(new EGObjectArray(failureConsumptionRates));
-        failureConsumptionRates.clear();
-      }
-      if (taskEventReports.size() > 0) {
-        writer.writeEGObject(new EGObjectArray(taskEventReports));
-        taskEventReports.clear();
-      }
+      sendIfNotEmpty(schedules);
+      sendIfNotEmpty(failureConsumptionRates);
+      sendIfNotEmpty(taskEventReports);
+      sendIfNotEmpty(scheduleRescinds);
+      sendIfNotEmpty(failureConsumptionRateRescinds);
+      sendIfNotEmpty(taskEventReportRescinds);
       writer.flush();
     }
   }
+
+    private void sendIfNotEmpty(List list) throws IOException {
+      if (list.size() > 0) {
+        writer.writeEGObject(new EGObjectArray(list));
+        list.clear();
+      }
+    }
 
   private void maybeSendExecutionTimeStatus(boolean force) throws IOException {
     long now = System.currentTimeMillis();
