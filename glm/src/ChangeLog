@@ -1,3 +1,8 @@
+2002-06-13  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/plugin/completion/GLMCompletionSocietyPlugin.java:
+	Add ability to send oplan and publish gls.
+
 2002-05-28  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/glm/plugin/completion/GLMCompletionTargetPlugin.java: 

@@ -33,10 +33,11 @@ import org.cougaar.core.plugin.completion.CompletionSocietyPlugin;
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.mlm.plugin.organization.GLSInitServlet;
 
 public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
-  private static final long GET_OPLAN_DELAY = 60000L;
-  private static final long SEND_GLS_DELAY = 10000L;
+  private static final long SEND_OPLAN_DELAY = 60000L;
+  private static final long PUBLISH_GLS_DELAY = 10000L;
   private static final String forRoot = "ForRoot";
   private long timeout;
   private CollectionSubscription oplanSubscription;
@@ -61,31 +62,40 @@ public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
 	return (task.getPrepositionalPhrase(forRoot) != null);
       }
     };
-  private CompletionAction publishOplanAction =
+  private CompletionAction sendOplanAction =
     new CompletionAction() {
       public boolean checkCompletion(boolean haveLaggard) {
         if (haveLaggard) {
-          timeout = now + GET_OPLAN_DELAY;
+          timeout = now + SEND_OPLAN_DELAY;
         } else if (now > timeout) {
-          return isOplanPublished();
+          sendOplan();
+          timeout = now + PUBLISH_GLS_DELAY;
+          return true;
         }
         return false;
       }
+      public String toString() {
+        return "CompletionAction(sendOplan)";
+      }
     };
-  private CompletionAction sendGLSAction =
+  private CompletionAction publishGLSAction =
     new CompletionAction() {
       public boolean checkCompletion(boolean haveLaggard) {
         if (haveLaggard) {
-          timeout = now + SEND_GLS_DELAY;
+          timeout = now + PUBLISH_GLS_DELAY;
         } else if (now > timeout) {
-          return isGLSPublished();
+          publishGLS();
+          return  true;
         }
         return false;
+      }
+      public String toString() {
+        return "CompletionAction(publishGLS)";
       }
     };
   private CompletionAction[] myCompletionActions = {
-    publishOplanAction,
-    sendGLSAction
+    sendOplanAction,
+    publishGLSAction
   };
 
   public void setupSubscriptions() {
@@ -100,11 +110,15 @@ public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
     return myCompletionActions;
   }
 
-  private boolean isOplanPublished() {
-    return oplanSubscription.size() > 0;
+  private void sendOplan() {
+    GLSInitServlet.Request req =
+      new GLSInitServlet.Request(GLSInitServlet.SENDOPLAN);
+    blackboard.publishAdd(req);
   }
 
-  private boolean isGLSPublished() {
-    return glsSubscription.size() > 0;
+  private void publishGLS() {
+    GLSInitServlet.Request req =
+      new GLSInitServlet.Request(GLSInitServlet.PUBLISHGLS);
+    blackboard.publishAdd(req);
   }
 }
