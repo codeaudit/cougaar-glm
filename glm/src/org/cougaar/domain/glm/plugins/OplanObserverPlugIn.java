@@ -8,7 +8,7 @@
  * </copyright>
  */
 
-package org.cougaar.domain.glm.plugin;
+package org.cougaar.domain.glm.plugins;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.cluster.IncrementalSubscription;
