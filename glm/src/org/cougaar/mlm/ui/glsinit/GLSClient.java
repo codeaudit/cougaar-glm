@@ -77,6 +77,8 @@ public class GLSClient extends JPanel {
   private static final String UPDATE_OPLAN_COMMAND = "updateoplan";
   private static final String OPLAN_PARAM_NAME = "&oplanID=";
 
+  private boolean stopping = false;
+
   /**
    * A GUI panel that can be enclosed in a frame or internal frame.
    * GUI that contacts servlets in society to publish oplan
@@ -126,14 +128,33 @@ public class GLSClient extends JPanel {
   /**
    * Set the initial default button to be the connect button.
    * Must be done after placing the GUI in a frame or internal frame.
+   * Also enables the connect button.
    */
 
   public void setDefaultButton() {
     JRootPane rootPane = getRootPane();
-    if (rootPane != null)
+    if (rootPane != null) {
       rootPane.setDefaultButton(connectButton);
+      connectButton.setEnabled(true);
+    }
   }
 
+  /**
+   * Stop reading from any open input streams.
+   */
+
+  public void stop() {
+    stopping = true;
+    disableButtons();
+  }
+
+  private void disableButtons() {
+    initButton.setEnabled(false);
+    oplanButton.setEnabled(false);
+    updateOplanButton.setEnabled(false);
+    rescindButton.setEnabled(false);
+    connectButton.setEnabled(false);
+  }
 
   /** creates an x_axis oriented panel containing two components */
   private JPanel createXPanel(JComponent comp1, JComponent comp2) {
@@ -370,10 +391,12 @@ public class GLSClient extends JPanel {
           return;
   	BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
   	String inputLine;
-  	while ((inputLine = in.readLine()) != null) {
+  	while ((inputLine = in.readLine()) != null && !stopping) {
           // read and discard any feedback
 	}
   	in.close();
+        if (stopping)
+          return;
       } catch (java.net.MalformedURLException me) {
 	JOptionPane.showMessageDialog(glsClient,
                                       "Invalid Host, Port, Agent or Servlet.",
@@ -382,6 +405,8 @@ public class GLSClient extends JPanel {
         me.printStackTrace();
         return;
       } catch (java.io.IOException ioe) {
+        if (stopping)
+          return;
 	JOptionPane.showMessageDialog(glsClient,
                                       "Could not connect to Host, Port, or Agent.\nThe Servlet may not be running there.",
                                       "No Servlet", 
@@ -452,23 +477,29 @@ public class GLSClient extends JPanel {
           ((HttpURLConnection) urlConnection).getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
           String inputLine;
-          while ((inputLine = in.readLine()) != null) {
+          while ((inputLine = in.readLine()) != null && !stopping) {
           }
           in.close();
+          if (stopping)
+            return null;
           throw new RuntimeException("Unable to contact: " +
                                      urlConnection.getURL().getHost() + " " +
                                      urlConnection.getURL().getPort());
         }
 
   	String inputLine;
-  	while ((inputLine = in.readLine()) != null) {
+  	while ((inputLine = in.readLine()) != null && !stopping) {
 	  if (inputLine.indexOf("oplan") > 0)
             addOplan(inputLine);
 	  else if (inputLine.indexOf("GLS") > 0)
             updateGLSTasks(inputLine);
 	}
   	in.close();
+        if (stopping)
+          return null;
       } catch (java.io.IOException e) {
+        if (stopping)
+          return null;
 	connectButton.setEnabled(true);
 	JOptionPane.showMessageDialog(glsClient,
                                       "Could not read from servlet at: " +
@@ -480,6 +511,8 @@ public class GLSClient extends JPanel {
         getRootPane().setDefaultButton(connectButton);
 	return null;
       } catch (RuntimeException re) {
+        if (stopping)
+          return null;
         connectButton.setEnabled(true);
         JOptionPane.showMessageDialog(glsClient,
                                      "Could not contact servlet at: " +
@@ -492,6 +525,8 @@ public class GLSClient extends JPanel {
         getRootPane().setDefaultButton(connectButton);
         return null;
       } catch (Exception e) {
+        if (stopping)
+          return null;
 	e.printStackTrace();
 	return null;
       }
