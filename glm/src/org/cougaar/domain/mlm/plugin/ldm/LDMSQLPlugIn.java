@@ -174,6 +174,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     protected void initProperties() {
     // default package for QueryHandler
     globalParameters.put("Package", "org.cougaar.domain.mlm.plugin.ldm");
+    globalParameters.put("agent","'"+getClusterIdentifier()+"'");
+    //System.out.println("LDMSQLPlugIn, globalParameters is: "+globalParameters);
   }
 
   // retrieve and parse the arguments
@@ -203,6 +205,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
   // parse the query file
   private void parseQueryFile() {
+      //System.out.println("LDMSQLPlugIn, query file is: "+queryFile);
     try {
       BufferedReader in = new BufferedReader(new InputStreamReader(getConfigFinder().open(queryFile)));
 				//BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
@@ -244,12 +247,15 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 		}
 	      }
 	      QueryHandler cqh= (QueryHandler)(Class.forName(s).newInstance());
+	      
+	      pt = (Properties)globalParameters.clone();
+	      //System.out.println("LDMSQLPlugIn, pt is: "+pt);
 	      cqh.initialize(this, // LDMEssentialPlugIn
 			     // this, // ldmservice
 			     getClusterIdentifier(),
 			     getCluster(),
 			     domainService.getFactory(),
-			     pt = (Properties)globalParameters.clone(),
+			     pt,
 			     getBlackboardService());
 	      queries.addElement(cqh);
 	    } catch (Exception bogon) {
@@ -367,8 +373,9 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	String param = s.substring(i,j);
 	String value = qh.getParameter(param);
 	if (value == null) {
-	  throw new RuntimeException("Parameter Substitution problem in '"+s+
-				     "' at "+(i-1));
+	    //System.out.println("qh.getParameter(param="+param);
+	    throw new RuntimeException("Parameter Substitution problem in '"+s+
+				       "' at "+(i-1));
 	}
 	sb.append(value);
 	i = j;
@@ -438,7 +445,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
         statement.close();
       } catch (SQLException sqe) {
-        System.err.println("executeQuery failed: " + sql);
+	  System.err.println("executeQuery failed: "+sqe+"\n" + sql);
       } finally {
         conn.close();
       }
