@@ -99,13 +99,17 @@ public class GLMTestingStimulatorPlugIn extends GLMStimulatorPlugIn
    * Cache the already handled allocations by their UID's
    */
   public void handleSuccessfulAlloc(Allocation alloc) {
+	// we were rehydrated -- no guarantees across rehydration
+	if (batchStart == null || testStart == null)
+	  return;
+
     // Check for a completed batch
     if ((alloc.getReportedResult() != null) && 
 	(alloc.getReportedResult().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE)) {
       if (!handledAllocations.contains(alloc.getUID())) {
 	// Cache the allocation UID
 	handledAllocations.add(alloc.getUID());
-
+	
 	// Print timing information for the completed batch
 	String t = getElapsedTime(batchStart);
 	String total = getElapsedTime(testStart);
@@ -133,7 +137,7 @@ public class GLMTestingStimulatorPlugIn extends GLMStimulatorPlugIn
    *                 "ClusterInputFile" defined in <ClusterName>.env.xml.
    */
   protected void createGUI(String infile) {
-    frame = new JFrame(getClusterName () + " - GLMStimulatorPlugIn");
+    frame = new JFrame(getClusterName () + " - GLMTestingStimulatorPlugIn");
     frame.getContentPane().setLayout(new BorderLayout());
 
     JPanel panel = new JPanel();
@@ -143,7 +147,7 @@ public class GLMTestingStimulatorPlugIn extends GLMStimulatorPlugIn
     JTextField iterations = new JTextField("1");
     JLabel label = new JLabel("                                             ");
 
-    GLMButtonListener myGLMListener = new GLMButtonListener(label, text, iterations);
+    myGLMListener = new GLMTestingButtonListener(label, text, iterations);
     button.addActionListener(myGLMListener);
     button2.addActionListener(myGLMListener);
 
@@ -172,14 +176,11 @@ public class GLMTestingStimulatorPlugIn extends GLMStimulatorPlugIn
    * 
    * </pre>
    */
-  class GLMButtonListener implements ActionListener {
-    GLMButtonListener(JLabel label, JTextField text, JTextField iterations){
-      this.label = label;
-      this.text = text;
+  class GLMTestingButtonListener extends GLMButtonListener {
+    GLMTestingButtonListener(JLabel label, JTextField text, JTextField iterations){
+	  super (label, text);
       this.iterations = iterations;
     }
-    protected JLabel label;
-    protected JTextField text;
     protected JTextField iterations;
     public void actionPerformed(ActionEvent e) {
       String lnfName = e.getActionCommand();

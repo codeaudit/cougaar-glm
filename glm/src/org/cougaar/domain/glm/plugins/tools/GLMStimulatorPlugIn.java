@@ -63,6 +63,7 @@ import org.cougaar.lib.filter.UTILPlugInAdapter;
 
 import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.lib.util.UTILPreference;
+import org.cougaar.core.plugin.PluginBindingSite;
 
 /**
  * <pre>
@@ -138,8 +139,15 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
    *
    * @see org.cougaar.domain.glm.callback.GLMOrganizationListener
    */
-  public void handleNewOrganization (Enumeration e) {}
+  public void handleNewOrganization (Enumeration e) {
+	if (!reportedSeenOrgs && myGLMListener != null) {
+	  myGLMListener.indicateReady();
+	  reportedSeenOrgs = true;
+	}
+  }
 
+  boolean reportedSeenOrgs = false;
+  
   /**
    * <pre>
    * Helper function to publish a plan element.
@@ -194,9 +202,8 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
     JButton button = new JButton("Send Tasks");
     JButton button2 = new JButton("Rescind Tasks");
     JTextField text = new JTextField(infile);
-    JLabel label = new JLabel("                                             ");
-
-    GLMButtonListener myGLMListener = new GLMButtonListener(label, text);
+    JLabel label = new JLabel("No subordinates to task yet.  Wait until they report.");
+    myGLMListener = new GLMButtonListener(label, text);
     button.addActionListener(myGLMListener);
     button2.addActionListener(myGLMListener);
 
@@ -250,6 +257,9 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 		rescindTasks (label);
       }
     }
+	public void indicateReady () {
+	  label.setText("Ready to send tasks.");
+	}
   }
 
   /**
@@ -474,7 +484,8 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
     Collection tasks = null;
     try {
       GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, 
-										   getClusterIdentifier(), getConfigFinder(),
+										   ((PluginBindingSite) getBindingSite()).getAgentIdentifier(),
+										   getConfigFinder(),
 										   getLDMService().getLDM());
       tasks = UTILAllocate.enumToList (tp.getTasks());
     } 
@@ -493,6 +504,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 
   /** The callback mediating the org subscription */
   protected GLMOrganizationCallback myOrgCallback;
+  GLMButtonListener myGLMListener;
 }
 
 
