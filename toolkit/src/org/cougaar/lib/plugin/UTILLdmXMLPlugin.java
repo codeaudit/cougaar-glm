@@ -224,6 +224,7 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
 
       if (showParserFeatures) {
 	logger.debug ("UTILLdmXMLPlugin.getParsedDocument - parser features:");
+        /* // xerces2
 	String []features = parser.getFeaturesRecognized();
 	for (int i = 0; i < features.length; i++) {
 	  try {
@@ -232,6 +233,7 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
 	    logger.debug ("Feature " + i + " " + features[i] + " = not recognized excep?");
 	  }
 	}
+        */
       }
 
       parser.setFeature("http://apache.org/xml/features/allow-java-encodings", true);
@@ -239,9 +241,11 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
       // by default set to true, adds another node to tree that confuses getAssets below,
       // since it's not expecting a entity ref node
       parser.setFeature("http://apache.org/xml/features/dom/create-entity-ref-nodes", false);
+      /*  // xerces2
       if (logger.isDebugEnabled())
 	logger.debug ("UTILLdmXMLPlugin.getParsedDocument - setting parser create entity node to "+
 		      parser.getCreateEntityReferenceNodes());
+      */
       parser.setEntityResolver (new UTILEntityResolver (logger));
       InputSource is = new InputSource (inputStream);
       is.setSystemId (dfile);
