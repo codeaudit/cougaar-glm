@@ -24,35 +24,37 @@ package org.cougaar.glm.servlet;
 import java.io.*;
 import java.util.*;
 
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.DynamicUnaryPredicate;
-import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.SubscriptionWatcher;
-
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.servlet.data.xml.*;
-import org.cougaar.planning.servlet.ServletBase;
-import org.cougaar.planning.servlet.ServletWorker;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+import org.cougaar.core.blackboard.Subscription;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.blackboard.SubscriptionWatcher;
+
+import org.cougaar.core.service.BlackboardService;
+import org.cougaar.core.service.SchedulerService;
+
 import org.cougaar.core.servlet.SimpleServletSupport;
+import org.cougaar.core.servlet.BlackboardServletSupport;
 
-import org.cougaar.util.Trigger;
-import org.cougaar.util.TriggerModel;
-import org.cougaar.util.SyncTriggerModelImpl;
-
-import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.glm.parser.GLMTaskParser;
 
-import org.cougaar.core.service.SchedulerService;
-import org.cougaar.core.service.BlackboardService;
+import org.cougaar.lib.util.UTILAllocate;
+
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.servlet.ServletBase;
+import org.cougaar.planning.servlet.ServletWorker;
+import org.cougaar.planning.servlet.data.xml.*;
+
+import org.cougaar.util.DynamicUnaryPredicate;
+import org.cougaar.util.SyncTriggerModelImpl;
+import org.cougaar.util.Trigger;
+import org.cougaar.util.TriggerModel;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * <pre>
@@ -84,7 +86,7 @@ public class GLMStimulatorWorker
   public void execute(HttpServletRequest request,
                       HttpServletResponse response,
                       SimpleServletSupport support) throws IOException, ServletException {
-    this.support = (GLMStimulatorSupport) support;
+    this.support = (BlackboardServletSupport) support;
 
     Enumeration params = request.getParameterNames ();
     for (;params.hasMoreElements();) {
@@ -364,7 +366,7 @@ public class GLMStimulatorWorker
                                            support.getAgentIdentifier(),
                                            support.getConfigFinder(),
                                            support.getLDM(),
-					   support.getLog()); // SEEMS LIKE THE NULL LOGGER!!!!
+					   support.getLog());
       tasks = UTILAllocate.enumToList (tp.getTasks());
     }
     catch( Exception ex ) {
@@ -530,5 +532,5 @@ public class GLMStimulatorWorker
 
   protected String inputFile = "                     ";
 
-  protected GLMStimulatorSupport support;
+  protected BlackboardServletSupport support;
 }

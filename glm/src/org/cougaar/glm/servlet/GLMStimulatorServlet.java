@@ -48,7 +48,6 @@ import org.cougaar.glm.ldm.asset.Organization;
 
 import org.cougaar.glm.callback.GLMOrganizationCallback;
 import org.cougaar.glm.callback.GLMOrganizationListener;
-import org.cougaar.glm.parser.GLMTaskParser;
 import org.cougaar.glm.util.AssetUtil;
 
 import org.cougaar.planning.servlet.ServletBase;

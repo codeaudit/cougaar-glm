@@ -2,17 +2,32 @@ package org.cougaar.glm.servlet;
 
 import javax.servlet.Servlet;
 
+import org.cougaar.core.agent.ClusterIdentifier;
+
+import org.cougaar.core.plugin.*;
+
+import org.cougaar.core.servlet.BlackboardServletSupport;
 import org.cougaar.core.servlet.SimpleServletComponent;
 import org.cougaar.core.servlet.SimpleServletSupport;
 
-import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.NamingService;
-import org.cougaar.glm.servlet.GLMStimulatorSupport;
-import org.cougaar.core.plugin.*;
-import org.cougaar.util.ConfigFinder;
 import org.cougaar.core.service.SchedulerService;
 
+import org.cougaar.glm.servlet.GLMStimulatorSupport;
+import org.cougaar.util.ConfigFinder;
+
+/** 
+ * <pre>
+ * A special servlet component for the GLM Stimulator.
+ *
+ * Can't use SimpleServletComponent because we need additional services,
+ * including the LDMService's factory and LDMServesPlugin, and the config
+ * finder.
+ *
+ * </pre>
+ * @see org.cougaar.core.servlet.BlackboardServletSupport
+ */
 public class GLMStimulatorServletComponent extends SimpleServletComponent {
   private LDMService ldmService = null;
   private SchedulerService scheduler;
@@ -27,9 +42,10 @@ public class GLMStimulatorServletComponent extends SimpleServletComponent {
     return ((PluginBindingSite) bindingSite).getConfigFinder();
   }
 
-
-  // rely upon load-time introspection to set these services - 
-  //   don't worry about revokation.
+  /**
+   * Rely upon load-time introspection to set these services - 
+   *   don't worry about revokation.
+   */
   public final void setSchedulerService(SchedulerService ss) {
     scheduler = ss;
   }
@@ -46,14 +62,16 @@ public class GLMStimulatorServletComponent extends SimpleServletComponent {
   /**
    * so a subclass can create a different servlet support just by overriding this method
    * perhaps the core should work like this?
+   *
+   * Creates an instance of BlackboardServletSupport to give to the worker
    */
   protected SimpleServletSupport makeServletSupport () {
     if (log.isInfoEnabled())
-      log.info ("Creating GLMStimulatorSupport");
+      log.info ("Creating BlackboardServletSupport");
 
     // create a new "SimpleServletSupport" instance
     return 
-      new GLMStimulatorSupport (
+      new BlackboardServletSupport (
         path,
         agentId,
         blackboard,
