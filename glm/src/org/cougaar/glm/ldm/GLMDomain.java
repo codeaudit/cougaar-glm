@@ -92,7 +92,7 @@ public class GLMDomain extends DomainAdapter {
   }
 
   public void unload() {
-    ServiceBroker sb = getBindingSite().getServiceBroker();
+    ServiceBroker sb = getServiceBroker();
     if (ldmService != null) {
       sb.releaseService(
           this, LDMService.class, ldmService);
