@@ -186,7 +186,7 @@ public class PSP_Subordinates extends PSP_BaseAdapter
 
 		  out.println("<org name=\""+ orgName+ "\"></org>");
 
-          for (Iterator schedIter = schedule.iterator(); schedIter.hasNext();) {
+          for (Iterator schedIter = schedule.listIterator(); schedIter.hasNext();) {
             Relationship relationship = (Relationship)schedIter.next();
 
 			if (((relationship.getRoleA().equals(Constants.Role.ADMINISTRATIVESUBORDINATE)) &&
