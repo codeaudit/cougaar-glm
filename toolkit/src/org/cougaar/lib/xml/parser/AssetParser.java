@@ -51,7 +51,7 @@ public class AssetParser{
     }
     try {
       asset = UTILAsset.createInstance(ldm, data, bumperno);
-    } catch(Exception e){
+    } catch(RuntimeException e){
       System.err.println("\nGot exception processing Node <" + 
 			 node.getNodeName() + ">.  Could not create instance of " + data + " with unique id " + bumperno);
     }
