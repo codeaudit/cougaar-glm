@@ -16,6 +16,8 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import java.net.URL;
 
+import java.io.*;
+
 /**
  * EntityResolver for use with all UTIL xml parsers.
  *
@@ -43,7 +45,21 @@ public class UTILEntityResolver implements EntityResolver {
 
     // return a special input source
     try {
-      return new InputSource(ConfigFinder.getInstance().open(filename));
+      InputSource is = new InputSource(ConfigFinder.getInstance().open(filename));
+//        System.out.println ("UTILEntityResolver.resolveEntity - publicID " + 
+//  			  publicId + " system ID " + 
+//  			  systemId + " filename from systemID " + 
+//  			  filename + " input source " + is);
+
+      
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(is.getByteStream()));
+//        int size = 0;
+//        char [] buf = new char [80];
+//        while ((size = reader.read (buf)) > 0)
+//  	System.out.println ("Line : " + new String(buf));
+//        is.getByteStream().reset();      
+
+      return is;
     } catch (Exception e) {
       System.err.println(e.getMessage());
       System.err.println ("UTILLdmXMLPlugIn.getParsedDocument - Could not find on config path");

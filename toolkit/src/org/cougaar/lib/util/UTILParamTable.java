@@ -75,11 +75,13 @@ public class UTILParamTable extends ParamTable {
    * (and passed in the envParams variable) then it is set
    * to be the name of the cluster plus env.xml.
    */
-  private static Vector finalizeStuff(Vector envParams, ClusterIdentifier cluster){
+  private static Vector finalizeStuff(final Vector envParams, ClusterIdentifier cluster){
     boolean hasfile = false;
     boolean hasdir = false;
 
-    Iterator runtimeParams = envParams.iterator();
+    Vector paramCopy = new Vector (envParams);
+
+    Iterator runtimeParams = paramCopy.iterator();
     while(runtimeParams.hasNext()){
       String runtimeParam = (String)runtimeParams.next();
       Param p = ParamParser.getParam(runtimeParam);
@@ -97,11 +99,11 @@ public class UTILParamTable extends ParamTable {
 
     if(!hasfile){
       String newParam = "envFile={String}" + cluster.getAddress() + ".env.xml";
-      //  System.out.println ("Adding param " + newParam);
-      envParams.add(newParam);
+      //System.out.println ("UTILParamTable.finalizeStuff() - Adding param " + newParam);
+      paramCopy.add(newParam);
     }
 
-    return envParams;
+    return paramCopy;
   }
 }
 

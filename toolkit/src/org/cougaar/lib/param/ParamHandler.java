@@ -10,8 +10,11 @@
 
 package  org.cougaar.lib.param;
 
-import org.xml.sax.HandlerBase;
-import org.xml.sax.AttributeList;
+//import org.xml.sax.HandlerBase;
+//import org.xml.sax.AttributeList;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
  * Class that handles what to do when we encouter a parameter in a 
@@ -20,7 +23,8 @@ import org.xml.sax.AttributeList;
  * the file.
  *
  */
-class ParamHandler extends HandlerBase {
+//class ParamHandler extends HandlerBase {
+class ParamHandler extends DefaultHandler {
 
   /**
    * Constructor
@@ -37,7 +41,8 @@ class ParamHandler extends HandlerBase {
    * @param name the name of the xml element (parameter name)
    * @param atts the attribute list of the xml element
    */
-  public void startElement (String name, AttributeList atts) {
+  //  public void startElement (String name, AttributeList atts) {
+  public void startElement (String uri, String local, String name, Attributes atts) throws SAXException {
     String attributeName = null;
     String attributeType = null;
     String attributeValue = null;
@@ -46,7 +51,8 @@ class ParamHandler extends HandlerBase {
 
     if(name.equals("Parameter")){
       for(int i = 0; i < size; i++){
-	String attribute = atts.getName(i);
+	//	String attribute = atts.getName(i);
+	String attribute = atts.getLocalName(i);
 	
 	if (attribute.equals("name")){
 	  attributeName = atts.getValue(i);

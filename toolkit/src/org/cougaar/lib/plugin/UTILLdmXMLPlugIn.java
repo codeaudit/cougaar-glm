@@ -45,6 +45,8 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.SAXNotRecognizedException;
 
 /**
  * <pre>
@@ -74,7 +76,8 @@ import org.xml.sax.InputSource;
  */
 
 public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM {
-  private boolean debug = false;
+  private boolean debug = "true".equals(System.getProperty("UTILLdmXMLPlugIn.debug", "false"));
+  private boolean showParserFeatures = "true".equals(System.getProperty("UTILLdmXMLPlugIn.showParserFeatures", "false"));
 
   /**
    * Load the data from the file synchronously.
@@ -106,15 +109,16 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
       while(assets.hasMoreElements()){
       	Asset asset = (Asset)assets.nextElement();
       	boolean result = publishAdd(asset);
-		if (debug)
-			System.out.println ("UTILLdmXMLPlugIn.createAssets - Publishing " + asset + " to the log plan");
+	if (debug)
+	  System.out.println ("UTILLdmXMLPlugIn.createAssets - Publishing " + asset + " to the log plan");
 
-		if (!result)
-			System.err.println("Warning: GLMLdmXMLPlugIn not successful publishing asset " + asset);
+	if (!result)
+	  System.err.println("Warning: GLMLdmXMLPlugIn not successful publishing asset " + asset);
       }
   }
 
   /**
+   * <pre>
    * Returns a document that represents the parsed xml file returned by getFileName.
    * Uses ConfigFileFinder to find the .ldm.xml file and any xml entity references within 
    * the file.
@@ -122,28 +126,64 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
    * Need to provide an entity resolver to the parser.
    * The entity resolver is just a wrapper of the ConfigFinder.
    *
+   * </pre>
    * @see #getFileName
    * @see org.cougaar.lib.plugin.UTILEntityResolver#resolveEntity
    * @see org.cougaar.util.ConfigFinder#open
    * @return document that we can query for assets
    */
   protected Document getParsedDocument () {
-	  String debugParam = getStringParam ("debug");
-	  debug = (debugParam != null && "true".equals (debugParam));
+    //	  String debugParam = getStringParam ("debug");
+    //	  debug = (debugParam != null && "true".equals (debugParam));
 
       String dfile = getFileName ();
       DOMParser parser = new DOMParser();
+      InputStream inputStream = null;
       try {
-	  InputStream inputStream = ConfigFinder.getInstance().open(dfile);
+	  inputStream = ConfigFinder.getInstance().open(dfile);
+	  if (debug)
+	    System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - Opened "+
+				dfile + 
+				" input stream " + inputStream);
 
-	  parser.setFeature(
-		 "http://apache.org/xml/features/allow-java-encodings", true);
+	  if (showParserFeatures) {
+	    System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - parser features:");
+	    String []features = parser.getFeaturesRecognized();
+	    for (int i = 0; i < features.length; i++) {
+	      try {
+		System.out.println ("Feature " + i + " " + features[i] + " = " + parser.getFeature(features[i]));
+	      } catch (SAXNotRecognizedException saxnre) {
+		System.out.println ("Feature " + i + " " + features[i] + " = not recognized excep?");
+	      }
+	    }
+	  }
+
+	  parser.setFeature("http://apache.org/xml/features/allow-java-encodings", true);
+
+	  // by default set to true, adds another node to tree that confuses getAssets below,
+	  // since it's not expecting a entity ref node
+	  parser.setFeature("http://apache.org/xml/features/dom/create-entity-ref-nodes", false);
+	  if (debug)
+	    System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - setting parser create entity node to "+
+				parser.getCreateEntityReferenceNodes());
 	  parser.setEntityResolver (new UTILEntityResolver ());
-	  parser.parse(new InputSource (inputStream));
+	  InputSource is = new InputSource (inputStream);
+	  is.setSystemId (dfile);
+	  parser.parse(is);
+      }
+      catch(SAXParseException saxe){
+	System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - got SAX Parse exception in file " + 
+			    saxe.getSystemId () + " line " + saxe.getLineNumber () + " col " + saxe.getColumnNumber ()+"\n"+
+			    "Exception was :");
+	System.err.println(saxe.getMessage());
       }
       catch(Exception e){
-	  System.err.println(e.getMessage());
-	  e.printStackTrace();
+	if (inputStream == null) {
+	  System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - could not find " + 
+			      dfile + ".  Please check config path.");
+	}
+	System.err.println(e.getMessage());
+	e.printStackTrace();
       }
 
       return parser.getDocument();
@@ -228,9 +268,12 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
 	Node child = nlist.item(i);
 	if(child.getNodeType() == Node.ELEMENT_NODE){
 	  String childname = child.getNodeName();
+	  if (debug)
+	    System.out.println ("UTILLdmXMLPlugIn.getAssets - childname " + childname);
 
 	  if(childname.equals("prototype")) {
             //System.out.println("Parsing Prototype");
+	    PrototypeParser.setDebug (debug);
 	    PrototypeParser.cachePrototype(getLDM(), child);
 	  }
 	  else if(childname.equals("instance")) {
@@ -253,6 +296,10 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
  	    }
  	  }
 	  */
+	}
+	else {
+	  if (debug)
+	    System.out.println ("UTILLdmXMLPlugIn.getAssets - got non-element node " + child);
 	}
       }
     }

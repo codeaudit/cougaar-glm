@@ -20,12 +20,15 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.apache.xerces.parsers.SAXParser;
+
+import org.xml.sax.Attributes;
 import org.xml.sax.DocumentHandler;
 import org.xml.sax.EntityResolver;
-import org.xml.sax.HandlerBase;
+//import org.xml.sax.HandlerBase;
 import org.xml.sax.InputSource;
-import org.xml.sax.Parser;
-import org.xml.sax.helpers.ParserFactory;
+//import org.xml.sax.Parser;
+//import org.xml.sax.helpers.ParserFactory;
 
 import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.xml.parser.ParamParser;
@@ -111,10 +114,14 @@ public class ParamTable{
 	InputStream inputStream = ConfigFinder.getInstance().open(pfile);
 
 	// must specify which parser to use.
-	Parser parser = ParserFactory.makeParser("com.ibm.xml.parsers.SAXParser");
-	parser.setDocumentHandler(new ParamHandler(this));
+	//	Parser parser = ParserFactory.makeParser("com.ibm.xml.parsers.SAXParser");
+	SAXParser parser = new SAXParser();
+	//	parser.setDocumentHandler(new ParamHandler(this));
+	parser.setContentHandler(new ParamHandler(this));
 	parser.setEntityResolver (new UTILEntityResolver ());
-	parser.parse(new InputSource (inputStream));
+	InputSource is = new InputSource (inputStream);
+	is.setSystemId (pfile);
+	parser.parse(is);
     }
     catch(Exception e){
       System.err.println(e.getMessage());

@@ -31,14 +31,16 @@ import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.lib.callback.UTILFilterCallback;
-
 import org.cougaar.lib.param.ParamTable;
+import org.cougaar.lib.param.Param;
 import org.cougaar.lib.util.UTILExpand;
 import org.cougaar.lib.util.UTILParamTable;
+import org.cougaar.lib.xml.parser.ParamParser;
 
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * Implementation of UTILPlugIn interface.
@@ -221,8 +223,9 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
       } catch (Exception e){}
       System.out.println (getClassName () + ".getEnvData : read param file <" + optionalEnvFile + ">");
     }
-
-    //System.out.println (getName () + " - Params : " + myParams);
+    
+    if (showParameters)
+      System.out.println (getName () + " - Params : " + myParams);
   }
 
   /**
@@ -230,6 +233,18 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
    */
   protected ParamTable createParamTable (Vector envParams, 
 					 ClusterIdentifier ident) {
+    if (showParameters) {
+      System.out.println (getName () + " - creating param table, identifier was " + ident);
+      for (Iterator i = envParams.iterator(); i.hasNext();) {
+	String runtimeParam = (String)i.next();
+	Param p = ParamParser.getParam(runtimeParam);
+	if(p != null){
+	  String name = p.getName();
+	  System.out.println("UTILPlugInAdapter.createParamTable() - got param name " + name
+			     + " with value " + p);
+	}
+      }
+    }
     return new UTILParamTable (envParams, ident);
   }
 
@@ -454,7 +469,8 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
   protected boolean myExtraOutput;
   protected boolean myExtraExtraOutput;
   protected boolean myExtraFilterOutput;
-  
+  protected boolean showParameters = "true".equals(System.getProperty("UTILPlugInAdapter.showParameters","false"));
+
   protected boolean showDebugOnFailure;
   protected boolean skipLowConfidence = true;
   protected double HIGH_CONFIDENCE = 0.99d;

@@ -23,7 +23,11 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 public class PrototypeParser {
   public static boolean debug = false;
 
-  public static void setDebug (boolean d) { debug = d; }
+  public static void setDebug (boolean d) { 
+    debug = d; 
+    if (debug)
+      System.out.println ("PrototypeParser - debug set to true");
+  }
 
     public static void cachePrototype(LDMServesPlugIn ldm, Node node) {
       cachePrototype(ldm, node, false); 
@@ -50,6 +54,9 @@ public class PrototypeParser {
       for(int i = 0; i < nlength; i++) {
 	Node    child       = nlist.item(i);
 	String  childname   = child.getNodeName();
+
+	if (debug)
+	  System.out.println ("PrototypeParser.cachePrototype - child " + childname);
 	
 	if(child.getNodeType() == Node.ELEMENT_NODE) {
 	  if (childname.equals("object")) { 

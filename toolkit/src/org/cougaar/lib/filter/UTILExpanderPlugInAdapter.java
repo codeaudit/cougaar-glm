@@ -118,7 +118,13 @@ public class UTILExpanderPlugInAdapter extends UTILBufferingPlugInAdapter
    * @param t Task that has been expanded (getTask of Expansion)
    * @return true if task is interesting to this plugin
    */
-  public boolean interestingExpandedTask (Task t) { return interestingTask(t); }
+  public boolean interestingExpandedTask (Task t) { 
+    boolean val = interestingTask(t); 
+    if (myExtraExtraOutput)
+      System.out.println (getName () + ".interestingExpandedTask - " + 
+			  (val ? "interested in " : " NOT interested in ") + t.getUID());
+    return val;
+  }
 
   /**
    * Implemented for UTILExpansionListener
