@@ -33,6 +33,7 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.lib.util.UTILPrepPhrase;
 import org.cougaar.lib.util.UTILVerify;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Enumeration;
 import java.util.Map;
@@ -132,10 +133,15 @@ public class UTILWorkflowCallback extends UTILFilterCallbackAdapter {
       (UTILGenericListener) myListener;
     boolean anythingChanged = newTasks.hasMoreElements();
     int i = 0;
-    
+
+    Collection removedCollection = mySub.getRemovedCollection ();
+	
     Map seenTasksMap = new HashMap ();
     while (newTasks.hasMoreElements()) {
       Task newT = (Task)newTasks.nextElement();
+	  if (removedCollection.contains (newT))
+		continue;
+	  
       if ((seenTasksMap.get (newT) == null) &&
 	  isWellFormed (newT)) {
 	seenTasksMap.put (newT, newT);
@@ -150,6 +156,8 @@ public class UTILWorkflowCallback extends UTILFilterCallbackAdapter {
     
     while (changedTasks.hasMoreElements()) {
       Task changedT = (Task)changedTasks.nextElement();
+	  if (removedCollection.contains (changedT))
+		continue;
       if ((seenTasksMap.get (changedT) == null) &&
 	  isWellFormed (changedT)) {
 	seenTasksMap.put (changedT, changedT);
