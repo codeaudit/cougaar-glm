@@ -1,5 +1,18 @@
 2002-05-28  Ray Tomlinson  <RTomlinson@bbn.com>
 
+	* org/cougaar/glm/plugin/completion/GLMCompletionTargetPlugin.java: 
+	Specialization for GLM. Adds some ignored verbs for non-functional
+	confidence rating on DetermineRequirements, GetLogSupport, and
+	MaintainInventory.
+
+	* org/cougaar/glm/plugin/completion/GLMCompletionSocietyPlugin.java:
+	Specialization for GLM. Implements two CompletionActions to wait
+	for oplan and GLS respectively. Eventually, these will actually
+	"push the buttons", but for now they just wait.
+
+	* org/cougaar/glm/plugin/completion/GLMCompletionNodePlugin.java:
+	Specialization for GLM. Currently no specialization is necessary.
+
 	* org/cougaar/mlm/plugin/sample/UniversalAllocatorPlugin.java:
 	Remove debug println.
 
