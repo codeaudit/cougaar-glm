@@ -266,7 +266,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	}
 	if ((newCurrent) && (previous != null)) {
 	    double value = convertScalarToDouble(previous);
-	    if (!Double.isNaN(value && value > 0.0) {
+	    if (!Double.isNaN(value) && (value > 0.0)) {
 		start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
 		// Period spans a single day
 		if (periodBegin == (days-1)) {
