@@ -67,6 +67,8 @@ import org.w3c.dom.NodeList;
  * plugin=org.cougaar.mlm.plugin.sql.LDMXMLPlugin( foo.ldm.xml )
  * </PRE>
  *
+ * @deprecated Try toolkit module's org.cougaar.lib.plugin.UTILLdmXMLPlugin, or XMLPrototypeProviderPlugin in this package
+ *
  */
 public class LDMXMLComponentPlugin 
     extends ComponentPlugin
