@@ -24,6 +24,7 @@ import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.util.MoreMath;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
+import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.LdmFactory;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.measure.*;
@@ -172,7 +173,17 @@ public class TaskUtils extends PlugInHelper {
 
 
   public static String shortTaskDesc(Task task) {
+    String typeID = null;
+    Object o = task.getDirectObject();
+    if (o instanceof Asset) {
+      TypeIdentificationPG typePG = ((Asset)o).getTypeIdentificationPG();
+      if (typePG != null) {
+	typeID= typePG.getTypeIdentification();
+      }
+    }
     return task.getUID() + "["+
+      task.getVerb()+"; "+
+      typeID+"; "+
       demandFormat_.format(TaskUtils.getQuantity(task))+"; "+
       TimeUtils.dateString(TaskUtils.getEndTime(task))+"]";
   }
