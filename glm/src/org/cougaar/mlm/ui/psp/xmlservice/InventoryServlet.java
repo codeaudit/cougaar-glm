@@ -46,9 +46,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
 
-import org.cougaar.core.servlet.ServletUtil;
 import org.cougaar.core.servlet.SimpleServletSupport;
 import org.cougaar.core.util.UID;
 import org.cougaar.planning.ldm.asset.Asset;
