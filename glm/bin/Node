@@ -69,9 +69,9 @@ if ("$os" == "Linux") then
     #setenv JAVA_COMPILER javacomp
 endif
 
-#set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS -Dalp.message.isLogging=true -Djava.rmi.server.logCalls=true -Dsun.rmi.server.exceptionTrace=true -Dsun.rmi.transport.tcp.readTimeout=150000 "
+#set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS -Dorg.cougaar.message.isLogging=true -Djava.rmi.server.logCalls=true -Dsun.rmi.server.exceptionTrace=true -Dsun.rmi.transport.tcp.readTimeout=150000 "
 set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS"
-#set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS -Dalp.nameserver.verbosity=20"
+#set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS -Dorg.cougaar.nameserver.verbosity=20"
 
 if ($?ALP_DEV_PATH) then
     echo java $javaargs org.cougaar.core.society.Node $args
