@@ -30,6 +30,7 @@ public abstract class Geolocs {
     geoloc.setInstallationTypeCode("MAP");			
     return (GeolocLocation)geoloc;
   }
+
   public static GeolocLocation blueGrass() {
     NewGeolocLocation geoloc = ALPFactory.newGeolocLocation();
     geoloc.setName("Blue Grass Depot, KY");
@@ -40,6 +41,19 @@ public abstract class Geolocs {
     geoloc.setLatitude(Latitude.newLatitude("37.7"));
     geoloc.setLongitude(Longitude.newLongitude("-84.2167"));
     geoloc.setInstallationTypeCode("AMO");			
+    return (GeolocLocation)geoloc;    
+  }
+
+  public static GeolocLocation asmara() {
+    NewGeolocLocation geoloc = ALPFactory.newGeolocLocation();
+    geoloc.setName("ASMARA");
+    geoloc.setCountryStateCode("ER");
+    geoloc.setCountryStateName("ERITREA");
+    geoloc.setGeolocCode("ZNKY");
+    geoloc.setIcaoCode("ZNKY");
+    geoloc.setLatitude(Latitude.newLatitude("15.2906"));
+    geoloc.setLongitude(Longitude.newLongitude("38.9102"));
+    geoloc.setInstallationTypeCode("JAP");			
     return (GeolocLocation)geoloc;    
   }
 }

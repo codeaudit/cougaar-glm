@@ -60,7 +60,7 @@ public class AmmoPacker extends Packer {
     // BOZO - source and destination should be taken from the tasks not
     // hardcoded.
     AmmoTransport ac = new AmmoTransport(Geolocs.blueGrass(), 
-                                         Geolocs.abuDhabi());
+                                         Geolocs.asmara());
 
     ac.setGenericPlugin(this);
     
