@@ -739,6 +739,9 @@ supplyType.doc=Specific type of item within the greater class. \
 [ForUnitPG]
 slots=String unit
 
+[FromBasePG]
+slots=GeolocLocation base
+
 ;;
 ;; examples
 ;;
