@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/LocationParser.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/LocationParser.java,v 1.3 2002-04-02 21:34:45 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -36,7 +36,7 @@ import org.cougaar.glm.ldm.plan.NewGeolocLocation;
  */
 public class LocationParser{
 
-  public static GeolocLocation getLocation(LDMServesPlugin ldm, Node node){
+  public GeolocLocation getLocation(LDMServesPlugin ldm, Node node){
     GLMFactory af = (GLMFactory)ldm.getFactory("glm");
 
     NodeList  nlist      = node.getChildNodes();      

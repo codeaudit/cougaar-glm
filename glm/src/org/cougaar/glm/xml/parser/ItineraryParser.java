@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/ItineraryParser.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/ItineraryParser.java,v 1.3 2002-04-02 21:34:45 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -39,7 +39,13 @@ import org.cougaar.lib.xml.parser.VerbParser;
  * Copyright (c) 1999 BBN Technologies 
  */
 public class ItineraryParser{
-  public static Schedule getItinerary(LDMServesPlugin ldm, Node node){
+  public ItineraryParser () {
+    dateParser = new DateParser();
+    verbParser = new VerbParser();
+    locationParser = new LocationParser();
+  }
+
+  public Schedule getItinerary(LDMServesPlugin ldm, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
 
@@ -49,14 +55,14 @@ public class ItineraryParser{
       String  childname = child.getNodeName();
       
       if(childname.equals("ItineraryElement")){
-	elements.addElement(ItineraryParser.getItineraryElement(ldm, child));
+	elements.addElement(getItineraryElement(ldm, child));
       }
     }
     Schedule sched = ldm.getFactory().newSchedule(elements.elements());
     return sched;
   }
   
-  private static ItineraryElement getItineraryElement(LDMServesPlugin ldm, Node node){
+  private ItineraryElement getItineraryElement(LDMServesPlugin ldm, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
 
@@ -66,21 +72,25 @@ public class ItineraryParser{
       String  childname = child.getNodeName();
       
       if(childname.equals("StartLocation")){
-	element.setStartLocation(LocationParser.getLocation(ldm, child));
+	element.setStartLocation(locationParser.getLocation(ldm, child));
       }
       else if(childname.equals("EndLocation")){
-	element.setEndLocation(LocationParser.getLocation(ldm, child));
+	element.setEndLocation(locationParser.getLocation(ldm, child));
       }
       else if(childname.equals("StartDate")){
-	element.setStartDate(DateParser.getDate(child));
+	element.setStartDate(dateParser.getDate(child));
       }
       else if(childname.equals("EndDate")){
-	element.setEndDate(DateParser.getDate(child));
+	element.setEndDate(dateParser.getDate(child));
       }
       else if(childname.equals("Role")){
-	element.setRole(VerbParser.getVerb(child));
+	element.setRole(verbParser.getVerb(child));
       }
     }
     return element;
   }
+
+  DateParser dateParser;
+  VerbParser verbParser;
+  LocationParser locationParser;
 }
