@@ -25,10 +25,11 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
   public static final int CLASS_TYPE = 5;
   public static final int RANGE_TYPE = 6;
   public static final int KEY_TYPE = 7;
+  public static final int LONG_TYPE = 8;
   
   // Remember to update if add/removing types
   private static final int MIN_TYPE = STRING_TYPE;
-  private static final int MAX_TYPE = KEY_TYPE; 
+  private static final int MAX_TYPE = LONG_TYPE; 
   
 
   private String myName = null;
@@ -40,6 +41,9 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
     switch (type) {
     case INTEGER_TYPE:
       return "Integer";
+      
+    case LONG_TYPE:
+      return "Long";
       
     case DOUBLE_TYPE:
       return "Double";
@@ -143,6 +147,20 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
       } else {
         try {
           myValue = new Integer(value.toString());
+        } catch (NumberFormatException nfe) {
+          nfe.printStackTrace();
+          success = false;
+        }
+      }
+      
+      break;
+
+    case LONG_TYPE:
+      if (value instanceof Long) {
+        myValue = value;
+      } else {
+        try {
+          myValue = new Long(value.toString());
         } catch (NumberFormatException nfe) {
           nfe.printStackTrace();
           success = false;

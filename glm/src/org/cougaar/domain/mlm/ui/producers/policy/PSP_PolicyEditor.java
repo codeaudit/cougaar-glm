@@ -269,6 +269,18 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
                                                     intMax));
           break;
 
+        case UIPolicyParameterInfo.LONG_TYPE:
+          LongRuleParameter 
+            longParam = (LongRuleParameter)ldmParameters[i];
+          Long longMin = new Long(longParam.getLowerBound());
+          Long longMax = new Long(longParam.getUpperBound());
+          policyInfo.add(new UIBoundedParameterInfo(longParam.getName(),
+                                                    type,
+                                                    longParam.getValue(),
+                                                    longMin,
+                                                    longMax));
+          break;
+
         case UIPolicyParameterInfo.KEY_TYPE:
           KeyRuleParameter keyParam = (KeyRuleParameter)ldmParameters[i];
           List ldmKeys = Arrays.asList(keyParam.getKeys());
@@ -321,6 +333,10 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
       type = UIPolicyParameterInfo.INTEGER_TYPE;
       break;
 
+    case RuleParameter.LONG_PARAMETER:
+      type = UIPolicyParameterInfo.LONG_TYPE;
+      break;
+
     case RuleParameter.DOUBLE_PARAMETER:
       type = UIPolicyParameterInfo.DOUBLE_TYPE;
       break;
@@ -348,6 +364,10 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
 
     case RuleParameter.KEY_PARAMETER:
       type = UIPolicyParameterInfo.KEY_TYPE;
+      break;
+
+    case RuleParameter.PREDICATE_PARAMETER:
+      type = -1;                // These are not handled
       break;
     
     default:
@@ -381,6 +401,10 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
 
     case UIPolicyParameterInfo.INTEGER_TYPE:
       type = RuleParameter.INTEGER_PARAMETER;
+      break;
+
+    case UIPolicyParameterInfo.LONG_TYPE:
+      type = RuleParameter.LONG_PARAMETER;
       break;
 
     case UIPolicyParameterInfo.KEY_TYPE:

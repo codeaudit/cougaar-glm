@@ -67,6 +67,7 @@ public class UIBoundedParameterInfo extends UIPolicyParameterInfo
    */
   public void setType(int type) {
     if ((type == INTEGER_TYPE) ||
+        (type == LONG_TYPE) ||
         (type == DOUBLE_TYPE)) {
       super.setType(type);
     } else {
@@ -100,6 +101,29 @@ public class UIBoundedParameterInfo extends UIPolicyParameterInfo
         
         if ((intVal < myMin.intValue()) ||
             (intVal > myMax.intValue())) {
+          success = false;
+        }
+      }
+
+      break;
+
+    case LONG_TYPE:
+      if ((myMin != null) &&
+          (myMax != null)) {
+        long longVal = 0;
+        if (value instanceof Long) {
+          longVal = ((Long)value).longValue();
+        } else {
+          try {
+            longVal = new Long(value.toString()).longValue();
+          } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            success = false;
+          }
+        }
+        
+        if ((longVal < myMin.longValue()) ||
+            (longVal > myMax.longValue())) {
           success = false;
         }
       }
