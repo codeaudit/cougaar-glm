@@ -21,8 +21,10 @@ public class UISimpleNamedSchedule implements Serializable {
   public final static String DUE_OUT = "Due Out";
   public final static String PROJECTED_DUE_OUT = "Projected Due Out";
   public final static String REQUESTED_DUE_IN = "Requested Due In";
+  public final static String PROJECTED_DUE_IN = "Projected Due In";
   public final static String REQUESTED_DUE_OUT = "Requested Due Out";
   public final static String PROJECTED_REQUESTED_DUE_OUT = "Projected Requested Due Out";
+  public final static String PROJECTED_REQUESTED_DUE_IN = "Projected Requested Due In";
   public final static String REQUESTED_DUE_OUT_SHORTFALL = "Requested Due Out Shortfall";
   public final static String UNCONFIRMED_DUE_IN = "Unconfirmed Due In";
   public final static String ALLOCATED = "Allocated";

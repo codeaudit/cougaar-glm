@@ -16,6 +16,12 @@ import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.asset.Capacity;
 import org.cougaar.domain.glm.ldm.asset.Person;
 import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.plugins.TaskUtils;
+import org.cougaar.domain.glm.plugins.TimeUtils;
+import org.cougaar.domain.planning.ldm.measure.Rate;
+import org.cougaar.domain.planning.ldm.measure.FlowRate;
+import org.cougaar.domain.planning.ldm.measure.CountRate;
+
 
 import java.text.DateFormat;
 import java.util.*;
@@ -73,10 +79,16 @@ public class UIInventoryImpl {
       { "HETTransportation", "Tons" },
   };
   static final String[] fuelTypes = { "DF2", "DFM", "JP5", "JP8", "MUG" };
+
+  public final static String NO_INVENTORY_SCHEDULE_JUST_CONSUME="NO INVENTORY SCHEDULE(DEMAND)";
+
   Asset asset;
   TimeSpanSet dueInSchedule = new TimeSpanSet();
   TimeSpanSet unconfirmedDueInSchedule = new TimeSpanSet();
   TimeSpanSet requestedDueInSchedule = new TimeSpanSet();
+  TimeSpanSet projectedDueInSchedule = new TimeSpanSet();
+  TimeSpanSet projectedRequestedDueInSchedule = new TimeSpanSet();
+
   Vector dueOutSchedule = null;
   Vector dueOutLaborSchedule = null;
   Vector projectedDueOutSchedule = null;
@@ -102,35 +114,51 @@ public class UIInventoryImpl {
     }
   }
 
+    
+  public Asset getAsset() {return this.asset;}
+
+  protected Asset getInsideAsset() {
+      if((asset instanceof ALPAsset) &&
+	 (((ALPAsset) asset).getScheduledContentPG() != null))
+	  return ((ALPAsset)asset).getScheduledContentPG().getAsset();
+      else
+	  return this.asset;
+  }
+
   /** Set asset for this inventory object.
    * Handle Labor assets differently from non-labor.
    */
 
   public void setAsset(Asset asset) {
     this.asset = asset;
-    Schedule s = ((ALPAsset)asset).getScheduledContentPG().getSchedule();
-    if (s != null) {
-	if (s.getScheduleType().equals(PlanScheduleType.TOTAL_CAPACITY)) {
-	    if (s instanceof LaborSchedule)
-		s = ((LaborSchedule)s).getQuantitySchedule();
-	    else 
-		System.out.println("UIInventoryImpl WARNING: Expected labor schedule");	  
-	    laborSchedule = scheduleToNonOverlapVector(s);
-	} else
-	    onHandSchedule = scheduleToNonOverlapVector(s);
-    }
-    if (isLaborAsset(asset)){
-	dueOutLaborSchedule = computeDueOutVector();
-	projectedDueOutLaborSchedule = computeProjectedDueOutVector();
-	//        setDueOutLaborSchedule();
-    }
-    else {
-	dueOutSchedule = computeDueOutVector();
-	projectedDueOutSchedule = computeProjectedDueOutVector();
-        //setDueOutSchedule();
-        setALPRequestedDueOutSchedule(); 
-        setALPProjectedRequestedDueOutSchedule();
-//          setDueOutShortfallSchedule();
+    
+    if((asset instanceof ALPAsset) &&
+       (((ALPAsset) asset).getScheduledContentPG() != null)){
+
+	Schedule s = ((ALPAsset)asset).getScheduledContentPG().getSchedule();
+	if (s != null) {
+	    if (s.getScheduleType().equals(PlanScheduleType.TOTAL_CAPACITY)) {
+		if (s instanceof LaborSchedule)
+		    s = ((LaborSchedule)s).getQuantitySchedule();
+		else 
+		    System.out.println("UIInventoryImpl WARNING: Expected labor schedule");	  
+		laborSchedule = scheduleToNonOverlapVector(s);
+	    } else
+		onHandSchedule = scheduleToNonOverlapVector(s);
+	}
+	if (isLaborAsset(asset)){
+	    dueOutLaborSchedule = computeDueOutVector();
+	    projectedDueOutLaborSchedule = computeProjectedDueOutVector();
+	    //        setDueOutLaborSchedule();
+	}
+	else {
+	    dueOutSchedule = computeDueOutVector();
+	    projectedDueOutSchedule = computeProjectedDueOutVector();
+	    //setDueOutSchedule();
+	    setALPRequestedDueOutSchedule(); 
+	    setALPProjectedRequestedDueOutSchedule();
+	    //          setDueOutShortfallSchedule();
+	}
     }
   }
 
@@ -141,7 +169,7 @@ public class UIInventoryImpl {
     private boolean isLaborAsset(Asset asset) {
         if (asset instanceof Capacity)
             return true;
-        if (((ALPAsset)asset).getScheduledContentPG().getAsset() instanceof Person)
+        if (getInsideAsset() instanceof Person)
             return true;
         return false;
     }
@@ -193,8 +221,7 @@ public class UIInventoryImpl {
     @return String - the nomenclature from the TypeIdentificationPG
    */
   public String getAssetName() {
-    TypeIdentificationPG typeIdPG = 
-      ((ALPAsset)asset).getScheduledContentPG().getAsset().getTypeIdentificationPG();
+    TypeIdentificationPG typeIdPG = this.getInsideAsset().getTypeIdentificationPG();
     return typeIdPG.getNomenclature() + ":" + typeIdPG.getTypeIdentification();
   }
 
@@ -203,10 +230,17 @@ public class UIInventoryImpl {
     */
 
   public String getScheduleType() {
-    Schedule s = ((ALPAsset)asset).getScheduledContentPG().getSchedule();
-    if (s != null)
-      return s.getScheduleType();
-    return "";
+      if((asset instanceof ALPAsset) &&
+	 (((ALPAsset) asset).getScheduledContentPG() != null)) {
+	  Schedule s = ((ALPAsset)asset).getScheduledContentPG().getSchedule();
+	  if (s != null)
+	      return s.getScheduleType();
+      }
+      else {
+	  return NO_INVENTORY_SCHEDULE_JUST_CONSUME;
+      }
+
+      return "";
   }
 
   /**
@@ -214,11 +248,12 @@ public class UIInventoryImpl {
     */
 
   public String getUnitType() {
-    Asset insideAsset = ((ALPAsset)asset).getScheduledContentPG().getAsset();
+    Asset insideAsset=this.getInsideAsset();
     String typeId =
       insideAsset.getTypeIdentificationPG().getTypeIdentification();
     String nomenclature =
       insideAsset.getTypeIdentificationPG().getNomenclature();
+
     String scheduleType = getScheduleType();
 
     // capacity
@@ -275,9 +310,21 @@ public class UIInventoryImpl {
       return null;
     }
 
-    double quantity = getPreferenceValue(task, AspectType.QUANTITY);
+    double quantity;
+    
+    if(TaskUtils.isProjection(task)) {
+	Rate r = getProjectionRate(task);
+	if(r == null) 
+	    quantity = -1;
+	else
+	    quantity = getDailyQty(r);
+
+    }
+    else {
+	quantity  = getPreferenceValue(task, AspectType.QUANTITY);
+    }
     if (quantity < 0) {
-      System.out.println("UIInventoryImpl WARNING: EXPECTED QUANTITY IN ALLOCATION RESULT FOR DUE OUT");
+      System.out.println("UIInventoryImpl WARNING: EXPECTED QUANTITY IN ALLOCATION RESULT WHEN DERIVING SCHEDULE ELEMENT FROM TASK");
       return null; // ignore if no quantity
     }
 
@@ -301,6 +348,84 @@ public class UIInventoryImpl {
     else
 	return new UIQuantityScheduleElement(start_time, end_time, quantity);
   }
+
+
+  private Vector getScheduleFromProjectionTask(Task projectTask, boolean ignoreStartTime) {
+    Vector schedule = null;
+    if (projectTask == null) {
+      System.out.println("UIInventoryImpl WARNING: Project Task is null");
+      return null;
+    }
+    if(!TaskUtils.isProjection(projectTask)) {
+	System.out.println("UIInventoryImpl WARNING: Expected Project Task.");
+	return null;
+    }
+
+    double quantity;    
+    Rate r = getProjectionRate(projectTask);
+    if(r == null) 
+	quantity = -1;
+    else
+	quantity = getDailyQty(r);
+
+    if (quantity < 0) {
+      System.out.println("UIInventoryImpl WARNING: EXPECTED DAILY QTY QUANTITY IN PROJECTION TASK");
+      return null; // ignore if no quantity
+    }
+
+    long start_time = getPreferredTime(projectTask, AspectType.START_TIME);
+    if (start_time < 0) {
+      System.out.println("UIInventoryImpl  WARNING: NO START TIME IN PROJECT TASK");
+      return null; // ignore if no start time
+    }
+
+    long end_time = getPreferredTime(projectTask, AspectType.END_TIME);
+    if (end_time < 0) {
+      System.out.println("UIInventoryImpl  WARNING: NO END TIME IN PROJECT TASK");
+      return null;
+      // end_time = start_time; // if no end time, make end = start
+    }
+
+    long elementStartTime=start_time;
+    long elementEndTime;
+
+    while(elementStartTime < end_time) {
+	elementEndTime = elementStartTime + (TimeUtils.MSEC_PER_DAY-1);
+	if (elementEndTime > end_time)
+	    elementEndTime = end_time;
+	if(schedule == null)
+	    schedule = new Vector();
+	// use end time only
+	if (ignoreStartTime)
+	    schedule.add(new UIQuantityScheduleElement(elementEndTime-1,elementEndTime, quantity));
+	else
+	    schedule.add(new UIQuantityScheduleElement(elementStartTime, elementEndTime, quantity));
+	elementStartTime = elementEndTime + 1;
+    }
+    return schedule;
+  }
+
+
+
+    
+    public static Rate getProjectionRate(Task task) {	
+	Rate r = TaskUtils.getRate(task);
+	return r;
+    }
+
+    public static double getDailyQty(Rate aRate) {
+	if (aRate instanceof FlowRate) {
+	    return ((FlowRate) aRate).getGallonsPerDay();
+	}
+	else if (aRate instanceof CountRate) {
+	    return ((CountRate) aRate).getEachesPerDay();
+	}
+	else {
+	    System.out.println("UIInventoryImpl::getDailyQty - unknown type of rate - " + aRate.getClass().getName());
+	    return -1;
+	}
+    }
+
 
     public static double getPreferenceValue(Task task, int aspect_type) {
 	Preference task_pref = task.getPreference(aspect_type);
@@ -366,15 +491,31 @@ public class UIInventoryImpl {
   public void addDueInSchedule(Allocation allocation) {
       if (allocation.getReportedResult() == null) {
 	  // if unconfirmed add to dueInSchedule
-	  UIQuantityScheduleElement schedule = 
-	      getScheduleElementFromTask(allocation.getTask(), true);
-	  if (schedule != null) {
-	      if (debug) {
-		  System.out.println("Adding unconfirmed due in schedule from allocation: " + 
-				     allocation.getUID());
-		  printQuantityScheduleElement(schedule);
+	  Vector schedule=null;
+	  if(TaskUtils.isProjection(allocation.getTask())) {
+	      schedule = getScheduleFromProjectionTask(allocation.getTask(),true);
+	      if(schedule != null) {
+		  if (debug) {
+		      System.out.println("Adding projected due in schedule from allocation: " + 
+					 allocation.getUID());
+
+		      for(int i=0; i<schedule.size(); i++) 
+			  printQuantityScheduleElement((UIQuantityScheduleElement)schedule.elementAt(i));
+		  }
+		  projectedDueInSchedule.addAll(schedule);
 	      }
-	      unconfirmedDueInSchedule.add(schedule);
+	  }
+	  else {
+	      UIQuantityScheduleElement se = 
+		  getScheduleElementFromTask(allocation.getTask(), true);
+	      if(se != null) {
+		  if (debug) {
+		      System.out.println("Adding unconfirmed due in schedule from allocation: " + 
+					 allocation.getUID());
+		      printQuantityScheduleElement(se);
+		  }
+		  unconfirmedDueInSchedule.add(schedule);
+	      }
 	  }
       } else if (allocation.getReportedResult().isSuccess()) {
 	  UIQuantityScheduleElement schedule = 
@@ -399,9 +540,30 @@ public class UIInventoryImpl {
       System.out.println("UIInventoryImpl WARNING: no task in due-in allocation");
       return;
     }
+
+    double quantity=-1;
     long startTime = getPreferredTime(task, AspectType.START_TIME);
     long endTime = getPreferredTime(task, AspectType.END_TIME);
-    double quantity = task.getPreferredValue(AspectType.QUANTITY);
+    
+    if(TaskUtils.isProjection(task)) {
+	Vector projectSchedule = getScheduleFromProjectionTask(task,true);
+	
+	if(projectSchedule != null)
+	    projectedRequestedDueInSchedule.addAll(projectSchedule);
+
+	return;
+
+	/*** MWD Remove
+	Rate r = getProjectionRate(task);
+	if(r != null) 
+	    quantity = getDailyQty(r);
+	projection=true;
+	***/
+    }
+    else {
+	quantity  = getPreferenceValue(task, AspectType.QUANTITY);
+    }
+
     // must have start time and quantity
     if ((quantity != -1) && (startTime != -1)) { 
       if (endTime == -1)
@@ -414,6 +576,7 @@ public class UIInventoryImpl {
 			     task.getUID());
 	  printQuantityScheduleElement(schedule);
       }
+      
       requestedDueInSchedule.add(schedule);
     }
   }
@@ -423,32 +586,25 @@ public class UIInventoryImpl {
      @return Vector - the schedule for this asset in this cluster
   */
   public Vector getDueInSchedule() {
-      if (checkTimeSpanSet(dueInSchedule) == null) return null;
-
+     if (checkTimeSpanSet(dueInSchedule) == null) return null;
+     
      if (debug) {
-// 	// print original schedule for debugging
- 	System.out.println("ORIGINAL DUE IN SCHEDULE");
- 	Vector s = new Vector(dueInSchedule);
- 	printSchedule(s);
+	 // 	// print original schedule for debugging
+	 System.out.println("ORIGINAL DUE IN SCHEDULE");
+	 Vector s = new Vector(dueInSchedule);
+	 printSchedule(s);
      }
-
-    // make an alp schedule so we can use the alp utilities
-    // to make it non-overlapping
-    Schedule tmpALPSchedule = getALPSchedule(dueInSchedule);
-    Vector results;
-    if (isOverlappingSchedule(tmpALPSchedule)) {
-      if (debug)  System.out.println("IS OVERLAPPING");
-      tmpALPSchedule =
-	  ScheduleUtilities.computeNonOverlappingSchedule(tmpALPSchedule);
-      results = scheduleToVector(tmpALPSchedule);
-    } else {
-	results = new Vector(dueInSchedule);
-    }
-    if (debug)  {
- 	System.out.println("FINAL DUE IN SCHEDULE");
-// 	printSchedule(results);
-    }	
-    return results;
+     
+     // make an alp schedule so we can use the alp utilities
+     // to make it non-overlapping
+     Schedule tmpALPSchedule = makeNonOverlapping(dueInSchedule);
+     Vector results = scheduleToVector(tmpALPSchedule);
+     
+     if (debug)  {
+	 System.out.println("FINAL DUE IN SCHEDULE");
+	 printSchedule(results);
+     }	
+     return results;
   }
 
   /**
@@ -458,39 +614,79 @@ public class UIInventoryImpl {
 
   public Vector getUnconfirmedDueInSchedule() {
       if (checkTimeSpanSet(unconfirmedDueInSchedule) == null) return null;
-
-    if (debug) {
-	// print original schedule for debugging
-	System.out.println("ORIGINAL UNCONFIRMED DUE IN SCHEDULE");
-	printSchedule(new Vector(unconfirmedDueInSchedule));
-    }
-
-    // make an alp schedule so we can use the alp utilities
-    // to make it non-overlapping
-    Schedule tmpALPSchedule = getALPSchedule(unconfirmedDueInSchedule);
-	System.out.println("Got ALPSCHEDUlE UNCONFIRMED DUE IN SCHEDULE");
-    Vector results;
-    if (isOverlappingSchedule(tmpALPSchedule)) {
-      if (debug)  System.out.println("IS OVERLAPPING");
-      tmpALPSchedule =
-        ScheduleUtilities.computeNonOverlappingSchedule(tmpALPSchedule);
-    } else {
-	System.out.println("Not Overlapping UNCONFIRMED DUE IN SCHEDULE");
-    }
-    results = scheduleToVector(tmpALPSchedule);
-    if (debug)  {
-	System.out.println("FINAL UNCONFIRMED DUE IN SCHEDULE");
-	printSchedule(results);
-    } 
-    return results;
+      
+      if (debug) {
+	  // print original schedule for debugging
+	  System.out.println("ORIGINAL UNCONFIRMED DUE IN SCHEDULE");
+	  printSchedule(new Vector(unconfirmedDueInSchedule));
+      }
+ 
+      System.out.println("Got ALPSCHEDUlE UNCONFIRMED DUE IN SCHEDULE");
+      // make an alp schedule so we can use the alp utilities
+      // to make it non-overlapping
+      Schedule tmpALPSchedule = makeNonOverlapping(unconfirmedDueInSchedule);
+      Vector results = scheduleToVector(tmpALPSchedule);
+      if (debug)  {
+	  System.out.println("FINAL UNCONFIRMED DUE IN SCHEDULE");
+	  printSchedule(results);
+      } 
+      return results;
   }
 
-  /** Get the requested due in schedule.
-   */
-  public Vector getRequestedDueInSchedule() {
-      if (checkTimeSpanSet(requestedDueInSchedule) == null) return null;
-      return new Vector(requestedDueInSchedule); 
+  /**
+     Get the schedule that indicates the projected due-in inventory for this asset.
+     @return Vector - the schedule for this asset in this cluster
+  */
+
+  public Vector getProjectedDueInSchedule() {
+      if (checkTimeSpanSet(projectedDueInSchedule) == null) return null;
+      
+      if (debug) {
+	  // print original schedule for debugging
+	  System.out.println("ORIGINAL PROJECTED DUE IN SCHEDULE");
+	  printSchedule(new Vector(projectedDueInSchedule));
+      }
+      System.out.println("Got ALPSCHEDUlE PROJECTED DUE IN SCHEDULE");
+      // make an alp schedule so we can use the alp utilities
+      // to make it non-overlapping
+      Schedule tmpALPSchedule = makeNonOverlapping(projectedDueInSchedule);
+      Vector results = scheduleToVector(tmpALPSchedule);
+      if (debug)  {
+	  System.out.println("FINAL PROJECTED DUE IN SCHEDULE");
+	  printSchedule(results);
+      } 
+      return results;
   }
+
+
+    public static Schedule makeNonOverlapping(TimeSpanSet inSchedule) {
+	// make an alp schedule so we can use the alp utilities
+	// to make it non-overlapping
+	Schedule tmpALPSchedule = getALPSchedule(inSchedule);
+	if (isOverlappingSchedule(tmpALPSchedule)) {
+	    if (debug)  System.out.println("UIInventoryImpl::makeNonOverlapping:IS OVERLAPPING");
+	    tmpALPSchedule =
+		ScheduleUtilities.computeNonOverlappingSchedule(tmpALPSchedule);
+	} else if (debug) {
+	    System.out.println("UIInventoryImpl::makeNonOverlapping:is NOT Overlapping");
+	}
+	return tmpALPSchedule;
+    }
+
+    /** Get the requested due in schedule.
+     */
+    public Vector getRequestedDueInSchedule() {
+	if (checkTimeSpanSet(requestedDueInSchedule) == null) return null;
+	return new Vector(requestedDueInSchedule); 
+    }
+
+    /** Get the projected requested due in schedule.
+     */
+    public Vector getProjectedRequestedDueInSchedule() {
+	if (checkTimeSpanSet(projectedRequestedDueInSchedule) == null) return null;
+	return new Vector(projectedRequestedDueInSchedule); 
+    }
+
 
     /** Get the schedule that indicates the due-out (allocated)
 	schedule for a labor asset.  This is similar to the due-out
