@@ -45,31 +45,24 @@ import org.cougaar.glm.ldm.plan.*;
 import org.cougaar.glm.ldm.policy.*;
 
 
-
-/***********************************************************************************************************************
-<b>Description</b>: KeepAlive PSP that sends order total updates to the KeepAlive stream.  This PSP is used by the BOL
-										Admin UI tool.
-
-<br><br><b>Notes</b>:<br>
-									- 
-
-@author Eric B. Martin, &copy;2000 Clark Software Engineering, Ltd. & Defense Advanced Research Projects Agency (DARPA)
-@version 1.0
-***********************************************************************************************************************/
+/**
+ * <b>Description</b>: KeepAlive PSP that sends order total updates to the 
+ * KeepAlive stream.  This PSP is used by the BOL Admin UI tool.
+ * <br><br><b>Notes</b>:<br>
+ *
+ * @author Eric B. Martin, &copy;2000 Clark Software Engineering, Ltd. & Defense Advanced Research Projects Agency (DARPA)
+ * @version 1.0
+ **/
 public class PSP_ALPLocatorKeepAlive extends org.cougaar.lib.planserver.PSP_BaseAdapter implements org.cougaar.lib.planserver.PlanServiceProvider, org.cougaar.lib.planserver.KeepAlive, org.cougaar.lib.planserver.UISubscriber
 {
 	
-	
-	/*********************************************************************************************************************
-  <b>Description</b>: Holds the loutput stream/semaphore object pairs of each incomming PSP keepalive request.
-
-  <br><br><b>Notes</b>:<br>
-										- The stream object is the key of each entry in the hashtable
-	*********************************************************************************************************************/
+	/**
+	 * <b>Description</b>: Holds the loutput stream/semaphore object pairs of each incomming PSP keepalive request.
+	 *   <br><br><b>Notes</b>:<br>
+	 *			- The stream object is the key of each entry in the hashtable
+	 **/
 	private Hashtable streamList = new Hashtable(1);
 	
-	/****************************************************************************************************
-	******************************************************************************************************/
 	//private IncrementalSubscription allChangeLocationTasks = null;;
 	private Subscription allChangeLocationTasks = null;
   private UnaryPredicate allChangeLocationTasksPredicate = new UnaryPredicate() {
@@ -80,51 +73,45 @@ public class PSP_ALPLocatorKeepAlive extends org.cougaar.lib.planserver.PSP_Base
     } 
     return false;
     }};
-	/*********************************************************************************************************************
-  <b>Description</b>: Default constructor.  This constructor simply calls its super class default constructor to ensure
-  										the instance is properly constructed.
 
-  <br><b>Notes</b>:<br>
-	                  - 
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Default constructor.  This constructor simply calls its super 
+	 * class default constructor to ensure the instance is properly constructed.
+	 *  <br><b>Notes</b>:<br>
+	 **/
   public PSP_ALPLocatorKeepAlive()
   {
     super();
   }
 
-	/*********************************************************************************************************************
-  <b>Description</b>: Constructor.  This constructor sets the PSP's resource location according to the parameters
-  										passed in.
-
-  <br><b>Notes</b>:<br>
-	                  - 
-
-  <br>
-  @param pkg The package id
-  @param id The PSP name
-
-  @throws RuntimePSPException
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Constructor.  This constructor sets the PSP's resource location according 
+	 * to the parameters passed in.
+	 *  <br><b>Notes</b>:<br>
+	 *  <br>
+	 *  @param pkg The package id
+	 *  @param id The PSP name
+	 *  @throws RuntimePSPException
+	 **/
   public PSP_ALPLocatorKeepAlive(String pkg, String id) throws org.cougaar.lib.planserver.RuntimePSPException
   {
     setResourceLocation(pkg, id);
   }
 
-	/*********************************************************************************************************************
-  <b>Description</b>: Sends the LocationScheduleElementChanges to the KeepAlive stream when they change.
-
-  <br><b>Notes</b>:<br>
-	                  - Uses a BOLPSPState object to hold PSP configuration and HTTP request data<BR>
-	                  - Catches all Throwable objects and prints a stack trace to the HTTP response output
-
-  <br>
-  @param out HTTP response socket stream
-  @param queryParameters HTTP parameter data and connection information
-  @param psc Current Plan Service Context object
-  @param psu Utility functions for the PSP
-
-  @throws Exception 
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Sends the LocationScheduleElementChanges to the KeepAlive stream when they change.
+	 *
+	 *  <br><b>Notes</b>:<br>
+	 *                - Uses a BOLPSPState object to hold PSP configuration and HTTP request data<BR>
+	 *                - Catches all Throwable objects and prints a stack trace to the HTTP response output
+	 *  <br>
+	 *  @param out HTTP response socket stream
+	 *  @param queryParameters HTTP parameter data and connection information
+	 *  @param psc Current Plan Service Context object
+	 *  @param psu Utility functions for the PSP
+	 *
+	 *  @throws Exception 
+	 **/
   public void execute(PrintStream out, HttpInput queryParameters, PlanServiceContext psc, PlanServiceUtilities psu) throws Exception
   {
   	System.out.println("Keepalive entered");
@@ -155,59 +142,52 @@ public class PSP_ALPLocatorKeepAlive extends org.cougaar.lib.planserver.PSP_Base
 		  
 		}
   }
-  /*********************************************************************************************************************
-  <b>Description</b>: Notification method which is invoked when the bookOrdersSubscription object subscription has been
-  										changed.  This method will send the data stream to every PSP connection in the streamList,
-  										un-blocking the KeepAlive threads of the streams that get exceptions when they are written to and
-  										removes those streams from the streamList hashtable.
 
-  <br><b>Notes</b>:<br>
-	                  - 
-
-  <br>
-  @param subscription Subscription object that changed
-  
-  @see #execute(PrintStream, HttpInput, PlanServiceContext, PlanServiceUtilities)
-  @see #streamList
-	*********************************************************************************************************************/
-	public void subscriptionChanged(Subscription subscription)
-	{
-		// Go through every new task we've subscribed to  ((IncrementalSubscription)subscription).getAddedList()
+  /**
+   *  <b>Description</b>: Notification method which is invoked when the bookOrdersSubscription object 
+   * subscription has been changed.  This method will send the data stream to every PSP connection in 
+   * the streamList, un-blocking the KeepAlive threads of the streams that get exceptions when they 
+   * are written to and removes those streams from the streamList hashtable. 
+   *
+   *  <br><b>Notes</b>:<br>
+   *  <br>
+   *  @param subscription Subscription object that changed
+   *  @see #execute(PrintStream, HttpInput, PlanServiceContext, PlanServiceUtilities)
+   *  @see #streamList
+   **/
+  public void subscriptionChanged(Subscription subscription)
+  {
+    // Go through every new task we've subscribed to  ((IncrementalSubscription)subscription).getAddedList()
     for(Enumeration changeLocationTask = ((IncrementalSubscription)subscription).getAddedList(); changeLocationTask.hasMoreElements();)
-    {
-      Task task = (Task) changeLocationTask.nextElement();
-      PrepositionalPhrase pp = task.getPrepositionalPhrase("LOCATIONINFO");
-      MapLocationInfo scheduleElements = (MapLocationInfo) pp.getIndirectObject();
-      System.out.println("added task " + task);
-      sendToStreams(scheduleElements);
+      {
+	Task task = (Task) changeLocationTask.nextElement();
+	PrepositionalPhrase pp = task.getPrepositionalPhrase("LOCATIONINFO");
+	MapLocationInfo scheduleElements = (MapLocationInfo) pp.getIndirectObject();
+	System.out.println("added task " + task);
+	sendToStreams(scheduleElements);
       
-    }
+      }
     
     for(Enumeration changeLocationTask = ((IncrementalSubscription)subscription).getChangedList(); changeLocationTask.hasMoreElements();)
-    {
+      {
     	Task task = (Task) changeLocationTask.nextElement();
-      PrepositionalPhrase pp = task.getPrepositionalPhrase("LOCATIONINFO");
-      MapLocationInfo scheduleElements = (MapLocationInfo) pp.getIndirectObject();
-      System.out.println("changed task " + task);
-      sendToStreams(scheduleElements);
+	PrepositionalPhrase pp = task.getPrepositionalPhrase("LOCATIONINFO");
+	MapLocationInfo scheduleElements = (MapLocationInfo) pp.getIndirectObject();
+	System.out.println("changed task " + task);
+	sendToStreams(scheduleElements);
       
-    }
+      }
+  }
 
-		
-	}
-
-	/*********************************************************************************************************************
-  <b>Description</b>: Sends an admin status page to the AdminTool status window.
-
-  <br><b>Notes</b>:<br>
-	                  - 
-
-  <br>
-  @param pspState Current state of the PSP including HTTP request parameters
-  @param out Output stream
-  @param psc Plan Service Context object
-  @param psu Plan Service Utility object
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Sends an admin status page to the AdminTool status window.
+	 *  <br><b>Notes</b>:<br>
+	 *  <br>
+	 *  @param pspState Current state of the PSP including HTTP request parameters
+	 *  @param out Output stream
+	 *  @param psc Plan Service Context object
+	 *  @param psu Plan Service Utility object
+	 **/
 	public void sendToStreams(MapLocationInfo mli)
 	{
     PrintStream out = null;
@@ -245,59 +225,49 @@ public class PSP_ALPLocatorKeepAlive extends org.cougaar.lib.planserver.PSP_Base
 		}
 	}
 
-	
-
-	/*********************************************************************************************************************
-  <b>Description</b>: Required by the PlanServiceProvider interface.
-
-  <br><b>Notes</b>:<br>
-	                  - Always returns false
-
-  <br>
-  @return True if PSP returns XML, false otherwise
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Required by the PlanServiceProvider interface.
+	 *  <br><b>Notes</b>:<br>
+	 *                 - Always returns false
+	 *  <br>
+	 *  @return True if PSP returns XML, false otherwise
+	 **/
 	public boolean returnsXML()
 	{
 		return(false);
 	}
 	
-	/*********************************************************************************************************************
-  <b>Description</b>: Required by the PlanServiceProvider interface.
-
-  <br><b>Notes</b>:<br>
-	                  - Always returns true
-
-  <br>
-  @return True if PSP returns HTML, false otherwise
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Required by the PlanServiceProvider interface.
+	 *  <br><b>Notes</b>:<br>
+	 *                - Always returns true
+	 *  <br>
+	 *  @return True if PSP returns HTML, false otherwise
+	 **/
 	public boolean returnsHTML()
 	{
 		return(true);
 	}
 
-	/*********************************************************************************************************************
-  <b>Description</b>: Required by the PlanServiceProvider interface.
-
-  <br><b>Notes</b>:<br>
-	                  - Always returns null
-
-  <br>
-  @return DTD String
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Required by the PlanServiceProvider interface.
+	 *  <br><b>Notes</b>:<br>
+	 *                - Always returns null
+	 *  <br>
+	 *  @return DTD String
+	 **/
 	public String getDTD()
 	{
 		return(null);
 	}
 	
-	/*********************************************************************************************************************
-  <b>Description</b>: Required by the PlanServiceProvider interface.
-
-  <br><b>Notes</b>:<br>
-	                  - Always returns false
-
-  <br>
-  @return True if interested, false otherwise
-	*********************************************************************************************************************/
+	/**
+	 *  <b>Description</b>: Required by the PlanServiceProvider interface.
+	 *  <br><b>Notes</b>:<br>
+	 *                - Always returns false
+	 *  <br>
+	 *  @return True if interested, false otherwise
+	 **/
 	public boolean test(HttpInput queryParameters, PlanServiceContext sc)
 	{
 		super.initializeTest(); // IF subclass off of PSP_BaseAdapter.java
