@@ -19,7 +19,7 @@
  * </copyright>
  */
 
-package org.cougaar.mlm.plugin.organization;
+package org.cougaar.mlm.plugin.sample;
 
 import java.awt.Color;
 import java.awt.Graphics;
