@@ -40,6 +40,7 @@ import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
+import org.cougaar.util.LRUCache;
 import org.cougaar.util.log.Logger;
 
 /** 
@@ -57,14 +58,32 @@ public class UTILPreference {
   private static double fiftyYears = ONE_DAY*365*50; // millis
   private static double boundaryDefaultScore = 0.75;
 
-  protected Map startDateCache = new HashMap ();
-  protected Map endDateCache = new HashMap ();
+  // 0 = LRU
+  // 1 = hashmap
+  private static final int CACHE_STYLE_DEFAULT = 0;
+  private static final int CACHE_STYLE = 
+    Integer.getInteger("org.cougaar.lib.util.UTILPreference.cacheStyle",
+                       CACHE_STYLE_DEFAULT).intValue();
+
+  private static final int CACHE_SIZE_DEFAULT = 256;
+  private static final int CACHE_SIZE =
+    Integer.getInteger("org.cougaar.lib.util.UTILPreference.cacheSize",
+                       CACHE_SIZE_DEFAULT).intValue();
+
+  protected Map startDateCache;
+  protected Map endDateCache;
 
   public double NO_ASPECT_VALUE = -1.0d;
 
   public UTILPreference (Logger l) { 
     logger = l; 
-    //    alloc = new UTILAllocate (l);
+    if (CACHE_STYLE == 1) {
+      startDateCache = new HashMap(CACHE_SIZE);
+      endDateCache = new HashMap(CACHE_SIZE);
+    } else {
+      startDateCache = new LRUCache(CACHE_SIZE);
+      endDateCache = new LRUCache(CACHE_SIZE);
+    }
   }
 
   /** 

@@ -34,6 +34,9 @@ import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
+
+import org.cougaar.util.LRUCache;
+
 import org.cougaar.util.log.Logger;
 
 /** 
@@ -45,10 +48,30 @@ public class UTILPrepPhrase {
   private static String myName = "UTILPrepPhrase";
   protected Logger logger;
 
-  /** maps prepositions to map of indirect objects to prep phrases */
-  protected Map prepToIndirectMap = new HashMap ();
+  // 0 = LRU
+  // 1 = hashmap
+  private static final int CACHE_STYLE_DEFAULT = 0;
+  private static final int CACHE_STYLE = 
+    Integer.getInteger("org.cougaar.lib.util.UTILPreference.cacheStyle",
+                       CACHE_STYLE_DEFAULT).intValue();
 
-  public UTILPrepPhrase (Logger log) { logger = log;}
+  private static final int CACHE_SIZE_DEFAULT = 256;
+  private static final int CACHE_SIZE =
+    Integer.getInteger("org.cougaar.lib.util.UTILPreference.cacheSize",
+                       CACHE_SIZE_DEFAULT).intValue();
+
+  /** maps prepositions to map of indirect objects to prep phrases */
+  protected Map prepToIndirectMap;
+
+  public UTILPrepPhrase (Logger log) { 
+    logger = log;
+
+    if (CACHE_STYLE == 1) {
+      prepToIndirectMap = new HashMap(CACHE_SIZE);
+    } else {
+      prepToIndirectMap = new LRUCache(CACHE_SIZE);
+    }
+  }
 
   /**
    * Utility method for extracting the indirect object from a 
@@ -229,7 +252,12 @@ public class UTILPrepPhrase {
 						     Object indirectObject) {
     Map indirectToPhrase = (Map) prepToIndirectMap.get (prep);
     if (indirectToPhrase == null) {
-      indirectToPhrase = new HashMap ();
+      if (CACHE_STYLE == 1) {
+	indirectToPhrase = new HashMap(CACHE_SIZE);
+      } else {
+	indirectToPhrase = new LRUCache(CACHE_SIZE);
+      }
+
       prepToIndirectMap.put (prep, indirectToPhrase);
     }
 
