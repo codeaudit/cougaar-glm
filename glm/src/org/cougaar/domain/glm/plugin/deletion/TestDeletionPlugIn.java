@@ -13,7 +13,12 @@ package org.cougaar.domain.glm.plugin.deletion;
 import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import org.cougaar.util.Enumerator;
 import org.cougaar.core.cluster.Alarm;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.plugin.SimplePlugIn;
@@ -37,57 +42,20 @@ import org.cougaar.util.UnaryPredicate;
  *       scheduling algorithm
  *   Watches for deletion of expired tasks and modifies its scheduling
  *       data to account for the deleted tasks
+ * Root tasks have no OfType preposition.
+ * Expansion of root tasks yields subtasks having OfType phrase
+ * Aggregation of subtasks produce tasks at the next level. These
+ * tasks have no OfType if they are to be allocated to another cluster
  **/
 public class TestDeletionPlugIn extends SimplePlugIn {
-    private abstract class Handler {
-        protected IncrementalSubscription tasks;
-        public Handler(final int type) {
-            tasks = (IncrementalSubscription) subscribe(new UnaryPredicate() {
-                public boolean execute(Object o) {
-                    return testTask(o, type);
-                }
-            });
-        }
-        public abstract void execute();
-    }
-
-    private class RootHandler extends Handler {
-        public RootHandler() {
-            super(TYPE_ROOT);
-        }
-        public void execute() {
-            handleExpTasksAdded(tasks.getAddedList());
-            handleExpTasksChanged(tasks.getChangedList());
-            handleExpTasksRemoved(tasks.getRemovedList());
-        }
-    }
-
-    private class SubHandler extends Handler {
-        public SubHandler(int subtype) {
-            super(TYPE_SUB + subtype);
-        }
-        public void execute() {
-            handleSubTasksAdded(tasks.getAddedList());
-            handleSubTasksChanged(tasks.getChangedList());
-            handleSubTasksRemoved(tasks.getRemovedList());
-        }
-    }
-
-    private class AggHandler extends Handler {
-        public AggHandler(int subtype) {
-            super(TYPE_AGG + subtype);
-        }
-        public void execute() {
-            handleAggTasksAdded(tasks.getAddedList());
-            handleAggTasksChanged(tasks.getChangedList());
-            handleAggTasksRemoved(tasks.getRemovedList());
-        }
-    }
-
     /** Subscriptions to tasks **/
-    private Handler[] handlers;
 
-    private IncrementalSubscription[] mpTasks;
+    private IncrementalSubscription tasksToExpand;
+    private IncrementalSubscription tasksToAggregate;
+    private IncrementalSubscription tasksToAllocateLocally;
+    private IncrementalSubscription tasksToAllocateRemotely;
+    private Vector[] mpTasks;
+    private IncrementalSubscription selfOrgs;
 
     /** Something to allocate subtasks to. **/
     private Asset theRootAsset; // DO of root tasks
@@ -98,8 +66,18 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     /** The Role we use for allocations **/
     private Role testProviderRole;
 
-    /** The verb that we use **/
-    private static Verb testDeletionVerb = Verb.getVerb("TestDeletion");
+    private Organization selfOrg;
+
+    private Organization provider;
+
+    /**
+     * The verbs that we use. Tasks to be expanded are
+     * TestDeletionExpand and Tasks to be aggregated are
+     * TestDeletionAggregate.
+     **/
+    
+    private static Verb testDeletionExpand = Verb.getVerb("TestDeletionExpand");
+    private static Verb testDeletionAggregate = Verb.getVerb("TestDeletionAggregate");
 
     /** The preposition used to specify task level **/
     private static final String LEVEL = "AtLevel";
@@ -108,10 +86,7 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     private static final String SUBTYPE = "Type";
 
     private static final int N_SUBTYPES = 3;
-    private static final int TYPE_ROOT  = 0;
-    private static final int TYPE_SUB   = 1;
-    private static final int TYPE_AGG   = TYPE_SUB + N_SUBTYPES;
-    private static final int N_TYPES    = TYPE_AGG + N_SUBTYPES;
+    private static final int TYPE_ROOT = 1; // The subtype that is forwarded to another cluster
 
     /** The preposition used to specify task duration **/
     private static final String DURATION = "OfDuration";
@@ -123,21 +98,76 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     private long minInterTaskInterval =  1 * 3600000L;
     private long maxInterTaskInterval = 24 * 3600000L;
     private long AGGREGATION_PERIOD   =  5 * 86400000L;
+    private long testDuration         =  0 * 86400000L; // Run test for 120 days
+    private int nRoots = 2;     // Generate this many roots (0 means infinite);
+    private int rootCount = 0;  // Number of roots so far
+    private int level = 0;      // Our level
     private Alarm newRootTimer;
+    private long testEnd;
+    private boolean useProvider = false;
     private Random random = new Random();
 
-    private boolean testTask(Object o, int subtype) {
-        if (o instanceof Task) {
-            Task task = (Task) o;
-            if (task.getVerb().equals(testDeletionVerb)) {
-                return getSubtype(task) == subtype;
+    private UnaryPredicate expandPredicate = new UnaryPredicate() {
+        public boolean execute(Object o) {
+            if (o instanceof Task) {
+                Task task = (Task) o;
+                return (task.getVerb().equals(testDeletionExpand)
+                        && getLevel(task) == level);
             }
+            return false;
         }
-        return false;
-    }
+    };
+
+    private UnaryPredicate aggregatePredicate = new UnaryPredicate() {
+        public boolean execute(Object o) {
+            if (o instanceof Task) {
+                Task task = (Task) o;
+                return (task.getVerb().equals(testDeletionAggregate)
+                        && getLevel(task) == level);
+            }
+            return false;
+        }
+    };
+
+    private UnaryPredicate allocateLocallyPredicate = new UnaryPredicate() {
+        public boolean execute(Object o) {
+            if (o instanceof Task) {
+                Task task = (Task) o;
+                if (task.getVerb().equals(testDeletionExpand) && getLevel(task) == level + 1) {
+                    return !useProvider || getSubtype(task) != TYPE_ROOT;
+                }
+            }
+            return false;
+        }
+    };
+
+    private UnaryPredicate allocateRemotelyPredicate = new UnaryPredicate() {
+        public boolean execute(Object o) {
+            if (o instanceof Task) {
+                Task task = (Task) o;
+                if (task.getVerb().equals(testDeletionExpand) && getLevel(task) == level + 1) {
+                    return useProvider && getSubtype(task) == TYPE_ROOT;
+                }
+            }
+            return false;
+        }
+    };
 
     public void setupSubscriptions() {
-        Role.create("TestDeletionProvider", "TestDeletionCostumer");
+        Vector params = getParameters();
+        switch (params.size()) {
+        default:
+        case 4: testDuration = parseInterval((String) params.elementAt(3));
+        case 3: nRoots = Integer.parseInt((String) params.elementAt(2));
+        case 2: useProvider = ((String) params.elementAt(1)).trim().toLowerCase().equals("true");
+        case 1: level = Integer.parseInt((String) params.elementAt(0));
+        case 0: break;
+        }
+        System.out.println(" useProvider=" + ((String) params.elementAt(0)).trim().toLowerCase());
+        System.out.println(" useProvider=" + useProvider);
+        System.out.println("      nRoots=" + nRoots);
+        System.out.println("testDuration=" + testDuration);
+        Role.create("TestDeletionProvider", "TestDeletionCustomer");
         testProviderRole = Role.getRole("TestDeletionProvider");
         theRootAsset = theLDMF.createInstance(theLDMF.createPrototype(Asset.class, "TestRoot"));
         theExpAsset = theLDMF.createInstance(theLDMF.createPrototype(Asset.class, "TestExp"));
@@ -147,29 +177,89 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         publishAdd(theExpAsset);
         publishAdd(theAggAsset);
         publishAdd(theAllocAsset);
-        mpTasks = new IncrementalSubscription[N_SUBTYPES];
-        handlers = new Handler[1 + N_SUBTYPES + N_SUBTYPES];
-        int i = 0;
-        handlers[i++] = new RootHandler();
-        for (int type = 0; type < N_SUBTYPES; type++) {
-            handlers[i++] = new SubHandler(type);
+        selfOrgs = (IncrementalSubscription) subscribe(new UnaryPredicate() {
+            public boolean execute(Object o) {
+                if (o instanceof Organization) {
+                    return ((Organization) o).isSelf();
+                }
+                return false;
+            }
+        });
+        if (!useProvider) setupSubscriptions2();
+    }
+
+    private void setupSubscriptions2() {
+        mpTasks = new Vector[N_SUBTYPES];
+        for (int i = 0; i < mpTasks.length; i++) {
+            mpTasks[i] = new Vector();
         }
-        for (int type = 0; type < N_SUBTYPES; type++) {
-            AggHandler handler = new AggHandler(type);
-            mpTasks[type] = handler.tasks;
-            handlers[i++] = handler;
-        }
+        tasksToExpand = (IncrementalSubscription) subscribe(expandPredicate);
+        tasksToAggregate = (IncrementalSubscription) subscribe(aggregatePredicate);
+        tasksToAllocateLocally = (IncrementalSubscription) subscribe(allocateLocallyPredicate);
+        tasksToAllocateRemotely = (IncrementalSubscription) subscribe(allocateRemotelyPredicate);
+        testEnd = currentTimeMillis() + testDuration;
         setNewRootTimer();
     }
 
     public void execute() {
         System.out.println("TestDeletionPlugIn.execute()");
-        for (int i = 0; i < handlers.length; i++) {
-            handlers[i].execute();
+        if (useProvider) {
+            if (provider == null) {
+                if (selfOrgs.hasChanged()) {
+                    if (selfOrg == null) {
+                        checkSelfOrgs(selfOrgs.getAddedList());
+                    }
+                    if (selfOrg == null) return;
+                    checkProvider();
+                }
+            }
+            if (provider == null) return;
         }
-        if (newRootTimer.hasExpired()) {
+        if (tasksToExpand.hasChanged()) {
+            handleExpTasksAdded(tasksToExpand.getAddedList());
+            handleExpTasksChanged(tasksToExpand.getChangedList());
+            handleExpTasksRemoved(tasksToExpand.getRemovedList());
+        }
+        if (tasksToAggregate.hasChanged()) {
+            handleSubTasksAdded(tasksToAggregate.getAddedList());
+            handleSubTasksChanged(tasksToAggregate.getChangedList());
+            handleSubTasksRemoved(tasksToAggregate.getRemovedList());
+        }
+        if (tasksToAllocateLocally.hasChanged()) {
+            handleAggTasksAdded(tasksToAllocateLocally.getAddedList(), false);
+            handleAggTasksChanged(tasksToAllocateLocally.getChangedList(), false);
+            handleAggTasksRemoved(tasksToAllocateLocally.getRemovedList(), false);
+        }
+        if (tasksToAllocateRemotely.hasChanged()) {
+            handleAggTasksAdded(tasksToAllocateRemotely.getAddedList(), true);
+            handleAggTasksChanged(tasksToAllocateRemotely.getChangedList(), true);
+            handleAggTasksRemoved(tasksToAllocateRemotely.getRemovedList(), true);
+        }
+            
+        if (newRootTimer != null && newRootTimer.hasExpired()) {
+            newRootTimer = null;
             addRootTask();
+            rootCount++;
             setNewRootTimer();
+        }
+    }
+
+    private void checkSelfOrgs(Enumeration orgs) {
+        if (orgs.hasMoreElements()) {
+            selfOrg = (Organization) orgs.nextElement();
+        }
+    }
+
+    private void checkProvider() {
+        Collection c = selfOrg.getRelationshipSchedule().getMatchingRelationships(testProviderRole);
+        if (c.size() > 0) {
+            Relationship relationship = (Relationship) c.iterator().next();
+            if (relationship.getRoleA().equals(testProviderRole)) {
+                provider = (Organization) relationship.getA();
+            } else {
+                provider = (Organization) relationship.getB();
+            }
+            setupSubscriptions2(); // Ready to go
         }
     }
 
@@ -178,15 +268,20 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     }
 
     private void setNewRootTimer() {
-	long interval = randomLong(minInterTaskInterval, maxInterTaskInterval);
-        newRootTimer = wakeAfter(interval);
-	System.out.println("Next wakeup after " + (interval/3600000.0) + " hours");
+        if ((testDuration <= 0L || currentTimeMillis() < testEnd)
+            && (nRoots < 0 || rootCount < nRoots)) {
+            long interval = randomLong(minInterTaskInterval, maxInterTaskInterval);
+            newRootTimer = wakeAfter(interval);
+            System.out.println("Next wakeup after " + (interval/3600000.0) + " hours");
+        } else {
+            System.out.println("No wakeup: " + testDuration + ", " + nRoots);
+        }
     }
 
     private void handleExpTasksAdded(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task expTask = (Task) tasks.nextElement();
-            System.out.println("Exp task added: " + expTask);
+            System.out.println("Exp task added: " + format(expTask));
             expandTask(expTask);
         }
     }
@@ -194,14 +289,14 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     private void handleExpTasksChanged(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task expTask = (Task) tasks.nextElement();
-            System.out.println("Exp task changed: " + expTask);
+            System.out.println("Exp task changed: " + format(expTask));
         }
     }
 
     private void handleExpTasksRemoved(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task expTask = (Task) tasks.nextElement();
-            System.out.println("Exp task removed: " + expTask);
+            System.out.println("Exp task removed: " + format(expTask));
             // There's nothing to do
         }
     }
@@ -209,7 +304,7 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     private void handleSubTasksAdded(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task subtask = (Task) tasks.nextElement();
-            System.out.println("subtask added: " + subtask);
+            System.out.println("subtask added: " + format(subtask));
             aggregateSubtask(subtask);
         }
     }
@@ -217,38 +312,40 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     private void handleSubTasksChanged(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task subtask = (Task) tasks.nextElement();
-            System.out.println("subtask changed: " + subtask);
+            System.out.println("subtask changed: " + format(subtask));
         }
     }
 
     private void handleSubTasksRemoved(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task subtask = (Task) tasks.nextElement();
-            System.out.println("subtask removed:. " + subtask);
+            System.out.println("subtask removed:. " + format(subtask));
         }
     }
 
-    private void handleAggTasksAdded(Enumeration tasks) {
+    private void handleAggTasksAdded(Enumeration tasks, boolean remote) {
         while (tasks.hasMoreElements()) {
             Task aggtask = (Task) tasks.nextElement();
-            System.out.println("aggtask added: " + aggtask);
-            allocateAggtask(aggtask);
+            System.out.println("aggtask added: " + format(aggtask));
+            allocateAggtask(aggtask, remote);
         }
     }
 
-    private void handleAggTasksChanged(Enumeration tasks) {
+    private void handleAggTasksChanged(Enumeration tasks, boolean remote) {
         while (tasks.hasMoreElements()) {
             Task aggtask = (Task) tasks.nextElement();
-            System.out.println("aggtask changed: " + aggtask);
-            reallocateAggtask(aggtask);
+            System.out.println("aggtask changed: " + format(aggtask));
+            reallocateAggtask(aggtask, remote);
         }
     }
 
-    private void handleAggTasksRemoved(Enumeration tasks) {
+    private void handleAggTasksRemoved(Enumeration tasks, boolean remote) {
         while (tasks.hasMoreElements()) {
             Task aggtask = (Task) tasks.nextElement();
-            System.out.println("aggtask removed:. " + aggtask);
-            advanceScheduleStartTime(aggtask);
+            System.out.println("aggtask removed:. " + format(aggtask));
+            int subtype = getSubtype(aggtask);
+            mpTasks[subtype].remove(aggtask);
+            advanceScheduleStartTime(aggtask, remote);
         }
     }
 
@@ -269,7 +366,7 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         Task previousTask = null;
         for (int i = 0; i < nsubs; i++) {
             long duration = (long) (random.nextDouble() * nominalDuration);
-            NewTask subtask = createTask(getLevel(expTask), TYPE_SUB + i, theExpAsset,
+            NewTask subtask = createTask(testDeletionAggregate, getLevel(expTask), i, theExpAsset,
                                          startTime, startTime + nominalDuration, duration);
             publishAdd(subtask);
             startTime += nominalDuration;
@@ -314,7 +411,7 @@ public class TestDeletionPlugIn extends SimplePlugIn {
      * one.
      **/
     private void aggregateSubtask(Task subtask) {
-        int subtype = getSubtype(subtask) - TYPE_SUB;
+        int subtype = getSubtype(subtask);
         long startTime = TaskUtils.getStartTime(subtask);
         long endTime = TaskUtils.getEndTime(subtask);
         for (Iterator i = mpTasks[subtype].iterator(); i.hasNext(); ) {
@@ -327,8 +424,9 @@ public class TestDeletionPlugIn extends SimplePlugIn {
                 return;
             }
         }
-        NewMPTask mpTask = createMPTask(getLevel(subtask), TYPE_AGG + subtype, theAggAsset,
+        NewMPTask mpTask = createMPTask(testDeletionExpand, getLevel(subtask) + 1, subtype, theAggAsset,
                                         startTime, endTime, endTime - startTime);
+        mpTasks[subtype].add(mpTask);
         publishAdd(mpTask);
         createAggregation(subtask, mpTask);
     }
@@ -347,7 +445,9 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         Aggregation agg = theLDMF.createAggregation(subtask.getPlan(), subtask,
                                                     mpTask.getComposition(),
                                                     ar);
-        ((NewComposition) mpTask.getComposition()).addAggregation(agg);
+        NewComposition comp = (NewComposition) mpTask.getComposition();
+        comp.addAggregation(agg);
+        mpTask.setParentTasks(new Enumerator(comp.getParentTasks()));
         publishChange(mpTask);
         publishAdd(agg);
     }
@@ -370,13 +470,13 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         mpTask.setPreference(pref);
     }
 
-    private void advanceScheduleStartTime(Task task) {
+    private void advanceScheduleStartTime(Task task, boolean remote) {
     }
 
     private static int getLevel(Task task) {
         PrepositionalPhrase pp = task.getPrepositionalPhrase(LEVEL);
         if (pp == null) {
-            System.out.println("No LEVEL for " + task);
+            System.out.println("No LEVEL for " + format(task));
             return 0;
         }
         Integer io = (Integer) pp.getIndirectObject();
@@ -399,45 +499,55 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         return N_SUBTYPES;
     }
 
-    private void reallocateAggtask(Task subtask) {
+    private void reallocateAggtask(Task subtask, boolean remote) {
         AllocationResult ar =
             PlugInHelper
             .createEstimatedAllocationResult(subtask, theLDMF, 1.0, true);
         Allocation alloc = (Allocation) subtask.getPlanElement();
         alloc.setEstimatedResult(ar);
+        publishChange(alloc);
     }
 
-    private void allocateAggtask(Task subtask) {
+    private void allocateAggtask(Task subtask, boolean remote) {
+        int subtype = getSubtype(subtask);
+        Asset asset;
+        if (remote) {
+            asset = provider;
+            System.out.println("Using provider " + provider);
+        } else {
+            asset = theAllocAsset;
+        }
+        if (asset == null) return; // Wait 'til out provider checks reports for service
         AllocationResult ar =
             PlugInHelper
             .createEstimatedAllocationResult(subtask, theLDMF, 1.0, true);
         Allocation alloc =
-            theLDMF.createAllocation(subtask.getPlan(), subtask, theAllocAsset,
+            theLDMF.createAllocation(subtask.getPlan(), subtask, asset,
                                      ar, testProviderRole);
         publishAdd(alloc);
     }
 
-    private NewMPTask createMPTask(int level, int subtype, Asset asset,
+    private NewMPTask createMPTask(Verb verb, int level, int subtype, Asset asset,
                                    long startTime, long endTime, long duration)
     {
         NewMPTask task = theLDMF.newMPTask();
-        fillTask(task, level, subtype, asset, startTime, endTime, duration);
+        fillTask(task, verb, level, subtype, asset, startTime, endTime, duration);
         NewComposition composition = theLDMF.newComposition();
         composition.setCombinedTask(task);
         task.setComposition(composition);
         return task;
     }
-    private NewTask createTask(int level, int subtype, Asset asset,
+    private NewTask createTask(Verb verb, int level, int subtype, Asset asset,
                                long startTime, long endTime, long duration)
     {
         NewTask task = theLDMF.newTask();
-        fillTask(task, level, subtype, asset, startTime, endTime, duration);
+        fillTask(task, verb, level, subtype, asset, startTime, endTime, duration);
         return task;
     }
-    private void fillTask(NewTask task, int level, int subtype, Asset asset,
+    private void fillTask(NewTask task, Verb verb, int level, int subtype, Asset asset,
                           long startTime, long endTime, long duration)
     {
-        task.setVerb(testDeletionVerb);
+        task.setVerb(verb);
         NewPrepositionalPhrase pp;
         Vector phrases = new Vector(3);
 
@@ -489,8 +599,22 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         long startTime = currentTimeMillis() + randomLong(minRootTaskDelay, maxRootTaskDelay);
         long duration = randomLong(minRootTaskDuration, maxRootTaskDuration);
         long endTime = startTime + 2L * duration;
-        NewTask task = createTask(0, TYPE_ROOT, theRootAsset, startTime, endTime, duration);
-        System.out.println("Adding " + task);
+        NewTask task = createTask(testDeletionExpand, level, TYPE_ROOT, theRootAsset, startTime, endTime, duration);
+        System.out.println("Adding " + format(task));
         publishAdd(task);
+    }
+
+    private static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HHmm");
+
+    private static String format(Task task) {
+        return task.getDirectObject().getTypeIdentificationPG().getTypeIdentification()
+            + ", level="
+            + getLevel(task)
+            + ", subtype="
+            + getSubtype(task)
+            + ", start="
+            + dateFormat.format(new Date(TaskUtils.getStartTime(task)))
+            + ", end="
+            + dateFormat.format(new Date(TaskUtils.getEndTime(task)));
     }
 }
