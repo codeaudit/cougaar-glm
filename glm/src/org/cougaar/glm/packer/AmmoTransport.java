@@ -41,7 +41,7 @@ import java.util.Vector;
 public class AmmoTransport extends AggregationClosure {
   public static final String AMMO_CATEGORY_CODE = "MBB";
   public static final String MILVAN_NSN = "NSN/8115001682275";
-  public static final double PACKING_LIMIT = 16.0; /* short tons */
+  public static final double PACKING_LIMIT = 13.9; /* short tons */
 
   private static Asset MILVAN_PROTOTYPE = null;
   private static long counter = 0;
