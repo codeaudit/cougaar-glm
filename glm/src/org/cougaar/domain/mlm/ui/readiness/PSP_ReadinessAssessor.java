@@ -119,7 +119,7 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 				//out.println("WIDTH = 600 HEIGHT = 600 NAME = \"NChartApplet\"  codebase=\"http://java.sun.com/products/plugin/1.3.1/jinstall-131-win32.cab#Version=1,3,1,0\">");
 				out.println("WIDTH = 600 HEIGHT = 600 codebase=\"http://java.sun.com/products/plugin/1.2/jinstall-12-win32.cab#Version=1,2,0,0\">");
 				out.println("<PARAM NAME = CODE VALUE = \"NChartApplet.class\" >");
-				out.println("<PARAM NAME = ARCHIVE VALUE = \"/big.jar\" >");
+				out.println("<PARAM NAME = ARCHIVE VALUE = \"/uiframework.jar\" >");
 				//out.println("<PARAM NAME = CODEBASE = \".\" >");
 				//out.println("<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;jpi-version=1.3.1\">");
 				out.println("<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.2\">");
@@ -127,8 +127,8 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 			sendReadinessParameters(clusterId, psc, out);
 			out.println("<COMMENT>");
 				//out.println("<EMBED type=\"application/x-java-applet;jpi-version=1.3.1\"");  
-				out.println("<EMBED type=\"application/x-java-applet;version=1.2.2\"" + " java_CODE=\"NChartApplet.class\"" + " java_ARCHIVE=\"/big.jar\"");
-			  //out.println("ARCHIVE=\"/big.jar\""); 
+				out.println("<EMBED type=\"application/x-java-applet;version=1.2.2\"" + " java_CODE=\"NChartApplet.class\"" + " java_ARCHIVE=\"/uiframework.jar\"");
+			  //out.println("ARCHIVE=\"/uiframework.jar\""); 
 			  //out.println("CODEBASE=\".\"");
 			  //out.println("CODE=\"NChartApplet.class\""); 
 			  out.println("NAME=\"NChartApplet\""); 
@@ -142,7 +142,7 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 			  out.println("</COMMENT>");
 			  out.println("</OBJECT>");
 			//out.println("<CENTER><APPLET ARCHIVE='/rasschart.jar' CODEBASE='./bin' CODE='org.cougaar.domain.mlm.plugin.assessor.ReadinessAssessorApplet.class' WIDTH=600 HEIGHT=450>");
-      //out.println("<CENTER><APPLET ARCHIVE='/big.jar'  CODE='NChartApplet.class' WIDTH=600 HEIGHT=450>");
+      //out.println("<CENTER><APPLET ARCHIVE='/uiframework.jar'  CODE='NChartApplet.class' WIDTH=600 HEIGHT=450>");
 //			out.println("<PARAM NAME=ReadinessURL VALUE='" + pspURL + "'>");
 			//sendReadinessParameters(out);
 			//out.println("</APPLET>");
