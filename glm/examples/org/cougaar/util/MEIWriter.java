@@ -149,7 +149,7 @@ class MEIWriter {
   private void writePrototype(PrintWriter pw)
   {
     print(pw, "<prototype name = " + '"' + nsn + '"' + ">", 0);
-    print(pw, "<object class = " + '"' + "org.cougaar.domain.planning.ldm.asset.Asset" + '"' + ">", 2);
+    print(pw, "<object class = " + '"' + "org.cougaar.planning.ldm.asset.Asset" + '"' + ">", 2);
     writeTypeIdentificationPG(pw);
     writePhysicalPG(pw);
     if (moveable) {
@@ -162,7 +162,7 @@ class MEIWriter {
   private void writeTypeIdentificationPG(PrintWriter pw)
   {
     writeComplexFieldStart(pw, "TypeIdentificationPG", 
-			   "org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG");
+			   "org.cougaar.planning.ldm.asset.NewTypeIdentificationPG");
     writeSimpleField(pw, "TypeIdentification", "String", desc);
     writeSimpleField(pw, "Nomenclature", "String", 
 		     "NSN/" + removeChar(nsn, '-'));
@@ -172,18 +172,18 @@ class MEIWriter {
 
   private void writePhysicalPG(PrintWriter pw) 
   {
-    writeComplexFieldStart(pw, "PhysicalPG", "org.cougaar.domain.planning.ldm.asset.NewPhysicalPG");
-    writeMeasureField(pw, "Length", "org.cougaar.domain.planning.ldm.measure.Distance", 
+    writeComplexFieldStart(pw, "PhysicalPG", "org.cougaar.planning.ldm.asset.NewPhysicalPG");
+    writeMeasureField(pw, "Length", "org.cougaar.planning.ldm.measure.Distance", 
 		      "Inches", length);
-    writeMeasureField(pw, "Width", "org.cougaar.domain.planning.ldm.measure.Distance", 
+    writeMeasureField(pw, "Width", "org.cougaar.planning.ldm.measure.Distance", 
 		      "Inches", width);
-    writeMeasureField(pw, "Height", "org.cougaar.domain.planning.ldm.measure.Distance", 
+    writeMeasureField(pw, "Height", "org.cougaar.planning.ldm.measure.Distance", 
 		      "Inches", height);
-    writeMeasureField(pw, "Mass", "org.cougaar.domain.planning.ldm.measure.Mass", 
+    writeMeasureField(pw, "Mass", "org.cougaar.planning.ldm.measure.Mass", 
 		      "Pounds", mass);
-    writeMeasureField(pw, "FootprintArea", "org.cougaar.domain.planning.ldm.measure.Area", 
+    writeMeasureField(pw, "FootprintArea", "org.cougaar.planning.ldm.measure.Area", 
 		      "SquareFeet", footprint_area);
-    writeMeasureField(pw, "Volume", "org.cougaar.domain.planning.ldm.measure.Volume", 
+    writeMeasureField(pw, "Volume", "org.cougaar.planning.ldm.measure.Volume", 
 		      "CubicFeet", volume);
     writeComplexFieldEnd(pw);
   }
@@ -191,7 +191,7 @@ class MEIWriter {
   private void writeMovabilityPG(PrintWriter pw) 
   {
     writeComplexFieldStart(pw, "MovabilityPG", 
-			   "org.cougaar.domain.planning.ldm.asset.NewMovabilityPG");
+			   "org.cougaar.planning.ldm.asset.NewMovabilityPG");
     writeSimpleField(pw, "Moveable", "boolean", (moveable ? "True" : "False"));
     writeSimpleField(pw, "CargoCategoryCode", "String", cargo_category_code);
     writeComplexFieldEnd(pw);
