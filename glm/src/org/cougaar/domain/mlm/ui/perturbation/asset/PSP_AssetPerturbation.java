@@ -28,7 +28,7 @@ import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.core.plugin.Assessor;
 import org.cougaar.core.plugin.PlugInDelegate;
-import org.cougaar.core.plugin.util.ExpanderHelper;
+import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.core.society.UID;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
@@ -342,7 +342,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     delegate.publishAdd(newTask);
 
     AllocationResult allocationResult = 
-      ExpanderHelper.createEstimatedAllocationResult(newTask, ldmFactory, 100.0);
+      PlugInHelper.createEstimatedAllocationResult(newTask, ldmFactory, 100.0, true);
     Allocation allocation = 
       ldmFactory.createAllocation(ldmFactory.getRealityPlan(),
                                   newTask,

@@ -56,11 +56,14 @@ public class AssetPerturbationDisplay extends JPanel {
   static final private String DEFAULT_HOST = "localhost";
   static final private int DEFAULT_PORT = 5555;
 
+  Map myDestroyed = new HashMap();
+
   private ScrollingTextLine myScrollingTextLine;
   private Insets myNoInternalPadding;
   private Insets myInternalPadding;
   private Insets myLabelInternalPadding;
   
+
   // JComboBox for cluster names
     //  private JComboBox myClusterNameBox;
   private JComboBox myClusterNameBox;
@@ -385,10 +388,10 @@ public class AssetPerturbationDisplay extends JPanel {
                              AssetPerturbationPSPConnectionInfo.current(),
                              false);
 
-      System.out.println("Connected " + connection);
+      //System.out.println("Connected " + connection);
       String query = AssetPerturbationMessage.generateQueryRequest();
 
-      System.out.println("Query - " + query);
+      //System.out.println("Query - " + query);
       connection.sendData(query);
 
       InputStream is = connection.getInputStream();
@@ -402,25 +405,31 @@ public class AssetPerturbationDisplay extends JPanel {
       Vector rows = new Vector();
       
       while((len = is.read(byteBuffer, 0, byteBuffer.length)) > -1 ) {
-        System.out.println("Reading data");
+        //System.out.println("Reading data");
         os.write(byteBuffer, 0, len);
 
         // Ensure that we bridge buffers correctly.
         StringBuffer stringBuffer = new StringBuffer(s);
         stringBuffer.append(new String(byteBuffer, 0, len));
         s = new String(stringBuffer);
-    
+        
+        //System.out.println("Response - " + s);
+
         int start = 0;
         int end = 0;
         ParsePosition parsePosition = new ParsePosition(0);
-        while ((start = s.indexOf(AssetPerturbationMessage.NAME_LABEL)) >=0) {
-
+        while (start < s.length()) { 
+          
           String name = 
             AssetPerturbationMessage.parseParameter(s,
-                                     AssetPerturbationMessage.NAME_LABEL, 
-                                     AssetPerturbationMessage.DELIM,
-                                     parsePosition);
+                                                    AssetPerturbationMessage.NAME_LABEL, 
+                                                    AssetPerturbationMessage.DELIM,
+                                                    parsePosition);
 
+          if (name.equals("")) {
+            break;
+          }
+        
           String uidStr = 
             AssetPerturbationMessage.parseParameter(s,
                                      AssetPerturbationMessage.UID_LABEL, 
@@ -433,11 +442,14 @@ public class AssetPerturbationDisplay extends JPanel {
 
           // Got all the data - add a row to the table.
           AssetInfo assetInfo = new AssetInfo(name, uidStr);
-          System.out.println ("Name = " + name);
+          //System.out.println("Name = " + name);
           rows.add(assetInfo);
+
+          // Reset start of parsing for next asset
+          start = parsePosition.getIndex();
         }
 
-        s = s.substring(parsePosition.getIndex());
+        s = s.substring(start);
       }
       myAssetList.setListData(rows);
       displayExpression(rows.size() + " cargo vehicles retrieved.");
@@ -450,7 +462,7 @@ public class AssetPerturbationDisplay extends JPanel {
       }
 
     } catch (Exception e) {
-      System.out.println("AssetDisplay.execute - " + 
+      System.err.println("AssetDisplay.execute - " + 
                          "exception reading AssetPerturbationMessage output.");
       e.printStackTrace();
       displayError("Exception " + e + " retrieving info messages.");
@@ -491,17 +503,16 @@ public class AssetPerturbationDisplay extends JPanel {
                                                                 startDate,
                                                                 endDate);
 
-      System.out.println("Request - " + request);
+      //System.out.println("Request - " + request);
       connection.sendData(request);
 
       String reply = new String(connection.getResponse());
-      System.out.println("got response " + reply);
+      //System.out.println("got response " + reply);
 
-      //      lastDestroyed = assetInfo;
-      destroyed.put (assetInfo.getName(), assetInfo);
-      System.out.println ("last is " + assetInfo.getName());
+      myDestroyed.put(assetInfo.getName(), assetInfo);
+      //System.out.println("last is " + assetInfo.getName());
     } catch (Exception e) {
-      System.out.println("AssetDisplay.execute - " + 
+      System.err.println("AssetDisplay.execute - " + 
                          "exception reading AssetPerturbationMessage output.");
       e.printStackTrace();
       displayError("Exception " + e + " retrieving info messages.");
@@ -524,8 +535,8 @@ public class AssetPerturbationDisplay extends JPanel {
 
     String connectionInfo = codeBase.substring(0, end + 1);
 
-    System.out.println("getConnectionInfo - codeBase " + codeBase + 
-                       " connectionInfo " + connectionInfo);
+    //System.out.println("getConnectionInfo - codeBase " + codeBase + 
+    //                   " connectionInfo " + connectionInfo);
 
     return connectionInfo;
   }
@@ -543,8 +554,6 @@ public class AssetPerturbationDisplay extends JPanel {
     
   public static void main(String[] args) {
     ThemeFactory.establishMetalTheme();
-
-    System.out.println(javax.swing.UIManager.getFont("List.font"));
     
     new AssetPerturbationDisplay();
   }
@@ -621,96 +630,31 @@ public class AssetPerturbationDisplay extends JPanel {
       JLabel label = null;
       if (assetInfo == null) {
         text = "";
-        /*      } else if (assetInfo == lastDestroyed) {
-          System.out.println ("drawing label" + assetInfo.getName());
-          label = new JLabel (assetInfo.getName());
-          label.setBackground (Color.red);
-          lastDestroyed = null;
-        */
       } else {
         text= assetInfo.getName();
       }
-      /*
-      if (destroyed.get (assetInfo) != null) {
+
+      setText(text);
+      if (isSelected) {
+        if (myDestroyed.get(assetInfo.getName()) != null)
           setBackground (Color.red);
-          System.out.println ("Setting red");
+        else
+          setBackground (list.getSelectionBackground());
+        setForeground(list.getSelectionForeground());
       }
-      */
-      //      if (label == null)
-      //          return super.getListCellRendererComponent(list, text, index, isSelected, 
-      //                                                    cellHasFocus);
-      //      else
-      //          return super.getListCellRendererComponent(list, label, index, isSelected, 
-      //                                                    cellHasFocus);
-
-         setText(text);
-         if (isSelected) {
-             if (destroyed.get (assetInfo.getName()) != null)
-               this.setBackground (Color.red);
-             else
-               this.setBackground (list.getSelectionBackground());
-             this.setForeground(list.getSelectionForeground());
-             System.out.println ("Setting ?");
-         }
-         else if (destroyed.get (assetInfo.getName ()) != null) {
-             this.setBackground (Color.red);
-             System.out.println ("Setting red");
-         } else {
-             this.setBackground(list.getBackground());
-             this.setForeground(list.getForeground());
-             System.out.println ("Setting X");
-         }
-         this.setEnabled(list.isEnabled());
-         this.setFont(list.getFont());
-
-         return this;
+      else if (myDestroyed.get (assetInfo.getName ()) != null) {
+        setBackground (Color.red);
+      } else {
+        setBackground(list.getBackground());
+        setForeground(list.getForeground());
+      }
+      setEnabled(list.isEnabled());
+      setFont(list.getFont());
+      
+      return this;
     }
   } // ends AssetRenderer   
 
-    // Display an icon and a string for each object in the list.
-
-    /*
- class MyCellRenderer extends JLabel implements ListCellRenderer {
-     // This is the only method defined by ListCellRenderer.  We just
-     // reconfigure the Jlabel each time we're called.
-
-     public Component getListCellRendererComponent(
-       JList list,
-       Object value,            // value to display
-       int index,               // cell index
-       boolean isSelected,      // is the cell selected
-       boolean cellHasFocus)    // the list and the cell have the focus
-     {
-         AssetInfo assetInfo = (AssetInfo)value;
-         String text = "";
-
-         if (assetInfo == null) {
-             text = "";
-         } else {
-             text= assetInfo.getName();
-         }
-      
-         String s = value.toString();
-         setText(s);
-         setIcon((s.length() > 10) ? longIcon : shortIcon);
-           if (isSelected) {
-             setBackground(list.getSelectionBackground());
-               setForeground(list.getSelectionForeground());
-           }
-         else {
-               setBackground(list.getBackground());
-               setForeground(list.getForeground());
-           }
-           setEnabled(list.isEnabled());
-           setFont(list.getFont());
-         return this;
-     }
- }
-
-    // String[] data = {"one", "two", "free", "four"};
-    // JList dataList = new JList(data);
- dataList.setCellRenderer(new MyCellRenderer());
-    */ 
   private class AssetInfo {
     private String myName;
     private String myUID;
@@ -729,7 +673,7 @@ public class AssetPerturbationDisplay extends JPanel {
     }
   } //ends AssetRenderer
 
-    Map destroyed = new HashMap();
+  
 }
 
 

@@ -61,7 +61,7 @@ public class AssetPerturbationMessage {
     
     if (start == -1) {
       System.out.println("PSP_Asset.parseParameter() -  " + label + 
-                         " label not found in " + data);
+                         " label not found in " + data.substring(parsePosition.getIndex()));
       return "";
     }
 
@@ -70,7 +70,8 @@ public class AssetPerturbationMessage {
 
     if (end == -1) {
       System.out.println("PSP_Asset.parseParameter() -  " + delim + 
-                         " delimiter not found after label " + label);
+                         " delimiter not found after label " + label + 
+                         " in " + data.substring(parsePosition.getIndex()));
       parsePosition.setErrorIndex(start);
       return "";
     }
