@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+
+  <!-- this is for querying a cluster about its location schedule -->
+  <glquery>
+    <keyname>ORG_LOC</keyname>
+    <predicate>
+      <instanceof>org.cougaar.domain.glm.ldm.asset.Organization</instanceof>
+    </predicate>
+    <adapter>org.cougaar.lib.uiframework.ui.orglocation.psp.xmlservice.LocationScheduleToXml</adapter>
+  </glquery>
+
+  <!-- this is for querying a cluster about its relationship schedule -->
+  <glquery>
+    <keyname>ORG_RELS</keyname>
+    <predicate>
+      <instanceof>org.cougaar.domain.glm.ldm.asset.Organization</instanceof>
+    </predicate>
+    <adapter>org.cougaar.lib.uiframework.ui.orgui.OrgSubAdapter</adapter>
+  </glquery>
+
+</xml>
+
