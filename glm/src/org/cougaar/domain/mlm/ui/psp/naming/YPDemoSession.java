@@ -42,8 +42,12 @@ public class YPDemoSession
 
      // transcript = formatted HTML text
      private StringBuffer transcript = new StringBuffer();
-     public QueryObject qobject = null;
-     public StringBuffer buffer = new StringBuffer();
+     private QueryObject qobject = null;
+     private StringBuffer buffer = new StringBuffer();
+
+     public QueryObject getQueryObject(){ return qobject; }
+     public void setQueryObject(QueryObject qo) { qobject = qo; }
+
 
      // append entry to session transcript
      public void add(String entry){

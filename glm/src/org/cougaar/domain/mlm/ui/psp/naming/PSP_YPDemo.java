@@ -60,29 +60,6 @@ import org.cougaar.domain.planning.ldm.plan.Relationship;
  **/
 
 
-//###########################################################################
-//###########################################################################
-//###########################################################################
-//
-// Identifies Query Tags against JNDI NS.  Populated at runtime when
-// user BUTTON_UPDATE_YP_ATTRIBUTES selected
-//
-class QueryObject {
-     public  QueryObject() {
-          myEntries.put(GET_ALL_NAMES, GET_ALL_NAMES);
-     }
-
-     public final static String GET_ALL_NAMES = "GET_ALL_NAMES";
-     public final static String GET_ALL_ATTRIBUTES = "GET_ALL_ATTRIBUTES";
-
-     //public boolean allRoles = true;
-     private Map myEntries = new Hashtable(); // new ArrayList();
-
-     public Map getEntries() { return myEntries; }
-}
-
-
-
 
 
 //###########################################################################
@@ -165,11 +142,11 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         String GETLINE = query_parameters.getInputLines()[0];
         System.out.println("[PSP_ExternalQuery] GETLINE=" + GETLINE);
         QueryObject qObject =null;
-        if( session.qobject == null) {
+        if( session.getQueryObject() == null) {
              qObject = new QueryObject();
-             session.qobject=qObject;
+             session.setQueryObject(qObject);
         } else {
-             qObject = session.qobject;
+             qObject = session.getQueryObject();
         }
         if( query_parameters.getInputLines()[0].indexOf("?UPDATE") > -1 ) {
               processFormPOST(query_parameters, psc, qObject, session, out);
@@ -236,9 +213,9 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         int counter=0;
         for(int i=0; i< lst.size(); i++) {
               String ar = (String)lst.get(i);
-              if( session.qobject.getEntries().containsKey( ar.toString() ) == false) {
+              if( session.getQueryObject().getEntries().containsKey( ar.toString() ) == false) {
                    counter ++;
-                   session.qobject.getEntries().put( ar.toString(), ar);
+                   session.getQueryObject().getEntries().put( ar.toString(), ar);
               }
         }
         if( lst.size() > 0 ) {
