@@ -24,7 +24,7 @@ package org.cougaar.lib.xml.parser;
 import java.util.Date;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.lib.util.UTILPreference;

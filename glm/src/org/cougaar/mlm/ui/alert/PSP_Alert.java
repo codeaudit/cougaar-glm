@@ -121,7 +121,7 @@ public class PSP_Alert extends PSP_BaseAdapter
                         PlanServiceUtilities psu) throws Exception
     {
         Subscription subscription = 
-            psc.getServerPlugInSupport().subscribe(this, alertPred);
+            psc.getServerPluginSupport().subscribe(this, alertPred);
         boolean raw = false;
         for (Iterator i = query_parameters.getURLParameters().iterator(); i.hasNext(); ) {
             String param = ((String) i.next()).toLowerCase().trim();

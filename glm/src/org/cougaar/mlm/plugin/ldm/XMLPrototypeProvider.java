@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AssetFactory;
@@ -67,8 +67,8 @@ public class XMLPrototypeProvider
 	 // 	public Asset getAssetPrototype( String typeid ) { return null; }
 	 // 	public String getQuery() { return null; }
 	 // 	public void processRow( Object[] rowdata ) {}
-	 private LDMXMLPlugIn myLDMPlugIn;
-	 private ClusterServesPlugIn myCluster;
+	 private LDMXMLPlugin myLDMPlugin;
+	 private ClusterServesPlugin myCluster;
 
 	// don't use this canHandle (this is the orig) see message above!
 	 //public boolean canHandle( String typeid ) {
@@ -82,9 +82,9 @@ public class XMLPrototypeProvider
 	//	  return false;
 	 //}
 
-	 public XMLPrototypeProvider(  LDMXMLPlugIn plugin, ClusterServesPlugIn cluster ) {
+	 public XMLPrototypeProvider(  LDMXMLPlugin plugin, ClusterServesPlugin cluster ) {
 		  theAssetFactory = new AssetFactory();
-		  this.myLDMPlugIn = plugin;
+		  this.myLDMPlugin = plugin;
 		  this.myCluster = cluster;
 	 }
 

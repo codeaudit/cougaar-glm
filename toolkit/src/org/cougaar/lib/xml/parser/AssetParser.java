@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 
 import org.w3c.dom.Node;
@@ -33,7 +33,7 @@ import org.cougaar.lib.util.UTILAsset;
  */
 public class AssetParser{
 
-  public static Asset getAsset(LDMServesPlugIn ldm, Node node){
+  public static Asset getAsset(LDMServesPlugin ldm, Node node){
     Asset asset = null;
     String data = null;
     try{

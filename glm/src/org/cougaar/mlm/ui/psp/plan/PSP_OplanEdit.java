@@ -27,7 +27,7 @@ import java.util.*;
 
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.UnaryPredicate;
@@ -141,7 +141,7 @@ public class PSP_OplanEdit
    * Only able to modify first orgActivity.
    * Does lots of "new String" allocs for no good reason.
    * Odd postData format -- should allow both postdata and
-   *   URL parameter line (ala PSP_PlugInLoader).
+   *   URL parameter line (ala PSP_PluginLoader).
    * Calls getTimeSpan(), array index too often.
    * </pre>
    */
@@ -248,7 +248,7 @@ System.out.println("begin oplan edit");
       }
       String base_url = "http://"+loc+":"+port+"/";
       String clusterID = 
-        psc.getServerPlugInSupport().getClusterIDAsString();
+        psc.getServerPluginSupport().getClusterIDAsString();
       String cluster_url = base_url+"$"+clusterID;
       String path = query_parameters.getGETUrlString();
       if (path.endsWith("/")) {
@@ -330,8 +330,8 @@ System.out.println("is post");
           OrgActivity[] orgActivityArray = 
             (OrgActivity[]) PSPOplanUtilities.getOrgActivities(psc, postOrgID).toArray();
 
-          PlugInDelegate delegate = 
-            psc.getServerPlugInSupport().getDirectDelegate();
+          PluginDelegate delegate = 
+            psc.getServerPluginSupport().getDirectDelegate();
           delegate.openTransaction();
           
           // post 

@@ -203,7 +203,7 @@ public class PSP_UIAssets extends PSP_BaseAdapter
                                       PlanServiceContext psc,
                                       PlanServiceUtilities psu ) throws Exception
     {
-       Subscription OrgSubscription = psc.getServerPlugInSupport().subscribe(this, getOrgPred());
+       Subscription OrgSubscription = psc.getServerPluginSupport().subscribe(this, getOrgPred());
        Enumeration en = ((CollectionSubscription)OrgSubscription).elements();
 
        System.out.println("[PSP_UIAssets.getOrgAssetRelationships] Invoked...");
@@ -222,7 +222,7 @@ public class PSP_UIAssets extends PSP_BaseAdapter
 
        en = ((CollectionSubscription)OrgSubscription).elements();
 
-       String THISCID = getClusterIDAsString(psc.getServerPlugInSupport().getClusterIDAsString());
+       String THISCID = getClusterIDAsString(psc.getServerPluginSupport().getClusterIDAsString());
 
        // SECOND PASS - COMPUTE RELATIONSHIPS
        if (self != null) {

@@ -27,8 +27,8 @@ import org.cougaar.core.blackboard.PlanElementSet;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.core.plugin.PlugInAdapter;
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
 import java.awt.*;
 import java.awt.event.*;
@@ -57,7 +57,7 @@ import org.cougaar.mlm.plugin.UICoordinator;
  *
  */
 
-public class CompletionAssessor extends SimplePlugIn
+public class CompletionAssessor extends SimplePlugin
 {
   private static final boolean BRIEF = false; // True for task id only
 
@@ -745,7 +745,7 @@ public class CompletionAssessor extends SimplePlugIn
   }
 
   /**
-   * Overrides the setupSubscriptions() in the SimplePlugIn.
+   * Overrides the setupSubscriptions() in the SimplePlugin.
    */
   protected void setupSubscriptions() {
     getSubscriber().setShouldBePersisted(false);
@@ -860,7 +860,7 @@ public class CompletionAssessor extends SimplePlugIn
   /* CCV2 execute method */
   /* This will be called every time a alloc matches the above predicate */
   /* Note: Failed Dispositions only come through on the changed list. 
-     Since Dispositions are changed by other PlugIns after we see them
+     Since Dispositions are changed by other Plugins after we see them
      here, we need to keep track of the ones we've seen so we don't 
      act on them more than once.
    */

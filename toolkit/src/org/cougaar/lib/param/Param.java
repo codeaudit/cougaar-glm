@@ -116,7 +116,7 @@ public class Param {
    * Get accessor for the String value of a parameter.
    * Override if needed.
    *
-   * public because LdmXMLPlugIn just wants to read from params from
+   * public because LdmXMLPlugin just wants to read from params from
    * ini file.
    * @return the String value of the parameter.
    */

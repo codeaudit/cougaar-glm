@@ -26,7 +26,7 @@ import org.cougaar.planning.ldm.plan.Verb;
 import java.io.Serializable;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.ProjectionWeight;
-import org.cougaar.glm.plugins.DecorationPlugIn;
+import org.cougaar.glm.plugins.DecorationPlugin;
 import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.glm.plugins.TaskUtils;
 

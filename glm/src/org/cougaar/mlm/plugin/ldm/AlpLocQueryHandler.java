@@ -30,9 +30,9 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
@@ -45,7 +45,7 @@ import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 
 /** Reads alploc info from a database table. Assumes it's being invoked on
- * behalf of SQLOplanPlugIn. Updates SQLOplanPlugIn's geoloc table with alplocs.
+ * behalf of SQLOplanPlugin. Updates SQLOplanPlugin's geoloc table with alplocs.
  *
  * BOZO - alplocs are not geolocs but there isn't any other commonly understood way
  * to access them.
@@ -79,7 +79,7 @@ public class AlpLocQueryHandler  extends SQLOplanQueryHandler {
     geoloc.setLongitude(Longitude.newLongitude(((Number) rowData[3]).doubleValue()));
     geoloc.setInstallationTypeCode("AlpLoc");			
 
-    myPlugIn.updateLocation(geoloc);
+    myPlugin.updateLocation(geoloc);
   }
 
 }

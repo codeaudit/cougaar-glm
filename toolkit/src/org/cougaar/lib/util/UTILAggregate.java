@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.cougaar.lib.filter.UTILPlugIn;
+import org.cougaar.lib.filter.UTILPlugin;
 
 /**
  * This class contains utility functions for creating
@@ -78,7 +78,7 @@ public class UTILAggregate {
    * @return MPTask representing composition
    */
 
-  public static List makeAggregation(UTILPlugIn creator,
+  public static List makeAggregation(UTILPlugin creator,
 									 RootFactory ldmf,
 									 Plan realityPlan,
 									 Vector parentTasks, 
@@ -173,7 +173,7 @@ public class UTILAggregate {
    *   representing composition, all the compositions, and the aggregation plan elements
    */
 
-  public static List makeAggregation(UTILPlugIn creator,
+  public static List makeAggregation(UTILPlugin creator,
 									 RootFactory ldmf,
 									 Plan realityPlan,
 									 Vector parentTasks, 
@@ -252,7 +252,7 @@ public class UTILAggregate {
    * @param t task
    * @return Aggregation
    */
-  public static Aggregation makeFailedAggregation(UTILPlugIn creator,
+  public static Aggregation makeFailedAggregation(UTILPlugin creator,
 						  RootFactory ldmf, Task t) {
     AllocationResult failedAR  = 
       ldmf.newAllocationResult(1.0, false, 

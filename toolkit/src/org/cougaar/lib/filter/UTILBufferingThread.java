@@ -23,14 +23,14 @@ package org.cougaar.lib.filter;
 
 import org.cougaar.lib.param.ParamMap;
 
-import org.cougaar.lib.util.UTILPlugInException;
+import org.cougaar.lib.util.UTILPluginException;
 
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Interacts with a BufferingPlugIn.
+ * Interacts with a BufferingPlugin.
  *
  * Implements runnable -- must be started inside a java Thread.
  *
@@ -51,9 +51,9 @@ public class UTILBufferingThread implements Runnable {
   /** 
    * Works with a buffering plugin
    */
-  public UTILBufferingThread (UTILBufferingPlugIn bufferingPlugIn,
+  public UTILBufferingThread (UTILBufferingPlugin bufferingPlugin,
 			      boolean myExtraOutput, boolean myExtraExtraOutput) {
-    myPlugin = bufferingPlugIn;
+    myPlugin = bufferingPlugin;
 
     this.myExtraOutput      = myExtraOutput;
     this.myExtraExtraOutput = myExtraExtraOutput;
@@ -146,7 +146,7 @@ public class UTILBufferingThread implements Runnable {
     } 
     catch (Exception e) {
       e.printStackTrace();
-      throw new UTILPlugInException(e.getMessage());
+      throw new UTILPluginException(e.getMessage());
     }
   }
 
@@ -271,8 +271,8 @@ public class UTILBufferingThread implements Runnable {
    *
    * wraps processBufferedTasks call in COUGAAR transaction
    *
-   * calls UTILBufferingPlugIn.processTasks
-   * @see UTILBufferingPlugIn#processTasks
+   * calls UTILBufferingPlugin.processTasks
+   * @see UTILBufferingPlugin#processTasks
    */
   protected void dispatchTasks(List tasks) {
     lastupdate = new Date ();
@@ -328,7 +328,7 @@ public class UTILBufferingThread implements Runnable {
   private List bufferedTasks;
   private List notYetDispatched;
 
-  protected UTILBufferingPlugIn myPlugin = null;
+  protected UTILBufferingPlugin myPlugin = null;
   protected long MAXSIZE;
   protected long MINSIZE;
   protected long MAXTIME; // milliseconds

@@ -195,7 +195,7 @@ public class PSP_ClusterRelationships extends PSP_BaseAdapter
 
     // ASK MYSELF
     Collection col =
-      myState.psc.getServerPlugInSupport().queryForSubscriber(
+      myState.psc.getServerPluginSupport().queryForSubscriber(
           getSelfPred());
     boolean empty = (col.size() == 0);
     if (!empty) {

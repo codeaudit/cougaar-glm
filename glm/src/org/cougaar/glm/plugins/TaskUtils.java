@@ -20,7 +20,7 @@
 package org.cougaar.glm.plugins;
 
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.PluginHelper;
 import org.cougaar.util.MoreMath;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
@@ -40,7 +40,7 @@ import org.cougaar.glm.ldm.asset.SupplyClassPG;
 import org.cougaar.glm.debug.GLMDebug;
 
 /** Provides convenience methods. */
-public class TaskUtils extends PlugInHelper {
+public class TaskUtils extends PluginHelper {
   /** number of msec per day */
   // 86400000 msec/day = 1000msec/sec * 60sec/min *60min/hr * 24 hr/day
   public static final long MSEC_PER_DAY =  86400000;

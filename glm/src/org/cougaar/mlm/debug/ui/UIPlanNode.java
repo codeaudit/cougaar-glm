@@ -37,7 +37,7 @@ import org.cougaar.util.UnaryPredicate;
   */
 
 public class UIPlanNode extends UITreeNode implements UISubscriber {
-  private UIPlugIn uiPlugIn;
+  private UIPlugin uiPlugin;
   private String planName;
   private boolean childrenLoaded = false;
 
@@ -45,18 +45,18 @@ public class UIPlanNode extends UITreeNode implements UISubscriber {
     Listens on the plan elements collection (plan elements are the children
     nodes of the plan) to dynamically change the tree as the plan elements
     change.
-    @param uiPlugIn this user interface plug in
+    @param uiPlugin this user interface plug in
     @param planName name of plan to display
     @param clusterId cluster from which to obtain plan
     @exception UINoPlanException thrown when the plan does not exist
     */
 
-  public UIPlanNode(UIPlugIn uiPlugIn, String planName, 
+  public UIPlanNode(UIPlugin uiPlugin, String planName, 
 		    ClusterIdentifier clusterId) throws UINoPlanException {
     super();
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
     this.planName = planName;
-    super.setUserObject(uiPlugIn.getPlan(planName)); 
+    super.setUserObject(uiPlugin.getPlan(planName)); 
   }
 
   /** The plan is never a leaf.
@@ -85,7 +85,7 @@ public class UIPlanNode extends UITreeNode implements UISubscriber {
 
   public void loadChildren() {
     if (!childrenLoaded) {
-      uiPlugIn.subscribe(this, planElementPredicate());
+      uiPlugin.subscribe(this, planElementPredicate());
       childrenLoaded = true;
     }
   }

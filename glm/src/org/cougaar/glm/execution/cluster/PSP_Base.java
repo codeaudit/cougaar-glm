@@ -21,14 +21,14 @@
 package org.cougaar.glm.execution.cluster;
 
 import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.lib.planserver.HttpInput;
 import org.cougaar.lib.planserver.PSP_BaseAdapter;
 import org.cougaar.lib.planserver.PlanServiceContext;
 import org.cougaar.lib.planserver.PlanServiceUtilities;
 import org.cougaar.lib.planserver.RuntimePSPException;
-import org.cougaar.lib.planserver.ServerPlugInSupport;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.lib.planserver.ServerPluginSupport;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import java.io.PrintStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,11 +45,11 @@ public abstract class PSP_Base extends PSP_BaseAdapter
     protected PrintStream out;
     protected LineReader reader;
     protected LineWriter writer;
-    protected ServerPlugInSupport sps;
+    protected ServerPluginSupport sps;
     protected PlanServiceContext psc;
     protected PlanServiceUtilities psu;
-    protected PlugInDelegate delegate;
-    protected ClusterServesPlugIn cluster;
+    protected PluginDelegate delegate;
+    protected ClusterServesPlugin cluster;
     protected RootFactory factory;
     protected abstract void execute() throws InterruptedException, IOException;
   }
@@ -77,7 +77,7 @@ public abstract class PSP_Base extends PSP_BaseAdapter
       context.writer = new OutputStreamLineWriter(out);
       context.psc = psc;
       context.psu = psu;
-      context.sps = psc.getServerPlugInSupport();
+      context.sps = psc.getServerPluginSupport();
       context.delegate = context.sps.getDirectDelegate();
       context.cluster = context.delegate.getCluster();
       context.factory = context.sps.getFactoryForPSP();

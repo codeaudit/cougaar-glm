@@ -31,7 +31,7 @@ public class FailureConsumptionSegment
   protected FailureConsumptionRateManager theFailureConsumptionRateManager;
   public FailureConsumptionRate theFailureConsumptionRate;
   public FailureConsumptionRate theOriginalFailureConsumptionRate;
-  public FailureConsumptionPlugInItem thePlugInItem;
+  public FailureConsumptionPluginItem thePluginItem;
   private int theUnits = AbstractRate.PER_DAY;
 
   public FailureConsumptionSegment(String aSource,
@@ -41,12 +41,12 @@ public class FailureConsumptionSegment
     theSource = aSource.intern();
     theFailureConsumptionRate = aFailureConsumptionRate;
     theFailureConsumptionRateManager = aFailureConsumptionRateManager;
-    setPlugInItem(theFailureConsumptionRateManager.getPlugInItem(aFailureConsumptionRate, this, null));
+    setPluginItem(theFailureConsumptionRateManager.getPluginItem(aFailureConsumptionRate, this, null));
     setEnabled(true);
   }
 
-  public void setPlugInItem(FailureConsumptionPlugInItem newFailureConsumptionPlugInItem) {
-    thePlugInItem = newFailureConsumptionPlugInItem;
+  public void setPluginItem(FailureConsumptionPluginItem newFailureConsumptionPluginItem) {
+    thePluginItem = newFailureConsumptionPluginItem;
   }
 
   public static Object getKey(FailureConsumptionRate fcr) {
@@ -79,7 +79,7 @@ public class FailureConsumptionSegment
       .theEventGenerator
       .getSchedulingLookAhead();
     try {
-      AnnotatedDouble quantity = thePlugInItem.getQuantity(schedulingTime);
+      AnnotatedDouble quantity = thePluginItem.getQuantity(schedulingTime);
       int q = (int) Math.floor(quantity.value);
       if (q > 0) {
 //          System.out.println(System.identityHashCode(this));
@@ -100,7 +100,7 @@ public class FailureConsumptionSegment
     } catch (Exception ioe) {
       ioe.printStackTrace();
     }
-    long timeQuantum = thePlugInItem.getTimeQuantum(schedulingTime);
+    long timeQuantum = thePluginItem.getTimeQuantum(schedulingTime);
     timeQuantum = Math.max(timeQuantum, ONE_MINUTE);
     timeQuantum = Math.min(timeQuantum, ONE_DAY);
     theFailureConsumptionRate.theStartTime = time + timeQuantum;

@@ -23,16 +23,16 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.agent.ClusterServesPlugIn;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.core.domain.LDMServesPlugin;
 
 /**
  * Parses the value portion of an object in an xml file.
  */
 public class ValueParser{
   
-  public static Object getValue(LDMServesPlugIn ldm, Node node){
-    // Note need the LDMServesPlugIn to be able to call ObjectParser.
+  public static Object getValue(LDMServesPlugin ldm, Node node){
+    // Note need the LDMServesPlugin to be able to call ObjectParser.
 
     Object retval = null;
 

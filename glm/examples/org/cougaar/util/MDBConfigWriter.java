@@ -263,7 +263,7 @@ public class MDBConfigWriter {
       String group = (String)plugInGroups.get(new Integer(ind));
 	  if (group != null)
 	  {
-	    sql = "select InGroupSequence, PlugIn from GroupDefinitions"
+	    sql = "select InGroupSequence, Plugin from GroupDefinitions"
 		+" where GroupName='"+group+"'";
         rset = stmt.executeQuery(sql);
         System.out.println(sql);
@@ -275,7 +275,7 @@ public class MDBConfigWriter {
 	        number++;
 	        Hashtable plugins = (Hashtable)groupDefinitions.get(group);
 	        int index = rset.getInt("InGroupSequence");
-	        String plugIn = rset.getString("PlugIn");
+	        String plugIn = rset.getString("Plugin");
 	        plugins.put(new Integer(index), plugIn);
         }
             System.out.println("Query returned "+number+" results");
@@ -286,7 +286,7 @@ public class MDBConfigWriter {
 
     // Add the plugIn groups per cluster to the plugIn vector
     number = 0;
-    sql = "select Cluster, PlugInGroup from GroupsInCluster";
+    sql = "select Cluster, PluginGroup from GroupsInCluster";
 
     if (community != null && node != null)
 	{
@@ -309,17 +309,17 @@ public class MDBConfigWriter {
     while(rset.next())
       {number++;
 	        String cluster_name = rset.getString("Cluster");
-	        String pluginGroup = rset.getString("PlugInGroup");
+	        String pluginGroup = rset.getString("PluginGroup");
 
 	        Vector current_cluster_plugins = (Vector)all_clusters.get(cluster_name);	        
 		  if (current_cluster_plugins == null) {
 	            current_cluster_plugins = new Vector();
 	            all_clusters.put(cluster_name, current_cluster_plugins);
 	        }
-	      Hashtable groupPlugIns = (Hashtable)groupDefinitions.get(pluginGroup);
-		  for (int ind = 0; ind < groupPlugIns.size(); ind++)
+	      Hashtable groupPlugins = (Hashtable)groupDefinitions.get(pluginGroup);
+		  for (int ind = 0; ind < groupPlugins.size(); ind++)
 		  {
-			current_cluster_plugins.addElement(groupPlugIns.get(new Integer(ind)));
+			current_cluster_plugins.addElement(groupPlugins.get(new Integer(ind)));
 		  }
       }
     System.out.println("Query returned "+number+" results");
@@ -349,8 +349,8 @@ public class MDBConfigWriter {
         mdbCommunities.removeElementAt(0);
         
 
-        sql = "select Organizations.Name, CommunityPlugIns.Plugin from Organizations, CommunityPlugIns"
-            +" where CommunityPlugIns.Community='"+sCommunity+"'";
+        sql = "select Organizations.Name, CommunityPlugins.Plugin from Organizations, CommunityPlugins"
+            +" where CommunityPlugins.Community='"+sCommunity+"'";
  
 	    if (!sCommunity.equals("Society"))
         {
@@ -449,7 +449,7 @@ public class MDBConfigWriter {
   // class = org.cougaar.core.agent.ClusterImpl
   // uic = <Clustername>
   // cloned = false
-  // [ PlugIns ]
+  // [ Plugins ]
   // plugin = <pluginname>
   // ...
   // 
@@ -472,7 +472,7 @@ public class MDBConfigWriter {
         cluster_file.println("class = org.cougaar.core.agent.ClusterImpl");
         cluster_file.println("uic = " + cluster_name);
         cluster_file.println("cloned = false\n");
-        cluster_file.println("[ PlugIns ]");
+        cluster_file.println("[ Plugins ]");
         Vector plugins = (Vector)(all_clusters.get(cluster_name));
         for(Enumeration p = plugins.elements();p.hasMoreElements();) {
 	        String plugin = (String)(p.nextElement());

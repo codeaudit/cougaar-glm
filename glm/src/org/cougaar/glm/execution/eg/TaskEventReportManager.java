@@ -62,19 +62,19 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
         };
   }
 
-  protected Class getPlugInInterface() {
-    return TaskEventPlugIn.class;
+  protected Class getPluginInterface() {
+    return TaskEventPlugin.class;
   }
 
-  protected Class getDefaultPlugInClass() {
-    return TaskEventDefaultPlugIn.class;
+  protected Class getDefaultPluginClass() {
+    return TaskEventDefaultPlugin.class;
   }
 
-  private void applyPlugIns(TimedTaskEventReport tter) {
+  private void applyPlugins(TimedTaskEventReport tter) {
     long theExecutionTime = theEventGenerator.getExecutionTime();
-    for (Iterator i = getEnabledPlugIns(); i.hasNext(); ) {
-      TaskEventPlugIn thePlugIn = (TaskEventPlugIn) i.next();
-      if (thePlugIn.apply(tter, theExecutionTime)) return;
+    for (Iterator i = getEnabledPlugins(); i.hasNext(); ) {
+      TaskEventPlugin thePlugin = (TaskEventPlugin) i.next();
+      if (thePlugin.apply(tter, theExecutionTime)) return;
     }
   }
 
@@ -97,7 +97,7 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
         } else {
           tter = new TimedTaskEventReport(source, ter, this);
         }
-        applyPlugIns(tter);
+        applyPlugins(tter);
         addToSchedule(tter);
       }
     }

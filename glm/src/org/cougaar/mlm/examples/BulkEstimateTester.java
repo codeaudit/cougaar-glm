@@ -43,8 +43,8 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.BulkEstimate;
 import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.core.plugin.PlugInAdapter;
+import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.core.plugin.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -54,7 +54,7 @@ import org.cougaar.util.UnaryPredicate;
  *
  */
 
-public class BulkEstimateTester extends SimplePlugIn
+public class BulkEstimateTester extends SimplePlugin
 {
   /** frame for 1-button UI **/
   static JFrame frame;
@@ -96,7 +96,7 @@ public class BulkEstimateTester extends SimplePlugIn
  
 
   private void createGUI() {
-    frame = new JFrame("BulkEstimatePlugIn");
+    frame = new JFrame("BulkEstimatePlugin");
     frame.setLocation(0, 80);
     frame.getContentPane().setLayout(new FlowLayout());
     JPanel panel = new JPanel();

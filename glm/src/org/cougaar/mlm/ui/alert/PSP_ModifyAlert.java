@@ -30,7 +30,7 @@ import java.util.*;
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.planning.ldm.plan.Alert;
 import org.cougaar.planning.ldm.plan.AlertParameter;
 import org.cougaar.planning.ldm.plan.NewAlert;
@@ -160,7 +160,7 @@ public class PSP_ModifyAlert extends PSP_BaseAdapter
 
 
       // Bracket subsequent activity within a transaction
-      PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+      PluginDelegate delegate = psc.getServerPluginSupport().getDirectDelegate();
       delegate.openTransaction();
 
       Subscription subscription = delegate.subscribe(alertPred);

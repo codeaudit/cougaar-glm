@@ -43,7 +43,7 @@ import org.cougaar.core.agent.ClusterIdentifier;
   */
 
 public class UITreeDisplay implements Runnable, ActionListener {
-  private UIPlugIn uiPlugIn;
+  private UIPlugin uiPlugin;
   private String planName;
   private ClusterIdentifier clusterId;
   private String command;
@@ -56,16 +56,16 @@ public class UITreeDisplay implements Runnable, ActionListener {
     All the work is done in the run method so
     that the main user interface thread which creates this,
     isn't waiting to fetch the information needed for the tree.
-    @param uiPlugIn this user interface plugin
+    @param uiPlugin this user interface plugin
     @param planName the name of the plan for which to display information
     @param clusterId the cluster for which to display information
     @param command UIDisplay.PLAN_COMMAND, PLAN_DETAILS_COMMAND, TASKS_COMMAND, 
     WORKFLOWS_COMMAND, CLUSTER_ASSETS_COMMAND, ALL_ASSETS_COMMAND
    */
 
-  public UITreeDisplay(UIPlugIn uiPlugIn, String planName, 
+  public UITreeDisplay(UIPlugin uiPlugin, String planName, 
 		       ClusterIdentifier clusterId, String command) {
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
     this.planName = planName;
     this.clusterId = clusterId;
     this.command = command;
@@ -81,28 +81,28 @@ public class UITreeDisplay implements Runnable, ActionListener {
 
     try {
       if (command.equals(UIDisplay.PLAN_COMMAND)) {
-	root = new UIPlanNode(uiPlugIn, planName, clusterId);
+	root = new UIPlanNode(uiPlugin, planName, clusterId);
 	title = "LogPlan in " + clusterId.getAddress();
       }
       else if (command.equals(UIDisplay.PLAN_DETAILS_COMMAND)) {
-	root = new UIPlanDetailsNode(uiPlugIn, planName, clusterId);
+	root = new UIPlanDetailsNode(uiPlugin, planName, clusterId);
 	title = "LogPlan Details in " + clusterId.getAddress();
       }
       else if (command.equals(UIDisplay.TASKS_COMMAND)) {
-	root = new UITaskCollectionNode(uiPlugIn, planName, clusterId);
+	root = new UITaskCollectionNode(uiPlugin, planName, clusterId);
 	title = "Expandable Tasks in " + 
 	  clusterId.getAddress();
       }
       else if (command.equals(UIDisplay.WORKFLOWS_COMMAND)) {
-	root = new UIWorkflowCollectionNode(uiPlugIn, planName, clusterId);
+	root = new UIWorkflowCollectionNode(uiPlugin, planName, clusterId);
 	title = "Allocatable Workflows in " + 
 	  clusterId.getAddress();
       } else if (command.equals(UIDisplay.CLUSTER_ASSETS_COMMAND)) {
-	root = new UIClusterAssetsNode(uiPlugIn, planName, clusterId);
+	root = new UIClusterAssetsNode(uiPlugin, planName, clusterId);
 	title = "Cluster Assets in " +
 	  clusterId.getAddress();
       } else if (command.equals(UIDisplay.ALL_ASSETS_COMMAND)) {
-	root = new UIAllAssetsNode(uiPlugIn, planName, clusterId);
+	root = new UIAllAssetsNode(uiPlugin, planName, clusterId);
 	title = "All Assets in " +
 	  clusterId.getAddress();
       }

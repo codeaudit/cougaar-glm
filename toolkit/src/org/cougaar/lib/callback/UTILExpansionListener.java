@@ -34,7 +34,7 @@ import java.util.List;
  * When an expansion changes, it can change in one of 4 ways, each of which the 
  * the listener can play a role in.
  *
- * Note that below, when default behavior is mentioned, it is in ExpanderPlugInAdapter.
+ * Note that below, when default behavior is mentioned, it is in ExpanderPluginAdapter.
  *  
  * 1) The expansion can fail.  (handleFailedExpansion)
  * Some downstream allocation can fail, and if this happens, the listener will
@@ -43,7 +43,7 @@ import java.util.List;
  * The listener can handle this in one of two ways :
  *  a) rescind the expansion and replan and reallocate OR
  *  b) give up and report the failed expansion to a superior.  An example of this
- *     approach is in UTILSimpleExpanderPlugIn
+ *     approach is in UTILSimpleExpanderPlugin
  *
  * Since this is important, THERE IS NO DEFAULT BEHAVIOR for this option.
  *

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cougaar.lib.planserver.*;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 
 import org.cougaar.mlm.plugin.ldm.OplanFileReader;
 import org.cougaar.glm.ldm.oplan.*;
@@ -169,8 +169,8 @@ public class PSP_AddOplan
       final MyPSPState myState, 
       final PrintStream out,
       final String filename) {
-    // get direct delegate to PlanServer's PlugIn
-    PlugInDelegate pi = myState.sps.getDirectDelegate();
+    // get direct delegate to PlanServer's Plugin
+    PluginDelegate pi = myState.sps.getDirectDelegate();
 
     // parse the oplan file
     Oplan oplan;

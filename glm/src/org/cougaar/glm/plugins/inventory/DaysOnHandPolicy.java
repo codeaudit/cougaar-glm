@@ -27,7 +27,7 @@ import org.cougaar.planning.ldm.policy.RuleParameterIllegalValueException;
 import org.cougaar.planning.ldm.policy.StringRuleParameter;
 
 /**
- * The PolicyPlugIn
+ * The PolicyPlugin
  *
  * @author   ALPINE <alpine-software@bbn.com>
  *

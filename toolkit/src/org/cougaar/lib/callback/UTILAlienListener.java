@@ -42,11 +42,11 @@ public interface UTILAlienListener extends UTILFilterCallbackListener {
   boolean interestingTask(Task t);
 
   /**
-   * If the listener is a descendant of UTILPlugInAdapter, 
+   * If the listener is a descendant of UTILPluginAdapter, 
    * should not have to write anything,
    * since it already has a method with this name.
    * 
-   * @see org.cougaar.lib.filter.UTILPlugInAdapter#getClusterName
+   * @see org.cougaar.lib.filter.UTILPluginAdapter#getClusterName
    */
   String getClusterName ();
   /**

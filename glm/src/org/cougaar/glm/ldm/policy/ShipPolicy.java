@@ -25,7 +25,7 @@ package org.cougaar.glm.ldm.policy;
 import org.cougaar.planning.ldm.policy.*;
 
 /**
- * The PolicyPlugIn
+ * The PolicyPlugin
  *
  * @author   ALPINE <alpine-software@bbn.com>
  *

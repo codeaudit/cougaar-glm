@@ -47,7 +47,7 @@ import org.cougaar.util.UnaryPredicate;
  */
 
 public class UIAssets implements UIBarGraphSource, UISubscriber {
-  private UIPlugIn uiPlugIn;
+  private UIPlugin uiPlugin;
   private Vector listeners;
   private ClusterIdentifier clusterId;
   private Date startDate;
@@ -67,18 +67,18 @@ public class UIAssets implements UIBarGraphSource, UISubscriber {
   /** Display the assets assigned to the cluster in a bar graph.
       The x-axis is type of asset (i.e. truck, tank, HET) and
       the y-axis is the quantity of that asset.
-      @param uiPlugIn this user interface plugin
+      @param uiPlugin this user interface plugin
       @param planName the name of the plan for which to display assets
       @param clusterId the cluster for which to display assets
       @exception UINoPlanException thrown when the plan does not exist
   */
 
-  public UIAssets(UIPlugIn uiPlugIn, String planName, 
+  public UIAssets(UIPlugin uiPlugin, String planName, 
 		  ClusterIdentifier clusterId, 
 		  Object listener) throws UINoPlanException {
     listeners = new Vector(1);
     listeners.addElement(listener);
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
     contiguous = false; // don't make bars in bar graph contiguous
   }
 
@@ -87,7 +87,7 @@ public class UIAssets implements UIBarGraphSource, UISubscriber {
     */
 
   public void startSubscription() {
-    uiPlugIn.subscribe(this, assetPredicate());
+    uiPlugin.subscribe(this, assetPredicate());
   }
 
   private static UnaryPredicate assetPredicate() {
@@ -109,7 +109,7 @@ public class UIAssets implements UIBarGraphSource, UISubscriber {
       myAssets.removeElement(removed.nextElement());
     recomputeAssets();
     //////////////////////
-//     clusterCollection = uiPlugIn.getClusterCollection(clusterId);
+//     clusterCollection = uiPlugin.getClusterCollection(clusterId);
 //     plan = clusterCollection.getPlan(planName);
 //     if (plan == null)
 //       throw new UINoPlanException("There is no plan in cluster: " +

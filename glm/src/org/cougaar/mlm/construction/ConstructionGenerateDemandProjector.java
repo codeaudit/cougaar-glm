@@ -40,7 +40,7 @@ import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewSchedule;
 
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.PluginHelper;
 import org.cougaar.planning.ldm.measure.*;
 
 import org.cougaar.glm.ldm.plan.ObjectScheduleElement;
@@ -70,7 +70,7 @@ import org.cougaar.glm.plugins.projection.ConsumerSpec;
 
 // glm
 import org.cougaar.glm.plugins.BasicProcessor;
-import org.cougaar.glm.plugins.GLMDecorationPlugIn;
+import org.cougaar.glm.plugins.GLMDecorationPlugin;
 
 /*
  * Construction (ClassIV) plugin that takes construction tasks and 
@@ -88,7 +88,7 @@ public class ConstructionGenerateDemandProjector extends BasicProcessor {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	private ClusterIdentifier meCluster = null;
-	private GLMDecorationPlugIn thisPlugIn_ = null;
+	private GLMDecorationPlugin thisPlugin_ = null;
 
 	protected IncrementalSubscription constructionDemandSub;
 	protected IncrementalSubscription generateConstructionProjectionSub;
@@ -100,10 +100,10 @@ public class ConstructionGenerateDemandProjector extends BasicProcessor {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public ConstructionGenerateDemandProjector
-			( GLMDecorationPlugIn glmPlugIn, Organization myOrg ) {
+			( GLMDecorationPlugin glmPlugin, Organization myOrg ) {
 
-		super ( glmPlugIn, myOrg );
-		thisPlugIn_ = glmPlugIn;
+		super ( glmPlugin, myOrg );
+		thisPlugin_ = glmPlugin;
 		this.myOrganization = myOrg;
 
 		initializeSubscriptions();
@@ -226,7 +226,7 @@ public class ConstructionGenerateDemandProjector extends BasicProcessor {
 		// Project demand for each consumer in the cluster.
 		Enumeration assets = consumerSchedules_.keys();
 		Vector tasks = new Vector();
-		//Vector glm_oplans = thisPlugIn_.getOPlans();
+		//Vector glm_oplans = thisPlugin_.getOPlans();
                 //debug (" glm_oplans is " + glm_oplans);
 		while (assets.hasMoreElements()) {
 
@@ -300,7 +300,7 @@ public class ConstructionGenerateDemandProjector extends BasicProcessor {
                    //System.out.println("\n Got a result set for the query: " +
                    //    nsn + ", " + nomenclature + ", " + quantity + ", " + units);
 
-                   long dayDuration = (PlugInHelper.getEndTime(task) - PlugInHelper.getStartTime(task))/
+                   long dayDuration = (PluginHelper.getEndTime(task) - PluginHelper.getStartTime(task))/
                                         MSEC_PER_DAY;
                    //System.out.println("task duration is " + dayDuration);
 

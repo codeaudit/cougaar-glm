@@ -50,7 +50,7 @@ public class GeneralInventoryManager extends InventoryManager {
   private IncrementalSubscription refillAllocs_ = null;
 
   /** Constructor */
-  public GeneralInventoryManager(InventoryPlugIn plugin, Organization org, String type)
+  public GeneralInventoryManager(InventoryPlugin plugin, Organization org, String type)
   {
     super(plugin, org, type);
     printLog("Constructor type:"+type);
@@ -111,7 +111,7 @@ public class GeneralInventoryManager extends InventoryManager {
 	Task refill = alloc.getTask();
 	MaintainedItem inventoryID = 
 	  (MaintainedItem)refill.getPrepositionalPhrase(Constants.Preposition.MAINTAINING).getIndirectObject();
-	Inventory inv = inventoryPlugIn_.findOrMakeInventory(supplyType_, inventoryID.getTypeIdentification());
+	Inventory inv = inventoryPlugin_.findOrMakeInventory(supplyType_, inventoryID.getTypeIdentification());
 	if (inv != null) {
 	  invSet.add(inv);
 	  changed = true;
@@ -146,8 +146,8 @@ public class GeneralInventoryManager extends InventoryManager {
       Enumeration allocs = invAllocSubscription.getAddedList();
       while (allocs.hasMoreElements()) {
 	Allocation alloc = (Allocation) allocs.nextElement();
-	if (!inventoryPlugIn_.hasSeenAllConsumers()) {
-	  inventoryPlugIn_.recordCustomerForTask(alloc.getTask());
+	if (!inventoryPlugin_.hasSeenAllConsumers()) {
+	  inventoryPlugin_.recordCustomerForTask(alloc.getTask());
 	}
 	invSet.add(alloc.getAsset());
 	changed = true;

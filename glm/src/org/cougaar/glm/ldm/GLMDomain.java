@@ -30,7 +30,7 @@ import org.cougaar.core.blackboard.LogPlanServesLogicProvider;
 import org.cougaar.core.blackboard.XPlanServesBlackboard;
 import org.cougaar.core.domain.Domain;
 import org.cougaar.core.domain.Factory;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.glm.ldm.lps.*;
 
 /**
@@ -45,7 +45,7 @@ public class GLMDomain implements Domain {
     Constants.Role.init();      // Insure that our Role constants are initted
   }
 
-  public Factory getFactory(LDMServesPlugIn ldm) {
+  public Factory getFactory(LDMServesPlugin ldm) {
     return new GLMFactory(ldm);
   }
 

@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 
 import org.cougaar.planning.ldm.asset.AggregateAsset;
@@ -78,7 +78,7 @@ import org.cougaar.glm.util.GLMPreference;
 
 
 import org.cougaar.lib.util.UTILAsset;
-import org.cougaar.lib.util.UTILPlugInException;
+import org.cougaar.lib.util.UTILPluginException;
 import org.cougaar.lib.util.UTILRuntimeException;
 
 import java.util.*;
@@ -198,7 +198,7 @@ public class AssetUtil extends UTILAsset {
     try {
       geoloc = (GeolocLocation) o.getMilitaryOrgPG().getHomeLocation();
     } catch (NullPointerException e) {
-      throw new UTILPlugInException("no military org property for organization"
+      throw new UTILPluginException("no military org property for organization"
 				    + " (" + o + ")");
     }
 
@@ -263,7 +263,7 @@ public class AssetUtil extends UTILAsset {
       }
     }
     if(myself == null){
-      throw new UTILPlugInException("can't find myself as clusterAsset");
+      throw new UTILPluginException("can't find myself as clusterAsset");
     }
     return myself;
   }
@@ -309,12 +309,12 @@ public class AssetUtil extends UTILAsset {
     TypeIdentificationPG typeofasset = null;
     typeofasset = asset.getTypeIdentificationPG();
     if (typeofasset == null) {
-       throw new UTILPlugInException("bad type identification property: \"" +
+       throw new UTILPluginException("bad type identification property: \"" +
 				     asset + "\"");
     }
     String nom = typeofasset.getTypeIdentification();
     if (nom == null) {
-      throw new UTILPlugInException("bad type identification: \"" +
+      throw new UTILPluginException("bad type identification: \"" +
 				     asset + "\"");
     }
     return(nom.equals("OTHER/Passenger") ||
@@ -336,16 +336,16 @@ public static boolean isPallet(Asset asset) {
       TypeIdentificationPG typeofasset = null;
       typeofasset = asset.getTypeIdentificationPG();
       if (typeofasset == null) {
-	throw new UTILPlugInException("bad type identification property: \"" +
+	throw new UTILPluginException("bad type identification property: \"" +
 				      asset + "\"");
       }
       String nom = typeofasset.getTypeIdentification();
       if (nom == null) {
-	throw new UTILPlugInException("bad type identification: \"" +
+	throw new UTILPluginException("bad type identification: \"" +
 				      asset + "\"");
       }
       if (nom.equals ("TOPS_PALLET"))
-	  throw new UTILPlugInException("AssetUtil.isPallet - found TOPS_PALLET.  " + 
+	  throw new UTILPluginException("AssetUtil.isPallet - found TOPS_PALLET.  " + 
 					"Please use PALLET from Container protos instead!");
       //!!!Hack for AEF...until we figure out the TypeIdentification/Nomenclature problem on AEF's end.
       if ( (nom.indexOf("463L") != -1))
@@ -406,12 +406,12 @@ public static boolean isPallet(Asset asset) {
     TypeIdentificationPG typeofasset = null;
     typeofasset = asset.getTypeIdentificationPG();
     if (typeofasset == null) {
-	throw new UTILPlugInException("bad type identification property: \"" +
+	throw new UTILPluginException("bad type identification property: \"" +
 				      asset + "\"");
     }
     String nom = typeofasset.getTypeIdentification();
     if (nom == null) {
-	throw new UTILPlugInException("bad type identification: \"" + asset + "\"");
+	throw new UTILPluginException("bad type identification: \"" + asset + "\"");
     }
     return (nom.equals("Ammunition"));
   }
@@ -593,13 +593,13 @@ public static boolean isPallet(Asset asset) {
 	double qty = aggAsset.getQuantity();
 
 	if (qty <= 0)
-	    throw new UTILPlugInException("got bad qty for Aggregate Asset: \"" + 
+	    throw new UTILPluginException("got bad qty for Aggregate Asset: \"" + 
 					  asset + "\"");
 
 	asset = aggAsset.getAsset();
 
 	if(asset == null)
-	    throw new UTILPlugInException("Got null asset in Aggregate Asset");
+	    throw new UTILPluginException("Got null asset in Aggregate Asset");
 
 	double area = getArea(asset).getSquareFeet();
 	return Area.newSquareFeet(qty * area);
@@ -625,17 +625,17 @@ public static boolean isPallet(Asset asset) {
 	  prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG();
 	}
 	catch(Exception e){
-	    throw new UTILPlugInException("error getting physical property for asset :\"" +
+	    throw new UTILPluginException("error getting physical property for asset :\"" +
 					  asset + "\"");
 	}
 	Area area;
 	try { area = prop.getFootprintArea(); }
 	catch (Exception e) {
-	    throw new UTILPlugInException("No Physical property set for asset: \"" +
+	    throw new UTILPluginException("No Physical property set for asset: \"" +
 					  asset + "\"");
 	}
 	if (area == null) {
-	    throw new UTILPlugInException("Got null footprint area in asset: \"" +
+	    throw new UTILPluginException("Got null footprint area in asset: \"" +
 					  asset + "\"");
 	}
 	return area;
@@ -669,13 +669,13 @@ public static boolean isPallet(Asset asset) {
       double qty = aggAsset.getQuantity();
 
       if (qty <= 0)
- 	throw new UTILPlugInException("got bad qty for Aggregate Asset: \"" + 
+ 	throw new UTILPluginException("got bad qty for Aggregate Asset: \"" + 
  				      asset + "\"");
 
       asset = aggAsset.getAsset();
 
       if(asset == null)
- 	throw new UTILPlugInException("Got null asset in Aggregate Asset");
+ 	throw new UTILPluginException("Got null asset in Aggregate Asset");
 
       double m3perasset = totalVolume(asset,ignoreVehiclesAndContainers).getCubicMeters();
       return Volume.newCubicMeters(qty * m3perasset);
@@ -700,18 +700,18 @@ public static boolean isPallet(Asset asset) {
 	PhysicalPG prop = null;
 	try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
 	catch(Exception e){
-	    throw new UTILPlugInException("error getting physical property for asset :\"" +
+	    throw new UTILPluginException("error getting physical property for asset :\"" +
 					  asset + "\"");
 	}
 
 	Volume vol;
 	try { vol = prop.getVolume(); }
 	catch (Exception e) {
-	    throw new UTILPlugInException("No Physical property set for asset: \"" +
+	    throw new UTILPluginException("No Physical property set for asset: \"" +
 					  asset + "\"");
 	}
 	if (vol == null) {
-	    throw new UTILPlugInException("Got null volume in asset: \"" +
+	    throw new UTILPluginException("Got null volume in asset: \"" +
 					  asset + "\"");
 	}
 	return vol;
@@ -731,13 +731,13 @@ public static boolean isPallet(Asset asset) {
       double qty = aggAsset.getQuantity();
 
       if (qty <= 0)
- 	throw new UTILPlugInException("got bad qty for Aggregate Asset: \"" + 
+ 	throw new UTILPluginException("got bad qty for Aggregate Asset: \"" + 
  				      asset + "\"");
 
       asset = aggAsset.getAsset();
 
       if(asset == null)
- 	throw new UTILPlugInException("Got null asset in Aggregate Asset");
+ 	throw new UTILPluginException("Got null asset in Aggregate Asset");
 
       double tonsperasset = totalMass(asset).getTons();
       return Mass.newTons(qty * tonsperasset);
@@ -758,18 +758,18 @@ public static boolean isPallet(Asset asset) {
 	PhysicalPG prop = null;
 	try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
 	catch(Exception e){
-	    throw new UTILPlugInException("error getting physical property for asset :\"" +
+	    throw new UTILPluginException("error getting physical property for asset :\"" +
 					  asset + "\"");
 	}
 
 	Mass mass;
 	try { mass = prop.getMass(); }
 	catch (Exception e) {
-	    throw new UTILPlugInException("No Physical property set for asset: \"" +
+	    throw new UTILPluginException("No Physical property set for asset: \"" +
 					  asset + "\"");
 	}
 	if (mass == null) {
-	    throw new UTILPlugInException("Got null mass in asset: \"" +
+	    throw new UTILPluginException("Got null mass in asset: \"" +
 					  asset + "\"");
 	}
 	return mass;
@@ -781,13 +781,13 @@ public static boolean isPallet(Asset asset) {
       double qty = aggAsset.getQuantity();
 
       if (qty <= 0)
- 	throw new UTILPlugInException("got bad qty for Aggregate Asset: \"" + 
+ 	throw new UTILPluginException("got bad qty for Aggregate Asset: \"" + 
  				      asset + "\"");
 
       asset = aggAsset.getAsset();
 
       if(asset == null)
- 	throw new UTILPlugInException("Got null asset in Aggregate Asset");
+ 	throw new UTILPluginException("Got null asset in Aggregate Asset");
 
       if (isStandardContainer(asset)) return (long)qty;
       else return 0l;
@@ -811,7 +811,7 @@ public static boolean isPallet(Asset asset) {
   public static double totalSquareFeet(Asset asset) {
     double area = totalArea(asset).getSquareFeet();
     if(area < 0){
-      throw new UTILPlugInException("Got bad area in asset: \"" +
+      throw new UTILPluginException("Got bad area in asset: \"" +
  				    asset + "\"");
     }
     return area;
@@ -827,7 +827,7 @@ public static boolean isPallet(Asset asset) {
   public static double totalCubicMeters(Asset asset) {
     double vol = totalVolume(asset).getCubicMeters();
     if(vol < 0){
-       throw new UTILPlugInException("Got bad volume in asset: \"" +
+       throw new UTILPluginException("Got bad volume in asset: \"" +
 				     asset + "\"");
     }
     return vol;
@@ -843,7 +843,7 @@ public static boolean isPallet(Asset asset) {
   public static double totalTons(Asset asset) {
     double mass = totalMass(asset).getTons();
     if(mass < 0){
-       throw new UTILPlugInException("Got bad weight in asset: \"" +
+       throw new UTILPluginException("Got bad weight in asset: \"" +
 				     asset + "\"");
     }
     return mass;

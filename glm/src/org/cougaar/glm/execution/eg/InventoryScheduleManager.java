@@ -76,19 +76,19 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
     };
   }
 
-  protected Class getPlugInInterface() {
-    return InventoryPlugIn.class;
+  protected Class getPluginInterface() {
+    return InventoryPlugin.class;
   }
 
-  protected Class getDefaultPlugInClass() {
-    return InventoryDefaultPlugIn.class;
+  protected Class getDefaultPluginClass() {
+    return InventoryDefaultPlugin.class;
   }
 
-  private void applyPlugIns(TimedInventoryReport tir) {
+  private void applyPlugins(TimedInventoryReport tir) {
     long theExecutionTime = theEventGenerator.getExecutionTime();
-    for (Iterator i = getEnabledPlugIns(); i.hasNext(); ) {
-      InventoryPlugIn thePlugIn = (InventoryPlugIn) i.next();
-      if (thePlugIn.apply(tir, theExecutionTime)) return;
+    for (Iterator i = getEnabledPlugins(); i.hasNext(); ) {
+      InventoryPlugin thePlugin = (InventoryPlugin) i.next();
+      if (thePlugin.apply(tir, theExecutionTime)) return;
     }
   }
 
@@ -167,7 +167,7 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
     for (int i = 0; i < inventoryReports.length; i++) {
       reports[i] =
         new TimedInventoryReport(source, inventoryReports[i], theInventoryReportManager);
-      applyPlugIns(reports[i]);
+      applyPlugins(reports[i]);
     }
     theInventoryReportManager.receiveInventoryReports(source, reports);
   }

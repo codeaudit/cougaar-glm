@@ -2529,7 +2529,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 
   /** 
    * Create data based on contents of log plan based on 
-   * GSS/SimpleMultilegSchedulerPlugIn behavior.  <br>
+   * GSS/SimpleMultilegSchedulerPlugin behavior.  <br>
    * Assumes that there are root TRANSPORT tasks, which have one of two 
    * configurations:<br>
    * GROUND-SEA-GROUND and GROUND-AIR-GROUND
@@ -2714,7 +2714,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 
     setDefaultInformation(
       itin, 
-      psc.getServerPlugInSupport().getClusterIDAsString()); 
+      psc.getServerPluginSupport().getClusterIDAsString()); 
     setTaskInformation(itin, task);
 
     // Grab the three legs of the mission, CONUS_GROUND, SEA/AIR, THEATER_GROUND

@@ -50,19 +50,19 @@ public interface UTILAllocationListener extends UTILFilterCallbackListener {
    *
    * When returns TRUE, handleRescindedAlloc is called.
    *
-   * See comment on UTILAllocatorPlugInAdapter.needToRescind.
+   * See comment on UTILAllocatorPluginAdapter.needToRescind.
    *
    * @param alloc allocation to check for
    * @return boolean true if task needs to be rescinded
    * @see #handleRescindedAlloc
-   * @see org.cougaar.lib.filter.UTILAllocatorPlugInAdapter#needToRescind
+   * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter#needToRescind
    */
   boolean needToRescind (Allocation alloc);
 
   /**
    * What to do with a rescinded allocation. 
    *
-   * See comment on UTILAllocatorPlugInAdapter.needToRescind.
+   * See comment on UTILAllocatorPluginAdapter.needToRescind.
    *
    * Implementers need to take into consideration that 
    * the asset chosen last time is not available this time.
@@ -70,7 +70,7 @@ public interface UTILAllocationListener extends UTILFilterCallbackListener {
    * @param alloc the allocation that has been rescinded
    * @return true if handled
    * @see #needToRescind
-   * @see org.cougaar.lib.filter.UTILAllocatorPlugInAdapter#needToRescind
+   * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter#needToRescind
    */
   boolean handleRescindedAlloc (Allocation alloc);
 
@@ -100,7 +100,7 @@ public interface UTILAllocationListener extends UTILFilterCallbackListener {
 
   /**
    * What to do with a successful allocation. 
-   * For implementers who DON'T extend UTILPlugInAdapter,
+   * For implementers who DON'T extend UTILPluginAdapter,
    * this is equivalent to updateAllocationResult and therefore
    * should be implemented with an empty body.
    * 
@@ -110,7 +110,7 @@ public interface UTILAllocationListener extends UTILFilterCallbackListener {
    *
    * @param alloc the returned successful allocation
    * @see #needToRescind
-   * @see org.cougaar.lib.filter.UTILAllocatorPlugInAdapter#needToRescind
+   * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter#needToRescind
    */
   void handleSuccessfulAlloc(Allocation alloc);
 

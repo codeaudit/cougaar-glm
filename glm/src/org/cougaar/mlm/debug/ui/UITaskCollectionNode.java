@@ -33,7 +33,7 @@ import org.cougaar.planning.ldm.plan.Task;
   */
 
 public class UITaskCollectionNode extends UITreeNode implements UISubscriber {
-  private UIPlugIn uiPlugIn;
+  private UIPlugin uiPlugin;
   private String planName;
   private boolean childrenLoaded = false;
 
@@ -42,18 +42,18 @@ public class UITaskCollectionNode extends UITreeNode implements UISubscriber {
     the UITreeNode constructor.
     Listens for changes to the expandable tasks in order to dynamically
     update the tree.
-    @param uiPlugIn this user interface plug in
+    @param uiPlugin this user interface plug in
     @param planName name of plan for which to display tasks
     @param clusterId cluster from which to obtain tasks
     @exception UINoPlanException thrown when the plan does not exist
     */
 
-  public UITaskCollectionNode(UIPlugIn uiPlugIn, String planName,
+  public UITaskCollectionNode(UIPlugin uiPlugin, String planName,
 		   ClusterIdentifier clusterId) throws UINoPlanException {
     super();
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
     this.planName = planName;
-    super.setUserObject(uiPlugIn.getPlan(planName));
+    super.setUserObject(uiPlugin.getPlan(planName));
   }
 
   /** Has leaves which are the tasks.
@@ -83,7 +83,7 @@ public class UITaskCollectionNode extends UITreeNode implements UISubscriber {
   public void loadChildren() {
     if (!childrenLoaded) {
       System.out.println("Entered subscription for expandable tasks.");
-      uiPlugIn.subscribe(this, taskPredicate());
+      uiPlugin.subscribe(this, taskPredicate());
       childrenLoaded = true;
     }
   }

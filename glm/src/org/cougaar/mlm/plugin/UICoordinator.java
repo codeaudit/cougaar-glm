@@ -93,13 +93,13 @@ public class UICoordinator {
    * Use this layout if a config file cannot be found.
    **/
   private static void doDefaultLayout() {
-    add("GLSInitPlugIn",    		   	      0,   0, 378,  78);
-    add("GLSRescindPlugIn", 		   	      0,  80, 378,  78);
-    add("OplanPlugIn",      		   	      0, 160, 378,  78);
-    add("AllocationAssessorPlugIn for <3ID>", 	      0, 240, 378, 400);
-    add("MCCTriggerCreatorPlugIn",                  380,   0, 378,  78);
-    add("PolicyPlugIn",                             380,  80, 378, 108);
-    add("AllocationAssessorPlugIn for <3-69-ARBN>", 380, 160, 378, 400);
+    add("GLSInitPlugin",    		   	      0,   0, 378,  78);
+    add("GLSRescindPlugin", 		   	      0,  80, 378,  78);
+    add("OplanPlugin",      		   	      0, 160, 378,  78);
+    add("AllocationAssessorPlugin for <3ID>", 	      0, 240, 378, 400);
+    add("MCCTriggerCreatorPlugin",                  380,   0, 378,  78);
+    add("PolicyPlugin",                             380,  80, 378, 108);
+    add("AllocationAssessorPlugin for <3-69-ARBN>", 380, 160, 378, 400);
   }
 
   private UICoordinator(String name, int x, int y, int width, int height) {

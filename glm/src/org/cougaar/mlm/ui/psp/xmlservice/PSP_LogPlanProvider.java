@@ -109,7 +109,7 @@ public class PSP_LogPlanProvider extends PSP_BaseAdapter implements PlanServiceP
 
       // enter subscription and get objects from it
       Subscription subscription = 
-	psc.getServerPlugInSupport().subscribe(this, xmlPredicate);
+	psc.getServerPluginSupport().subscribe(this, xmlPredicate);
       Collection container = 
 	((CollectionSubscription)subscription).getCollection();
       Vector planObjects = new Vector(container.size());
@@ -127,7 +127,7 @@ public class PSP_LogPlanProvider extends PSP_BaseAdapter implements PlanServiceP
 	  planObjects.addElement(i.next());
 
       // unsubscribe, don't need this subscription any more
-      psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+      psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
 
       // create XML document for selected plan objects
       XMLPlanObjectProvider provider = new XMLPlanObjectProvider();

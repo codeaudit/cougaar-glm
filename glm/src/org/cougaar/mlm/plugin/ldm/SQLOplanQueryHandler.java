@@ -31,9 +31,9 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.service.BlackboardService;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 
 import org.cougaar.util.Parameters;
@@ -46,10 +46,10 @@ import org.cougaar.glm.ldm.plan.GeolocLocation;
 
 
 /* Abstract base class for query handlers which are invoked on behalf of
- * SQLOplanPlugIn.
+ * SQLOplanPlugin.
  */
 public abstract class SQLOplanQueryHandler extends QueryHandler {
-  protected SQLOplanBase myPlugIn;
+  protected SQLOplanBase myPlugin;
                
   /** Called on QueryHandler load to allow it to start any
    * threads or other once-only intialization.
@@ -65,16 +65,16 @@ public abstract class SQLOplanQueryHandler extends QueryHandler {
     execute();
   }
     
-  protected void initialize(LDMSQLPlugIn ldmplugin,
+  protected void initialize(LDMSQLPlugin ldmplugin,
                             ClusterIdentifier cid,
-                            ClusterServesPlugIn comp,
+                            ClusterServesPlugin comp,
                             RootFactory aldmf,
                             Properties params,
                             BlackboardService sub) {
     if (!(ldmplugin instanceof SQLOplanBase)) {
       throw new IllegalArgumentException("ldmplugin must be an SQLOplanBase");
     } else {
-    myPlugIn = (SQLOplanBase) ldmplugin;
+    myPlugin = (SQLOplanBase) ldmplugin;
       super.initialize(ldmplugin, cid, comp, aldmf, params, sub);
     }
   }
@@ -83,7 +83,7 @@ public abstract class SQLOplanQueryHandler extends QueryHandler {
     startQuery();                 // let the query have some state
 
     String q = getQuery();		
-    myPlugIn.executeSQL(q, this);
+    myPlugin.executeSQL(q, this);
 	  
     endQuery();                   // tell the query it is done.
   }

@@ -23,7 +23,7 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.plan.Schedule;
 
 import java.text.DateFormat;
@@ -36,7 +36,7 @@ import java.util.Date;
  */
 public class ScheduleParser{
 
-  public static Schedule getSchedule( LDMServesPlugIn ldm, Node node){
+  public static Schedule getSchedule( LDMServesPlugin ldm, Node node){
 
     Schedule newSchedule = null;
 

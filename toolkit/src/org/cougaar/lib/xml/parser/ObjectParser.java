@@ -23,8 +23,8 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.agent.ClusterServesPlugIn;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.core.domain.Factory;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -43,7 +43,7 @@ public class ObjectParser{
   
   static final String PG_STRING = "PG";
 
-  public static Object getObject(LDMServesPlugIn ldm, Node node){
+  public static Object getObject(LDMServesPlugin ldm, Node node){
     RootFactory ldmFactory = ldm.getFactory();
     Object obj = null;
 

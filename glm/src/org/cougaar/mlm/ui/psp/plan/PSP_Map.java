@@ -74,7 +74,7 @@ public class PSP_Map extends PSP_BaseAdapter
 
         if (query_parameters.existsParameter("RELATIONS"))  {
 
-          Subscription subscription = psc.getServerPlugInSupport().subscribe(this, getOrgPred());
+          Subscription subscription = psc.getServerPluginSupport().subscribe(this, getOrgPred());
           Enumeration en = ((CollectionSubscription)subscription).elements();
           boolean empty = true;
 
@@ -129,7 +129,7 @@ public class PSP_Map extends PSP_BaseAdapter
           }
         } else if (query_parameters.existsParameter("TASKS"))  {
           Subscription subscription = 
-            psc.getServerPlugInSupport().subscribe(this, getTaskPred());
+            psc.getServerPluginSupport().subscribe(this, getTaskPred());
           int numTasks = ((CollectionSubscription)subscription).size();
           out.println("numtasks "+numTasks);
         } else {

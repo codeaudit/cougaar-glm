@@ -86,33 +86,33 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
                                        annotation);
   }
 
-  protected Class getPlugInInterface() {
-    return FailureConsumptionPlugIn.class;
+  protected Class getPluginInterface() {
+    return FailureConsumptionPlugin.class;
   }
 
-  protected Class getDefaultPlugInClass() {
-    return FailureConsumptionDefaultPlugIn.class;
+  protected Class getDefaultPluginClass() {
+    return FailureConsumptionDefaultPlugin.class;
   }
 
-  public FailureConsumptionPlugInItem getPlugInItem(FailureConsumptionRate theFailureConsumptionRate, 
+  public FailureConsumptionPluginItem getPluginItem(FailureConsumptionRate theFailureConsumptionRate, 
  						    FailureConsumptionSegment theFailureConsumptionSegment,
- 						    FailureConsumptionPlugInItem aFailureConsumptionPlugInItem)
+ 						    FailureConsumptionPluginItem aFailureConsumptionPluginItem)
   {
     long theExecutionTime = theEventGenerator.getExecutionTime();
-    for (Iterator i = getEnabledPlugIns(); i.hasNext(); ) {
-      FailureConsumptionPlugIn thePlugIn = (FailureConsumptionPlugIn) i.next();
-      FailureConsumptionPlugInItem item =
-        thePlugIn.createFailureConsumptionItem(theFailureConsumptionRate, theFailureConsumptionSegment, theExecutionTime, aFailureConsumptionPlugInItem);
+    for (Iterator i = getEnabledPlugins(); i.hasNext(); ) {
+      FailureConsumptionPlugin thePlugin = (FailureConsumptionPlugin) i.next();
+      FailureConsumptionPluginItem item =
+        thePlugin.createFailureConsumptionItem(theFailureConsumptionRate, theFailureConsumptionSegment, theExecutionTime, aFailureConsumptionPluginItem);
       if (item != null) return item;
     }
     return null;
   }
 
-    public void firePlugInChanged() {
+    public void firePluginChanged() {
 	synchronized (schedule) {
 	    for (Iterator i = schedule.iterator(); i.hasNext(); ) {
 		FailureConsumptionSegment fcs = (FailureConsumptionSegment) i.next();
-		fcs.setPlugInItem(getPlugInItem(fcs.theFailureConsumptionRate, fcs, fcs.thePlugInItem));
+		fcs.setPluginItem(getPluginItem(fcs.theFailureConsumptionRate, fcs, fcs.thePluginItem));
 	    }
 	}
     }

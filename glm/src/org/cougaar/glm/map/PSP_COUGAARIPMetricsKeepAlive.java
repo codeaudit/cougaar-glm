@@ -125,7 +125,7 @@ public class PSP_COUGAARIPMetricsKeepAlive extends org.cougaar.lib.planserver.PS
   	  	
   	if (allChangeLocationTasks == null)
 		{
-			allChangeLocationTasks = psc.getServerPlugInSupport().subscribe(this, allChangeLocationTasksPredicate);
+			allChangeLocationTasks = psc.getServerPluginSupport().subscribe(this, allChangeLocationTasksPredicate);
 		}
 		
 		// Make a semaphore object to wait against while the KeepAlive connection is maintained

@@ -34,7 +34,7 @@ import java.text.DateFormat;
 
 import org.cougaar.core.blackboard.Subscriber;
 
-import org.cougaar.core.plugin.PlugInAdapter;
+import org.cougaar.core.plugin.PluginAdapter;
 
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.asset.AggregateAssetAdapter;
@@ -106,15 +106,15 @@ public class Perturbation implements Runnable
    private HashMap attributes_;
    private Vector objects_;
    private Subscriber objectSubscriber_;
-   private PerturbationPlugIn pertPlugIn_;
+   private PerturbationPlugin pertPlugin_;
    
 /**
  * @param perturbationData XML Perturbation Data Node    
  */
-   public Perturbation ( Node perturbationData, PerturbationPlugIn pertPlugIn )
+   public Perturbation ( Node perturbationData, PerturbationPlugin pertPlugin )
    {
       parseData( perturbationData );
-      this.pertPlugIn_ = pertPlugIn;
+      this.pertPlugin_ = pertPlugin;
    }
 
 /**
@@ -455,7 +455,7 @@ public class Perturbation implements Runnable
                                methodName, methodParams, methodParams );
                }
                catch ( Exception exception )
-               {				                  System.out.println("<<<PerturbationPlugIn>>> PERTURBATION" +
+               {				                  System.out.println("<<<PerturbationPlugin>>> PERTURBATION" +
                         " ERROR::Cluster with UIC " + getUIC() + 
                         "; Asset with item_id " + getItemId() + "\n" +                         exception.toString());
                }		
@@ -563,14 +563,14 @@ public class Perturbation implements Runnable
       }
       catch ( NoSuchMethodException nsme )
       {
-         System.out.println("<<<PerturbationPlugIn>>>PERTURBATION " +
+         System.out.println("<<<PerturbationPlugin>>>PERTURBATION " +
                "ERROR::Cluster with UIC " + getUIC() + 
                "; Asset with item_id " + getItemId() + "\n" +
                nsme.toString() );
       }
       catch ( Exception exception )
       {
-         System.out.println("<<<PerturbationPlugIn>>> PERTURBATION " +
+         System.out.println("<<<PerturbationPlugin>>> PERTURBATION " +
                                "ERROR::Cluster with UIC " +getUIC() +
                "; Asset with item_id " + getItemId() + "\n" +
                exception.toString() );
@@ -597,7 +597,7 @@ public class Perturbation implements Runnable
       }
       catch ( Exception exception )
       {
-         System.out.println("<<<PerturbationPlugIn>>> PERTURBATION " +
+         System.out.println("<<<PerturbationPlugin>>> PERTURBATION " +
                "ERROR::Cluster with UIC " + getUIC() +
                "; Asset with item_id " + getItemId() + "\n" +
                 exception.toString() );
@@ -614,7 +614,7 @@ public class Perturbation implements Runnable
    {
       boolean status;
 		 
-      System.out.println("\n<<<PerturbationPlugIn>>> Removing asset with " +
+      System.out.println("\n<<<PerturbationPlugin>>> Removing asset with " +
              "item_id " + getItemId() + " of Cluster with UIC " + getUIC() );
       objectSubscriber_.openTransaction();
       status = objectSubscriber_.publishRemove( asset );
@@ -656,7 +656,7 @@ public class Perturbation implements Runnable
             {
                // Get the field accessor method and invoke it to set the
                // new value.
-	            System.out.println("\n<<<PerturbationPlugIn>>> Perturbation " +   
+	            System.out.println("\n<<<PerturbationPlugin>>> Perturbation " +   
                   " on asset with item_id " + getItemId() + " of Cluster " +
                   " with UIC " + getUIC() + " ....Beginning.....");
 			
@@ -705,7 +705,7 @@ public class Perturbation implements Runnable
                methodParams = null;
                method = ( property.getClass() ).getMethod ( methodName,
                                                             methodParams );
-					                              System.out.println("\n<<<PerturbationPlugIn>>> " +
+					                              System.out.println("\n<<<PerturbationPlugin>>> " +
                   "UIC: " + getUIC() + ", item_id: " + getItemId() + "\n" +
                   getField() + " Field of Property " + getProperty() +
                   " has been changed to " + 
@@ -729,7 +729,7 @@ public class Perturbation implements Runnable
             if ( !endString.equals( "" ) )
                new_end_date = df.parse(endString);				
 
-            RootFactory ldmf = pertPlugIn_.getMyRootFactory();
+            RootFactory ldmf = pertPlugin_.getMyRootFactory();
             Schedule sched = ldmf.newSimpleSchedule( new_start_date,
                                                      new_end_date);
             ( (RoleScheduleImpl) rs).setAvailableSchedule( sched );
@@ -744,7 +744,7 @@ public class Perturbation implements Runnable
                            getAvailableSchedule().getStartDate();
             Date end = ( ( Asset ) asset).getRoleSchedule().
                            getAvailableSchedule().getEndDate();
-            System.out.println("\n<<<PerturbationPlugIn>>> " +
+            System.out.println("\n<<<PerturbationPlugin>>> " +
                "The available schedule for asset with item_id: " +
                getItemId() + ", from cluster with UIC: " + getUIC() +
                "has changed...\n" + "AVAILABLE SCHEDULE:\n" + 
@@ -753,13 +753,13 @@ public class Perturbation implements Runnable
       }
       catch ( NoSuchMethodException nsme )
       {
-         System.out.println("\n<<<PerturbationPlugIn>>> PERTURBATION " +
+         System.out.println("\n<<<PerturbationPlugin>>> PERTURBATION " +
             "ERROR::UIC: " + getUIC() + ", item_id: " + getItemId() + "\n" +  
             nsme.toString());
       }
       catch ( Exception exception )
       {
-         System.out.println("\n<<<PerturbationPlugIn>>> PERTURBATION "
+         System.out.println("\n<<<PerturbationPlugin>>> PERTURBATION "
             + "ERROR::UIC: " + getUIC() + ", item_id: " + getItemId() +
             "\n" + exception.toString() );
          exception.printStackTrace();
@@ -807,7 +807,7 @@ public class Perturbation implements Runnable
                }
                else
                {
-                  System.out.println("\n<<<PerturbationPlugIn>>> PERTURBATION " +
+                  System.out.println("\n<<<PerturbationPlugin>>> PERTURBATION " +
                      "ERROR::" + "\tPerturbation Unsuccessful...Property " +
                      getProperty() + " is not accessible on Asset with item_id " +
                      getItemId() + " in Cluster with UIC " + getUIC() );
@@ -827,7 +827,7 @@ public class Perturbation implements Runnable
             }
             else
             {
-               System.out.println("\n<<<PerturbationPlugIn>>> PERTURBATION ERROR::"
+               System.out.println("\n<<<PerturbationPlugin>>> PERTURBATION ERROR::"
                   + "\tPerturbation Unsuccessful...Property " + getProperty() +
                   " is not accessible on Oplan with OplanId " + getItemId() );
             }
@@ -835,19 +835,19 @@ public class Perturbation implements Runnable
       }
       else
       {
-         System.out.println("\n<<<PerturbationPlugIn>>> PERTURBATION ERROR::" +
+         System.out.println("\n<<<PerturbationPlugin>>> PERTURBATION ERROR::" +
             "\tPerturbation Unsuccessful...Cluster: " + this.getUIC() +
             ", Asset: " + this.getItemId() + " not available!!!" );			
       }
 	  
       if ( !status )
       {
-         System.out.println("\n<<<PerturbationPlugIn>>> PERTURBATION ERROR::" +
+         System.out.println("\n<<<PerturbationPlugin>>> PERTURBATION ERROR::" +
             "\tPerturbation Unsuccessful...Unable to modify " + getField() + 
             " of the " + getProperty() + " on Asset with item_id " +
             this.getItemId() + " of Cluster with UIC " + this.getUIC() );
       }	
-      System.out.println("\n<<<PerturbationPlugIn>>> Perturbation on object " +
+      System.out.println("\n<<<PerturbationPlugin>>> Perturbation on object " +
             "with UIC: " + this.getUIC() + "; item_id: " + this.getItemId() +
             "....Ending");
    }

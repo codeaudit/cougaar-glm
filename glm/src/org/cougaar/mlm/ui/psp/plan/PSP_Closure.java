@@ -27,7 +27,7 @@ import java.util.*;
 
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
@@ -303,7 +303,7 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
         (OrgActivity []) orgActivities.toArray();
       System.out.println("DEBUG:!!!!"+orgActivities.size());
 
-      PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+      PluginDelegate delegate = psc.getServerPluginSupport().getDirectDelegate();
       delegate.openTransaction();
 
       if (doPost(orgActivityArray,postData) == true)

@@ -64,17 +64,17 @@ public class LogPlansFrame extends JFrame {
   /**
    *
    */
-  static public void addLogPlan( final LogPlanModelServerPlugIn logPlanModelServerPlugIn) {
+  static public void addLogPlan( final LogPlanModelServerPlugin logPlanModelServerPlugin) {
     if ( deactivate) {
       return;
     }
-    String clusterName = logPlanModelServerPlugIn.getClusterName();
+    String clusterName = logPlanModelServerPlugin.getClusterName();
     if ( !(list.contains( clusterName))) {
       list.add( clusterName);
       JButton button = new JButton( clusterName);
       button.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          LogPlanFrame logPlanFrame = new LogPlanFrame( logPlanModelServerPlugIn.getClusterName(), logPlanModelServerPlugIn.getLogPlanModel());
+          LogPlanFrame logPlanFrame = new LogPlanFrame( logPlanModelServerPlugin.getClusterName(), logPlanModelServerPlugin.getLogPlanModel());
           logPlanFrame.pack();
           logPlanFrame.show();
         }

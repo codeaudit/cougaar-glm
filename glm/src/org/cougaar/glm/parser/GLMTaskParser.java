@@ -70,7 +70,7 @@ public class GLMTaskParser{
 					   RootFactory ldmf, 
 					   ClusterIdentifier clusterIdentifier, 
 					   ConfigFinder configFinder,
-					   LDMServesPlugIn ldmServesPlugIn) {
+					   LDMServesPlugin ldmServesPlugin) {
     try{
       DOMParser parser = new DOMParser();
       parser.setFeature(
@@ -84,7 +84,7 @@ public class GLMTaskParser{
 
 	  myLdmf    = ldmf;
 	  this.clusterIdentifier = clusterIdentifier;
-      myLdm     = ldmServesPlugIn;
+      myLdm     = ldmServesPlugin;
       myTasks   = this.getTaskList(doc);
     }
     catch(FileNotFoundException fnfe){
@@ -137,5 +137,5 @@ public class GLMTaskParser{
   private ClusterIdentifier   clusterIdentifier  = null;
   private RootFactory           myLdmf     = null;
   private Vector                myTasks    = null;
-  private LDMServesPlugIn       myLdm      = null;
+  private LDMServesPlugin       myLdm      = null;
 }

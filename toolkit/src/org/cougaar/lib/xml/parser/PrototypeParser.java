@@ -23,8 +23,8 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.agent.ClusterServesPlugIn;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 
 /**
@@ -40,13 +40,13 @@ public class PrototypeParser {
       System.out.println ("PrototypeParser - debug set to true");
   }
 
-    public static void cachePrototype(LDMServesPlugIn ldm, Node node) {
+    public static void cachePrototype(LDMServesPlugin ldm, Node node) {
       cachePrototype(ldm, node, false); 
     }
-    public static Asset cachePrototype(LDMServesPlugIn ldm, Node node,
+    public static Asset cachePrototype(LDMServesPlugin ldm, Node node,
 					boolean return_first) {
    
-    LDMServesPlugIn myLDMServesPlugIn = ldm;
+    LDMServesPlugin myLDMServesPlugin = ldm;
     Asset prototype = null;
 
     if(node.getNodeName().equals("prototype")){
@@ -60,7 +60,7 @@ public class PrototypeParser {
       // (Consumables, Repairables, etc.) assets.
       //:: Check and see if this prototype is already cached (do nothing).
       //:: If prototype is not cached then go ahead and create then cache prototype.
-      //      if(!myLDMServesPlugIn.isPrototypeCached(prototypeName)) {
+      //      if(!myLDMServesPlugin.isPrototypeCached(prototypeName)) {
       //
       for(int i = 0; i < nlength; i++) {
 	Node    child       = nlist.item(i);

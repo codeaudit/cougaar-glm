@@ -27,7 +27,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.*;
 
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.ItineraryElement;

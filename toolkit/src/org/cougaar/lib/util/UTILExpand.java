@@ -42,11 +42,11 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
 
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 
 import org.cougaar.core.util.UID;
 
-import org.cougaar.lib.filter.UTILPlugIn;
+import org.cougaar.lib.filter.UTILPlugin;
 import org.cougaar.lib.param.ParamTable;
 
 import java.util.ArrayList;
@@ -172,7 +172,7 @@ public class UTILExpand {
    * @param ldmf the RootFactory
    * @param taskToClone the task to be cloned
    * @return cloned copy of the original task
-   * @see org.cougaar.lib.plugin.UTILAllocatorPlugInAdapter
+   * @see org.cougaar.lib.plugin.UTILAllocatorPluginAdapter
    */
   public static NewTask cloneTask(RootFactory ldmf,
 				  Task taskToClone) {
@@ -520,7 +520,7 @@ public class UTILExpand {
    * @param t task to make a failed expansion for
    * @return Expansion 
    */
-  public static Expansion makeFailedExpansion(UTILPlugIn creator,
+  public static Expansion makeFailedExpansion(UTILPlugin creator,
 					      RootFactory ldmf, Task t) {
     AllocationResult failedAR = 
       ldmf.newAllocationResult(1.0, false,
@@ -537,7 +537,7 @@ public class UTILExpand {
   /** 
    * This method Expands the given Task.
    * @param ldmf the LDMFactory
-   * @param plugin the PlugInDelegate
+   * @param plugin the PluginDelegate
    * @param pluginName string representation of the plugin's name
    * @param paramTable used for myExtraOutput
    * @param myExtraOutput used to turn on extra outputs
@@ -545,7 +545,7 @@ public class UTILExpand {
    * @param subtasks the expanded subtasks
    */
 
-  public static void handleTask(RootFactory ldmf, PlugInDelegate plugin, String pluginName,
+  public static void handleTask(RootFactory ldmf, PluginDelegate plugin, String pluginName,
 				boolean wantConfidence, boolean myExtraOutput,
 				Task t, List subtasks) {
 	handleTask (ldmf, plugin.getBlackboardService (), pluginName, wantConfidence, myExtraOutput, t, subtasks);
@@ -555,7 +555,7 @@ public class UTILExpand {
 				boolean wantConfidence, boolean myExtraOutput,
 				Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
-      throw new UTILPlugInException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
+      throw new UTILPluginException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
     }
 
     // WARNING: The following MPTask code is somewhat GlobalSea specific.
@@ -579,7 +579,7 @@ public class UTILExpand {
 	if (sub_t_i.next() instanceof MPTask)
 	 contains_mptasks = true;
 	else if (contains_mptasks == true)
-	  throw new UTILPlugInException(pluginName +
+	  throw new UTILPluginException(pluginName +
 					".handleTask : ERROR: Found expansion with mixed Task and MPTask children.");
       } // while
       
@@ -629,7 +629,7 @@ public class UTILExpand {
   /** 
    * who uses this anymore anyway?  TOPS?
    */
-  public static Expansion handleTaskPrime(RootFactory ldmf, PlugInDelegate plugin, String pluginName,
+  public static Expansion handleTaskPrime(RootFactory ldmf, PluginDelegate plugin, String pluginName,
 				boolean wantConfidence, boolean myExtraOutput,
 										  Task t, List subtasks) {
 	return handleTaskPrime (ldmf, plugin.getBlackboardService(), pluginName, wantConfidence, myExtraOutput, t, subtasks);
@@ -642,7 +642,7 @@ public class UTILExpand {
 				boolean wantConfidence, boolean myExtraOutput,
 				Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
-      throw new UTILPlugInException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
+      throw new UTILPluginException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
     }
 
     // WARNING: The following MPTask code is somewhat GlobalSea specific.
@@ -666,7 +666,7 @@ public class UTILExpand {
 	if (sub_t_i.next() instanceof MPTask)
 	 contains_mptasks = true;
 	else if (contains_mptasks == true)
-	  throw new UTILPlugInException(pluginName +
+	  throw new UTILPluginException(pluginName +
 					".handleTask : ERROR: Found expansion with mixed Task and MPTask children.");
       } // while
       

@@ -31,7 +31,7 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;
@@ -150,7 +150,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         if( query_parameters.getInputLines()[0].indexOf("?UPDATE") > -1 ) {
               processFormPOST(query_parameters, psc, qObject, session, out);
         }
-        PlugInDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
+        PluginDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
         displayUserSearchCheckBoxes(out,  query_parameters, qObject, session, psc, pd.getClusterIdentifier().cleanToString());
         out.flush();
   }
@@ -182,7 +182,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                       YPDemoSession session, PrintStream out)
     {
         System.out.println("[PSP_YPDemo.processGetAttributesFromPOST()] Entered.");
-        NamingService nservice = psc.getServerPlugInSupport().getNamingService();
+        NamingService nservice = psc.getServerPluginSupport().getNamingService();
         /**
          *  Returns List of Binding objects which match predicate
          *
@@ -226,9 +226,9 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         System.out.println("[PSP_YPDemo.processUpdateAttributesFromPOST()] Entered.");
 
         //session.append( session.createHeaderToSessionTranscript("Attributes added to YP.") );
-        NamingService nservice = psc.getServerPlugInSupport().getNamingService();
+        NamingService nservice = psc.getServerPluginSupport().getNamingService();
 
-        PlugInDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
+        PluginDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
         Subscription subscription = psc.getServerPluginSupport().subscribe(this,
                                            myAllObjsPredicate );
         Collection container = ((CollectionSubscription)subscription).getCollection();
@@ -324,7 +324,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
           String decodedpost = URLDecoder.decode(post);
           System.out.println("DECODED POST="+  decodedpost);
 
-          NamingService nservice = psc.getServerPlugInSupport().getNamingService();
+          NamingService nservice = psc.getServerPluginSupport().getNamingService();
           //---------------------------------------------
           String tag3 = qObject.GET_ALL;
           int ind3 = decodedpost.indexOf(tag3);

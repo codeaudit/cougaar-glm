@@ -35,7 +35,7 @@ import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.plugins.ClusterOPlan;
-import org.cougaar.glm.plugins.GLMDecorationPlugIn;
+import org.cougaar.glm.plugins.GLMDecorationPlugin;
 import org.cougaar.glm.plugins.AssetUtils;
 import org.cougaar.glm.plugins.MaintainedItem;
 import org.cougaar.glm.plugins.TaskUtils;
@@ -48,7 +48,7 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
   /** 
    * @see Class#ProjectionTasksPredicate
    **/
-  public GenerateSupplyDemandExpander(GLMDecorationPlugIn pi, Organization org, Vector types) {
+  public GenerateSupplyDemandExpander(GLMDecorationPlugin pi, Organization org, Vector types) {
     super(pi, org, types, new ProjectionTasksPredicate(pi,org,types));
   }
 
@@ -59,7 +59,7 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
     String myOrgName_;
     Vector resourceTypes_;
 
-    public ProjectionTasksPredicate(GLMDecorationPlugIn pi, Organization org, Vector types) {
+    public ProjectionTasksPredicate(GLMDecorationPlugin pi, Organization org, Vector types) {
       myOrgName_ = org.getItemIdentificationPG().getItemIdentification();
       clusterId_ = pi.getMyDelegate().getClusterIdentifier();
       resourceTypes_ = types;

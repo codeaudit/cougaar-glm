@@ -25,7 +25,7 @@ import java.util.*;
 
 import org.cougaar.core.domain.Factory;
 import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.blackboard.LogPlan;
 import org.cougaar.core.agent.ClusterServesLogicProvider;
 import org.cougaar.core.agent.ClusterIdentifier;
@@ -46,7 +46,7 @@ import org.cougaar.glm.ldm.asset.*;
  **/
 
 public class GLMFactory implements org.cougaar.core.domain.Factory {
-  public GLMFactory(LDMServesPlugIn ldm) {
+  public GLMFactory(LDMServesPlugin ldm) {
     RootFactory rf = ldm.getFactory();
     rf.addAssetFactory(new org.cougaar.glm.ldm.asset.AssetFactory());
     rf.addPropertyGroupFactory(new org.cougaar.glm.ldm.asset.PropertyGroupFactory());

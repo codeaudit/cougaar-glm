@@ -306,7 +306,7 @@ public class PSP_Stoplight extends PSP_BaseAdapter implements PlanServiceProvide
     };
 
     Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, myPredicate);
+      psc.getServerPluginSupport().subscribe(this, myPredicate);
     Collection container = 
       ((CollectionSubscription)subscription).getCollection();
 
@@ -314,7 +314,7 @@ public class PSP_Stoplight extends PSP_BaseAdapter implements PlanServiceProvide
     getEquipmentStatus(container);
 
     // unsubscribe, don't need this subscription any more
-    psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+    psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
 
     // send the status
     if (statusHashtable != null) {

@@ -35,19 +35,19 @@ import java.util.*;
   * @author  ALPINE <alpine-software@bbn.com>
   *
   **/
- public class ConstructionInventoryDecorator extends  PlugInDecorator {
+ public class ConstructionInventoryDecorator extends  PluginDecorator {
     private static final String            CLASSNAME = "ConstructionInventoryDecorator";
     private static final String          CONSTRUCTION = "ClassIVConstructionMaterial";
 
-    InventoryPlugIn thisPlugIn_;
+    InventoryPlugin thisPlugin_;
     Service serv_;
     Agency agency_;
     Organization cluster_;
 
     /** Constructor */
-    public ConstructionInventoryDecorator (InventoryPlugIn plugin, Organization cluster) {
+    public ConstructionInventoryDecorator (InventoryPlugin plugin, Organization cluster) {
 	super(plugin);
-	thisPlugIn_ = plugin;
+	thisPlugin_ = plugin;
 	cluster_ = cluster;
 	serv_ = cluster_.getOrganizationPG().getService();
 	agency_ = cluster_.getOrganizationPG().getAgency();
@@ -57,27 +57,27 @@ import java.util.*;
      *   Sets up SupplyExpander, WithdrawAllocator, ConstructionInventoryManager and
      *   ExternalAllocator.
      */
-    public void decoratePlugIn(Organization cluster) {
+    public void decoratePlugin(Organization cluster) {
 	if (needConstructionInventory()) {
             //SAE - Reads in inventory file items
             //      Inventory file name needs to be of format <org>_<type>.inv
             //      where type for construction is classivconstructionmaterial
             //      see CONSTRUCTION string defined above.
             //      such as ENG_classivconstructionmaterial.inv
-	    thisPlugIn_.initializeInventoryFile(CONSTRUCTION);
+	    thisPlugin_.initializeInventoryFile(CONSTRUCTION);
 
-	    addTaskProcessor(new SupplyExpander(thisPlugIn_, cluster_, CONSTRUCTION));
-	    addTaskProcessor(new WithdrawAllocator(thisPlugIn_, cluster_, CONSTRUCTION, ConstructionConstants.CONSTRUCTIONSUPPLYPROVIDER));
-	    addTaskProcessor(new ConstructionInventoryManager(thisPlugIn_, cluster_, CONSTRUCTION));
+	    addTaskProcessor(new SupplyExpander(thisPlugin_, cluster_, CONSTRUCTION));
+	    addTaskProcessor(new WithdrawAllocator(thisPlugin_, cluster_, CONSTRUCTION, ConstructionConstants.CONSTRUCTIONSUPPLYPROVIDER));
+	    addTaskProcessor(new ConstructionInventoryManager(thisPlugin_, cluster_, CONSTRUCTION));
 	}
-	addTaskProcessor(new ExternalAllocator(thisPlugIn_, cluster_, CONSTRUCTION, ConstructionConstants.CONSTRUCTIONSUPPLYPROVIDER));
+	addTaskProcessor(new ExternalAllocator(thisPlugin_, cluster_, CONSTRUCTION, ConstructionConstants.CONSTRUCTIONSUPPLYPROVIDER));
 
 //  	if (needSimpleTransportAllocator() ) {
-//  	    addTaskProcessor(new TerminalTransportAllocator(thisPlugIn_, cluster_));
+//  	    addTaskProcessor(new TerminalTransportAllocator(thisPlugin_, cluster_));
 //  	}
 
 //  	if (needTransportAllocator() ) {
-//  	    addTaskProcessor(new TransportAllocator(thisPlugIn_, cluster_));
+//  	    addTaskProcessor(new TransportAllocator(thisPlugin_, cluster_));
 //  	}
 
 

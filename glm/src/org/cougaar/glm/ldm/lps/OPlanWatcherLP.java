@@ -181,7 +181,7 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
 
     // RAY - Turned this back on since some plugins need to see
     // updated location schedules. The offending plugin
-    // (PropagationPlugIn) checks explicitly for
+    // (PropagationPlugin) checks explicitly for
     // RelationshipSchedule.RelationshipScheduleChangeReport
     // ChangeReports and re-propagates IFF the changes include such a
     // ChangeReport

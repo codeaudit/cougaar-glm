@@ -29,7 +29,7 @@ import java.util.Vector;
 import org.cougaar.glm.ldm.asset.ClassVIIMajorEndItem;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.Service;
-import org.cougaar.glm.plugins.PlugInDecorator;
+import org.cougaar.glm.plugins.PluginDecorator;
 import org.cougaar.glm.plugins.projection.GenerateSupplyDemandExpander;
 
 /**
@@ -38,17 +38,17 @@ import org.cougaar.glm.plugins.projection.GenerateSupplyDemandExpander;
  *
  **/
 
-public class ConstructionProjectionDecorator extends PlugInDecorator {
+public class ConstructionProjectionDecorator extends PluginDecorator {
     private static final String            CLASSNAME = "ConstructionProjectionDecorator";
     // move to the plug in
     Service serv_;
-    ConstructionProjectionPlugIn thisPlugIn_;
+    ConstructionProjectionPlugin thisPlugin_;
     Organization cluster_;
     
     /**  @param plugin to be configured */
-    public ConstructionProjectionDecorator(ConstructionProjectionPlugIn plugin) {
+    public ConstructionProjectionDecorator(ConstructionProjectionPlugin plugin) {
 	    super(plugin);
-	    thisPlugIn_ = plugin;
+	    thisPlugin_ = plugin;
     }
 
     /** Predicate for MEIs - used to define consumers for Construction items.
@@ -72,22 +72,22 @@ public class ConstructionProjectionDecorator extends PlugInDecorator {
      *  this cluster represents.
      *  @param cluster the given plugin is loaded into
      */
-    public void decoratePlugIn(Organization cluster) {
+    public void decoratePlugin(Organization cluster) {
       cluster_ = cluster;
 	    Service serv_ = cluster_.getOrganizationPG().getService();
 	    // assuming that 'end' clusters have agencies
-	    String theater_ = thisPlugIn_.getTheater();
+	    String theater_ = thisPlugin_.getTheater();
 
-	    addTaskProcessor( new ConstructionGenerateDemandProjector(thisPlugIn_, cluster_));
+	    addTaskProcessor( new ConstructionGenerateDemandProjector(thisPlugin_, cluster_));
     	// This processor is in GLM and creates supply tasks when the flag '+ConstructionSupplyTasks' is in
 	    // the parameter list of this plugin
 
       // CDW - not supply, or is it?      - no part_types
-      // Vector part_types = thisPlugIn_.getParameters(); this get us nothing...
+      // Vector part_types = thisPlugin_.getParameters(); this get us nothing...
       Vector partTypes = new Vector();
       partTypes.add("ClassIVConstructionMaterial");
       System.out.println("Decorating with part_type of " + partTypes.elementAt(0));
-      addTaskProcessor( new GenerateSupplyDemandExpander(thisPlugIn_, cluster_, partTypes));
+      addTaskProcessor( new GenerateSupplyDemandExpander(thisPlugin_, cluster_, partTypes));
     }
 
 }

@@ -34,7 +34,7 @@ import org.cougaar.glm.ldm.asset.VolumetricInventory;
 import org.cougaar.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.plugins.*;
-import org.cougaar.planning.plugin.DeletionPlugIn;
+import org.cougaar.planning.plugin.DeletionPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.measure.*;
@@ -137,7 +137,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 
 
 
-  public InventoryManager(InventoryPlugIn plugin, Organization org, String type) {
+  public InventoryManager(InventoryPlugin plugin, Organization org, String type) {
     super(plugin, org, type);
     inventoryAllocSubscription_ = subscribe(new AllocToInventoryPredicate(supplyType_));
     modifiedInventorySubscription_ = subscribe(new ModifiedInventoryPredicate(supplyType_));
@@ -165,20 +165,20 @@ public abstract class InventoryManager extends InventoryProcessor {
     if (!changedSet_.isEmpty()) {
       printDebug(2,"\n\n\nBEGIN CYCLE___________________________________________\n");
 	    
-      if (inventoryPlugIn_.getDetermineRequirementsTask() == null) {
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
+      if (inventoryPlugin_.getDetermineRequirementsTask() == null) {
+	Enumeration inventories = inventoryPlugin_.getInventoryBins(supplyType_);
 	changedSet_ = new HashSet();
 	while (inventories.hasMoreElements()) {
 	  changedSet_.add(inventories.nextElement());
 	}
-	System.out.println("#####"+clusterId_+" is running because (inventoryPlugIn_.getDetermineRequirementsTask() == null)"); 
+	System.out.println("#####"+clusterId_+" is running because (inventoryPlugin_.getDetermineRequirementsTask() == null)"); 
 
 	handleRescinds();
 
 	// RJB now we have handled all inventories
 	changedSet_=null;
 
-      } else if (inventoryPlugIn_.hasSeenAllConsumers()) {
+      } else if (inventoryPlugin_.hasSeenAllConsumers()) {
 	handleChangedInventories();
 	// RJB now we have handled all inventories
 	changedSet_=null;
@@ -219,7 +219,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     forcePrintConcise = f;
   }
 
-  public static class IMDeletionPolicy extends DeletionPlugIn.DeletionPolicy {
+  public static class IMDeletionPolicy extends DeletionPlugin.DeletionPolicy {
     public String supplyType_;
   }
 
@@ -228,7 +228,7 @@ public abstract class InventoryManager extends InventoryProcessor {
       (IMDeletionPolicy) ldmFactory_.newPolicy(IMDeletionPolicy.class.getName());
     policy.supplyType_ = supplyType_;
     policy.init(supplyType_ + " Due Out Deletion",
-		inventoryPlugIn_.getDueOutPredicate(supplyType_),
+		inventoryPlugin_.getDueOutPredicate(supplyType_),
 		deletionDelay);
     return policy;
   }
@@ -402,7 +402,7 @@ public abstract class InventoryManager extends InventoryProcessor {
   }
 
   private Task newProjectSupplyTask(Inventory inventory, long start, long end, Rate rate) {
-    Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
+    Task parentTask = inventoryPlugin_.findOrMakeMILTask(inventory);
     // Create start and end time preferences (strictly at)
     ScoringFunction score;
     Vector prefs = new Vector();
@@ -434,7 +434,7 @@ public abstract class InventoryManager extends InventoryProcessor {
   }
 
   private Inventory getInventoryForTask (Task task) {
-    return inventoryPlugIn_.findOrMakeInventory(supplyType_,(Asset)task.getDirectObject());
+    return inventoryPlugin_.findOrMakeInventory(supplyType_,(Asset)task.getDirectObject());
   }
 
   // ********************************************************
@@ -459,7 +459,7 @@ public abstract class InventoryManager extends InventoryProcessor {
       inv = (Inventory)inventories.next();
       invpg = (InventoryPG)inv.getInventoryPG();
       // maintainInventory Task is the parent of all the refills for this inventory
-      Task maintainInventory = inventoryPlugIn_.findOrMakeMILTask(inv);
+      Task maintainInventory = inventoryPlugin_.findOrMakeMILTask(inv);
       // should never be null but may want to add a check AHF
       total += invpg.addPreviousRefillsToInventory(maintainInventory);
       invpg.determineInventoryLevels();
@@ -606,7 +606,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     // FIX ME - sets to today??? check dates.
     // 	task.setCommitmentDate(date);
     //      		printDebug(1,"orderRefill task:"+TaskUtils.taskDesc(task));
-    Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
+    Task parentTask = inventoryPlugin_.findOrMakeMILTask(inventory);
     plugin_.publishAddToExpansion(parentTask, task);
     if (isPrintConcise()) {
       printConcise("orderNewRefill() "
@@ -935,7 +935,7 @@ public abstract class InventoryManager extends InventoryProcessor {
       invpg.updateContentSchedule(inventory);
 
       // detailed Inventory Schedule for demo purposes only
-      Boolean detailed = (Boolean)inventoryPlugIn_.getParam("Detailed");
+      Boolean detailed = (Boolean)inventoryPlugin_.getParam("Detailed");
       if ((detailed != null) && detailed.booleanValue()) {
 	invpg.updateDetailedContentSchedule(inventory);
       }
@@ -1102,11 +1102,11 @@ public abstract class InventoryManager extends InventoryProcessor {
 	changed = true;
       }
       if (pol.hasFillToCapacityRule()) {
-	inventoryPlugIn_.setFillToCapacity(supplyType_, pol.getFillToCapacity());
+	inventoryPlugin_.setFillToCapacity(supplyType_, pol.getFillToCapacity());
 	changed = true;
       }
       if (pol.hasMaintainAtCapacityRule()) {
-	inventoryPlugIn_.setMaintainAtCapacity(supplyType_, pol.getMaintainAtCapacity());
+	inventoryPlugin_.setMaintainAtCapacity(supplyType_, pol.getMaintainAtCapacity());
 	changed = true;
       }
       if (pol.hasSwitchoverRule()) {
@@ -1114,7 +1114,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	  new ProjectionWeightImpl(pol.getWithdrawSwitchoverDay(),
 				   pol.getRefillSwitchoverDay(),
 				   pol.getTurnOffProjections());
-	inventoryPlugIn_.setProjectionWeight(supplyType_, newWeight);
+	inventoryPlugin_.setProjectionWeight(supplyType_, newWeight);
 	changed = true;
       }
     }

@@ -22,7 +22,7 @@
 
 /*
  * File: DMPIClusterStartup.java
- * Heavily modified from original to be an LDMPlugIn
+ * Heavily modified from original to be an LDMPlugin
  */
 
 package org.cougaar.mlm.plugin;
@@ -33,13 +33,13 @@ package org.cougaar.mlm.plugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import java.util.Enumeration;
-import org.cougaar.core.agent.ClusterServesPlugIn;
-import org.cougaar.core.domain.LDMServesPlugIn;
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.core.domain.LDMServesPlugin;
+import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.core.plugin.PrototypeProvider;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.LDMPlugInServesLDM;
+import org.cougaar.core.plugin.LDMPluginServesLDM;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -62,16 +62,16 @@ import java.util.Vector;
 import org.cougaar.util.ConfigFinder;
 
 /**
- * This Data Management PlugIn class reads a .ini file and creates a Cluster'
- * startup data.  For the moment the PlugIn only instantiates the LDM
+ * This Data Management Plugin class reads a .ini file and creates a Cluster'
+ * startup data.  For the moment the Plugin only instantiates the LDM
  * classes of interest to this Cluster.
  * <p>
  **/
 
-public final class DMPIClusterStartup extends SimplePlugIn
-  implements LDMPlugInServesLDM {
+public final class DMPIClusterStartup extends SimplePlugin
+  implements LDMPluginServesLDM {
 
-  private LDMServesPlugIn ldm = null;
+  private LDMServesPlugin ldm = null;
   private RootFactory ldmf = null;
 
   /** The file name for the assets **/
@@ -103,7 +103,7 @@ public final class DMPIClusterStartup extends SimplePlugIn
    * </PRE>
    * @param aSpec The string object with the format (Type, NSN, qty, VIN).
    * @exception NumberFormatException If the qunatitiy can not be converted to a number.
-   * @exception DMPlugInException If unable to create the requested Asset.
+   * @exception DMPluginException If unable to create the requested Asset.
    * @exception RootFactoryExceptionm I fRootFactory throws exception during creation.
    **/
   private Asset buildAsset( String aSpec ) throws NumberFormatException
@@ -257,7 +257,7 @@ public final class DMPIClusterStartup extends SimplePlugIn
    * INVARIANCE:
    * </PRE>
    * @return Vector The vector object that contains the parsed data.
-   * @exception DMPlugInException If the key is not located in the file.
+   * @exception DMPluginException If the key is not located in the file.
    **/
   private Vector parseDataFile()  {
     Vector myParsedData = null;
@@ -292,7 +292,7 @@ public final class DMPIClusterStartup extends SimplePlugIn
    * We'll not actually do anything later on.
    **/
   protected void setupSubscriptions() {
-    ldm = (LDMServesPlugIn) getLDM();
+    ldm = (LDMServesPlugin) getLDM();
     ldmf = ldm.getFactory();
     theKey = getClusterIdentifier().getAddress();
 

@@ -118,7 +118,7 @@ public class GSSchedulerResult {
 
   /** 
    * test to use before calling removeTaskGroupForAsset 
-   * Used by UTILGSSAggregatorPlugIn to know when to let scheduler
+   * Used by UTILGSSAggregatorPlugin to know when to let scheduler
    * forget about a task group.
    * 
    * This is part of the problem where there can be a time gap between

@@ -42,8 +42,8 @@ import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.plugin.Assessor;
-import org.cougaar.core.plugin.PlugInDelegate;
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.core.plugin.util.PluginHelper;
 import org.cougaar.core.util.UID;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
@@ -224,7 +224,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
                             PlanServiceContext psc,
                             PlanServiceUtilities psu) throws Exception {
     Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, allAssetPred);
+      psc.getServerPluginSupport().subscribe(this, allAssetPred);
     Enumeration assets = ((CollectionSubscription)subscription).elements();
 
     myCalendar.set(1995, 0, 1, 0, 0, 0);
@@ -306,8 +306,8 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       throw new RuntimePSPException("Unable to parse end date = " + endStr);
     }
 
-    ServerPlugInSupport serverPlugInSupport = psc.getServerPlugInSupport();
-    PlugInDelegate delegate = serverPlugInSupport.getDirectDelegate();
+    ServerPluginSupport serverPluginSupport = psc.getServerPluginSupport();
+    PluginDelegate delegate = serverPluginSupport.getDirectDelegate();
 
     delegate.openTransaction();
     Subscription subscription = delegate.subscribe(assetByUIDPred);
@@ -360,19 +360,19 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     }
     
     RootFactory ldmFactory = 
-      serverPlugInSupport.getFactoryForPSP();
+      serverPluginSupport.getFactoryForPSP();
     
     NewTask newTask = createUnavailableTask(asset, startDate, endDate, 
                                             ldmFactory);
 
     ClusterIdentifier clusterID = 
-      ClusterIdentifier.getClusterIdentifier(serverPlugInSupport.getClusterIDAsString());
+      ClusterIdentifier.getClusterIdentifier(serverPluginSupport.getClusterIDAsString());
     newTask.setSource(clusterID);
     newTask.setDestination(clusterID);
     delegate.publishAdd(newTask);
 
     AllocationResult allocationResult = 
-      PlugInHelper.createEstimatedAllocationResult(newTask, ldmFactory, 100.0, true);
+      PluginHelper.createEstimatedAllocationResult(newTask, ldmFactory, 100.0, true);
     Allocation allocation = 
       ldmFactory.createAllocation(ldmFactory.getRealityPlan(),
                                   newTask,
@@ -424,7 +424,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     delegate.closeTransaction();
   }
  
-    private Task queryForMyParentTask ( PlugInDelegate delegate, UID parentsUID) {
+    private Task queryForMyParentTask ( PluginDelegate delegate, UID parentsUID) {
 
 	myParentUID = parentsUID;
 	if (debug)
@@ -432,7 +432,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
 	Subscription subscription = delegate.subscribe(parentTaskPred);
 	Collection container = 
 	    ((CollectionSubscription)subscription).getCollection();
-	//	Collection container = psc.getServerPlugInSupport().queryForSubscriber(parentTaskPred );
+	//	Collection container = psc.getServerPluginSupport().queryForSubscriber(parentTaskPred );
 	Enumeration parentTaskByUID  = new Enumerator(container);
 	return (Task)parentTaskByUID.nextElement();
     }
@@ -440,7 +440,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
   /**
    *
    */
-  protected void publishRemoveUntilBoundary (PlugInDelegate delegate,
+  protected void publishRemoveUntilBoundary (PluginDelegate delegate,
                                              Enumeration planElements, 
                                              Vector stuffToRemove,
                                              Vector originalTasks) {

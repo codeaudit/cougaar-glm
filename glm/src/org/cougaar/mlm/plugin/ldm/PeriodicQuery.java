@@ -84,7 +84,7 @@ public abstract class PeriodicQuery extends QueryHandler {
         System.out.println("I am about to execute the Query " +queryString);
         System.out.println("For Database " + dbName);	  
 	        
-        boolean success = myQueryLDMPlugIn.executeQuery(queryString, this, dbName);
+        boolean success = myQueryLDMPlugin.executeQuery(queryString, this, dbName);
 	  	  
         if (!success)
           {	 
@@ -94,7 +94,7 @@ public abstract class PeriodicQuery extends QueryHandler {
             dbName = getParameter("DB_NAME" + count);	
             while ((queryString != null) && (!success))
               {
-                success = myQueryLDMPlugIn.executeQuery(queryString, this, dbName);
+                success = myQueryLDMPlugin.executeQuery(queryString, this, dbName);
                 count++;
                 dbName = getParameter("DB_NAME" + count);	
                 queryString = getQueryString("query" + count);
@@ -109,12 +109,12 @@ public abstract class PeriodicQuery extends QueryHandler {
             // Send an alert 
           }
       }// LDMType = Query	 
-    // It is the LDMSQLPlugIn       
+    // It is the LDMSQLPlugin       
     else
       {
         String q = getQuery();		
-        myLDMPlugIn.executeSQL(q, this);
-      }// LDMSQLPlugIn		 
+        myLDMPlugin.executeSQL(q, this);
+      }// LDMSQLPlugin		 
 	  
     endQuery();                   // tell the query it is done.
   }

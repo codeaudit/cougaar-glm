@@ -197,7 +197,7 @@ public class PSP_TransportTAA
     }
 
     org.cougaar.core.domain.RootFactory ldmf = 
-      psc.getServerPlugInSupport().getFactoryForPSP();
+      psc.getServerPluginSupport().getFactoryForPSP();
     Object obj = XMLObjectFactory.parseObject(ldmf, root);
     if (!(obj instanceof Collection)) {
       System.err.println("PSP_TransportTAA INVALID XML File: "+xmlFilename);
@@ -241,7 +241,7 @@ public class PSP_TransportTAA
   protected Vector searchForOrgActivities(
       PlanServiceContext psc, String clusterID) {
     Iterator iter = 
-      psc.getServerPlugInSupport().queryForSubscriber(
+      psc.getServerPluginSupport().queryForSubscriber(
         newOrgActPred()).iterator();
     Vector v = new Vector();
     while (iter.hasNext()) {

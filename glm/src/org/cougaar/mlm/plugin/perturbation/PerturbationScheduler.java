@@ -24,7 +24,7 @@ package org.cougaar.mlm.plugin.perturbation;
   import java.util.Date;
   import java.util.Vector ;
 
-  import org.cougaar.core.agent.ClusterServesPlugIn;
+  import org.cougaar.core.agent.ClusterServesPlugin;
   
   import org.cougaar.util.ReusableThread ;
   import org.cougaar.util.ReusableThreadPool ;
@@ -125,7 +125,7 @@ public class PerturbationScheduler implements Runnable
 		
 		jobs = getPerturbations();
 		remaining = jobs.size();
-PerturbationPlugIn p = null;
+PerturbationPlugin p = null;
 		for (int i=0; i < remaining; i++) 
 		{
 			if (((PerturbationNode)jobs.elementAt(i)) == job) 
@@ -133,7 +133,7 @@ PerturbationPlugIn p = null;
 				jobs.removeElementAt(i);
 				remaining = jobs.size();
 				System.out.println(
-				   "\n<<<PerturbationPlugIn>>> The number of perturbations " +
+				   "\n<<<PerturbationPlugin>>> The number of perturbations " +
 				   "remaining is: " + remaining );
 				if ( remaining == 0 )
 				{
@@ -212,7 +212,7 @@ PerturbationPlugIn p = null;
 			  else 
 			  {
 			     System.out.println
-				 	("\n<<<PerturbationPlugIn..." + pjob.threadId + 
+				 	("\n<<<PerturbationPlugin..." + pjob.threadId + 
 					">>> ERROR::There are no available threads to " +
 					"run the remaining perturbations");
 			  }
@@ -241,12 +241,12 @@ PerturbationPlugIn p = null;
 	public synchronized void run() 
 	{
 	    System.out.println (
-		   "\n<<<PerturbationPlugIn>>> Starting Scheduler..........");
+		   "\n<<<PerturbationPlugin>>> Starting Scheduler..........");
 		while (true) 
 		{
 		   long waitTime = runPerturbations();
 		   try {
-		      System.out.println("\n<<<PerturbationPlugIn>>> " +
+		      System.out.println("\n<<<PerturbationPlugin>>> " +
 			     "Next Perturbation Scheduled to begin in " + (waitTime/1000) + 
 				 " seconds ");
 			  wait(waitTime);
@@ -256,7 +256,7 @@ PerturbationPlugIn p = null;
 	}
 	
 	//
-	// The following methods are not cuurently in use by the PerturbationPlugIn.
+	// The following methods are not cuurently in use by the PerturbationPlugin.
     //
 
 	public void execute(PerturbationNode jobNode) 

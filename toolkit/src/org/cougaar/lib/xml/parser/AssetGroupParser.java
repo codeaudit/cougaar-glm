@@ -20,7 +20,7 @@
  */
 
 package org.cougaar.lib.xml.parser;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
  */
 public class AssetGroupParser{
 
-  public static AssetGroup getAssetGroup(LDMServesPlugIn ldm, Node node){
+  public static AssetGroup getAssetGroup(LDMServesPlugin ldm, Node node){
     AssetGroup ag = null;
     try{
       NodeList  nlist    = node.getChildNodes();      

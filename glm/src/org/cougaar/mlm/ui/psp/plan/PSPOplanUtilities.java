@@ -146,21 +146,21 @@ public class PSPOplanUtilities {
   }
       
   public static Collection getOplans(PlanServiceContext psc) {
-    return psc.getServerPlugInSupport().queryForSubscriber(allOplansPredicate);
+    return psc.getServerPluginSupport().queryForSubscriber(allOplansPredicate);
   }
 
         /*************************************************************************************
          * 
          **/
  // public static Collection getCincs(PlanServiceContext psc) {
- //   return psc.getServerPlugInSupport().queryForSubscriber(allCincsPredicate);
+ //   return psc.getServerPluginSupport().queryForSubscriber(allCincsPredicate);
  // }
 
         /*************************************************************************************
          * 
          **/
   public static Collection getSelfOrganizationIDs(PlanServiceContext psc) {
-    Collection orgs = psc.getServerPlugInSupport().queryForSubscriber(allSelfOrganizationsPredicate);
+    Collection orgs = psc.getServerPluginSupport().queryForSubscriber(allSelfOrganizationsPredicate);
     Collection result;
     if (orgs.size() == 1) {
       return Collections.singleton(((Organization) orgs.iterator().next()).getItemIdentificationPG().getItemIdentification());
@@ -184,35 +184,35 @@ public class PSPOplanUtilities {
   }
 
   public static Collection getOrgActivities(PlanServiceContext psc, Collection orgIDs) {
-    return psc.getServerPlugInSupport().queryForSubscriber(new OrgActivitiesPredicate(orgIDs));
+    return psc.getServerPluginSupport().queryForSubscriber(new OrgActivitiesPredicate(orgIDs));
   }
 
         /*************************************************************************************
          * 
          **/
   public static Collection getOrgRelations(PlanServiceContext psc) {
-    return psc.getServerPlugInSupport().queryForSubscriber(allOrgRelationsPredicate);
+    return psc.getServerPluginSupport().queryForSubscriber(allOrgRelationsPredicate);
   }
 
   /*************************************************************************************
          * 
          **/
   public static Collection getForcePackages(PlanServiceContext psc) {
-    return psc.getServerPlugInSupport().queryForSubscriber(allForcePackagesPredicate);
+    return psc.getServerPluginSupport().queryForSubscriber(allForcePackagesPredicate);
   }
 
         /*************************************************************************************
          * 
          **/
 /*  public static Collection getTheaterInfos(PlanServiceContext psc) {
-    return psc.getServerPlugInSupport().queryForSubscriber(allTheaterInfosPredicate);
+    return psc.getServerPluginSupport().queryForSubscriber(allTheaterInfosPredicate);
   } */
 
         /*************************************************************************************
          * 
          **/
   public static Collection getTimeSpans(PlanServiceContext psc) {
-    return psc.getServerPlugInSupport().queryForSubscriber(allTimeSpansPredicate);
+    return psc.getServerPluginSupport().queryForSubscriber(allTimeSpansPredicate);
   }
 
 
@@ -220,7 +220,7 @@ public class PSPOplanUtilities {
          * 
          **/
   public static Collection getPolicies(PlanServiceContext psc) {
-    return psc.getServerPlugInSupport().queryForSubscriber(allPoliciesPredicate);
+    return psc.getServerPluginSupport().queryForSubscriber(allPoliciesPredicate);
   }
 
 

@@ -209,7 +209,7 @@ public class PSP_TransportLinksNodes
    */
   protected Vector searchTransportRoutes(PlanServiceContext psc) {
     Collection col = 
-      psc.getServerPlugInSupport().queryForSubscriber(
+      psc.getServerPluginSupport().queryForSubscriber(
         getTransportRoutePred());
     if (col instanceof Vector) {
       return (Vector)col;
@@ -225,7 +225,7 @@ public class PSP_TransportLinksNodes
    */
   protected Vector searchTransportGraphs(PlanServiceContext psc) {
     Collection col = 
-      psc.getServerPlugInSupport().queryForSubscriber(
+      psc.getServerPluginSupport().queryForSubscriber(
         getTransportGraphPred());
     if (col instanceof Vector) {
       return (Vector)col;

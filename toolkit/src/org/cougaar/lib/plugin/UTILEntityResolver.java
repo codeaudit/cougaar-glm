@@ -74,7 +74,7 @@ public class UTILEntityResolver implements EntityResolver {
       return is;
     } catch (Exception e) {
       System.err.println(e.getMessage());
-      System.err.println ("UTILLdmXMLPlugIn.getParsedDocument - Could not find on config path");
+      System.err.println ("UTILLdmXMLPlugin.getParsedDocument - Could not find on config path");
       e.printStackTrace();
       return null;
     }

@@ -53,7 +53,7 @@ import org.cougaar.util.UnaryPredicate;
  */
 
 public class UISchedule implements UIBarGraphSource, UISubscriber {
-  private UIPlugIn uiPlugIn;
+  private UIPlugin uiPlugin;
   private static long MSECS_PER_HOUR = 3600000;
   private static long MSECS_PER_DAY = MSECS_PER_HOUR * 24;
   private Vector listeners;
@@ -80,14 +80,14 @@ public class UISchedule implements UIBarGraphSource, UISubscriber {
     specified plan.
     The display consists of a set of vertical bars for each asset;
     the y-axis represents quantity of the asset, the x-axis represents time.
-    @param uiPlugIn this user interface plugin
+    @param uiPlugin this user interface plugin
     @param planName the name of the plan for which to display scheduled assets
     @param clusterId the cluster for which to display scheduled assets
     @param assetName name of asset, null to graph all assets
     @exception UINoPlanException thrown when the plan does not exist
     */
 
-  public UISchedule(UIPlugIn uiPlugIn, String planName, 
+  public UISchedule(UIPlugin uiPlugin, String planName, 
 		    ClusterIdentifier clusterId, 
 		    String assetName, Object listener) throws UINoPlanException {
     if (assetName != null) {
@@ -98,7 +98,7 @@ public class UISchedule implements UIBarGraphSource, UISubscriber {
     }
     listeners = new Vector(1);
     listeners.addElement(listener);
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
   }
 
   /** Can't start subscription in constructor, because you could
@@ -106,7 +106,7 @@ public class UISchedule implements UIBarGraphSource, UISubscriber {
     */
 
   public void startSubscription() {
-    uiPlugIn.subscribe(this, planElementPredicate());
+    uiPlugin.subscribe(this, planElementPredicate());
   }
 
   private static UnaryPredicate planElementPredicate() {

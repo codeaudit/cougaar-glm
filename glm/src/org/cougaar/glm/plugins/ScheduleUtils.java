@@ -33,7 +33,7 @@ import org.cougaar.planning.ldm.plan.ScheduleUtilities;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 
 import java.util.*;
 

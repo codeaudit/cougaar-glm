@@ -30,9 +30,9 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
@@ -45,7 +45,7 @@ import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 
 /** Reads geoloc info from a database table. Assumes it's being invoked on
- * behalf of SQLOplanPlugIn. Updates SQLOplanPlugIn's geoloc table.
+ * behalf of SQLOplanPlugin. Updates SQLOplanPlugin's geoloc table.
  */
 
 public class GeoLocQueryHandler  extends SQLOplanQueryHandler {
@@ -77,7 +77,7 @@ public class GeoLocQueryHandler  extends SQLOplanQueryHandler {
     geoloc.setCountryStateCode((String) rowData[6]);
     geoloc.setCountryStateName((String) rowData[7]);
 
-    myPlugIn.updateLocation(geoloc);
+    myPlugin.updateLocation(geoloc);
   }
 }
 

@@ -108,7 +108,7 @@ public class GSScheduler {
 //        e.printStackTrace();
 //      }
     catch(SAXParseException saxe) {
-      System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - got SAX Parse exception in file " + 
+      System.out.println ("UTILLdmXMLPlugin.getParsedDocument - got SAX Parse exception in file " + 
 			  saxe.getSystemId () + " line " + saxe.getLineNumber () + " col " + saxe.getColumnNumber ()+"\n"+
 			  "Exception was :");
       System.err.println(saxe.getMessage());
@@ -160,7 +160,7 @@ public class GSScheduler {
 //        e.printStackTrace();
 //      }
     catch(SAXParseException saxe) {
-      System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - got SAX Parse exception in file " + 
+      System.out.println ("UTILLdmXMLPlugin.getParsedDocument - got SAX Parse exception in file " + 
 			  saxe.getSystemId () + " line " + saxe.getLineNumber () + " col " + saxe.getColumnNumber ()+"\n"+
 			  "Exception was :");
       System.err.println(saxe.getMessage());

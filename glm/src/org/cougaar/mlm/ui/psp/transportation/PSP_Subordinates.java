@@ -177,7 +177,7 @@ public class PSP_Subordinates extends PSP_BaseAdapter
   private void getMyRelationships(PrintStream out, MyPSPState myState) {
     // ASK MYSELF
     Collection col =
-      myState.psc.getServerPlugInSupport().queryForSubscriber(
+      myState.psc.getServerPluginSupport().queryForSubscriber(
           getSelfPred());
     boolean empty = (col.size() == 0);
     if (!empty) {

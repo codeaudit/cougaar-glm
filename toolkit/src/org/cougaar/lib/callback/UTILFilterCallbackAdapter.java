@@ -80,7 +80,7 @@ public class UTILFilterCallbackAdapter implements UTILFilterCallback {
   /** 
    * Used by plugins to ask the subscription direct questions,
    * like "give me all your elements." 
-   * @see org.cougaar.lib.filter.UTILAllocatorPlugInAdapter#getAssets
+   * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter#getAssets
    */
   public IncrementalSubscription getSubscription () { 
     return mySub;

@@ -35,9 +35,9 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
 
-import org.cougaar.core.plugin.PlugInDelegate;
-import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.core.plugin.util.PluginHelper;
 
 import org.cougaar.core.util.UID;
 
@@ -59,7 +59,7 @@ import org.cougaar.glm.ldm.asset.Organization;
   * <li>  A subscription to all its assets, used to find itself.
   * </ol>
   */
-abstract public class GenericPlugin extends SimplePlugIn  {
+abstract public class GenericPlugin extends SimplePlugin  {
   public static final boolean DEBUG = false;
   public static final boolean debugExecute = true;
 
@@ -474,7 +474,7 @@ abstract public class GenericPlugin extends SimplePlugIn  {
   }
 
   protected void updateAllocationResult(IncrementalSubscription planElements) {
-    PlugInHelper.updateAllocationResult(planElements);
+    PluginHelper.updateAllocationResult(planElements);
   }
 
 }

@@ -117,7 +117,7 @@ public class PSP_AssetPopulation extends PSP_BaseAdapter
   {
     // This should return a collection containing only the self organization
     Collection orgs = 
-      psc.getServerPlugInSupport().queryForSubscriber(getSelfPred());
+      psc.getServerPluginSupport().queryForSubscriber(getSelfPred());
     Organization organization = null;
     Iterator iter = orgs.iterator();
     while (iter.hasNext()) {
@@ -125,7 +125,7 @@ public class PSP_AssetPopulation extends PSP_BaseAdapter
     }
 
     Collection assets = 
-      psc.getServerPlugInSupport().queryForSubscriber(interestingAsset());
+      psc.getServerPluginSupport().queryForSubscriber(interestingAsset());
 
     writeAssets(organization, assets, out);
   }

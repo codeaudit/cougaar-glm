@@ -22,7 +22,7 @@
 /** The ForcePackage is a LDM Object that contains temporary groupings of 
  * organizations.  The ForcePackage object includes items such 
  * as time phasing, organziational relationships, and a forcePackage ID.   
- * To initially create the ForcePackage objects, the OplanPlugIn loads the 
+ * To initially create the ForcePackage objects, the OplanPlugin loads the 
  * specified oplan.xml file, parses the oplan file for operational information 
  * and publishes the ForcePackage objects to the Log Plan. 
  * The ForcePackages are initially created in the J3 cluster and then is 

@@ -57,7 +57,7 @@ import org.cougaar.lib.xml.parser.ParamParser;
  * The envDir can be relative or absolute.
  *
  * For example : 
- * plugin = com.bbn.tops.plugins.ground.TOPSGAFortAggregatorPlugIn
+ * plugin = com.bbn.tops.plugins.ground.TOPSGAFortAggregatorPlugin
  *   (envDir={String}../../tops/data, envFile={String}FortStewartAggregator.env.xml)
  *
  * The envDir can be used if there are two files of the same name in the 

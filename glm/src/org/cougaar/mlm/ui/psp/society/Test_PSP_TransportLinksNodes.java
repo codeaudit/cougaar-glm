@@ -34,7 +34,7 @@ import org.cougaar.mlm.ui.psp.transportation.data.*;
 /**
  * Test_PSP_TransportLinksNodes.
  * <p>
- * This class can be used to test a running PSP_TransportLinksNodes PlugIn.
+ * This class can be used to test a running PSP_TransportLinksNodes Plugin.
  * It works just like a browser, except it uses object serialization to 
  * receive the data instead of HTML.
  * <p>

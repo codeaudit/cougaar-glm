@@ -22,16 +22,16 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.plan.Schedule;
 
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 
-import org.cougaar.core.plugin.PlugInAdapter;
+import org.cougaar.core.plugin.PluginAdapter;
 
 import org.cougaar.planning.ldm.plan.NewRoleSchedule;
 
@@ -61,11 +61,11 @@ public class XMLAssetCreator //extends QueryHandler
   //public String getQuery() { return null; }
   //public void processRow( Object[] rowdata ) {}
 	
-  private LDMXMLPlugIn myLDMPlugIn;
-  private ClusterServesPlugIn myCluster;
+  private LDMXMLPlugin myLDMPlugin;
+  private ClusterServesPlugin myCluster;
 
-  public XMLAssetCreator( LDMXMLPlugIn plugin, ClusterServesPlugIn cluster ) {
-    this.myLDMPlugIn = plugin;
+  public XMLAssetCreator( LDMXMLPlugin plugin, ClusterServesPlugin cluster ) {
+    this.myLDMPlugin = plugin;
     this.myCluster = cluster;
   }
 
@@ -84,7 +84,7 @@ public class XMLAssetCreator //extends QueryHandler
         if ( child.getNodeName().equals( "prototype" )) {
           protoname = child.getAttributes().getNamedItem( "name" ).getNodeValue();
           //System.err.println( "\nprotoname = " + protoname );
-          pr = myLDMPlugIn.getPrototype( protoname );
+          pr = myLDMPlugin.getPrototype( protoname );
           //System.err.println( "\npr = " + pr );
           //String bumper = "foo"; //remember to change this!
           //System.err.println( "\nCreating Asset " + pr );

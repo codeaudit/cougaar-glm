@@ -82,7 +82,7 @@ class Sizer {
       }
     }
     // precondition:  _curTask is bound to a Task and remainder >= 0.0
-    // remainder can be == 0.0 because some PlugIn developers make such
+    // remainder can be == 0.0 because some Plugin developers make such
     // tasks instead of rescinding requests.
 
     if (_remainder <= requestedAmt ) {

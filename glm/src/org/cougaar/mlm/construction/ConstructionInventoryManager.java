@@ -53,7 +53,7 @@ import org.cougaar.glm.ldm.asset.*;
 public class ConstructionInventoryManager extends GeneralInventoryManager {
 
     /** Constructor */
-    public ConstructionInventoryManager(InventoryPlugIn plugin, Organization org, String type)
+    public ConstructionInventoryManager(InventoryPlugin plugin, Organization org, String type)
     {
         super(plugin, org, type);
     }

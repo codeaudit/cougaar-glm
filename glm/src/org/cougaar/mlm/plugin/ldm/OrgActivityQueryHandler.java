@@ -31,9 +31,9 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 
 import org.cougaar.util.Parameters;
@@ -45,8 +45,8 @@ import org.cougaar.glm.ldm.oplan.TimeSpan;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 
 /** Reads OrgActivity for specified Oplan from a database table. Assumes it's 
- * being invoked on behalf of SQLOplanPlugIn. Updates orgactivities maintained 
- * by SQLOplanPlugIn.
+ * being invoked on behalf of SQLOplanPlugin. Updates orgactivities maintained 
+ * by SQLOplanPlugin.
  */
 
 public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
@@ -77,8 +77,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * but may be overridden.
    **/
   public void startQuery() {
-    String oplanID = getParameter(SQLOplanPlugIn.OPLAN_ID_PARAMETER);
-    myOplan = myPlugIn.getOplan(oplanID);
+    String oplanID = getParameter(SQLOplanPlugin.OPLAN_ID_PARAMETER);
+    myOplan = myPlugin.getOplan(oplanID);
     
     if (myOplan == null) {
       throw new java.lang.IllegalArgumentException("OrgActivityQueryHandler.startQuery() - " +
@@ -130,7 +130,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
   /** this method is called when a query is complete, 
    * afer the last call to processRow. Updates OrgActivities maintained by
-   * SQLOplanPlugIn
+   * SQLOplanPlugin
    **/
   public void endQuery() {
     // myOrgInfoMap has a TimeSpanSet for each Org
@@ -159,7 +159,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                              orgActivity.getGeoLoc());
         }
         */
-        myPlugIn.updateOrgActivities(myOplan, orgInfo.getOrgName(), 
+        myPlugin.updateOrgActivities(myOplan, orgInfo.getOrgName(), 
                                      orgActivities);
       }
     }
@@ -169,7 +169,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     if ((currentEndDay == null) ||
         (!currentEndDay.equals(myOplan.getEndDay()))) {
       //System.out.println("Setting end Day to " + myOplan.getEndDay());
-      myPlugIn.updateOplanInfo(myOplan);
+      myPlugin.updateOplanInfo(myOplan);
     }
 
     myLastModifiedTime = myMaxModifiedTime;
@@ -254,7 +254,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     String locCode = (String) rowData[3];
 
     // look up geoloc from location string
-    GeolocLocation geoLoc = (GeolocLocation) myPlugIn.getLocation(locCode);
+    GeolocLocation geoLoc = (GeolocLocation) myPlugin.getLocation(locCode);
 
     OrgInfoElement element = 
       new OrgInfoElement(geoLoc, 

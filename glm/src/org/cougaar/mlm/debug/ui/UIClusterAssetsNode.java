@@ -37,23 +37,23 @@ import org.cougaar.util.UnaryPredicate;
   */
 
 public class UIClusterAssetsNode extends UITreeNode implements UISubscriber {
-  private UIPlugIn uiPlugIn;
+  private UIPlugin uiPlugin;
   private String planName;
   private boolean childrenLoaded = false;
 
   /** Creates a tree node for a plan by calling the UITreeNode constructor.
-    @param uiPlugIn this user interface plug in
+    @param uiPlugin this user interface plug in
     @param planName name of plan to display
     @param clusterId cluster from which to obtain plan
     @exception UINoPlanException thrown when the plan does not exist
     */
 
-  public UIClusterAssetsNode(UIPlugIn uiPlugIn, String planName, 
+  public UIClusterAssetsNode(UIPlugin uiPlugin, String planName, 
 			    ClusterIdentifier clusterId) throws UINoPlanException {
     super();
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
     this.planName = planName;
-    super.setUserObject(uiPlugIn.getPlan(planName));
+    super.setUserObject(uiPlugin.getPlan(planName));
   }
 
   /** Not a leaf.
@@ -81,7 +81,7 @@ public class UIClusterAssetsNode extends UITreeNode implements UISubscriber {
   public synchronized void loadChildren() {
     // new CCV2 method to obtain cluster assets
     if (!childrenLoaded) {
-      uiPlugIn.subscribe(this, organizationPredicate());
+      uiPlugin.subscribe(this, organizationPredicate());
       childrenLoaded = true;
     }
   }

@@ -28,7 +28,7 @@ import java.util.*;
 
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
@@ -122,7 +122,7 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
                             PlanServiceContext psc,
                             PlanServiceUtilities psu) throws Exception {
     Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, allPolicyPred);
+      psc.getServerPluginSupport().subscribe(this, allPolicyPred);
     Enumeration en = ((CollectionSubscription)subscription).elements();
 
     Vector policies = convertToUIPolicyInfos(en);
@@ -167,7 +167,7 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
     
     // enter subscription which causes policy editor
     // to be invoked and make its changes
-    PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+    PluginDelegate delegate = psc.getServerPluginSupport().getDirectDelegate();
     delegate.openTransaction();
 
     Subscription subscription = delegate.subscribe(xmlPredicate);

@@ -22,7 +22,7 @@
 	of a dueout. This is necessary so that the changed can be
 	incorporated into the state of the inventory.
 
-	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugIn.java (Repository):
+	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugin.java (Repository):
 	Add additional syntax allowing more precise specification of tasks
 	to be allocated. In particular, if the verb is followed by a
 	slash, the remainder of the text up to a semicolon (or the end of
@@ -37,10 +37,10 @@
 
 2001-09-27  Ray Tomlinson  <RTomlinson@bbn.com>
 
-	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugIn.java (Repository):
+	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugin.java (Repository):
 	Remove superfluous imports and replace wild card imports. Extend
-	AssetDataPlugInBase instead of AssetDataPlugIn pending renaming of
-	the AssetDataPlugIn.
+	AssetDataPluginBase instead of AssetDataPlugin pending renaming of
+	the AssetDataPlugin.
 
 	* org/cougaar/domain/glm/ldm/asset/OrganizationAdapter.java (Repository):
 	Remove isSelf method. This is reimplemented in subclasses in a
@@ -48,15 +48,15 @@
 
 2001-09-18  Ray Tomlinson  <RTomlinson@bbn.com>
 
-	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugInFile.java (Repository): 
-	File version of OrgDataPlugIn extends AssetDataPlugInFile.
+	* org/cougaar/domain/mlm/plugin/organization/OrgDataPluginFile.java (Repository): 
+	File version of OrgDataPlugin extends AssetDataPluginFile.
 	
-	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugInDB.java (Repository): 
-	Database version of OrgDataPlugIn extends AssetDataPlugInDB.
+	* org/cougaar/domain/mlm/plugin/organization/OrgDataPluginDB.java (Repository): 
+	Database version of OrgDataPlugin extends AssetDataPluginDB.
 
 2001-09-14  Ray Tomlinson  <RTomlinson@bbn.com>
 
-	* org/cougaar/domain/glm/plugins/GLMDecorationPlugIn.java (Repository): 
+	* org/cougaar/domain/glm/plugins/GLMDecorationPlugin.java (Repository): 
 	* org/cougaar/domain/glm/plugins/ClusterOPlan.java (Repository):
 	Keep track of ClusterOPlans so can be found after rehydration.
 	Otherwise, they keep building up each time rehydration is performed.
@@ -77,14 +77,14 @@
 
 2001-09-07  Ray Tomlinson  <RTomlinson@bbn.com>
 
-	* org/cougaar/domain/mlm/plugin/organization/GLSRescindPlugIn.java:
+	* org/cougaar/domain/mlm/plugin/organization/GLSRescindPlugin.java:
 	Make random pusher GUI optional controlled by
-	org.cougaar.mlm.plugin.organization.GLSRescindPlugIn.hidden
+	org.cougaar.mlm.plugin.organization.GLSRescindPlugin.hidden
 	system property. Defaults to true (hidden).
 
-	* org/cougaar/domain/mlm/plugin/organization/GLSGUIInitPlugIn.java:
+	* org/cougaar/domain/mlm/plugin/organization/GLSGUIInitPlugin.java:
 	Make random pusher GUI optional controlled by
-	org.cougaar.mlm.plugin.organization.GLSGUIInitPlugIn.hidden
+	org.cougaar.mlm.plugin.organization.GLSGUIInitPlugin.hidden
 	system property. Defaults to true (hidden).
 
 2001-09-06  Ray Tomlinson  <RTomlinson@bbn.com>
@@ -93,7 +93,7 @@
 	Fix off by one error in processing inventory reports. Manifested
 	as array index exception.
 
-	* org/cougaar/domain/glm/ldm/QueryLDMPlugIn.java:
+	* org/cougaar/domain/glm/ldm/QueryLDMPlugin.java:
 	Include the failing query when printing a failed query message.
 	What good is an error message that says that one of your many
 	queries failed, but doesn't say which one.
@@ -103,18 +103,18 @@
 	* src/org/cougaar/domain/mlm/plugin/CompletionAssessor.java:
 	Add unload() to dispose the GUI frame.
 
-	* src/org/cougaar/domain/mlm/plugin/GLSGUIBasePlugIn.java: 
+	* src/org/cougaar/domain/mlm/plugin/GLSGUIBasePlugin.java: 
 	Add unload() to dispose the GUI frame.	
 
 2001-06-06  Beth DePass  <bdepass@bbn.com>
-  * org/cougaar/domain/mlm/plugin/generic/UniversalExpanderPlugIn.java:
+  * org/cougaar/domain/mlm/plugin/generic/UniversalExpanderPlugin.java:
   Now uses a parameter specified in cougaar.rc to define what the 
   database expansion table is. For example:
     generic.database.expander.expansion_table=constr_task_exp
   Also added some comments and did some general cleanup.
   
-  * doc/UniversalExpanderPlugIn.html:
-  New detailed README file for the UniversalExpanderPlugIn.
+  * doc/UniversalExpanderPlugin.html:
+  New detailed README file for the UniversalExpanderPlugin.
 
 2001-06-01  Amy Fedyk  <afedyk@bbn.com>
 
@@ -138,7 +138,7 @@
 	When creating Supply and ProjectSupply refills, fill MAINTAINING Prep Phrase
 	with MaintainedItem class instead of the Inventory.
 
-	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugIn.java
+	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugin.java
 	findOrMakeInventory() convenience method should now check for NULL inventory
 	IDs.
 
@@ -150,7 +150,7 @@
 	Inventory.
 
 	* org/cougaar/domain/glm/execution/cluster/PSP_ExecutionWatcher.java
-	* org/cougaar/domain/mlm/plugin/assessor/ConsumptionAssessorPlugIn.java
+	* org/cougaar/domain/mlm/plugin/assessor/ConsumptionAssessorPlugin.java
 	Use new MaintainedItem instead of Asset from MAINTAINING Prep Phrase
 	
 	
@@ -210,7 +210,7 @@
 
 2001-05-01  Ray Tomlinson  <RTomlinson@bbn.com>
 
-	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugIn.java:
+	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugin.java:
 	Add method to record a new customer based on a supply or withdraw
 	task.
 
@@ -225,7 +225,7 @@
 	allocations. Activation is necessary only for changes to the
 	estimated result not for arbitrary changes to the allocation.
 
-	* org/cougaar/domain/glm/plugins/DecorationPlugIn.java:
+	* org/cougaar/domain/glm/plugins/DecorationPlugin.java:
 	Add logic to delay execution of a processor until there is a
 	reasonable assurance that all customers have sent their tasks. For
 	inventory management, this allows inventory management to be
@@ -323,14 +323,14 @@
 	
 2001-04-20  Ray Tomlinson  <RTomlinson@bbn.com>
 
-	* org/cougaar/domain/glm/execution/eg/TripletFCPlugIn.java:
+	* org/cougaar/domain/glm/execution/eg/TripletFCPlugin.java:
 	Support 24x7
-	Abstracted the generic part of the POLSpecialPlugIn and added "all
+	Abstracted the generic part of the POLSpecialPlugin and added "all
 	consumables" selection plus extensible "multiplier" specification.
 	Subclasses can specify an arbitrary set of fields to be entered
 	for determining the "multiplier".
 
-	* org/cougaar/domain/glm/execution/eg/TwentyFourBySevenPlugIn.java:
+	* org/cougaar/domain/glm/execution/eg/TwentyFourBySevenPlugin.java:
 	Support 24x7
 	New plugin allows the failure rate of selected consumables be
 	controlled by a sensor readout.
@@ -340,9 +340,9 @@
 	Insure using GMT for execution time. This brings execution time
 	into line with the time displayed in inventory chart ui.
 
-	* org/cougaar/domain/glm/execution/eg/POL2PlugIn.java:
+	* org/cougaar/domain/glm/execution/eg/POL2Plugin.java:
 	Support 24x7
-	Reimplement POLSpecialPlugIn using TripletFCPlugIn.
+	Reimplement POLSpecialPlugin using TripletFCPlugin.
 
 	* org/cougaar/domain/glm/execution/eg/EventGenerator.java:
 	Support 24x7 demo
@@ -372,7 +372,7 @@
 	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java
 	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java
 	* org/cougaar/domain/glm/plugins/inventory/InventoryPolicy.java
-	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugIn.java
+	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugin.java
 	* org/cougaar/domain/mlm/construction/ConstructionInventoryManager.java
 	* org/cougaar/domain/mlm/construction/ConstructionInventoryBG.java
 
@@ -525,7 +525,7 @@
 	such tasks. The "useStartTime" concept was never really correct
 	and is now gone!
 
-	* org/cougaar/domain/glm/plugins/DecorationPlugIn.java:
+	* org/cougaar/domain/glm/plugins/DecorationPlugin.java:
 	Debugging Support
 	Correctly identify the class of the plugin.
 
@@ -543,7 +543,7 @@
 	Add InventoryPG slot. Every Inventory has an InventoryPG, and it
 	is referenced repeatedly. Might as well be a slot.
 
-	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugIn.java:
+	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugin.java:
 	Debugging support
 	Add code to deliver all supply tasks one day early. This code is
 	unconditionally suppressed, but can be recompiled in an enabled
@@ -623,7 +623,7 @@
 	Debugging support
 	Add toString method.
 
-	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugIn.java:
+	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugin.java:
 	Debugging support
 	Remove debugging printlns.
 	Respond to task preference changes and adjust allocations
@@ -674,14 +674,14 @@
 	with the task preferences, the reported result cannot. When
 	preferences are changed, the reported result lies for awhile.
 
-	* org/cougaar/domain/glm/plugins/GLMDecorationPlugIn.java:
+	* org/cougaar/domain/glm/plugins/GLMDecorationPlugin.java:
 	Debugging support
 	USe GLMDebug delayed separator message when synchronous debugging
 	mode.
 
 	* org/cougaar/domain/glm/plugins/BasicProcessor.java:
 	Fix Bug #235
-	Use PlugInHelper to update allocation results and remove duplicate
+	Use PluginHelper to update allocation results and remove duplicate
 	code. Create estimated allocation result with 0.0 confidence.
 
 	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
@@ -711,7 +711,7 @@
 
 	Fix for bux 189. Oplan no longer contains any references to
 	associated org activities, org relations, force packages, or 
-	policies. PlugIns interested in these objects should subscribe to
+	policies. Plugins interested in these objects should subscribe to
 	them directly.
 
 2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
@@ -727,7 +727,7 @@
 
 	Fix for bux 189. Oplan no longer contains any references to
 	associated org activities, org relations, force packages, or 
-	policies. PlugIns interested in these objects should subscribe to
+	policies. Plugins interested in these objects should subscribe to
 	them directly.
 
 2001-03-21  Noelle Givler <ngivler@bbn.com>
@@ -736,7 +736,7 @@
 
 	Fix for bux 189. Oplan no longer contains any references to
 	associated org activities, org relations, force packages, or 
-	policies. PlugIns interested in these objects should subscribe to
+	policies. Plugins interested in these objects should subscribe to
 	them directly.
 
 2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
@@ -751,7 +751,7 @@
 	* org/cougaar/domain/glm/plugins/inventory/SupplyExpander.java:
 	Kludge to propagate AllocationResult changes to the supply
 	expansion. Ideally, this should be done by subscribing to the
-	supply expansions, but the structure of the DecoratorPlugIn makes
+	supply expansions, but the structure of the DecoratorPlugin makes
 	this difficult. Instead, we build on the kludge that the
 	ProjectWithdraw subtask is publishChanged when its Allocation
 	AllocationResult is changed.
@@ -822,7 +822,7 @@
 	RuleParameters setting the RefillSwitchoverDay and
 	WithdrawSwitchoverDay values for ProjectionWeight creation.
 	
-	The InventoryPlugIn now maintains the default ProjectionWeight for
+	The InventoryPlugin now maintains the default ProjectionWeight for
 	a class of supply. The default ProjectionWeight is created as
 	needed using the createProjectionWeight method. This method may be
 	overridden to provide a particular default. The former projection
@@ -864,7 +864,7 @@
 	identity of the current SubscriptionClient. This is especially
 	useful when composing error messages.
 
-	* PlugInAdapter
+	* PluginAdapter
 	Set the SubscriptionClient.current ThreadLocal variable to be the
 	current plugin. This variable is then accessible for additional
 	information in debug printouts.
@@ -894,14 +894,14 @@
 
 2001-02-15  Ray Tomlinson  <rtomlinson@bbn.com>
 
-	* InventoryPlugIn
+	* InventoryPlugin
 	Maintains the DueOutPredicate. This is the predicate used by the
 	WithdrawAllocator to select Tasks to allocate against inventories
 	of a supply type. Putting it in the plugin makes it accessible to
 	the InventoryManager (which see).
 
 	* WithdrawAllocator
-	Gets the DueOutPredicate from the InventoryPlugIn instead of
+	Gets the DueOutPredicate from the InventoryPlugin instead of
 	creating it itself.
 
 	* InventoryManager
@@ -909,7 +909,7 @@
 	Tasks in the LogPlan in order to compute NDaysDemand. The deletion
 	delay specified by the policy tracks the daysBackward_ variable.
 	The predicate of the DeletionPolicy is the DueOutPredicate
-	obtained from the InventoryPlugIn.
+	obtained from the InventoryPlugin.
 
 2001-02-13  Ray Tomlinson  <rtomlinson@bbn.com>
 
@@ -917,11 +917,11 @@
 	Reinstate logplan.change(selfOrg) when org activities cause the
 	location schedule to change.
 
-	* OrgReportPlugIn
+	* OrgReportPlugin
 	When resending asset transfers due to changes to the self
 	organization, pass through the change reports.
 
-	* PropagationPlugIn
+	* PropagationPlugin
 	Only re-propagate when an organization changes due to a change in
 	relationships as indicated by the presence of
 	RelationshipSchedule.RelationshipScheduleChangeReport in the
@@ -935,9 +935,9 @@
 Cannot mix and match different builds of glm and core across this date.
 	
 2001-01-11 Jim Winston <jwinston@bbn.com>
-	* org.cougaar.mlm.plugin.generic.PropgationPlugIn
-	* org.cougaar.mlm.plugin.ldm.XMLPolicyPlugIn
-	Both PlugIns now accept more than one XML file parameter. 
+	* org.cougaar.mlm.plugin.generic.PropgationPlugin
+	* org.cougaar.mlm.plugin.ldm.XMLPolicyPlugin
+	Both Plugins now accept more than one XML file parameter. 
 	
 2001-01-11 Amy Fedyk <afedyk@bbn.com>
 	* org.cougaar.glm.plugins.projection.GenerateSupplyDemandExpander
@@ -994,11 +994,11 @@ Cannot mix and match different builds of glm and core across this date.
 	Add some AirLiftPG slots for TOPS.
 
 2000-08-25 Jim Winston    <jwinston@bbn.com>
-	* DetailRequestLP, QueryRequest, OplanCoupon, GetOplanPlugIn
+	* DetailRequestLP, QueryRequest, OplanCoupon, GetOplanPlugin
 	Added directive messages and support in logic provider for querying
 	remote logplans. The first use is for Oplan propagation. Instead
 	of sending the entire Oplan to all clusters, they get an OplanCoupon
-	instead. The GetOplanPlugIn uses the new query method to retrieve
+	instead. The GetOplanPlugin uses the new query method to retrieve
 	only the pertinent pieces of the Oplan from its home cluster.
 
 2000-08-11 Jim Winston    <jwinston@bbn.com>
@@ -1028,13 +1028,13 @@ Cannot mix and match different builds of glm and core across this date.
 
 2000-06-21  Michael Thome  <mthome@bbn.com>
 
-	* OrgRTDataPlugIn
+	* OrgRTDataPlugin
 	Fix reflection to be able to construct Roles and other
 	interning-like plan objects.
 
 2000-06-02  Beth DePass  <bdepass@bbn.com>
   
-  * GLS PlugIns
+  * GLS Plugins
   Update wrt propagation changes
   
 2000-05-23  Michael Thome  <mthome@bbn.com>
@@ -1055,7 +1055,7 @@ Cannot mix and match different builds of glm and core across this date.
 
 2000-04-14  Michael Thome  <mthome@bbn.com>
 
-	* StrategicTransportProjectorPlugIn
+	* StrategicTransportProjectorPlugin
 	Update so that it really works under 6.x.
 
 2000-04-04  Jim Winston    <jwinston@bbn.com>
@@ -1069,7 +1069,7 @@ Cannot mix and match different builds of glm and core across this date.
 
 2000-03-06  Michael Thome  <mthome@bbn.com>
 
-	* OrgRTDataPlugIn
+	* OrgRTDataPlugin
 	Update using real object for ClusterIdentifiers
 
 2000-03-03  Michael Thome  <mthome@bbn.com>
@@ -1079,14 +1079,14 @@ Cannot mix and match different builds of glm and core across this date.
 
 2000-02-16  Ray Tomlinson  <rtomlinson@bbn.com>
 
-	* OPlanPlugIn
+	* OPlanPlugin
 	Remember if Oplan has been published in a private state variable
 	so the GUI can be correct after rehydration.
 
-	* GLSGUIInitPlugIn
-	Use Oplan from OplanPlugIn instead of create our own.
+	* GLSGUIInitPlugin
+	Use Oplan from OplanPlugin instead of create our own.
 
-	* GLSGUIInitPlugIn
+	* GLSGUIInitPlugin
 	Add private state variable to count root tasks sent. Include the
 	count in the feedback in the GUI. Disable the button until all the
 	ducks are lined up and it is legitimate to send a root
@@ -1109,22 +1109,22 @@ Cannot mix and match different builds of glm and core across this date.
 
 1999-11-22  Michael Thome  <mthome@bbn.com>
 
-	* StrategicTransportProjectorPlugIn
+	* StrategicTransportProjectorPlugin
 	Prevent silly traversal of parent tasks across cluster boundaries.
 
 1999-11-19  Michael Thome  <mthome@bbn.com>
 
-	* PropagationPlugIn
+	* PropagationPlugin
 	Only propagate top-level transferrables, not
 	OplanContributors. Warn about and then ignore OplanContributor
 	directives in forwarding files (e.g. forward.xml).
 
-	* OplanPlugIn, OplanFileReader
+	* OplanPlugin, OplanFileReader
 	Load Oplan objects to match new Oplan layout with
 	OplanContributors as attatched Oplan parts which also get entered
 	into the logplan.
 	
-	* OrgReportPlugIn
+	* OrgReportPlugin
 	Attempt to solve the problem where a rescind of an ReportForDuty
 	directive cannot figure out how to reconnect the org to it's old
 	superior.  The hacked solution is to assume that the org which
@@ -1133,7 +1133,7 @@ Cannot mix and match different builds of glm and core across this date.
 
 1999-10-14  Michael Thome  <mthome@bbn.com>
 
-	* OrgRTDataPlugIn
+	* OrgRTDataPlugin
 	Make primitive types really work.  example:
 		[MilitaryOrgPG]
 		IsReserve	boolean	"true"
@@ -1161,7 +1161,7 @@ Cannot mix and match different builds of glm and core across this date.
 	
 1999-10-04  Michael Thome  <mthome@bbn.com>
 
-	* OrgRTDataPlugIn
+	* OrgRTDataPlugin
 	Lowercase type specifiers in cluster ini files are now interpreted 
 	as builtin types rather than wrapper classes.
 

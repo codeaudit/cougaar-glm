@@ -12,11 +12,11 @@
 	* eg/ScheduleManager.java:
 	Add enableLog method.
 
-	* eg/TwentyFourBySevenPlugIn.java:
+	* eg/TwentyFourBySevenPlugin.java:
 	Change default value mechanism.
 	Use AnnotatedDouble where needed.
 
-	* eg/TripletFCPlugIn.java:
+	* eg/TripletFCPlugin.java:
 	Use a special Document for textfields so that changes can be
 	continuously watched if needed. This fixes a problem with edits
 	having no effect.
@@ -32,7 +32,7 @@
 	* eg/TaskEventReportManager.java:
 	Change table model to support logging.
 
-	* eg/POL2PlugIn.java:
+	* eg/POL2Plugin.java:
 	Return AnnotatedDouble instead of double.
 
 	* eg/ManagerBase.java:
@@ -58,10 +58,10 @@
 	Change table model to support logging.
 	Set annotation on reports.
 
-	* eg/FailureConsumptionPlugInItem.java:
+	* eg/FailureConsumptionPluginItem.java:
 	Return AnnotateDouble for quantity.
 
-	* eg/FailureConsumptionDefaultPlugIn.java:
+	* eg/FailureConsumptionDefaultPlugin.java:
 	Return AnnotatedDouble instead of double.
 
 	* eg/EventGenerator.java:
@@ -73,10 +73,10 @@
 	Change format to not include day of week. Excel can't parse such
 	dates.
 
-	* eg/POLSpecialPlugIn.java: 
+	* eg/POLSpecialPlugin.java: 
 	Return AnnotatedDouble instead of double.
 
-	* eg/DODICSpecialPlugIn.java:
+	* eg/DODICSpecialPlugin.java:
 	Return AnnotatedDouble instead of double.
 
 	* eg/AnnotatedDouble.java:

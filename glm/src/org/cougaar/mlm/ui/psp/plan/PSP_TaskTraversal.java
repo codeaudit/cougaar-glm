@@ -101,7 +101,7 @@ public class PSP_TaskTraversal extends PSP_BaseAdapter implements PlanServicePro
 
             out.println("<HTML><BODY><FONT COLOR=mediumblue>");
             out.println("<CENTER><H3> Verb=" + verbFilter
-                        + " @ " + psc.getServerPlugInSupport().getClusterIDAsString()
+                        + " @ " + psc.getServerPluginSupport().getClusterIDAsString()
                         + "</H3></CENTER>");
 
             out.println("<TABLE align=center border=1 cellPadding=1 cellSpacing=1");
@@ -139,7 +139,7 @@ public class PSP_TaskTraversal extends PSP_BaseAdapter implements PlanServicePro
             Enumeration en;
             Enumeration en2;
 
-            Subscription subscription = psc.getServerPlugInSupport().subscribe(this, getTaskPred());
+            Subscription subscription = psc.getServerPluginSupport().subscribe(this, getTaskPred());
             Collection container = ((CollectionSubscription)subscription).getCollection();
             en = new Enumerator(container);
             int numTasks = container.size();

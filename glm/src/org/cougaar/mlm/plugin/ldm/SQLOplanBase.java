@@ -30,7 +30,7 @@ import org.cougaar.glm.ldm.oplan.OrgActivity;
 
 import java.util.Collection;
 
-/** Defines minimum interface required to be an SQLOplanPlugIn */
+/** Defines minimum interface required to be an SQLOplanPlugin */
 public interface SQLOplanBase {
 
   void updateOplanInfo(Oplan update);

@@ -43,7 +43,7 @@ public class WithdrawAllocator extends InventoryProcessor {
     Hashtable bins_ = new Hashtable();
     Role role_;
 
-    public WithdrawAllocator(InventoryPlugIn plugin, Organization org, String type, Role role)
+    public WithdrawAllocator(InventoryPlugin plugin, Organization org, String type, Role role)
     {
 	super(plugin, org, type);
 	role_ = role;
@@ -58,12 +58,12 @@ public class WithdrawAllocator extends InventoryProcessor {
     private void initialize()
     {
 	// Subscribe to SupplyInventory Task
-        withdrawTasks_ = subscribe(inventoryPlugIn_.getDueOutPredicate(supplyType_));
+        withdrawTasks_ = subscribe(inventoryPlugin_.getDueOutPredicate(supplyType_));
     }
  
     public void update() {
 	super.update(); // set up dates
-	if (inventoryPlugIn_.getDetermineRequirementsTask() != null) {
+	if (inventoryPlugin_.getDetermineRequirementsTask() != null) {
 	    allocateWithdrawTasks(withdrawTasks_.getAddedList());
 	    allocateWithdrawTasks(withdrawTasks_.getChangedList());
 	}
@@ -78,7 +78,7 @@ public class WithdrawAllocator extends InventoryProcessor {
 	while (tasks.hasMoreElements()) {
 	    wdrawTask = (Task)tasks.nextElement();
 	    proto = (Asset)wdrawTask.getDirectObject();
-	    inventory = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
+	    inventory = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
 	    // A withdraw task is not created unless findOrMakeInventory returns an
 	    // inventory object, so this should never happen.
 	    if (inventory == null)  {

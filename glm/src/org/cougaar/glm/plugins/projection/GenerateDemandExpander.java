@@ -59,7 +59,7 @@ import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
 
 import org.cougaar.glm.plugins.AssetUtils;
 import org.cougaar.glm.plugins.BasicProcessor;
-import org.cougaar.glm.plugins.DecorationPlugIn;
+import org.cougaar.glm.plugins.DecorationPlugin;
 import org.cougaar.glm.plugins.TaskUtils;
 import org.cougaar.glm.plugins.TimeUtils;
 
@@ -68,8 +68,8 @@ import org.cougaar.glm.plugins.TimeUtils;
  */
 public abstract class GenerateDemandExpander extends BasicProcessor {
 
-  /** PlugIn Parameter for creation of Supply instead of ProjectSupply tasks. 
-      Values true/false, e.g. MyProjectionPlugIn(+BulkWaterSupplyTasks) */
+  /** Plugin Parameter for creation of Supply instead of ProjectSupply tasks. 
+      Values true/false, e.g. MyProjectionPlugin(+BulkWaterSupplyTasks) */
   public final static String create_supply_tasks_param = "SupplyTasks";
 
   /** Subscription for GenerateDemand tasks. */
@@ -86,7 +86,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
   /** Table used for Diff-Based replanning of ProjectSupply tasks */
   protected Hashtable                    publishedProjectionTable_;
 
-  public GenerateDemandExpander(DecorationPlugIn pi, Organization org,
+  public GenerateDemandExpander(DecorationPlugin pi, Organization org,
 				Vector types, UnaryPredicate pred) {
     super(pi, org);
     resourceTypes_ = types;
@@ -185,7 +185,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
     ownSubscription_ = subscribe(ownTasksPredicate_);
     ownPESubscription_ = subscribe(ownTasksPEPredicate_); 
     // DemandProjectionPolicies have two rules 
-    //  - max number of resources - now obsolete in Ants because done by IcisMEILDMPlugIn
+    //  - max number of resources - now obsolete in Ants because done by IcisMEILDMPlugin
     //  - aggregation period - number of days between output demand tasks
     //        going away with true projection tasks
     policySubscription_ = subscribe(new PolicyPredicate());

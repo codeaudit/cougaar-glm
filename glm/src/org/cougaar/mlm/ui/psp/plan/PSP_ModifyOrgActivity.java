@@ -31,7 +31,7 @@ import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
 import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
@@ -136,7 +136,7 @@ public class PSP_ModifyOrgActivity
     UIModifyOrgActivityState moa = 
       UIModifyOrgActivityState.readFromXML(
         XMLData,
-        psc.getServerPlugInSupport().getFactoryForPSP());
+        psc.getServerPluginSupport().getFactoryForPSP());
     if (moa == null) {
       throw new RuntimePSPException("Invalid \"XMLData\" parameter: "+XMLData);
     }
@@ -170,7 +170,7 @@ public class PSP_ModifyOrgActivity
           Date origStartDate = timeSpan.getStartDate();
           Date origEndDate = timeSpan.getEndDate();
           
-          PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+          PluginDelegate delegate = psc.getServerPluginSupport().getDirectDelegate();
           delegate.openTransaction();
           // modify
           moa.changeOrgActivity(orgAct, oplan);
@@ -381,13 +381,13 @@ public class PSP_ModifyOrgActivity
 
   protected void publishChange(
       PlanServiceContext psc, Object obj) {
-    psc.getServerPlugInSupport().getDirectDelegate().publishChange(obj);
+    psc.getServerPluginSupport().getDirectDelegate().publishChange(obj);
   }
 
   protected Enumeration searchUsingUnaryPredicate(
       PlanServiceContext psc, UnaryPredicate pred) {
     Subscription subscription = 
-      psc.getServerPlugInSupport().getDirectDelegate().subscribe(pred);
+      psc.getServerPluginSupport().getDirectDelegate().subscribe(pred);
     return ((CollectionSubscription)subscription).elements();
   }
 

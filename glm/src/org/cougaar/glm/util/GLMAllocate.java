@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMAllocate.java,v 1.1 2001-12-27 22:42:14 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMAllocate.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -44,7 +44,7 @@ import org.cougaar.planning.ldm.plan.Task;
 
 import org.cougaar.glm.ldm.Constants;
 
-import org.cougaar.lib.filter.UTILPlugIn;
+import org.cougaar.lib.filter.UTILPlugin;
 
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
-  public static PlanElement makeAllocation (UTILPlugIn creator,
+  public static PlanElement makeAllocation (UTILPlugin creator,
 					    RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -105,7 +105,7 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
-  public static PlanElement makeAllocation (UTILPlugIn creator,
+  public static PlanElement makeAllocation (UTILPlugin creator,
 					    RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -131,7 +131,7 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
- public static PlanElement makeAllocation (UTILPlugIn creator,
+ public static PlanElement makeAllocation (UTILPlugin creator,
 					   RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -157,7 +157,7 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
-  public static PlanElement makeAllocation(UTILPlugIn creator,
+  public static PlanElement makeAllocation(UTILPlugin creator,
 					   RootFactory ldmf,
 					   Plan plan,
 					   Task t,

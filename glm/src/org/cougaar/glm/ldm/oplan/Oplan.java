@@ -23,7 +23,7 @@
  * information to clusters.  The Oplan object includes items such as
  * time phasing, priority, and cday information along with an oplan ID
  * and references to other oplan objects.  To initially create the
- * Oplan object, the OplanPlugIn loads the specified oplan.xml file,
+ * Oplan object, the OplanPlugin loads the specified oplan.xml file,
  * parses the oplan file for operational information and publishes the
  * Oplan object to the Log Plan. The Oplan is initially created in the
  * J3 (Joint Operational Officer) cluster and then is transferred to
@@ -124,7 +124,7 @@ public class Oplan extends OwnedUniqueObject
 	
   /**     
    * Constructor for the Oplan object.  This should only be used by
-   * the OPlanPlugIn.
+   * the OPlanPlugin.
    * @param xmlfilename Name of the oplan xml file to be parsed.
    * 
    */    	
@@ -132,14 +132,14 @@ public class Oplan extends OwnedUniqueObject
   {
     setXMLFileName( xmlfilename );
     /*
-    System.out.println("<<<OPlanPlugIn>>> The XML file name is: " 
+    System.out.println("<<<OPlanPlugin>>> The XML file name is: " 
                        + getXMLFileName() );
     */
   } //Oplan
 	
   /**     
    * Constructor for the Oplan object.  This should only be used by
-   * the OPlanPlugIn.
+   * the OPlanPlugin.
    * 
    */  	
   public Oplan(UID uid, 
@@ -172,7 +172,7 @@ public class Oplan extends OwnedUniqueObject
 
   /**     
    * Constructor for the Oplan object.  This should only be used by
-   * the OPlanPlugIn.
+   * the OPlanPlugin.
    * @param xmlfilename Name of the oplan xml file to be parsed.
    * 
    */  

@@ -81,12 +81,12 @@ public class PSP_Maintenance extends PSP_BaseAdapter implements PlanServiceProvi
 		       PlanServiceUtilities psu) throws Exception {
 
     Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, myPredicate);
+      psc.getServerPluginSupport().subscribe(this, myPredicate);
 
     Vector assets = new Vector(((CollectionSubscription)subscription).getCollection());
 
     // unsubscribe, don't need this subscription any more
-    psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+    psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
 
     // add UI data versions of all the assets to the XML document
     // just retrieve typeIdentification and property fields

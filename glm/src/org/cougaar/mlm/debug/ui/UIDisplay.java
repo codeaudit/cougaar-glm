@@ -55,11 +55,11 @@ import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 
-/** The sample User Interface PlugIn display.
-  This is created and run from the UIPlugIn.start method.  It's run
-  in a separate thread so that the UIPlugIn.start method
+/** The sample User Interface Plugin display.
+  This is created and run from the UIPlugin.start method.  It's run
+  in a separate thread so that the UIPlugin.start method
   can return immediately while this new thread creates
   the user display and awaits user actions.
 
@@ -81,8 +81,8 @@ import org.cougaar.core.plugin.PlugInDelegate;
 public class UIDisplay implements ActionListener, Runnable {
   // contains correspondence between display buttons and cluster boxes
   private Hashtable displayDictionary = new Hashtable();
-  private UIPlugIn uiPlugIn;      // plugin we're a part of
-  private PlugInDelegate delegate;
+  private UIPlugin uiPlugin;      // plugin we're a part of
+  private PluginDelegate delegate;
   private Plan plan = null;       // plan we're examining
   private ClusterIdentifier myClusterId; // local cluster id
   private String myClusterName;
@@ -108,13 +108,13 @@ public class UIDisplay implements ActionListener, Runnable {
   Insets labelInternalPadding;
   JPanel panel;
 
-  /** Called from UIPlugIn; records the plugin this is part of for use by
+  /** Called from UIPlugin; records the plugin this is part of for use by
     objects it creates.
-    @param uiPlugIn this user interface plugin
+    @param uiPlugin this user interface plugin
     */
 
-  public UIDisplay(UIPlugIn uiPlugIn, PlugInDelegate del) {
-    this.uiPlugIn = uiPlugIn;
+  public UIDisplay(UIPlugin uiPlugin, PluginDelegate del) {
+    this.uiPlugin = uiPlugin;
     delegate = del;
   }
 
@@ -147,7 +147,7 @@ public class UIDisplay implements ActionListener, Runnable {
     myClusterId = delegate.getClusterIdentifier();
     myClusterName = myClusterId.getAddress();
     // get the plan
-    plan = uiPlugIn.getPlan();
+    plan = uiPlugin.getPlan();
 
     // quit when user closes window
 
@@ -292,7 +292,7 @@ public class UIDisplay implements ActionListener, Runnable {
     // this handles a user input event
     //    if (command.equals(ASSIGN_ASSETS_COMMAND)) {
     //      ((JButton)(e.getSource())).setEnabled(false);
-    //      UIInput uiInput = new UIInput(uiPlugIn, ASSIGN_ASSETS_COMMAND);
+    //      UIInput uiInput = new UIInput(uiPlugin, ASSIGN_ASSETS_COMMAND);
     //      Thread uiThread = new Thread(uiInput);
     //      uiThread.setName("uiThread:ASSIGN_ASSET_COMMAND:" + uiThread.getName());
     //      uiThread.start(); // go assign assets
@@ -300,12 +300,12 @@ public class UIDisplay implements ActionListener, Runnable {
     //    else if (command.equals(PROVIDE_LOG_SUPPORT_COMMAND)) {
     //    else if (command.equals(PROVIDE_LOG_SUPPORT_COMMAND)) {
     //      ((JButton)(e.getSource())).setEnabled(false); // disable button
-    //      UIInput uiInput = new UIInput(uiPlugIn, PROVIDE_LOG_SUPPORT_COMMAND); // create uiinput
+    //      UIInput uiInput = new UIInput(uiPlugin, PROVIDE_LOG_SUPPORT_COMMAND); // create uiinput
     //      Thread uiThread = new Thread(uiInput);
     //      uiThread.setName("uiThread:PROVIDE_LOG_SUPPORT_COMMAND:" + uiThread.getName());
     //      uiThread.start(); // start uiinput
     if (command.equals(CREATE_TASK_COMMAND)) {
-      UserInput userInput = new UserInput(uiPlugIn, this, delegate);
+      UserInput userInput = new UserInput(uiPlugin, this, delegate);
       Thread uiThread = new Thread(userInput);
       uiThread.setName("uiThread:CREATE_TASK_COMMAND:" + uiThread.getName());
       uiThread.start();
@@ -317,14 +317,14 @@ public class UIDisplay implements ActionListener, Runnable {
 	  command.equals(WORKFLOWS_COMMAND) ||
 	  command.equals(CLUSTER_ASSETS_COMMAND) ||
 	  command.equals(ALL_ASSETS_COMMAND)) {
-	  display = new UITreeDisplay(uiPlugIn, planName, myClusterId, command);
+	  display = new UITreeDisplay(uiPlugin, planName, myClusterId, command);
 	  Thread uiThread = new Thread(display);
 	  uiThread.setName("uiThread:DISPLAY:" + uiThread.getName());
 	  uiThread.start();
       } else if (command.equals(ASSETS_COMMAND) ||
 		 command.equals(ASSET_SCHEDULE_COMMAND) ||
 		 command.equals(SINGLE_ASSET_SCHEDULE_COMMAND)) {
-	display = new UIBarGraphDisplay(uiPlugIn, planName, myClusterId, command);
+	display = new UIBarGraphDisplay(uiPlugin, planName, myClusterId, command);
 	Thread uiThread = new Thread(display);
 	uiThread.setName("uiThread:SCHEDULE:" + uiThread.getName());
 	uiThread.start();

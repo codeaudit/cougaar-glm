@@ -310,7 +310,7 @@ public class PSP_Inventory
 
       Vector assetNames = new Vector();
       Subscription subscription = 
-	psc.getServerPlugInSupport().subscribe(this, assetNamePredicate);
+	psc.getServerPluginSupport().subscribe(this, assetNamePredicate);
 
       Collection container = 
 	((CollectionSubscription)subscription).getCollection();
@@ -335,7 +335,7 @@ public class PSP_Inventory
        
        HashSet assetNamesSet = new HashSet();
        Subscription subscription = 
-         psc.getServerPlugInSupport().subscribe(this, assetNamePredicate);
+         psc.getServerPluginSupport().subscribe(this, assetNamePredicate);
 
       Collection container = 
 	((CollectionSubscription)subscription).getCollection();
@@ -354,7 +354,7 @@ public class PSP_Inventory
       Vector assetNames = new Vector(assetNamesSet);
       
       // unsubscribe, don't need this subscription any more
-      psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+      psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
       // send the results
       ObjectOutputStream p = new ObjectOutputStream(out);
       p.writeObject(assetNames);
@@ -365,7 +365,7 @@ public class PSP_Inventory
     if (desiredAssetName.startsWith("UID:")) {
       String desiredAssetUID = desiredAssetName.substring(4);
       Subscription subscription = 
-	psc.getServerPlugInSupport().subscribe(this, new PSPAssetUIDPredicate(desiredAssetUID));
+	psc.getServerPluginSupport().subscribe(this, new PSPAssetUIDPredicate(desiredAssetUID));
       Collection collection = 
 	((CollectionSubscription)subscription).getCollection();
       for (Iterator i = collection.iterator(); i.hasNext(); ) {
@@ -379,15 +379,15 @@ public class PSP_Inventory
 	desiredAssetName = nomenclature + ":" + typeId;
       }
       // unsubscribe, don't need this subscription any more
-      psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+      psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
     } // end getting asset name from UID
 
     Date startDay=getStartDate(psc);
 
     // get roles and determine if this cluster is a provider (or consumer)
     Subscription roleSubscription =
-      psc.getServerPlugInSupport().subscribe(this, 
-       new PSPRolePredicate(psc.getServerPlugInSupport().getClusterIDAsString()));
+      psc.getServerPluginSupport().subscribe(this, 
+       new PSPRolePredicate(psc.getServerPluginSupport().getClusterIDAsString()));
     Collection roleCollection =
       ((CollectionSubscription)roleSubscription).getCollection();
     boolean provider = false;
@@ -403,14 +403,14 @@ public class PSP_Inventory
 	}
       }
     }
-    psc.getServerPlugInSupport().unsubscribeForSubscriber(roleSubscription);
+    psc.getServerPluginSupport().unsubscribeForSubscriber(roleSubscription);
 
     // get asset and tasks we need to create the inventory
     PSPInventoryPredicate inventoryPredicate = 
       new PSPInventoryPredicate(desiredAssetName, 
-		     psc.getServerPlugInSupport().getClusterIDAsString());
+		     psc.getServerPluginSupport().getClusterIDAsString());
     Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, inventoryPredicate);
+      psc.getServerPluginSupport().subscribe(this, inventoryPredicate);
     Collection collection = 
       ((CollectionSubscription)subscription).getCollection();
 
@@ -421,7 +421,7 @@ public class PSP_Inventory
     UIInventoryImpl inventory = getInventoryFromLogPlan(collection);
 
     // unsubscribe, don't need this subscription any more
-    psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+    psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
 
     // set values in UISimpleInventory, a serializable object
     UISimpleInventory simpleInventory = 
@@ -440,13 +440,13 @@ public class PSP_Inventory
       
       // get oplan
       Subscription oplanSubscription =
-	  psc.getServerPlugInSupport().subscribe(this, oplanPredicate());
+	  psc.getServerPluginSupport().subscribe(this, oplanPredicate());
       Collection oplanCollection =
 	  ((CollectionSubscription)oplanSubscription).getCollection();
       if (!oplanCollection.isEmpty()) {
 	  Oplan plan = (Oplan) ((CollectionSubscription)oplanSubscription).first();
 	  startingCDay = plan.getCday();
-	  psc.getServerPlugInSupport().unsubscribeForSubscriber(oplanSubscription);     
+	  psc.getServerPluginSupport().unsubscribeForSubscriber(oplanSubscription);     
     }
     return startingCDay;
   }

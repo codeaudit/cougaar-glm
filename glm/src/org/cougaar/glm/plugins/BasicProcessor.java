@@ -26,7 +26,7 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.measure.Rate;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
@@ -53,21 +53,21 @@ import org.cougaar.glm.debug.GLMDebug;
  * BasicProcessor supplies generic methods for connecting to the 'owner'
  * plugin and to record objects as they are published by this processor 
  * to the logplan. 
- * @see DecorationPlugIn 
- * @see PlugInDecorator
+ * @see DecorationPlugin 
+ * @see PluginDecorator
  */
 public abstract class BasicProcessor {
 
     protected RootFactory ldmFactory_;
     /** 'hook' to plugin's methods */
-    protected PlugInDelegate delegate_;
+    protected PluginDelegate delegate_;
     /** organization cluster identifier */
     protected ClusterIdentifier clusterId_;
     protected Organization myOrganization_ = null;
     // The name of my organization -- used for UsingGLMSource
     protected String myOrgName_ = null;
     protected String className_;
-    protected DecorationPlugIn plugin_;
+    protected DecorationPlugin plugin_;
     public AllocationResultAggregator UnlikeTaskARA_ = new UnlikeTaskARA();
 
     public static NumberFormat demandFormat = NumberFormat.getInstance();
@@ -82,7 +82,7 @@ public abstract class BasicProcessor {
     // like execute - called whenever a subscription has changed
     public abstract void update();
 
-    public BasicProcessor(DecorationPlugIn pi, Organization org) {
+    public BasicProcessor(DecorationPlugin pi, Organization org) {
 	// set constants
 	className_ = this.getClass().getName();
 	int indx = className_.lastIndexOf(".");
@@ -1036,7 +1036,7 @@ public abstract class BasicProcessor {
     }
 
     /** create an AllocationResult that assumes the 'best' possible result
-     *  (taken from GLSAllocatorPlugIn) */
+     *  (taken from GLSAllocatorPlugin) */
     public AllocationResult createEstimatedAllocationResult(Task t) {
         AllocationResultHelper helper = new AllocationResultHelper(t, null);
         return helper.getAllocationResult(0.0, true);

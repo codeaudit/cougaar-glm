@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Interacts with a BufferingPlugIn.
+ * Interacts with a BufferingPlugin.
  *
  * Implements runnable -- must be started inside a java Thread.
  *
@@ -46,9 +46,9 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
   /** 
    * Works with a buffering plugin
    */
-  public UTILTimeoutBufferingThread (UTILTimeoutBufferingPlugIn bufferingPlugIn,
+  public UTILTimeoutBufferingThread (UTILTimeoutBufferingPlugin bufferingPlugin,
 				     boolean myExtraOutput, boolean myExtraExtraOutput) {
-      super (bufferingPlugIn, myExtraOutput, myExtraExtraOutput);
+      super (bufferingPlugin, myExtraOutput, myExtraExtraOutput);
   }
 
   /** Read additional data from environment files. */
@@ -75,7 +75,7 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
       if (super.anyTasksLeft ())
 	  return true;
       boolean retval = (lastDisposition != null) && 
-	  ((UTILTimeoutBufferingPlugIn) myPlugin).anyTasksLeft ();
+	  ((UTILTimeoutBufferingPlugin) myPlugin).anyTasksLeft ();
 
       if (myExtraExtraOutput && retval)
 	  System.out.println (this + " - Has tasks left");
@@ -126,7 +126,7 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
 
     return ((lastDisposition != null) &&
 	    (dispositionWaitTime() >= DISPATCH_TIMEOUT) &&
-	    ((UTILTimeoutBufferingPlugIn) myPlugin).anyTasksLeft ());
+	    ((UTILTimeoutBufferingPlugin) myPlugin).anyTasksLeft ());
   }
 
   /**
@@ -153,13 +153,13 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
    *
    * wraps processLeftoverTasks call in COUGAAR transaction
    *
-   * calls UTILBufferingPlugIn.processTasks
-   * @see UTILBufferingPlugIn#processTasks
+   * calls UTILBufferingPlugin.processTasks
+   * @see UTILBufferingPlugin#processTasks
    */
   protected void alternateDispatch () {
     myPlugin.startTransaction();
     try{
-      ((UTILTimeoutBufferingPlugIn)myPlugin).processLeftoverTasks ();
+      ((UTILTimeoutBufferingPlugin)myPlugin).processLeftoverTasks ();
       // we've taken care of all leftover tasks, 
       // so we don't need to keep checking
       lastDisposition = null;

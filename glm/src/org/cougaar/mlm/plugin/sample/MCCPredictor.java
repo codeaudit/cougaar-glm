@@ -21,7 +21,7 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectType;
@@ -36,7 +36,7 @@ public class MCCPredictor implements Predictor
 {
     long SHIP_DAYS = 86400000L;
         
-    public AllocationResult Predict(Task for_task, PlugInDelegate plugin) {
+    public AllocationResult Predict(Task for_task, PluginDelegate plugin) {
         // Get Task Preferences, paying attention only to START_TIME
         // and END_TIME for this simple example;
         Date start = null;

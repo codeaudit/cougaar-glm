@@ -364,7 +364,7 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
     setStatus(true, "");
 
     // do layout
-    JFrame frame = new JFrame("ModifyOrgActivityGUIPlugIn");
+    JFrame frame = new JFrame("ModifyOrgActivityGUIPlugin");
     frame.setLocation(0,0);
     JPanel rootPanel = new JPanel((LayoutManager) null);
     GridBagLayout gbl = new GridBagLayout();

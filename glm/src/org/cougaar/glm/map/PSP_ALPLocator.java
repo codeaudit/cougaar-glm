@@ -122,18 +122,18 @@ public class PSP_ALPLocator
 	
 
     // send the Location object
-    if (LocationCollectorPlugIn.organizationLocations != null) 
+    if (LocationCollectorPlugin.organizationLocations != null) 
     {
     	if(!desiredOrganization.equals("all"))
     	{
-    	 	Object o = (Object)LocationCollectorPlugIn.organizationLocations.get(desiredOrganization);
+    	 	Object o = (Object)LocationCollectorPlugin.organizationLocations.get(desiredOrganization);
 	    	ObjectOutputStream p = new ObjectOutputStream(out);
 		    p.writeObject(o);
 		    System.out.println("Sent Locator Object");
 		  }
 		  else
 		  {
-		  	Object o = (Object)LocationCollectorPlugIn.organizationLocations;
+		  	Object o = (Object)LocationCollectorPlugin.organizationLocations;
 	    	ObjectOutputStream p = new ObjectOutputStream(out);
 		    p.writeObject(o);
 		    System.out.println("Sent Hashtable Object");

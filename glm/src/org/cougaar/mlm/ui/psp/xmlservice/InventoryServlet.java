@@ -200,7 +200,7 @@ public class InventoryServlet
 	 
 	 Vector assetNames = new Vector();
 	 Subscription subscription = 
-	 psc.getServerPlugInSupport().subscribe(this, assetNamePredicate);
+	 psc.getServerPluginSupport().subscribe(this, assetNamePredicate);
 	 
 	 Collection container = 
 	 ((CollectionSubscription)subscription).getCollection();
@@ -227,7 +227,7 @@ public class InventoryServlet
 	Collection container = support.queryBlackboard(assetNamePredicate);
 	
 	/*	Subscription subscription = 
-		psc.getServerPlugInSupport().subscribe(this, assetNamePredicate);
+		psc.getServerPluginSupport().subscribe(this, assetNamePredicate);
 		
 		Collection container = 
 		((CollectionSubscription)subscription).getCollection();
@@ -248,7 +248,7 @@ public class InventoryServlet
 	Vector assetNames = new Vector(assetNamesSet);
 	
 	// unsubscribe, don't need this subscription any more
-	//psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+	//psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
 	// send the results
 	ObjectOutputStream p = new ObjectOutputStream(out);
 	p.writeObject(assetNames);
@@ -261,7 +261,7 @@ public class InventoryServlet
 	Collection collection = support.queryBlackboard(new AssetUIDPredicate(desiredAssetUID));
       
 	/*Subscription subscription = 
-	  psc.getServerPlugInSupport().subscribe(this, new AssetUIDPredicate(desiredAssetUID));
+	  psc.getServerPluginSupport().subscribe(this, new AssetUIDPredicate(desiredAssetUID));
 	  Collection collection = 
 	  ((CollectionSubscription)subscription).getCollection();
 	*/
@@ -277,7 +277,7 @@ public class InventoryServlet
 	  desiredAssetName = nomenclature + ":" + typeId;
 	}
 	// unsubscribe, don't need this subscription any more
-	//psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+	//psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
       } // end getting asset name from UID
       
       Date startDay=getStartDate();
@@ -288,8 +288,8 @@ public class InventoryServlet
       Collection roleCollection = support.queryBlackboard(rolePred);
     
       /*Subscription roleSubscription =
-	psc.getServerPlugInSupport().subscribe(this, 
-	new RolePredicate(psc.getServerPlugInSupport().getClusterIDAsString()));
+	psc.getServerPluginSupport().subscribe(this, 
+	new RolePredicate(psc.getServerPluginSupport().getClusterIDAsString()));
 	Collection roleCollection =
 	((CollectionSubscription)roleSubscription).getCollection();
       */    
@@ -314,7 +314,7 @@ public class InventoryServlet
 	}	
       }
 
-      //psc.getServerPlugInSupport().unsubscribeForSubscriber(roleSubscription);
+      //psc.getServerPluginSupport().unsubscribeForSubscriber(roleSubscription);
     
       // get asset and tasks we need to create the inventory
     
@@ -324,9 +324,9 @@ public class InventoryServlet
       /*
 	InventoryPredicate inventoryPredicate = 
 	new InventoryPredicate(desiredAssetName, 
-	psc.getServerPlugInSupport().getClusterIDAsString());
+	psc.getServerPluginSupport().getClusterIDAsString());
 	Subscription subscription = 
-	psc.getServerPlugInSupport().subscribe(this, inventoryPredicate);
+	psc.getServerPluginSupport().subscribe(this, inventoryPredicate);
 	Collection collection = 
 	((CollectionSubscription)subscription).getCollection();
       */
@@ -340,7 +340,7 @@ public class InventoryServlet
       UIInventoryImpl inventory = getInventoryFromLogPlan(collection);
     
       // unsubscribe, don't need this subscription any more
-      //psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+      //psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
     
       // set values in UISimpleInventory, a serializable object
       UISimpleInventory simpleInventory = 
@@ -540,7 +540,7 @@ public class InventoryServlet
       Collection oplanCollection = support.queryBlackboard(oplanPredicate());
       
       /*Subscription oplanSubscription =
-	psc.getServerPlugInSupport().subscribe(this, oplanPredicate());
+	psc.getServerPluginSupport().subscribe(this, oplanPredicate());
 	Collection oplanCollection =
 	((CollectionSubscription)oplanSubscription).getCollection();
       */    
@@ -552,7 +552,7 @@ public class InventoryServlet
 	//Oplan plan = (Oplan) collectsub.first();
 	//Oplan plan = (Oplan) ((CollectionSubscription)oplanSubscription).first();
 	startingCDay = plan.getCday();
-	//psc.getServerPlugInSupport().unsubscribeForSubscriber(oplanSubscription);     
+	//psc.getServerPluginSupport().unsubscribeForSubscriber(oplanSubscription);     
       }
       return startingCDay;
     }

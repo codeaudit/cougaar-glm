@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMMeasure.java,v 1.1 2001-12-27 22:42:14 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMMeasure.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -39,7 +39,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.cougaar.lib.util.UTILPlugInException;
+import org.cougaar.lib.util.UTILPluginException;
 
 /**
  * This class contains utility functions for measurements.
@@ -76,9 +76,9 @@ public class GLMMeasure {
   public static Distance distanceBetween(GeolocLocation start, GeolocLocation end, double multiplier) {
 
     if (start == null)
-      throw new UTILPlugInException("start geoloc is null");
+      throw new UTILPluginException("start geoloc is null");
     if (end == null)
-      throw new UTILPlugInException("end geoloc is null");
+      throw new UTILPluginException("end geoloc is null");
 
     // get Long/Lat
     Longitude startlong = start.getLongitude();
@@ -87,13 +87,13 @@ public class GLMMeasure {
     Latitude  endlat    = end.getLatitude();
 
     if (startlong == null)
-      throw new UTILPlugInException("startlong is null in start GeolocLocation");
+      throw new UTILPluginException("startlong is null in start GeolocLocation");
     if (startlat == null)
-      throw new UTILPlugInException("startlat is null in start  GeolocLocation");
+      throw new UTILPluginException("startlat is null in start  GeolocLocation");
     if (endlong == null)
-      throw new UTILPlugInException("endlong is null in end GeolocLocation");
+      throw new UTILPluginException("endlong is null in end GeolocLocation");
     if (endlat == null)
-      throw new UTILPlugInException("endlat is null in end GeolocLocation");
+      throw new UTILPluginException("endlat is null in end GeolocLocation");
     if ((startlong.getDegrees () == 0.0d) && (startlat.getDegrees () == 0.0d))
       System.out.println ("distanceBetween - Geoloc " + start + " has lat = lon = 0.0?");
     if ((endlong.getDegrees () == 0.0d) && (endlat.getDegrees () == 0.0d))
@@ -117,7 +117,7 @@ public class GLMMeasure {
 
   /**
    * This is a helper function to generate geo loc codes.
-   * It is used in TOPSGlobalGroundAllocatorPlugIn.getOrgLocation() 
+   * It is used in TOPSGlobalGroundAllocatorPlugin.getOrgLocation() 
    * to initialize the static locations
    * of the known organizations.  In the long term, it is hoped that
    * this can be phased out in favor of a native ALPINE mechanism.
@@ -163,7 +163,7 @@ public class GLMMeasure {
       return (newDate);
     }
     else{
-       throw new UTILPlugInException("illegal direction received.");
+       throw new UTILPluginException("illegal direction received.");
     }
   }
 
@@ -233,13 +233,13 @@ public class GLMMeasure {
   public static Organization bestOrg(GeolocLocation loc, Set orgs, String clusterName) {
 
     if (orgs == null || orgs.size() == 0) {
-      throw new UTILPlugInException(clusterName+ "GLMMeasure: no orgs available");
+      throw new UTILPluginException(clusterName+ "GLMMeasure: no orgs available");
     }
 
     if (loc == null) {
       // This is a lie- it doesn't actually return anything, does it?  it
       // just dies...
-      throw new UTILPlugInException(clusterName+ "GLMMeasure: null loc while checking for orgs, returning default org");
+      throw new UTILPluginException(clusterName+ "GLMMeasure: null loc while checking for orgs, returning default org");
     }
 
     Iterator orgse = orgs.iterator();
@@ -278,7 +278,7 @@ public class GLMMeasure {
     }
 
     if (best == null) {
-      throw new UTILPlugInException(clusterName+ " GLMMeasure saw no appropriate orgs");
+      throw new UTILPluginException(clusterName+ " GLMMeasure saw no appropriate orgs");
     }
     return best;
   }

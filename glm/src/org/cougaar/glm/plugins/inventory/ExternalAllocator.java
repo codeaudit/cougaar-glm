@@ -18,7 +18,7 @@
 package org.cougaar.glm.plugins.inventory;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.PluginHelper;
 import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
@@ -55,7 +55,7 @@ public class ExternalAllocator extends InventoryProcessor {
     /** list of nsn's with no resupply point */
     protected Vector notified_ = new Vector();
 
-    public ExternalAllocator(InventoryPlugIn plugin, Organization org, String type, org.cougaar.planning.ldm.plan.Role role) {
+    public ExternalAllocator(InventoryPlugin plugin, Organization org, String type, org.cougaar.planning.ldm.plan.Role role) {
 	super(plugin, org, type);
 	providerRole_ = role;
  	providerOrgs_ = subscribe(new ItemProviderPredicate(org, providerRole_));
@@ -115,7 +115,7 @@ public class ExternalAllocator extends InventoryProcessor {
     /** This method is called everytime a subscription has changed. */
     public void update() {
 	super.update(); // set up dates
-	if (inventoryPlugIn_.getDetermineRequirementsTask() != null) {
+	if (inventoryPlugin_.getDetermineRequirementsTask() != null) {
 	    notified_.clear();
 	    rememberProviders();
 	    // Supply tasks that are not handled in this cluster are allocated to
@@ -127,7 +127,7 @@ public class ExternalAllocator extends InventoryProcessor {
 	    allocateRefillTasks(refillTasks_.getAddedList());
 	    // Allocate inventory projections
 	    allocateRefillTasks(myProjectionTasks_.getAddedList());
-            PlugInHelper.updateAllocationResult(refillAllocs_);
+            PluginHelper.updateAllocationResult(refillAllocs_);
 	}
     }
 
@@ -154,7 +154,7 @@ public class ExternalAllocator extends InventoryProcessor {
 	    proto = (Asset)supplyTask.getDirectObject();
 	    // If inventory exists for this item then ignore task
 	    // Let the Supply Expander handle it.
-	    inv = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
+	    inv = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
 	    if (inv == null) {
 		allocateTask(supplyTask);
 // 		printDebug("allocateSupplyTasks(), allocated "+TaskUtils.taskDesc(supplyTask)+

@@ -54,7 +54,7 @@ import javax.swing.tree.*;
  * Storage class (model) of LogPlan content for LogPlan Viewer UI.
  */
 public class LogPlanModel extends DefaultTreeModel {
-  LogPlanModelServerPlugIn logPlanModelServerPlugIn = null;
+  LogPlanModelServerPlugin logPlanModelServerPlugin = null;
   Vector skipVerbs = new Vector();
 
   boolean             displayDates = true;
@@ -69,9 +69,9 @@ public class LogPlanModel extends DefaultTreeModel {
 
   Hashtable elementIdToNodeMap = new Hashtable();
 
-  public LogPlanModel( LogPlanModelServerPlugIn logPlanModelServerPlugIn, String clusterName, boolean didRehydrate, Enumeration skipVerbsEnum) {
+  public LogPlanModel( LogPlanModelServerPlugin logPlanModelServerPlugin, String clusterName, boolean didRehydrate, Enumeration skipVerbsEnum) {
     super( new DefaultMutableTreeNode( "LogPlan", true));
-    this.logPlanModelServerPlugIn = logPlanModelServerPlugIn;
+    this.logPlanModelServerPlugin = logPlanModelServerPlugin;
     theRootNode = (DefaultMutableTreeNode)getRoot();
 
     while ( skipVerbsEnum.hasMoreElements()) {
@@ -824,15 +824,15 @@ public class LogPlanModel extends DefaultTreeModel {
    * Update model with adds, changes and removes of LogPlan elements.
    */
   public void logPlanUpdate() {
-    Enumeration tasksAdded          = logPlanModelServerPlugIn.getTasksAdded();
-    Enumeration tasksChanged        = logPlanModelServerPlugIn.getTasksChanged();
-    Enumeration tasksRemoved        = logPlanModelServerPlugIn.getTasksRemoved();
+    Enumeration tasksAdded          = logPlanModelServerPlugin.getTasksAdded();
+    Enumeration tasksChanged        = logPlanModelServerPlugin.getTasksChanged();
+    Enumeration tasksRemoved        = logPlanModelServerPlugin.getTasksRemoved();
 
-    Enumeration allocationsAdded    = logPlanModelServerPlugIn.getAllocationsAdded();
-    Enumeration allocationsChanged  = logPlanModelServerPlugIn.getAllocationsChanged();
-    Enumeration allocationsRemoved  = logPlanModelServerPlugIn.getAllocationsRemoved();
+    Enumeration allocationsAdded    = logPlanModelServerPlugin.getAllocationsAdded();
+    Enumeration allocationsChanged  = logPlanModelServerPlugin.getAllocationsChanged();
+    Enumeration allocationsRemoved  = logPlanModelServerPlugin.getAllocationsRemoved();
 
-    Enumeration nonAllocationDispositionsAdded  = logPlanModelServerPlugIn.getNonAllocationDispositionsAdded();
+    Enumeration nonAllocationDispositionsAdded  = logPlanModelServerPlugin.getNonAllocationDispositionsAdded();
 
     while ( tasksAdded.hasMoreElements())
       handleAddedTask( (Task)tasksAdded.nextElement());
@@ -854,8 +854,8 @@ public class LogPlanModel extends DefaultTreeModel {
    * If Society is in rehydrate mode, repopulate the model with previous content.
    */
   private void rehydrate() {
-    Enumeration tasks       = logPlanModelServerPlugIn.getTasks();
-    Enumeration allocations = logPlanModelServerPlugIn.getAllocations();
+    Enumeration tasks       = logPlanModelServerPlugin.getTasks();
+    Enumeration allocations = logPlanModelServerPlugin.getAllocations();
 
     while ( tasks.hasMoreElements())
       handleAddedTask( (Task)tasks.nextElement());

@@ -51,10 +51,10 @@ public class UTILListeningBufferingThread
   /** 
    * Works with a buffering plugin
    */
-  public UTILListeningBufferingThread (UTILBufferingPlugIn bufferingPlugIn,
+  public UTILListeningBufferingThread (UTILBufferingPlugin bufferingPlugin,
 				      boolean myExtraOutput, 
 				      boolean myExtraExtraOutput) {
-    super (bufferingPlugIn, myExtraOutput, myExtraExtraOutput);
+    super (bufferingPlugin, myExtraOutput, myExtraExtraOutput);
   }
 
   /** 
@@ -68,7 +68,7 @@ public class UTILListeningBufferingThread
   /** 
    * Handling a task as a generic listener means buffering it.
    * When the task thresholds are reached, then UTILBufferingThread
-   * will call processTasks on BufferingPlugIn.
+   * will call processTasks on BufferingPlugin.
    */
   public void handleTask (Task t) { 
     if (myExtraExtraOutput)

@@ -121,7 +121,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   }	   		 
   
   /**
-   * Executes PlugIn functionality.
+   * Executes Plugin functionality.
    */
   protected void execute(){
 

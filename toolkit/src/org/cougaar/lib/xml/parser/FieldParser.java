@@ -24,7 +24,7 @@ package org.cougaar.lib.xml.parser;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.lang.reflect.Method;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
@@ -42,7 +42,7 @@ public class FieldParser{
   /**
    * set a field given by node in an object obj
    */
-  public static Object setField(LDMServesPlugIn ldm, Node node, Object obj){
+  public static Object setField(LDMServesPlugin ldm, Node node, Object obj){
 
     if(node.getNodeName().equals("field")){
 
@@ -378,7 +378,7 @@ public class FieldParser{
    * are returned as strings, it is the callers responsibility
    * to do the conversion.
    */
-  private static Object getFieldValue(LDMServesPlugIn ldm, Node node){
+  private static Object getFieldValue(LDMServesPlugin ldm, Node node){
     Object     retval   = null;
     NodeList   nlist    = node.getChildNodes();      
     int        nlength  = nlist.getLength();
@@ -402,7 +402,7 @@ public class FieldParser{
    * to do the conversion.
    */
   private static Collection getFieldCollection(
-      LDMServesPlugIn ldm, Node node, Class collectionClass){
+      LDMServesPlugin ldm, Node node, Class collectionClass){
     Collection retcoll;
     NodeList   nlist    = node.getChildNodes();      
     int        nlength  = nlist.getLength();
@@ -432,7 +432,7 @@ public class FieldParser{
     return retcoll;
   }
 
-  private static TypeIdentificationPG getTypeIdentificationPG(LDMServesPlugIn ldm, 
+  private static TypeIdentificationPG getTypeIdentificationPG(LDMServesPlugin ldm, 
                                                               Node node, Asset obj){
     NewTypeIdentificationPG ntip = (NewTypeIdentificationPG)obj.getTypeIdentificationPG();
     TypeIdentificationPG    tip  = null;

@@ -131,7 +131,7 @@ public class PSP_ALPLocatorKeepAlive extends org.cougaar.lib.planserver.PSP_Base
   	
   	if (allChangeLocationTasks == null)
 		{
-			allChangeLocationTasks = psc.getServerPlugInSupport().subscribe(this, allChangeLocationTasksPredicate);
+			allChangeLocationTasks = psc.getServerPluginSupport().subscribe(this, allChangeLocationTasksPredicate);
 		}
   	
   	

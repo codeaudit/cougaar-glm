@@ -28,22 +28,22 @@ import java.util.Vector;
 import org.cougaar.glm.ldm.asset.ClassVIIMajorEndItem;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.Service;
-import org.cougaar.glm.plugins.PlugInDecorator;
+import org.cougaar.glm.plugins.PluginDecorator;
 
-/** Associates proper SupplyProjector with a given SupplyProjectionPlugIn. 
- * @see SupplyProjectionPlugIn
+/** Associates proper SupplyProjector with a given SupplyProjectionPlugin. 
+ * @see SupplyProjectionPlugin
  * @see SupplyProjector **/
-public class SupplyProjectionDecorator extends PlugInDecorator {
+public class SupplyProjectionDecorator extends PluginDecorator {
     private static final String            CLASSNAME = "SupplyProjectionDecorator";
     // move to the plug in
     Service serv_;
-    SupplyProjectionPlugIn thisPlugIn_;
+    SupplyProjectionPlugin thisPlugin_;
     Organization cluster_;
     
     /**  @param plugin to be configured */
-    public SupplyProjectionDecorator(SupplyProjectionPlugIn plugin) {
+    public SupplyProjectionDecorator(SupplyProjectionPlugin plugin) {
 	super(plugin);
-	thisPlugIn_ = plugin;
+	thisPlugin_ = plugin;
     }
 
     /** Predicate for MEIs - used to define consumers for Supply projection.
@@ -84,8 +84,8 @@ public class SupplyProjectionDecorator extends PlugInDecorator {
      *  this cluster represents.
      *  @param cluster the given plugin is loaded into
      */
-    public void decoratePlugIn(Organization cluster) {
+    public void decoratePlugin(Organization cluster) {
 	cluster_ = cluster;
- 	addTaskProcessor( new GenerateSupplyDemandExpander(thisPlugIn_, cluster_, thisPlugIn_.getPartTypes()));
+ 	addTaskProcessor( new GenerateSupplyDemandExpander(thisPlugin_, cluster_, thisPlugin_.getPartTypes()));
     }
 }

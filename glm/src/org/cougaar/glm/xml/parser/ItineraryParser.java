@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/ItineraryParser.java,v 1.1 2001-12-27 22:42:15 bdepass Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/ItineraryParser.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.Vector;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
 import org.cougaar.planning.ldm.plan.NewItineraryElement;
@@ -39,7 +39,7 @@ import org.cougaar.lib.xml.parser.VerbParser;
  * Copyright (c) 1999 BBN Technologies 
  */
 public class ItineraryParser{
-  public static Schedule getItinerary(LDMServesPlugIn ldm, Node node){
+  public static Schedule getItinerary(LDMServesPlugin ldm, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
 
@@ -56,7 +56,7 @@ public class ItineraryParser{
     return sched;
   }
   
-  private static ItineraryElement getItineraryElement(LDMServesPlugIn ldm, Node node){
+  private static ItineraryElement getItineraryElement(LDMServesPlugin ldm, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
 

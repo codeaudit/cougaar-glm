@@ -42,24 +42,24 @@ import java.util.Enumeration;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 
 /** Supports user input of tasks.
  */
 
 public class UserInputTask {
   NewTask task;
-  UIPlugIn uiPlugIn;
+  UIPlugin uiPlugin;
   ClusterObjectFactory cof;
   ClusterIdentifier myClusterId;
   String myClusterName;
   Plan plan;
-  PlugInDelegate delegate;
+  PluginDelegate delegate;
 
   /** Create a new task with the user input.
    */
 
-  public UserInputTask(UIPlugIn uiPlugIn, PlugInDelegate delegate,
+  public UserInputTask(UIPlugin uiPlugin, PluginDelegate delegate,
 		       String destinationName,
 		       String objectClusterAssetName,
 		       String objectPhysicalAssetName,
@@ -72,7 +72,7 @@ public class UserInputTask {
 		       int phraseAssetQuantity,
 		       String verb,
 		       String startDate, String endDate, String bestDate) {
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
     this.delegate = delegate;
     cof = delegate.getFactory();
     myClusterId = delegate.getClusterIdentifier();
@@ -81,7 +81,7 @@ public class UserInputTask {
     task = cof.newTask();
     task.setPlan(plan);
     task.setSource(myClusterId);
-    task.setDestination(uiPlugIn.getClusterIdFromName(destinationName));
+    task.setDestination(uiPlugin.getClusterIdFromName(destinationName));
     task.setDirectObject(createAsset(objectClusterAssetName, 
 				     objectPhysicalAssetName,
 				     objectCapabilities, 

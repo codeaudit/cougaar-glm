@@ -108,7 +108,7 @@ public class PSP_UIDataProvider extends PSP_BaseAdapter implements PlanServicePr
       XMLUIObjectSelector xmlPredicate = new XMLUIObjectSelector(terms);
       
       // enter subscription 
-      Subscription subscription = psc.getServerPlugInSupport().subscribe(this, xmlPredicate);
+      Subscription subscription = psc.getServerPluginSupport().subscribe(this, xmlPredicate);
 
       // get the org.cougaar.mlm.ui.data objects selected
       // and get the fields requested
@@ -116,7 +116,7 @@ public class PSP_UIDataProvider extends PSP_BaseAdapter implements PlanServicePr
       Vector requestedFields = ((Term)(terms.elementAt(0))).requestedFields;
 
       // unsubscribe, don't need this subscription any more
-      psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+      psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
 
       XMLPlanObjectProvider provider=null;
       //  TRAP ANY EXCEPTIONS DURING INTROSPECTION/XML GENERATION...

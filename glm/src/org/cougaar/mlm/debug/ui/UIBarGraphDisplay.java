@@ -44,7 +44,7 @@ import org.cougaar.util.UnaryPredicate;
  */
 
 public class UIBarGraphDisplay implements Runnable, ActionListener, UISubscriber {
-  private UIPlugIn uiPlugIn;
+  private UIPlugin uiPlugin;
   private String planName;
   private ClusterIdentifier clusterId;
   private String command;
@@ -63,19 +63,19 @@ public class UIBarGraphDisplay implements Runnable, ActionListener, UISubscriber
     All the work is done in the run method so
     that the main user interface thread which creates this,
     isn't waiting to fetch the information needed for the bar graph.
-    @param uiPlugIn this user interface plugin
+    @param uiPlugin this user interface plugin
     @param planName the name of the plan for which to display information
     @param clusterId the cluster for which to display information
     @param command UIDisplay.ASSET_SCHEDULE_COMMAND or UIDisplay.ASSETS_COMMAND
    */
 
-  public UIBarGraphDisplay(UIPlugIn uiPlugIn, String planName, 
+  public UIBarGraphDisplay(UIPlugin uiPlugin, String planName, 
 			   ClusterIdentifier clusterId, String command) {
-    this.uiPlugIn = uiPlugIn;
+    this.uiPlugin = uiPlugin;
     this.planName = planName;
     this.clusterId = clusterId;
     this.command = command;
-    //    uiPlugIn.subscribe(this, assetPredicate());
+    //    uiPlugin.subscribe(this, assetPredicate());
   }
 
   private static UnaryPredicate assetPredicate() {
@@ -114,12 +114,12 @@ public class UIBarGraphDisplay implements Runnable, ActionListener, UISubscriber
     try {
       if (command.equals(UIDisplay.ASSET_SCHEDULE_COMMAND)) {
 	// asset name is null for graph all assets
-	dataSource = new UISchedule(uiPlugIn, planName, clusterId, null, this);
+	dataSource = new UISchedule(uiPlugin, planName, clusterId, null, this);
 	title = "Asset Schedule in " + 
 	  clusterId.getAddress();
       }
       else if (command.equals(UIDisplay.SINGLE_ASSET_SCHEDULE_COMMAND)) {
-	Vector tmp = uiPlugIn.getPhysicalAssetNames();
+	Vector tmp = uiPlugin.getPhysicalAssetNames();
 	String assetNames[] = new String[tmp.size()];
 	tmp.copyInto(assetNames);
 	String assetChosen = 
@@ -130,13 +130,13 @@ public class UIBarGraphDisplay implements Runnable, ActionListener, UISubscriber
 	if (assetChosen == null)
 	  return;
 	// create information for bar graph schedule for chosen asset
-	dataSource = new UISchedule(uiPlugIn, planName, 
+	dataSource = new UISchedule(uiPlugin, planName, 
 				    clusterId, assetChosen, this);
 	title = "Single Asset Schedule in " +
 	  clusterId.getAddress();
       }
       else if (command.equals(UIDisplay.ASSETS_COMMAND)) {
-	dataSource = new UIAssets(uiPlugIn, planName, clusterId, this);
+	dataSource = new UIAssets(uiPlugin, planName, clusterId, this);
 	title = "Assets in " +
 	  clusterId.getAddress();
       } else {

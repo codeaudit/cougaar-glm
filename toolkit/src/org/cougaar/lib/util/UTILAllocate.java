@@ -43,7 +43,7 @@ import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 
-import org.cougaar.lib.filter.UTILPlugIn;
+import org.cougaar.lib.filter.UTILPlugin;
 
 
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation (UTILPlugIn creator,
+  public static PlanElement makeAllocation (UTILPlugin creator,
 					    RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -115,7 +115,7 @@ public class UTILAllocate {
    *
    * Automates the checking of an allocation against its preferences
    *
-   * PlugIns should never have to create AllocationResults directly.
+   * Plugins should never have to create AllocationResults directly.
    * If you want to find the score of a task-allocation result pair 
    * before making the REAL allocation, you can call scoreAgainstPreferences
    * (GSS).
@@ -134,7 +134,7 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation (UTILPlugIn creator,
+  public static PlanElement makeAllocation (UTILPlugin creator,
 					    RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -159,7 +159,7 @@ public class UTILAllocate {
    *
    * This automates the checking of an allocation against its preferences.
    *
-   * PlugIns should never have to create AllocationResults directly.
+   * Plugins should never have to create AllocationResults directly.
    * If you want to find the score of a task-allocation result pair 
    * before making the REAL allocation, you can call scoreAgainstPreferences
    * (GSS).
@@ -178,7 +178,7 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation (UTILPlugIn creator,
+  public static PlanElement makeAllocation (UTILPlugin creator,
 					    RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -211,7 +211,7 @@ public class UTILAllocate {
    *
    * This automates the checking of an allocation against its preferences.
    *
-   * PlugIns should never have to create AllocationResults directly.
+   * Plugins should never have to create AllocationResults directly.
    * If you want to find the score of a task-allocation result pair 
    * before making the REAL allocation, you can call scoreAgainstPreferences
    * (GSS).
@@ -232,7 +232,7 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation(UTILPlugIn creator,
+  public static PlanElement makeAllocation(UTILPlugin creator,
 					   RootFactory ldmf,
 					   Plan plan,
 					   Task t,
@@ -452,7 +452,7 @@ public class UTILAllocate {
    * @return FailedDisposition 
    * @see #makeFailedDisposition (RootFactory, Task)
    */
-  public static Disposition makeFailedDisposition(UTILPlugIn creator,
+  public static Disposition makeFailedDisposition(UTILPlugin creator,
 							 RootFactory ldmf, Task t,
 							 AllocationResult failedAR) {
     Disposition falloc    = 
@@ -481,7 +481,7 @@ public class UTILAllocate {
    * @return FailedDisposition 
    * @see #makeFailedDisposition (RootFactory, Task, AllocationResult)
    */
-  public static Disposition makeFailedDisposition(UTILPlugIn creator,
+  public static Disposition makeFailedDisposition(UTILPlugin creator,
 						      RootFactory ldmf, Task t) {
     AllocationResult failedAR  = 
       ldmf.newAllocationResult(HIGHEST_CONFIDENCE, RESCINDMEPLEASE, 

@@ -820,7 +820,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
   /**
    * Add plugins found in a Properties object.
    **/
-  private static void addPlugIns(Properties props) {
+  private static void addPlugins(Properties props) {
     String prefix = EventGenerator.class.getName() + ".plugin.";
     for (Enumeration e = props.propertyNames(); e.hasMoreElements(); ) {
       String key = (String) e.nextElement();
@@ -828,9 +828,9 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
       if (key.startsWith(prefix)) {
         try {
           line = props.getProperty(key);
-          addPlugIn(line);
+          addPlugin(line);
         } catch (ClassNotFoundException cnfe) {
-          System.err.println("PlugIn class not found: " + line);
+          System.err.println("Plugin class not found: " + line);
         }
       }
     }
@@ -839,7 +839,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
   /**
    * Add plugins found listed in a file
    **/
-  private static void addPlugIns(String filename) {
+  private static void addPlugins(String filename) {
     int n = 0;
     try {
       BufferedReader reader = new BufferedReader(new FileReader(filename));
@@ -847,9 +847,9 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
         String line;
         while ((line = reader.readLine()) != null) {
           try {
-            addPlugIn(line);
+            addPlugin(line);
           } catch (ClassNotFoundException cnfe) {
-            System.err.println("PlugIn class not found: " + line);
+            System.err.println("Plugin class not found: " + line);
           }
         }
       } finally {
@@ -860,17 +860,17 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
     }
   }
 
-  private static void addPlugIn(String plugInSpecification) throws ClassNotFoundException {
-    plugIns.add(new PlugInSpecification(plugInSpecification));
+  private static void addPlugin(String plugInSpecification) throws ClassNotFoundException {
+    plugIns.add(new PluginSpecification(plugInSpecification));
   }
 
   /**
    * Get iterator of all plugin specifications that implement the given interface.
    **/
-  public Iterator getPlugInSpecifications(final Class interfaceClass) {
+  public Iterator getPluginSpecifications(final Class interfaceClass) {
     return new FilteredIterator(plugIns.iterator(), new UnaryPredicate() {
       public boolean execute(Object o) {
-        return interfaceClass.isAssignableFrom(((PlugInSpecification) o).getPlugInClass());
+        return interfaceClass.isAssignableFrom(((PluginSpecification) o).getPluginClass());
       }
     });
   }
@@ -993,7 +993,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
         continue;
       }
       if (args[i].equals("-plugins")) {
-        addPlugIns(args[++i]);
+        addPlugins(args[++i]);
         continue;
       }
       if (args[i].equals("-time")) {
@@ -1002,7 +1002,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
       }
       System.err.println("Unrecognized argument: " + args[i]);
     }
-    addPlugIns(System.getProperties()); // Add plugins specified as system properties
+    addPlugins(System.getProperties()); // Add plugins specified as system properties
     final EventGenerator eventGenerator = new EventGenerator();
     JFrame frame = new JFrame("COUGAAR Event Generator");
     frame.setContentPane(eventGenerator.getGUI());

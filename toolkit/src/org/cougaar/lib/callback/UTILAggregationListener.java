@@ -34,7 +34,7 @@ import java.util.List;
  * When an aggregation changes, it can change in one of two ways, each of which the 
  * the listener can play a role in.
  *
- * Note that below, when default behavior is mentioned, it is in ???PlugInAdapter.
+ * Note that below, when default behavior is mentioned, it is in ???PluginAdapter.
  *  
  * 1) The aggregation can fail.  (handleFailedAggregation)
  * Some downstream allocation can fail, and if this happens, the listener will
@@ -43,7 +43,7 @@ import java.util.List;
  * The listener can handle this in one of two ways :
  *  a) rescind the aggregation and replan and reallocate OR
  *  b) give up and report the failed aggregation to a superior.  An example of this
- *     approach is in UTILXXXPlugIn
+ *     approach is in UTILXXXPlugin
  *
  * Since this is important, THERE IS NO DEFAULT BEHAVIOR for this option.
  *
@@ -74,12 +74,12 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
    *
    * When returns TRUE, handleRescindedAggregation is called.
    *
-   * See comment on UTILAggregatorPlugInAdapter.needToRescind.
+   * See comment on UTILAggregatorPluginAdapter.needToRescind.
    *
    * @param alloc allocation to check for
    * @return boolean true if task needs to be rescinded
    * @see #handleRescindedAggregation
-   * @see tops.filterPlugins.TOPSAggregatorPlugInAdapter#needToRescind
+   * @see tops.filterPlugins.TOPSAggregatorPluginAdapter#needToRescind
    */
   boolean needToRescind (Aggregation agg);
 
@@ -87,12 +87,12 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
    * An aggregation has failed.  It's up to the plugin how to deal with the
    * failure.
    *
-   * See comment on UTILAggregatorPlugInAdapter.needToRescind.
+   * See comment on UTILAggregatorPluginAdapter.needToRescind.
    *
    * @param aggregation that failed/has been rescinded by listener
    * @return true if handled
    * @see #needToRescind
-   * @see org.cougaar.lib.filter.UTILAggregatorPlugInAdapter#needToRescind
+   * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter#needToRescind
    */
   boolean handleRescindedAggregation(Aggregation agg);
 
@@ -105,14 +105,14 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
 
   /**
    * What to do with a successful aggregation. 
-   * For implementers who DON'T extend UTILPlugInAdapter,
+   * For implementers who DON'T extend UTILPluginAdapter,
    * this should be implemented with an empty body.
    * 
    * Called after reportChangedAggregation when needToRescind returns FALSE.
    *
    * @param agg the returned successful aggregation
    * @see #needToRescind
-   * @see org.cougaar.lib.filter.UTILAggregatorPlugInAdapter#needToRescind
+   * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter#needToRescind
    */
   void handleSuccessfulAggregation(Aggregation agg);
 

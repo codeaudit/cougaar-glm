@@ -52,10 +52,10 @@ public class SQLGlobalAirProtoCreator extends SQLAggregateAssetCreator {
            
     try {
       	  Asset pr;
-	  	  if (myLDMPlugIn != null)
-	  	     pr = myLDMPlugIn.getPrototype(protoname);
+	  	  if (myLDMPlugin != null)
+	  	     pr = myLDMPlugin.getPrototype(protoname);
 	  	  else
-	     pr = myQueryLDMPlugIn.getPrototype(protoname);
+	     pr = myQueryLDMPlugin.getPrototype(protoname);
 
          
       return pr;

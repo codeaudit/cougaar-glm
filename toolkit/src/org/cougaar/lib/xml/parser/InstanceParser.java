@@ -21,8 +21,8 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.cougaar.core.agent.ClusterServesPlugIn;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Schedule;
 
@@ -46,7 +46,7 @@ import org.w3c.dom.NodeList;
  */
 public class InstanceParser{
 
-  public static List getInstance(LDMServesPlugIn ldm, Node node){
+  public static List getInstance(LDMServesPlugin ldm, Node node){
 
     Schedule newSchedule = null; 
     List newAssets = new ArrayList ();
@@ -99,7 +99,7 @@ public class InstanceParser{
    * @param newScheduler - initial availability
    * @return the new asset!
    */
-    protected static Asset makeNewAsset (LDMServesPlugIn ldm, 
+    protected static Asset makeNewAsset (LDMServesPlugin ldm, 
 					 String prototype, 
 					 String id, 
 					 Schedule newSchedule) {

@@ -134,7 +134,7 @@ public class PSP_Report extends PSP_BaseAdapter
     myScreenDate = new Date((long)millis);
 
     Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, reportPred);
+      psc.getServerPluginSupport().subscribe(this, reportPred);
     Collection collection = 
       ((CollectionSubscription)subscription).getCollection();
     Iterator reportIterator = collection.iterator();

@@ -41,7 +41,7 @@ public class PolicyEditor implements UnaryPredicate {
   /* Find the policy object to change based on the Policy ID
      Edit the policy object and return true, which places
      the object in the subscription.
-     The PSP calls publishChange (via the PlanServerPlugIn)
+     The PSP calls publishChange (via the PlanServerPlugin)
      for all the objects in the subscription.
      */
   public boolean execute(Object object) {

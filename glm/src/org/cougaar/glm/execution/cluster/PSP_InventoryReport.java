@@ -30,11 +30,11 @@ import org.cougaar.lib.planserver.PlanServiceContext;
 import org.cougaar.lib.planserver.PlanServiceProvider;
 import org.cougaar.lib.planserver.PlanServiceUtilities;
 import org.cougaar.lib.planserver.RuntimePSPException;
-import org.cougaar.lib.planserver.ServerPlugInSupport;
+import org.cougaar.lib.planserver.ServerPluginSupport;
 import org.cougaar.lib.planserver.UseDirectSocketOutputStream;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.ldm.asset.Inventory;
 import org.cougaar.glm.ldm.asset.ReportSchedulePG;
@@ -115,7 +115,7 @@ public class PSP_InventoryReport
   }
 
   private Inventory getInventory(final String theItemIdentification, PlanServiceContext psc) {
-    Collection c = psc.getServerPlugInSupport().queryForSubscriber(new UnaryPredicate() {
+    Collection c = psc.getServerPluginSupport().queryForSubscriber(new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof Inventory) {
           Inventory inventory = (Inventory) o;

@@ -28,7 +28,7 @@ public abstract class AggregationClosure {
 
   /**
     * This method will be called by aggregation and packing scripts of
-    * the scripting PlugIn.  It is guaranteed to be called before the
+    * the scripting Plugin.  It is guaranteed to be called before the
     * newTask method is called, so that writers of newTask methods may
     * feel free to use the variables _gp and _factory, that point to the
     * GenericPlugin and its RootFactory, respectively.

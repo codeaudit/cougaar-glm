@@ -19,14 +19,14 @@ package org.cougaar.glm.ldm.asset;
 
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import java.io.Serializable;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.ProjectionWeight;
-import org.cougaar.glm.plugins.DecorationPlugIn;
+import org.cougaar.glm.plugins.DecorationPlugin;
 import org.cougaar.glm.plugins.TaskUtils;
 
 public class ProjectionWeightImpl implements ProjectionWeight, Serializable {

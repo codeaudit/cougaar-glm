@@ -61,7 +61,7 @@ import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.Verb;
 
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 
 /** Supports task creation by users.
  */
@@ -116,21 +116,21 @@ public class UserInput implements ActionListener, Runnable {
   Insets internalPadding;
   Insets labelInternalPadding;
   JPanel panel;
-  UIPlugIn uiPlugIn;
+  UIPlugin uiPlugin;
   UIDisplay uiDisplay;
   ClusterObjectFactory cof;
   Plan realityPlan;
   String planName;
-  PlugInDelegate delegate;
+  PluginDelegate delegate;
 
 
   /** Initialize values used by user input thread.
-    @param UIPlugIn this plugin
+    @param UIPlugin this plugin
     @param UIDisplay the main display object
    */
 
-  public UserInput(UIPlugIn uiPlugIn, UIDisplay uiDisplay, PlugInDelegate delegate) {
-    this.uiPlugIn = uiPlugIn;
+  public UserInput(UIPlugin uiPlugin, UIDisplay uiDisplay, PluginDelegate delegate) {
+    this.uiPlugin = uiPlugin;
     this.uiDisplay = uiDisplay;
     this.delegate = delegate;
     cof = delegate.getFactory();
@@ -291,7 +291,7 @@ public class UserInput implements ActionListener, Runnable {
 		 GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL,
 		 0, 0, labelInternalPadding, 1, 0);
     JComboBox box = new JComboBox();
-    Vector choices = uiPlugIn.getClusterNames();
+    Vector choices = uiPlugin.getClusterNames();
     for (int i = 0; i < choices.size(); i++)
       box.addItem(choices.elementAt(i));
     box.addItem("");
@@ -401,7 +401,7 @@ public class UserInput implements ActionListener, Runnable {
     if (source instanceof JButton) {
       if (command.equals(CREATE_TASK)) {
 	UserInputTask newTask = 
-            new UserInputTask(uiPlugIn, delegate, destinationCluster,
+            new UserInputTask(uiPlugin, delegate, destinationCluster,
 			      objectClusterAsset, objectPhysicalAsset, 
 			      objectCapabilities, objectAssetQuantity, 
 			      phrasePreposition,

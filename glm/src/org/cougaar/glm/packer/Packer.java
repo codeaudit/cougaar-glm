@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.PluginHelper;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
@@ -230,7 +230,7 @@ public abstract class Packer extends GenericPlugin {
     while (changedPEs.hasMoreElements()) {
       PlanElement pe = (PlanElement)changedPEs.nextElement();
       
-      if (PlugInHelper.updatePlanElement(pe)) {
+      if (PluginHelper.updatePlanElement(pe)) {
         boolean needToCorrectQuantity = false;
         
         AllocationResult estimatedAR = pe.getEstimatedResult();

@@ -257,7 +257,7 @@ public class PSP_OplanView extends PSP_BaseAdapter implements PlanServiceProvide
         out.println(PSPOplanUtilities.sectionHeader("Organizations"));
         while(org_activities.hasNext()) {
             OrgActivity org = (OrgActivity)org_activities.next();
-            if (org.getOrgID().equals(psc.getServerPlugInSupport().getClusterIDAsString())) {
+            if (org.getOrgID().equals(psc.getServerPluginSupport().getClusterIDAsString())) {
                 out.println("<p>" + org.getOrgID() + " " + org.getActivityType() + " " + org.getOpTempo() + 
                             " " + org.getTimeSpan().getStartDate() + 
                             "(C+" + computeDeltaDay(org.getTimeSpan().getStartDate(), c_date) + ") " + 

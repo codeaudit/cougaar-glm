@@ -68,7 +68,7 @@ import org.cougaar.glm.ldm.oplan.OplanContributor;
 import org.cougaar.glm.ldm.oplan.OplanCoupon;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 
-import org.cougaar.mlm.plugin.ldm.LDMSQLPlugIn;
+import org.cougaar.mlm.plugin.ldm.LDMSQLPlugin;
 import org.cougaar.mlm.plugin.ldm.SQLOplanBase;
 import org.cougaar.mlm.plugin.ldm.SQLOplanQueryHandler;
 
@@ -79,13 +79,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
 /**
- * The GLSInitServlet crams all of the functionality of the GLSGUIInitPlugIn, 
- * GLSGUIRescindPlugIn, and SQLOplanPlugIn sans GUIs into one plugin
+ * The GLSInitServlet crams all of the functionality of the GLSGUIInitPlugin, 
+ * GLSGUIRescindPlugin, and SQLOplanPlugin sans GUIs into one plugin
  * The buttons are now in a client application which talks to the
  * servlets in this plugin to publish the oplan and gls tasks
  *
  **/
-public class GLSInitServlet extends LDMSQLPlugIn implements SQLOplanBase{
+public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 
   private IncrementalSubscription oplanSubscription;
 
@@ -140,7 +140,7 @@ public class GLSInitServlet extends LDMSQLPlugIn implements SQLOplanBase{
   };
 
   /**
-   * This predicate selects for root tasks injected by the GLSGUIInitPlugIn
+   * This predicate selects for root tasks injected by the GLSGUIInitPlugin
    **/
   private UnaryPredicate glsPredicate =  new UnaryPredicate() {
       public boolean execute(Object o) {
@@ -195,7 +195,7 @@ public class GLSInitServlet extends LDMSQLPlugIn implements SQLOplanBase{
   }
 
   /**
-   * Executes PlugIn functionality.
+   * Executes Plugin functionality.
    */
   public void execute(){
 
@@ -678,7 +678,7 @@ public class GLSInitServlet extends LDMSQLPlugIn implements SQLOplanBase{
     try {
       UID oplanUID = oplan.getUID();
       ContextOfUIDs context = new ContextOfUIDs(oplanUID);
-      System.out.println("GLSGUIInitPlugIn: Setting context to: " + oplanUID);
+      System.out.println("GLSGUIInitPlugin: Setting context to: " + oplanUID);
       task.setContext(context);
     } catch (Exception ex) {
       ex.printStackTrace();

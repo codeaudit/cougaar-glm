@@ -58,7 +58,7 @@ public class DeletionProcessor extends InventoryProcessor {
 
     private static final boolean DEBUG = true;
 
-    public DeletionProcessor(InventoryPlugIn plugin, Organization org, String type) {
+    public DeletionProcessor(InventoryPlugin plugin, Organization org, String type) {
         super(plugin, org, type);
 	initialize();
     }
@@ -147,7 +147,7 @@ public class DeletionProcessor extends InventoryProcessor {
                 continue;
             }
             Asset proto = (Asset) task.getDirectObject();
-	    Inventory inventory = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
+	    Inventory inventory = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
             if (inventory == null)  {
 		String typeID = proto.getTypeIdentificationPG().getTypeIdentification();
 		printError("Inventory NOT found for "+typeID);

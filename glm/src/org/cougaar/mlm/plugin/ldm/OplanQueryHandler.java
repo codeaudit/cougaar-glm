@@ -25,9 +25,9 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 
 import org.cougaar.util.Parameters;
@@ -36,7 +36,7 @@ import org.cougaar.glm.ldm.oplan.Oplan;
 
 
 /** Reads oplan info from a database table. Assumes it's being invoked on
- * behalf of SQLOplanPlugIn. Updates oplan maintained by SQLOplanPlugIn.
+ * behalf of SQLOplanPlugin. Updates oplan maintained by SQLOplanPlugin.
  */
 
 public class OplanQueryHandler  extends SQLOplanQueryHandler {
@@ -81,8 +81,8 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
    * but may be overridden by subclasses.
    **/
   public void endQuery() {
-    String oplanID = getParameter(SQLOplanPlugIn.OPLAN_ID_PARAMETER);
-    Oplan oplan = myPlugIn.getOplan(oplanID);
+    String oplanID = getParameter(SQLOplanPlugin.OPLAN_ID_PARAMETER);
+    Oplan oplan = myPlugin.getOplan(oplanID);
     boolean updateNeeded = false;
 
     if (oplan != null) {
@@ -104,7 +104,7 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
       oplan.setPriority(myPriority);
       oplan.setCday(myCday);
       
-      myPlugIn.updateOplanInfo(oplan);
+      myPlugin.updateOplanInfo(oplan);
     }
   }
 }

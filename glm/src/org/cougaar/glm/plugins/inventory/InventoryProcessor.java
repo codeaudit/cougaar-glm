@@ -44,7 +44,7 @@ import org.cougaar.glm.plugins.*;
   */
 public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 
-    protected InventoryPlugIn                          inventoryPlugIn_;
+    protected InventoryPlugin                          inventoryPlugin_;
     protected IncrementalSubscription        supplyTasks_;
     protected IncrementalSubscription        projectionTasks_;
     protected IncrementalSubscription        refillTasks_;
@@ -57,10 +57,10 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
     protected String                      GEOLOC = "ABC";
     public static NumberFormat demandFormat = NumberFormat.getInstance();
 
-    public InventoryProcessor(InventoryPlugIn plugin, org.cougaar.glm.ldm.asset.Organization org, String type )
+    public InventoryProcessor(InventoryPlugin plugin, org.cougaar.glm.ldm.asset.Organization org, String type )
     {
 	super(plugin, org);
-	inventoryPlugIn_ = plugin;
+	inventoryPlugin_ = plugin;
 	supplyType_ = type;
 
 	NewGeolocLocation newGeoloc = GLMFactory.newGeolocLocation();
@@ -239,7 +239,7 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
     public void update() {
 //  	long alp_time = getAlpTime();
 	startTime_ = getAlpTime();
-//          Collection oplans = ((GLMDecorationPlugIn)inventoryPlugIn_).getOPlans();
+//          Collection oplans = ((GLMDecorationPlugin)inventoryPlugin_).getOPlans();
 //          if (oplans.isEmpty()) {
 //              oplanStartTime_ = alp_time;
 //  	    oplanEndTime_ = TimeUtils.addNDays(oplanStartTime_, 180);
@@ -265,7 +265,7 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 	if (!tasks.hasMoreElements()) {
 	    return;
 	}
-	Task parent_task = inventoryPlugIn_.findOrMakeMILTask(inventory);
+	Task parent_task = inventoryPlugin_.findOrMakeMILTask(inventory);
 	Schedule published_schedule = createProjectionSchedule(parent_task);
 	Schedule newtask_schedule  = newObjectSchedule(tasks);
 	Enumeration tasks_to_publish = diffProjections(published_schedule, newtask_schedule);

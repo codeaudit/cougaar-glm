@@ -60,23 +60,23 @@ public class PerturbationNode
     /**@shapeType AggregationLink
     @associates <b>Perturbation</b>*/
     private Vector lnkUnnamed1;
-	private PerturbationPlugIn pertPlugIn_; 
+	private PerturbationPlugin pertPlugin_; 
 
    /**
      * @param perturbationData XML perturbation data node
 	 * @param subscriber The asset subscriber
 	 */
-   public PerturbationNode( Node perturbationData, Subscriber subscriber, PerturbationPlugIn pertPlugIn )
+   public PerturbationNode( Node perturbationData, Subscriber subscriber, PerturbationPlugin pertPlugin )
    {	
-		this.pertPlugIn_ = pertPlugIn;
+		this.pertPlugin_ = pertPlugin;
 		this.subscriber = subscriber;
 		setJob( perturbationData );
 		parseData( perturbationData );
    }
 
-public PerturbationPlugIn getPerturbationPlugIn()
+public PerturbationPlugin getPerturbationPlugin()
 {
-	return pertPlugIn_;
+	return pertPlugin_;
 }
    /**
      * Sets the perturbation job.
@@ -84,7 +84,7 @@ public PerturbationPlugIn getPerturbationPlugIn()
 	 */	
    public void setJob ( Node jobData )
    {
-      Perturbation tempJob = new Perturbation(jobData, pertPlugIn_ );
+      Perturbation tempJob = new Perturbation(jobData, pertPlugin_ );
       tempJob.setSubscriber(subscriber );
       job = (Runnable)tempJob;
       

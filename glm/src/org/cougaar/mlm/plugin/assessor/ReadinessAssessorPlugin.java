@@ -41,7 +41,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.LDMService;
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.PluginHelper;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
@@ -185,7 +185,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
       for (Iterator peIt = readinessPESub.getChangedCollection().iterator(); peIt.hasNext();) {
 	PlanElement pe = (PlanElement) peIt.next();
-	if (PlugInHelper.updatePlanElement(pe)) {
+	if (PluginHelper.updatePlanElement(pe)) {
 	  blackboard.publishChange(pe);
 	}
       }

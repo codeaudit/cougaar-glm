@@ -29,17 +29,17 @@ function wake() {
 }
 
 function publishAdd( obj ) {
-	_plugin.getPlugInSubscriber().publishAdd( obj );
+	_plugin.getPluginSubscriber().publishAdd( obj );
 }
 
 function publishChange( obj ) {
-	_plugin.getPlugInSubscriber().publishChange( obj );
+	_plugin.getPluginSubscriber().publishChange( obj );
 }
 
 function publishRemove( obj ) {
-	_plugin.getPlugInSubscriber().publishRemove( obj );
+	_plugin.getPluginSubscriber().publishRemove( obj );
 }
 
 function getSubscriber() {
-	return _plugin.getPlugInSubscriber();
+	return _plugin.getPluginSubscriber();
 }

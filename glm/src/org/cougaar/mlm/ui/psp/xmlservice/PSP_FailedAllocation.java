@@ -96,7 +96,7 @@ public class PSP_FailedAllocation extends PSP_BaseAdapter implements PlanService
                        PlanServiceUtilities psu) throws Exception
   {
     Subscription subscription = 
-        psc.getServerPlugInSupport().subscribe(this, myPredicate);
+        psc.getServerPluginSupport().subscribe(this, myPredicate);
     // loop through the failed allocations we've seen since last awakened
     // and send the tasks to the client as XML encoded UIData objects
     while( true ) {

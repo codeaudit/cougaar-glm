@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
@@ -39,22 +39,22 @@ import java.util.Date;
 /**
  * Creates asset from AggregateAsset xml node.
  *
- * Called from UTILLdmXMLPlugIn.
+ * Called from UTILLdmXMLPlugin.
  */
 public class AggregateAssetParser{
   private static final boolean testing = false;
 
   /**
-   * This function is for use with the UTILLdmXMLPlugIn.
+   * This function is for use with the UTILLdmXMLPlugin.
    *
    * Insensitive to the case of the <aggregateasset> tag.  (So <AggregateAsset> is OK too.)
    *
    * @param ldmFactory - the factory to ask to create instances
    * @param node       - the AggregateAsset document node itself
    * @return an aggregate asset that corresponds to the node
-   * @see org.cougaar.lib.plugin.UTILLdmXMLPlugIn#getAssets
+   * @see org.cougaar.lib.plugin.UTILLdmXMLPlugin#getAssets
    */
-  public static AggregateAsset getAggregate(LDMServesPlugIn ldm, Node node){
+  public static AggregateAsset getAggregate(LDMServesPlugin ldm, Node node){
     AggregateAsset newAsset = null;
 
     if (node.getNodeName().toLowerCase().equals("aggregateasset")){
@@ -133,7 +133,7 @@ public class AggregateAssetParser{
 	return null;
   }
   
-  protected static Schedule getSchedule (LDMServesPlugIn ldm, NodeList nlist) {
+  protected static Schedule getSchedule (LDMServesPlugin ldm, NodeList nlist) {
     // Only expect one schedule per instance
       for(int i = 0; i < nlist.getLength(); i++) {
 	Node    child       = nlist.item(i);
@@ -154,7 +154,7 @@ public class AggregateAssetParser{
    * @param asset       - to modify
    * @param newSchedule - initial availability
    */
-  protected static void setSchedule (LDMServesPlugIn ldm, 
+  protected static void setSchedule (LDMServesPlugin ldm, 
 				     Asset asset, 
 				     Schedule newSchedule) {
     if (testing)

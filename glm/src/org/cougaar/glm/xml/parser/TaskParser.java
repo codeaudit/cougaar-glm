@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.1 2001-12-27 22:42:15 bdepass Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.Verb;
@@ -55,7 +55,7 @@ import org.cougaar.lib.xml.parser.VerbParser;
 public class TaskParser{
   private static String PREPO="PREPO";
 
-  public static Task getTask(LDMServesPlugIn ldm,
+  public static Task getTask(LDMServesPlugin ldm,
 			     ClusterIdentifier clusterIdentifier, 
 			     RootFactory ldmf, 
 			     Node node){
@@ -194,7 +194,7 @@ public class TaskParser{
     return task;
   }
 
-  private static Object getStuff(LDMServesPlugIn ldm, Node node){
+  private static Object getStuff(LDMServesPlugin ldm, Node node){
     Object object = null;
     
     if(node.getNodeName().equals("with") ||

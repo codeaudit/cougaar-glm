@@ -46,7 +46,7 @@ import java.text.*;
 /**
  * The Base SourceExpander class.
  */
-public class SourceExpander extends SimplePlugIn {
+public class SourceExpander extends SimplePlugin {
   // The implemented approach for SOURCE logic requires all suppliers to have the SOURCE plugins.
   // An alternate approach sends SUPPLY tasks to clusters that don't have MultipleSupplierCapable role.
   // The downside of this approach is that all SUPPLY plugins must ignore SUPPLY tasks whose parent task
@@ -178,7 +178,7 @@ public class SourceExpander extends SimplePlugIn {
   }
 
   /**
-   * Standard SimplePlugIn method.
+   * Standard SimplePlugin method.
    * Store cluster name and setup subscriptions for input Tasks, Expansions and Allocations.
    */
   protected void setupSubscriptions() {

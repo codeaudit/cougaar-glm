@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.util.MinMaxPanel;
 import org.cougaar.util.UnaryPredicate;
 import java.awt.Component;
@@ -61,7 +61,7 @@ public class RandomButtonPusher implements java.io.Serializable {
 
   private transient Runnable clicker;
 
-  private transient PlugInDelegate plugInDelegate;
+  private transient PluginDelegate plugInDelegate;
 
   protected RandomButtonPusher(int minSleepTime, int maxSleepTime, boolean initialState) {
     this.minSleepTime = minSleepTime;
@@ -69,7 +69,7 @@ public class RandomButtonPusher implements java.io.Serializable {
     enabled = initialState;
   }
 
-  public static IncrementalSubscription subscribe(PlugInDelegate pid, Class randomButtonPusherClass) {
+  public static IncrementalSubscription subscribe(PluginDelegate pid, Class randomButtonPusherClass) {
     final String randomButtonPusherClassName = randomButtonPusherClass.getName();
     UnaryPredicate predicate = new UnaryPredicate() {
       public boolean execute(Object o) {
@@ -79,7 +79,7 @@ public class RandomButtonPusher implements java.io.Serializable {
     return (IncrementalSubscription) pid.subscribe(predicate);
   }
 
-  public Component init(String label, PlugInDelegate delegate, JButton aButtonToPush) {
+  public Component init(String label, PluginDelegate delegate, JButton aButtonToPush) {
     buttonLabel = label;
     plugInDelegate = delegate;
     theButtonToPush = aButtonToPush;

@@ -87,7 +87,7 @@ public abstract class ManagerBase {
    * @return null if there is no default else the class of the default
    * plugin.
    **/
-  protected Class getDefaultPlugInClass() {
+  protected Class getDefaultPluginClass() {
     return null;
   }
 
@@ -96,7 +96,7 @@ public abstract class ManagerBase {
    * if this manager has plugins.
    * @return null if there are no plugins else the class of the plugin interface
    **/
-  protected Class getPlugInInterface() {
+  protected Class getPluginInterface() {
     return null;
   }
 
@@ -104,29 +104,29 @@ public abstract class ManagerBase {
    * Install plugins
    **/
   private void installPlugins() {
-    Class pluginInterface = getPlugInInterface();
+    Class pluginInterface = getPluginInterface();
     if (pluginInterface == null) return; // This manager has no plugins
-    Class defaultPlugInClass = getDefaultPlugInClass();
-    for (Iterator i = theEventGenerator.getPlugInSpecifications(pluginInterface); i.hasNext(); ) {
-      PlugInSpecification plugInSpecification = (PlugInSpecification) i.next();
+    Class defaultPluginClass = getDefaultPluginClass();
+    for (Iterator i = theEventGenerator.getPluginSpecifications(pluginInterface); i.hasNext(); ) {
+      PluginSpecification plugInSpecification = (PluginSpecification) i.next();
       try {
-        Class plugInClass = plugInSpecification.getPlugInClass();
-        if (plugInClass == defaultPlugInClass) continue; // Do later
-        PlugIn plugin = (PlugIn) plugInClass.newInstance();
+        Class plugInClass = plugInSpecification.getPluginClass();
+        if (plugInClass == defaultPluginClass) continue; // Do later
+        Plugin plugin = (Plugin) plugInClass.newInstance();
         boolean disabled = true; // All plugins disabled by default
         String parameter = plugInSpecification.getParameter();
         if (parameter != null) plugin.setParameter(parameter);
         if (theEventGenerator != null) plugin.setEventGenerator(theEventGenerator);
-        addPlugIn(plugin, disabled);
+        addPlugin(plugin, disabled);
       } catch (Exception e) {
         System.err.println("Exception creating " + pluginInterface.getName() + ": " + e);
         e.printStackTrace();
       }
     }
     try {
-      addPlugIn((PlugIn) defaultPlugInClass.newInstance(), false);
+      addPlugin((Plugin) defaultPluginClass.newInstance(), false);
     } catch (Exception e) {
-      System.err.println("Exception creating " + defaultPlugInClass + ": " + e);
+      System.err.println("Exception creating " + defaultPluginClass + ": " + e);
       e.printStackTrace();
     }
   }
@@ -154,7 +154,7 @@ public abstract class ManagerBase {
       };
       theReportManagerGUI.addToToolBar(filterAction).setToolTipText("Edit report filter");
       if (plugins.size() > 0) {
-        theReportManagerGUI.addToToolBar(getPlugInButton());
+        theReportManagerGUI.addToToolBar(getPluginButton());
       }
       List toolBarItems = getToolBarItems();
       for (Iterator i = toolBarItems.iterator(); i.hasNext(); ) {
@@ -177,10 +177,10 @@ public abstract class ManagerBase {
     props.setProperty(prefix + "autosendInvisible", isAutoSendInvisible() ? "true" : "false");
     getFilterGUI().save(props, prefix + "filter.");
     for (Iterator i = plugins.iterator(); i.hasNext(); ) {
-      PlugInItem plugInItem = (PlugInItem) i.next();
-      String piPrefix = prefix + "plugin." + plugInItem.thePlugIn.getPlugInName() + ".";
+      PluginItem plugInItem = (PluginItem) i.next();
+      String piPrefix = prefix + "plugin." + plugInItem.thePlugin.getPluginName() + ".";
       props.setProperty(piPrefix + "selected", plugInItem.isSelected() ? "true" : "false");
-      plugInItem.thePlugIn.save(props, piPrefix);
+      plugInItem.thePlugin.save(props, piPrefix);
     }
   }
 
@@ -202,10 +202,10 @@ public abstract class ManagerBase {
     schedule.clearFilters();
     getFilterGUI().addFilters(schedule);
     for (Iterator i = plugins.iterator(); i.hasNext(); ) {
-      PlugInItem plugInItem = (PlugInItem) i.next();
-      String piPrefix = prefix + "plugin." + plugInItem.thePlugIn.getPlugInName() + ".";
+      PluginItem plugInItem = (PluginItem) i.next();
+      String piPrefix = prefix + "plugin." + plugInItem.thePlugin.getPluginName() + ".";
       plugInItem.setSelected(getBooleanProperty(props, piPrefix + "selected"));
-      plugInItem.thePlugIn.restore(props, piPrefix);
+      plugInItem.thePlugin.restore(props, piPrefix);
     }
   }
 
@@ -362,40 +362,40 @@ public abstract class ManagerBase {
     theEventGenerator.postErrorMessage(getGUI(), message);
   }
 
-  protected JButton getPlugInButton() {    
+  protected JButton getPluginButton() {    
     JButton pluginButton = new JButton("Plugins...");
     pluginButton.setToolTipText("Select and configure plugins");
     pluginButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        postPlugInDialog();
+        postPluginDialog();
       }
     });
     return pluginButton;
   }
 
-  private static class PlugInItem extends JCheckBox {
-    public PlugIn thePlugIn;
-    public PlugInItem(PlugIn aPlugIn) {
-      super(aPlugIn.getPlugInName());
-      thePlugIn = aPlugIn;
+  private static class PluginItem extends JCheckBox {
+    public Plugin thePlugin;
+    public PluginItem(Plugin aPlugin) {
+      super(aPlugin.getPluginName());
+      thePlugin = aPlugin;
     }
   }
 
-  protected Iterator getEnabledPlugIns() {
+  protected Iterator getEnabledPlugins() {
     final Iterator all = plugins.iterator();
     return new Iterator() {
-      private PlugInItem nextItem = null;
+      private PluginItem nextItem = null;
       public boolean hasNext() {
         while (nextItem == null) {
           if (!all.hasNext()) return false;
-          nextItem = (PlugInItem) all.next();
+          nextItem = (PluginItem) all.next();
           if (nextItem.isSelected()) return true;
 	  nextItem = null;
         }
         return false;
       }
       public Object next() {
-        Object result = nextItem.thePlugIn;
+        Object result = nextItem.thePlugin;
         nextItem = null;
         return result;
       }
@@ -405,24 +405,24 @@ public abstract class ManagerBase {
     };
   }
 
-  private void postPlugInDialog() {
+  private void postPluginDialog() {
     JPanel box = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
     for (int i = 0, n = plugins.size(); i < n; i++) {
-      PlugInItem item = (PlugInItem) plugins.get(i);
-      if (item.thePlugIn.getClass() == getDefaultPlugInClass()) {
+      PluginItem item = (PluginItem) plugins.get(i);
+      if (item.thePlugin.getClass() == getDefaultPluginClass()) {
           item.disable();
       }
       gbc.gridy = i;
       gbc.gridx = 0;
       gbc.anchor = gbc.WEST;
       box.add(item, gbc);
-      if (item.thePlugIn.isConfigurable()) {
-        final PlugIn thePlugIn = item.thePlugIn;
+      if (item.thePlugin.isConfigurable()) {
+        final Plugin thePlugin = item.thePlugin;
         JButton configureButton = new JButton("Configure...");
         configureButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            thePlugIn.configure(getGUI());
+            thePlugin.configure(getGUI());
           }
         });
         gbc.gridx = 1;
@@ -432,18 +432,18 @@ public abstract class ManagerBase {
     OptionPane.
         showOptionDialog(getGUI(),
                          box,
-                         "Select PlugIns",
+                         "Select Plugins",
                          OptionPane.DEFAULT_OPTION,
                          OptionPane.QUESTION_MESSAGE,
                          null, null, null);
-    firePlugInChanged();
+    firePluginChanged();
   }
 
-  protected void firePlugInChanged() {
+  protected void firePluginChanged() {
   }
 
-  protected void addPlugIn(PlugIn plugin, boolean disabled) {
-    PlugInItem item = new PlugInItem(plugin);
+  protected void addPlugin(Plugin plugin, boolean disabled) {
+    PluginItem item = new PluginItem(plugin);
     item.setSelected(!disabled);
     plugins.add(item);
   }

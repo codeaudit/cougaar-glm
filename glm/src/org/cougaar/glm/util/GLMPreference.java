@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.1 2001-12-27 22:42:14 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -45,7 +45,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import org.cougaar.lib.util.UTILPreference;
-import org.cougaar.lib.util.UTILPlugInException;
+import org.cougaar.lib.util.UTILPluginException;
 
 /** 
  * This class contains preference-related methods.
@@ -178,7 +178,7 @@ public class GLMPreference extends UTILPreference {
 	}
       }
     } catch (ClassCastException cce) {
-      throw new UTILPlugInException(classname + 
+      throw new UTILPluginException(classname + 
 				    ".getReportedPODLocation - expecting an AspectLocation as POD aspect value. " + 
 				    "\nInstead got " + aspectValue.getClass ());
     }

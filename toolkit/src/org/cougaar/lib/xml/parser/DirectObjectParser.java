@@ -22,7 +22,7 @@
 package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.w3c.dom.NodeList;
 
@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
  */
 public class DirectObjectParser{
 
-  public static Asset getDirectObject(LDMServesPlugIn ldm, Node node){
+  public static Asset getDirectObject(LDMServesPlugin ldm, Node node){
     Asset asset = null;
     try{
       NodeList  nlist    = node.getChildNodes();      

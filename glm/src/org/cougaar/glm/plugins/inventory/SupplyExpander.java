@@ -18,7 +18,7 @@
 package org.cougaar.glm.plugins.inventory;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.PluginHelper;
 import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.CountRate;
@@ -197,7 +197,7 @@ public class SupplyExpander extends InventoryProcessor {
     /** Constructor takes this processor's plugin, organization and the type of 
      *  supply tasks that shall be handled.
      **/
-    public SupplyExpander(InventoryPlugIn plugin, Organization org, String type)
+    public SupplyExpander(InventoryPlugin plugin, Organization org, String type)
     {
 	super(plugin, org, type);
 	supplyType_ = type;
@@ -211,7 +211,7 @@ public class SupplyExpander extends InventoryProcessor {
     }
 
     private boolean getBooleanParam(String paramName) {
-        Boolean bool = (Boolean) inventoryPlugIn_.getParam(paramName);
+        Boolean bool = (Boolean) inventoryPlugin_.getParam(paramName);
         return (bool != null && bool.booleanValue());
     }
 
@@ -299,7 +299,7 @@ public class SupplyExpander extends InventoryProcessor {
 
     /** This method is called everytime a subscription has changed. */
     public void update() {
-	if ((inventoryPlugIn_.getDetermineRequirementsTask() == null) ||
+	if ((inventoryPlugin_.getDetermineRequirementsTask() == null) ||
 	    !needUpdate()) {
 	    return;
 	}
@@ -308,9 +308,9 @@ public class SupplyExpander extends InventoryProcessor {
   	updateExpansion(supplyTasks_.getChangedList());
 	handleExpandableTasks(projectionTasks_.getAddedList());
 	updateExpansion(projectionTasks_.getChangedList());
-        PlugInHelper.updateAllocationResult(projectExpansions_);
+        PluginHelper.updateAllocationResult(projectExpansions_);
         handleExpansionChanges(supplyExpansions_.getChangedList());
-        PlugInHelper.updateAllocationResult(supplyExpansions_);
+        PluginHelper.updateAllocationResult(supplyExpansions_);
     }
 
     private boolean needUpdate() {
@@ -333,7 +333,7 @@ public class SupplyExpander extends InventoryProcessor {
 	    proto = (Asset)supplyTask.getDirectObject();
 	    // If we cannot allocate the task to inventory then ignore it.
 	    // The external allocator will forward it onto a re-supply cluster.
-	    inv = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
+	    inv = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
 	    if (inv != null) {
 		tasksExpanded++;
 //  		printDebug("handleExpandableTasks(), <"+supplyType_+">, Expanding "+TaskUtils.taskDesc(supplyTask));
@@ -355,7 +355,7 @@ public class SupplyExpander extends InventoryProcessor {
 	while (tasks.hasMoreElements()) {
 	    supplyTask = (Task)tasks.nextElement();
 	    proto = (Asset)supplyTask.getDirectObject();
-	    inv = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
+	    inv = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
 	    if (inv != null) {
 		PlanElement pe = supplyTask.getPlanElement();
 		if (pe instanceof Expansion) {

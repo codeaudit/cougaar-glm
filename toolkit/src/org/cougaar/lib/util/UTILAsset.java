@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 
 import org.cougaar.planning.ldm.asset.AggregateAsset;
@@ -67,7 +67,7 @@ public class UTILAsset {
    * @param bumperno      - the unique identifier assigned to the returned instance.
    * @return an LDM asset, null if no prototype prototypeName is known
    */
-  public static Asset createInstance(LDMServesPlugIn ldm, String prototypeName, String bumperno){
+  public static Asset createInstance(LDMServesPlugin ldm, String prototypeName, String bumperno){
     Asset instance = ldm.getFactory().createInstance (prototypeName, bumperno);
     return instance;
   }
@@ -86,7 +86,7 @@ public class UTILAsset {
    * Given a vector of objects, it creates an asset group
    * containing those objects.  
    *
-   * @param  ldm can be gotten from the getLDM() method inherited from PlugInAdapter.
+   * @param  ldm can be gotten from the getLDM() method inherited from PluginAdapter.
    * @param  v a Vector of assets to be grouped
    * @return AssetGroup
    */

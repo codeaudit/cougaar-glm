@@ -24,10 +24,10 @@ package org.cougaar.mlm.plugin.ldm;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.util.Parameters;
 
 import java.util.Vector;
@@ -38,23 +38,23 @@ import java.util.Properties;
 public abstract class QueryHandler {
   public QueryHandler() {}
 	
-  protected LDMSQLPlugIn myLDMPlugIn;
-  protected LDMQueryPlugIn myQueryLDMPlugIn;
+  protected LDMSQLPlugin myLDMPlugin;
+  protected LDMQueryPlugin myQueryLDMPlugin;
   protected boolean LDMQueryType = false;
   protected ClusterIdentifier myClusterIdentifier;
-  protected ClusterServesPlugIn myComponent;
+  protected ClusterServesPlugin myComponent;
   protected RootFactory ldmf;
   protected Properties myParameters;
   protected BlackboardService subscriber;
-  protected LDMServesPlugIn ldm;
+  protected LDMServesPlugin ldm;
 	
-  protected void initialize( LDMSQLPlugIn ldmplugin,
+  protected void initialize( LDMSQLPlugin ldmplugin,
                              ClusterIdentifier cid,
-                             ClusterServesPlugIn comp,
+                             ClusterServesPlugin comp,
                              RootFactory aldmf,
                              Properties params,
                              BlackboardService sub) {
-    myLDMPlugIn = ldmplugin;
+    myLDMPlugin = ldmplugin;
     ldm = comp.getLDM();
     myClusterIdentifier = cid;
     myComponent = comp;
@@ -63,13 +63,13 @@ public abstract class QueryHandler {
     subscriber = sub;
   }
 
-  protected void initializeQH( LDMQueryPlugIn ldmplugin,
+  protected void initializeQH( LDMQueryPlugin ldmplugin,
                                ClusterIdentifier cid,
-                               ClusterServesPlugIn comp,
+                               ClusterServesPlugin comp,
                                RootFactory aldmf,
                                Properties params,
                                BlackboardService sub) {
-    myQueryLDMPlugIn = ldmplugin;
+    myQueryLDMPlugin = ldmplugin;
     ldm = comp.getLDM();
     myClusterIdentifier = cid;
     myComponent = comp;
@@ -80,7 +80,7 @@ public abstract class QueryHandler {
   }
 
 	
-  protected LDMServesPlugIn getLDM() {
+  protected LDMServesPlugin getLDM() {
     return ldm;
   }
 

@@ -49,17 +49,17 @@ public class PerturbationReader
    private Document doc;
    private Vector perturbations_;
    private Subscriber assetSubscriber_;
-   private PerturbationPlugIn pertPlugIn_;
+   private PerturbationPlugin pertPlugin_;
 
    /**
      * @param subscriber Asset Subscriber
 	 */
    
-   public PerturbationReader( String fileName, Subscriber subscriber, PerturbationPlugIn pertPlugIn )
+   public PerturbationReader( String fileName, Subscriber subscriber, PerturbationPlugin pertPlugin )
    {
       setFileName( fileName );
       setSubscriber( subscriber );
-	setPerturbationPlugIn( pertPlugIn );
+	setPerturbationPlugin( pertPlugin );
       createPerturbations();
       readPerturbationData();
    }
@@ -74,12 +74,12 @@ public class PerturbationReader
    }
 
 	/**
-	* Sets the PerturbationPlugIn.
-	* @param PerturbationPlugIn The calling plugin.
+	* Sets the PerturbationPlugin.
+	* @param PerturbationPlugin The calling plugin.
 	*/
-   private void setPerturbationPlugIn( PerturbationPlugIn pertPlugIn_ )
+   private void setPerturbationPlugin( PerturbationPlugin pertPlugin_ )
    {
-      this.pertPlugIn_ = pertPlugIn_ ;
+      this.pertPlugin_ = pertPlugin_ ;
    }
 
    /**
@@ -138,7 +138,7 @@ public class PerturbationReader
 			for ( int i = 0; i < len; i++ )
 			{
 			   perturbations_.addElement( new PerturbationNode(theNodes.item(i), 
-			      getSubscriber(), pertPlugIn_ ) );
+			      getSubscriber(), pertPlugin_ ) );
 			}
 		 }
 	  } 

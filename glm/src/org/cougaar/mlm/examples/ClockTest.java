@@ -21,10 +21,10 @@
 
 package org.cougaar.mlm.examples;
 
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.SimplePlugin;
 import java.util.Date;
 import java.util.Vector;
-import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.agent.ClusterIdentifier;
 
 
@@ -51,9 +51,9 @@ import org.cougaar.core.agent.ClusterIdentifier;
  *   plugin = org.cougaar.mlm.examples.ClockTest
  **/
 
-public class ClockTest extends SimplePlugIn
+public class ClockTest extends SimplePlugin
 {
-  ClusterServesPlugIn cluster = null;
+  ClusterServesPlugin cluster = null;
   ClusterIdentifier cid = null;
   
   public ClockTest() {

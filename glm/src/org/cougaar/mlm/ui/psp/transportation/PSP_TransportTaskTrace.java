@@ -209,10 +209,10 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
     private Subscription AllocationSubscription;
     private void initSubscriptions(PlanServiceContext psc)
     {
-          OrgSubscription = psc.getServerPlugInSupport().subscribe(this, getOrgPred());
-          TaskSubscription = psc.getServerPlugInSupport().subscribe(this, getTaskPred());
-          AssetSubscription = psc.getServerPlugInSupport().subscribe(this, getAssetPred());
-          AllocationSubscription = psc.getServerPlugInSupport().subscribe(this, getAllocPred());
+          OrgSubscription = psc.getServerPluginSupport().subscribe(this, getOrgPred());
+          TaskSubscription = psc.getServerPluginSupport().subscribe(this, getTaskPred());
+          AssetSubscription = psc.getServerPluginSupport().subscribe(this, getAssetPred());
+          AllocationSubscription = psc.getServerPluginSupport().subscribe(this, getAllocPred());
     }
 
 
@@ -349,7 +349,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
             orgUID = query.substring(iorg+14,nxt);
           }
 
-          thisClusterID = psc.getServerPlugInSupport().getClusterIDAsString();
+          thisClusterID = psc.getServerPluginSupport().getClusterIDAsString();
           retVector.addElement(
              execute2(query_parameters,psc,psu,verbFilter,
                       taskUID,assetUID,orgUID));
@@ -636,7 +636,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                        //            + " of verb " + vrb.toString()
                        //            + ", looking for " + taskUIDFilter
                        //            + " verb filter = " + verbFilter
-                       //            + " @ cluster " + psc.getServerPlugInSupport().getClusterIDAsString()
+                       //            + " @ cluster " + psc.getServerPluginSupport().getClusterIDAsString()
                        //            + "}" ;
 
                        /**
@@ -663,7 +663,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
 
                 String msg = "(No Tasks found)(Looking for TransportationMission, Transport tasks)"
                              + ", UID=" + taskUIDFilter + " @"
-                             + psc.getServerPlugInSupport().getClusterIDAsString()
+                             + psc.getServerPluginSupport().getClusterIDAsString()
                              + ")";
                 UITTException uiex = new UITTException( msg);
 
