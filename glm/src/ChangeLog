@@ -1,3 +1,10 @@
+2001-02-02 Mark Davis <mdavis@bbn.com>
+	* org.cougaar.domain.mlm.ui.planviewer.inventory.InventoryChart
+	and others in that package.
+
+	Made compatible to both build and run Inventory GUI with new Sitraka JChart upgrade (new jcchart451K.jar to replace old jcchart400K.jar in core).
+Cannot mix and match different builds of glm and core across this date.
+	
 2001-01-11 Jim Winston <jwinston@bbn.com>
 	* org.cougaar.domain.mlm.plugin.generic.PropgationPlugIn
 	* org.cougaar.domain.mlm.plugin.ldm.XMLPolicyPlugIn
