@@ -11,6 +11,12 @@ query = select 'Personnel' NSN, personnel QTY_OH, 'MilitaryPersonnel' NOMENCLATU
 	from ue_summary_mtmc \
     	where uic = :uic
 
+# Next, get the MOS levels and generate an aggregate asset
+%SQLAggregateAssetCreator
+query = select CAPABILITY MOS_LEVEL, PERSONNEL MOS_QTY, 'Dummy Nomenclature' \
+	from ORG_MOS \
+	where UIC = :uic
+
 # Then, get the containers and generate an aggregate asset
 %SQLAggregateAssetCreator
 query = select '8115001682275' NSN, container_20_ft_qty QTY_OH, 'Container' NOMENCLATURE \
