@@ -14,6 +14,7 @@ import org.cougaar.util.ConfigFinder;
 
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import java.net.URL;
 
 /**
  * EntityResolver for use with all UTIL xml parsers.
@@ -24,37 +25,25 @@ import org.xml.sax.InputSource;
  * The entity resolver is just a wrapper of the configFinder.
  * The resolver is expected to resolve a systemID, where:
  *
- * systemID is of the form : file:/ferris/bueller/day
- * user.dir is             :      /ferris/bueller
- * and we want just the last part (day)
- * NOTE: on NT -->
- * systemID is of the form : file:/C:/ferris/bueller/day
- * user.dir is             :       C:/ferris/bueller
- * No slash in front of the path on the user.dir.
  *
  */
 public class UTILEntityResolver implements EntityResolver {
   public InputSource resolveEntity (String publicId, String systemId)	{
-    // systemID is of the form : file:/ferris/bueller/day
-    // user.dir is             :      /ferris/bueller
-    // and we want just the last part
-    // NOTE: on NT -->
-    // systemID is of the form : file:/C:/ferris/bueller/day
-    // user.dir is             :      C:/ferris/bueller
-    // No slash in front of the path on the user.dir
-    String separator = System.getProperty ("file.separator");
-    String currDir   = System.getProperty ("user.dir");
-    if (!currDir.startsWith (separator))
-      currDir = separator + currDir;
-    // 5 for the file: and one for the trailing slash
-    String fileName = systemId.substring (currDir.length()+6);
-    //	System.out.println ("curr dir = " + currDir);
-    //	System.out.println ("Asking config file finder for systemID = " + systemId);
-    //	System.out.println ("Asking config file finder for file = " + fileName);
+
+    URL url = null;
+
+    try {
+      url = new URL(systemId);
+    } catch(Exception e) {}
+
+    String filename = url.getFile();
+
+    filename = filename.replace('\\', '/');
+    filename = filename.substring(filename.lastIndexOf("/")+1, filename.length());
 
     // return a special input source
     try {
-      return new InputSource(ConfigFinder.getInstance().open(fileName));
+      return new InputSource(ConfigFinder.getInstance().open(filename));
     } catch (Exception e) {
       System.err.println(e.getMessage());
       System.err.println ("UTILLdmXMLPlugIn.getParsedDocument - Could not find on config path");
