@@ -2,7 +2,7 @@
 #
 source $ALP_INSTALL_PATH/bin/setlibpath.csh
 
-set MYCLASSES="ui.perturbation.asset.AssetPerturbationDisplay"
+set MYCLASSES="org.cougaar.domain.mlm.ui.perturbation.asset.AssetPerturbationDisplay"
 
 set osargs=""
 set os=`uname`
@@ -15,3 +15,5 @@ if ($?ALP_DEV_PATH) then
 endif
 
 java $osargs -classpath $LIBPATHS $MYCLASSES
+
+
