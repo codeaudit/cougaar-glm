@@ -21,11 +21,12 @@ package org.cougaar.domain.glm.plugins;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.util.MoreMath;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
 import org.cougaar.domain.planning.ldm.LdmFactory;
 import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.measure.Rate;
+import org.cougaar.domain.planning.ldm.measure.*;
 
 import java.text.NumberFormat;
 import java.util.Date;
@@ -186,31 +187,26 @@ public class TaskUtils extends PlugInHelper {
 	return task.getDirectObject().getTypeIdentificationPG().getTypeIdentification();
     }
 
-    // true if ==
+    /**
+     * Compare the preferences of two tasks return true if the tasks
+     * have preferences for the same aspect types and if all
+     * corresponding AspectValues are nearly equal.
+     * This needs to be fixed to be more efficient.
+     **/
     public static boolean comparePreferences(Task a, Task b) {
-	Preference p;
-	int at;
-	AspectScorePoint asp;
+        return comparePreferencesInner(a, b) && comparePreferencesInner(b, a);
+    }
+
+    private static boolean comparePreferencesInner(Task a, Task b) {
 	Enumeration ae = a.getPreferences();
 	while (ae.hasMoreElements()) {
-	    p = (Preference)ae.nextElement();
-	    at = p.getAspectType();
-	    if ( p.getScoringFunction().getBest().getValue() != getPreferenceBestValue(b,at)) {
-// 		GLMDebug.DEBUG("TaskUtils","compare AspectType:"+at+" a:"+p.getScoringFunction().getBest().getValue()+" b:"+getPreferenceBestValue(b,at));
-		return false;
-	    }
-	}
-	Enumeration be = b.getPreferences();
-	while (be.hasMoreElements()) {
-	    p = (Preference)be.nextElement();
-	    at = p.getAspectType();
-	    if ( p.getScoringFunction().getBest().getValue() != getPreferenceBestValue(a,at)) {
-		GLMDebug.DEBUG("TaskUtils","compare AspectType:"+at+" b:"+p.getScoringFunction().getBest().getValue()+" a:"+getPreferenceBestValue(a,at));
-		return false;
-	    }
-	}
-	return true;
-	
+            Preference p = (Preference) ae.nextElement();
+            int at = p.getAspectType();
+            double av = p.getScoringFunction().getBest().getValue();
+            double bv = getPreferenceBestValue(b, at);
+            if (!MoreMath.nearlyEquals(av, bv, 0.0001)) return false;
+        }
+        return true;
     }
 
 
@@ -262,6 +258,23 @@ public class TaskUtils extends PlugInHelper {
 	return ((AspectRate) best).getRateValue();
     }
 
+    public static double getDailyQuantity(Task task) {
+        if (isProjection(task)) {
+            Rate r = getRate(task);
+            if (r instanceof FlowRate) {
+                return ((FlowRate) r).getGallonsPerDay();
+            } else if (r instanceof CountRate) {
+                return ((CountRate) r).getEachesPerDay();
+            } else if (r instanceof MassTransferRate) {
+                return ((MassTransferRate) r).getShortTonsPerDay();
+            } else {
+                return Double.NaN;
+            }
+        } else {
+            return getQuantity(task);
+        }
+    }
+
     public static double getMultiplier(Task task) {
         AspectValue best = getPreferenceBest(task, AlpineAspectType.DEMANDMULTIPLIER);
         if (best == null)
@@ -269,63 +282,54 @@ public class TaskUtils extends PlugInHelper {
 	return best.getValue();
     }
 
-    public static double getRefillQuantity(Task refillTask){
-        PlanElement pe = refillTask.getPlanElement();
-        double qty;
-        if ((pe instanceof Allocation) && (pe.getReportedResult()!= null)) {
-            // get actual allocation results
-            AllocationResult ar = pe.getReportedResult();
-
-            if (!ar.isSuccess()) {
-                qty = 0.0;
-            } else {
-                qty = getQuantity(ar);
-            }
-        } else {
-            // get requested results until actual results are available
-            qty=TaskUtils.getPreference(refillTask, AspectType.QUANTITY);;
+    public static double getRefillQuantity(Task refillTask) {
+        AllocationResult ar = getValidResult(refillTask);
+        if (ar != null) {
+	    // if Estimated Result was successful then return AR Quantity, else return 0.0
+	    if (ar.isSuccess()) 
+		return getQuantity(ar);
+	    else
+		return 0.0;
         }
-        return qty;
-  }
+        // get requested results until actual results are available
+        return TaskUtils.getPreference(refillTask, AspectType.QUANTITY);
+    }
 
-  public static double getWithdrawQuantity(Task withdrawTask) {
-       PlanElement pe = withdrawTask.getPlanElement();
-       double qty = Double.NaN;
-       // if there is an observed result use it, otherwise use the preference
-       if ((pe instanceof Allocation) && (pe.getObservedResult()!= null)) {
-	   // get actual allocation results
-            AllocationResult ar = pe.getObservedResult();
-	    qty = getQuantity(ar);
-       }
-       if (Double.isNaN(qty)) {
-            // get requested results until observed results are available
-            qty=TaskUtils.getPreference(withdrawTask, AspectType.QUANTITY);;
-       }
-        return qty;
-  }
+    public static double getWithdrawQuantity(Task withdrawTask) {
+        AllocationResult ar = getValidResult(withdrawTask);
+        if (ar != null) {
+            return getQuantity(ar);
+        }
+        // get requested results until actual results are available
+        return TaskUtils.getPreference(withdrawTask, AspectType.QUANTITY);
+    }
 
-  public static long getRefillTime(Task refillTask){
-	PlanElement pe = refillTask.getPlanElement();
-	long end_time;
-	if ((pe instanceof Allocation) && (pe.getReportedResult()!= null)) {
-	    // get actual allocation results
-	    AllocationResult ar = pe.getReportedResult();
+    public static long getRefillTime(Task refillTask){
+        AllocationResult ar = getValidResult(refillTask);
+        if (ar != null) {
+            return (long) getEndTime(ar);
+        } else {
+            // use requested results until actual results are valid
+            return TaskUtils.getEndTime(refillTask);
+        }
+    }
 
-	    if (!ar.isSuccess()) {
-		end_time = (long)getEndTime(ar);
-	    } else {
-		end_time = (long)getEndTime(ar);
-	    }
-	} else {
-	    // get requested results until actual results are available
-	    end_time = TaskUtils.getEndTime(refillTask);
-	}
-	return end_time;
-  }
+    public static Date getRefillDate(Task refillTask){
+        return new Date(getRefillTime(refillTask));
+    }
 
-  public static Date getRefillDate(Task refillTask){
-      return new Date(getRefillTime(refillTask));
-  }
+    private static AllocationResult getValidResult(Task task) {
+	PlanElement pe = task.getPlanElement();
+	if (pe != null) {
+            AllocationResult ar = pe.getEstimatedResult();
+            if (ar != null) {
+                if (ar.getConfidenceRating() > 0.5) {
+                    return ar;
+                }
+            }
+        }
+        return null;
+    }
 
      /** return the preference of the given aspect type.  Returns null if
       *  the task does not have the given aspect. */
