@@ -48,7 +48,8 @@ public class ClusterOPlan implements Serializable {
     clusterId_ = id;
     oplan_ = op;
     startTime_ = oplan_.getCday().getTime();
-    endTime_ = oplan_.getCday().getTime();
+    endTime_ = startTime_ + 1;
+    //    endTime_ = oplan_.getEndDay().getTime();
     //  	orgActivitySubscription_ = sub;
     //  	updateOrgActivities(orgActivitySubscription_.elements());
     //  	updateOPlanTimes();
