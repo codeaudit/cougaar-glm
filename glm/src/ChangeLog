@@ -1,14 +1,387 @@
+2001-04-20  Amy Fedyk <afedyk@bbn.com>
+	* org/cougaar/domain/glm/plugins/TaskUtils.java:
+	Fixes bug #341
+	Return ZERO for the Quantity when the AllocationResult on the
+	retill task is not success.
+
+	* org/cougaar/domain/glm/plugins/InventoryManager.java
+	* org/cougaar/domain/glm/plugins/GeneralInventoryManager.java:
+	Fixes bug #307
+	Remove references to isBattalionLevel() and remove the method 
+	itself.  Depends on a very unreliable method of determining 
+	leaf nodes.
+	
+2001-04-20  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Fixes bug #342
+	In generateProjections, always terminate the previous refill
+	projection on the switchover day and start a new one. This makes
+	the first active refill projection be based on the reorder level
+	just prior to the switchover day instead of earlier garbage.
+
+2001-04-19  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Fix bug #334
+	Rewrite reorder profile approximation to correct bugs.
+
+2001-04-18  Mark Davis  <mdavis@bbn.com>
+        Add maintainAtCapacity flag.
+	
+        * org/cougaar/domain/glm/ldm/asset/alpprops.def
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java
+	* org/cougaar/domain/glm/plugins/inventory/InventoryPolicy.java
+	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugIn.java
+	* org/cougaar/domain/mlm/construction/ConstructionInventoryManager.java
+	* org/cougaar/domain/mlm/construction/ConstructionInventoryBG.java
+
+	The above files were changed in order to introduce a new
+	maintainAtCapacity boolean flag into the InventoryPolicy.
+	Now, like the fillToCapacity flag which means the goal level should
+	never go above capacity, maintainAtCapacity means the inventory
+	level should never drop below the capacity level.
+
+	The InventoryManager was effected to help set the flag and also
+	getMinReorderLevel and getMaxReorderLevel were modified to handle
+	the majority of the cases.   getMinReorderLevel now bumps up the 
+	reorder level to capacity when maintainAtCapacity is set to true.
+	getMaxReorderLevel always limits to capacity now.
+	
+	* glm/configs/common/InventoryPolicy-ARBN.ldm.xml
+	Set the maintain at capacity flag to true for Ammo at battalions
+
+2001-04-16  Mark Davis  <mdavis@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java;
+	First large part to fix for bug #207.
+	Compute an NDays of Demand for every planning day and
+	put it into an array.   This is based on a new call
+	from InventoryManager that passes relevant policy information
+	as well as the min and max level for the reorder level which
+	is derived from subclasses of the InventoryManager.
+	Moved getReorderLevel() and getGoalLevel() from InventoryManager,
+	and accomplish the same behavior but now these methods are
+	on the InventoryBG.
+
+	* Set the reorder level to never return more than the capacity
+	when getFillToCapacity() is turned on.  Also, take out the setting 
+	of capacity to a higher level, was causing problems.  Many were 
+	solved by above getFillToCapacity() fix, but Ray feels this capacity
+	is not used for anything but a concept (not in any calculations 
+	but to set reorder level, etc), so it should not be set on the 
+	fly.   This is to fix bug #306
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	In order to work with fix above, rip out all code for getGoalLevel
+	and reorderLevel and replace call to those with calls to methods
+	with same name on InventoryBG.
+
+	These changes should allow for the desimination of the this information
+	to the GUI's in the future.
+
+	* org/cougaar/domain/mlm/construction/ConstructionInventoryManager.java
+	In order to work with these fixes, take out the implementation
+	of getReorderLevel() and replace with new getMaxReorderLevel() which
+	encapsulates the same behavior.
+	
+2001-04-16  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Fixes bug #312
+	Return the first day of demand from getFirstPlanningDay if it is
+	greater than today. This confines refills from an inventory
+	manager to just prior to the first demand. Ideally, the first
+	planning day would be the day that the manager arrives at its
+	destination and is ready to conduct business, but there is no easy
+	way to do this.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Part of fix for bug #306
+	Move computation of boosted capacity into a separate method so it
+	can be overridden. Used by AntsGeneralInventoryManager to avoid a
+	cycle of increasing capacity to huge levels.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Temporary fix for bug #307
+	Return false from isBattalionLevel when the cluster is SPTBN or TCBN.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	Fixes bug #309
+	Remove refillNeeded override. The override was checking for refill
+	switchover day and claiming that no refill was needed after the
+	switchover day. This is incorrect -- the refill is still needed,
+	it just can't be satisfied by ordering a refill. Instead,
+	orderRefill checks the switchover day and refuses to place an
+	order after the switchover.	
+
 2001-04-16  Brian Krisler <bkrisler@bbn.com>
 	* org/cougaar/domain/mlm/ui/planviewer/XMLTreeFactory.java
 
 	Removed; Was not being used and also extended a class that
 	no longer exists in the new Xerces API.
+
+2001-04-13  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/BasicProcessor.java:
+	Debugging
+	Use TimeAspectValue when editing start and end times of
+	projections so they print as dates instead of doubles. Remove dead
+	code.
+
+2001-04-12  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	When the need for a previously failed refill goes to zero, don't
+	remove the refill. Instead, change to quantity to be teeny. This
+	avoids a problem where the IM would later attempt a refill on that
+	day leading to an infinite cycle.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Accumulate negative projection rates and apply them at the next
+	opportunity. Sometimes changing reorder levels imply a reduction
+	in inventory level for which a negative projection rate would be
+	necessary. We don't generate negative projections. Instead the
+	effect is accumulated and used to reduce subsequent projections
+	having positive rates.
+	Fix the reorder profile code to confine observations to the
+	boundaries of the projection being profiled. Looking beyond the
+	boundary may cause the generation of excessive corrections that
+	cannot be undone.
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Reimplement getNDaysDemand with an algorithm that prevents reorder
+	levels from dropping; they can only increase. This is an attempt
+	to improve the stability of the inventory manager. This
+	implementation also requires that the level increase by a certain
+	amount before it actually takes effect.	
+
+2001-04-10  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Fixes Bug #273
+	Change end test on generateProjections to allow for the
+	possibility that the number of days having valid projected demand
+	may be less that the total planning days. The null returned when
+	the end of valid demand is reached caused the NPE. Now the loop
+	terminates when the end is reached.
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Addresses Bug #273
+	Add checks that the type of quantity for this inventory is one
+	that we know how to deal with. If the initial level of the
+	inventory is of a type that is not understood, an exception is
+	thrown. This is better than a later NPE, but the real fix is to
+	accommodate the type of quantity.
+
+2001-04-09  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/mlm/ui/data/UIInventoryImpl.java:
+	Process phased allocation results. The actual values for a
+	projection are phased, so the quantity schedules must be built
+	from the phased result.
+	Supply tasks no longer have a start time. Use only the end time of
+	such tasks. The "useStartTime" concept was never really correct
+	and is now gone!
+
+	* org/cougaar/domain/glm/plugins/DecorationPlugIn.java:
+	Debugging Support
+	Correctly identify the class of the plugin.
+
+	* org/cougaar/domain/glm/plugins/AssetUtils.java:
+	Fix Bug #235
+	Add single time version of getSupportingOrgs -- Supply tasks only
+	have an END_TIME and it only makes sense to find the relationships
+	in effect at that time.
+
+	* org/cougaar/domain/glm/ldm/asset/alpprops.def:
+	Fix Bug #235
+	Add methods to support correct inventory management.
+
+	* org/cougaar/domain/glm/ldm/asset/alpassets.def:
+	Add InventoryPG slot. Every Inventory has an InventoryPG, and it
+	is referenced repeatedly. Might as well be a slot.
+
+	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugIn.java:
+	Debugging support
+	Add code to deliver all supply tasks one day early. This code is
+	unconditionally suppressed, but can be recompiled in an enabled
+	state for testing the behavior of the IM when it receives refills
+	early.	
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Fix Bug #235
+	Major change to adjustForInadequateInventory to incorporate refill
+	processing as well. These cannot be done as indenpendent
+	activities because the effect of removing demand (dueouts) must be
+	accounted for before refill processing for the following days.
+	Now, for each day the following happens:
+	   if there is a failed refill:
+	       adjust quantity of the failed refill to the bare minimum
+	   else
+	       order a refill if needed
+	   if a refill was needed but couldn't be ordered
+	       fail enought dueouts to bring the inventory up to the
+	       reorder level
+        Adjust generated projections to account for shifting reorder level
+	using a horizon following algorithm. This algorithm adjusts refill
+	projections with a profile that overbounds the average of the goal
+	and reorder levels.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java: 
+	Fix Bug #235
+	Implement three methods of altering existing refills:
+	REFILL_ALTER_TASK -- change task preferences
+	REFILL_REPLACE_TASK -- rescind and issue new task
+	REFILL_ADD_TASK -- add another task for the increment
+	Inventories are now refilled as part of
+	"adjustForInadequateInventory. This is necessary because refills
+	subsequent to a failed refill cannot be done until the dueouts are
+	failed to bring inventory levels back up.
+	orderRefill now adjusts the quantity of previous orders that have
+	failed down to the minimum amount required to reach the reorder
+	level.
+	Refactor orderRefill into orderNewRefill parallel to
+	orderRefillWithPrevious.
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Fix Bug #235
+	Add dueins indexed by requested day and use for
+	refillAlreadyFailedOnDay and getRefillOnDay
+	Set inventory start time to today, always. Because demand does not
+	appear all at once a start time based on later demand that happens
+	to arrive first will mistakenly set the inventory start time too
+	late.
+
+	* org/cougaar/domain/glm/ldm/asset/DueOut.java:
+	Fix Bug #235
+	Initialize filled_ to previouslyFilled for non-projections.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Fix Bug #235
+	Need access to routines in GeneralInventoryManager.
+	Move getGoalLevel from GeneralInventoryManager.
+	Check for null "previous" projection in generateProjections. This
+	avoids an NPE just after rescinding GLS.
+	Use goal level instead of reorder level when adjusting
+	projected refills to track inventory demand.
+	Change default safety level factor to 0.25 (the safety level is
+	25% of the reorder level). This is more realistic than allowing
+	the inventory to drop all the way to the safety level.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	Fix Bug #235
+	Need access to routines in GeneralInventoryManager.
+	Move getGoalLevel to base class (InventoryManager)	
+
+	* org/cougaar/domain/mlm/ui/data/UIInventoryImpl.java:
+	Debugging support
+	Add some debugging output.
+
+	* org/cougaar/domain/mlm/ui/data/UIQuantityScheduleElement.java:
+	Debugging support
+	Add toString method.
+
+	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugIn.java:
+	Debugging support
+	Remove debugging printlns.
+	Respond to task preference changes and adjust allocations
+	accordingly.
+
+	* org/cougaar/domain/glm/plugins/inventory/WithdrawAllocator.java:
+	Fix Bug #235
+	Replace any estimated allocation result when the preferences of
+	the withdraw task change.
+
+	* org/cougaar/domain/glm/plugins/inventory/SupplyExpander.java:
+	Fix Bug #235
+	Check for null allocation result in aggregator. Use currentar when
+	equal to new aggregated result.
+	Update subtasks when changes occur in supply tasks. E.g., a change
+	in the rate preference of a supply is propagated to the rate
+	preference of the withdraw task.
+	Remove dead code.
+
+	* org/cougaar/domain/glm/plugins/inventory/SupplyExpander.java:
+	Fix Bug #235 Install AllocationResultAggregator on supply
+	expansions to correctly aggregate the allocation result instead of
+	doing publishChange on the subtasks. The latter is unstable and
+	ust plain wrong.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	Fix Bug #235	
+	Move update of refill allocs to ExternalAllocator.
+	Remove refill_qty*1.3 kludge.
+	Reset the estimated allocation result of an altered refill task.
+	Move a bunch of refill methods to InventoryManager. These are
+	pretty generic methods and can always be overridden of different
+	behavior is desired.
+
+	* org/cougaar/domain/glm/plugins/inventory/ExternalAllocator.java:
+	Fix Bug #235
+	Move the updating of the allocation results of tasks to allocated
+	by the external allocator into the external allocator from the
+	inventory manager.
+
+	* org/cougaar/domain/glm/plugins/TaskUtils.java:
+	Fix Bug #235
+	Add getValidResult to get the allocation result associated with a
+	Task in a uniform way instead of slightly different and
+	occasionally incorrect ways in several places. Use this method in
+	those places to fix some bug. Mainly, use the estimated result and
+	not the reported result. The estimated result can be made to agree
+	with the task preferences, the reported result cannot. When
+	preferences are changed, the reported result lies for awhile.
+
+	* org/cougaar/domain/glm/plugins/GLMDecorationPlugIn.java:
+	Debugging support
+	USe GLMDebug delayed separator message when synchronous debugging
+	mode.
+
+	* org/cougaar/domain/glm/plugins/BasicProcessor.java:
+	Fix Bug #235
+	Use PlugInHelper to update allocation results and remove duplicate
+	code. Create estimated allocation result with 0.0 confidence.
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Fix Bug #235
+	Include refill projections in dueins.
+	Create a different DueOut for every day from a projection. This is
+	essential to modified the success/fail status of each day of
+	projection. Use AllocationResultHelper to edit the day-by-day
+	allocation results to return a time-phased value.
+	Interpret time-phased allocation result when interpreting refill
+	dueins.
+
+	* org/cougaar/domain/glm/debug/GLMDebug.java:
+	Support debugging
+	Add delayed separator messages. Used in synchronous plugin mode to
+	suppress the separator messages until actual debugging output
+	occurs.
 	
 2001-03-30  Michael Thome  <mthome@bbn.com>
 
 	* GLMDomain
 	Add glm, mlm, alp aliases.  We now expect it to be loaded as "glm"
 
+2001-03-21  Noelle Givler <ngivler@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/Oplan.java:
+
+	Fix for bux 189. Oplan no longer contains any references to
+	associated org activities, org relations, force packages, or 
+	policies. PlugIns interested in these objects should subscribe to
+	them directly.
+
+2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	Add ProjectSupply tasks to the RefillTasks predicate. This
+	predicate is used to find refills with changed allocation results.
+	Previously, AllocationResults for refill projections were never updated.
+	
 2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/domain/glm/ldm/Oplan.java:
