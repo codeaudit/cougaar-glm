@@ -265,11 +265,11 @@ public class InventorySelector implements ActionListener {
 
     // fetch assets for new cluster
     if ((command.equals(SET_CLUSTER)) || !assetNameBoxInitted) {
-	new Thread(clusterName + "updateInventoryBox") {
-            public void run() {
-                updateInventoryBox();
-            }
-        }.start();
+	SwingUtilities.invokeLater(
+	    new Thread(clusterName + "updateInventoryBox") {
+                public synchronized void run() {
+                    updateInventoryBox();
+		}});
         return;
     }
 
