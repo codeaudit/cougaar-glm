@@ -17,31 +17,33 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.domain.glm.ldm.asset;
 
-import org.cougaar.core.cluster.ClusterIdentifier;
-import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.planning.ldm.RootFactory;
-import org.cougaar.domain.planning.ldm.measure.*;
-import org.cougaar.domain.planning.ldm.plan.*;
-import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.io.NotActiveException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Hashtable;
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.glm.debug.*;
-import org.cougaar.domain.glm.plugins.*;
+import org.cougaar.domain.glm.execution.common.InventoryReport;
+import org.cougaar.domain.glm.ldm.ALPFactory;
 import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
 import org.cougaar.domain.glm.ldm.plan.ObjectScheduleElement;
 import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
-import org.cougaar.domain.glm.ldm.ALPFactory;
-import org.cougaar.domain.glm.ldm.asset.*;
-import org.cougaar.domain.glm.execution.common.InventoryReport;
-//  import com.bbn.supply.assets.AntsProjectionWeight;
+import org.cougaar.domain.glm.plugins.*;
+import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.domain.planning.ldm.measure.*;
+import org.cougaar.domain.planning.ldm.plan.*;
 
 public abstract class InventoryBG implements PGDelegate {
 
@@ -68,6 +70,7 @@ public abstract class InventoryBG implements PGDelegate {
     // Stuff for execution below
     protected ArrayList report_history;
     protected InventoryReport latest_report;
+    protected InventoryReport oldest_report;
     protected Calendar calendar_ = Calendar.getInstance();
     
     public InventoryBG(InventoryPG  pg) {
@@ -77,6 +80,7 @@ public abstract class InventoryBG implements PGDelegate {
 	level_ = null;
 	report_history = new ArrayList();
 	latest_report = null;
+	oldest_report = null;
     }
 
     public void setProjectionWeight(ProjectionWeight weight) {
@@ -105,8 +109,6 @@ public abstract class InventoryBG implements PGDelegate {
 	dueOut_.clear();
 	dueIns_.clear();
 	level_ = null;
-
-	latest_report = null;
 
 	initializeTime(inventory, today);
 //    	GLMDebug.DEBUG("InventoryBG", null, " resetInventory():"+inventory+
@@ -523,20 +525,20 @@ public abstract class InventoryBG implements PGDelegate {
 	// 		       ", DueOuts="+dueOut_.size()+", DueIns="+dueIns_.size()+", reported levels="+reported_levels.length);
 	level_ = new double[size];
 	for (int i=0; i < size; i++) {
-	    try {
-		dueout = getDueOutTotal((Vector)dueOut_,i);
-	    } catch (ArrayIndexOutOfBoundsException exception) {
-		dueout = 0;
-	    }
-	    try {
-		duein = getDueInTotal((Vector)dueIns_,i);
-	    }
-	    catch (ArrayIndexOutOfBoundsException exception) {
-		duein = 0;
-	    }
-	    if ((reported_levels.length > i) && (reported_levels[i] >= 0)) {
+	    if ((reported_levels.length > i) && !Double.isNaN(reported_levels[i])) {
 		level_[i] = reported_levels[i];
 	    } else {
+                try {
+                    dueout = getDueOutTotal(dueOut_, i);
+                } catch (ArrayIndexOutOfBoundsException exception) {
+                    dueout = 0;
+                }
+                try {
+                    duein = getDueInTotal(dueIns_, i);
+                }
+                catch (ArrayIndexOutOfBoundsException exception) {
+                    duein = 0;
+                }
 		level_[i] = previous_level + duein - dueout;
 	    }
 	    previous_level = level_[i];
@@ -559,7 +561,7 @@ public abstract class InventoryBG implements PGDelegate {
 	    t = (InventoryTask)e.nextElement();
 	    task = t.getTask();
 	    if (t.getFilled()) {
-		if (task.getVerb().equals(Constants.Verb.WITHDRAW)){
+                if (task.getVerb().equals(Constants.Verb.WITHDRAW)){
 		    actualTotal += TaskUtils.getWithdrawQuantity(task) * getWeightingFactor(task,imputedDay);
 		} else if (task.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
 		    projectedTotal += TaskUtils.getWithdrawQuantity(task) * getWeightingFactor(task,imputedDay);
@@ -572,7 +574,7 @@ public abstract class InventoryBG implements PGDelegate {
     }
 
     private double getDueInTotal(Vector dueInsVector, int day) {
-	Vector dueIns = (Vector)dueInsVector.get(day);
+	Vector dueIns = (Vector) dueInsVector.get(day);
 	Enumeration e = dueIns.elements();
 	double actualTotal = 0;
 	double projectedTotal = 0;
@@ -582,7 +584,7 @@ public abstract class InventoryBG implements PGDelegate {
 	while (e.hasMoreElements()) {
 	    t = (InventoryTask)e.nextElement();
 	    task = t.getTask();
-	    double d = getWeightingFactor(task,imputedDay);
+	    double d = getWeightingFactor(task, imputedDay);
 	    if (t.getFilled()) {
 		if (TaskUtils.isProjection(task)) {
 		    Rate r = TaskUtils.getRate(task);
@@ -748,8 +750,6 @@ public abstract class InventoryBG implements PGDelegate {
                   qse = ScheduleUtils.buildQuantityScheduleElement(level_[i], start, end);
                 } catch (IllegalArgumentException iae) {
                   iae.printStackTrace();
-                  System.err.println("start=" + start);
-                  System.err.println("end=" + end);
                   continue;
                 }
 //  		GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), Start:"+TimeUtils.dateString(start)+
@@ -812,8 +812,31 @@ public abstract class InventoryBG implements PGDelegate {
     public void addInventoryReport(InventoryReport newInventoryReport) {
 	synchronized (this) {
 	    report_history.add(newInventoryReport);
+            if (latest_report == null
+                || latest_report.theReportDate < newInventoryReport.theReportDate) {
+                latest_report = newInventoryReport;
+            }
+            if (oldest_report == null
+                || oldest_report.theReportDate > newInventoryReport.theReportDate) {
+                oldest_report = newInventoryReport;
+            }
 	}
 	GLMDebug.DEBUG("InventoryBG", "addInventoryReport(), Report added!!!!!!! : "+this.hashCode());
+    }
+
+    /**
+     * Remove inventory reports older than a specified time. Never removes the latest report.
+     **/
+    public void pruneOldInventoryReports(long pruneTime) {
+        synchronized (this) {
+            for (Iterator i = report_history.iterator(); i.hasNext(); ) {
+                InventoryReport report = (InventoryReport) i.next();
+                if (pruneTime > report.theReportDate && report != latest_report) {
+                    i.remove();
+                }
+            }
+            oldest_report = null; // We probably removed this, recompute when asked
+        }
     }
 
     /**
@@ -828,28 +851,36 @@ public abstract class InventoryBG implements PGDelegate {
     /**
      * Returns the InventoryReport with the latest date
      **/
-    private InventoryReport getLatestInventoryReport() {
+    public InventoryReport getLatestInventoryReport() {
 	synchronized (this) {
-	    InventoryReport curr_report = null;
-	    latest_report = null;
-
-	    if (!report_history.isEmpty()) {
-		// size is set to the # of elements in the report_history
-		int size = report_history.size();
-		
-		// initialize the latest_report to be the first one
-		latest_report = (InventoryReport) report_history.get(0);
-		
-		// Now, we loop through the rest of the reports to find the latest one
-		for(int i = 1; i < size; i++) {
-		    curr_report = (InventoryReport) report_history.get(i);
-		    // Erika: not sure if I should be looking at the ReportDate or ReceivedDate!!!
-		    if (latest_report.theReportDate < curr_report.theReportDate) {
-			latest_report = curr_report;
-		    }
+            if (latest_report == null) { // This is almost always up-to-date, but in case it isn't...
+                for (Iterator i = report_history.iterator(); i.hasNext(); ) {
+                    InventoryReport report = (InventoryReport) i.next();
+                    if (latest_report == null
+                        || latest_report.theReportDate < report.theReportDate) {
+                        latest_report = report;
+                    }
 		}
 	    }
 	    return latest_report;
+	}
+    }
+
+    /**
+     * Returns the InventoryReport with the oldest date
+     **/
+    public InventoryReport getOldestInventoryReport() {
+	synchronized (this) {
+            if (oldest_report == null) { // This is almost always up-to-date, but in case it isn't...
+                for (Iterator i = report_history.iterator(); i.hasNext(); ) {
+                    InventoryReport report = (InventoryReport) i.next();
+                    if (oldest_report == null
+                        || oldest_report.theReportDate > report.theReportDate) {
+                        oldest_report = report;
+                    }
+		}
+	    }
+	    return oldest_report;
 	}
     }
 
@@ -858,42 +889,33 @@ public abstract class InventoryBG implements PGDelegate {
      **/
     private double[]  getTimeOrderedReportedLevels() {
 	double ordered_list[];
-	ArrayList list = getInventoryReportHistory();
+        InventoryReport[] reports;
+        synchronized (this) {   // Must be synchronized so reports can change while we process them
+            List list = getInventoryReportHistory();
+            int size = list.size();
+            reports = (InventoryReport[]) list.toArray(new InventoryReport[size]);
+        }
 	// No Reports - use PG for initial inventory level
-	if (list.isEmpty()) {
+	if (reports.length == 0) {
 	    ordered_list = new double[1];
 	    ordered_list[0] = getDouble(myPG_.getInitialLevel());
 //  	    GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), List is empty.");
-	}
-	else {
+	} else {
 //  	    GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), Sorting Report list.");
 	    // Sort the Reports by time in ascending order
 	    // Yah, it's inefficient but it's only a few lines of code and there should never
 	    // be more than 5 items in this list
-	    int size = list.size();
-	    Object obj;
-	    for (int i = 0; i < size - 1; i++) {
-		for (int j = i + 1; j < size ; j++) {
-		    InventoryReport repi = (InventoryReport)list.get(i);
-		    InventoryReport repj = (InventoryReport)list.get(j);
-  		    if (repi.theReportDate > repj.theReportDate) {
-  			list.set(i, repj);
-  			list.set(j, repi);
-  		    }
-		}
-	    }
-//  	    for (int i=0; i< size; i++) {
-//  		while (i < size-1) {
-//  		    if (((InventoryReport)list.get(i)).theReportDate >
-//  			((InventoryReport)list.get(i+1)).theReportDate) {
-//  			obj = list.get(i);
-//  			list.set(i, list.get(i+1));
-//  			list.set(i+1, obj);
-//  		    }
-//  		}
-
-//  	    }
-	    long latest = ((InventoryReport)list.get(size-1)).theReportDate;
+            java.util.Arrays.sort(reports, new Comparator() {
+                public int compare(Object o1, Object o2) {
+                    InventoryReport r1 = (InventoryReport) o1;
+                    InventoryReport r2 = (InventoryReport) o2;
+                    long diff = r1.theReportDate - r2.theReportDate;
+                    if (diff < 0L) return -1;
+                    if (diff > 0L) return  1;
+                    return 0;
+                }
+            });
+	    long latest = reports[reports.length - 1].theReportDate;
 
 	    // create a double[] containing inventory levels indexed by day
 	    int len = TimeUtils.getDaysBetween(getStartTime(), TimeUtils.pushToEndOfDay(calendar_, latest))+1;
@@ -901,17 +923,17 @@ public abstract class InventoryBG implements PGDelegate {
 		len = 1;
 	    }
 	    ordered_list = new double[len];
-	    java.util.Arrays.fill(ordered_list, -1.0);
+	    java.util.Arrays.fill(ordered_list, Double.NaN);
 	    ordered_list[0] = getDouble(myPG_.getInitialLevel());
-	    Double d;
-	    for (int i=0; i<size; i++) {
-		long report_date = ((InventoryReport)list.get(i)).theReportDate;
-		int day = TimeUtils.getDaysBetween(getStartTime(), TimeUtils.pushToEndOfDay(calendar_, report_date));
+            long start = getStartTime();
+	    for (int i = 0, n = reports.length; i < n; i++) {
+		long report_date = reports[i].theReportDate;
+		int day = TimeUtils.getDaysBetween(start, TimeUtils.pushToEndOfDay(calendar_, report_date));
 		// Last Report that was received before or on day 0 becomes initial value
 		if (day < 0) {
 		    day = 0;
 		}
-		ordered_list[day] = ((InventoryReport)list.get(i)).theQuantity;
+		ordered_list[day] = reports[i].theQuantity;
 		GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), Report day is "+day+
 			       "("+TimeUtils.dateString(report_date)+"), Value is: "+ordered_list[day]);
 	    }
