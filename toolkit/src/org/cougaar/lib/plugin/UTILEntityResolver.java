@@ -30,6 +30,14 @@ import java.io.*;
  *
  */
 public class UTILEntityResolver implements EntityResolver {
+  public static boolean debug = 
+	"true".equals (System.getProperty ("org.cougaar.lib.plugin.UTILEntityResolver.debug",
+									   "false"));
+
+  /** 
+   * Set org.cougaar.lib.plugin.UTILEntityResolver.debug to true to see debug info. <p>
+   * Will say what file is getting read in...
+   **/
   public InputSource resolveEntity (String publicId, String systemId)	{
 
     URL url = null;
@@ -46,18 +54,11 @@ public class UTILEntityResolver implements EntityResolver {
     // return a special input source
     try {
       InputSource is = new InputSource(ConfigFinder.getInstance().open(filename));
-//        System.out.println ("UTILEntityResolver.resolveEntity - publicID " + 
-//  			  publicId + " system ID " + 
-//  			  systemId + " filename from systemID " + 
-//  			  filename + " input source " + is);
-
-      
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(is.getByteStream()));
-//        int size = 0;
-//        char [] buf = new char [80];
-//        while ((size = reader.read (buf)) > 0)
-//  	System.out.println ("Line : " + new String(buf));
-//        is.getByteStream().reset();      
+	  if (debug)
+		System.out.println ("UTILEntityResolver.resolveEntity - publicID " + 
+ 			  publicId + " system ID " + 
+  			  systemId + " filename from systemID " + 
+  			  filename + " input source " + is);
 
       return is;
     } catch (Exception e) {
