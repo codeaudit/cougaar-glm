@@ -33,7 +33,7 @@ import java.util.Iterator;
  * </PRE>
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: XMLPolicyPlugIn.java,v 1.3 2001-01-10 20:55:56 jwinston Exp $
+ * @version  $Id: XMLPolicyPlugIn.java,v 1.4 2001-02-07 19:00:26 ngivler Exp $
  */
 public class XMLPolicyPlugIn extends SimplePlugIn
 {
@@ -57,7 +57,9 @@ public class XMLPolicyPlugIn extends SimplePlugIn
 	  xmlfilename = (String) pi.next();
 	  //System.out.println("XMLPolicyPlugIn processing file: " + xmlfilename);
 	  globalParameters.put( "XMLFile", xmlfilename ); // Why are we doing this?
-	  policyCreator = new XMLPolicyCreator(xmlfilename, theLDMF);
+	  policyCreator = new XMLPolicyCreator(xmlfilename, 
+                                               getCluster().getConfigFinder(),
+                                               theLDMF);
 	  Policy policies[] = policyCreator.getPolicies();
 
 	  for (int i=0; i<policies.length; i++) {

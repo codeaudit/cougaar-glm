@@ -50,7 +50,6 @@ import org.cougaar.domain.planning.ldm.plan.Location;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.Reflect;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;

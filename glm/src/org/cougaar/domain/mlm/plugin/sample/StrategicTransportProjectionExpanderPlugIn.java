@@ -11,7 +11,7 @@
 package org.cougaar.domain.mlm.plugin.sample;
 
 import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.oplan.*;
@@ -31,6 +31,7 @@ import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.plugin.util.ExpanderHelper;
+import org.cougaar.core.plugin.util.PlugInHelper;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -72,7 +73,7 @@ public class StrategicTransportProjectionExpanderPlugIn extends SimplePlugIn {
     if (myExpansions.hasChanged()) {
       watchExpansions(myExpansions.getAddedList());
       watchExpansions(myExpansions.getChangedList());
-      ExpanderHelper.updateAllocationResult(myExpansions);
+      PlugInHelper.updateAllocationResult(myExpansions);
     }
   }
 
@@ -109,7 +110,7 @@ public class StrategicTransportProjectionExpanderPlugIn extends SimplePlugIn {
     wf.setParentTask(task);
     AllocationResult estAR = null;
     if (!e.hasMoreElements()) { // No non-org assets
-      estAR = ExpanderHelper.createEstimatedAllocationResult(task, theLDMF, 1.0);
+      estAR = PlugInHelper.createEstimatedAllocationResult(task, theLDMF, 1.0, true);
     }
     while (e.hasMoreElements()) {
       if (++count > 10) {

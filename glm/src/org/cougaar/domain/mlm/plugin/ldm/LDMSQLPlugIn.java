@@ -21,7 +21,6 @@ import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.ClusterServesPlugIn;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.Parameters;
 
 import java.util.Vector;
@@ -183,7 +182,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   // parse the query file
   private void parseQueryFile() {
     try {
-      BufferedReader in = new BufferedReader(new InputStreamReader(ConfigFileFinder.open( queryFile )));
+      BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
       Properties pt = null;
       for (String line = in.readLine(); line != null; line=in.readLine()) {
         

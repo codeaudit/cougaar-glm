@@ -60,7 +60,6 @@ import org.cougaar.core.cluster.SubscriberException;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.ClusterServesPlugIn;
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.Parameters;
 
 import org.cougaar.util.UnaryPredicate;
@@ -238,8 +237,8 @@ public boolean executeQuery(String rawSql, QueryHandler qh, String dbName)
 		
    
             statement.close();
-			conn.close();
-  		    success=true;
+            conn.close();
+            success=true;
  		
 
           }// else statement
@@ -322,7 +321,7 @@ protected void setupSubscriptions()
 	     try
 	     {
 	        // Locate the .cfg file
-	        InputStreamReader config = new InputStreamReader(ConfigFileFinder.open(configFile));
+	        InputStreamReader config = new InputStreamReader(getCluster().getConfigFinder().open(configFile));
 		  
 	        parseConfigFile(config);
 	   
@@ -345,7 +344,7 @@ protected void setupSubscriptions()
 	     //}
 	     try
 	     {
-	        InputStreamReader qs = new InputStreamReader(ConfigFileFinder.open(queryFile));	 
+	        InputStreamReader qs = new InputStreamReader(getCluster().getConfigFinder().open(queryFile));	 
 	        parseQueryFile(qs);
                 qs.close();
              } catch (Exception e)

@@ -50,7 +50,6 @@ import org.cougaar.domain.planning.ldm.plan.Location;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.Reflect;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
@@ -102,6 +101,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
 
   private static long DEFAULT_START_TIME = -1;
   private static long DEFAULT_END_TIME = -1;
+
 
   static {
     myCalendar.set(1990, 0, 1, 0, 0, 0);

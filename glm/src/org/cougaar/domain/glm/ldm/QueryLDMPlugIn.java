@@ -4,7 +4,6 @@ import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.ClusterImpl;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.Parameters;
 import org.cougaar.domain.glm.debug.GLMDebug;
 import org.cougaar.domain.mlm.plugin.ldm.LDMEssentialPlugIn;
@@ -175,7 +174,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     **/
     protected void parseQueryFile(String queryFile) {
 	try {
-	    BufferedReader in = new BufferedReader(new InputStreamReader(ConfigFileFinder.open( queryFile )));
+	    BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
 	    for (String line = in.readLine(); line != null; line=in.readLine()) {
 		line = line.trim();
 		// skip empty lines

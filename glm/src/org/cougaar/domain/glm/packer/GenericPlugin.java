@@ -37,7 +37,7 @@ import org.cougaar.domain.planning.ldm.plan.Workflow;
 
 import org.cougaar.core.plugin.PlugInDelegate;
 import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.core.plugin.util.ExpanderHelper;
+import org.cougaar.core.plugin.util.PlugInHelper;
 
 import org.cougaar.core.society.UID;
 
@@ -320,7 +320,7 @@ abstract public class GenericPlugin extends SimplePlugIn  {
   protected void execute() {
     // now we handle updates to our plan elements
     if (_myPlanElements != null) {
-      ExpanderHelper.updateAllocationResult(_myPlanElements);
+      PlugInHelper.updateAllocationResult(_myPlanElements);
     } else if (DEBUG) {
       System.out.println("HTC GenericPlugin: _myPlanElements subscription is missing!");
     }

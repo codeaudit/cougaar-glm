@@ -24,7 +24,6 @@ import org.cougaar.util.UnaryPredicate;
 
 import java.io.*;
 
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.Filters;
 
 import com.ibm.xml.parser.*;
@@ -39,7 +38,7 @@ import org.w3c.dom.NodeList;
  * PropagationPlugIn propagates Transferables based on xml files in parameter list
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.3 2001-01-12 18:57:03 jwinston Exp $
+ * @version $Id: PropagationPlugIn.java,v 1.4 2001-02-07 19:00:25 ngivler Exp $
  */
 
 public class PropagationPlugIn extends SimplePlugIn

@@ -24,8 +24,6 @@ import org.cougaar.domain.planning.ldm.plan.Schedule;
 import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.FactoryException;
 
-import org.cougaar.util.ConfigFileFinder;
-
 // This is only for interim use!
 import org.cougaar.domain.planning.ldm.plan.NewRoleSchedule;
 
@@ -122,7 +120,7 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
 
     private void parseXMLFile() {
 	try {
-          doc = ConfigFileFinder.parseXMLConfigFile(xmlfilename);
+          doc = getCluster().getConfigFinder().parseXMLConfigFile(xmlfilename);
           assets = getAssets( doc );
           while(assets.hasMoreElements()){
             Asset asset = (Asset)assets.nextElement();

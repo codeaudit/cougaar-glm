@@ -207,8 +207,8 @@ public class GenericTablePlugIn extends SimplePlugIn {
       allocResult = allocPred.Predict(task, getDelegate());
     else
       allocResult = 
-            AllocatorHelper.createEstimatedAllocationResult(
-                task, getFactory());
+            PlugInHelper.createEstimatedAllocationResult(
+                task, getFactory(), 0.0, true);
     Allocation myalloc = getFactory().createAllocation(
             task.getPlan(), task, org, 
             allocResult, Role.BOGUS);
@@ -362,7 +362,7 @@ public class GenericTablePlugIn extends SimplePlugIn {
     newTask.setWorkflow(wf);
   
     AllocationResult ar =
-      ExpanderHelper.createEstimatedAllocationResult(newTask, theLDMF);
+      PlugInHelper.createEstimatedAllocationResult(newTask, theLDMF, 0.0, true);
     Expansion exp =
       f.createExpansion(parentTask.getPlan(), newTask, wf, ar);
     publishAdd(exp);

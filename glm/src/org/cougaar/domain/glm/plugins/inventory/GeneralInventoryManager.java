@@ -23,7 +23,6 @@ import org.cougaar.domain.planning.ldm.*;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.*;
 import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.UnaryPredicate;
 import java.io.*;
 import java.lang.*;

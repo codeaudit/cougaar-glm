@@ -93,7 +93,7 @@ public class LaborScheduleImpl
 
   private static final ArrayList emptySet = new ArrayList(0);
 
-  private static ArrayList getProductElements(Collection qtys, final Collection rates) {
+  private static ArrayList getProductElements(Schedule qtys, final Schedule rates) {
     // if one of the schedules has no matching elements, return an empty OrderedSet.
     if (qtys.isEmpty() || rates.isEmpty()) {
       return emptySet;

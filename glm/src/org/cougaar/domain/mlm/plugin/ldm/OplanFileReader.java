@@ -13,7 +13,6 @@ import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.core.society.UID;
-import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.planning.ldm.policy.Policy;
@@ -205,7 +204,7 @@ public class OplanFileReader {
   public void readOplanData()
   {
     try {
-      doc = theCluster.getConfigFinder().parseXMLConfigFile( xmlfilename );			
+      doc = theCluster.getConfigFinder().parseXMLConfigFile( xmlfilename );
       parseFileData(doc);
       if (thePlan_.getEndDay() == null) {
         thePlan_.inferEndDay();
@@ -690,7 +689,9 @@ public class OplanFileReader {
 	
   public void setPolicy(Node data)
   {
-    XMLPolicyCreator pc = new XMLPolicyCreator(xmlfilename, ldmF);
+    XMLPolicyCreator pc = new XMLPolicyCreator(xmlfilename, 
+                                               theCluster.getConfigFinder(),
+                                               ldmF);
     // New functionality to create an OplanPolicy Object
     // 9-13-99
 

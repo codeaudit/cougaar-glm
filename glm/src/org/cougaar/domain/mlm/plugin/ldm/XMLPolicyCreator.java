@@ -37,30 +37,33 @@ import org.w3c.dom.NodeList;
 
 /** XMLPolicyCreator - creates policies from xml file
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: XMLPolicyCreator.java,v 1.2 2001-01-03 14:33:14 mthome Exp $
+ * @version $Id: XMLPolicyCreator.java,v 1.3 2001-02-07 19:00:26 ngivler Exp $
  **/
 
 public class XMLPolicyCreator {
 
 	
-  private File XMLFile;
   private String xmlfilename;
   private Document doc;
   private RootFactory ldmf = null;
+  private ConfigFinder configFinder;
 
-  public XMLPolicyCreator( String xmlfilename ) {
+  public XMLPolicyCreator(String xmlfilename, ConfigFinder configFinder) {
     this.xmlfilename = xmlfilename;
-    XMLFile = new File(xmlfilename);
+    this.configFinder = configFinder;
   }
 
-  public XMLPolicyCreator( String xmlfilename, RootFactory ldmf ) {
-    this(xmlfilename);
+  public XMLPolicyCreator(String xmlfilename, ConfigFinder configFinder, 
+                          RootFactory ldmf ) {
+    this(xmlfilename, configFinder);
     this.ldmf = ldmf;
   }
 
+  /*
   public XMLPolicyCreator(RootFactory ldmf) {
     this.ldmf = ldmf;
   }
+  */
 
   public void setRootFactory(RootFactory ldmf) {
     this.ldmf = ldmf;
@@ -68,7 +71,7 @@ public class XMLPolicyCreator {
 
   public Policy[] getPolicies() {
     try {
-      doc = ConfigFileFinder.parseXMLConfigFile(xmlfilename);
+      doc = configFinder.parseXMLConfigFile(xmlfilename);
       if (doc == null) {
 	System.out.println("XML Parser could not handle file " + xmlfilename);
 	return null;
@@ -362,7 +365,7 @@ public class XMLPolicyCreator {
   }
 
   public static void main (String[] args) {
-    XMLPolicyCreator xmlpc = new XMLPolicyCreator( args[0] );
+    XMLPolicyCreator xmlpc = new XMLPolicyCreator( args[0], new ConfigFinder());
     Policy policies[] = xmlpc.getPolicies();
     if (policies != null) {
       System.out.println("There are " + policies.length + " policies");
