@@ -77,6 +77,7 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 	private Organization LocationInfoOrg = null;
 	private Organization myOrganization = null;
 	private boolean mapInfoExists = false;
+	private boolean debug = false;
 	MapLocationInfo mli = null;
 	// Predicate for all tasks of verb with Organization object
 	private IncrementalSubscription allSelfOrganizationTasks;
@@ -118,6 +119,7 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
   {
     allSelfOrganizationTasks = (IncrementalSubscription)subscribe(allSelfOrganizationsPredicate);
     mapInfoOrganizationTasks = (IncrementalSubscription)subscribe(mapInfoOrganizationsPredicate);
+    parseParameters();
   }
 
 
@@ -137,7 +139,9 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
      //for(Enumeration mapInfoOrganization = mapInfoOrganizationTasks.getAddedList(); mapInfoOrganization.hasMoreElements();)
      for (Iterator orgIter = mapInfoOrganizationTasks.getCollection().iterator(); orgIter.hasNext();)
      {
-    	//System.out.println("&&& ChangeForOrganization - mapinfo org received");
+     	
+     	if(debug)
+    	  System.out.println("&&& ChangeForOrganization - mapinfo org received");
       //LocationInfoOrg = (Organization) mapInfoOrganization.nextElement();
 //      LocationInfoOrg = (Organization) orgIter.next();
       lio = (Organization) orgIter.next();
@@ -174,7 +178,8 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 		      publishAdd(task);
 		      Allocation allocation = theLDMF.createAllocation(task.getPlan(), task, LocationInfoOrg, null, Role.AVAILABLE);
           publishAdd(allocation);
-//		      System.out.println("&&&& publishing location task in response to mapinfo init");
+          if(debug)
+		        System.out.println("&&&& publishing location task in response to mapinfo init");
 		    }
       }
      
@@ -182,7 +187,8 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
     // Go through every new task we've subscribed to
     for(Enumeration selfOrganization = allSelfOrganizationTasks.getAddedList(); selfOrganization.hasMoreElements();)
     {
-    	//System.out.println("&&& ChangeForOrganization - add");
+    	if(debug)
+    	  System.out.println("&&& ChangeForOrganization - add");
       Organization org = (Organization) selfOrganization.nextElement();
       myOrganization   = org;
       //  get the locationSchedulePG
@@ -192,19 +198,21 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 	      publishAdd(task);
 	      Allocation allocation = theLDMF.createAllocation(task.getPlan(), task, LocationInfoOrg, null, Role.AVAILABLE);
         publishAdd(allocation);
-//	      System.out.println("&&&& changefororg publish added locationchange task");
+        if(debug)
+	        System.out.println("&&&& changefororg publish added locationchange task");
 	    }
     }
     
     for(Enumeration selfOrganization = allSelfOrganizationTasks.getChangedList(); selfOrganization.hasMoreElements();)
     {
-    	//System.out.println("&&& ChangeForOrganization - change");
+    	if(debug)
+    	  System.out.println("&&& ChangeForOrganization - change");
     	Organization org = (Organization) selfOrganization.nextElement();
       //  get the locationSchedulePG
       Task task = createLocationTask(org);
       if(task != null && mapInfoExists)
       {
-//      	System.out.println("&&&& changefororg publish changed locationchange task");
+      	//System.out.println("&&&& changefororg publish changed locationchange task");
 	      publishAdd(task);
 	      Allocation allocation = theLDMF.createAllocation(task.getPlan(), task, LocationInfoOrg, null, Role.AVAILABLE);
         publishAdd(allocation);
@@ -224,36 +232,31 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 		  LocationSchedulePG lspg = org.getLocationSchedulePG();
 		  RelationshipSchedule relationshipSched = org.getRelationshipSchedule();
 		  
-//		  System.out.println("rel sched = " + relationshipSched);
+		  //System.out.println("rel sched = " + relationshipSched);
 		    
 		  Role role = Role.getRole("AdministrativeSubordinate"); 
 		  Collection orgCollection = relationshipSched.getMatchingRelationships(role);
 		  
-		  Vector relations = new Vector(1);
+		  /*Vector relations = new Vector(1);
 		  for (Iterator relIter = orgCollection.iterator(); relIter.hasNext();)
       {
         Relationship rel = (Relationship) relIter.next();
         String a = rel.getA().toString();
         int beginString = a.lastIndexOf('/');
         String subordinate = a.substring(beginString + 1, a.length() - 1);
-//        System.out.println("relationship " + subordinate);
+        //System.out.println("relationship " + subordinate);
         relations.add(subordinate);
-      }
+      }*/
 		  //System.out.println("&&&& Collection of role relations " + orgCollection);
 		  //System.out.println("locationschedule " + lspg);
       //  create a "changelocation" task with a prepositional phrase of "New Location" and
       //  an indirect object of type MapLOcationInfo
       //  then publish add or publish change the the task to the location collector (MapInfo cluster)
       //  whose role is specified in a orgallocations.xml file as "LocationCollector" 
-     if(lspg != null)
-     { 
-      Schedule schedule = lspg.getSchedule();
-      //System.out.println("schedule " + schedule);
-      Enumeration e = schedule.getAllScheduleElements();
-      
-      Vector scheduleElements = new Vector(1);
+     Vector scheduleElements = new Vector(1);
       MilitaryOrgPG mpg = org.getMilitaryOrgPG();
       GeolocLocation homeLoc = null;
+      int echelonNumber = 0;
       String symbol = null;
       if(mpg != null)
       {
@@ -262,7 +265,31 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 	      
 	      if(newSymbol != null)
 	        symbol = removeDots(newSymbol);
+	        
+	      String echelon = mpg.getEchelon();
+	      if(echelon != null)
+	      {
+	      	//System.out.println("echelon string is " + echelon);
+	      	try
+	      	{
+	          echelonNumber = Integer.parseInt(echelon);
+	        }
+	        catch(Exception e)
+	        {
+	        	//System.out.println("echelon is not a number");
+	        }
+	      }      
       }
+     
+      long l1 = 0;
+      long l2 = Long.MAX_VALUE;
+     if(lspg != null)
+     { 
+      Schedule schedule = lspg.getSchedule();
+      //System.out.println("schedule " + schedule);
+      Enumeration e = schedule.getAllScheduleElements();
+      
+     
       while(e.hasMoreElements())
       {
       	LocationScheduleElement lse = (LocationScheduleElement)e.nextElement();
@@ -276,8 +303,7 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
         return null;  //  it hasn't changed so don't publish it
       }            
       //  get the HomeLocation GeolocLocation stuff
-      long l1 = 0;
-      long l2 = Long.MAX_VALUE;
+      
       if(scheduleElements.size() > 0)
       {
       	//LocationScheduleElement l = (LocationScheduleElement)scheduleElements.elementAt(0);
@@ -291,10 +317,24 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
       	}
       	
       }
+     } 
+     
+     Vector relations = new Vector(1);
+		  for (Iterator relIter = orgCollection.iterator(); relIter.hasNext();)
+      {
+        Relationship rel = (Relationship) relIter.next();
+        String a = rel.getA().toString();
+        int beginString = a.lastIndexOf('/');
+        String subordinate = a.substring(beginString + 1, a.length() - 1);
+        //System.out.println("relationship " + subordinate);
+        relations.add(subordinate);
+      }
       
       NewLocationScheduleElement home = new LocationScheduleElementImpl(l1, l2, homeLoc);
       //System.out.println("homeloc " + home);
       scheduleElements.add(home);
+     if(scheduleElements.size() > 0)
+     {
       MapLocationInfo ml = new MapLocationInfo(scheduleElements, symbol);
 	    NewTask task = theLDMF.newTask();
 	    task.setDirectObject(null);
@@ -306,13 +346,15 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 	    String longName = org.getUID().toString();
 	    int index = longName.lastIndexOf('/');
 	    String orgName = longName.substring(0, index);
-//	    System.out.println("orgname " + orgName);
+	    if(debug)
+	      System.out.println("creating location change task for  " + orgName);
 	    orgNamePP.setPreposition("ORGNAME");
 	    orgNamePP.setIndirectObject(orgName);
 	    preps.add(orgNamePP);
 	    
 	    ml.setUID(orgName);
 	    ml.setRelationshipSchedule(relations);
+	    ml.setEchelon(echelonNumber);
 	    NewPrepositionalPhrase npp = theLDMF.newPrepositionalPhrase();
 	    npp.setPreposition("LOCATIONINFO");
 	    npp.setIndirectObject(ml);
@@ -362,6 +404,12 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 		//  build the string from everthing beyond the x minus the dots + "F"
 		String newSym = "";
 		int xIndex = sym.indexOf('x');
+
+		if (xIndex <0 ) 
+		{
+			xIndex = sym.indexOf('X');
+		}
+
 		for(int i = xIndex + 1; i < sym.length(); i++)
 		{
 			if(sym.charAt(i) != '.')
@@ -384,7 +432,10 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 			oldLocationsVector = (Vector) oldLocations.get(orgName);
 			//System.out.println("&&& compare oldvector size" + oldLocationsVector.size() + " to newVector size " + newLocationsVector.size());
 			if(oldLocationsVector.size() != newLocationsVector.size())
+			{
+				oldLocations.put(orgName, newLocationsVector);
 			  return false;
+			}
 			else
 			{
 				for(int i = 0; i < oldLocationsVector.size(); i++)
@@ -405,6 +456,16 @@ public class ChangeForOrganizationPlugIn extends org.cougaar.core.plugin.SimpleP
 			return false;
 		}
 	}
+	
+
+  private void parseParameters()
+  {
+      Vector pVec = getParameters();
+    if (pVec.size() > 0)
+    {
+      debug = true;
+    }
+  }
 	
 	
 }

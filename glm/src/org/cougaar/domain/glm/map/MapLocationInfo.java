@@ -24,8 +24,9 @@ import java.util.Hashtable;
 public class MapLocationInfo implements Serializable
 {
 
-  
+ static final long serialVersionUID = 511995200124741430L; 
   String symbol2525 = null;
+  int echelon = 0;
   Vector scheduleElements = null;
   String UID = null;
   Vector relationshipSched = null;
@@ -61,6 +62,16 @@ public class MapLocationInfo implements Serializable
   public void setRelationshipSchedule(Vector r)
   {
   	relationshipSched = r;
+  }
+  
+  public void setEchelon(int ech)
+  {
+  	echelon = ech;
+  }
+  
+  public int getEchelon()
+  {
+  	return echelon;
   }
   
   public Vector getRelationshipSchedule()

@@ -62,7 +62,7 @@ import java.awt.FlowLayout;
 
 
 /***********************************************************************************************************************
-<b>Description</b>: Allocate transport tasks to roles".
+<b>Description</b>: collect organizationinfo
 
 @author Frank Cooley, &copy;2000 Clark Software Engineering, Ltd. & Defense Advanced Research Projects Agency (DARPA)
 @version 1.0
@@ -70,11 +70,12 @@ import java.awt.FlowLayout;
 
 public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {
-	
+	private ActionListener dumpProfileListener = null;
 	public static Hashtable organizationLocations = new Hashtable();
 	private IncrementalSubscription allChangeLocationTasks;
 	private int lineindex = 0;
 	protected static String ls = System.getProperty("line.separator");
+	public static boolean locationDebug = false;
   private UnaryPredicate allChangeLocationTasksPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
     	if (o instanceof Task) {
@@ -111,14 +112,14 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
 // ---------------------------------------------------------------------------------------------------------------------
 
 	/*********************************************************************************************************************
-  <b>Description</b>: Subscribe to "pack the books" tasks and any changes in the inventory.
+  <b>Description</b>: Subscribe to organizations.
 
 	*********************************************************************************************************************/
   public void setupSubscriptions()
   {
     allChangeLocationTasks = (IncrementalSubscription)subscribe(allChangeLocationTasksPredicate);
     allOrganizationTasks = (IncrementalSubscription)subscribe(allOrganizationsPredicate);
-    
+    parseParameters();
     ActionListener startListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         startButtonListener();
@@ -129,6 +130,13 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
       public void actionPerformed(ActionEvent e) {
         stopButtonListener();
       }
+    };
+
+    dumpProfileListener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        dumpProfileListener ();
+      }
+
     };
 
     JFrame frame = new JFrame("Location Collector Structures");
@@ -171,7 +179,8 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
 		    		Longitude longitude = orgLoc.getLongitude();
 		    		double geoLat = latitude.getDegrees();
 		    		double geoLong = longitude.getDegrees();
-		    		jTextArea1.insert(ls + orgName + "   " + geoLat + "   " + geoLong,lineindex++);
+//		    		jTextArea1.insert(ls + orgName + "   " + geoLat + "   " + geoLong,lineindex++);
+		    		jTextArea1.append(ls + orgName + "   " + geoLat + "   " + geoLong);
 		    	}
 		    }
 		    JScrollPane jScrollPane1 = new JScrollPane(jTextArea1);
@@ -181,6 +190,7 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
 		    frame.getContentPane().add("Center", panel);
 		    frame.pack();
 		    frame.setVisible(true);
+		    
 	  }
 
    private void stopButtonListener()
@@ -190,29 +200,40 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
 		    JPanel panel = new JPanel();
 		    // Create the button
 		    JButton startButton = new JButton("ok");
+		    JButton dumpProfile = new JButton("Dump Profile and Exit");
+    			dumpProfile.addActionListener(dumpProfileListener);
+
 		    JTextArea jTextArea1 = new JTextArea(15, 40);
 		    for(Enumeration e = organizationLocations.keys(); e.hasMoreElements();)
 		    {
 		    	String orgName = (String) e.nextElement();
-		    	System.out.println("&&&& print org " + orgName);
+		    	//System.out.println("&&&& print org " + orgName);
 		    	MapLocationInfo mli = (MapLocationInfo) organizationLocations.get(orgName);
 		    	Vector elements = mli.getRelationshipSchedule();
 		    	for(int i = 0; i < elements.size(); i++)
 		    	{
 		    		String subordinate = (String) elements.elementAt(i);
-		    		System.out.println("&&&& print subordinate " + subordinate);
-		    		jTextArea1.insert(ls + orgName + "   " + subordinate,lineindex++);
+		    		//System.out.println("&&&& print subordinate " + subordinate);
+//		    		jTextArea1.insert(ls + orgName + "   " + subordinate,lineindex++);
+		    		jTextArea1.append(ls + orgName + "   " + subordinate);
 		    	}
 		    }
 		        
 		    JScrollPane jScrollPane1 = new JScrollPane(jTextArea1);		    
 		    panel.add(jScrollPane1, BorderLayout.CENTER);
-		    		    
+		    panel.add(dumpProfile,BorderLayout.CENTER);		    
 		    frame.getContentPane().add("Center", panel);
 		    frame.pack();
 		    frame.setVisible(true);
    }
 
+   private void dumpProfileListener()
+   {
+
+		// if the profiler is running, use this button to exit and write the profile file
+		
+			System.exit(0);
+	}
 
 	/*********************************************************************************************************************
   <b>Description</b>: Called by infrastructure whenever something we are interested in is changed or added.
@@ -220,7 +241,8 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
 	*********************************************************************************************************************/
   public void execute()
   {
-    System.out.println("&&&& LocationCollector");
+  	if(locationDebug)
+      System.out.println("&&&& LocationCollector");
     // Go through every new task we've subscribed to
     for(Enumeration changeLocationTask = allChangeLocationTasks.getAddedList(); changeLocationTask.hasMoreElements();)
     {
@@ -231,7 +253,8 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
       String orgName = (String) on.getIndirectObject();
       
       organizationLocations.put(orgName, scheduleElements);
-      System.out.println("&&&& locationCollector put add for  " + orgName);
+      if(locationDebug)
+        System.out.println("&&&& locationCollector put add for  " + orgName);
     }
     
     for(Enumeration changeLocationTask = allChangeLocationTasks.getChangedList(); changeLocationTask.hasMoreElements();)
@@ -242,7 +265,8 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
       PrepositionalPhrase on = task.getPrepositionalPhrase("ORGNAME");
       String orgName = (String) on.getIndirectObject();
       organizationLocations.put(orgName, scheduleElements);
-      System.out.println("&&&& locationCollector put change for  " + orgName);
+      if(locationDebug)
+        System.out.println("&&&& locationCollector put change for  " + orgName);
     }
     
     for(Enumeration publishingOrganization = allOrganizationTasks.getAddedList(); publishingOrganization.hasMoreElements();)
@@ -253,8 +277,8 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
       String longName = org.getUID().toString();
 	    int index = longName.lastIndexOf('/');
 	    String orgName = longName.substring(0, index);
-	    
-	    System.out.println("&&&& locationCollector put homeloc for  " + longName);
+	    if(locationDebug)
+	      System.out.println("&&&& locationCollector put homeloc for  " + longName);
       if(!organizationLocations.containsKey(orgName))
       {
 	      Vector scheduleElements = new Vector(1);
@@ -294,6 +318,12 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
 		//  build the string from everthing beyond the x minus the dots + "F"
 		String newSym = "";
 		int xIndex = sym.indexOf('x');
+
+		if (xIndex <0 ) 
+		{
+			xIndex = sym.indexOf('X');
+		}
+
 		for(int i = xIndex + 1; i < sym.length(); i++)
 		{
 			if(sym.charAt(i) != '.')
@@ -303,15 +333,16 @@ public class LocationCollectorPlugIn extends org.cougaar.core.plugin.SimplePlugI
 		return newSym;
 	}
   /*********************************************************************************************************************
-  <b>Description</b>: Looks at the PlugIn parameters for the packerTime value.
+  <b>Description</b>: Looks at the PlugIn parameters for the debug value.
 	*********************************************************************************************************************/
   private void parseParameters()
   {
-  	// Look through the PlugIn parameters for the packer time
+  	//System.out.println("&&&& parsing");
     Vector pVec = getParameters();
     if (pVec.size() > 0)
     {
-     
+    	locationDebug = true;
+    	//System.out.println("setting debug to" + locationDebug);
     }
   }
 }
