@@ -41,6 +41,13 @@ public class UISimpleNamedSchedule implements UISimpleNamedScheduleNames, Serial
     return schedule;
   }
 
+  public String toString() {
+    return
+      "UISimpleNamedSchedule {"+
+      "\n name: "+name+
+      "\n schedule: "+schedule+
+      "\n}";
+  }
 }
 
 
