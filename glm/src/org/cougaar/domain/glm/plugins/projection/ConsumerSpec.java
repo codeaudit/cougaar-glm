@@ -104,17 +104,20 @@ public abstract class ConsumerSpec implements Serializable {
 
     // for a particular resource, return the
     /**
-     * Here is what this method does (Ray Tomlinson).
-     * Merges a number of parameter schedules into a combined
-     * schedule. In the combined schedule, the "parameter"  of each
-     * element is a Vector of the parameters from each of the input
-     * schedules. For elements not covered by the input schedule, the
-     * corresponding Vector element is null.
+     * Here is what this method does (Ray Tomlinson). Merges a number
+     * of parameter schedules into a combined schedule. In the
+     * combined schedule, the "parameter" of each element is a Vector
+     * of the parameters from each of the input schedules. For
+     * elements not covered by the input schedule, the corresponding
+     * Vector element is null. The output schedule elements correspond
+     * to the intersections of the elements or inter-element gaps of
+     * the input schedules. No schedule element is generated for time
+     * spans where none of the input schedules has an element.
+     * Conversely, all elements of the merged schedule have at least
+     * one non-null parameter.
      *
-     * There is a basic assumption that the elements of the input
-     * schedules and the output schedule are non-overlapping and
-     * gap-free. This may not have been the intention, but the
-     * original code made that assumption and so do my modifications.
+     * There is an assumption that the elements of the input schedules
+     * and the output schedule are non-overlapping.
      **/
     public Schedule getMergedSchedule() {
 	if (mergedSchedule_ == null) {
@@ -140,31 +143,31 @@ public abstract class ConsumerSpec implements Serializable {
                 }
 	    }
 
-	    long end = TimeSpan.MAX_VALUE; 
 	    Vector result_sched = new Vector();
-	    boolean notdone = true;
-	    while (notdone) {
+	    long end = TimeSpan.MIN_VALUE;
+	    while (end != TimeSpan.MAX_VALUE) {
 		Vector params = new Vector(num_params);
 		params.setSize(num_params);
-		notdone = false;
+                boolean haveParams = false;
+                end = TimeSpan.MAX_VALUE;
 		for (int ii = 0; ii < num_params; ii++) {
                     params.set(ii, null);// Presume no element for schedule(ii)
 		    // check if interval good
 		    ose = intervals[ii];
 		    if (ose != null) {
                         if (ose.getEndTime() <= start) {
-                            // This has already been covered, Step to next
+                            // This has already been covered; Step to next
                             if (!enums[ii].hasMoreElements()) {
 				// ran off end of schedule(ii)
                                 intervals[ii] = null;
                                 continue;
                             }
-                            ose = (ObjectScheduleElement)enums[ii].nextElement();
+                            ose = (ObjectScheduleElement) enums[ii].nextElement();
                             intervals[ii] = ose;
                         }
 			if (ose.getStartTime() > start) {
-			    // ose is _not_ part of this result (gap)
-                            // element, it's later
+			    // ose is _not_ part of this result
+                            // element, it's later (there is a gap)
 			    if (ose.getStartTime() < end) {
                                 // This result element ends not later
                                 // than the start of this pending element
@@ -178,14 +181,13 @@ public abstract class ConsumerSpec implements Serializable {
 			}
 			// add current param to list
 			params.set(ii, ose.getObject());
-			notdone = true;
+                        haveParams = true;
 		    }
-		}	    
-		if (notdone) {
-		    result_sched.add(new ObjectScheduleElement(start, end, params));
-		    start = end;
-		    end = TimeSpan.MAX_VALUE;
 		}
+		if (haveParams) {
+		    result_sched.add(new ObjectScheduleElement(start, end, params));
+		}
+                start = end;
 	    }
 	    mergedSchedule_ = newObjectSchedule(result_sched.elements());
 	    GLMDebug.DEBUG("ConsumberSpec", "ConsumerSpec created mergedSchedule "+result_sched.size());
