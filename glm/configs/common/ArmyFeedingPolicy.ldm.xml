@@ -3,32 +3,97 @@
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
 
 <Policies>
-
- <Policy name="ArmyFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
+ <Policy name="ArmyFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.SubsistencePolicy">
+    <RuleParam name="MealPolicy">
+      <RangeSet value="">
+        <RangeValue min="0"  max="20">
+	  <RuleParam name="Meals">
+      	    <KeySet value="">
+	      <KeyValue key="Breakfast" value="MRE" />
+	      <KeyValue key="Lunch" value="MRE" />
+	      <KeyValue key="Dinner" value="MRE" />
+    	    </KeySet>
+  	  </RuleParam>
+	</RangeValue>
+        <RangeValue min="21"  max="60">
+	  <RuleParam name="Meals">
+      	    <KeySet value="">
+	      <KeyValue key="Breakfast" value="UGR-HS" />
+	      <KeyValue key="Lunch" value="MRE" />
+	      <KeyValue key="Dinner" value="MRE" />
+    	    </KeySet>
+  	  </RuleParam>
+	</RangeValue>
+        <RangeValue min="61"  max="180">
+	  <RuleParam name="Meals">
+      	    <KeySet value="">
+	      <KeyValue key="Breakfast" value="UGR-A" />
+	      <KeyValue key="Lunch" value="MRE" />
+	      <KeyValue key="Dinner" value="UGR-HS" />
+    	    </KeySet>
+  	  </RuleParam>
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="EnhancementsPolicy">
+      <RangeSet value ="">
+	<RangeValue min="0" max="180">
+	  <RuleParam name="Enhancements">
+      	    <KeySet value="">
+      	    	<KeyValue key="Fresh Fruits" value=".35" />
+		<KeyValue key="Fresh Vegetables" value=".11" />
+    	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="A-RationPolicy">
+      <RangeSet value="">
+	<RangeValue min="0" max="23">
+	  <RuleParam name="A-RationCapability">
+      	    <KeySet value="">
+      	    	<KeyValue key="Capability" value="false" />
+    	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+	<RangeValue min="24" max="180">
+	  <RuleParam name="A-RationCapability">
+      	    <KeySet value="">
+      	    	<KeyValue key="Capability" value="true" />
+    	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="BottledWaterPolicy">
+      <RangeSet value="">
+        <RangeValue min="0"  max="180">
+  	  <RuleParam name="BottledWater">
+      	    <KeySet value="">
+      	    	<KeyValue key="BottledWater" value="3.0" />
+    	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+ 
     <RuleParam name="Breakfast">
       <RangeSet value="">
-        <RangeValue min="0"  max="20"    value="MRE" />
-        <RangeValue min="21" max="60"    value="UGR-HS" />
-        <RangeValue min="61" max="180" value="UGR-A" />
       </RangeSet>
     </RuleParam>
     <RuleParam name="Lunch">
       <RangeSet value="">
-        <RangeValue min="0"  max="20"    value="MRE" />
-        <RangeValue min="21" max="60"    value="MRE" />
-        <RangeValue min="61" max="180" value="MRE" />
       </RangeSet>
     </RuleParam>
     <RuleParam name="Dinner">
       <RangeSet value="">
-        <RangeValue min="0"  max="20"    value="MRE" />
-        <RangeValue min="21" max="60"    value="MRE" />
-        <RangeValue min="61" max="180" value="UGR-HS" />
       </RangeSet>
     </RuleParam>
     <RuleParam name="BottledWater">
-      <RangeSet value="">
-        <RangeValue min="0"  max="180"    value="3" />
+      <RangeSet value="Water">
+        <RangeValue min="0"  max="180">
+	   <String value="3"/>
+	</RangeValue>
       </RangeSet>
     </RuleParam>
     <RuleParam name="WaterUOI">
@@ -40,21 +105,10 @@
     </RuleParam>   
  <RuleParam name="Enhancements">
       <KeySet value="">
-      <KeyValue key="Apples" value=".07" />
-      <KeyValue key="Plums" value=".07" />
-      <KeyValue key="Pears" value=".07" />
-      <KeyValue key="Oranges" value=".07" />
-      <KeyValue key="Bananas" value=".07" />
-      <KeyValue key="Lettuce" value=".0275" />
-      <KeyValue key="Green Peppers" value=".0275" />
-      <KeyValue key="Celery" value=".0275" />
-      <KeyValue key="Carrots" value=".0275" />
-    </KeySet>
+          </KeySet>
     </RuleParam>
 <RuleParam name="A-RationCapability">
   <RangeSet value="">
-    <RangeValue min="0"  max="23"    value="False" />
-    <RangeValue min="24"  max="180"    value="True" />
   </RangeSet>
     </RuleParam>
 </Policy>
