@@ -38,6 +38,12 @@ public class OplanCoupon extends OwnedUniqueObject
 {
 
   private UID _oplanUID;
+  private String _oplanQueryFile;
+  private String _oplanID;
+
+  public OplanCoupon(MessageAddress homeClusterID) { 
+    setOwner(homeClusterID);
+  }
 
   public OplanCoupon(UID oplanUID,
 		      MessageAddress homeClusterID) {
@@ -53,6 +59,26 @@ public class OplanCoupon extends OwnedUniqueObject
     setOwner(homeClusterID);
   }
 
+  public OplanCoupon(UID thisUID,
+		      UID oplanUID,
+		      MessageAddress homeClusterID,
+                      String queryFile,
+                      String oplanID) {
+    setUID(thisUID);
+    _oplanUID = oplanUID;
+    setOwner(homeClusterID);
+    setOplanQueryFile(queryFile);
+    setOplanID(oplanID);
+  }
+
+  public void setOplanID (String oplanID) {
+    _oplanID = oplanID;
+  }
+
+  public String getOplanID() {
+    return _oplanID;
+  }
+
   public void setOplanUID (UID oplanUID) {
     _oplanUID = oplanUID;
   }
@@ -61,6 +87,13 @@ public class OplanCoupon extends OwnedUniqueObject
     return _oplanUID;
   }
 
+  public void setOplanQueryFile (String oplanQueryFile) {
+    _oplanQueryFile = oplanQueryFile;
+  }
+
+  public String getOplanQueryFile() {
+    return _oplanQueryFile;
+  }
   public void setHomeClusterID(MessageAddress homeClusterID) {
     setOwner(homeClusterID);
   }
@@ -74,7 +107,9 @@ public class OplanCoupon extends OwnedUniqueObject
   public Object clone() {
     OplanCoupon newOplanCoupon = new OplanCoupon(getUID(),
 						 _oplanUID,
-						 getOwner());
+						 getOwner(),
+                                                 getOplanQueryFile(),
+                                                 getOplanID());
     return newOplanCoupon;
   }
 
@@ -84,7 +119,9 @@ public class OplanCoupon extends OwnedUniqueObject
       OplanCoupon other = (OplanCoupon) trans;
       if (other.getUID().equals(getUID()) &&
 	  other.getOplanUID().equals(_oplanUID) &&
-	  other.getHomeClusterID().equals(getOwner())) {
+	  other.getHomeClusterID().equals(getOwner()) &&
+          other.getOplanQueryFile().equals(getOplanQueryFile()) &&
+          other.getOplanID().equals(getOplanID())) {
 	return true;
       }
     }
@@ -103,6 +140,8 @@ public class OplanCoupon extends OwnedUniqueObject
     setUID(other.getUID());
     _oplanUID = other.getOplanUID();
     setOwner(other.getHomeClusterID());
+    setOplanQueryFile(other.getOplanQueryFile());
+    setOplanID(other.getOplanID());
   }
 
 }
