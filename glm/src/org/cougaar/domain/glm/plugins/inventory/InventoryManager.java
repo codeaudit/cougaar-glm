@@ -614,12 +614,12 @@ public abstract class InventoryManager extends InventoryProcessor {
 		       " max on hand:"+convertScalarToDouble(invpg.getCapacity())+" on day "+i);
 	    refill_task = invpg.getRefillOnDay(i);
 	    if (refill_task != null) {
+		plugin_.publishRemoveFromExpansion(refill_task);
 		invpg.removeDueIn(refill_task);
-		publishRemoveTask(refill_task);
-		invpg.determineInventoryLevels();	  
-		printDebug(1,"checkForOverflow remove refill "+TaskUtils.taskDesc(refill_task));
-	    }
-	    day = invpg.getFirstOverflow(++i, clusterId_);
+		invpg.determineInventoryLevels();
+		printDebug(1000,"checkForOverflow remove refill "+TaskUtils.taskDesc(refill_task));
+            }
+	    day = invpg.getFirstOverflow(i, clusterId_);
 	}
     }
 
@@ -657,11 +657,22 @@ public abstract class InventoryManager extends InventoryProcessor {
 	}
     }
 
-    /** method called from update when a GLS Rescind is detected.   Right now
-     here it just calls clearInventorySchedule.   It may be overloaded 
-     by subclasses*/
+    /**
+       method called from update when a GLS Rescind is detected. We
+       simply make sure the inventory levels have been recomputed to
+       reflect the removed dueins and dueouts.
+    **/
     protected void handleGLSRescind() {
-	clearInventorySchedule();
+        accountForWithdraws();
+        addPreviousRefills();
+        Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
+	while (inventories.hasMoreElements()) {
+	    Inventory inventory = (Inventory)inventories.nextElement();
+	    InventoryPG invpg = 
+		(InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	    invpg.determineInventoryLevels();
+            invpg.updateContentSchedule(inventory);
+	}
     }
 
     // ********************************************************
