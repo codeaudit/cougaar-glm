@@ -15,9 +15,11 @@ import java.util.StringTokenizer;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.ibm.xml.parser.Parser;
-import com.ibm.xml.parser.TXDocument;
-import com.ibm.xml.parser.TXElement;
+import org.apache.xerces.parsers.DOMParser;
+import org.xml.sax.InputSource;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class XMLTable extends AbstractTableModel {
 
@@ -25,20 +27,21 @@ public class XMLTable extends AbstractTableModel {
   // paths correspond to headers, except that prepositions are special cased
   String[] paths = { "source.address", "destination.address", "verb", "ID", "parentTask", "priority", "directObject.TypeIdentificationPG_type_identification", "directObject.ItemIdentificationPG_item_identification" };
   String[] prepositions = { "To", "From", "For", "OfType" };
-  TXElement[] children;
+  NodeList children;
 
   public XMLTable(byte[] buffer) {
-    TXDocument doc = null;
+    Document doc = null;
 
     try {
-      Parser p = new Parser("Log Plan");
-      doc = p.readStream(new ByteArrayInputStream(buffer));
+      DOMParser p = new DOMParser();
+      p.parse(new InputSource(new ByteArrayInputStream(buffer)));
+      doc = p.getDocument();
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    TXElement root = (TXElement)doc.getDocumentElement();
-    children = root.searchChildrenAll("Task");
+    Element root = doc.getDocumentElement();
+    children = root.getElementsByTagName("Task");
   }
 
   public int getColumnCount() {
@@ -46,17 +49,18 @@ public class XMLTable extends AbstractTableModel {
   }
 
   public int getRowCount() {
-    return children.length;
+    return children.getLength();
   }
 
-  private String getValueOfNode(TXElement node, String[] nodeNames, int index) {
-    TXElement[] elements = node.searchChildrenAll(nodeNames[index]);
-    if (elements.length != 0) {
+  private String getValueOfNode(Element node, String[] nodeNames, int index) {
+    NodeList list = node.getElementsByTagName(nodeNames[index]);
+
+    if( list.getLength() != 0 ) {
       if (index == nodeNames.length-1)
-        return elements[0].getFirstChild().getNodeValue();
+	return list.item(0).getFirstChild().getNodeValue();
       else
-        for (int i = 0; i < elements.length; i++)
-          return getValueOfNode(elements[i], nodeNames, index+1);
+	for(int i=0; i < list.getLength(); i++) 
+	  return getValueOfNode((Element)list.item(i), nodeNames, index+1);
     }
     return null;
   }
@@ -76,24 +80,26 @@ public class XMLTable extends AbstractTableModel {
     return false;
   }
 
-  private String getPreposition(TXElement child, String s) {
-    TXElement[] prepPhrases = child.searchChildrenAll("prepositionalPhrases");
-    for (int i = 0; i < prepPhrases.length; i++) {
-      TXElement[] prepNode = prepPhrases[i].searchChildrenAll("preposition");
-      TXElement node = prepNode[0];
+  private String getPreposition(Element child, String s) {
+    NodeList prepPhrases = child.getElementsByTagName("prepositionalPhrases");
+    
+    for( int i=0; i < prepPhrases.getLength(); i++) {
+      NodeList prepNode = 
+           ((Element)prepPhrases.item(i)).getElementsByTagName("preposition");
+      Element node = (Element)prepNode.item(0);
       String preposition = node.getFirstChild().getNodeValue();
       if (preposition.equals(s)) {
         if (s.equals("To") || s.equals("From")) {
           String[] nodeNames = { "indirectObject", "name" };
-          return getValueOfNode(prepPhrases[i], nodeNames, 0);
+          return getValueOfNode((Element)prepPhrases.item(i), nodeNames, 0);
         }
         if (s.equals("For")) {
           String[] nodeNames = { "indirectObject", "ItemIdentificationPG_item_identification" };
-          return getValueOfNode(prepPhrases[i], nodeNames, 0);
+          return getValueOfNode((Element)prepPhrases.item(i), nodeNames, 0);
         }
         if (s.equals("OfType")) {
           String[] nodeNames = { "indirectObject", "TypeIdentificationPG_type_identification" };
-          return getValueOfNode(prepPhrases[i], nodeNames, 0);
+          return getValueOfNode((Element)prepPhrases.item(i), nodeNames, 0);
         }
       }
     }
@@ -101,7 +107,7 @@ public class XMLTable extends AbstractTableModel {
   }
 
   public Object getValueAt(int row, int col) {
-    TXElement child = children[row];
+    Element child = (Element)children.item(row);
     String header = headers[col];
     if (isPreposition(header))
       return getPreposition(child, header);
