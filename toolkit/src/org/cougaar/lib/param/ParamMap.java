@@ -88,4 +88,6 @@ public interface ParamMap {
    * @return the String value of the parameter
    */
   String getStringParam(String name) throws ParamException;
+
+  boolean hasParam (String name);
 }
