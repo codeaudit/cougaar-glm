@@ -9,11 +9,8 @@
  */
 
 package org.cougaar.domain.mlm.plugin.ldm;
-
 import org.cougaar.util.StateModelException;
-
 import org.cougaar.core.cluster.SubscriberException;
-
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.PropertyGroup;
 import org.cougaar.domain.planning.ldm.asset.AssetFactory;
@@ -24,9 +21,18 @@ import org.cougaar.domain.planning.ldm.plan.Schedule;
 import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.FactoryException;
 
+import org.cougaar.domain.planning.ldm.DomainService;
+import org.cougaar.domain.planning.ldm.PrototypeRegistryService;
+import org.cougaar.core.plugin.LDMService;
+import org.cougaar.core.component.ServiceRevokedListener;
+import org.cougaar.core.component.ServiceRevokedEvent;
+
+
 // This is only for interim use!
 import org.cougaar.domain.planning.ldm.plan.NewRoleSchedule;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+ 
 import java.lang.reflect.Method;
 
 import java.util.Vector;
@@ -61,6 +67,8 @@ import org.w3c.dom.NodeList;
  * plugin=org.cougaar.domain.mlm.plugin.sql.LDMXMLPlugIn( foo.ldm.xml )
  * </PRE>
  *
+ * Modified to request specific services from ComponentPlugin instead of SimplePlugIn
+ * and PlugInAdapter.
  */
 public class LDMXMLPlugIn extends LDMEssentialPlugIn
 {
@@ -69,17 +77,38 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
     private String xmlfilename;
     private File XMLFile;
     private Enumeration assets;
-    //private XmlDocument doc;
     private Document doc;
-    private RootFactory ldmf;
-  //private AssetFactory theAssetFactory = new AssetFactory();
-    
+    private RootFactory theFactory;
+		DomainService domainService = null;
+		PrototypeRegistryService protregService = null;    
 
     public LDMXMLPlugIn() {}
 
     protected void setupSubscriptions() {
-	if (didRehydrate()) return; // Assets already added after rehydration
-	ldmf = getFactory();
+
+					// get the domain service  	
+				if (theFactory == null) {
+						domainService = (DomainService) getBindingSite().getServiceBroker().getService(
+				 																					 this, DomainService.class,
+																								 new ServiceRevokedListener() {
+	 										     						 public void serviceRevoked(ServiceRevokedEvent re) {
+																						 theFactory = null;
+		 			                                 }
+																										 });
+				
+				 // get the registry service  	
+						 protregService = (PrototypeRegistryService) getBindingSite().getServiceBroker().getService(                                      this, PrototypeRegistryService.class,
+																		 					new ServiceRevokedListener() {
+															 				public void serviceRevoked(ServiceRevokedEvent re) {
+																 							theFactory = null;
+											 										}
+																		});
+				}
+				
+
+	if (blackboard.didRehydrate()) return; // Assets already added after rehydration
+
+	theFactory = domainService.getFactory();
 	try {
 	    getParams();
 	    parseXMLFile();
@@ -98,7 +127,8 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
      * Parse parameters passed to PlugIn
      */
     private void getParams() {
-	Vector pv = getParameters();
+				//Collection pv = getParameters();			
+				Vector pv = getParameters();
 	if ( pv == null ) {
 	    throw new RuntimeException( "LDMXMLPlugIn requires a parameter" );
 	} else {
@@ -115,12 +145,12 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
 
     private void parseXMLFile() {
 	try {
-          doc = getCluster().getConfigFinder().parseXMLConfigFile(xmlfilename);
-          assets = getAssets( doc );
-          while(assets.hasMoreElements()){
-            Asset asset = (Asset)assets.nextElement();
-            publishAdd(asset);
-          }
+			doc = getConfigFinder().parseXMLConfigFile(xmlfilename);
+			assets = getAssets( doc );
+			while(assets.hasMoreElements()){
+					Asset asset = (Asset)assets.nextElement();
+					blackboard.publishAdd(asset);
+			}
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
@@ -156,15 +186,16 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
     }
 
     public Asset getAssetPrototype( String typeid ) {
-      Asset proto = theLDM.getPrototype(typeid);
+				Asset proto = protregService.getPrototype(typeid); // not through ldm anymore 
       if (proto == null) {
 	NodeList nlist = doc.getDocumentElement().getElementsByTagName( "prototype" );
 	Element node = findPrototype( typeid, nlist );
         String assetClass = getAssetClass( node );
-        proto = ldmf.createPrototype(assetClass, typeid );
-        getLDM().fillProperties(proto);
-        //getOtherProperties( proto, node );
-        getLDM().cachePrototype( typeid, proto );
+        
+				proto = theFactory.createPrototype(assetClass, typeid);
+        protregService.fillProperties(proto);
+        
+				protregService.cachePrototype(typeid, proto);
       }
       return proto;
     }
@@ -278,8 +309,8 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
 
     
     private Enumeration getLDMAssets( Document doc ) {
-	RootFactory ldmf = theLDMF;
-	Vector assets = new Vector();
+				RootFactory theFactory = domainService.getFactory();
+				Vector assets = new Vector();
 	
 	NodeList prototypes = doc.getElementsByTagName( "prototype" );
 	int proto_size = prototypes.getLength();
@@ -302,31 +333,32 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
 		    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
 		    Date start = df.parse( scheduleNode.getAttributes().getNamedItem( "start" ).getNodeValue() );
 		    Date end = df.parse( scheduleNode.getAttributes().getNamedItem( "end" ).getNodeValue() );
-		    sched = ldmf.newSimpleSchedule( start, end );			   
+		    sched = theFactory.newSimpleSchedule(start, end);
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		}
 	    }
 	    String nomen = child.getAttributes().getNamedItem( "id" ).getNodeValue();
 	    String protoname = child.getAttributes().getNamedItem( "prototype" ).getNodeValue();
-	    Asset myAsset = ldmf.createInstance( protoname, nomen );
+	    
+			Asset myAsset = theFactory.createInstance( protoname, nomen );
 	    ((NewRoleSchedule)myAsset.getRoleSchedule()).setAvailableSchedule( sched );
 	    assets.addElement( myAsset );
-	}
+	} 
 	return assets.elements();
     }
 
     private NewPropertyGroup createPG(String propname) {
         NewPropertyGroup tmp_prop = null;
         try {
-            tmp_prop = (NewPropertyGroup)ldmf.createPropertyGroup(propname);
+						tmp_prop = (NewPropertyGroup)theFactory.createPropertyGroup(propname);
         } catch ( FactoryException fe ) {
             try {
-                tmp_prop = (NewPropertyGroup)ldmf.createPropertyGroup(Class.forName(propname));
+									tmp_prop = (NewPropertyGroup)theFactory.createPropertyGroup(Class.forName(propname));
             } catch ( ClassNotFoundException cnf ) {
                 cnf.printStackTrace();
             }
-        }
+        } 
         return tmp_prop;
     }
     
