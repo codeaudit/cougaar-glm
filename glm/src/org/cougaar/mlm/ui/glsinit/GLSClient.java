@@ -223,7 +223,7 @@ public class GLSClient {
 		      
       } catch (java.net.MalformedURLException me) {
 	System.err.println(me);
-	JOptionPane.showConfirmDialog(outerPanel, "Invalid Host, Port, or Agent\nPlease check fields and try again", "Bad URL", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+	JOptionPane.showConfirmDialog(outerPanel, "Invalid Host, Port, or Agent\nPlease check fields and try again", "Bad URL", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 	return;
       }
       //System.out.println(url.getProtocol() + url.getHost() + url.getPath());
@@ -244,7 +244,7 @@ public class GLSClient {
  	//System.out.println("length " + urlConnection.getContentLength());
 
       } catch (java.io.IOException e) {
-	JOptionPane.showConfirmDialog(outerPanel, "Could not connect to Host, Port, or Agent\nThe Servlet may not be running there.\nPlease check fields and try again", "No Servlet", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+	JOptionPane.showConfirmDialog(outerPanel, "Could not connect to Host, Port, or Agent\nThe Servlet may not be running there.\nPlease check fields and try again", "No Servlet", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 	e.printStackTrace();
       } catch (Exception e) {
 	e.printStackTrace();
@@ -267,11 +267,11 @@ public class GLSClient {
 	//System.out.println(urlString );
 	lr  =  new LineReader(url.openConnection());		      
       } catch (java.net.MalformedURLException me) {
-	JOptionPane.showConfirmDialog(outerPanel, "Invalid Host, Port, or Agent\nPlease check fields and try again", "Bad URL", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+	JOptionPane.showConfirmDialog(outerPanel, "Invalid Host, Port, or Agent\nPlease check fields and try again", "Bad URL", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 	//me.printStackTrace();
 	return;
       } catch (java.io.IOException ioe) {
-	JOptionPane.showConfirmDialog(outerPanel, "Could not connect to Host, Port, or Agent\nThe Servlet may not be running there.\nPlease check fields and try again", "No Servlet", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+	JOptionPane.showConfirmDialog(outerPanel, "Could not connect to Host, Port, or Agent\nThe Servlet may not be running there.\nPlease check fields and try again", "No Servlet", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 	ioe.printStackTrace();
 	return;
       }
@@ -331,7 +331,7 @@ public class GLSClient {
 
       } catch (java.io.IOException e) {
 	connectButton.setEnabled(true);
-	JOptionPane.showConfirmDialog(outerPanel, "Could not connect to Host, Port, or Agent\nThe Servlet may not be running there.\nPlease check fields and try again", "Bad URL", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+	JOptionPane.showConfirmDialog(outerPanel, "Could not connect to Host, Port, or Agent\nThe Servlet may not be running there.\nPlease check fields and try again", "Bad URL", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 	//e.printStackTrace();
 	oplanButton.setEnabled(false);
 	frame.getRootPane().setDefaultButton(connectButton); 
