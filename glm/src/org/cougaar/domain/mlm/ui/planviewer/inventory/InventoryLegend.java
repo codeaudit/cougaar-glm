@@ -63,7 +63,13 @@ public class InventoryLegend extends JPanel {
 	this.inventoryChart = inventoryChart;
 	
 	//     int iconWidth = getFontMetrics(getFont()).getHeight() / 2;
-	iconWidth = getFontMetrics(getFont()).getHeight();
+	
+	// Circle icon width
+	//iconWidth = getFontMetrics(getFont()).getHeight();
+	
+	// Square icon width
+	iconWidth = getFontMetrics(getFont()).getHeight()-2;
+
 	setLayout(new GridBagLayout());
 	insets = new Insets(0, 0, 0, 0);
 	panels = new Vector();
@@ -308,7 +314,7 @@ public class InventoryLegend extends JPanel {
 	    series = chartDataView.getSeries(j);
 	    color = series.getStyle().getSymbolColor();
 	    label = new JLabel(series.getLabel(),
-			       new CircleIcon(color, iconWidth),
+			       new SquareIcon(color, iconWidth),
 			       SwingConstants.RIGHT);
 	    label.setForeground(Color.black);
 	    demandSupplyPanel.add(label, 
@@ -362,7 +368,7 @@ public class InventoryLegend extends JPanel {
 	    series = chartDataView.getSeries(j);
 	    color = series.getStyle().getSymbolColor();
 	    label = new JLabel(series.getLabel(),
-			       new CircleIcon(color, iconWidth),
+			       new SquareIcon(color, iconWidth),
 			       SwingConstants.RIGHT);
 	    label.setForeground(Color.black);
 	    add(label, 
@@ -484,6 +490,66 @@ public class InventoryLegend extends JPanel {
 	
     }
 
+
+    static class SquareIcon implements Icon {
+	public Color color;
+	public int length;
+	public boolean drawEmpty;
+        public boolean isButton;
+
+	public SquareIcon(Color color, int length, boolean doDrawEmpty) {
+	    this(color, length, doDrawEmpty, true);
+        }
+
+	private SquareIcon(Color color, int length, boolean doDrawEmpty, boolean isButton) {
+	    this.color = color;
+	    this.length = length;
+	    this.drawEmpty = doDrawEmpty;
+            this.isButton = isButton;
+	}
+
+	public SquareIcon(Color color, int length) {
+	    this(color, length, false, false);
+	}
+
+	public int getIconWidth() {
+	    return length;
+	}
+
+	public int getIconHeight() {
+	    return length;
+	}
+
+	public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setStroke(wideStroke);
+            g2d.setRenderingHints(renderingHints);
+	    if(drawEmpty) {
+                g2d.setColor(color);
+		g2d.drawRect(x+1, y+1, length-2, length-2);
+	    }
+	    else {
+                if (isButton) {
+                    g2d.setColor(color);
+                    g2d.fillRect(x, y, length, length);
+//                      g2d.setColor(color);
+//                      g2d.fillRect(x+2, y+2, length-4, length-4);
+                    g2d.setColor(Color.black);
+                    g2d.drawRect(x+1, y+1, length-2, length-2);
+                } else {
+                    g2d.setColor(color);
+                    g2d.fillRect(x, y, length, length);
+                }
+	    }
+            g2d.dispose();
+	}
+
+	public void setDrawEmpty(boolean doDrawEmpty) { 
+	    this.drawEmpty = doDrawEmpty;
+	}
+	
+    }
+
     public class SeriesToggleButton extends JToggleButton {
 	private ChartDataViewSeries series=null;
 
@@ -493,11 +559,11 @@ public class InventoryLegend extends JPanel {
 
 
 	public SeriesToggleButton(String aLabel,
-				  int aDiameter,
+				  int aLength,
 				  int aSeriesIndex,
 				  ChartDataViewSeries aSeries) {
-	    super(aLabel,new CircleIcon(aSeries.getStyle().getSymbolColor(),
-					aDiameter,true), true);
+	    super(aLabel,new SquareIcon(aSeries.getStyle().getSymbolColor(),
+					aLength,true), true);
 	    this.seriesIndex = aSeriesIndex;
 	    this.dataView = aSeries.getParent();
 	    this.dm = (InventoryChartDataModel) 
@@ -505,7 +571,7 @@ public class InventoryLegend extends JPanel {
  
 	    this.series = aSeries;
 	    this.setForeground(Color.black);
-	    setSelectedIcon(new CircleIcon(aSeries.getStyle().getSymbolColor(),aDiameter,false));
+	    setSelectedIcon(new SquareIcon(aSeries.getStyle().getSymbolColor(),aLength,false));
 
 	    //setOpaque(true);
 	    setBorderPainted(false);
