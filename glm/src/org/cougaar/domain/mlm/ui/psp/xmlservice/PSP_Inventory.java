@@ -43,6 +43,10 @@ public class PSP_Inventory
   private String myID;
   public String desiredAssetName;
 
+
+  final public static String ASSET = "ASSET";
+  final public static String ASSET_AND_CLASSTYPE = ASSET + ":" + "CLASS_TYPE:";
+
   public PSP_Inventory() throws RuntimePSPException {
     super();
   }
@@ -130,8 +134,6 @@ public class PSP_Inventory
       inv.addNamedSchedule(ON_HAND,   inventory.getOnHandSchedule());
     } else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
 
-      inventory.computeSimulatedProjectionSchedules();
-
       inv.addNamedSchedule(ON_HAND,                               inventory.getOnHandSchedule());
       inv.addNamedSchedule(DUE_IN,                                inventory.getDueInSchedule());
       inv.addNamedSchedule(UNCONFIRMED_DUE_IN,                    inventory.getUnconfirmedDueInSchedule());
@@ -146,8 +148,8 @@ public class PSP_Inventory
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN  +INACTIVE, inventory.getInactiveProjectedRequestedDueInSchedule());
           
       inv.addNamedSchedule(DUE_OUT,                               inventory.getDueOutSchedule());
-      inv.addNamedSchedule(PROJECTED_DUE_OUT,                     inventory.getProjectedDueOutSchedule());
       inv.addNamedSchedule(REQUESTED_DUE_OUT,                     inventory.getRequestedDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_OUT,                     inventory.getProjectedDueOutSchedule());
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT,           inventory.getProjectedRequestedDueOutSchedule());
                                      
       inv.addNamedSchedule(DUE_OUT                     +INACTIVE, inventory.getInactiveDueOutSchedule());
@@ -155,12 +157,14 @@ public class PSP_Inventory
       inv.addNamedSchedule(REQUESTED_DUE_OUT           +INACTIVE, inventory.getInactiveRequestedDueOutSchedule());
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT +INACTIVE, inventory.getInactiveProjectedRequestedDueOutSchedule());
 
+      inventory.computeSimulatedProjectionSchedules();
+      
       //inv.addNamedSchedule(ON_HAND,                               inventory.getOnHandMockSchedule());
       //inv.addNamedSchedule(PROJECTED_DUE_IN,                      inventory.getProjectedMockDueInSchedule());
       //inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN,            inventory.getProjectedRequestedMockDueInSchedule());
       //inv.addNamedSchedule(PROJECTED_DUE_OUT,                     inventory.getProjectedMockDueOutSchedule());
       //inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT,           inventory.getProjectedRequestedMockDueOutSchedule());
-
+      
       inv.addNamedSchedule(ON_HAND_MOCK_PERIOD,                    inventory.getOnHandMockSchedule());
       inv.addNamedSchedule(PROJECTED_DUE_IN_MOCK_PERIOD,           inventory.getProjectedMockDueInSchedule());
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN_MOCK_PERIOD, inventory.getProjectedRequestedMockDueInSchedule());
@@ -169,7 +173,6 @@ public class PSP_Inventory
       inv.addNamedSchedule(GOAL_LEVEL,              inventory.getGoalLevelSchedule());
       inv.addNamedSchedule(REORDER_LEVEL,           inventory.getReorderLevelSchedule());
       inv.addNamedSchedule(AVERAGE_DEMAND_LEVEL,    inventory.getAverageDemandSchedule());
-
     } 
     else if (scheduleType.equals(inventory.NO_INVENTORY_SCHEDULE_JUST_CONSUME)){
 	inv.addNamedSchedule(DUE_IN,                              inventory.getDueInSchedule());
@@ -233,14 +236,30 @@ public class PSP_Inventory
     }
 
     // return list of asset names
-    if (desiredAssetName.equals("ASSET")) {
+    if (desiredAssetName.equals(ASSET)||
+	desiredAssetName.startsWith(ASSET_AND_CLASSTYPE)) {
 
-	/****
+	DemandObjectPredicate assetNamePredicate;
+	//AssetPredicate assetNamePredicate;
+
+	if(desiredAssetName.startsWith(ASSET_AND_CLASSTYPE)) {
+	    String desiredClassType = desiredAssetName.substring(ASSET_AND_CLASSTYPE.length());
+	    assetNamePredicate = new DemandObjectPredicate(desiredClassType);
+	    //assetNamePredicate = new AssetPredicate(desiredClassType);
+	}
+	else {
+	    assetNamePredicate = new DemandObjectPredicate();
+	    //assetNamePredicate = new AssetPredicate();
+	}
+
+	// Asset no demand type handling
+	/***
 	 **
+	 *
 
       Vector assetNames = new Vector();
       Subscription subscription = 
-	psc.getServerPlugInSupport().subscribe(this, new AssetPredicate());
+	psc.getServerPlugInSupport().subscribe(this, assetNamePredicate);
 
       Collection container = 
 	((CollectionSubscription)subscription).getCollection();
@@ -257,15 +276,15 @@ public class PSP_Inventory
 	assetNames.addElement(nomenclature);
       }
 
-      ****
+       ***
        * MWD fix and try this out -below
        * MWD get rid of old commented out above replaced by below
        * to get demand even where no inventories.
-       ***/
+       ****/
        
        HashSet assetNamesSet = new HashSet();
        Subscription subscription = 
-         psc.getServerPlugInSupport().subscribe(this, new DemandObjectPredicate());
+         psc.getServerPlugInSupport().subscribe(this, assetNamePredicate);
 
       Collection container = 
 	((CollectionSubscription)subscription).getCollection();
@@ -282,7 +301,7 @@ public class PSP_Inventory
       }
 
       Vector assetNames = new Vector(assetNamesSet);
-
+      
       // unsubscribe, don't need this subscription any more
       psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
       // send the results
@@ -525,6 +544,18 @@ class InventoryPredicate implements UnaryPredicate {
 
 class AssetPredicate implements UnaryPredicate {
 
+  private String supplyType;
+
+  public AssetPredicate() {
+      super();
+      supplyType = null;
+  }
+
+  public AssetPredicate(String theSupplyType) {
+      super();
+      supplyType = theSupplyType;
+  }
+
   public boolean execute(Object o) {
     if (!(o instanceof GLMAsset))
       return false;
@@ -542,11 +573,42 @@ class AssetPredicate implements UnaryPredicate {
       System.out.println("WARNING: No typeIdentificationPG for asset");
       return false;
     }
+    //If we care about supply type make sure direct object matches supply type
+    if (supplyType != null) {
+	SupplyClassPG pg = (SupplyClassPG)a1.searchForPropertyGroup(SupplyClassPG.class);
+	if ((pg == null) ||
+	    (!(supplyType.equals(pg.getSupplyType())))){
+	    return false;
+	}
+	/***
+	if (pg == null) {
+	    System.out.println("WARNING: Null Supply type");
+	    return false;
+	}
+	else if (!(supplyType.equals(pg.getSupplyType()))){
+	    System.out.println("WARNING: The Supply type is: " + pg.getSupplyType());
+	    return false;
+	}
+	System.out.println("NO WARNING: SUCCESS got Asset of right type");
+	***/
+    }
     return true;
   }
 }
 
 class DemandObjectPredicate implements UnaryPredicate {
+
+  private String supplyType;
+
+  public DemandObjectPredicate() {
+      super();
+      supplyType = null;
+  }
+
+  public DemandObjectPredicate(String theSupplyType) {
+      super();
+      supplyType = theSupplyType;
+  }
 
   public boolean execute(Object o) {
     if (!(o instanceof Task))
@@ -562,6 +624,14 @@ class DemandObjectPredicate implements UnaryPredicate {
     if (typeIdPG == null) {
       System.out.println("WARNING: No typeIdentificationPG for asset");
       return false;
+    }
+    //If we care about supply type make sure direct object matches supply type
+    if (supplyType != null) {
+	SupplyClassPG pg = (SupplyClassPG)asset.searchForPropertyGroup(SupplyClassPG.class);
+	if ((pg == null) ||
+	    (!(supplyType.equals(pg.getSupplyType())))){
+	    return false;
+	}
     }
     return true;
   }
