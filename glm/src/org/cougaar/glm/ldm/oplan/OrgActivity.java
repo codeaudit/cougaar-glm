@@ -106,6 +106,11 @@ public interface OrgActivity
   void modifyActivityItem(String key, String value);
   HashMap getItems();
 
+  String getOpCon();
+  void setOpCon(String opcon);
+
+  String getAdCon();
+  void setAdCon(String adcon);
 
   void setAll(Transferable other);
 

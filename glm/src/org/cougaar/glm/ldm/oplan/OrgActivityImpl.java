@@ -60,6 +60,8 @@ public class OrgActivityImpl extends OwnedUniqueObject
   private HashMap oaHashMap = new HashMap(5);
   private String orgID;
   private UID oplanUID;
+  private String adCon;
+  private String opCon;
   
   OrgActivityImpl(String orgID, UID oplanUID) 
   {	
@@ -99,6 +101,21 @@ public class OrgActivityImpl extends OwnedUniqueObject
   {
     return getUID();
   }
+
+  public String getOpCon() {
+    return opCon;
+  }
+  public void setOpCon(String opCon) {
+    this.opCon = opCon;
+  }
+
+  public String getAdCon() {
+    return adCon;
+  }
+  public void setAdCon(String adCon) {
+    this.adCon = adCon;
+  }
+
 	
   public void setOplanUID(UID oplanUID)
   {
@@ -201,6 +218,8 @@ public class OrgActivityImpl extends OwnedUniqueObject
     return theTimeSpan.getEndTime();
   }
 
+
+
   public void setAll(Transferable other) 
   {
 	    
@@ -214,6 +233,8 @@ public class OrgActivityImpl extends OwnedUniqueObject
       theTimeSpan = oa.getTimeSpan();
       orgID = oa.getOrgID();
       oplanUID = oa.getOplanUID();
+      adCon = oa.getAdCon();
+      opCon = oa.getOpCon();
       setUID(oa.getOrgActivityId());
       if (oa instanceof OwnedUniqueObject) {
         setOwner(((OwnedUniqueObject)oa).getOwner());
@@ -242,6 +263,8 @@ public class OrgActivityImpl extends OwnedUniqueObject
         matches(getGeoLoc(), oa.getGeoLoc()) &&
         matches(getOrgID(), oa.getOrgID()) &&
         matches(getOplanUID(), oa.getOplanUID()) &&
+        matches(getAdCon(), oa.getAdCon()) &&
+        matches(getOpCon(), oa.getOpCon()) &&
         matches(getOrgActivityId(), oa.getOrgActivityId());
 
       return status;
@@ -258,6 +281,8 @@ public class OrgActivityImpl extends OwnedUniqueObject
     oa.setActivityName(activityName);
     oa.setUID(getUID());
     oa.setOwner(getOwner());
+    oa.setAdCon(getAdCon());
+    oa.setOpCon(getOpCon());
 	
     if (oaHashMap != null) oa.oaHashMap = new HashMap((HashMap)oaHashMap.clone()); 	
 
