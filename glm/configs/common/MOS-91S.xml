@@ -2,28 +2,17 @@
 
 <!DOCTYPE assets SYSTEM "AssetList.ldm.dtd" []>
 
-<!--
- **************************************************************
- *                                                              
- *  Copyright 1997-1999 Defense Advanced Research Projects 
- *  Agency and ALPINE (A BBN Technologies (BBN) and Raytheon 
- *  Systems Company (RSC) Consortium). This software to be used 
- *  in accordance with the COUGAAR license agreement.             
- *                                                              
- ****************************************************************
--->
-
-<prototype name="MOS-35J">
+<prototype name="MOS-91B">
   <object class="org.cougaar.domain.glm.ldm.asset.MilitaryPerson">
 
       <field name="TypeIdentificationPG" type="object">
         <value>
           <object class="org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG">
             <field name="TypeIdentification" type="String">
-              <value> MOS/35J </value>
+              <value> MOS/91B </value>
             </field>
             <field name="Nomenclature" type="String">
-              <value> MOS/35J/Telecommunication Terminal Device Repairer </value>
+              <value> MOS/91B/Preventive Medicine Specialist </value>
             </field>
           </object>
         </value>
@@ -36,7 +25,7 @@
               <value> 
                 <object class="org.cougaar.domain.glm.ldm.plan.Skill">
                   <field name="Skill" type="String">
-                    <value> MOS/35J </value>
+                    <value> MOS/91B </value>
                   </field>
                 </object>
               </value>
@@ -46,4 +35,4 @@
       </field>
 
   </object>
-</prototype> <!-- end Telecommunication Terminal Device Repairer -->
+</prototype> <!-- end Preventive Medicine Specialist -->
