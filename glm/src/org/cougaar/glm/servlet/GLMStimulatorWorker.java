@@ -66,12 +66,7 @@ import org.cougaar.core.service.SchedulerService;
 public class GLMStimulatorWorker
   extends ServletWorker {
 
-  private static long MIN_INTERVAL = 20l;
-
-  //  public static boolean VERBOSE = false;
-  //  static {
-  //    VERBOSE = Boolean.getBoolean("org.cougaar.glm.servlet.GLMStimulatorWorker.verbose");
-  //  }
+  private static long MIN_INTERVAL = 20l; // millis
 
   public GLMStimulatorWorker (ServletBase servlet) {
     this.servlet = servlet;
@@ -90,8 +85,6 @@ public class GLMStimulatorWorker
       String value = request.getParameter (name);
       getSettings (name, value);
     }
-
-    // createGUI(inputFile);
 
     if (debug)
       System.out.println("GLMStimulatorWorker Invoked...");
@@ -157,7 +150,7 @@ public class GLMStimulatorWorker
       inputFile = value;
     else if (eq (name, "debug"))
       debug = eq (value, "true");
-    else if (eq (name, GLMStimulatorServlet.NUM_TASKS))
+    else if (eq (name, GLMStimulatorServlet.NUM_BATCHES))
       totalBatches = Integer.parseInt(value);
     else if (eq (name, GLMStimulatorServlet.INTERVAL)) {
       try { 
@@ -297,15 +290,10 @@ public class GLMStimulatorWorker
 
   protected void blackboardChanged () {
     try {
-      //      if (debug)
-      // System.out.println ("GLMStimulatorWorker.blackboard changed called.");
-
       support.getBlackboardService().openTransaction();
       Set toRemove = new HashSet (); // to avoid concurrent mod error
       for (Iterator iter = subscriptions.iterator (); iter.hasNext(); ) {
 	IncrementalSubscription sub = (IncrementalSubscription) iter.next ();
-	//	if (debug)
-	//	  System.out.println ("GLMStimulatorWorker.blackboard checking subscription " + sub);
 	if (sub.hasChanged ()) {
 	  boolean wasEmpty = true;
 	  Collection changedItems = sub.getChangedCollection();
@@ -324,10 +312,6 @@ public class GLMStimulatorWorker
 	    toRemove.add (sub);
 	  }
 	}
-	//	else {
-	  //	  if (debug)
-	//	    System.out.println ("GLMStimulatorWorker.blackboard subscription " + sub + " has not changed.");
-	//	}
       }
       subscriptions.removeAll (toRemove); // we've been notified about these, no reason to keep them around
       if (debug)
@@ -388,25 +372,6 @@ public class GLMStimulatorWorker
     }
   }
 
-  /*
-  protected void sendTasksAgain () {//String xmlTaskFile) {
-    batchStart = new Date();
-
-    Collection tasks = readXmlTasks(xmlTaskFile);
-    try {
-      support.getBlackboardService().openTransaction();
-      for (Iterator iter = task.iterator(); iter.hasNext();)
-	publishAdd (iter.next ());
-    } catch (Exception exc) {
-      System.err.println("Could not send tasks.");
-      System.err.println(exc.getMessage());
-      exc.printStackTrace();
-    } finally{
-      support.getBlackboardService().closeTransaction(false);
-    }
-  }
-  */
-
   private static final class PlanElementPredicate implements UnaryPredicate {
     Task forTask;
     public PlanElementPredicate (Task forTask) { this.forTask = forTask; }
@@ -428,24 +393,6 @@ public class GLMStimulatorWorker
       return true;
     }
   };
-
-  /**
-   * get the allocation
-   */
-  /*
-  protected PlanElement getPlanElement(SimpleServletSupport support, Task forTask) {
-    // get self org
-    Collection col = support.queryBlackboard (new PlanElementPredicate (forTask));
-    if ((col != null) && 
-        (col.size() == 1)) {
-      Iterator iter = col.iterator();
-      PlanElement planElement = (PlanElement) iter.next();
-      return planElement;
-    } else {
-      return null;
-    }
-  }
-  */
 
   protected String getElapsedTime (Date start) {
     Date end = new Date ();
@@ -495,37 +442,11 @@ public class GLMStimulatorWorker
     return tasks;
   }
 
-  private class ResponseData implements XMLable, Serializable {
-    //XMLable members:
-    //----------------
-    //    public List messages = new ArrayList ();
-    public String totalTime;
-    public Vector batchTimes = new Vector();
-
-    //    public void addMessage (String message) { messages.add (message); }
-
-    /**
-     * Write this class out to the Writer in XML format
-     * @param w output Writer
-     **/
-    public void toXML(XMLWriter w) throws IOException{
-      w.optagln("results", "totalTime", totalTime);
-      for (int i=0;i<batchTimes.size();i++)
-	w.sitagln("batch", 
-		  "id", ""+(i+1), 
-		  "time", (String)batchTimes.elementAt(i)); 
-      w.cltagln("results");
-    }
-  }
-
   // rely upon load-time introspection to set these services - 
   //   don't worry about revokation.
   public final void setSchedulerService(SchedulerService ss) {
     scheduler = ss;
   }
-
-  /** frame for 2-button UI */
-  //  JFrame frame;
 
   /** Collection of tasks that have been sent.  Needed for later rescinds */
   protected Collection tasksSent = new HashSet();
@@ -537,7 +458,7 @@ public class GLMStimulatorWorker
   protected Date testStart = null;
   protected Date batchStart = null;
   protected Collection handledPlanElements = new HashSet();
-  protected ResponseData responseData=new ResponseData();
+  protected GLMStimulatorResponseData responseData=new GLMStimulatorResponseData();
 
   protected int batchesSent = 0;
   protected int totalBatches = 0;

@@ -57,9 +57,40 @@ import org.cougaar.core.servlet.SimpleServletSupport;
 
 /**
  * <pre>
- * An extension of the GLMStimulator PlugIn that automatically
- * sends batches of a given task and keep track of the time it
- * takes to finish the batch.  
+ * A servlet that injects tasks into an agent.
+ *
+ * Parses an xml file that defines a batch of tasks.
+ *
+ * The servlet takes these parameters:
+ * 1) The file name of the xml file
+ *    URL param is inputFileName
+ * 2) The number of batches of tasks to be sent (defaults to 1)
+ *    URL param is numberOfBatches
+ * 3) The interval to wait between batches being sent (defaults to 1 second)
+ *    URL param is interval
+ * 4) Whether to wait or not for each task to complete before sending the next
+ *    This can be very useful for performance measurements.
+ *    URL param is wait
+ * 5) Which format you'd like the results back in : XML, HTML, or serialized objects
+ *    The results, when you wait for each task to complete, is a list of completion times
+ *    plus the total time to complete.  See GLMStimulatorResponseData for sample output.
+ *
+ * A typical URL would be :
+ *
+ * http://localhost:8800/$3-FSB/stimulator?inputFileName=Supply.dat.xml&numberOfBatches=1&interval=1000&format=html
+ *
+ * It requires a special servlet component in the ini file (or equivalent CSMART entry) :
+ *
+ * plugin = org.cougaar.glm.servlet.GLMStimulatorServletComponent(org.cougaar.glm.servlet.GLMStimulatorServlet, /stimulator)
+ *
+ * Also, if the xml file that defines a task that needs a prototype that is not provided by the XMLPrototypeProvider, you 
+ * may need to register the prototype using an xml file, e.g.:
+ *
+ * plugin = org.cougaar.lib.plugin.UTILLdmXMLPlugin(ldmFile={String}Ammo_AssetList.ldm.xml)
+ * 
+ * Gordon Vidaver
+ * gvidaver@bbn.com
+ * (617) 873-3558
  * </pre>
  */
 public class GLMStimulatorServlet extends ServletBase {
@@ -68,7 +99,7 @@ public class GLMStimulatorServlet extends ServletBase {
   }
 
   public static final String INPUT_FILE = "inputFileName";
-  public static final String NUM_TASKS  = "numberOfTasks";
+  public static final String NUM_BATCHES = "numberOfBatches";
   public static final String INTERVAL   = "interval";
   public static final String WAIT       = "wait";
   public static final boolean DEBUG = false;
@@ -77,20 +108,6 @@ public class GLMStimulatorServlet extends ServletBase {
   static {
     VERBOSE = Boolean.getBoolean("org.cougaar.glm.plugins.tools.GLMStimulatorServlet.verbose");
   }
-
-  /*
-  public void doGet(HttpServletRequest request,
-		    HttpServletResponse response) throws IOException, ServletException {
-    ServletWorker worker = createWorker ();
-
-    if (VERBOSE) {
-      Enumeration paramNames = request.getParameterNames();
-      for (int i = 0; paramNames.hasMoreElements (); )
-	System.out.println ("ServletBase got param #" + i++ + " - " + paramNames.nextElement ());
-    }
-    worker.execute (request, response, support);
-  }
-  */
 
   protected ServletWorker createWorker () {
     return new GLMStimulatorWorker (this);
@@ -109,7 +126,7 @@ public class GLMStimulatorServlet extends ServletBase {
 	      "SIZE=40>");
     // get number of tasks to send 
     out.print("<P>\n"+
-	      "&nbsp;&nbsp;Number of tasks <INPUT TYPE=\"text\" NAME=\"" + NUM_TASKS + "\" "+
+	      "&nbsp;&nbsp;Number of batches <INPUT TYPE=\"text\" NAME=\"" + NUM_BATCHES + "\" "+
 	      "VALUE=\"1\">");
     // get periodicity 
     out.print("<P>\n"+
