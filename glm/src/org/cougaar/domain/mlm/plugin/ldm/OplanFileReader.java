@@ -17,7 +17,9 @@ import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.planning.ldm.policy.Policy;
 import org.cougaar.domain.mlm.plugin.ldm.XMLPolicyCreator;
-import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+
+import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.oplan.*;
@@ -577,7 +579,8 @@ public class OplanFileReader {
             }// catch
       }// thruTime     
 	  
-    TimeSpan ts = new TimeSpan(thePlan_.getCday(), startDelta, thruDelta);
+    TimeSpan ts = new org.cougaar.domain.glm.ldm.oplan.TimeSpan(thePlan_.getCday(), 
+                                                                startDelta, thruDelta);
 
     if (object instanceof OplanContributor)
       ((OplanContributor)object).setTimeSpan(ts);
