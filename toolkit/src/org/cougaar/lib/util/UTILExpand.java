@@ -111,7 +111,7 @@ public class UTILExpand {
 				    Enumeration preferences,
 				    byte priority,
 				    ClusterIdentifier source) {
-    return makeSubTask(ldmf, plan, parent.getUID(), verb, prepphrases, 
+    return makeSubTask(ldmf, plan, (parent != null) ? parent.getUID() : null, verb, prepphrases, 
 		       obj, preferences, priority, source);
   }
 
@@ -185,14 +185,17 @@ public class UTILExpand {
    * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter
    */
   public NewTask cloneTask(RootFactory ldmf,
-				  Task taskToClone) {
+			   Task taskToClone) {
     // Warning, this assumes that the task is part of a workflow!
 
     Workflow flow = taskToClone.getWorkflow();
-    NewTask t =  makeSubTask (ldmf,
+    
+    logger.debug ("ldmf is " + ldmf + " taskToClone " + taskToClone);
+
+    NewTask t = makeSubTask (ldmf,
 			      taskToClone.getPlan(),
 
-			      flow.getParentTask (),
+			      (flow != null) ? flow.getParentTask () : null,
 			      taskToClone.getVerb(),
 			      taskToClone.getPrepositionalPhrases(),
 			      taskToClone.getDirectObject (),
@@ -311,12 +314,12 @@ public class UTILExpand {
     // 			    " FROM " + prepHelper.getFromLocation (subTask) + 
     // 			    " TO "    + prepHelper.getToLocation   (subTask) + extra);
     if (pe == null) {
-      logger.info ("\t no PE yet.");
+      logger.warn ("\t no PE yet.");
       showPreferences (subTask);
     }
     else {
       if (pe.getEstimatedResult () == null)
-	logger.info ("\t" + " NULL EST AR");
+	logger.warn ("\t" + " NULL EST AR");
       else
 	showPreferences (subTask, 
 			 pe.getEstimatedResult().getAspectTypes (),
@@ -325,8 +328,8 @@ public class UTILExpand {
   }
 
   public void showPreferences (Task t,
-				      int [] aspectTypes,
-				      double [] aspectValues) {
+			       int [] aspectTypes,
+			       double [] aspectValues) {
     boolean prefExceeded = false;
     Enumeration prefs = t.getPreferences ();
     Map map = new HashMap ();
@@ -337,8 +340,6 @@ public class UTILExpand {
       map.put (new Integer (pref.getAspectType ()), pref);
     }
 
-    //    String prefString = "";
-
     for (int i = 0; i < aspectTypes.length; i++) {
       aspectType = aspectTypes[i];
       Integer aspectTypeInt = new Integer (aspectType);
@@ -346,13 +347,11 @@ public class UTILExpand {
       if (pref != null) {
 	AspectValue av = new AspectValue (aspectType, aspectValues[i]);
 	if (aspectType == AspectType.END_TIME)
-	  logger.info(printEndTime (t, av));
+	  logger.warn(printEndTime (t, av));
 	else
-	  logger.info(print (av, pref));
+	  logger.warn(print (av, pref));
       }
     }
-    
-    //    logger.debug (prefString);
   }
 
   public void showPreferences (Task t) {
@@ -365,13 +364,11 @@ public class UTILExpand {
       Preference pref = (Preference) prefs.nextElement ();
       if (pref != null) {
 	if (pref.getAspectType () == AspectType.END_TIME)
-	  logger.info(printEndTime (t));
+	  logger.warn(printEndTime (t));
 	else
-	  logger.info(print (pref));
+	  logger.warn(print (pref));
       }
     }
-    
-    //    logger.debug (prefString);
   }
 
   protected String print (AspectValue av, Preference pref) {
@@ -387,7 +384,7 @@ public class UTILExpand {
 	type = "START";
 	value   = "" + new Date ((long) av.getValue ());
 	prefstr = "" + new Date ((long) prefval);
-	intermediate = (av.getValue () < prefval) ? " < " : "";
+	intermediate = (av.getValue () < prefval) ? " >" : "";
 	break;
       case AspectType.END_TIME: 
 	type = "END  ";
@@ -404,8 +401,7 @@ public class UTILExpand {
       return "Excep";
     }
 
-
-    return (type + ":p " + prefstr + intermediate + " -a " + value);
+    return (type + ":p " + prefstr + intermediate + "-a " + value);
   }
 
   protected String print (Preference pref) {
