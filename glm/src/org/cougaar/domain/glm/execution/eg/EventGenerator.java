@@ -995,12 +995,13 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
         }
       }
     });
-    timeGUIPanel.setLocation(10000, 0);
     forceComponentInWindow(timeGUIPanel, lp);
     frame.pack();
     frame.setState(frame.ICONIFIED);
+    timeGUIPanel.setLocation(10000, 0);
     frame.show();
     eventGenerator.initialize();
+    frame.setState(frame.NORMAL);
     eventGenerator.startListeners();
   }
 }
