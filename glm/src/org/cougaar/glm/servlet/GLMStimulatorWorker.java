@@ -157,6 +157,10 @@ public class GLMStimulatorWorker
 
       bb.unsubscribe(planElementSubscription);
       bb.closeTransaction();
+      bb.unregisterInterest(watcher);
+
+      tm.unload ();
+      tm.stop();
     }
   }
 
@@ -393,6 +397,10 @@ public class GLMStimulatorWorker
 	      support.getLog().debug ("GLMStimulatorWorker.blackboard changed - found changed plan elements.");
             wasEmpty = false;
             PlanElement pe = (PlanElement) iter2.next();
+
+	    if (support.getLog().isDebugEnabled ())
+	      support.getLog().debug ("GLMStimulatorWorker.blackboard PE " + pe.getUID () + " changed.");
+
             Task task = pe.getTask();
             Date timeSent = (Date) sentTasks.get(task);
             if (timeSent != null) {
