@@ -202,11 +202,20 @@ public abstract class InventoryBG implements PGDelegate {
 	return day;
     }
 
+    /**
+     * Get the inventory level at a particular execution time
+     **/
     public Scalar getLevel(long day) {
 	int d = TimeUtils.getDaysBetween(day, getStartTime());
 	return getLevel(d);
     }
 
+    /**
+     * Get inventory level on a particular day relative to the start
+     * time of the inventory. If the specified day is before the start
+     * time of the inventory, the initial level is returned. If after
+     * the maximum day, the level on that maximum day is returned.
+     **/
     public Scalar getLevel(int day) {
 	Scalar initial = myPG_.getInitialLevel();
 	if ((day < 0) || (level_ == null)) {
