@@ -166,6 +166,7 @@ public class GLSInitServlet extends LDMSQLPlugin {
       }
     };
 
+  // Subscribe to my private state object to recover on rehydrate
   private static UnaryPredicate statePredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
       return (o instanceof MyPrivateState);
@@ -208,10 +209,14 @@ public class GLSInitServlet extends LDMSQLPlugin {
     myorgassets = (IncrementalSubscription) subscribe(orgAssetPred);
     requestSubscription = (IncrementalSubscription) subscribe(requestPredicate);
 
+    // Set up the local private state object
+    // It is put on the blackboard for persistence and recovered 
+    // on rehydration
     if (getBlackboardService().didRehydrate()) {
       checkForPrivateState(stateSubscription.elements());
     } else {
-      getBlackboardService().publishAdd(new MyPrivateState());
+      myPrivateState = new MyPrivateState();
+      getBlackboardService().publishAdd(myPrivateState);
     }
 
     // register with servlet service
@@ -234,10 +239,14 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
     boolean doNotify = false;
 
-    if (stateSubscription.hasChanged()) {
-      checkForPrivateState(stateSubscription.getAddedList());
-    }
+    // This block not necessary
+    // Only need to get the private state object at startup
+    // from rehydration
+//     if (stateSubscription.hasChanged()) {
+//       checkForPrivateState(stateSubscription.getAddedList());
+//     }
 
+    // Handle case where we're self-running based on the Self Org
     if (myorgassets.hasChanged()) {
       handleMyOrgAssets(myorgassets.getAddedList());
 
@@ -308,6 +317,7 @@ public class GLSInitServlet extends LDMSQLPlugin {
     }
   }
 
+  // Helper method used only on rehydration
   private void checkForPrivateState(Enumeration e) {
     if (myPrivateState == null) {
       while(e.hasMoreElements()) {
