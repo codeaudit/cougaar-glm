@@ -10,7 +10,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.planning.ldm.asset.Asset;
+
+import org.cougaar.planning.ldm.measure.Mass;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.Plan;
@@ -21,6 +22,9 @@ import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.core.domain.RootFactory;
+
+
+import org.cougaar.glm.ldm.asset.GLMAsset;
 
 /**
   * This class provides one of two "wheels" that drive the packing process.
@@ -75,7 +79,21 @@ class Sizer {
     // to see if the _curTask has anything left in it...
     if (_remainder == 0.0) {
       if ((_curTask = getNextTask()) != null) {
-        _remainder = _curTask.getPreferredValue(AspectType.QUANTITY);
+	GLMAsset assetToBePacked = (GLMAsset) _curTask.getDirectObject();
+	if (assetToBePacked.hasPhysicalPG()) {
+	  Mass massPerEach = assetToBePacked.getPhysicalPG().getMass();
+	  _remainder = _curTask.getPreferredValue(AspectType.QUANTITY) *
+	    massPerEach.getShortTons();
+	  _gp.getLoggingService().debug("Quantity: " + _curTask.getPreferredValue(AspectType.QUANTITY) + 
+				      " * massPerEach: " + massPerEach.getShortTons() +
+				      " = " + _remainder + " short tons");
+	} else {
+	  _gp.getLoggingService().warn("Sizer.provide: asset - " + 
+					assetToBePacked + 
+					" - does not have a PhysicalPG. " +
+					"Assuming QUANTITY preference is in stort tons.");
+	  _remainder = _curTask.getPreferredValue(AspectType.QUANTITY);
+	}
 	if (_expansionQueue != null) {
 	  _gp.getLoggingService().error ("Sizer.provide : ERROR - Expansion queue is not null - we will drop tasks :");
 	  for (Iterator iter = _expansionQueue.iterator(); iter.hasNext(); )
