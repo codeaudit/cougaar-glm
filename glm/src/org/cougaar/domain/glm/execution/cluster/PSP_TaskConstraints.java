@@ -139,6 +139,7 @@ public class PSP_TaskConstraints
             thatTaskAspect = constraint.getConstrainedAspect();
           } else {
             thatTask = constraint.getConstrainingTask();
+            if (thatTask == null) continue; // Not inter-task constraint
             thisTaskAspect = constraint.getConstrainedAspect();
             thatTaskAspect = constraint.getConstrainingAspect();
           }
