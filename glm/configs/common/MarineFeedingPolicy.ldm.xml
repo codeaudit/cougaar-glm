@@ -3,8 +3,7 @@
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
 
 <Policies>
-
- <Policy name="MarineFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
+<Policy name="MarineFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
     <RuleParam name="Breakfast">
       <RangeSet value="">
        <RangeValue min="0"  max="9"    value="MRE" />
@@ -26,5 +25,30 @@
         <RangeValue min="30" max="60"  value="B-Ration" />
       </RangeSet>
     </RuleParam>
+ <RuleParam name="BottledWater">
+      <RangeSet value="">
+              </RangeSet>
+    </RuleParam>
+    <RuleParam name="WaterUOI">
+      	<String value ="Liter">
+	</String>
+    </RuleParam>   
+ <RuleParam name="DemandEnhancements">
+  <Boolean value="false"> </Boolean>
+    </RuleParam>   
+ <RuleParam name="Enhancements">
+      <KeySet value="">
+    </KeySet>
+    </RuleParam>
+<RuleParam name="A-RationCapability">
+  <RangeSet value="">
+  </RangeSet>
+    </RuleParam>
  </Policy>
 </Policies>
+
+
+
+
+
+

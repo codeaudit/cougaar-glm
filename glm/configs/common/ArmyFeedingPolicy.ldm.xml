@@ -1,7 +1,10 @@
 <?xml version="1.0"  encoding="US-ASCII"?>
+
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
+
 <Policies>
-<Policy name="ArmyFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
+
+ <Policy name="ArmyFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
     <RuleParam name="Breakfast">
       <RangeSet value="">
         <RangeValue min="0"  max="20"    value="MRE" />
@@ -23,5 +26,46 @@
         <RangeValue min="61" max="180" value="UGR-HS" />
       </RangeSet>
     </RuleParam>
- </Policy>
+    <RuleParam name="BottledWater">
+      <RangeSet value="">
+        <RangeValue min="0"  max="180"    value="3" />
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="WaterUOI">
+      	<String value ="Liter">
+	</String>
+    </RuleParam>   
+ <RuleParam name="DemandEnhancements">
+  <Boolean value="false"> </Boolean>
+    </RuleParam>   
+ <RuleParam name="Enhancements">
+      <KeySet value="">
+      <KeyValue key="Apples" value=".07" />
+      <KeyValue key="Plums" value=".07" />
+      <KeyValue key="Pears" value=".07" />
+      <KeyValue key="Oranges" value=".07" />
+      <KeyValue key="Bananas" value=".07" />
+      <KeyValue key="Lettuce" value=".0275" />
+      <KeyValue key="Green Peppers" value=".0275" />
+      <KeyValue key="Celery" value=".0275" />
+      <KeyValue key="Carrots" value=".0275" />
+    </KeySet>
+    </RuleParam>
+<RuleParam name="A-RationCapability">
+  <RangeSet value="">
+    <RangeValue min="0"  max="23"    value="False" />
+    <RangeValue min="24"  max="180"    value="True" />
+  </RangeSet>
+    </RuleParam>
+</Policy>
 </Policies>
+
+
+
+
+
+
+
+
+
+

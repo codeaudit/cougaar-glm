@@ -26,5 +26,24 @@
 	<RangeValue min="30" max="180"  value="UGR-A" />
       </RangeSet>
     </RuleParam>
- </Policy>
+    <RuleParam name="BottledWater">
+      <RangeSet value="">
+              </RangeSet>
+    </RuleParam>
+    <RuleParam name="WaterUOI">
+      	<String value ="Liter">
+	</String>
+    </RuleParam>   
+ <RuleParam name="DemandEnhancements">
+  <Boolean value="false"> </Boolean>
+    </RuleParam>   
+ <RuleParam name="Enhancements">
+      <KeySet value="">
+    </KeySet>
+    </RuleParam>
+<RuleParam name="A-RationCapability">
+  <RangeSet value="">
+  </RangeSet>
+    </RuleParam>
+</Policy>
 </Policies>
