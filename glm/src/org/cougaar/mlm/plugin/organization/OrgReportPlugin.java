@@ -71,7 +71,6 @@ public class OrgReportPlugin extends AssetReportPlugin
           Task task = (Task) o;
 	  if (((task.getVerb().equals(Constants.Verb.REPORTFORDUTY)) ||
                (task.getVerb().equals(Constants.Verb.REPORTFORSERVICE))) &&
-              (task.getWorkflow() == null) &&
               (task.getPlanElement() == null)) {
 	    return true;
           }
