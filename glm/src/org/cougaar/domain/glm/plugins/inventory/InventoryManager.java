@@ -161,19 +161,25 @@ public abstract class InventoryManager extends InventoryProcessor {
       printDebug(2,"\n\n\nBEGIN CYCLE___________________________________________\n");
 	    
       if (inventoryPlugIn_.getDetermineRequirementsTask() == null) {
-	// MWD - added a method to handle GLS Rescind cases,
-	//       override in DLAInventoryManager that reinitializes
-	//       input files as well as clearing inventory schedules
 	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
 	changedSet_ = new HashSet();
 	while (inventories.hasMoreElements()) {
 	  changedSet_.add(inventories.nextElement());
 	}
 	System.out.println("#####"+clusterId_+" is running because (inventoryPlugIn_.getDetermineRequirementsTask() == null)"); 
+
+	//nominal handling of rescinds
 	resetInventories();
+	accountForWithdraws();
+	addPreviousRefills();
+	refreshInventorySchedule();
+
+	// MWD hook for any additional handling of rescinds by subclasses
 	handleGLSRescind();
+
 	// RJB now we have handled all inventories
 	changedSet_=null;
+
       } else if (inventoryPlugIn_.hasSeenAllConsumers()) {
 	resetInventories();
 	accountForWithdraws();
@@ -859,22 +865,10 @@ public abstract class InventoryManager extends InventoryProcessor {
   }
 
   /**
-     method called from update when a GLS Rescind is detected. We
-     simply make sure the inventory levels have been recomputed to
-     reflect the removed dueins and dueouts.
+     method called from update when a GLS Rescind is detected. This
+     is an entry point for any additional handling by subclasses.
   **/
-  protected void handleGLSRescind() {
-    accountForWithdraws();
-    addPreviousRefills();
-    Iterator inventories = changedSet_.iterator();
-    while (inventories.hasNext()) {
-      Inventory inventory = (Inventory)inventories.next();
-      InventoryPG invpg = 
-	(InventoryPG)inventory.getInventoryPG();
-      invpg.determineInventoryLevels();
-      invpg.updateContentSchedule(inventory);
-    }
-  }
+  protected void handleGLSRescind() {}
 
   // ********************************************************
   //                                                        *
@@ -894,7 +888,7 @@ public abstract class InventoryManager extends InventoryProcessor {
       Eaches for Count and
       Short Tons for Mass.
   **/
-  protected double convertScalarToDouble(Scalar measure) {
+  static protected double convertScalarToDouble(Scalar measure) {
     double d = Double.NaN;
     if (measure instanceof Volume) {
       d = ((Volume)measure).getGallons();
