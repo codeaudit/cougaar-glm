@@ -21,8 +21,6 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -30,23 +28,32 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Vector;
+import java.util.Collections;
+
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Connection;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.util.UID;
 
+import org.cougaar.util.DBProperties;
+import org.cougaar.util.DBConnectionPool;
+import org.cougaar.util.Parameters;
 import org.cougaar.util.UnaryPredicate;
   
-import org.cougaar.core.service.UIDService;
 import org.cougaar.core.service.ServletService;
 
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -59,13 +66,7 @@ import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.ldm.plan.Verb;
 
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NamedPosition;
 import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.oplan.OplanContributor;
-import org.cougaar.glm.ldm.oplan.OplanCoupon;
-import org.cougaar.glm.ldm.oplan.OrgActivity;
 
 import org.cougaar.mlm.plugin.ldm.LDMSQLPlugin;
 import org.cougaar.mlm.plugin.ldm.SQLOplanBase;
@@ -87,12 +88,20 @@ import java.io.*;
 public class GLSInitServlet extends LDMSQLPlugin {
 
   public static final String SENDOPLAN = "sendoplan";
-  public static final String UPDATEOPLAN = "updateoplan";
+//   public static final String UPDATEOPLAN = "updateoplan";
   public static final String PUBLISHGLS = "publishgls";
   public static final String RESCINDGLS = "rescindgls";
 
   private static final String PUBLISH_ON_SELF_ORG = "PublishOnSelfOrg";
 
+  private static final String QUERY_NAME = "OplanTimeframeQuery";
+
+  private DBProperties dbp;
+  private String database;
+  private String username;
+  private String password;
+
+  private static DateFormat cDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
   /**
    * For making direct request on this plugin (not via servlet).
@@ -103,9 +112,10 @@ public class GLSInitServlet extends LDMSQLPlugin {
       this.command = command;
     }
   }
-  private IncrementalSubscription oplanSubscription;
 
   private IncrementalSubscription glsSubscription;
+
+  private IncrementalSubscription oplanInfoSubscription;
 
   private IncrementalSubscription myorgassets;
 
@@ -116,19 +126,13 @@ public class GLSInitServlet extends LDMSQLPlugin {
   /** for knowing when we get our self org asset **/
   private Organization selfOrgAsset = null;
 
-  private ArrayList contributors;
-
   private static final String forRoot = "ForRoot".intern();
 
   // tells reply servlet when to push info
   private Object monitor = new Object();
-
-  protected long myOplanTime;
-	
-  UIDService uidService = null;	
 		
   private static class MyPrivateState implements java.io.Serializable {
-    boolean oplanCouponExists = false;
+    boolean oplanInfoExists = false;
     boolean unpublishedChanges = false;
     boolean errorOccurred = false;
     int taskNumber = 0;
@@ -136,11 +140,17 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
   private MyPrivateState myPrivateState;
 
-  private static UnaryPredicate oplanPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return (o instanceof Oplan);
-    }
-  };
+  private OplanInfo myOplanInfo;
+
+  private static UnaryPredicate myOplanInfoPredicate = new UnaryPredicate() {
+      public boolean execute(Object o) { 
+        if (o instanceof OplanInfo) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    };
 
   /**
    * This predicate selects for root tasks injected by the GLSGUIInitPlugin
@@ -187,13 +197,13 @@ public class GLSInitServlet extends LDMSQLPlugin {
    */
   protected void setupSubscriptions() 
   {
-    initProperties();
-    grokArguments();
+    initProperties();  //super
+    grokArguments();   //super
     
     getBlackboardService().getSubscriber().setShouldBePersisted(false);
 
-    oplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(oplanPredicate);
     stateSubscription = (IncrementalSubscription) getBlackboardService().subscribe(statePredicate);
+    oplanInfoSubscription = (IncrementalSubscription) getBlackboardService().subscribe(myOplanInfoPredicate);
     glsSubscription = (IncrementalSubscription) getBlackboardService().subscribe(glsPredicate);
     myorgassets = (IncrementalSubscription) subscribe(orgAssetPred);
     requestSubscription = (IncrementalSubscription) subscribe(requestPredicate);
@@ -233,27 +243,18 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
       if ((selfOrgAsset != null) &&
           (Boolean.valueOf((String) globalParameters.get(PUBLISH_ON_SELF_ORG)).booleanValue())) {
-        //just publish oplan coupon here
-        publishOplanCoupon();
-        //publishOplanAndGLS();
+        publishOplan(); //reads db and sets default cDate
+        String opId = parseOplanID(queryFile); //using default cDate
+        OplanInfo opInfo = findOplanById(opId);
+        sendGLS(opInfo);
       }
     }
-    
-    if (oplanSubscription.hasChanged()) {
-      //only care about adds, not changes or deletes
-      Collection adds = oplanSubscription.getAddedCollection();
-      if ((adds != null) &&
-          (selfOrgAsset != null) &&
-          (Boolean.valueOf((String) globalParameters.get(PUBLISH_ON_SELF_ORG)).booleanValue())) {
-        for (Iterator i = adds.iterator(); i.hasNext(); ) {
-          Oplan oplan = (Oplan) i.next();
-          doPublishRootGLS(oplan);
-        }
-      }
+        
+    if (glsSubscription.hasChanged()) {
       doNotify = true;
     }
-    
-    if (glsSubscription.hasChanged()) {
+
+    if (oplanInfoSubscription.hasChanged()) {
       doNotify = true;
     }
     
@@ -269,12 +270,11 @@ public class GLSInitServlet extends LDMSQLPlugin {
     }
   }
 
-  private void processRequests(Collection newRequests) {
+  private void processRequests(Collection newRequests){
     for (Iterator i = newRequests.iterator(); i.hasNext(); ) {
       Request request = (Request) i.next();
       if (request.command.equals("sendoplan")) {
-        publishOplanCoupon();
-        myPrivateState.unpublishedChanges=false;
+        publishOplan();
       } else if (request.command.equals("publishgls")) {
 	publishAllRootGLS();
       }
@@ -282,22 +282,20 @@ public class GLSInitServlet extends LDMSQLPlugin {
     }
   }
 
-  /** finds the published oplan using its ID as a key
-      @return oplan
+  /** finds the selected oplan using its ID as a key
   */
-  private Oplan findOplanById(String oplanID) {
-    synchronized(oplanSubscription) {
-      for (Iterator iterator = oplanSubscription.iterator(); 
+  private OplanInfo findOplanById(String oplanID) {
+    synchronized(oplanInfoSubscription) {
+      for (Iterator iterator = oplanInfoSubscription.iterator(); 
 	   iterator.hasNext();) {
-	Oplan oplan = (Oplan) iterator.next();
-	if (oplanID.equals(oplan.getOplanId())) {
-	  return oplan;
+	OplanInfo moi = (OplanInfo) iterator.next();
+	if (oplanID.equals(moi.getOpId())) {
+	  return moi;
 	}
       }
       return null;
     }
   }
-  
 
   private void handleMyOrgAssets(Enumeration e) {
     while (e.hasMoreElements()) {
@@ -318,18 +316,86 @@ public class GLSInitServlet extends LDMSQLPlugin {
     }
   }
 
-  private void publishOplanCoupon() {
-    OplanCoupon ow = new OplanCoupon(getMessageAddress());
-    ow.setOplanQueryFile(queryFile);
-    String oplanID = parseOplanID(queryFile);
-    ow.setOplanID(oplanID);
-    
-    getUIDServer().registerUniqueObject(ow);
-    getBlackboardService().publishAdd(ow);
+  private void readOplanTimeframe() 
+    throws SQLException, IOException {
 
-    myPrivateState.oplanCouponExists = true;
-    getBlackboardService().publishChange(myPrivateState);    
-    //System.out.println("GLSInitServlet, globalParameters are: "+globalParameters);
+    String oplanId = parseOplanID(queryFile);
+
+    dbp = DBProperties.readQueryFile(queryFile);
+    database = dbp.getProperty("Database");
+    username = dbp.getProperty("Username");
+    password = dbp.getProperty("Password");
+
+    String oplan_opName;
+    int min_planning_offset;
+    int start_offset;
+    int end_offset;
+
+    try {
+      String dbtype = dbp.getDBType();
+      insureDriverClass(dbtype);
+      Connection conn =  DBConnectionPool.getConnection(database, username, password);
+      try {
+        Statement stmt = conn.createStatement();
+        String query = dbp.getQuery("OplanTimeframeQuery", 
+                                    Collections.singletonMap(":oplan_id:", oplanId));
+        ResultSet rs = stmt.executeQuery(query);
+        if ( rs.next()) {
+          if (rs.getObject(1) instanceof String)
+            oplan_opName = ((String)rs.getObject(1));
+          else
+            oplan_opName = new String ((byte[])rs.getObject(1),"US-ASCII");
+          min_planning_offset = ((Number)(rs.getObject(2))).intValue();
+          start_offset = ((Number)(rs.getObject(3))).intValue();
+          end_offset = ((Number)(rs.getObject(4))).intValue();
+        }
+        else {
+          throw new SQLException("No results from query:" +query);
+        }
+        rs.close();
+        stmt.close();
+      } catch (Exception except){
+        if (except instanceof SQLException) {
+          throw (SQLException) except;
+        }
+        SQLException myEx1 = new SQLException("Query failed.");
+        myEx1.initCause(except);
+        throw myEx1;
+      }
+      finally {
+        conn.close();
+      }
+      
+    } catch (Exception e) {
+      if (e instanceof SQLException) {
+        throw (SQLException) e;
+      }
+      SQLException myEx = new SQLException("Driver not found for " + database);
+      myEx.initCause(e);
+      throw myEx;
+    }
+
+    long start_time = currentTimeMillis();
+    OplanInfo moi = new OplanInfo(oplanId, 
+                                  oplan_opName, 
+                                  start_time, 
+                                  min_planning_offset, 
+                                  start_offset, 
+                                  end_offset);
+    getBlackboardService().publishAdd(moi);
+
+  }
+
+  private void insureDriverClass(String dbtype) throws SQLException, ClassNotFoundException {
+    String driverParam = "driver." + dbtype;
+    String driverClass = Parameters.findParameter(driverParam);
+    if (driverClass == null) {
+      // this is likely a "cougaar.rc" problem.
+      // Parameters should be modified to help generate this exception:
+      throw new SQLException("Unable to find driver class for \""+
+                             driverParam+"\" -- check your \"cougaar.rc\"");
+    }
+    Class.forName(driverClass);
   }
   
   private String parseOplanID(String queryFile) {
@@ -341,87 +407,48 @@ public class GLSInitServlet extends LDMSQLPlugin {
   }
 
   private void publishOplan() {
-    // Need to make separate add/remove/modify lists
     getBlackboardService().openTransaction();
-    publishOplanCoupon();
+    try {
+      readOplanTimeframe();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    myPrivateState.oplanInfoExists = true;
+    getBlackboardService().publishChange(myPrivateState);    
     getBlackboardService().closeTransactionDontReset();
     myPrivateState.unpublishedChanges=false;
   }
 
-  private void refreshOplan( ){
-    //Need to publish change to oplan coupon which will cause each agent
-    //  to go back to db and compare new info with their current info.
-    openTransaction();
-    String oplanID = parseOplanID(queryFile);
-    // Publish once for each changed oplan
-    Collection coupons = getBlackboardService().query(new CouponPredicate(oplanID));
-    for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
-      getBlackboardService().publishChange(couponIt.next());
-    }
-    closeTransactionDontReset();
-  }
-
-  private class CouponPredicate implements UnaryPredicate {
-    String _oplanID;
-    public CouponPredicate(String oplanID) {
-      _oplanID = oplanID;
-    }
-    public boolean execute(Object o) {
-      if (o instanceof OplanCoupon) {
-	if (((OplanCoupon ) o).getOplanID().equals(_oplanID)) {
-	  return true;
-	}
-      }
-      return false;
-    }
-  }
-
-  private class ContributorPredicate implements UnaryPredicate {
-    UID _oplanUID;
-    public ContributorPredicate(UID oplanUID) {
-      _oplanUID = oplanUID;
-    }
-    public boolean execute(Object o) {
-      if (o instanceof OplanContributor) {
-	if (((OplanContributor ) o).getOplanUID().equals(_oplanUID)) {
-	  return true;
-	}
-      }
-      return false;
-    }
-  }
-
   private void publishAllRootGLS() {
-    for (Iterator i = oplanSubscription.iterator(); i.hasNext(); ) {
-      Oplan oplan = (Oplan) i.next();
-      doPublishRootGLS(oplan);
+    for (Iterator i = oplanInfoSubscription.iterator(); i.hasNext(); ) {
+      OplanInfo moi = (OplanInfo) i.next();
+        sendGLS(moi);
     }
   }
 
-  public void publishRootGLS(String oplanID) {
+  public void publishRootGLS(String oplanID, String c0_date) {
     openTransaction();
-    Oplan oplan = findOplanById(oplanID);
-    System.out.println("publishRootGLS() oplan " + oplan);
-    doPublishRootGLS(oplan);
+    OplanInfo oi = findOplanById(oplanID);
+    oi.setCDate(c0_date);
+    sendGLS(oi);
     closeTransactionDontReset();
   }
-
 
   public void rescindRootGLS(String oplanID) {
     openTransaction();
-    Oplan oplan = findOplanById(oplanID);
-    System.out.println("rescindRootGLS() oplan " + oplan);
+    OplanInfo myOpIn = findOplanById(oplanID);
+    System.out.println("rescindRootGLS() myOpIn " + myOpIn);
     for (Iterator it = glsSubscription.iterator(); it.hasNext();) {
       Task t = (Task) it.next();
-      ContextOfUIDs cui = (ContextOfUIDs) t.getContext();
-      if (cui.contains(oplan.getUID())) {
+      ContextOfOplanIds coi = (ContextOfOplanIds) t.getContext();
+      if (coi.contains(myOpIn.getOpId())) {
 	publishRemove(t);
       }
     }
     closeTransactionDontReset();
   }
 
-  private void doPublishRootGLS(Oplan oplan) {    
+  private void sendGLS(OplanInfo moi) {
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
@@ -440,9 +467,14 @@ public class GLSInitServlet extends LDMSQLPlugin {
     newpp = theLDMF.newPrepositionalPhrase();
     newpp.setPreposition("ForRoot");
     newpp.setIndirectObject(new Integer(++myPrivateState.taskNumber));
-    publishChange(myPrivateState);
-
     phrases.add(newpp);
+
+    newpp = theLDMF.newPrepositionalPhrase();
+    newpp.setPreposition("WithC0");
+    newpp.setIndirectObject(new Long(moi.getCDate().getTime()));
+    phrases.add(newpp);
+
+    publishChange(myPrivateState);
 
     task.setPrepositionalPhrases(phrases.elements());
 
@@ -450,18 +482,8 @@ public class GLSInitServlet extends LDMSQLPlugin {
     task.setVerb(Constants.Verb.GetLogSupport);
 
     // schedule
-    long startTime = currentTimeMillis();
-    long endTime;
-    Date endDay = oplan.getEndDay();
-    if (endDay != null) {
-      endTime = endDay.getTime();
-    } else {
-      Calendar cal = Calendar.getInstance();
-      cal.setTime(new Date(startTime));
-      // increment date by 3 MONTHs
-      cal.add(Calendar.MONTH, 3);
-      endTime = cal.getTime().getTime();
-    }
+    long startTime = moi.getStartDay().getTime();
+    long endTime = moi.getEndDay().getTime();
 
     AspectValue startTav = TimeAspectValue.create(AspectType.START_TIME, startTime);
     AspectValue endTav = TimeAspectValue.create(AspectType.END_TIME, endTime);
@@ -480,9 +502,9 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
     // Set the context
     try {
-      UID oplanUID = oplan.getUID();
-      ContextOfUIDs context = new ContextOfUIDs(oplanUID);
-      System.out.println("GLSInitPlugin: Setting context to: " + oplanUID);
+      String oplanId = parseOplanID(queryFile);
+      ContextOfOplanIds context = new ContextOfOplanIds(oplanId);
+      System.out.println("GLSInitPlugin: Setting context to: " + oplanId);      
       task.setContext(context);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -491,22 +513,6 @@ public class GLSInitServlet extends LDMSQLPlugin {
     publishAdd(task);
     System.out.println("\n" + formatDate(System.currentTimeMillis()) + " Send Task: " + task);
   }
-
-//   private void publishOplanAndGLS() {
-//     publishOplanCoupon();
-
-//     //May not actually have the oplan at this point
-    
-//     for (Iterator iterator = oplanSubscription.iterator();
-//          iterator.hasNext();) {
-//       Object object = iterator.next();
-
-//       if (object instanceof Oplan) {
-//         doPublishRootGLS((Oplan) object);
-//       }
-//     }
-//     myPrivateState.unpublishedChanges=false;
-//   }
   
   protected static DateFormat logTimeFormat =
     new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
@@ -515,12 +521,79 @@ public class GLSInitServlet extends LDMSQLPlugin {
     return logTimeFormat.format(new Date(when));
   }
 
+  private static class OplanInfo implements java.io.Serializable {
+    private String opId;
+    private String opName;
+    private int min_planning_offset;
+    private int start_offset;
+    private int end_offset;
+    private Date cDate;
+    private Date startDay;
+    private Date endDay;
+    private long start_time;
+
+    public OplanInfo(String opId, 
+                     String opName, 
+                     long start_time,
+                     int min_planning_offset, 
+                     int start_offset, 
+                     int end_offset)  {
+      this.opId = opId;
+      this.opName = opName;
+      this.start_time = start_time;
+      this.min_planning_offset = min_planning_offset;
+      this.start_offset = start_offset;
+      this.end_offset = end_offset;
+
+      setCDate();
+    }
+    public String getOpName(){
+      return opName;
+    }
+    public String getOpId() {
+      return opId;
+    }
+    public Date getCDate() {
+      return cDate;
+    }
+    public void setCDate(String c0) {
+       try {
+         cDate = cDateFormat.parse(c0);
+       }catch (ParseException pe) {
+         pe.printStackTrace();
+       }
+       setStartDay();
+       setEndDay();
+    }
+    public void setCDate()  {      
+      long c0calc = start_time - (min_planning_offset * 86400000L);
+      cDate = new Date(c0calc);
+      String cDateFormatted = cDateFormat.format(cDate);
+      setCDate(cDateFormatted);
+    }
+    public Date getStartDay() {
+      return startDay;
+    }
+    public Date getEndDay() {
+      return endDay;
+    }
+    public void setStartDay() {
+      long startCalc = cDate.getTime() + (start_offset * 86400000L);
+      startDay = new Date(startCalc);
+
+    }
+    public void setEndDay() {
+      long endCalc = cDate.getTime() + (end_offset * 86400000L);  // days in milliseconds
+      endDay = new Date(endCalc);
+    }
+  }
+
 
   private class GLSServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
       String command = request.getParameter("command");
-      //System.out.println("GLSServlet got request command is" + command);
+      //System.out.println("GLSServlet got request command is: " + command);
       response.setContentType("text/html");
       try {
 	PrintWriter out = response.getWriter();
@@ -531,27 +604,28 @@ public class GLSInitServlet extends LDMSQLPlugin {
       if (command.equals(SENDOPLAN)) {
 	publishOplan();
       }
-      if (command.equals(UPDATEOPLAN)) {
-        // publish a change to the OplanCoupon
-	refreshOplan();
-      }
+//       if (command.equals(UPDATEOPLAN)) {
+// 	refreshOplan();
+//       }
       if (command.equals(PUBLISHGLS)) {
 	//System.out.println("oplanID is " + request.getParameter("oplanID"));
-	publishRootGLS(request.getParameter("oplanID"));
+ 	//System.out.println("cDay is " + request.getParameter("cDate"));
+        String oplanID = request.getParameter("oplanID");
+        String c0 = request.getParameter("cDate");
+	publishRootGLS(oplanID, c0);
       }
       if (command.equals(RESCINDGLS)) {
 	//System.out.println("oplanID is " + request.getParameter("oplanID"));
 	rescindRootGLS(request.getParameter("oplanID"));
       }
     }
-
   }
 
   private class GLSReplyServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
       String command = request.getParameter("command");
-      //System.out.println("GLSServlet got request " + command);
+      //System.out.println("GLSReplyServlet got request " + command);
       // make this smarter?
       ReplyWorker worker = new ReplyWorker(request, response);
       worker.execute();
@@ -575,12 +649,14 @@ public class GLSInitServlet extends LDMSQLPlugin {
 	// keep writing back to the client
   	while(true) {
 	  StringBuffer sb = new StringBuffer();
-	  for (Iterator it = oplanSubscription.iterator(); it.hasNext(); ) {
-	    Oplan oplan = (Oplan) it.next();
+	  for (Iterator it = oplanInfoSubscription.iterator(); it.hasNext(); ) {
+	    OplanInfo myOpInfo = (OplanInfo) it.next();
 	    sb.append("<oplan name=" );
-	    sb.append(oplan.getOperationName());
+	    sb.append(myOpInfo.getOpName());
 	    sb.append(" id=");
-	    sb.append(oplan.getOplanId());
+	    sb.append(myOpInfo.getOpId());
+            sb.append( "c0_date=");
+            sb.append(cDateFormat.format(myOpInfo.getCDate()));
 	    sb.append(">");
 	    out.println(sb);
 	    //System.out.println(sb);

@@ -264,14 +264,14 @@ public class GLSAllocatorPlugin extends SimplePlugin {
     }
 
     // Code removed because oplan is in context
-//      // pull out the "with OPlan" prep phrase and store for later
-//      Enumeration origpp = t.getPrepositionalPhrases();
-//      while (origpp.hasMoreElements()) {
-//        PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
-//        if ( theorigpp.getPreposition().equals(Constants.Preposition.WITH) ) {
-//  	prepphrases.addElement(theorigpp);
-//        }
-//      }
+     // pull out the "with OPlan" prep phrase and store for later
+     Enumeration origpp = t.getPrepositionalPhrases();
+     while (origpp.hasMoreElements()) {
+       PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
+       if ( theorigpp.getPreposition().equals("WithC0") ) {
+ 	prepphrases.addElement(theorigpp);
+       }
+     }
 	  
     NewPrepositionalPhrase newpp = theLDMF.newPrepositionalPhrase();
     newpp.setPreposition(Constants.Preposition.FOR);

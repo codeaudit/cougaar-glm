@@ -50,6 +50,7 @@ import org.cougaar.glm.ldm.plan.*;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
+import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewPlanElement;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -274,6 +275,17 @@ public class GLSExpanderPlugin extends ComponentPlugin {
     newpp.setPreposition(Constants.Preposition.FOR);
     newpp.setIndirectObject(theLDMF.cloneInstance(subasset));
     prepphrases.addElement(newpp);
+
+    Enumeration origpp = task.getPrepositionalPhrases();
+    while (origpp.hasMoreElements()) {
+      PrepositionalPhrase app = (PrepositionalPhrase) origpp.nextElement();
+      if (app.getPreposition().equals("WithC0")) {
+// 	long c0 = ((Long)app.getIndirectObject()).longValue();
+//         newpp.setPreposition("WithC0");
+//         newpp.setIndirectObject(new Long(c0));
+        prepphrases.addElement(app);
+      }
+    }
     subtask.setPrepositionalPhrases(prepphrases.elements());
     return subtask;
   } 
@@ -327,7 +339,8 @@ public class GLSExpanderPlugin extends ComponentPlugin {
     synchronized (task) {
       subtask.setPreferences(task.getPreferences());
     }
-    ContextOfUIDs context = (ContextOfUIDs) task.getContext();
+    ContextOfOplanIds context = (ContextOfOplanIds) task.getContext();
+    //ContextOfUIDs context = (ContextOfUIDs) task.getContext();
     if (context == null) {
     } else {
       //RAY      subtask.setContext(context);
