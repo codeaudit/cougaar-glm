@@ -3,25 +3,76 @@
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
 
 <Policies>
-<Policy name="RefugeeFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
+ <Policy name="RefugeeFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.SubsistencePolicy">
+    <RuleParam name="MealPolicy">
+      <RangeSet value="">
+        <RangeValue min="0"  max="80">
+	  <RuleParam name="Meals">
+      	    <KeySet value="">
+	      <KeyValue key="Breakfast" value="HDR" />
+    	    </KeySet>
+  	  </RuleParam>
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="EnhancementsPolicy">
+      <RangeSet value ="">
+	<RangeValue min="0" max="180">
+	  <RuleParam name="Enhancements">
+      	    <KeySet value="">
+	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="A-RationPolicy">
+      <RangeSet value="">
+	<RangeValue min="0" max="23">
+	  <RuleParam name="A-RationCapability">
+      	    <KeySet value="">
+      	    	<KeyValue key="Capability" value="false" />
+    	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+	<RangeValue min="24" max="180">
+	  <RuleParam name="A-RationCapability">
+      	    <KeySet value="">
+      	    	<KeyValue key="Capability" value="true" />
+    	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="BottledWaterPolicy">
+      <RangeSet value="">
+        <RangeValue min="0"  max="180">
+  	  <RuleParam name="BottledWater">
+      	    <KeySet value="">
+      	    	<KeyValue key="BottledWater" value="3.0" />
+    	    </KeySet>
+    	  </RuleParam>  
+	</RangeValue>
+      </RangeSet>
+    </RuleParam>
+ 
     <RuleParam name="Breakfast">
       <RangeSet value="">
-       <RangeValue min="0"  max="9"  value="HDR" />
       </RangeSet>
     </RuleParam>
     <RuleParam name="Lunch">
       <RangeSet value="">
-       <RangeValue min="0"  max="9"  value="" />
       </RangeSet>
     </RuleParam>
     <RuleParam name="Dinner">
       <RangeSet value="">
-        <RangeValue min="0"  max="9"  value="" />
-       </RangeSet>
+      </RangeSet>
     </RuleParam>
- <RuleParam name="BottledWater">
-      <RangeSet value="">
-              </RangeSet>
+    <RuleParam name="BottledWater">
+      <RangeSet value="Water">
+        <RangeValue min="0"  max="180">
+	   <String value="3"/>
+	</RangeValue>
+      </RangeSet>
     </RuleParam>
     <RuleParam name="WaterUOI">
       	<String value ="Liter">
@@ -32,14 +83,18 @@
     </RuleParam>   
  <RuleParam name="Enhancements">
       <KeySet value="">
-    </KeySet>
+          </KeySet>
     </RuleParam>
 <RuleParam name="A-RationCapability">
   <RangeSet value="">
   </RangeSet>
     </RuleParam>
- </Policy>
+</Policy>
 </Policies>
+
+
+
+
 
 
 
