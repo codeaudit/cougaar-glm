@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Vector;
 
 import org.cougaar.domain.glm.ldm.Constants;
@@ -144,6 +145,38 @@ public class AssetUtils {
 //  			   "getGeolocLocationAtTime(), LocationSchedulePG NOT found on "+org);
 	}
 	return geolocs.elements();
+    }
+
+    /**
+     * getPreviousGeolocLocation - given a time, return the organization's prior location
+     * Uses LocationSchedulePG and HomeLocation.
+     */
+    public static GeolocLocation getPreviousGeolocLocation(Organization org, long time) {
+        System.out.println(99);
+	LocationSchedulePG lspg = org.getLocationSchedulePG();
+        GeolocLocation previous = null;
+	try {
+          ArrayList ls = new ArrayList(lspg.getSchedule());
+
+          for (Iterator i  = ls.iterator(); i.hasNext();) {
+            LocationScheduleElement lse = (LocationScheduleElement)i.next(); 
+            if (lse.included(time)) {
+              break;
+            }
+            previous = (GeolocLocation) lse.getLocation();
+          }
+	} catch (NullPointerException npe) {
+	    // Not all organizations have LocationSchedulePG's
+//  	    GLMDebug.DEBUG("AssetUtils", 
+//  			   "getGeolocLocationAtTime(), LocationSchedulePG NOT found on "+org);
+	}
+
+        // Assume org at home if previous location not found in the LocationSchedulePG
+        if ((previous == null) && 
+            (org.hasMilitaryOrgPG())) {
+          previous = (GeolocLocation)org.getMilitaryOrgPG().getHomeLocation();
+        }
+	return previous;
     }
 
     public static void printRelationshipSchedule(Organization myOrg) {
