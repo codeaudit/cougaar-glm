@@ -58,6 +58,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
+import org.cougaar.core.component.StateObject;
 
 /**
  * <pre>
@@ -86,9 +87,54 @@ import org.xml.sax.SAXNotRecognizedException;
  * </pre>
  */
 
-public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM {
+public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM, StateObject {
   private boolean debug = "true".equals(System.getProperty("UTILLdmXMLPlugIn.debug", "false"));
   private boolean showParserFeatures = "true".equals(System.getProperty("UTILLdmXMLPlugIn.showParserFeatures", "false"));
+
+  private String originalAgentID = null;
+  
+  /**
+   * Implemented for StateObject
+   * <p>
+   * Get the current state of the Component that is sufficient to
+   * reload the Component from a ComponentDescription.
+   *
+   * @return null if this Component currently has no state
+   */
+  public Object getState() {
+	if (debug)
+	  System.out.println ("UTILLdmXMLPlugIn.getState called ");
+	
+    if (originalAgentID == null)
+	return getClusterIdentifier().getAddress();
+    else 
+	return originalAgentID;
+  }
+
+  /**
+   * Implemented for StateObject
+   * <p>
+   * Set-state is called by the parent Container if the state
+   * is non-null.
+   * <p>
+   * The state Object is whatever this StateComponent provided
+   * in it's <tt>getState()</tt> implementation.
+   * @param o the state saved before
+   */
+  public void setState(Object o) {
+	if (debug)
+	  System.out.println ("UTILLdmXMLPlugIn.setState called ");
+
+      originalAgentID = (String) o;
+  }
+
+  /** true iff originalAgentID is not null -- i.e. setState got called */
+  protected boolean didSpawn () {
+	boolean val = (originalAgentID != null);
+	if (debug)
+	  System.out.println ("UTILLdmXMLPlugIn.didSpawn returns - " + val);
+	return val;
+  }
 
   /**
    * Load the data from the file synchronously.
@@ -99,7 +145,7 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
   protected void setupSubscriptions() {
 	// if we just rehydrated, all the assets created before persisting should already be
 	// in the logplan
-	if (!didRehydrate ())
+	if (!didRehydrate () && !didSpawn())
 	  createAssets();
   }
 
