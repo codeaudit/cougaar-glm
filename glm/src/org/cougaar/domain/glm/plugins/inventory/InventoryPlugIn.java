@@ -17,10 +17,13 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Iterator;
 import java.util.Vector;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.cluster.Alarm;
 import org.cougaar.core.cluster.CollectionSubscription;
+import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.domain.glm.debug.*;
 import org.cougaar.domain.glm.ldm.Constants;
@@ -44,16 +47,37 @@ import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.NewWorkflow;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Preference;
+import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
+import org.cougaar.domain.planning.ldm.plan.Relationship;
 import org.cougaar.domain.planning.ldm.plan.Schedule;
 import org.cougaar.domain.planning.ldm.plan.ScheduleImpl;
 import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
 import org.cougaar.domain.planning.ldm.plan.Workflow;
+
 import org.cougaar.util.Enumerator;
 import org.cougaar.util.UnaryPredicate;
 
 public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
+
+    public void recordCustomerForTask(Task task){
+	recordCustomer(taskConsumerName(task));
+    }
+
+    public String taskConsumerName(Task task){
+	PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
+	if (pp == null) {
+	return "unknown consumer";
+	}
+	Object io = pp.getIndirectObject();
+       if (io instanceof String) {
+	   return (String)io;
+       } else {
+	   return "unknown consumer";
+       }
+    }
 
     public static class InventoryItemInfo {
         public double[] levels;
@@ -72,10 +96,12 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
         UnaryPredicate dueOutPredicate;
 	ProjectionWeight projectionWeight;
 	boolean fillToCapacity;
+	boolean maintainAtCapacity;
         public InventoryTypeHashEntry(UnaryPredicate predicate, ProjectionWeight weight) {
             dueOutPredicate = predicate;
 	    projectionWeight = weight;
 	    fillToCapacity = false;
+	    maintainAtCapacity = false;
         }
     }
 
@@ -127,14 +153,18 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
     public InventoryPlugIn() {
 	super();
-        setExecutionDelay(10000, 60000);
+//  	setExecutionDelay(30000,30000);
     }
 
     public synchronized void execute() {
+	String clusterId="unitialized clusterId";
+	if(myOrganization_!=null){
+	    clusterId = myOrganization_.getClusterPG().getClusterIdentifier().toString();
+	}
         aggMILTask_ = null;
         if (detReqSubscription_.hasChanged()) {
             aggregateDetermineRequirementsTasks((NewMPTask) getDetermineRequirementsTask(),
-                                               detReqSubscription_.getAddedList());
+						detReqSubscription_.getAddedList());
         }
         if (milSubscription_.hasChanged()) {
             //Added tasks are handled at the time of creation
@@ -163,7 +193,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	public boolean execute(Object o) {
 	    if (o instanceof Inventory) {
 		InventoryPG invpg = 
-		    (InventoryPG) ((Inventory) o).searchForPropertyGroup(InventoryPG.class);
+		    (InventoryPG) ((Inventory) o).getInventoryPG();
 		if (invpg != null) {
 		    return true;    
 		}
@@ -238,7 +268,13 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
     private void addInventory(Inventory inventory, String item) {
         inventoryHash_.put(item, inventory);
-        getInventoryTypeHashEntry(getAssetType(inventory)).invBins.add(inventory);
+	String assetType = getAssetType(inventory);
+	if (assetType == null) {
+	    GLMDebug.ERROR("InventoryPlugIn","addInventory failed to add "+item);
+	}
+	else {
+	    getInventoryTypeHashEntry(assetType).invBins.add(inventory);
+	}
     }
 
     private void removeInventory(Inventory inventory) {
@@ -247,7 +283,13 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
     private void removeInventory(Inventory inventory, String item) {
         inventoryHash_.remove(item);
-        getInventoryTypeHashEntry(getAssetType(inventory)).invBins.remove(inventory);
+	String assetType = getAssetType(inventory);
+	if (assetType == null) {
+	    GLMDebug.ERROR("InventoryPlugIn","removeInventory failed to remove "+item);
+	}
+	else {
+	    getInventoryTypeHashEntry(assetType).invBins.remove(inventory);
+	}
     }
 
     private void addMILTasks(Enumeration milTasks) {
@@ -475,6 +517,31 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	}
     }
 
+    public boolean getMaintainAtCapacity(String supplyType) {
+	InventoryTypeHashEntry entry = getInventoryTypeHashEntry(supplyType);
+        return entry.maintainAtCapacity;
+    }
+
+   /**
+     * Set the maintainAtCapacity for a class of supply. This becomes
+     * the default maintainAtCapacity for new Inventory Assets for the
+     * class of supply. The maintainAtCapacity of existing Inventory
+     * assets is updated to the new value (true/false). Override this if
+     * you don't want this behavior.
+     **/
+    public void setMaintainAtCapacity(String supplyType, boolean maintain_at_capacity) {
+	InventoryTypeHashEntry entry = getInventoryTypeHashEntry(supplyType);
+	entry.maintainAtCapacity = maintain_at_capacity;
+	Enumeration e = entry.invBins.elements();
+	while (e.hasMoreElements()) {
+            Inventory inv = (Inventory) e.nextElement();
+	    NewInventoryPG invpg = (NewInventoryPG) inv.getInventoryPG();
+	    invpg.setMaintainAtCapacity(maintain_at_capacity);
+	    
+	}
+    }
+
+
     public synchronized Inventory findOrMakeInventory(String supplytype, Asset resource) {
 	Inventory inventory = null;
 	// only need to sync if each processor is running on its own thread.
@@ -519,8 +586,10 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 // 	type = type.substring(type.lastIndexOf('.')+1);
 // 	return type;
       InventoryPG invpg = 
-	(InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	(InventoryPG)inventory.getInventoryPG();
+      if (invpg == null ) return null;
       Asset a = invpg.getResource();
+      if (a == null) return null;
       SupplyClassPG pg = (SupplyClassPG)a.searchForPropertyGroup(SupplyClassPG.class);
       return pg.getSupplyType();
     }
