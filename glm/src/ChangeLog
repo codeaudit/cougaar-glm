@@ -1,3 +1,12 @@
+2000-01-05 Noelle Givler <ngivler@bbn.com>
+	* Several
+	Replaced use of Iterator over Schedules. Depending on the use, code
+	was converted to iterate over either a full copy of the Schedule - 
+	ArrayList copy = new ArrayList(schedule)
+	- or a prescreened subset - 
+	Collection screened = schedule.filter(predicate)
+ 	
+	
 2000-11-21  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* Several
