@@ -51,13 +51,10 @@ public abstract class InventoryManager extends InventoryProcessor {
   /** Subscription to policies */
   protected IncrementalSubscription inventoryPolicySubscription_;
   private Inventory selectedInventory = null;
-  private boolean forcePrintConcise = false;
+  protected boolean forcePrintConcise = false;
   private String concisePrefix = "";
 
-  public static final int DONE = -1; 
-  public static final double GOAL_LEVEL_BOOST_CAPACITY_FACTOR= 1.1;
-
-
+  private static final int DONE = -1; 
 
   /**
    *   daysOnHand_    keep enough inventory on hand to cover N days of demand
@@ -71,8 +68,16 @@ public abstract class InventoryManager extends InventoryProcessor {
   protected int daysForward_ = 15;
   protected int daysBackward_ = 15;
   protected double goalLevelMultiplier_ = 2.0;
-  protected double shortfall; // For debugging only
-  protected Set changedSet_;
+  private double shortfall; // For debugging only
+  private Set changedSet_;
+
+  public final int REFILL_ALTER_TASK = 0;
+  public final int REFILL_REPLACE_TASK = 1;
+  public final int REFILL_ADD_TASK = 2; // This one doesn't work. Don't use it.
+  public final int REFILL_CHANGE_METHOD = REFILL_REPLACE_TASK;
+  private NewTask defaultSupplyTask = 
+    (NewTask)buildNewTask(null,Constants.Verb.SUPPLY,null);
+
 
   static class PolicyPredicate implements UnaryPredicate {
     String type_;
@@ -168,30 +173,38 @@ public abstract class InventoryManager extends InventoryProcessor {
 	}
 	System.out.println("#####"+clusterId_+" is running because (inventoryPlugIn_.getDetermineRequirementsTask() == null)"); 
 
-	//nominal handling of rescinds
-	resetInventories();
-	accountForWithdraws();
-	addPreviousRefills();
-	refreshInventorySchedule();
-
-	// MWD hook for any additional handling of rescinds by subclasses
-	handleGLSRescind();
+	handleRescinds();
 
 	// RJB now we have handled all inventories
 	changedSet_=null;
 
       } else if (inventoryPlugIn_.hasSeenAllConsumers()) {
-	resetInventories();
-	accountForWithdraws();
-	generateHandleDueIns();
-	adjustForInadequateInventory();
-	updateWithdrawAllocations();
-	refreshInventorySchedule();
+	handleChangedInventories();
 	// RJB now we have handled all inventories
 	changedSet_=null;
       }
       printDebug(2,"\n\nEND CYCLE___________________________________________\n\n");
     }
+  }
+
+  private void handleRescinds() {
+    //nominal handling of rescinds
+    resetInventories();
+    accountForWithdraws();
+    addPreviousRefills();
+    refreshInventorySchedule();
+    
+    // MWD hook for any additional handling of rescinds by subclasses
+    handleGLSRescind();
+  }
+
+  private void handleChangedInventories() {
+    resetInventories();
+    accountForWithdraws();
+    generateHandleDueIns();
+    adjustForInadequateInventory();
+    updateWithdrawAllocations();
+    refreshInventorySchedule();
   }
 
   public void printConcise(String s) {
@@ -202,7 +215,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     return forcePrintConcise || super.isPrintConcise();
   }
 
-  protected void forcePrintConcise(boolean f) {
+  public void forcePrintConcise(boolean f) {
     forcePrintConcise = f;
   }
 
@@ -265,7 +278,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 
   // Reset Inventories
 
-  protected void resetInventories() {
+  private void resetInventories() {
     Inventory inventory;
     Iterator list = changedSet_.iterator();
     printDebug("STEP 1: RESETINVENTORIES(), Today: "+TimeUtils.dateString(startTime_));
@@ -289,7 +302,7 @@ public abstract class InventoryManager extends InventoryProcessor {
   //                                                        *
   // ********************************************************
 
-  protected void accountForWithdraws() {
+  private void accountForWithdraws() {
     printDebug("STEP 2: ACCOUNTFORWITHDRAWS()");
     Iterator inventories = changedSet_.iterator();
     while (inventories.hasNext()) {
@@ -303,7 +316,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     }
   }
 
-  protected void computeThresholdSchedule(Inventory inventory) {
+  private void computeThresholdSchedule(Inventory inventory) {
     InventoryPG invpg = 
       (InventoryPG)inventory.getInventoryPG();
     invpg.computeThresholdSchedule(daysOnHand_,
@@ -314,7 +327,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 				   goalLevelMultiplier_);
   }
 
-  protected Vector generateInactiveProjections(Inventory inventory, int switchoverDay) {
+  private Vector generateInactiveProjections(Inventory inventory, int switchoverDay) {
     printDebug("STEP 2:  GenerateInactiveProjections() for "+AssetUtils.getAssetIdentifier(inventory));
     Vector projections = new Vector();
     InventoryPG invpg = inventory.getInventoryPG();
@@ -354,14 +367,14 @@ public abstract class InventoryManager extends InventoryProcessor {
     return rate;
   }
 
-  private double ignoreSmallIncrement(double increment, double x) {
+  protected double ignoreSmallIncrement(double increment, double x) {
     double t = x + increment;
     double diff = (x - increment) / t;
     if (diff < 0.0001 && diff > -0.0001) return x;
     return x + increment;
   }
 
-  protected Rate createIncrementedDailyRate(Measure qty, double increment) {
+  private Rate createIncrementedDailyRate(Measure qty, double increment) {
     Rate rate = null;
     if (qty instanceof Volume) {
       double d = ignoreSmallIncrement(increment, ((Volume) qty).getGallons());
@@ -379,7 +392,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     return rate;
   }
 
-  protected Task newProjectSupplyTask(Inventory inventory, long start, long end, Rate rate) {
+  private Task newProjectSupplyTask(Inventory inventory, long start, long end, Rate rate) {
     Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
     // Create start and end time preferences (strictly at)
     ScoringFunction score;
@@ -411,7 +424,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     return t;
   }
 
-  protected Inventory getInventoryForTask (Task task) {
+  private Inventory getInventoryForTask (Task task) {
     return inventoryPlugIn_.findOrMakeInventory(supplyType_,(Asset)task.getDirectObject());
   }
 
@@ -421,12 +434,12 @@ public abstract class InventoryManager extends InventoryProcessor {
   //                                                        *
   // ********************************************************
 
-  protected void generateHandleDueIns() {
+  private void generateHandleDueIns() {
     printDebug("Step 3: generateHandleDueIns()");
     addPreviousRefills();
   }
 
-  protected void addPreviousRefills() {
+  private void addPreviousRefills() {
 
     printDebug("      : addPreviousRefills()");
     int total=0;
@@ -453,7 +466,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     return time;
   }
 
-  public Task createRefillTask(Inventory inv, double refill_qty, long time) {
+  private Task createRefillTask(Inventory inv, double refill_qty, long time) {
     Asset item = getInventoryAsset(inv);
     // create request task
     Vector prefs = new Vector();
@@ -504,6 +517,185 @@ public abstract class InventoryManager extends InventoryProcessor {
     //  	return createQuantityPreference(AspectType.QUANTITY, refill_qty);
   }
 
+  // Refill Inventories
+
+  /**
+   * Generate a refill order to replenish the item in storage,
+   * assuming we already have determined we have at least an
+   * Economic Reorder Quantity. Allocate task to provider Org.
+   * @return true if an order was placed or changed
+   **/
+  private boolean orderRefill(Inventory inventory, int day) {
+    InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
+    double currentInventory = convertScalarToDouble(invpg.getLevel(day));
+    double goal_level = invpg.getGoalLevel(day);
+    double refill_qty = goal_level - currentInventory;
+    double reorder_level = invpg.getReorderLevel(day);
+
+    defaultSupplyTask.setDirectObject(invpg.getResource());
+    if (invpg.getProjectionWeight().getProjectionWeight(defaultSupplyTask, invpg.getImputedDay(day)) <= 0.0) {
+      // This test is to avoid generating refill SUPPLY tasks for times when the system
+      //  will ignore their effect on inventory
+      return false;       // Can't do a refill
+    }
+
+    if (!invpg.getFillToCapacity()) {
+      // ** THIS IS A KLUDGE FOR SUBSISTENCE -- WITHOUT IT WE FAIL THE FIRST ORDER.
+      //    SHOULDN'T HAPPEN LIKE THAT -- FIX ASAP -- RUSTY AND AMY!!
+      //    	    refill_qty = refill_qty*1.3;
+      // *** KLUDGE ********
+    }
+
+    boolean isCount = invpg.getCapacity() instanceof Count;
+    if (refill_qty > 0.0) {
+      if (isPrintConcise()) {
+	printConcise("orderRefill goal=" + goal_level
+		     + " reorder level=" + reorder_level
+		     + " current level=" + currentInventory);
+      }
+      Task task = null;
+      Task prev_refill = invpg.refillAlreadyFailedOnDay(day);
+      if (prev_refill != null) {
+	double min_qty = reorder_level - currentInventory;
+	if (min_qty <= 0.0) { // Refill unneeded
+	  min_qty = 1e-10;
+	  //                      invpg.removeDueIn(prev_refill);
+	  //                      plugin_.publishRemoveFromExpansion(prev_refill);
+	  //                      return true;
+	}
+	double prev_qty = TaskUtils.getQuantity(prev_refill);
+	if (isCount) min_qty = Math.ceil(min_qty);
+	if (min_qty < prev_qty) {
+	  refill_qty = min_qty; // Retry the refill with the min needed
+	} else {
+	  return false; // Can't refill on this day.
+	}
+      } else {
+	prev_refill = invpg.getRefillOnDay(day);
+      }
+      if (isCount) {
+	refill_qty=java.lang.Math.ceil(refill_qty);
+      }
+      if(prev_refill != null) {
+	return orderRefillWithPrevious(inventory, day, invpg, refill_qty);
+      } else {
+	return orderNewRefill(inventory, day, invpg, refill_qty);
+      }
+    } else {
+      printLog("OrderRefill qty < 0: "+refill_qty+" = "+goal_level+" - "+currentInventory);
+    }
+    return true;
+  }
+
+  private boolean orderNewRefill(Inventory inventory,
+				   int day,
+				   InventoryPG invpg,
+				   double refill_qty)
+  {
+    long time = invpg.convertDayToTime(day);
+    Task task = createRefillTask(inventory, refill_qty,  time);
+    // FIX ME - sets to today??? check dates.
+    // 	task.setCommitmentDate(date);
+    //      		printDebug(1,"orderRefill task:"+TaskUtils.taskDesc(task));
+    Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
+    plugin_.publishAddToExpansion(parentTask, task);
+    if (isPrintConcise()) {
+      printConcise("orderNewRefill() "
+		   + task.getUID()
+		   + " "
+		   + refill_qty
+		   + " on "
+		   + TimeUtils.dateString(invpg.convertDayToTime(day))
+		   );
+    }
+    invpg.addDueIn(task);
+    return true;
+  }
+
+  /**
+   * Modify an existing refill task if possible to increase the
+   * refill as indicated. If the previous refill has failed we don't
+   * expect an additional refill to succeed, but if the new amount
+   * is smaller than the previous one, then it might succeed so we go
+   * ahead with the change. Otherwise, we increase the amount of the
+   * existing refill (or replace with a larger refill, or add an
+   * additional refill depending on REFILL_CHANGE_METHOD).
+   * Note -- This routine is actually never called with a failed
+   * refill on day (See refillInventory).
+   * @param inventory the Inventory -- not used
+   * @param day the day of the refill
+   * @param invpg the InventoryPG of the inventory.
+   * @param date -- not used
+   * @param currentInventory -- not used
+   * @param goal_level -- not used
+   * @param refill_qty the amount needed to be added to the inventory
+   **/
+  private boolean orderRefillWithPrevious(Inventory inventory,
+					    int day,
+					    InventoryPG invpg,
+					    double refill_qty)
+  {
+    Task refill_task = invpg.getRefillOnDay(day);
+    double prev_qty = TaskUtils.getQuantity(refill_task);
+    boolean failed = false;
+    Allocation alloc = (Allocation) refill_task.getPlanElement();
+    if (alloc != null) {
+      AllocationResult report = alloc.getReportedResult();
+      if (report != null) {
+	failed = !report.isSuccess();
+      }
+    }
+    if (failed) {
+      if (prev_qty <= refill_qty) {
+	System.out.println("Known failed refill: "+TaskUtils.taskDesc(refill_task));
+	//  		printLog("Known failed refill: "+TaskUtils.taskDesc(refill_task));
+	return false;
+      } // If quantity reduced make the change
+    }
+    // Send orders for whole items, i.e. do not order 0.5 O-rings
+    if (invpg.getCapacity() instanceof Count) {
+      refill_qty = java.lang.Math.ceil(refill_qty);
+    }
+
+    if (isPrintConcise()) {
+      printConcise("orderRefillWithPrevious() "
+		   + refill_task.getUID()
+		   + " "
+		   + prev_qty
+		   + "-->"
+		   + refill_qty
+		   + " on "
+		   + TimeUtils.dateString(invpg.convertDayToTime(day))
+		   );
+    }
+    invpg.removeDueIn(refill_task);
+    switch (REFILL_CHANGE_METHOD) {
+    case REFILL_ALTER_TASK:
+      /* Change the quantity preference on the existing task.
+	 refill_qty is the additional amount needed, prev_qty is
+	 the effective quantity of the current task. */
+      if (!failed) refill_qty += prev_qty;
+      Preference qpref = createRefillQuantityPreference(refill_qty);
+      ((NewTask) refill_task).setPreference(qpref);
+      PlanElement pe = refill_task.getPlanElement();
+      if (pe != null) {
+	pe.setEstimatedResult(createEstimatedAllocationResult(refill_task));
+      }
+      delegate_.publishChange(refill_task);
+      invpg.addDueIn(refill_task);
+      return true;
+    case REFILL_REPLACE_TASK:
+      if (!failed) refill_qty += prev_qty;
+      plugin_.publishRemoveFromExpansion(refill_task);
+      return orderNewRefill(inventory, day, invpg, refill_qty);
+    case REFILL_ADD_TASK:
+      invpg.addDueIn(refill_task);
+      return orderNewRefill(inventory, day, invpg, refill_qty);
+    }
+    return false;
+  }
+
+
   // ********************************************************
   //                                                        *
   // Adjust Withdraws Section                               *
@@ -511,7 +703,7 @@ public abstract class InventoryManager extends InventoryProcessor {
   // ********************************************************
 
 
-  protected void adjustForInadequateInventory() {
+  private void adjustForInadequateInventory() {
     printLog("adjustForInadequateInventory()");
     // For each inventory
     Iterator inventories = changedSet_.iterator();
@@ -525,7 +717,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     }
   }
 
-  protected void adjustForInadequateInventory(Inventory inventory) {
+  private void adjustForInadequateInventory(Inventory inventory) {
     InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
     int firstDay = invpg.getFirstPlanningDay();
     int days = invpg.getPlanningDays();
@@ -627,7 +819,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     return MoreMath.nearlyEquals(val1, val2, 0.0001);
   }
 
-  protected boolean checkFailedRefill(Inventory inventory, InventoryPG invpg, int day) {
+  private boolean checkFailedRefill(Inventory inventory, InventoryPG invpg, int day) {
     Task prev_refill = invpg.refillAlreadyFailedOnDay(day);
     if (prev_refill != null) {
       return orderRefill(inventory, day);
@@ -635,9 +827,9 @@ public abstract class InventoryManager extends InventoryProcessor {
     return false;
   }
 
-  protected abstract boolean orderRefill(Inventory inventory, int day);
+//    protected abstract boolean orderRefill(Inventory inventory, int day);
 
-  protected boolean failDueOut(Inventory inventory, InventoryPG invpg, int day) {
+  private boolean failDueOut(Inventory inventory, InventoryPG invpg, int day) {
     DueOut lowestPriorityDueOut = invpg.getLowestPriorityDueOutBeforeDay(day);
     if (lowestPriorityDueOut == null) return false;
     //      printDebug("Inventory level before failing allocation is "+
@@ -668,7 +860,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     return true;
   }
 
-  protected void updateWithdrawAllocations() {
+  private void updateWithdrawAllocations() {
     printLog("updateWithdrawAllocations()");
     Iterator inventories = changedSet_.iterator();
     while (inventories.hasNext()) {
@@ -688,7 +880,7 @@ public abstract class InventoryManager extends InventoryProcessor {
    * reorder level. It is likely that this is overridden in a
    * subclass. Indeed, GeneralInventoryManager _does_ override.
    **/
-  protected int refillNeeded(Inventory inventory, int startDay) {
+  private int refillNeeded(Inventory inventory, int startDay) {
     InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
     int days = invpg.getPlanningDays();
     for (int day = startDay; day < days; day++) {
@@ -697,14 +889,13 @@ public abstract class InventoryManager extends InventoryProcessor {
     return DONE;
   }
 
-  protected boolean needRefill(Inventory inventory, int day) {
+  private boolean needRefill(Inventory inventory, int day) {
     InventoryPG invpg = inventory.getInventoryPG();
     double qty = convertScalarToDouble(invpg.getLevel(day));
     double level = invpg.getReorderLevel(day);
     shortfall = level - qty;
     return (shortfall > 0.0);
   }
-
 
   // ********************************************************
   //                                                        *
@@ -719,7 +910,7 @@ public abstract class InventoryManager extends InventoryProcessor {
   //                                                        *
   // ********************************************************
 
-  protected void refreshInventorySchedule() {
+  private void refreshInventorySchedule() {
     Inventory inventory;
     InventoryPG invpg;
     Iterator inventories = changedSet_.iterator();
@@ -819,7 +1010,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     }
   }
 
-  private int printInventoryStatus() {
+  protected int printInventoryStatus() {
 
     Iterator inventory = changedSet_.iterator();
     if(inventory.hasNext()){
