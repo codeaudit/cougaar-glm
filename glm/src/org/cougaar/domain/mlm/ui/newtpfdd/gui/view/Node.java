@@ -2,6 +2,7 @@ package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class Node extends LogPlanObject implements Serializable, Cloneable {
 
     // Tree Hierarchy Information
     private transient HashMap idToNode;
-    private transient List children; // of DBID
+    private transient List children = new ArrayList(); // of DBID
     private String parentUUID; // parents name
     private String nodeDBID; // self-identifier
 
