@@ -25,6 +25,8 @@ import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AspectRate;
 import org.cougaar.planning.ldm.plan.FloatAspectValue;
 
+import org.cougaar.planning.ldm.measure.CountRate;
+
 public class AlpineAspectType implements AspectType {
   public static final int DEMANDRATE       = N_CORE_ASPECTS + 0;
   public static final int DEMANDMULTIPLIER = N_CORE_ASPECTS + 1;
@@ -60,10 +62,10 @@ public class AlpineAspectType implements AspectType {
       public int getKey() { return DEMANDRATE; }
       public String getName() { return "DEMANDRATE"; }
       public AspectValue newAspectValue(Object o) { return AspectRate.create(DEMANDRATE,o); }
-      public AspectValue newAspectValue(long o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
-      public AspectValue newAspectValue(double o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
-      public AspectValue newAspectValue(float o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
-      public AspectValue newAspectValue(int o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
+      public AspectValue newAspectValue(long o) { return AspectRate.create(DEMANDRATE, o); }
+      public AspectValue newAspectValue(double o) { return AspectRate.create(DEMANDRATE, o); }
+      public AspectValue newAspectValue(float o) { return AspectRate.create(DEMANDRATE, o); }
+      public AspectValue newAspectValue(int o) { return AspectRate.create(DEMANDRATE, o); }
 
     };
   /** Start time of given Task **/
