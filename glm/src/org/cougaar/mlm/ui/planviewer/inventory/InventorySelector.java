@@ -117,14 +117,15 @@ public class InventorySelector implements ActionListener {
 
   private boolean setupTimeStatusHandler() {
 
-      //System.out.println("InventorySelector::Setting up Time status Handler");
+    System.out.print("***********SETTING UP TIME STATUS HANDLER***********");
+      System.out.println("InventorySelector::Setting up Time status Handler");
       
       if(executionListener == null) {
 	  timeStatusHandler = new InventoryExecutionTimeStatusHandler();
 	  Object[] handlers = {timeStatusHandler};
 	  ClusterInfo ci = new ClusterInfo(clusterName,hostAndPort);
 
-	  //System.out.println("InventorySelector::Trying to create InventoryExecutionListener");
+	  System.out.println("InventorySelector::Trying to create InventoryExecutionListener");
 
 	  try {
 	      executionListener = new InventoryExecutionListener(ci,handlers);
@@ -312,11 +313,20 @@ public class InventorySelector implements ActionListener {
       if (assetName == null)
         return;
 
+      // capture the clock time here in variable
+      long submit_time = java.lang.System.currentTimeMillis();
+
+      /*System.out.println("\n" + 
+	"Submit Begin Time: " + submit_time +
+	"\n");
+      */
+
       setupTimeStatusHandler();
       new QueryHelper(new InventoryQuery(assetName),
                       hostAndPort + "$" + clusterName + "/",
                       isApplet, container, doDisplayTable,
-		      timeStatusHandler);
+		      timeStatusHandler,
+		      submit_time);
     }
   }
 
