@@ -56,14 +56,26 @@ public class ChangeReporter extends SimplePlugin
       for (Iterator it = c.iterator(); it.hasNext(); ) {
         Object o = it.next();
 
-        Collection crs = stuff.getChangeReports(o);
+        Set crs = stuff.getChangeReports(o);
 
-        if (crs != null && crs.size()>0) {
-          synchronized (System.out) {
-            System.out.println(o.toString()+" change reports:");
-            for (Iterator crit = crs.iterator(); crit.hasNext(); ) {
-              ChangeReport cr = (ChangeReport) crit.next();
-              System.out.println("\t"+cr);
+        if (crs != AnonymousChangeReport.SET) {
+          if (crs == null) {
+            // shouldn't happen:
+            synchronized (System.out) {
+              System.out.println(o.toString()+" null change reports?");
+            }
+          } else if (crs.isEmpty()) {
+            // shouldn't happen:
+            synchronized (System.out) {
+              System.out.println(o.toString()+" empty change reports?");
+            }
+          } else {
+            synchronized (System.out) {
+              System.out.println(o.toString()+" change reports:");
+              for (Iterator crit = crs.iterator(); crit.hasNext(); ) {
+                ChangeReport cr = (ChangeReport) crit.next();
+                System.out.println("\t"+cr);
+              }
             }
           }
         } else {
