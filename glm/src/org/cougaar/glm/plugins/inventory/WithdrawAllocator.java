@@ -29,7 +29,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Ammunition;
 import org.cougaar.glm.ldm.asset.BulkPOL;
@@ -44,12 +43,15 @@ import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.plugin.util.AllocationResultHelper;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
 
 public class WithdrawAllocator extends InventoryProcessor {
 
     protected IncrementalSubscription        withdrawTasks_;
     Hashtable bins_ = new Hashtable();
     Role role_;
+    private static Logger logger = Logging.getLogger(WithdrawAllocator.class);
 
     public WithdrawAllocator(InventoryPlugin plugin, Organization org, String type, Role role)
     {
@@ -84,46 +86,43 @@ public class WithdrawAllocator extends InventoryProcessor {
 	AllocationResult ar;
 	int num_tasks=0;
 	while (tasks.hasMoreElements()) {
-	    wdrawTask = (Task)tasks.nextElement();
-	    proto = (Asset)wdrawTask.getDirectObject();
-	    inventory = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
-	    // A withdraw task is not created unless findOrMakeInventory returns an
-	    // inventory object, so this should never happen.
-	    if (inventory == null)  {
-		String typeID = proto.getTypeIdentificationPG().getTypeIdentification();
-		GLMDebug.ERROR("WithdrawAllocator", clusterId_, "Inventory NOT found for "+typeID);
-		continue;
-	    }
-            boolean isNew = wdrawTask.getPlanElement() == null;
-            if (isPrintConcise()) {
-                printConcise("allocateWithdrawTasks() "
-                             + (isNew ? "new " : "change ")
-                             + wdrawTask.getUID()
-                             + " "
-                             + TaskUtils.getDailyQuantity(wdrawTask)
-                             + (TaskUtils.isProjection(wdrawTask)
-                                ? (" from "
-                                   + TimeUtils.dateString(TaskUtils.getStartTime(wdrawTask))
-                                   + " to "
-                                   + TimeUtils.dateString(TaskUtils.getEndTime(wdrawTask)))
-                                : (" on "
-                                   + TimeUtils.dateString(TaskUtils.getEndTime(wdrawTask)))));
-            }
-            if (isNew) {
-                ar = new AllocationResultHelper(wdrawTask, null).getAllocationResult(1.0);
-                if (publishAllocation(wdrawTask, inventory, role_, ar)) {
-// 		    GLMDebug.DEBUG("WithdrawAllocator", clusterId_, 
-// 				      "Allocating "+TaskUtils.taskDesc(wdrawTask)+" to inventory, with PlanElement:"+
-// 				      wdrawTask.getPlanElement().getUID()+ ", DESCRIPTION: "+inventoryDesc(inventory));
-		    num_tasks++;
-		}
-	    }
-            delegate_.publishChange(inventory);
-	}
+      wdrawTask = (Task) tasks.nextElement();
+      proto = (Asset) wdrawTask.getDirectObject();
+      inventory = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
+      // A withdraw task is not created unless findOrMakeInventory returns an
+      // inventory object, so this should never happen.
+      if (inventory == null) {
+        String typeID = proto.getTypeIdentificationPG().getTypeIdentification();
+        if (logger.isErrorEnabled()) {
+          logger.error("Inventory NOT found for " + typeID);
+        }
+        continue;
+      }
+      boolean isNew = wdrawTask.getPlanElement() == null;
+      if (logger.isDebugEnabled()) {
+        logger.debug("allocateWithdrawTasks() " + (isNew ? "new " : "change ") + wdrawTask.getUID() +
+                                  " " + TaskUtils.getDailyQuantity(wdrawTask) +
+                                  (TaskUtils.isProjection(wdrawTask) ?
+                                   (" from " + TimeUtils.dateString(TaskUtils.getStartTime(wdrawTask)) +
+                                    " to " + TimeUtils.dateString(TaskUtils.getEndTime(wdrawTask))) :
+                                   (" on " + TimeUtils.dateString(TaskUtils.getEndTime(wdrawTask)))));
+      }
+      if (isNew) {
+        ar = new AllocationResultHelper(wdrawTask, null).getAllocationResult(1.0);
+        if (publishAllocation(wdrawTask, inventory, role_, ar)) {
+          // 		    GLMDebug.DEBUG("WithdrawAllocator", clusterId_,
+          // 				      "Allocating "+TaskUtils.taskDesc(wdrawTask)+" to inventory, with PlanElement:"+
+          // 				      wdrawTask.getPlanElement().getUID()+ ", DESCRIPTION: "+inventoryDesc(inventory));
+          num_tasks++;
+        }
+      }
+      delegate_.publishChange(inventory);
+    }
 	if (num_tasks > 0) {
-	    printDebug("allocateWithdrawTasks()  allocated "+num_tasks+
-		       " tasks to Inventory objects");
-	}
+      if (logger.isDebugEnabled()) {
+        logger.debug("allocateWithdrawTasks()  allocated " + num_tasks + " tasks to Inventory objects");
+      }
+    }
 
     }
 
