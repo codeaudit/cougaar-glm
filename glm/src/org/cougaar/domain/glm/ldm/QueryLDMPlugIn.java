@@ -247,6 +247,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	//GLMDebug.DEBUG(className_,"initialized driver");
     }
 
+  /** @return Vector<Object[]> of results or null (on failure) **/
     public Vector executeQuery(String query) {
 	Vector result = new Vector();
 	ResultSet rs = null;
@@ -266,7 +267,8 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
           }
           statement.close();
         } catch (java.sql.SQLException sqle) {
-          GLMDebug.ERROR(className_,"executeQuery fail to createStatement "+sqle);
+          GLMDebug.ERROR(className_,"executeQuery failed: "+sqle);
+          sqle.printStackTrace();
           return null;
         } finally {
           if (conn != null)
