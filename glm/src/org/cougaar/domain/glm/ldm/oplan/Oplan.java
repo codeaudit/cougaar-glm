@@ -40,8 +40,6 @@ import org.cougaar.core.society.UID;
 import org.cougaar.core.society.UniqueObject;
 import org.cougaar.core.society.OwnedUniqueObject;
 import org.cougaar.core.util.XMLizable;
-import org.cougaar.domain.planning.ldm.policy.Policy;
- 
 import org.cougaar.core.util.XMLize;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -76,10 +74,6 @@ public class Oplan extends OwnedUniqueObject
   private boolean hnsWater;
   private Vector pods = new Vector();
   private Vector dfspVector = new Vector();
-  private Vector orgrels = new Vector();
-  private Vector orgacts = new Vector();
-  private Vector fps = new Vector();
-  private Vector policies = new Vector();
 	
   // Priority values
   public static final String HIGH = "High";
@@ -193,72 +187,6 @@ public class Oplan extends OwnedUniqueObject
     setXMLFileName(xmlfilename);
   }//Oplan
   
-  // orgrels
-  public void addOrgRelation(OrgRelation o) {
-    orgrels.addElement(o);
-  }
-
-  Vector getOrgRelationsV() {
-    return orgrels;
-  }
-
-  public Enumeration getOrgRelations() {
-    return orgrels.elements();
-  }
-
-  public OrgRelation[] getOrgRelationArray() {
-    OrgRelation[] tmp = new OrgRelation[orgrels.size()];
-    return (OrgRelation[])orgrels.toArray(tmp);
-  }
-
-  // orgacts
-  public void addOrgActivity(OrgActivity o) {
-    orgacts.addElement(o);
-  }
-
-  // orgacts
-  public void setOrgActivities(Collection orgActivities) {
-    orgacts.clear();
-    orgacts.addAll(orgActivities);
-  }
-
-  Vector getOrgActivitiesV() { return orgacts; }
-
-  public Enumeration getOrgActivities() {
-    return orgacts.elements();
-  }
-
-  public OrgActivity[] getOrgActivityArray() {
-    OrgActivity[] tmp = new OrgActivity[orgacts.size()];
-    return (OrgActivity[])orgacts.toArray(tmp);
-  }
-
-  // fps
-  public void addForcePackage(ForcePackage fp) {
-    fps.addElement(fp);
-  }
-  Vector getForcePackagesV() { return fps; }
-  public Enumeration getForcePackages() {
-    return fps.elements();
-  }
-  public ForcePackage[] getForcePackageArray() {
-    ForcePackage[] tmp = new ForcePackage[fps.size()];
-    return (ForcePackage[])fps.toArray(tmp);
-  }
-
-  //policies
-  public void addPolicy(Policy p) {
-    policies.addElement(p);
-  }
-  Vector getPoliciesV() { return policies; }
-  public Enumeration getPolicies() {
-    return policies.elements();
-  }
-  public Policy[] getPolicyArray() {
-    Policy[] tmp = new Policy[policies.size()];
-    return (Policy[])policies.toArray(tmp);
-  }
-                        
   // pods
   public void addPOD(POD pod) 
   {
@@ -488,24 +416,23 @@ public class Oplan extends OwnedUniqueObject
   }// setCday
 
   /**
-   * Infer the end day from all the sub elements of the oplan
+   * Infer the end day from all the contributing elements
    **/
-  public void inferEndDay() {
-    Vector[] collections = {pods, dfspVector, orgrels, orgacts, fps, policies};
+  public void inferEndDay(Collection oplanContributors) {
     long maxET = Long.MIN_VALUE;
-    for (int i = 0; i < collections.length; i++) {
-      for (Iterator j = collections[i].iterator(); j.hasNext(); ) {
-        Object e = j.next();
-        if (e instanceof OplanContributor) {
-          OplanContributor contrib = (OplanContributor) e;
-          TimeSpan span = contrib.getTimeSpan();
-          if (span != null) {
-            long et = span.getEndTime();
-            if (et != span.MAX_VALUE && et > maxET) maxET = et;
-          }
+    for (Iterator iterator = oplanContributors.iterator(); 
+         iterator.hasNext(); ) {
+      Object e = iterator.next();
+      if (e instanceof OplanContributor) {
+        OplanContributor contrib = (OplanContributor) e;
+        TimeSpan span = contrib.getTimeSpan();
+        if (span != null) {
+          long et = span.getEndTime();
+          if (et != span.MAX_VALUE && et > maxET) maxET = et;
         }
       }
     }
+    
     if (maxET != Long.MIN_VALUE) {
       setEndDay(new Date(maxET + INFER_END_DAY_FUDGE));
     } else {
@@ -597,10 +524,6 @@ public class Oplan extends OwnedUniqueObject
     newOplan.setHNSPOLCapacity(hnsPOLCap);
     newOplan.setHNSWaterCapability(hnsWaterCap);
     newOplan.setHNSForWater(hnsWater);
-    copyVectorInto(getOrgRelationsV(), newOplan.getOrgRelationsV());
-    copyVectorInto(getOrgActivitiesV(), newOplan.getOrgActivitiesV());
-    copyVectorInto(getForcePackagesV(), newOplan.getForcePackagesV());
-    copyVectorInto(getPoliciesV(), newOplan.getPoliciesV());
     copyVectorInto(getPODsV(), newOplan.getPODsV());
     copyVectorInto(getDFSPsV(), newOplan.getDFSPsV());
     newOplan.setXMLFileName(xmlfilename_);
@@ -648,7 +571,6 @@ public class Oplan extends OwnedUniqueObject
         matches(getPriority(), oplan.getPriority()) &&
         matches(getCday(), oplan.getCday()) &&
         matches(getEndDay(), oplan.getEndDay()) &&
-        matches(getXMLFileName(), oplan.getXMLFileName()) &&
         matches(getTheaterID(), oplan.getTheaterID()) &&
         matches(getTerrainType(), oplan.getTerrainType()) &&
         matches(getSeason(), oplan.getSeason()) &&
@@ -658,11 +580,7 @@ public class Oplan extends OwnedUniqueObject
         (getHNSForWater() == oplan.getHNSForWater()) &&
         matches(getHNSWaterCapability(), oplan.getHNSWaterCapability()) &&
         matches(getPODsV(), oplan.getPODsV()) &&
-        matches(getDFSPsV(), oplan.getDFSPsV()) &&
-        matches(getOrgRelationsV(), oplan.getOrgRelationsV()) &&
-        matches(getOrgActivitiesV(), oplan.getOrgActivitiesV()) &&
-        matches(getForcePackagesV(), oplan.getForcePackagesV()) &&
-        matches(getPoliciesV(), oplan.getPoliciesV());
+        matches(getDFSPsV(), oplan.getDFSPsV());
     } else
       return false;
   }

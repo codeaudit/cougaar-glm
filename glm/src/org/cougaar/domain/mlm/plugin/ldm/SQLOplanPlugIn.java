@@ -94,6 +94,33 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     }
   };
   
+  private static class OrgActivityPredicate implements UnaryPredicate {
+    private Oplan myOplan= null;
+    private String myOrgId = "";
+
+    public void setOplan(Oplan oplan) {
+      myOplan = oplan;
+    }
+
+    public void setOrgId(String orgId) {
+      myOrgId = orgId;
+    }
+
+    public boolean execute(Object o) {
+      if ((myOplan == null) ||
+          (myOrgId.equals(""))) {
+        return false;
+      }
+    
+      return ((o instanceof OrgActivity) &&
+              (((OrgActivity) o).getOrgID().equals(myOrgId)) &&
+              (((OrgActivity) o).getOplanUID().equals(myOplan.getUID())));
+    }
+  }   
+
+  private static OrgActivityPredicate orgActivityPredicate = 
+    new OrgActivityPredicate();
+
   /**
    * Executes PlugIn functionality.
    */
@@ -118,6 +145,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
 
     for (Iterator it = contributors.iterator(); it.hasNext();) {
       IncrementalSubscription is = (IncrementalSubscription) it.next();
+      
       // we don't care about adds, just deletes and changes
       if (is.hasChanged()) {
 	Collection changes = is.getChangedCollection();
@@ -187,6 +215,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     }
   }
 
+  // Replace org activies for Org.
   public void updateOrgActivities(Oplan update,
                                   String orgId,
                                   Collection orgActivities) {
@@ -200,14 +229,16 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
         return;
       }
       
-      ArrayList orgActivityList = 
-        new ArrayList(Arrays.asList(oplan.getOrgActivityArray()));
-      for (ListIterator iterator = orgActivityList.listIterator();
+      // Execute a query to get all existing org activities associated with
+      // the oplan
+      orgActivityPredicate.setOplan(oplan);
+      orgActivityPredicate.setOrgId(orgId);
+      Collection existingOrgActivities = query(orgActivityPredicate);
+      for (Iterator iterator = existingOrgActivities.iterator();
            iterator.hasNext();) {
         OrgActivity orgActivity = (OrgActivity) iterator.next();
+        
         if (orgActivity.getOrgID().equals(orgId)) {
-          iterator.remove();
-
           removedObjects.add(orgActivity);
         }
       }
@@ -215,12 +246,8 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       for (Iterator iterator = orgActivities.iterator();
            iterator.hasNext();) {
         OrgActivity orgActivity = (OrgActivity) iterator.next();
-
-        orgActivityList.add(orgActivity);
         newObjects.add(orgActivity);
       }
-
-      oplan.setOrgActivities(orgActivityList);
 
       if (myPrivateState != null) {
         myPrivateState.unpublishedChanges = true;
@@ -390,12 +417,14 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
 
     for (Iterator iterator = modifiedObjects.iterator();
          iterator.hasNext();) {
-      publishChange(iterator.next());
+      Object object = iterator.next();
+      publishChange(object);
     }
 
     for (Iterator iterator = removedObjects.iterator();
          iterator.hasNext();) {
-      publishRemove(iterator.next());
+      Object object = iterator.next();
+      publishRemove(object);
     }
 
     publishChange(myPrivateState);

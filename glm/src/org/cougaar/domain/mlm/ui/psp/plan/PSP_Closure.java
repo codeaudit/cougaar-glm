@@ -37,6 +37,15 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
    **/
   public PSP_Closure() {
     super();
+    try
+    {
+      URLname =  java.net.InetAddress.getLocalHost().getHostAddress();
+    }
+    catch (UnknownHostException e)
+    {
+      System.out.println("Catch UnknownHostException at PSP_Closure");
+    }
+
   }
 
   public PSP_Closure( String pkg, String id ) throws RuntimePSPException {
@@ -114,13 +123,12 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
 
   private OrgActivity getOrgActivityWith(String orgID,String activityType,PlanServiceContext psc)
   {
-
-    Oplan plan = PSPOplanUtilities.getOplan(psc);
-    Enumeration org_activities = plan.getOrgActivities();
-    while(org_activities.hasMoreElements() )
-    {
-      OrgActivity org = (OrgActivity)org_activities.nextElement();
-      if(org.getOrgID().equals(orgID) && org.getActivityType().equals(activityType))
+    Collection orgActivities = PSPOplanUtilities.getOrgActivities(psc, orgID
+);
+    for (Iterator iterator = orgActivities.iterator();
+         iterator.hasNext();) {
+      OrgActivity org = (OrgActivity)iterator.next();
+      if (org.getActivityType().equals(activityType))
         return org;
     }
     return null;
@@ -246,14 +254,14 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
         orgID = (String) orgID_Info.get(0);
         String activityType = (String) orgID_Info.get(1);
         String activityName = (String) orgID_Info.get(2);
-        OrgActivity org = getOrgActivityWith(orgID,activityType,psc);
+        OrgActivity org = getOrgActivityWith(orgID, activityType ,psc);
         displayOrgActivityWithName(out,org);
       }
       else
       {
         orgID = (String) orgID_Info.get(0);
         String activityType = (String) orgID_Info.get(1);
-        OrgActivity org = getOrgActivityWith(orgID,activityType,psc);
+        OrgActivity org = getOrgActivityWith(orgID, activityType, psc);
         displayOrgActivity(out,org);
       }
 
@@ -264,22 +272,13 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
       String postData = query_parameters.getBodyAsString();
       String postOrgID = (String) postOrgID_Info.get(0);
       String postActivityType = (String) postOrgID_Info.get(1);
-      Vector orgActivityVector = new Vector();
-      //OrgActivity org = getOrgActivityWith(postOrgID,postActivityType,psc);
       Oplan plan = PSPOplanUtilities.getOplan(psc);
-      Enumeration org_activities = plan.getOrgActivities();
-      while(org_activities.hasMoreElements() )
-      {
-        OrgActivity org = (OrgActivity)org_activities.nextElement();
-        if(org.getOrgID().equals(postOrgID) )
-        {
-          orgActivityVector.addElement(org);
-        }
-      }
+      Collection orgActivities = 
+        PSPOplanUtilities.getOrgActivities(psc, postOrgID);
 
-      OrgActivity[] orgActivityArray = new OrgActivity[ orgActivityVector.size() ];
-      System.out.println("DEBUG:!!!!"+orgActivityVector.size());
-      orgActivityVector.copyInto(orgActivityArray);
+      OrgActivity[] orgActivityArray = 
+        (OrgActivity []) orgActivities.toArray();
+      System.out.println("DEBUG:!!!!"+orgActivities.size());
 
       PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
       delegate.openTransaction();
@@ -350,16 +349,13 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
   public void displayClosurePlan(PrintStream out, PlanServiceContext psc,String sortType) {
 
     try {
-
-      Oplan plan = PSPOplanUtilities.getOplan(psc);
-
-      OrgActivity[] orgActivityArray = plan.getOrgActivityArray();
       Vector orgVector = new Vector();
-      for (int i  = 0;i <orgActivityArray.length ; i++ )
-      {
-        if( orgActivityArray[i].getActivityType().equals("Deployment") )
-        {
-          orgVector.addElement( orgActivityArray[i] );
+      for (Iterator iterator = 
+             PSPOplanUtilities.getOrgActivities(psc).iterator();
+           iterator.hasNext();) {
+        OrgActivity orgActivity = (OrgActivity) iterator.next();
+        if (orgActivity.getActivityType().equals("Deployment")) {
+          orgVector.addElement(orgActivity);
         }
       }
 
@@ -380,7 +376,6 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
 
       for (int i  = 0;i <orgArray.length; i++ )
       {
-        System.out.println("In for loop");
         //if(orgArray[i].getActivityType().equals("Deployment") )
         //{
         out.println("<tr>");

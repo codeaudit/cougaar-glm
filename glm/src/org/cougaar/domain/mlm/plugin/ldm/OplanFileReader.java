@@ -9,39 +9,21 @@
  */
 package org.cougaar.domain.mlm.plugin.ldm;
 
-import org.cougaar.domain.planning.ldm.RootFactory;
-import org.cougaar.domain.planning.ldm.measure.Longitude;
-import org.cougaar.domain.planning.ldm.measure.Latitude;
-import org.cougaar.core.society.UID;
-import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
-import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
-import org.cougaar.domain.planning.ldm.policy.Policy;
-import org.cougaar.domain.mlm.plugin.ldm.XMLPolicyCreator;
-
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.ldm.*;
-import org.cougaar.domain.glm.ldm.plan.*;
-import org.cougaar.domain.glm.ldm.asset.*;
-import org.cougaar.domain.glm.ldm.oplan.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.File;
-import java.lang.*;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Collection;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Calendar;
-import java.text.*;
-import org.cougaar.core.cluster.Subscriber;
-import org.cougaar.core.cluster.UIDServer;
-import org.cougaar.core.cluster.ClusterIdentifier;
-import org.cougaar.core.cluster.ClusterServesPlugIn;
+import java.util.HashMap;
 
 import com.ibm.xml.parser.Parser;
 
@@ -52,6 +34,27 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
+
+import org.cougaar.core.cluster.Subscriber;
+import org.cougaar.core.cluster.UIDServer;
+import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.core.cluster.ClusterServesPlugIn;
+import org.cougaar.core.society.UID;
+
+import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.domain.planning.ldm.measure.Longitude;
+import org.cougaar.domain.planning.ldm.measure.Latitude;
+import org.cougaar.domain.planning.ldm.policy.Policy;
+
+import org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl;
+import org.cougaar.domain.mlm.plugin.ldm.XMLPolicyCreator;
+
+//import org.cougaar.domain.glm.*;
+//import org.cougaar.domain.glm.ldm.*;
+//import org.cougaar.domain.glm.ldm.plan.*;
+//import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+
 
 /**
   This class is used to parse the given oplan xml file and instantiates oplan objects
@@ -68,7 +71,11 @@ public class OplanFileReader {
     
   // Reference back to the Oplan object
   private Oplan thePlan_;
-	
+  private ArrayList theOrgActivities_ = new ArrayList();
+  private ArrayList theOrgRelations_ = new ArrayList();
+  private ArrayList theForcePackages_ = new ArrayList();
+  private ArrayList thePolicies_ = new ArrayList();
+  
   private static final String OPLANID = "oplanID";
   private static final String OPERATIONNAME = "operationName";
   private static final String PRIORITY = "priority";
@@ -168,6 +175,11 @@ public class OplanFileReader {
   }//OplanFileReader
 	
   public Oplan readOplan() {
+    theForcePackages_.clear();
+    theOrgActivities_.clear();
+    theOrgRelations_.clear();
+    thePolicies_.clear();
+
     thePlan_= new Oplan(xmlfilename);
     uids.registerUniqueObject(thePlan_);
     thePlan_.setOwner(cid);
@@ -176,6 +188,51 @@ public class OplanFileReader {
     readOplanData();
     return thePlan_;
   }
+
+  public ArrayList getForcePackages(Oplan oplan) {
+    if ((thePlan_ != null) &&
+        (oplan.getUID() == thePlan_.getUID())) {
+      return theForcePackages_;
+    } else {
+      throw new IllegalArgumentException("Oplan - " + oplan + 
+                                         " does not match the current oplan - " +
+                                         thePlan_);
+    }
+  }
+
+  public ArrayList getOrgActivities(Oplan oplan) {
+    if ((thePlan_ != null) &&
+        (oplan.getUID() == thePlan_.getUID())) {
+      return theOrgActivities_;
+    } else {
+      throw new IllegalArgumentException("Oplan - " + oplan + 
+                                         " does not match the current oplan - " +
+                                         thePlan_);
+    }
+  }
+
+  public ArrayList getOrgRelations(Oplan oplan) {
+    if ((thePlan_ != null) &&
+        (oplan.getUID() == thePlan_.getUID())) {
+      return theOrgRelations_;
+    } else {
+      throw new IllegalArgumentException("Oplan - " + oplan + 
+                                         " does not match the current oplan - " +
+                                         thePlan_);
+    }
+  }
+
+  public ArrayList getPolicies(Oplan oplan) {
+    if ((thePlan_ != null) &&
+        (oplan.getUID() == thePlan_.getUID())) {
+      return thePolicies_;
+    } else {
+      throw new IllegalArgumentException("Oplan - " + oplan + 
+                                         " does not match the current oplan - " +
+                                         thePlan_);
+    }
+  }
+        
 
   /**
      get the XMLFileName
@@ -208,9 +265,6 @@ public class OplanFileReader {
     try {
       doc = theCluster.getConfigFinder().parseXMLConfigFile( xmlfilename );
       parseFileData(doc);
-      if (thePlan_.getEndDay() == null) {
-        thePlan_.inferEndDay();
-      }
     } catch ( Exception e ) {
       e.printStackTrace();
     }// trycatch block
@@ -426,7 +480,8 @@ public class OplanFileReader {
           }// for loop
       }// if statement
 
-    thePlan_.addForcePackage(fp);
+    
+    theForcePackages_.add(fp);
 	  	   
   }// setForcePackages	
 
@@ -435,17 +490,6 @@ public class OplanFileReader {
     OrgActivity oa = new OrgActivity(orgID, oplanUID);
     uids.registerUniqueObject(oa);
     oa.setOwner(cid);
-    /* orgactivity.OpTempo:
-       orgactivity.activityType:
-       orgactivity.activityName:*/
-         
-    /*      if( attributes.getNamedItem(TAALOC) != null)
-            oa.setTAALoc(attributes.getNamedItem(TAALOC).getNodeValue());
-            if( attributes.getNamedItem(TAAEAD) != null)
-            oa.setTAAEAD(attributes.getNamedItem(TAAEAD).getNodeValue());
-            if( attributes.getNamedItem(TAALAD) != null)
-            oa.setTAALAD(attributes.getNamedItem(TAALAD).getNodeValue()); */
-
 		     
     if( attributes.getNamedItem(ACTIVITYTYPE) != null)
       oa.setActivityType(attributes.getNamedItem(ACTIVITYTYPE).getNodeValue());
@@ -454,9 +498,6 @@ public class OplanFileReader {
     if( attributes.getNamedItem(OPTEMPO) != null)
       oa.setOpTempo(attributes.getNamedItem(OPTEMPO).getNodeValue());
 
-    //	  if( attributes.getNamedItem("OpActivity") != null)
-    //         ts.setOpActivity(attributes.getNamedItem("OpActivity").getNodeValue());	     
-		 
     addGeoLocs(oa, data);
 
     // DTD Requirements (keyvalue*,timespan?)>	 
@@ -476,13 +517,13 @@ public class OplanFileReader {
                   oa.addActivityItem(subattributes.getNamedItem(KEY).getNodeValue(),
                                      subattributes.getNamedItem(VALUE).getNodeValue());  
               }// if statement
-				// if Timespan
+	    // if Timespan
             if (nodeName.equals(TIMESPAN))
               setTimeSpan(oa, subNodes.item(i));
           }// for loop			
       }// if statement		 		 
 		 
-    thePlan_.addOrgActivity(oa);
+    theOrgActivities_.add(oa);
   }//setOrgActivity
 	
   public void addOrgRelation(Object obj, Node node)
@@ -539,7 +580,7 @@ public class OplanFileReader {
     // if (obj instanceof ForcePackage)
     //     ((ForcePackage)obj).addOrgRelation(or);
 		                
-    thePlan_.addOrgRelation(or);
+    theOrgRelations_.add(or);
     
   }//addOrgRelation
 	
@@ -636,14 +677,14 @@ public class OplanFileReader {
     try {
 
       // Create a newGeolocLocation
-      NewGeolocLocation geoLoc = null;
+      GeolocLocationImpl geoLoc = null;
 
       // get the geoLoc Code from the XML
       Node gcn = subattributes.getNamedItem(GEOLOCCODE);
       String geoLocCode = null;
       if (gcn != null && (geoLocCode=gcn.getNodeValue()) != null) {
         geoLocCode = geoLocCode.intern();
-        geoLoc = (NewGeolocLocation) geolocCache.get(geoLocCode);
+        geoLoc = (GeolocLocationImpl) geolocCache.get(geoLocCode);
       }
 
       if (geoLoc == null) {
@@ -712,7 +753,7 @@ public class OplanFileReader {
               if (thePolicy != null) 
                 {
                   //String policyName = subNodes.item(i).getAttributes().getNamedItem("name").getNodeValue();
-                  thePlan_.addPolicy(thePolicy);
+                  thePolicies_.add(thePolicy);
                 }
 			          					 
             }// if statement

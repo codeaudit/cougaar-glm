@@ -280,16 +280,22 @@ System.out.println("is orgid");
         }
         // find matching orgAct in oplan
         OrgActivity showOrg = null;
-        Enumeration org_activities = plan.getOrgActivities();
-        while (org_activities.hasMoreElements()) {
-          OrgActivity org = (OrgActivity)org_activities.nextElement();
-          if (((orgID == null) ||
-               orgID.equals(org.getOrgID())) && 
-              ((activityType == null) || 
-               activityType.equals(org.getActivityType())) &&
+        Collection orgActivities;
+
+        if (orgID == null) {
+          orgActivities = PSPOplanUtilities.getOrgActivities(psc);
+        } else {
+          orgActivities = PSPOplanUtilities.getOrgActivities(psc, orgID);
+        }
+
+        for (Iterator iterator = orgActivities.iterator();
+             iterator.hasNext();) {
+          OrgActivity orgActivity = (OrgActivity)iterator.next();
+          if (((activityType == null) || 
+               activityType.equals(orgActivity.getActivityType())) &&
               ((activityName == null) ||
-               (activityName.equals(org.getActivityName())))) {
-            showOrg = org;
+               (activityName.equals(orgActivity.getActivityName())))) {
+            showOrg = orgActivity;
             break;
           }
         }
@@ -308,20 +314,13 @@ System.out.println("is post");
           String postData = query_parameters.getBodyAsString();
           String postOrgID = (String) postOrgID_Info.get(0);
           String postActivityType = (String) postOrgID_Info.get(1);
-          // get list of orgActs with matching orgID
-          Vector orgActivityVector = new Vector();
-          Enumeration org_activities = plan.getOrgActivities();
-          while (org_activities.hasMoreElements()) {
-            OrgActivity org = (OrgActivity)org_activities.nextElement();
-            if (org.getOrgID().equals(postOrgID))
-              orgActivityVector.addElement(org);
-          }
-          // make array -- dumb?
-          OrgActivity[] orgActivityArray =
-            new OrgActivity[orgActivityVector.size()];
-          orgActivityVector.copyInto(orgActivityArray);
 
-          PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+          // get list of orgActs with matching orgID
+          OrgActivity[] orgActivityArray = 
+            (OrgActivity[]) PSPOplanUtilities.getOrgActivities(psc, postOrgID).toArray();
+
+          PlugInDelegate delegate = 
+            psc.getServerPlugInSupport().getDirectDelegate();
           delegate.openTransaction();
           
           // post 
@@ -420,14 +419,10 @@ System.out.println("is post");
     String str3 = new String("Employment-Defensive");
 
     try {
-      //Enumeration en = null
-      //Enumeration org_activities = 
-      //  PSPOplanUtilities.getOrgActivities(this, psc);
+      Collection org_activities = 
+        PSPOplanUtilities.getOrgActivities(psc);
 
-      Enumeration org_activities = plan.getOrgActivities();
-      String previousOrgID = " ";
-      OrgActivity org = (OrgActivity)org_activities.nextElement();
-      int index = 0;
+      
       printHtmlBegin(out);
 
       out.println("<p align=\"center\"><b><font size=\"5\">OPLAN EDITOR</font></b></p>");
@@ -440,57 +435,66 @@ System.out.println("is post");
       out.println("<td><b>Employment Standdown</b></td>");
       out.println("</tr>");
 
-      while (org_activities.hasMoreElements()) {
+      String previousOrgID = " ";
+      int index = 0; // avoid blank lines for initial org
+      boolean first = true;
+      for (Iterator iterator = org_activities.iterator();
+           iterator.hasNext();) {
+        OrgActivity org = (OrgActivity)iterator.next();
         //System.out.println("Debug: "+ org.getOrgID() );
         //System.out.println("Debug: "+ org.getActivityType() );
 
         out.println("<tr>");
         out.println("<td>" + org.getOrgID() +"</td>");
-        previousOrgID = org.getOrgID();
-        while (org.getOrgID().equals(previousOrgID)) {
-          //out.println("<td><a href=" +
-          //  "\""+URLname+"?ORGID="+
-          //  org.getOrgID() + "\">" + org.getOrgID() + "</a></td>");
-          if (org.getActivityType().startsWith("Cinc")) {
-            out.println("<td> &nbsp;</td>");
-          } else if (org.getActivityType().equals("Deployment") &&
-                     (org.getActivityName() != null)) {
-            out.println("<td><a href="+
-              "\""+URLname+"?ORGID="+ 
-              org.getOrgID() +"="+
-              org.getActivityType()+"="+
-              org.getActivityName()+ "\">" +"C+" +
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) + 
-              " To C+" + 
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) +
-              "</a></td>");
-          } else if (org.getActivityType().equals("Deployment")) {
-            out.println("<td><a href=" +
-              "\""+URLname+"?ORGID="+ 
-              org.getOrgID() +"="+
-              org.getActivityType()+ "\">" +"C+" +
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) +
-              " To C+" + 
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) + 
-              "</a></td>");
-          } else {
-            out.println("<td>" +"C+" +
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) +
-              " To C+" + 
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) +
-              "</td>");
-          }
-          org = (OrgActivity)org_activities.nextElement();
-          index++;
-        }
-        // fill up remaining spaces
-        for (int i = index; i <4; i++) {
-          out.println("<td> &nbsp;</td>");
-        }
-        index=0;
-        out.println("</tr>");
-      }
 
+        if (!(org.getOrgID().equals(previousOrgID))) {
+          previousOrgID = org.getOrgID();
+
+          if (!first) {
+            // fill up remaining spaces
+            for (int i = index; i <4; i++) {
+              out.println("<td> &nbsp;</td>");
+            }
+            out.println("</tr>");
+            first = false;
+          }
+          index = 0;
+        }
+          
+        //out.println("<td><a href=" +
+        //  "\""+URLname+"?ORGID="+
+        //  org.getOrgID() + "\">" + org.getOrgID() + "</a></td>");
+        if (org.getActivityType().startsWith("Cinc")) {
+          out.println("<td> &nbsp;</td>");
+        } else if (org.getActivityType().equals("Deployment") &&
+                   (org.getActivityName() != null)) {
+          out.println("<td><a href="+
+                      "\""+URLname+"?ORGID="+ 
+                      org.getOrgID() +"="+
+                      org.getActivityType()+"="+
+                      org.getActivityName()+ "\">" +"C+" +
+                      getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) + 
+                      " To C+" + 
+                      getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) +
+                      "</a></td>");
+        } else if (org.getActivityType().equals("Deployment")) {
+          out.println("<td><a href=" +
+                      "\""+URLname+"?ORGID="+ 
+                      org.getOrgID() +"="+
+                      org.getActivityType()+ "\">" +"C+" +
+                      getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) +
+                      " To C+" + 
+                      getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) + 
+                      "</a></td>");
+        } else {
+          out.println("<td>" +"C+" +
+                      getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) +
+                      " To C+" + 
+                      getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) +
+                      "</td>");
+        }
+        index++;
+      }
       out.println("</table>");
       printHtmlEnd(out);
       out.flush();

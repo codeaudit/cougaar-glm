@@ -22,8 +22,6 @@ import org.cougaar.domain.planning.ldm.plan.Transferable;
 import org.cougaar.domain.planning.ldm.plan.NewTransferableRescind;
 import org.cougaar.domain.planning.ldm.plan.TransferableVerification;
 
-import org.cougaar.domain.glm.ldm.oplan.Oplan;
-import org.cougaar.domain.glm.ldm.oplan.OplanContributor;
 import java.util.*;
 import org.cougaar.core.util.*;
 import org.cougaar.util.*;
@@ -34,7 +32,7 @@ import org.cougaar.core.society.UID;
 /**
   * ReceiveTransferableLP Adds or modifies transferables to cluster
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: ReceiveTransferableLP.java,v 1.2 2001-01-03 14:33:13 mthome Exp $
+  * @version $Id: ReceiveTransferableLP.java,v 1.3 2001-03-28 15:45:37 ngivler Exp $
   **/
 
 public class ReceiveTransferableLP extends LogPlanLogicProvider implements MessageLogicProvider
@@ -51,14 +49,6 @@ public class ReceiveTransferableLP extends LogPlanLogicProvider implements Messa
         }};
   }
 
-  private static UnaryPredicate makeOplanIDp(final UID opid) {
-    return new UnaryPredicate() {
-        public boolean execute(Object o) {
-          return (o instanceof OplanContributor) && 
-            opid.equals( ((OplanContributor)o).getUID() );
-        }};
-  }
-    
   /**
    * Adds/removes Transferables to/from LogPlan... Side-effect = other subscribers
    * also updated.
@@ -114,84 +104,13 @@ public class ReceiveTransferableLP extends LogPlanLogicProvider implements Messa
   // we should really break this out into an abstract api, but it
   // scares me to put logprovider code into object like Oplan.
   /** Reconcile any component state of the logplan with regard to 
-   * the newly transfered putative transferable.  Only Oplans
-   * actually activate this code.
    * @param t Old version of transferrable from logplan.  May be null.
    * @param pt Putative new version of the transferrable.
    **/
   private void reconcile(Transferable t, Transferable pt) {
-    if (pt instanceof Oplan) {
-      reconcileOplan((Oplan)t, (Oplan) pt);
-    } else if (pt instanceof OplanContributor) {
-      reconcileOplanContributor((OplanContributor) t, (OplanContributor) pt);
-    }
-  }
-
-  private void reconcileOplanContributor(OplanContributor opc, OplanContributor popc) {
-    Oplan pot = (Oplan) logplan.findUniqueObject(popc.getOplanUID());
-    if (pot != null) {
-      reconcileOplan(null, pot);
-    }
-  }
-
-  // op may be null!
-  private void reconcileOplan(Oplan op, Oplan pot) {
-    UID opid = pot.getUID();
-
-    // get the right transferrables from the logplan
-    Enumeration tmpe = logplan.searchLogPlan(makeOplanIDp(opid));
-    // turn the enum into a collection so we can search multiple times.
-    Collection ocs = Translations.toCollection(tmpe);
-    // matches is the set of objects from ocs that are found in the oplan subs
-    Collection matches = new ArrayList(ocs.size());
-
-    // iterate over the oplan subs, adding to or changing the logplan
-    // as needed
-    reconcileOplanSubs(pot.getOrgRelations(), ocs, matches);
-    reconcileOplanSubs(pot.getOrgActivities(), ocs, matches);
-    reconcileOplanSubs(pot.getForcePackages(), ocs, matches);
-    
-    // take out the subs that aren't found in putative oplan
-    ocs.removeAll(matches);
-    // remove non-matches from the logplan
-    for (Iterator i=ocs.iterator(); i.hasNext();) {
-      logplan.remove(i.next());
-    }
-    // done.
-  }
-
-  /** update a set of sub oplan bits
-   * @param oss a set of newly transfered subOplan bits.
-   * @param lpts existing logplan subOplan bits.
-   * @param matches a set of existing logplan subOplan that have been found
-   * in the newly transfered oplan, to be added to by this method.
-   **/
-  private void reconcileOplanSubs(Enumeration oss, Collection lpts, Collection matches) {
-    while (oss.hasMoreElements()) {
-      // os is a new suboplan part to find
-      final Transferable os = (Transferable)oss.nextElement();
-      
-      // see if we've got a match
-      Object found = Filters.findElement(lpts, new UnaryPredicate() {
-          public boolean execute(Object o) {
-            return os.same((Transferable)o);
-          }});
-      
-      if (found != null) {
-        // found is an existing suboplan part which needs to get updated
-        if (! found.equals(os)) { // match ids but content has changed.
-          ((OplanContributor)found).setAll(os);       // update
-          // have to rely on implicit ChangeReports to catch details.
-          // top-level transferrable will have user-defined changereports.
-          logplan.change(os, null);   // notify watchers.
-        } // else do nothing
-
-        // add it to our match list
-        matches.add(os);
-      } else {
-        // no match - needs to be added
-        logplan.add(os);
-      }
-    }
   }
 }
+
+
+
+

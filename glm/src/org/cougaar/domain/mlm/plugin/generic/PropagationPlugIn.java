@@ -40,7 +40,7 @@ import org.w3c.dom.NodeList;
  * PropagationPlugIn propagates Transferables based on xml files in parameter list
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.6 2001-02-15 13:34:08 tomlinso Exp $
+ * @version $Id: PropagationPlugIn.java,v 1.7 2001-03-28 15:45:37 ngivler Exp $
  */
 
 public class PropagationPlugIn extends SimplePlugIn
@@ -232,14 +232,15 @@ public class PropagationPlugIn extends SimplePlugIn
               TransferablePredicate tp = null;
               try {
                 Class cl = theLDM.getLDMClassLoader().loadClass(className);
+                /*
                 if (OplanContributor.class.isAssignableFrom(cl)) {
                   System.err.println("Warning: "+xmlfilename+
                                      " specifies propagation of OplanContributor \""+
                                      className+"\":  Will ignore.");
                   // leave tp alone to bail out.
-                } else {
+                  } else { */
                   tp = new TransferablePredicate(cl);
-                }
+                  //}
               } catch (Exception e) {
                 e.printStackTrace();
               }

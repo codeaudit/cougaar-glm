@@ -119,15 +119,17 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
   public void endQuery() {
     // myOrgInfoMap has a TimeSpanSet for each Org
     Collection orgInfosByOrg = myOrgInfoMap.values();
-    
-    ArrayList allOrgActivities = new ArrayList(orgInfosByOrg.size());
+    ArrayList allOrgActivities = new ArrayList();
     for (Iterator iterator = orgInfosByOrg.iterator();
          iterator.hasNext();) {
       OrgInfo orgInfo = (OrgInfo) iterator.next();
 
+      // Need to compute all org activities so I can update the 
+      // oplan end day
+      TimeSpanSet orgActivities = getMergedOrgActivities(orgInfo);
+      allOrgActivities.addAll(orgActivities);
       if (needToUpdate(orgInfo)) {
-        TimeSpanSet orgActivities = getMergedOrgActivities(orgInfo);
-
+        
         /* Debugging  */
         /*
         for (Iterator oaIterator = orgActivities.iterator();
@@ -145,6 +147,14 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
         myPlugIn.updateOrgActivities(myOplan, orgInfo.getOrgName(), 
                                      orgActivities);
       }
+    }
+
+    Date currentEndDay = myOplan.getEndDay();
+    myOplan.inferEndDay(allOrgActivities);
+    if ((currentEndDay == null) ||
+        (!currentEndDay.equals(myOplan.getEndDay()))) {
+      //System.out.println("Setting end Day to " + myOplan.getEndDay());
+      myPlugIn.updateOplanInfo(myOplan);
     }
 
     myLastQueryTime = new Date().getTime();

@@ -14,19 +14,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.LayoutManager;
 
-import org.cougaar.core.cluster.Subscriber;
-import org.cougaar.core.cluster.Subscription;
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.core.society.UID;
-  
-import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.ldm.plan.*;
-import org.cougaar.domain.glm.ldm.asset.*;
-import org.cougaar.domain.glm.ldm.oplan.*;
-import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.domain.planning.ldm.RootFactory;
-  
-import org.cougaar.util.UnaryPredicate;
+//import java.io.*;
   
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,9 +22,26 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.cougaar.core.cluster.Subscriber;
+import org.cougaar.core.cluster.Subscription;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.society.UID;
+
+import org.cougaar.domain.planning.ldm.RootFactory;
+
+import org.cougaar.util.UnaryPredicate;
+
+/*  
+import org.cougaar.domain.glm.ldm.*;
+import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+*/
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 import org.cougaar.domain.mlm.plugin.UICoordinator;
-import java.io.*;
+
 
 /**
  * The OPlanPlugIn instantiates the OPlan
@@ -193,14 +198,23 @@ public class OPlanPlugIn extends SimplePlugIn
     // Get the PlugIn Parameters
     Vector params = getParameters();
     ArrayList oplans = new ArrayList(params.size());
+    ArrayList oplanComponents = new ArrayList(params.size());
     // Instantiate the OPlanFileReader to create the OPlan
-    if ( params.size() != 0 ) {
+    if (params.size() != 0) {
       for (int i = 0, n = params.size(); i < n; i++) {
         String fileName = (String)(params.elementAt(i));
         OplanFileReader ofr =
           new OplanFileReader(fileName, subscriber, getFactory(), getCluster());
         Oplan oplan = ofr.readOplan();
         oplans.add(oplan);
+        oplanComponents.addAll(ofr.getForcePackages(oplan));
+        oplanComponents.addAll(ofr.getOrgActivities(oplan));
+        oplanComponents.addAll(ofr.getOrgRelations(oplan));
+        oplanComponents.addAll(ofr.getPolicies(oplan));
+
+        if (oplan.getEndDay() == null) {
+          oplan.inferEndDay(oplanComponents);
+        }
       }
     } else {
       System.err.println("OPlanPlugIn : No parameters were specified");
@@ -213,18 +227,9 @@ public class OPlanPlugIn extends SimplePlugIn
         // Add the OPLAN to the LogPlan.
         publishAdd(oplan);
         // publish the subs
-        for (Enumeration es = oplan.getForcePackages(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
-        }
-        for (Enumeration es = oplan.getOrgActivities(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
-        }
-        for (Enumeration es = oplan.getOrgRelations(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
-        }
-        // policies are not oplan-associated
-        for (Enumeration es = oplan.getPolicies(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
+        for (Iterator iterator = oplanComponents.iterator();
+             iterator.hasNext();) {
+          publishAdd(iterator.next());
         }
 
         OplanCoupon ow = new OplanCoupon(oplan.getUID(), getClusterIdentifier());
@@ -235,31 +240,6 @@ public class OPlanPlugIn extends SimplePlugIn
     } else {
       myPrivateState.errorOccurred = true;
     }
-
-    /** XXX **/
-    /*
-    try {
-      FileOutputStream os = new FileOutputStream("oplan.ser");
-      
-      class MyObjectOutputStream extends ObjectOutputStream {
-        MyObjectOutputStream(FileOutputStream fos) throws IOException {
-          super(fos);
-          enableReplaceObject(true);
-        }
-        protected Object replaceObject(Object o) throws IOException {
-          System.err.println(""+o.getClass()+"/"+o.toString());
-          return o;
-        }
-      }
-      ObjectOutputStream p = new MyObjectOutputStream(os);
-      p.writeObject(oplan);
-      p.flush();
-      os.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    */
-    /** XXX **/
 
     publishChange(myPrivateState);
     closeTransaction(false);
@@ -334,3 +314,14 @@ public class OPlanPlugIn extends SimplePlugIn
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
