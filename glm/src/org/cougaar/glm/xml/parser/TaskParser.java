@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.3 2002-03-04 18:33:17 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -48,6 +48,7 @@ import org.cougaar.lib.xml.parser.DateParser;
 import org.cougaar.lib.xml.parser.DirectObjectParser;
 import org.cougaar.lib.xml.parser.PreferencesParser;
 import org.cougaar.lib.xml.parser.VerbParser;
+import org.cougaar.glm.plugins.MaintainedItem;
 
 /**
  * Copyright (c) 1999 BBN Technologies 
@@ -112,11 +113,25 @@ public class TaskParser{
 	    newpp.setIndirectObject(getStuff(ldm, child));
 	    prep_phrases.addElement(newpp);
 	  }
+	  else if(childname.equals("maintaining")){
+	    // same as with
+	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
+	    newpp.setPreposition(Constants.Preposition.MAINTAINING);
+	    newpp.setIndirectObject(getMaintainingObject(ldm, child));
+	    prep_phrases.addElement(newpp);
+	  }
 	  else if(childname.equals("for")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.FOR);
-	    String forunit = getForUnit(child);
+	    String forunit = getTagContents(child);
 	    newpp.setIndirectObject(forunit);
+	    prep_phrases.addElement(newpp);
+	  }
+	  else if(childname.equals("oftype")){
+	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
+	    newpp.setPreposition(Constants.Preposition.OFTYPE);
+	    String oftype = getTagContents(child);
+	    newpp.setIndirectObject(oftype);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.toUpperCase().equals(PREPO)){
@@ -145,11 +160,20 @@ public class TaskParser{
 	    Preference p = PreferencesParser.getCost(ldmf, child);
 	    task.addPreference(p);
 	  }
+	  else if (childname.equals("quantity")){
+	    Preference p = PreferencesParser.getQuantity(ldmf, child);
+	    task.addPreference(p);
+	  }
 	  else if(childname.equals("ItineraryOf")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.ITINERARYOF);
 	    newpp.setIndirectObject(ItineraryParser.getItinerary(ldm, child));
 	    //task.setPrepositionalPhrase(newpp);
+	    prep_phrases.addElement(newpp);
+	  }
+	  else if(childname.equals("refill")){
+	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
+	    newpp.setPreposition(Constants.Preposition.REFILL);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if (childname.equals("RespondTo")){
@@ -222,7 +246,29 @@ public class TaskParser{
     return object;
   }
 
-  private static String getForUnit(Node node){
+  private static Object getMaintainingObject(LDMServesPlugin ldm, Node node){
+    String type = null, typeID = null, itemID = "maintainedItem", nomen = null;
+
+    NodeList  nlist    = node.getChildNodes();      
+    int       nlength  = nlist.getLength();
+
+    for(int i = 0; i < nlength; i++){
+      Node    child       = nlist.item(i);
+      String  childname   = child.getNodeName();
+      if(child.getNodeType() == Node.ELEMENT_NODE){
+	if(childname.equals("type"))
+	  type = getTagContents (child);
+	else if (childname.equals("typeID"))
+	  typeID = getTagContents (child);
+	else if (childname.equals("nomen"))
+	  nomen = getTagContents (child);
+      }
+    }
+
+    return new MaintainedItem (type, typeID, itemID, nomen);
+  }
+
+  private static String getTagContents(Node node){
     Asset asset = null;
     Node data = node.getFirstChild();
     return data.getNodeValue();
