@@ -175,40 +175,44 @@ public class PSP_Subordinates extends PSP_BaseAdapter
 		if (!org.isSelf ())
 		  continue;
 		
-        String orgName = org.getItemIdentificationPG().getNomenclature();
-
         if (myState.htmlFlag || true) {
-          RelationshipSchedule schedule = org.getRelationshipSchedule();
-		  
-		  if (DEBUG)
-			System.out.println ("PSP_Subordinates.getMyRelationships - output : " + 
-								"<org name=\""+ orgName+ "\"></org>");
-
-		  out.println("<org name=\""+ orgName+ "\"></org>");
-
-          for (Iterator schedIter = schedule.listIterator(); schedIter.hasNext();) {
-            Relationship relationship = (Relationship)schedIter.next();
-
-			if (((relationship.getRoleA().equals(Constants.Role.ADMINISTRATIVESUBORDINATE)) &&
-				 (relationship.getRoleB().equals(Constants.Role.ADMINISTRATIVESUPERIOR   )))){
-			  if (DEBUG)
-				System.out.println ("PSP_Subordinates.getMyRelationships - self " + 
-									orgName + 
-									"'s relationship : " + relationship);
-			  String subord = 
-				((Asset)relationship.getA()).getItemIdentificationPG().getNomenclature();
-
-			  if (DEBUG)
-				System.out.println ("\tsubord is " + subord + ", subord's role is : " + relationship.getRoleA());
-			  if (!orgName.equals (subord))
-				recurseOnSubords (out, myState, subord);
-			}
-          }
+		  generateXML (out, myState, org);
         }
       } while (iter.hasNext());
     }
   }
 
+  protected void generateXML (PrintStream out, MyPSPState myState, Organization org) {
+	RelationshipSchedule schedule = org.getRelationshipSchedule();
+		  
+	String orgName = org.getItemIdentificationPG().getNomenclature();
+
+	if (DEBUG)
+	  System.out.println ("PSP_Subordinates.getMyRelationships - output : " + 
+						  "<org name=\""+ orgName+ "\"></org>");
+
+	out.println("<org name=\""+ orgName+ "\"></org>");
+
+	for (Iterator schedIter = schedule.listIterator(); schedIter.hasNext();) {
+	  Relationship relationship = (Relationship)schedIter.next();
+
+	  if (((relationship.getRoleA().equals(Constants.Role.ADMINISTRATIVESUBORDINATE)) &&
+		   (relationship.getRoleB().equals(Constants.Role.ADMINISTRATIVESUPERIOR   )))){
+		if (DEBUG)
+		  System.out.println ("PSP_Subordinates.getMyRelationships - self " + 
+							  orgName + 
+							  "'s relationship : " + relationship);
+		String subord = 
+		  ((Asset)relationship.getA()).getItemIdentificationPG().getNomenclature();
+
+		if (DEBUG)
+		  System.out.println ("\tsubord is " + subord + ", subord's role is : " + relationship.getRoleA());
+		if (!orgName.equals (subord))
+		  recurseOnSubords (out, myState, subord);
+	  }
+	}
+  }
+	
   /**
    * yuck -- this PSP calling other PSPs!
    *
