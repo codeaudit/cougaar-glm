@@ -815,7 +815,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
         reader.close();
       }
     } catch (Exception e) {
-      System.err.println(e);
+      System.err.println("addPlugins:" + e);
     }
   }
 
