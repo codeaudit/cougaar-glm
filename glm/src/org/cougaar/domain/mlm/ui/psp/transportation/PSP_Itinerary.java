@@ -2093,10 +2093,13 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
   }
 
   /** 
-   * <i>LIVE mode</i> Root tasks have:<br>
+   * Interesting "Itinerary" Tasks.
    * <ol>
-   *   <li>source != destination</li>
-   *   <li>verb == Transport</li>
+   *   <li>is a Task</li>
+   *   <li>the plan element is an allocation</li>
+   *   <li>the allocation is to either a PhysicalAsset or Person</li>
+   *   <li>the task verb is Transport, TransportationMission, or Supply</li>
+   *   <li>the task doesn't have an "IMPLIED" preposition</li>
    * </ol>
    */
   protected static UnaryPredicate getInterestingTasksPred() {
@@ -2106,7 +2109,26 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
           if (o instanceof Task) {
             Task task = (Task)o;
             Object pe = task.getPlanElement();
-            if (pe != null && pe instanceof Allocation) {
+            // BEGIN "IMPLIED" FIX
+            if (pe instanceof Allocation) {
+              Asset a = ((Allocation)pe).getAsset();
+              if ((a instanceof PhysicalAsset) ||
+                  ((a instanceof ALPAsset) &&
+                   (((ALPAsset)a).hasPersonPG()))) {
+                Verb v = task.getVerb();
+                if ((Constants.Verb.Transport).equals(v) ||
+                    (Constants.Verb.TransportationMission).equals(v) ||
+                    (Constants.Verb.Supply).equals(v)) {
+                  if (task.getPrepositionalPhrase("IMPLIED") == null) {
+                    // an interesting task!
+                    return true;
+                  }
+                }
+              }
+            }
+            /*
+             * DISABLE FOR "IMPLIED" FIX
+            if (pe instanceof Allocation) {
               Allocation alloc = (Allocation)pe;
               if (alloc.getAsset()  instanceof PhysicalAsset) 
                 return true;
@@ -2114,6 +2136,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 		       ((ALPAsset)alloc.getAsset()).hasPersonPG())
 		return true;
             }
+            */
           }
           return false;
         }
