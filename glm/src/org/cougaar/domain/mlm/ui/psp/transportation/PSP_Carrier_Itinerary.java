@@ -608,7 +608,7 @@ public class PSP_Carrier_Itinerary extends PSP_BaseAdapter implements PlanServic
               }
             } catch (Exception e) {
               System.out.println("CARRIER_ITINERARY: Element "+verb+
-                " Error: "+e+" from Task: "+task.getUID().getUID());
+                " Error: "+e+" from Task: "+task.getUID());
             }
           } while (tiles.hasMoreElements());
           // success

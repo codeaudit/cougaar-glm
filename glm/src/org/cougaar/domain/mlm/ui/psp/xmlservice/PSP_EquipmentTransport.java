@@ -279,8 +279,8 @@ public class PSP_EquipmentTransport extends PSP_BaseAdapter implements PlanServi
     System.out.println("EquipmentTransport PSP invoked");
     postData = null;
 
-    if (query_parameters.getPostData() != null) {
-      postData = new String(query_parameters.getPostData());
+    if (query_parameters.hasBody()) {
+      postData = new String(query_parameters.getBodyAsCharArray());
       postData = postData.trim();
       System.out.println("POST DATA:" + postData);
     }

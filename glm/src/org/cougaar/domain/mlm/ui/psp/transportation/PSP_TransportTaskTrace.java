@@ -392,7 +392,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
 
                         String symbol = mopg.getHierarchy2525();
                         unit = new UIUnit();
-                        unit.setSelfAssetUID(org.getUID().getUID() );
+                        unit.setSelfAssetUID(defaultUIDString(org.getUID()));
                         unit.setLocation((GeolocLocation)loc);
                         unit.setMs2525IconName(symbol);
                    }
@@ -422,7 +422,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
             while (en.hasMoreElements() )
             {
                 Task tsk = (Task)en.nextElement();
-                String uistr = new String(tsk.getUID().getUID());
+                String uistr = new String(defaultUIDString(tsk.getUID()));
                 results.addElement(uistr);
             }
         } catch (Exception ex) {
@@ -525,7 +525,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
             while( en.hasMoreElements() )
             {
                 Organization org = (Organization)en.nextElement();
-                if( org.getUID().getUID().startsWith(orgUID) == true )
+                if(defaultUIDString(org.getUID()).startsWith(orgUID) == true )
                 {
                     TerminalRef tr = new TerminalRef();
                     tr.setData(new UITTAnswer("OrganizationUID." + orgUID));
@@ -544,7 +544,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                int h = Integer.parseInt(hashstring);
                if( ast.hashCode() == h ) return true;
             }
-            else if( ast.getUID().getUID().startsWith(assetUID) == true ) {
+            else if(defaultUIDString(ast.getUID()).startsWith(assetUID) == true ) {
                return true;
             }
             return false;
@@ -619,7 +619,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                       **/
                     boolean uidMatch = true; // default: assume matches unless UID is given and violated
                     if( taskUIDFilter != null ) {
-                       if( false == tsk.getUID().getUID().startsWith(taskUIDFilter) ){
+                       if( false == defaultUIDString(tsk.getUID()).startsWith(taskUIDFilter) ){
                            uidMatch = false;
                        }
                     }
@@ -706,7 +706,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
 
                     while( en.hasMoreElements() ) {
                         Task tsk2 = (Task)en.nextElement();
-                        annote += "->Task(" + tsk2.getUID().getUID() + ")";
+                        annote += "->Task(" + defaultUIDString(tsk2.getUID()) + ")";
 
                         PlanElement pe2 = tsk2.getPlanElement();
                         if( pe2 != null ) {
@@ -834,7 +834,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
          Enumeration en2;
 
          TraceRef er = new TraceRef();
-         er.UID = new String(tsk.getUID().getUID() );
+         er.UID = new String(defaultUIDString(tsk.getUID()));
 
          String annote = annotation + "->PE(alloc)";
          //
@@ -854,8 +854,8 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                     uiit.setClusterID(thisClusterID);
 
                     uiit.setInputTaskUID(getUIDOfInputTask(tsk));
-                    uiit.setAllocTaskUID(tsk.getUID().getUID());
-                    //uiit.setAssetUID(all.getAsset().getUID().getUID());
+                    uiit.setAllocTaskUID(defaultUIDString(tsk.getUID()));
+                    //uiit.setAssetUID(defaultUIDString(all.getAsset().getUID()));
 
                     er.setData(uiit);
                     annote += "->[obtaining itinerary of TransporationMission Task whose Allocation is to Physical Asset]";
@@ -913,7 +913,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                                        psc));
                                        
                             // er.AllocTaskUID = STRING_NULL;
-                            er.AllocAssetUID =  all.getAsset().getUID().getUID();
+                            er.AllocAssetUID =  defaultUIDString(all.getAsset().getUID());
 
                             annote += "->LocalOrganization("
                                  + all.getAsset().getUID() +")";
@@ -922,7 +922,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                                  "URL:"
                                  + "/$"+er.RemoteClusterID
                                  +"/alpine/demo/QUERYTRANSPORT.PSP?ORGANIZATION="
-                                 + all.getAsset().getUID().getUID()
+                                 + defaultUIDString(all.getAsset().getUID())
                                  + ";"
                                  );
               }
@@ -945,7 +945,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                  String type = null;
                  type = ass.getClass().getName();
                  if( ass.getUID() != null) {
-                      id = ass.getUID().getUID();
+                      id = defaultUIDString(ass.getUID());
                  } else {
                       /**
                               id = "ASSET_WITH_NULL_UID(" + type + ")";
@@ -992,7 +992,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
        String results = new String();
 
        results += "TYPE:ASSET;";
-       results += "UID:" + all.getUID().getUID() + ";";
+       results += "UID:" + defaultUIDString(all.getUID()) + ";";
 
        return results;
    }
@@ -1055,6 +1055,9 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
        return id;
     }
 
+    public static String defaultUIDString(UID aUID) {
+	return (aUID.getOwner() + "/" + aUID.getId());
+    }
 
     /**
       * A PSP can output either HTML or XML (for now).  The server
@@ -1152,7 +1155,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
                  )
        {
                    Schedule sch = (Schedule)io;
-                   uit.CarrierUID = all.getAsset().getUID().getUID();
+                   uit.CarrierUID = defaultUIDString(all.getAsset().getUID());
                    uit.CarrierTypeNomenclature = all.getAsset().getTypeIdentificationPG().getNomenclature();
                    uit.CarrierItemNomenclature = all.getAsset().getItemIdentificationPG().getNomenclature();
                    uit.setScheduleElementType(sch.getScheduleElementType());

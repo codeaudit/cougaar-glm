@@ -181,7 +181,8 @@ public class PSP_AssetPopulation extends PSP_BaseAdapter
 	  if ((instances = (List) (typeToInstances.get (typeID))) == null)
 		typeToInstances.put (typeID, instances = new ArrayList());
 	
-	  instances.add (asset.getUID().getUID().intern());
+	  instances.add ((asset.getUID().getOwner() + "/" +
+			  asset.getUID().getId()).intern());
     }
 
     return typeToQuantity;

@@ -496,7 +496,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
         } catch (Exception e) {
           System.err.println(
             "PSP_Itinerary: End eariest/latest preference problem: "+e+
-            " from task: "+task.getUID().getUID()+" scoring function: "+
+            " from task: "+task.getUID()+" scoring function: "+
             sf.getClass().getName()+" is "+sf);
         }
       }
@@ -1339,7 +1339,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       // leg was still being calculated or broken.  silently ignore it.
       if (DEBUG) {
         System.out.println("Ignore leg for alloc: "+
-          alloc.getUID().getUID());
+          alloc.getUID());
       }
       return;
     }
@@ -1757,7 +1757,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
               currentAsset));
         } catch (Exception e) {
           System.err.println("PSP_Itinerary: Ill-formed task: "+
-            currentAE.rootTask.getUID().getUID()+
+            currentAE.rootTask.getUID() +
             " Basic Exception: "+e);
           e.printStackTrace();
           continue;
@@ -1768,7 +1768,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
             getAllLegs(myState, currentAE));
         } catch (Exception e) {
           System.err.println("PSP_Itinerary: Ill-formed task: "+
-              currentAE.rootTask.getUID().getUID()+
+              currentAE.rootTask.getUID() +
               " Legs Exception: "+e);
           e.printStackTrace();
           continue;
@@ -1836,8 +1836,8 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
         Object o = myState.seenAssets.get(as);
         if (o == null) {
           throw new RuntimeException(
-            "Unseen Asset: "+as.getUID().getUID()+
-            " from rootTask: "+fromAE.rootTask.getUID().getUID());
+            "Unseen Asset: "+as.getUID()+
+            " from rootTask: "+fromAE.rootTask.getUID());
         }
         l.addAll(getSelfLegs(myState, (AssetEntry)o));
       }
@@ -2367,7 +2367,8 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 	  if (currentAsset.getUID() == null)
 	    System.err.println("PSP_Itinerary.findItinerary - " + currentAsset + " has no uid?");
 	      
-	  itin.setAssetUID(currentAsset.getUID().getUID());
+	  itin.setAssetUID(currentAsset.getUID().getOwner() + "/" +
+			   currentAsset.getUID().getId());
           itin.setUITAssetInfoVector(
             getUITAssetInfoVector(
               currentAsset));
@@ -2388,7 +2389,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 	  else {
 	    System.err.println("PSP_Itinerary.findItinerary - " +
 			       "Ill-formed root task: " +
-			       currentAE.rootTask.getUID().getUID() +
+			       currentAE.rootTask.getUID() +
 			       " Basic Exception: " +e);
 		  }
           e.printStackTrace();
@@ -2400,7 +2401,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
             getLegs(myState, currentAE));
         } catch (Exception e) {
           System.err.println("PSP_Itinerary: Ill-formed task: "+
-              currentAE.rootTask.getUID().getUID()+
+              currentAE.rootTask.getUID()+
               " Legs Exception: "+e);
           e.printStackTrace();
           continue;
@@ -2428,7 +2429,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       Allocation alloc = (Allocation)allocIter.next();
       if (DEBUG) {
         System.out.println("Generate leg for alloc: "+
-                           alloc.getUID().getUID());
+                           alloc.getUID());
       }
       addLegsAlloc(myState, legs, alloc);
     }

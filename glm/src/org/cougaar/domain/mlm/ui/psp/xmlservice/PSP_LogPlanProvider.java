@@ -79,8 +79,8 @@ public class PSP_LogPlanProvider extends PSP_BaseAdapter implements PlanServiceP
     String postData = null;
     boolean limit = false; // flag to limit number of items returned
 
-    if (query_parameters.getPostData() != null) {
-      postData = new String(query_parameters.getPostData());
+    if (query_parameters.hasBody()) {
+      postData = new String(query_parameters.getBodyAsCharArray());
       postData = postData.trim();
       System.out.println("POST DATA:" + postData);
 

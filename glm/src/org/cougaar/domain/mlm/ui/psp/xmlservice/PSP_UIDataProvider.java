@@ -108,7 +108,7 @@ public class PSP_UIDataProvider extends PSP_BaseAdapter implements PlanServicePr
       XMLUIObjectSelector xmlPredicate = new XMLUIObjectSelector(terms);
       
       // enter subscription 
-      Subscription subscription = psc.getServerPluginSupport().subscribe(this, xmlPredicate);
+      Subscription subscription = psc.getServerPlugInSupport().subscribe(this, xmlPredicate);
 
       // get the org.cougaar.domain.mlm.ui.data objects selected
       // and get the fields requested

@@ -43,6 +43,9 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
 
   private Enumeration org_activities = null;
   private String URLname;
+
+  private Date cDate=null;
+
   /** A zero-argument constructor is required for dynamically loaded PSPs,
     required by Class.newInstance()
    **/
@@ -193,6 +196,8 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
     String txtField;
     String select = " ";
 
+    Calendar formatter = Calendar.getInstance();
+
     //TimeSpan[] ts= new TimeSpan[2];
     // parse the string first
     String[] strHolder = new String[3];
@@ -205,7 +210,10 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
     }
     txtField = new String(strHolder[0].substring("textfield=".length() ) );
 
-    int endTime = Integer.parseInt(txtField);
+    int endDelta = Integer.parseInt(txtField);
+    formatter.setTime(cDate);
+    formatter.add(formatter.DATE, endDelta);
+    long endTime = formatter.getTime().getTime();
 
     if(org.length > 1)
     {
@@ -217,14 +225,14 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
         //TimeSpan depTimeSpan = org[0].getTimeSpan();
         //TimeSpan empTimeSpan = org[1].getTimeSpan();
         // org[0].getTimeSpan().setStartDelta(startTime);
-        org[0].getTimeSpan().setEndDelta(endTime);
-        org[1].getTimeSpan().setStartDelta(endTime+1);
+        org[0].getTimeSpan().setEndDate(new Date(endTime));
+        org[1].getTimeSpan().setStartDate(new Date(endTime+1));
       }
       return true;
     }
     else
     {
-      org[0].getTimeSpan().setEndDelta(endTime);
+      org[0].getTimeSpan().setEndDate(new Date(endTime));
       return true;
     }
     // set opTempo & timeSpan
@@ -284,8 +292,12 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
       String postOrgID = (String) postOrgID_Info.get(0);
       String postActivityType = (String) postOrgID_Info.get(1);
       Oplan plan = PSPOplanUtilities.getOplan(psc);
+
+      cDate = plan.getCday();
+
       Collection orgActivities = 
         PSPOplanUtilities.getOrgActivities(psc, postOrgID);
+
 
       OrgActivity[] orgActivityArray = 
         (OrgActivity []) orgActivities.toArray();

@@ -462,7 +462,7 @@ public class PSP_InputTaskAssetVolume extends PSP_BaseAdapter implements PlanSer
       MyPSPState myState, Asset dirObj) {
     if (dirObj instanceof AssetGroup) {
       if (DEBUG) {
-        System.err.println("Asset Group: "+dirObj.getUID().getUID());
+        System.err.println("Asset Group: "+dirObj.getUID());
       }
       Enumeration assetsEn = ((AssetGroup)dirObj).getAssets().elements();
       while (assetsEn.hasMoreElements()) {
@@ -470,7 +470,7 @@ public class PSP_InputTaskAssetVolume extends PSP_BaseAdapter implements PlanSer
       }
     } else if (dirObj != null) {
       if (DEBUG) {
-        System.err.println("Asset: "+dirObj.getUID().getUID());
+        System.err.println("Asset: "+dirObj.getUID());
       }
       int quantity = 1;
       while (dirObj instanceof AggregateAsset) {

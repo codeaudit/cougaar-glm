@@ -252,7 +252,7 @@ public class PSP_TaskTraversal extends PSP_BaseAdapter implements PlanServicePro
          //System.out.println(">PSP_TaskTraversal.getChildren.instanceofAggregation");
 
          ExternalRef er = new ExternalRef();
-         er.UID = new String( tsk.getUID().getUID() );   /// "IMMUTABLE" FIELD -- shouldn't change
+         er.UID = new String(defaultUIDString(tsk.getUID()));   /// "IMMUTABLE" FIELD -- shouldn't change
          er.InputTaskUID = getUIDOfInputTask(tsk);
          ///System.out.println("+++++++++AGGREGATION ER.UID=" + er.UID);
 
@@ -304,7 +304,7 @@ public class PSP_TaskTraversal extends PSP_BaseAdapter implements PlanServicePro
          Allocation all = (Allocation)pe;
 
          ExternalRef er = new ExternalRef();
-         er.UID = new String(tsk.getUID().getUID() );
+         er.UID = new String(defaultUIDString(tsk.getUID()));
 
 
          String annote ="";
@@ -350,7 +350,7 @@ public class PSP_TaskTraversal extends PSP_BaseAdapter implements PlanServicePro
                     er.AllocTaskUID = new String( "LocalOrganization"  );
                     String id = null;
                     if( all.getAsset().getUID() !=  null) {
-                                id =  all.getAsset().getUID().getUID();
+                                id=defaultUIDString(all.getAsset().getUID());
                     }
                     if( id == null ) {id = "NULL_UID.TYPE=(" + all.getAsset().getClass().getName() + ")"; }
 
@@ -360,11 +360,11 @@ public class PSP_TaskTraversal extends PSP_BaseAdapter implements PlanServicePro
          //!Organization --
          //    LOCAL ASSET ALLOCATION
          else {
-                    er.RemoteClusterID = new String(tsk.getUID().getUID() );
+                    er.RemoteClusterID = new String(defaultUIDString(tsk.getUID()));
                     er.AllocTaskUID = new String( "LocalAsset"  );
                     String id = null;
                     if( all.getAsset().getUID() !=  null) {
-                                id =  all.getAsset().getUID().getUID();
+                                id=defaultUIDString(all.getAsset().getUID());
                     }
                     if( id == null ) {id = "NULL_UID" + all.getAsset().getClass().getName(); }
                     annote = new String(annotation
@@ -429,6 +429,10 @@ public class PSP_TaskTraversal extends PSP_BaseAdapter implements PlanServicePro
                 }
              }
     **/
+    }
+
+    public static String defaultUIDString(UID aUID) {
+	return (aUID.getOwner() + "/" + aUID.getId());
     }
 
    /**

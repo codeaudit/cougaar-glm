@@ -87,7 +87,7 @@ public synchronized Class loadClass(String className,
     }
 
     //----- Define it (parse the class file)
-    result = defineClass(classBytes, 0, classBytes.length);
+    result = defineClass(className, classBytes, 0, classBytes.length);
     if (result == null) {
         throw new ClassFormatError();
     }

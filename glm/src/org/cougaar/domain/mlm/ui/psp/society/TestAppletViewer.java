@@ -126,7 +126,7 @@ public class TestAppletViewer extends  java.applet.Applet {
             } catch (Exception e) {e.printStackTrace(); }
 
 
-      show();
+      setVisible(true);
    }
 
    private void setDefaultColorsFonts(){

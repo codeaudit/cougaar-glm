@@ -21,6 +21,8 @@
  
 package org.cougaar.domain.mlm.ui.psp.plan;
 
+import org.cougaar.core.society.UID;
+
 public class UIOrgRelationship implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
   private String targetOrganizationCID;     // TARGET: the "TO" Cluster
@@ -55,11 +57,21 @@ public class UIOrgRelationship implements org.cougaar.core.util.SelfPrinter, jav
    * get and set access methods for <code>TargetOrganizationUID</code>
    * <p>
    * String version of Organization Asset UID
+   *
    */
   public String getTargetOrganizationUID() {return targetOrganizationUID;}
   public void setTargetOrganizationUID(String targetOrganizationUID) {
     this.targetOrganizationUID = targetOrganizationUID;
   }
+  public void setTargetOrganizationUID(String targetOrgOwner,
+				       long targetOrgId) {
+    this.targetOrganizationUID = targetOrgOwner + "/" + targetOrgId;
+  }
+  public void setTargetOrganizationUID(UID targetOrganizationUID) {
+    this.setTargetOrganizationUID(targetOrganizationUID.getOwner(),
+				  targetOrganizationUID.getId());
+  }
+
 
   /**
    * get and set access methods for <code>providerOrganizationUID</code>
@@ -69,6 +81,14 @@ public class UIOrgRelationship implements org.cougaar.core.util.SelfPrinter, jav
   public String getProviderOrganizationUID() {return providerOrganizationUID;}
   public void setProviderOrganizationUID(String providerOrganizationUID) {
     this.providerOrganizationUID = providerOrganizationUID;
+  }
+  public void setProviderOrganizationUID(String providerOrgOwner,
+				         long providerOrgId) {
+    this.providerOrganizationUID = providerOrgOwner + "/" + providerOrgId;
+  }
+  public void setProviderOrganizationUID(UID providerOrganizationUID) {
+    this.setProviderOrganizationUID(providerOrganizationUID.getOwner(),
+				  providerOrganizationUID.getId());
   }
 
   /**

@@ -97,9 +97,11 @@ public class PSP_Map extends PSP_BaseAdapter
                 (Organization) schedule.getOther(relationship);
 
               out.println("relate  '"+id+"' '" +
-                          self.getUID().getUID() + "' '" + 
+			  self.getUID().getOwner() + "/" +
+			  self.getUID().getId() + "' '" + 
                           schedule.getMyRole(relationship) + "' '" + 
-                          other.getUID().getUID() +"' '" +
+			  other.getUID().getOwner() + "/" +
+                          other.getUID().getId() +"' '" +
                           schedule.getOtherRole(relationship) +"'");
             }
           }
@@ -123,7 +125,7 @@ public class PSP_Map extends PSP_BaseAdapter
           }
         } else if (query_parameters.existsParameter("TASKS"))  {
           Subscription subscription = 
-            psc.getServerPluginSupport().subscribe(this, getTaskPred());
+            psc.getServerPlugInSupport().subscribe(this, getTaskPred());
           int numTasks = ((CollectionSubscription)subscription).size();
           out.println("numtasks "+numTasks);
         } else {
