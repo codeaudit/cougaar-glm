@@ -71,6 +71,7 @@ public class UTILInclusiveWorkflowCallback extends UTILFilterCallbackAdapter {
 	  UTILGenericListener genericListener = 
 	    (UTILGenericListener) myListener;
 	  Workflow wf = ((Expansion)o).getWorkflow();
+	  if (wf == null) return false;
 	  Enumeration e = wf.getTasks();
 
 	  while (e.hasMoreElements()){
@@ -109,13 +110,14 @@ public class UTILInclusiveWorkflowCallback extends UTILFilterCallbackAdapter {
     while (newExps.hasMoreElements()) {
       Expansion exp = (Expansion)newExps.nextElement();
       Workflow wf = exp.getWorkflow();
-      Enumeration e = wf.getTasks();
-
-      while (e.hasMoreElements()){
-	Task t = (Task)e.nextElement();
-
-	if (genericListener.interestingTask (t)) {
-	  genericListener.handleTask(t);
+      if (wf != null) {
+	Enumeration e = wf.getTasks();
+	while (e.hasMoreElements()){
+	  Task t = (Task)e.nextElement();
+	  
+	  if (genericListener.interestingTask (t)) {
+	    genericListener.handleTask(t);
+	  }
 	}
       }
     }

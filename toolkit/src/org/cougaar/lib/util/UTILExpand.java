@@ -296,6 +296,8 @@ public class UTILExpand {
   public void showExpansion(Expansion exp) {
     logger.info("--------------- exp " + exp.getUID () + " ----------------");
     Workflow wf = exp.getWorkflow ();
+    if (wf == null)
+      return;
     int i = 0;
     for (Enumeration enum = wf.getTasks (); enum.hasMoreElements (); ) {
       showPlanElement((Task) enum.nextElement (), i++);
