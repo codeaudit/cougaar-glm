@@ -68,7 +68,8 @@ import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
-import org.cougaar.planning.plugin.legacy.DeletionPlugin;
+import org.cougaar.planning.plugin.deletion.TaskDeletionPlugin;
+import org.cougaar.planning.plugin.deletion.DeletionPolicyBase;
 import org.cougaar.util.MoreMath;
 import org.cougaar.util.UnaryPredicate;
 
@@ -247,7 +248,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     forcePrintConcise = f;
   }
 
-  public static class IMDeletionPolicy extends DeletionPlugin.DeletionPolicy {
+  public static class IMDeletionPolicy extends DeletionPolicyBase {
     public String supplyType_;
   }
 
