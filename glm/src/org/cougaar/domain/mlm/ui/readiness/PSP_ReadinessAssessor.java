@@ -20,13 +20,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import java.util.Collection;
 import java.util.List;
-import org.cougaar.domain.planning.ldm.plan.Task;
-import org.cougaar.domain.planning.ldm.plan.AllocationResult;
-import org.cougaar.domain.planning.ldm.plan.Expansion;
-import org.cougaar.domain.glm.ldm.Constants;
+import java.util.Collection;
 
 import org.cougaar.lib.planserver.HttpInput;
 import org.cougaar.lib.planserver.PlanServiceContext;
@@ -37,6 +32,15 @@ import org.cougaar.core.cluster.Subscription;
 import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.domain.planning.ldm.plan.AspectValue;
+
+import org.cougaar.domain.glm.ldm.Constants;
+
+import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.domain.planning.ldm.plan.AllocationResult;
+import org.cougaar.domain.planning.ldm.plan.Expansion;
+import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.domain.planning.ldm.plan.PlanElement;
+import org.cougaar.domain.planning.ldm.plan.Disposition;
 
 import org.cougaar.domain.glm.plugins.MaintainedItem;
 import org.cougaar.domain.planning.ldm.asset.Asset;
@@ -107,7 +111,6 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 	public void execute(PrintStream out, HttpInput query_parameters, PlanServiceContext psc, PlanServiceUtilities psu) throws Exception
 	{
 
-    String clusterId = psc.getServerPluginSupport().getClusterIDAsString();
 
 		try
 		{
@@ -124,17 +127,17 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 				//out.println("<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;jpi-version=1.3.1\">");
 				out.println("<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.2\">");
 				//out.println("<PARAM NAME=\"scriptable\" VALUE=\"false\">");
-			sendReadinessParameters(clusterId, psc, out);
+			sendReadinessParameters(psc, out);
 			out.println("<COMMENT>");
-				//out.println("<EMBED type=\"application/x-java-applet;jpi-version=1.3.1\"");  
+				//out.println("<EMBED type=\"application/x-java-applet;jpi-version=1.3.1\"");
 				out.println("<EMBED type=\"application/x-java-applet;version=1.2.2\"" + " java_CODE=\"NChartApplet.class\"" + " java_ARCHIVE=\"/uiframework.jar\"");
-			  //out.println("ARCHIVE=\"/uiframework.jar\""); 
+			  //out.println("ARCHIVE=\"/uiframework.jar\"");
 			  //out.println("CODEBASE=\".\"");
-			  //out.println("CODE=\"NChartApplet.class\""); 
-			  out.println("NAME=\"NChartApplet\""); 
-			  out.println("WIDTH = 600"); 
-			  out.println("HEIGHT = 600"); 
-      sendnetscapeReadinessParameters(clusterId, psc, out);
+			  //out.println("CODE=\"NChartApplet.class\"");
+			  out.println("NAME=\"NChartApplet\"");
+			  out.println("WIDTH = 600");
+			  out.println("HEIGHT = 600");
+      sendnetscapeReadinessParameters(psc, out);
 			//out.println("pluginspage=\"http://java.sun.com/products/plugin/1.3.1/plugin-install.html\"><NOEMBED>");
 			  out.println(" pluginspage=\"http://java.sun.com/products/plugin/1.2/plugin-install.html\"><NOEMBED>");
 		  	out.println("</NOEMBED>");
@@ -178,32 +181,25 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   @param out HTTP response socket stream
   @param pspState Current state of the PSP including HTTP request parameters
 	*********************************************************************************************************************/
-	private void sendReadinessParameters(String cId, PlanServiceContext psc, PrintStream out)
+	private void sendReadinessParameters(PlanServiceContext psc, PrintStream out)
 	{
     Iterator itSet, itDOs;
     int ii, jj, kk;
 
 		// Get the readiness assessment
+    HashMap sendData = getAssetAV3s (psc);
 
-    //HashMap allClusterData = ReadinessAssessorPSPPlugIn.pspData;
-    Hashtable allClusterData = ReadinessAssessorPSPPlugIn.pspData;
-
-    synchronized (allClusterData)
+    if (sendData == null)
     {
-
-//      System.out.println ("PSP_ReadinessAssessor: getting cluster data with key " + cId);
-
-      HashMap sendData = (HashMap) allClusterData.get (cId);
-      if (sendData == null)
-      {
         sendData = getRollUpData(psc);
         if (sendData == null)
         {
           out.println ("<PARAM NAME=" + ReadinessAssessorPspUtil.NUMMAINTAINED + " VALUE='0'>");
           return;
         }
-      }
-      
+
+    }
+
       Set maintainedItems = sendData.keySet();
 
       out.println ("<PARAM NAME=" + ReadinessAssessorPspUtil.NUMMAINTAINED + " VALUE='" + maintainedItems.size() + "'>");
@@ -253,7 +249,6 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 
           // Create the parameter for the number of book titles in the inventory
 //		      out.println("<PARAM NAME=columns VALUE='" + overviewList.size() + "'>");
-    }
 
 	}
 
@@ -267,31 +262,22 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   @param out HTTP response socket stream
   @param pspState Current state of the PSP including HTTP request parameters
 	*********************************************************************************************************************/
-	private void sendnetscapeReadinessParameters(String cId, PlanServiceContext psc, PrintStream out)
+	private void sendnetscapeReadinessParameters(PlanServiceContext psc, PrintStream out)
 	{
     Iterator itSet, itDOs;
     int ii, jj, kk;
+    HashMap sendData = getAssetAV3s (psc);
 
-		// Get the readiness assessment
-
-    //HashMap allClusterData = ReadinessAssessorPSPPlugIn.pspData;
-    Hashtable allClusterData = ReadinessAssessorPSPPlugIn.pspData;
-
-    synchronized (allClusterData)
+    if (sendData == null)
     {
-
-//      System.out.println ("PSP_ReadinessAssessor: getting cluster data with key " + cId);
-
-      HashMap sendData = (HashMap) allClusterData.get (cId);
-      if (sendData == null)
-      {
         sendData = getRollUpData(psc);
         if (sendData == null)
         {
           out.println (ReadinessAssessorPspUtil.NUMMAINTAINED + "=0");
           return;
         }
-      }
+
+    }
 
       Set maintainedItems = sendData.keySet();
 
@@ -342,25 +328,93 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 
           // Create the parameter for the number of book titles in the inventory
 //		      out.println("<PARAM NAME=columns VALUE='" + overviewList.size() + "'>");
-    }
 
 	}
-  private long toYYYYMMDD (long millisecs)
+
+  
+  private final UnaryPredicate readinessTaskPred = new UnaryPredicate()
+  {
+    public boolean execute(Object o)
+    {
+      if (o instanceof Task)
+      {
+        Task t = (Task) o;
+        if (t.getVerb().equals(Constants.Verb.AssessReadiness))
+        {
+           if (t.getPlanElement() != null)
+           {
+            return true;
+           }
+        }
+      }
+
+    return false;
+    }
+  };
+
+  private HashMap getAssetAV3s (PlanServiceContext psc)
   {
 
-    long yyyymmdd = millisecs;
+    Collection raTasks = psc.getServerPluginSupport().queryForSubscriber(readinessTaskPred);
+    Iterator taskItr = raTasks.iterator();
 
-    Date d = new Date (millisecs);
-    GregorianCalendar c = new GregorianCalendar();
-    c.setTime(d);
+    HashMap retMap = null;
+//    System.out.println ("Query returned: " + raTasks.size() + " Expansion objects");
 
-    yyyymmdd = c.get(GregorianCalendar.DAY_OF_MONTH);
-    yyyymmdd += (c.get(GregorianCalendar.MONTH) + 1) * 100;
-    yyyymmdd += c.get(GregorianCalendar.YEAR) * 10000;
+    if (! taskItr.hasNext())
+      return null;
+    else
+      retMap = new HashMap();
 
-    return yyyymmdd;
+    while (taskItr.hasNext())
+    {
+
+      Task raTsk = (Task) taskItr.next();
+
+      AllocationResult ar = raTsk.getPlanElement().getEstimatedResult();
+      if (ar == null)
+        continue;
+
+      // index first by name of unit type (aka maintained item name)
+      String mtName = new String ("Overall");
+      PrepositionalPhrase ppFor = raTsk.getPrepositionalPhrase(Constants.Preposition.FOR);
+      if ( ppFor != null)
+      {
+        MaintainedItem mt = (MaintainedItem) ppFor.getIndirectObject();
+        mtName = new String (mt.getNomenclature());
+      }
+
+      HashMap assetMap = (HashMap) retMap.get(mtName);
+      if (assetMap == null)
+      {
+         assetMap = new HashMap();
+         retMap.put(mtName, assetMap);
+      }
+      
+      ArrayList arl = new ArrayList();
+
+      String asstName = new String ("All Assets");
+      PrepositionalPhrase ppWith = raTsk.getPrepositionalPhrase(Constants.Preposition.WITH);
+      if (ppWith != null)
+      {
+        Asset usedAsset = (Asset) ppWith.getIndirectObject();
+        asstName = new String (usedAsset.getTypeIdentificationPG().getNomenclature());
+      }
+      
+      assetMap.put (asstName, arl);
+
+      List phasedResults = ar.getPhasedAspectValueResults();
+
+      for ( int ii=0; ii < phasedResults.size(); ii ++)
+      {
+        AspectValue[] avs = (AspectValue[]) phasedResults.get(ii);
+        arl.add(avs);
+      }
+    }
+
+    return retMap;
+
   }
-
 
 
   private final UnaryPredicate readinessExpansionPred = new UnaryPredicate()
@@ -389,14 +443,14 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   private HashMap getRollUpData (PlanServiceContext psc)
   {
 
-    System.out.println ("Entering getRollUpData");
+//    System.out.println ("Entering getRollUpData");
     
     Collection stuffToDo = psc.getServerPluginSupport().queryForSubscriber(readinessExpansionPred);
     Iterator itr = stuffToDo.iterator();
 
     HashMap retMap = null;
-    System.out.println ("Query returned: " + stuffToDo.size() + " Expansion objects");
-    
+//    System.out.println ("Query returned: " + stuffToDo.size() + " Expansion objects");
+
     if (! itr.hasNext())
       return null;
     else
@@ -425,9 +479,27 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
     }
 
     return retMap;
-    
+
   }
-  
+
+
+  private long toYYYYMMDD (long millisecs)
+  {
+
+    long yyyymmdd = millisecs;
+
+    Date d = new Date (millisecs);
+    GregorianCalendar c = new GregorianCalendar();
+    c.setTime(d);
+
+    yyyymmdd = c.get(GregorianCalendar.DAY_OF_MONTH);
+    yyyymmdd += (c.get(GregorianCalendar.MONTH) + 1) * 100;
+    yyyymmdd += c.get(GregorianCalendar.YEAR) * 10000;
+
+    return yyyymmdd;
+  }
+
+
 	/*********************************************************************************************************************
   <b>Description</b>: Required by the UISubscriber interface.
 
