@@ -48,7 +48,10 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.lib.planserver.psp.PSP_PlugInLoader</Classname>
     <PSPName>alpine/demo/PLUGIN_LOADER.PSP</PSPName>
   </element>
-
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>mil.darpa.log.alpine.blackjack.plugins.PSP_FeedingPolicy</Classname>
+    <PSPName>FeedingPolicy.PSP</PSPName>
+  </element>
   <!-- ALPINE PSPs -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_LogPlanProvider</Classname>
