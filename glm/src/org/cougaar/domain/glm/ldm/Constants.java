@@ -177,6 +177,7 @@ public final class Constants {
       org.cougaar.domain.planning.ldm.plan.Role.create("FuelHandling", RelationshipType.PROVIDER);
       org.cougaar.domain.planning.ldm.plan.Role.create("FuelSupply", RelationshipType.PROVIDER);
       org.cougaar.domain.planning.ldm.plan.Role.create("FuelTransport", RelationshipType.PROVIDER);
+      org.cougaar.domain.planning.ldm.plan.Role.create("PackagedPOLSupply", RelationshipType.PROVIDER);
       org.cougaar.domain.planning.ldm.plan.Role.create("GSMaintenance", RelationshipType.PROVIDER);
       org.cougaar.domain.planning.ldm.plan.Role.create("HETTransportation", RelationshipType.PROVIDER);
       org.cougaar.domain.planning.ldm.plan.Role.create("Level1HealthCare", RelationshipType.PROVIDER);
@@ -270,6 +271,12 @@ public final class Constants {
                                 RelationshipType.PROVIDER_SUFFIX);
     public static final org.cougaar.domain.planning.ldm.plan.Role FUELSUPPLYCUSTOMER = 
       org.cougaar.domain.planning.ldm.plan.Role.getRole("FuelSupply" + 
+                                RelationshipType.CUSTOMER_SUFFIX);
+    public static final org.cougaar.domain.planning.ldm.plan.Role PACKAGEDPOLSUPPLYPROVIDER = 
+      org.cougaar.domain.planning.ldm.plan.Role.getRole("PackagedPOLSupply" + 
+                                RelationshipType.PROVIDER_SUFFIX);
+    public static final org.cougaar.domain.planning.ldm.plan.Role PACKAGEDPOLSUPPLYCUSTOMER = 
+      org.cougaar.domain.planning.ldm.plan.Role.getRole("PackagedPOLSupply" + 
                                 RelationshipType.CUSTOMER_SUFFIX);
     public static final org.cougaar.domain.planning.ldm.plan.Role FUELHANDLINGCUSTOMER = 
       org.cougaar.domain.planning.ldm.plan.Role.getRole("FuelHandling" +
