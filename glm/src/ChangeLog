@@ -1,5 +1,14 @@
 2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
 
+	* org/cougaar/domain/glm/ldm/Oplan.java:
+
+	Fix for bux 189. Oplan no longer contains any references to
+	associated org activities, org relations, force packages, or 
+	policies. PlugIns interested in these objects should subscribe to
+	them directly.
+
+2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
+
 	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
 	Add ProjectSupply tasks to the RefillTasks predicate. This
 	predicate is used to find refills with changed allocation results.
