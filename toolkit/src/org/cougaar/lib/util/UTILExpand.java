@@ -770,6 +770,7 @@ public class UTILExpand {
 
   }
 
-  private static AllocationResultAggregator myARA = new UTILAllocationResultAggregator ();
+  //  private static AllocationResultAggregator myARA = new UTILAllocationResultAggregator ();
+  private static AllocationResultAggregator myARA = AllocationResultAggregator.DEFAULT;
   private static boolean debugAlot = false;
 }
