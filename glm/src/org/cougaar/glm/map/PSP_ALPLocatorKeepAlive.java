@@ -153,8 +153,9 @@ public class PSP_ALPLocatorKeepAlive extends org.cougaar.lib.planserver.PSP_Base
    *  <br>
    *  @param subscription Subscription object that changed
    *  @see #execute(PrintStream, HttpInput, PlanServiceContext, PlanServiceUtilities)
-   *  @see #streamList
    **/
+  // streamList is private, so isn't javadoc visible
+  // *  @see #streamList
   public void subscriptionChanged(Subscription subscription)
   {
     // Go through every new task we've subscribed to  ((IncrementalSubscription)subscription).getAddedList()

@@ -158,8 +158,9 @@ public class PSP_COUGAARIPMetricsKeepAlive extends org.cougaar.lib.planserver.PS
    *  <br>
    *  @param subscription Subscription object that changed
    *  @see #execute(PrintStream, HttpInput, PlanServiceContext, PlanServiceUtilities)
-   *  @see #streamList
    **/
+  // cannot use the following because streamList is declared private
+  //  @see #streamList
 	public void subscriptionChanged(Subscription subscription)
 	{
 		// Go through every new task we've subscribed to  ((IncrementalSubscription)subscription).getAddedList()
