@@ -74,7 +74,7 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
   protected JButton glsButton = new JButton("Send GLS root");
 
   /** A combo box for selecting the Oplan **/
-  private JComboBox oplanCombo = new JComboBox();
+  protected JComboBox oplanCombo = new JComboBox();
 
   /** A panel to hold the GUI **/
   JPanel panel = new JPanel((LayoutManager) null);
