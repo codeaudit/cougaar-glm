@@ -67,7 +67,6 @@ public class UTILInclusiveWorkflowCallback extends UTILFilterCallbackAdapter {
 	    (UTILGenericListener) myListener;
 	  Workflow wf = ((Expansion)o).getWorkflow();
 	  Enumeration e = wf.getTasks();
-	  int num = 0;
 
 	  while (e.hasMoreElements()){
 	    Task subtask = (Task) e.nextElement();	    

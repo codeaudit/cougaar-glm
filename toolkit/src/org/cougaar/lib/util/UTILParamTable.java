@@ -85,7 +85,7 @@ public class UTILParamTable extends ParamTable {
    */
   private Vector addEnvFileParam(final Vector envParams, MessageAddress cluster){
     boolean hasfile = false;
-    boolean hasdir = false;
+//    boolean hasdir = false;
 
     Vector paramCopy = new Vector (envParams);
 
@@ -100,12 +100,12 @@ public class UTILParamTable extends ParamTable {
 	  hasfile = true;
 	}
 	else if(name.equals("envDir")){
-	  hasdir = true;
+//	  hasdir = true;
 	}
       }
     }
 
-    if(!hasfile){
+    if (!hasfile) {
       String newParam = "envFile={String}" + cluster.getAddress() + ".env.xml";
       paramCopy.add(newParam);
     }

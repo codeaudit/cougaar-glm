@@ -21,8 +21,6 @@
 
 package org.cougaar.lib.xml.parser;
 
-import java.util.Date;
-
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -138,7 +136,6 @@ public class AggregateAssetParser{
     // Only expect one schedule per instance
     for(int i = 0; i < nlist.getLength(); i++) {
       Node    child       = nlist.item(i);
-      String  childname   = child.getNodeName();
       if(child.getNodeType() == Node.ELEMENT_NODE) {
 	if(child.getNodeName().equals("schedule")){
 	  return scheduleParser.getSchedule(ldm, child);
@@ -160,8 +157,8 @@ public class AggregateAssetParser{
 			      Schedule newSchedule) {
     if (logger.isDebugEnabled())
       logger.debug ("setSchedule");
-    Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
-							       new Date(newSchedule.getEndTime()));
+//    Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
+//							       new Date(newSchedule.getEndTime()));
     // Set the Schedule
     ((NewRoleSchedule)asset.getRoleSchedule()).setAvailableSchedule(newSchedule);
   }

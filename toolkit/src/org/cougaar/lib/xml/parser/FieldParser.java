@@ -360,7 +360,6 @@ public class FieldParser{
         if(childname.equals("value")){
           
           NodeList nnlist   = child.getChildNodes();
-          int      nnlength = nnlist.getLength();
           
           for(int ii = 0; ii < nlength; ii++){
             Node    cchild       = nnlist.item(ii);

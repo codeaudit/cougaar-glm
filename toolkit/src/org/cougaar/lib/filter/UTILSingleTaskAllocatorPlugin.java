@@ -68,7 +68,6 @@ public abstract class UTILSingleTaskAllocatorPlugin
    */
   public void processTasks (List tasks) {
     // Should only ever have one task in here
-    boolean toldMessage = false;
     while (!tasks.isEmpty()) {
       Task t = (Task)tasks.remove(0);
       

@@ -303,9 +303,9 @@ public class UTILExpand {
 
   protected void showPlanElement (Task subTask, int taskNum) {
     PlanElement pe = subTask.getPlanElement ();
-    String extra = "";
+//    String extra = "";
     if (prepHelper.hasPrepNamed (subTask, "TASKEDTO")) 
-      extra = " TASKEDTO " + prepHelper.getIndirectObject (subTask, "TASKEDTO"); 
+//      extra = " TASKEDTO " + prepHelper.getIndirectObject (subTask, "TASKEDTO"); 
 
     // 	logger.debug ("\t" + ((taskNum != -1) ? "#" + taskNum : "") + 
     // 			    " FROM " + prepHelper.getFromLocation (subTask) + 
@@ -351,7 +351,6 @@ public class UTILExpand {
   public void showPreferences (Task t) {
     Enumeration prefs;
     synchronized (t) { prefs = t.getPreferences ();} // bug #2125
-    Map map = new HashMap ();
 
     for (; prefs.hasMoreElements (); ) {
       Preference pref = (Preference) prefs.nextElement ();
@@ -400,7 +399,6 @@ public class UTILExpand {
 
   protected String print (Preference pref) {
     String type = null;
-    String value = null;
     String prefstr = null;
     try {
       AspectValue prefav = 
@@ -448,7 +446,6 @@ public class UTILExpand {
 
   protected String printEndTime (Task t) {
     String type = null;
-    String value = null;
 
     type = "END  ";
 

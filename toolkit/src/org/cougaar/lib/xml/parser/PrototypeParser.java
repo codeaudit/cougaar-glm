@@ -74,7 +74,6 @@ public class PrototypeParser {
   public Asset cachePrototype(LDMServesPlugin ldm, Node node,
 			      boolean return_first) {
    
-    LDMServesPlugin myLDMServesPlugin = ldm;
     Asset prototype = null;
 
     if(node.getNodeName().equals("prototype")){

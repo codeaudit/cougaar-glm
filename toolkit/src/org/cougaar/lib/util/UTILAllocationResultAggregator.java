@@ -30,7 +30,6 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
 import org.cougaar.planning.ldm.plan.Location;
-import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TaskScoreTable;
 import org.cougaar.planning.ldm.plan.Workflow;
 
@@ -111,7 +110,6 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
 
     int tstSize = tst.size ();
     for (int i = 0; i < tstSize; i++) {
-      Task t = tst.getTask (i);
       count++;
       AllocationResult ar = tst.getAllocationResult(i);
 

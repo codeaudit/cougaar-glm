@@ -37,7 +37,6 @@ public class VerbParser{
 
     for(int i = 0; i < nlength; i++){
       Node    child       = nlist.item(i);
-      String  childname   = child.getNodeName();
       /* is this a correct assumption ? */
       verb = new Verb(child.getNodeValue());
     }

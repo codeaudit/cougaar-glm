@@ -56,7 +56,6 @@ public class PreferencesParser{
 
     for(int i = 0; i < nlength; i++){
       Node    child       = nlist.item(i);
-      String  childname   = child.getNodeName();
       Double  d = new Double(child.getNodeValue());
       cost = d.doubleValue();
     }
@@ -73,7 +72,6 @@ public class PreferencesParser{
 
     for(int i = 0; i < nlength; i++){
       Node    child       = nlist.item(i);
-      String  childname   = child.getNodeName();
       Long l = new Long(child.getNodeValue());
       quantity = l.longValue();
     }

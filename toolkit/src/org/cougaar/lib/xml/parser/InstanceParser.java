@@ -22,7 +22,6 @@
 package org.cougaar.lib.xml.parser;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.cougaar.lib.util.UTILAsset;
@@ -62,7 +61,6 @@ public class InstanceParser{
       // Only expect one schedule per instance but what the heck.
       for(int i = 0; i < nlength; i++) {
 	Node    child       = nlist.item(i);
-	String  childname   = child.getNodeName();
 	if(child.getNodeType() == Node.ELEMENT_NODE) {
 	  if(child.getNodeName().equals("schedule")){
 	    newSchedule = scheduleParser.getSchedule(ldm, child);
@@ -108,8 +106,8 @@ public class InstanceParser{
     Asset newAsset = assetHelper.createInstance(ldm,
 						prototype, id );
 
-    Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
-							       new Date(newSchedule.getEndTime()));
+//    Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
+//							       new Date(newSchedule.getEndTime()));
     // Set the Schedule
     ((NewRoleSchedule)newAsset.getRoleSchedule()).setAvailableSchedule(newSchedule);
 
