@@ -51,7 +51,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
         public GregorianCalendar reportBase;
         public int reportStepKind;
 
-        InventoryItemInfo(double[] levels, GregorianCalendar reportBase, int reportStepKind) {
+        public InventoryItemInfo(double[] levels, GregorianCalendar reportBase, int reportStepKind) {
             this.levels = levels;
             this.reportBase = reportBase;
             this.reportStepKind = reportStepKind;
