@@ -64,7 +64,7 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
   private static final int MINUTE_HAND_RADIUS = CLOCK_WIDTH * 11 / 32;
   private static final int SECOND_HAND_RADIUS = CLOCK_WIDTH * 14 / 32;
   private static final int TICK_LENGTH = 3;
-
+  private static final TimeZone timeZone = TimeZone.getTimeZone("GMT");
   private static double[] sinTable = new double[60];
   private static double[] cosTable = new double[60];
   static {
@@ -75,7 +75,7 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
       cosTable[i] = Math.cos(Math.PI * i / 30.0);
     }
   }
-  private GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+  private GregorianCalendar calendar = new GregorianCalendar(timeZone);
   private double theRate;             // The current rate
   private long lastNow;               // The start of this timing segment
   private long theOffset;             // The offset
@@ -122,6 +122,10 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
             add(b);
             bx += sz.width + BUTTON_GAP;
         }
+        clockFormat.setTimeZone(timeZone);
+        noSecondsClockFormat.setTimeZone(timeZone);
+        noMinutesClockFormat.setTimeZone(timeZone);
+        noHoursClockFormat.setTimeZone(timeZone);
     }
 
     public void disableControls() {
@@ -271,7 +275,7 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
   private DateFormat noSecondsClockFormat = new SimpleDateFormat("HH:mm:00");
   private DateFormat noMinutesClockFormat = new SimpleDateFormat("HH:00:00");
   private DateFormat noHoursClockFormat = new SimpleDateFormat("00:00:00");
-  private GregorianCalendar tempCalendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+  private GregorianCalendar tempCalendar = new GregorianCalendar(timeZone);
 
   private Font font = null;
   private FontMetrics fm;
