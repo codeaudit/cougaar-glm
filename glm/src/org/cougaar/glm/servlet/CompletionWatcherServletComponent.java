@@ -26,7 +26,6 @@ import javax.servlet.Servlet;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.BlackboardQueryService;
-import org.cougaar.core.service.NamingService;
 import org.cougaar.planning.service.LDMService;
 import org.cougaar.util.ConfigFinder;
 import org.cougaar.core.service.AlarmService;
@@ -59,7 +58,6 @@ public class CompletionWatcherServletComponent extends BlackboardServletComponen
         path,
         agentId,
         blackboardQuery,
-        ns,
 	log,
         getBlackboardService(),
 	getConfigFinder(),

@@ -27,7 +27,6 @@ import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.service.NamingService;
 import org.cougaar.core.service.SchedulerService;
 import org.cougaar.core.servlet.SimpleServletSupportImpl;
 import org.cougaar.util.ConfigFinder;
@@ -45,7 +44,6 @@ public class CompletionWatcherSupport extends BlackboardServletSupport {
       String path,
       MessageAddress agentId,
       BlackboardQueryService blackboardQuery,
-      NamingService ns,
       LoggingService logger,
       BlackboardService blackboard,
       ConfigFinder configFinder,
@@ -53,7 +51,7 @@ public class CompletionWatcherSupport extends BlackboardServletSupport {
       LDMServesPlugin ldm,
       SchedulerService scheduler,
       AlarmService alarm) {
-    super (path, agentId, blackboardQuery, ns, logger, blackboard, configFinder, ldmf, ldm, scheduler);
+    super (path, agentId, blackboardQuery, logger, blackboard, configFinder, ldmf, ldm, scheduler);
     this.alarm = alarm;
   }
 
