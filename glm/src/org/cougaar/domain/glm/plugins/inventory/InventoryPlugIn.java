@@ -64,6 +64,9 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     /** Subscription for the aggregated support request **/
     private CollectionSubscription aggMILSubscription_;
 
+    /** Subscription for the MIL tasks **/
+    private IncrementalSubscription milSubscription_;
+
     /** The aggMIL task found/created during the current transaction **/
     private Task aggMILTask_ = null;
 
@@ -89,6 +92,10 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
             aggregateDetermineRequirementsTasks((NewMPTask) getDetermineRequirementsTask(),
                                                detReqSubscription_.getAddedList());
         }
+        if (milSubscription_.hasChanged()) {
+            //Added tasks are handled at the time of creation
+            removeMILTasks(milSubscription_.getRemovedList());
+        }
 	super.execute();
     }
 
@@ -98,8 +105,9 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
         aggMILSubscription_ = (CollectionSubscription) subscribe(new AggMILPredicate(), false);
 	// Determine requirements task subscription 
 	detReqSubscription_ = (IncrementalSubscription) subscribe(new DetInvReqPredicate());
+        milSubscription_ = (IncrementalSubscription) subscribe(new MILPredicate());
 	addInventories(query(new InventoryPredicate()));
-	addMILTasks(query(new MILPredicate()));
+	addMILTasks(milSubscription_.elements());
     }
 
     // Predicates
@@ -186,11 +194,19 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	}
     }
 
-    private void addMILTasks(Collection milTasks) {
-        for (Iterator i = milTasks.iterator(); i.hasNext(); ) {
-	    Task task = (Task) i.next();
+    private void addMILTasks(Enumeration milTasks) {
+        while (milTasks.hasMoreElements()) {
+	    Task task = (Task) milTasks.nextElement();
 	    Inventory inventory = (Inventory) task.getDirectObject();
 	    MILTaskHash_.put(inventory, task);
+	}
+    }
+
+    private void removeMILTasks(Enumeration milTasks) {
+        while (milTasks.hasMoreElements()) {
+	    Task task = (Task) milTasks.nextElement();
+	    Inventory inventory = (Inventory) task.getDirectObject();
+	    MILTaskHash_.remove(inventory);
 	}
     }
 
@@ -293,7 +309,16 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	if (milTask == null) {
             Task parent = getDetermineRequirementsTask();
             if (parent == null) {
-                GLMDebug.ERROR("InventoryPlugIn",
+                /**
+                  This might happen just after the last determine
+                  requirements task is removed. Because of inertia,
+                  the inventory manager might still be trying to
+                  refill the inventory although, in fact the demand
+                  for that inventory is in the process of
+                  disappearing. The caller, getting a null return will
+                  simply abandon the attempt to do the refill.
+                 **/
+                GLMDebug.DEBUG("InventoryPlugIn",
                                "findOrMakeMILTask(), CANNOT CREATE MILTASK, no parent, inventory: "
                                + AssetUtils.assetDesc(inventory
                                                       .getScheduledContentPG()
