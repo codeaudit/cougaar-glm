@@ -300,6 +300,7 @@ public class DetailRequestLP
    * and sent back to  cluster where the request originated.
    */
   private void processQueryRequestAssignment(QueryRequestAssignment ta, Collection changes) {
+    System.out.println(99);
     QueryRequest request = (QueryRequest) ta.getQueryRequest();
     UnaryPredicate pred = request.getQueryPredicate();
     ArrayList collection;
@@ -312,9 +313,10 @@ public class DetailRequestLP
       }
       
       QueryReplyAssignment dra = getALPFactory().newQueryReplyAssignment(collection,
-								    pred,
-						   cluster.getClusterIdentifier(),
-						   request.getRequestingCluster());
+                                                                         pred,
+                                                                         request.getLocalQueryPredicate(),
+                                                                         cluster.getClusterIdentifier(),
+                                                                         request.getRequestingCluster());
 
       //System.out.println("DetailRequestLP:  QueryReplyAssignment " + dra);
       //System.out.println("QueryReplyAssignment Pred: " + dra.getRequestPredicate());
@@ -330,37 +332,62 @@ public class DetailRequestLP
    * originating cluster, and is published here.
    */
   private void processQueryReplyAssignment(QueryReplyAssignment reply, Collection changes) {
-    Collection objs = reply.getQueryResponse();
+    Collection replyCollection = reply.getQueryResponse();
     final UnaryPredicate replyPredicate = reply.getRequestPredicate();
-    if ((objs == null) || objs.isEmpty()) {
+    if ((replyCollection == null) || replyCollection.isEmpty()) {
       //System.out.println("DetailRequestLP: query on remote cluster returned no values " +
       //			 replyPredicate);
       cleanup(replyPredicate);
       return;
     }
-
-    for (Iterator it=objs.iterator(); it.hasNext();) {
-      Object obj = it.next();
-      try {
-	if (obj instanceof UniqueObject) {
-	  UniqueObject existingObj = logplan.findUniqueObject(((UniqueObject) obj).getUID());
-	  if (existingObj != null) {
-	    existingObj = (UniqueObject) obj;
-	    //System.out.println("DetailRequestLP: publish changing existing obj " + obj);
-	    // changes probably not filled in
-	    logplan.change(existingObj, changes);
-	  } else {
-	    //System.out.println("DetailRequestLP: publishing QueryReply " + reply + obj);
-	    logplan.add(obj);
-	  }
-	} else {
-	  //System.out.println("DetailRequestLP: publishing QueryReply " + reply + obj);
-	  logplan.add(obj);
-	}
-      } catch (RuntimeException excep) {
-	excep.printStackTrace();
+    
+    //Compare reply collection with local collection.
+    ArrayList localCollection = new ArrayList();
+    if (reply.getLocalPredicate() != null) {
+      Enumeration localEnum = 
+        logplan.searchLogPlan(reply.getLocalPredicate());
+      while (localEnum.hasMoreElements()) {
+        localCollection.add(localEnum.nextElement());
       }
     }
+
+    for (Iterator it = replyCollection.iterator(); it.hasNext();) {
+      Object obj = it.next();
+      if (obj instanceof UniqueObject) {
+        Object localObj = 
+          logplan.findUniqueObject(((UniqueObject) obj).getUID());
+        
+        if (localObj != null) {
+          // Only publish change if object is really different
+          if (!localObj.equals(obj)) {
+            //System.out.println("DetailRequestLP: publish changing existing obj " + obj);
+            // changes probably not filled in
+            System.out.println("Publishing a change to " + localObj);
+            logplan.change(localObj, changes);
+          }
+        } else {
+          //System.out.println("DetailRequestLP: publishing QueryReply " + reply + obj);
+          logplan.add(obj);
+        }
+      } else {
+        // Not unique
+        // Look for object match in local collection
+        if (findMatch(obj, localCollection) == null) {        
+          logplan.add(obj);
+        }
+      }
+    }
+
+    //Remove local objects which are not in the reply collection
+    for (Iterator iterator = localCollection.iterator();
+         iterator.hasNext();) {
+      Object localObj = iterator.next();
+      if (findMatch(localObj, replyCollection) == null) {
+        logplan.remove(localObj);
+      }
+    }
+        
+
     cleanup(replyPredicate);
   }
 
@@ -397,5 +424,32 @@ public class DetailRequestLP
       //System.out.println("Removing QueryRequest from logplan: " + qr);
       logplan.remove(qr);
     }
+  }
+
+  private Object findMatch(Object object, Collection collection) {
+
+    if (object instanceof UniqueObject) {
+      UID uid = ((UniqueObject) object).getUID();
+      
+      for (Iterator iterator = collection.iterator();
+           iterator.hasNext();) {
+        Object match = iterator.next();
+        if (match instanceof UniqueObject) {
+          if (((UniqueObject) match).getUID().equals(uid)) {
+            return match;
+          }
+        }
+      }
+    } else {
+      for (Iterator iterator = collection.iterator();
+           iterator.hasNext();) {
+        Object match = iterator.next();
+        if (match.equals(object)) {
+          return match;
+        }
+      }
+    }
+
+    return null;
   }
 }

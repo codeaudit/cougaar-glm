@@ -18,7 +18,7 @@ import org.cougaar.util.UnaryPredicate;
   * 
   *
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: QueryRequest.java,v 1.1 2000-12-20 18:18:20 mthome Exp $
+  * @version $Id: QueryRequest.java,v 1.2 2001-03-22 14:13:48 ngivler Exp $
   */
 public interface QueryRequest {
   
@@ -26,6 +26,11 @@ public interface QueryRequest {
    * @return Predicate containing the query
    */
   UnaryPredicate getQueryPredicate();
+
+  /**
+   * @return Predicate containing the query
+   */
+  UnaryPredicate getLocalQueryPredicate();
   
   /** Gets the Cluster where the object resides
     * @return The Cluster the request is being sent to.  

@@ -238,20 +238,36 @@ public class ALPFactory implements org.cougaar.domain.planning.ldm.Factory {
   }
 
   public static QueryReplyAssignment newQueryReplyAssignment(Collection reply,
-							       UnaryPredicate requestQuery,
-							       ClusterIdentifier replyFrom,
-							       ClusterIdentifier replyTo) {
+                                                             UnaryPredicate requestQuery,
+                                                             ClusterIdentifier replyFrom,
+                                                             ClusterIdentifier replyTo) {
     return new QueryReplyAssignment(reply, requestQuery, replyFrom, replyTo);
   }
 
-  public static QueryRequest newQueryRequest(UnaryPredicate queryPredicate,
-					       ClusterIdentifier sourceCluster,
-					       ClusterIdentifier requestingCluster) {
-    return new QueryRequestImpl(queryPredicate,
-				 sourceCluster,
-				 requestingCluster);
+  public static QueryReplyAssignment newQueryReplyAssignment(Collection reply,
+                                                             UnaryPredicate requestQuery,
+                                                             UnaryPredicate localQuery,
+                                                             ClusterIdentifier replyFrom,
+                                                             ClusterIdentifier replyTo) {
+    return new QueryReplyAssignment(reply, requestQuery, localQuery, replyFrom, replyTo);
   }
 
+  public static QueryRequest newQueryRequest(UnaryPredicate queryPredicate,
+                                             ClusterIdentifier sourceCluster,
+                                             ClusterIdentifier requestingCluster) {
+    return new QueryRequestImpl(queryPredicate,
+                                sourceCluster,
+                                requestingCluster);
+  }
 
+  public static QueryRequest newQueryRequest(UnaryPredicate queryPredicate,
+                                             UnaryPredicate localPredicate,
+                                             ClusterIdentifier sourceCluster,
+                                             ClusterIdentifier requestingCluster) {
+    return new QueryRequestImpl(queryPredicate,
+                                localPredicate,
+                                sourceCluster,
+                                requestingCluster);
+  }
 }
   

@@ -18,19 +18,36 @@ public class QueryRequestImpl
 {
 
   UnaryPredicate _requestPredicate;
+  UnaryPredicate _localPredicate;
   ClusterIdentifier _sourceCid;
   ClusterIdentifier _requestingCid;
 
   public QueryRequestImpl(UnaryPredicate requestPredicate,
-			   ClusterIdentifier sourceCid,
-			   ClusterIdentifier requestingCid) {
+                          ClusterIdentifier sourceCid,
+                          ClusterIdentifier requestingCid) {
     _requestPredicate = requestPredicate;
+    _sourceCid = sourceCid;
+    _requestingCid = requestingCid;
+    _localPredicate = null;
+  }
+
+  public QueryRequestImpl(UnaryPredicate requestPredicate,
+                          UnaryPredicate localPredicate,
+                          ClusterIdentifier sourceCid,
+                          ClusterIdentifier requestingCid) {
+    System.out.println(99);
+    _requestPredicate = requestPredicate;
+    _localPredicate = localPredicate;
     _sourceCid = sourceCid;
     _requestingCid = requestingCid;
   }
 
   public UnaryPredicate getQueryPredicate() {
     return _requestPredicate;
+  }
+
+  public UnaryPredicate getLocalQueryPredicate() {
+    return _localPredicate;
   }
 
   /**
@@ -48,4 +65,7 @@ public class QueryRequestImpl
     return  _requestingCid;
   }
 }
+
+
+
 

@@ -31,6 +31,8 @@ public class QueryReplyAssignment extends DirectiveImpl
 
   /** predicate from request. Used in for reporting in case the object is missing */
   private UnaryPredicate _predicate;
+  
+  private UnaryPredicate _localPredicate;
 
   public QueryReplyAssignment(Collection reply, 
 			      UnaryPredicate queryPredicate,
@@ -39,6 +41,20 @@ public class QueryReplyAssignment extends DirectiveImpl
 
     _queryReply = reply;
     _predicate = queryPredicate;
+    super.setSource(source);
+    super.setDestination(dest);
+    _localPredicate = null;
+  }
+
+  public QueryReplyAssignment(Collection reply, 
+			      UnaryPredicate queryPredicate,
+			      UnaryPredicate localPredicate,
+			      ClusterIdentifier source,
+			      ClusterIdentifier dest) {
+
+    _queryReply = reply;
+    _predicate = queryPredicate;
+    _localPredicate = localPredicate;
     super.setSource(source);
     super.setDestination(dest);
   }
@@ -55,6 +71,13 @@ public class QueryReplyAssignment extends DirectiveImpl
    */
   public UnaryPredicate getRequestPredicate() {
     return _predicate;
+  }
+
+  /**
+   * @return the UnaryPredicate from the request. Used when queryResponse is null
+   */
+  public UnaryPredicate getLocalPredicate() {
+    return _localPredicate;
   }
 
   // Shouldn't really be used, but here for completeness.

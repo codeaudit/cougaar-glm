@@ -629,6 +629,43 @@ public class Oplan extends OwnedUniqueObject
     Oplan otherOplan = (Oplan)other;
     return getUID().equals(otherOplan.getUID());
   }//same
+
+
+  /**     
+   * Determines if the given oplan is the same as
+   * the current oplan.
+   * @param other Oplan to compare it to.
+   * @return boolean true - same
+   *				   false - not same
+   */    
+  public boolean equals(Object o) {
+    if (o instanceof Oplan) {
+      Oplan oplan = (Oplan) o;
+
+      return
+        matches(getOplanId(), oplan.getOplanId()) &&
+        matches(getOperationName(), oplan.getOperationName()) &&
+        matches(getPriority(), oplan.getPriority()) &&
+        matches(getCday(), oplan.getCday()) &&
+        matches(getEndDay(), oplan.getEndDay()) &&
+        matches(getXMLFileName(), oplan.getXMLFileName()) &&
+        matches(getTheaterID(), oplan.getTheaterID()) &&
+        matches(getTerrainType(), oplan.getTerrainType()) &&
+        matches(getSeason(), oplan.getSeason()) &&
+        matches(getEnemyForceType(), oplan.getEnemyForceType()) &&
+        (getHNSPOL() == oplan.getHNSPOL()) &&
+        matches(getHNSPOLCapacity(), oplan.getHNSPOLCapacity()) &&
+        (getHNSForWater() == oplan.getHNSForWater()) &&
+        matches(getHNSWaterCapability(), oplan.getHNSWaterCapability()) &&
+        matches(getPODsV(), oplan.getPODsV()) &&
+        matches(getDFSPsV(), oplan.getDFSPsV()) &&
+        matches(getOrgRelationsV(), oplan.getOrgRelationsV()) &&
+        matches(getOrgActivitiesV(), oplan.getOrgActivitiesV()) &&
+        matches(getForcePackagesV(), oplan.getForcePackagesV()) &&
+        matches(getPoliciesV(), oplan.getPoliciesV());
+    } else
+      return false;
+  }
   
   /**     
    * This methods sets the Oplan contents to all
@@ -695,5 +732,32 @@ public class Oplan extends OwnedUniqueObject
     return (s==null)?null:(s.intern());
   }
 
+  private static boolean matches(Object a, Object b) {
+    if (!(a instanceof Enumeration) ||
+        !(b instanceof Enumeration)) {
+      return (a==null)?(b==null):(a.equals(b));
+    } else {
+      Enumeration aEnum = (Enumeration) a;
+      Enumeration bEnum = (Enumeration) b;
 
+      while (aEnum.hasMoreElements() && bEnum.hasMoreElements()) {
+        if (!matches(aEnum.nextElement(), bEnum.nextElement())) {
+          return false;
+        }
+      }
+
+      return  (!aEnum.hasMoreElements()) && (!bEnum.hasMoreElements());
+    }
+  }
 }// OPlan
+
+
+
+
+
+
+
+
+
+
+
