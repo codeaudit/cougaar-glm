@@ -38,6 +38,14 @@ import java.io.InputStreamReader;
 
 import org.cougaar.mlm.ui.SwingWorker;
 
+/**
+ * UI for invoking the GLSInitServlet to publish the OPLAN and send GLS Root.
+ * This may be run stand-alone, or from the CSMART console.
+ * @property org.cougaar.ui.userAuthClass used to specify the class to provide 
+ *             User Authentication support. Defaults to 
+ *             <code>org.cougaar.core.security.userauth.UserAuthenticatorImpl</code>, 
+ *             not delivered with Cougaar.
+ **/
 public class GLSClient extends JPanel {
   String agentURL = null; // of the form http://host:port/$agent
   GLSClient glsClient; // for reference by inner classes
@@ -127,9 +135,8 @@ public class GLSClient extends JPanel {
    * GUI that contacts servlets in society to publish oplan
    * and send and rescind GLS tasks.
    * Specify an agentURL, which is not displayed, and is not editable.
-   * @param agentURL agent url of the form http://host:port/$agent
+   * @param agentURL agent url of the form protocol://host:port/$agent
    */
-
   public GLSClient(String agentURL) {
     super(null);
     this.agentURL = agentURL;
@@ -138,6 +145,11 @@ public class GLSClient extends JPanel {
 
   private void init(boolean displayConnectFields) {
     glsClient = this;
+
+    // Could only do this secure init in certain circumstances?
+    // move to getURLString()?
+    doSecureUserAuthInit();
+
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     if (displayConnectFields) 
       createConnectionPanel();
@@ -147,13 +159,39 @@ public class GLSClient extends JPanel {
     createInitPanel();
   }
 
+  // Invoke the NAI security code, if available
+  private void doSecureUserAuthInit() {
+    String securityUIClass = System.getProperty("org.cougaar.ui.userAuthClass");
+    
+    if (securityUIClass == null) {
+      securityUIClass = "org.cougaar.core.security.userauth.UserAuthenticatorImpl";
+    }
+    
+    Class cls = null;
+    try {
+      cls = Class.forName(securityUIClass);
+    } catch (ClassNotFoundException e) {
+      System.err.println("Not using secure User Authentication: " + securityUIClass);
+    } catch (ExceptionInInitializerError e) {
+      System.err.println("Unable to use secure User Authentication: " + securityUIClass + ". " + e);
+    } catch (LinkageError e) {
+      System.err.println("Not using secure User Authentication: " + securityUIClass);
+    }
+    
+    if (cls != null) {
+      try {
+	cls.newInstance();
+      } catch (Exception e) {
+	System.err.println("Error using secure User Authentication (" + securityUIClass + "): " + e);
+      }
+    }
+  }
 
   /**
    * Set the initial default button to be the connect button.
    * Must be done after placing the GUI in a frame or internal frame.
    * Also enables the connect button.
    */
-
   public void setDefaultButton() {
     JRootPane rootPane = getRootPane();
     if (rootPane != null) {
@@ -377,9 +415,8 @@ public class GLSClient extends JPanel {
 
   /**
    * Creates url of the form:
-   * http://hostname:port/$agentname/servlet/?command=commandname&oplanID=oplanid
+   * protocol://hostname:port/$agentname/servlet/?command=commandname&oplanID=oplanid
    */
-
   private String getURLString(String servlet, String command, String oplanId) {
     StringBuffer urlString = new StringBuffer();
     if (agentURL != null)
@@ -409,7 +446,6 @@ public class GLSClient extends JPanel {
    * Publish Oplan, Update Oplan, Send GLS Root, Rescind GLS Root
    * Sends appropriate command to agent.
    */
-
   private class ButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
       String command = ae.getActionCommand();
@@ -458,7 +494,6 @@ public class GLSClient extends JPanel {
    * Attempts to connect to the NCA agent in the society running
    * in the current experiment.
    */
-
   private class ConnectionButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
       String urlString = getURLString(GLS_REPLY_SERVLET, 
@@ -493,7 +528,6 @@ public class GLSClient extends JPanel {
    * Note that this keeps the URL connection open and
    * reads whenever new information is available.
    */
-
   private class LineReader extends SwingWorker {
     private URLConnection urlConnection;
     public LineReader(URLConnection urlConnection) {
@@ -520,7 +554,8 @@ public class GLSClient extends JPanel {
           if (stopping)
             return null;
           throw new RuntimeException("Unable to contact: " +
-                                     urlConnection.getURL().getHost() + " " +
+				     urlConnection.getURL().getProtocol() + "://" +
+                                     urlConnection.getURL().getHost() + ":" +
                                      urlConnection.getURL().getPort());
         }
 
@@ -540,7 +575,8 @@ public class GLSClient extends JPanel {
 	connectButton.setEnabled(true);
 	JOptionPane.showMessageDialog(glsClient,
                                       "Could not read from servlet at: " +
-                                      urlConnection.getURL().getHost() + " " +
+				      urlConnection.getURL().getProtocol() + "://" +
+                                      urlConnection.getURL().getHost() + ":" +
                                       urlConnection.getURL().getPort(),
                                       "Bad Connection",
                                       JOptionPane.ERROR_MESSAGE);
@@ -553,7 +589,8 @@ public class GLSClient extends JPanel {
         connectButton.setEnabled(true);
         JOptionPane.showMessageDialog(glsClient,
                                      "Could not contact servlet at: " +
-                                      urlConnection.getURL().getHost() + " " +
+				      urlConnection.getURL().getProtocol() + "://" +
+                                      urlConnection.getURL().getHost() + ":" +
                                       urlConnection.getURL().getPort() +
                         " ; servlet may not be initialized; retry later.",
                                      "Initialization Not Complete",
@@ -575,7 +612,6 @@ public class GLSClient extends JPanel {
      * Add OPlan read from the agent to the list of available oplans,
      * and update the GUI.
      */
-
     private void addOplan(String s) {
       int nameIndex = s.indexOf("name=") + 5;
       int idIndex = s.indexOf("id=");
@@ -595,7 +631,6 @@ public class GLSClient extends JPanel {
      * Update information about GLS tasks from information
      * read from the agent and update the GUI.
      */
-
     private void updateGLSTasks(String s) {
       int numGLS = Integer.parseInt(s.substring(s.indexOf("GLS")+4, 
                                                 s.length()-1));
@@ -629,7 +664,6 @@ public class GLSClient extends JPanel {
    * Creates the GUI with a default host, port, and agent
    * which the user can edit.
    */
-
   public static void main(String args[]) {
     GLSClient gui = new GLSClient("localhost", "8800", "NCA");
     JFrame frame = new JFrame("GLS");
