@@ -109,8 +109,8 @@ public class SQLFDMAggregateAssetCreator extends PeriodicQuery
 	NewPhysicalPG pp = (NewPhysicalPG)ldmf.createPropertyGroup("PhysicalPG");
 	proto.setPhysicalPG(pp);
 	pp.setLength(Distance.newInches(((Number)data[LENGTH]).doubleValue()));
-	pp.setWidth(Distance.newFeet(((Number)data[WIDTH]).doubleValue()));
-	pp.setHeight(Distance.newFeet(((Number)data[HEIGHT]).doubleValue()));
+	pp.setWidth(Distance.newInches(((Number)data[WIDTH]).doubleValue()));
+	pp.setHeight(Distance.newInches(((Number)data[HEIGHT]).doubleValue()));
 	pp.setFootprintArea(Area.newSquareFeet(((Number)data[FOOTPRINT]).doubleValue()));
 	pp.setVolume(Volume.newCubicFeet(((Number)data[VOLUME]).doubleValue()));
 	pp.setMass(Mass.newPounds(((Number)data[WEIGHT]).doubleValue()));
