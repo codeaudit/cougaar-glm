@@ -21,6 +21,10 @@
 
 package org.cougaar.lib.filter;
 
+import org.cougaar.core.service.ThreadService;
+
+import org.cougaar.core.thread.Schedulable;
+
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 
@@ -68,8 +72,9 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   public void localSetup() {
     super.localSetup ();
 
-    myThread = new Thread(getBufferingThread(), getName ());
-    myThread.start ();
+    schedulable = 
+      threadService.getThread (this, getBufferingThread(), getName()+"_bufferingThread");
+    schedulable.start();
 
     verify = new UTILVerify (logger);
     prefHelper = new UTILPreference (logger);
@@ -210,11 +215,32 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    */
   public abstract void processTasks (List tasks);
 
+  /** maybe a good idea for later... */
+  public void setThreadService (ThreadService ts) {
+    threadService = ts;
+  }
+
+  public void suspend () {
+    super.suspend ();
+
+    getBufferingThread().pleaseStop(); // tell thread to stop
+
+    schedulable.cancel ();             // tell scheduler not to schedule this thread again
+  } 
+
+  public void resume  () {
+    super.resume ();
+
+    schedulable = 
+      threadService.getThread (this, getBufferingThread(), getName()+"_bufferingThread");
+    schedulable.start();
+  } 
+
   protected UTILBufferingThread  bufferingThread = null;
 
-  /** a reference to personal Thread to run the BufferingThread in **/
-  private Thread myThread = null;
+  protected Schedulable schedulable; 
 
   protected UTILVerify verify;
   protected UTILPreference prefHelper;
+  protected ThreadService threadService;
 }

@@ -113,6 +113,9 @@ public class UTILBufferingThread implements Runnable {
   public void run() {
     try {
       while (true) {
+	if (pleaseStopFlag) // the buffering plugin is about to be moved/suspended stop!
+	  break;
+
 	synchronized (this) {
 	  // grab all the tasks that have come in recently
 
@@ -312,6 +315,10 @@ public class UTILBufferingThread implements Runnable {
     }
   }
 
+  public void pleaseStop () {
+    pleaseStopFlag = true;
+  }
+
   /**
    * local helper function
    */
@@ -331,6 +338,7 @@ public class UTILBufferingThread implements Runnable {
   protected long MINSIZE;
   protected long MAXTIME; // milliseconds
   protected Date lastupdate = null;
+  protected boolean pleaseStopFlag = false;
 
   protected Logger logger;
 }
