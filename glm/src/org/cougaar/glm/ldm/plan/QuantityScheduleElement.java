@@ -42,7 +42,7 @@ public interface QuantityScheduleElement
   /** A Thunk which sums QuantityScheduleElements.  
    * The apply assumes that it will only be called on QuantityScheduleElements
    **/
-  public static class SumQuantities implements org.cougaar.util.Thunk {
+  class SumQuantities implements org.cougaar.util.Thunk {
     private double a = 0.0;
     public void apply(Object o) {
       a+=((QuantityScheduleElement)o).getQuantity();

@@ -27,13 +27,13 @@ import org.cougaar.planning.ldm.plan.ScheduleType;
  * Planning Schedule types
  */
 public interface PlanScheduleType extends ScheduleType {
-  static final String TOTAL_CAPACITY = "Total_Capacity";
-  static final String ALLOCATED_CAPACITY = "Allocated_Capacity";
-  static final String AVAILABLE_CAPACITY = "Available_Capacity";
+  String TOTAL_CAPACITY = "Total_Capacity";
+  String ALLOCATED_CAPACITY = "Allocated_Capacity";
+  String AVAILABLE_CAPACITY = "Available_Capacity";
 
-  static final String TOTAL_INVENTORY = "Total_Inventory";
-  static final String ACTUAL_CAPACITY = "Actual_Capacity";
+  String TOTAL_INVENTORY = "Total_Inventory";
+  String ACTUAL_CAPACITY = "Actual_Capacity";
 
-  static final String LABOR = "Labor";
+  String LABOR = "Labor";
 }
 
