@@ -47,6 +47,10 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
     theFailureConsumptionReportManager = aFailureConsumptionReportManager;
   }
 
+  protected String getLogFileName(String prefix) {
+    return prefix + "FCRates" + LOGFILE_SUFFIX;
+  }
+
   public String getGUITitle() {
     return "F/C Rates";
   }
@@ -62,9 +66,13 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
   }
 
   public void enqueueFailureConsumptionReport(String theSource,
-                                              FailureConsumptionReport aFailureConsumptionReport)
+                                              FailureConsumptionReport aFailureConsumptionReport,
+                                              Object annotation)
   {
-    theFailureConsumptionReportManager.enqueueFailureConsumptionReport(theSource, aFailureConsumptionReport);
+    theFailureConsumptionReportManager
+      .enqueueFailureConsumptionReport(theSource,
+                                       aFailureConsumptionReport,
+                                       annotation);
   }
 
   protected Class getPlugInInterface() {
@@ -122,7 +130,7 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
     finishScheduleUpdate();
   }
 
-  protected EGTableModel createTableModel() {
+  protected ManagerTableModel createTableModel() {
     return new FailureConsumptionRateTableModel();
   }
 
@@ -136,11 +144,27 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
   private static final int RATE_COLUMN          = 7;
   private static final int RATE_MULT_COLUMN     = 8;
   private static final int UNITS_COLUMN         = 9;
-  private static final int NCOLUMNS             = 10;
+  private static final int ANNOTATION_COLUMN    = 10;
+  private static final int NCOLUMNS             = 11;
   private static final int UNITS_WIDTH =
     EGTableModelBase.getCellWidth("gallons / minute");
 
   private class FailureConsumptionRateTableModel extends ManagerTableModel {
+
+    public FailureConsumptionRateTableModel() {
+      logColumns = new int[] {
+        CLUSTER_COLUMN,
+        START_TIME_COLUMN,
+        END_TIME_COLUMN,
+        ITEM_COLUMN,
+        CONSUMER_COLUMN,
+        CONSUMER_ID_COLUMN,
+        RATE_COLUMN,
+        RATE_MULT_COLUMN,
+        UNITS_COLUMN,
+        ANNOTATION_COLUMN
+      };
+    }
 
     public int getColumnCount() {
       return NCOLUMNS;
@@ -158,6 +182,7 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       case RATE_COLUMN:          return QUANTITY_WIDTH;
       case RATE_MULT_COLUMN:     return QUANTITY_WIDTH;
       case UNITS_COLUMN:         return UNITS_WIDTH;
+      case ANNOTATION_COLUMN:    return ANNOTATION_WIDTH;
       }
       return 75;
     }
@@ -174,6 +199,7 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       case RATE_COLUMN:          return QUANTITY_WIDTH / 2;
       case RATE_MULT_COLUMN:     return QUANTITY_WIDTH / 2;
       case UNITS_COLUMN:         return UNITS_WIDTH / 2;
+      case ANNOTATION_COLUMN:    return ANNOTATION_WIDTH / 2;
       }
       return 75;
     }
@@ -190,6 +216,7 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       case RATE_COLUMN:          return Integer.MAX_VALUE;
       case RATE_MULT_COLUMN:     return Integer.MAX_VALUE;
       case UNITS_COLUMN:         return Integer.MAX_VALUE;
+      case ANNOTATION_COLUMN:    return Integer.MAX_VALUE;
       }
       return 75;
     }
@@ -206,6 +233,7 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       case RATE_COLUMN:          return "Rate";
       case RATE_MULT_COLUMN:     return "Rate Multiplier";
       case UNITS_COLUMN:         return "Units";
+      case ANNOTATION_COLUMN:    return "Comment";
       }
       return null;
     }
@@ -222,6 +250,7 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       case RATE_COLUMN:          return Double.class;
       case RATE_MULT_COLUMN:     return Double.class;
       case UNITS_COLUMN:         return String.class;
+      case ANNOTATION_COLUMN:    return Object.class;
       }
       return null;
     }
@@ -238,6 +267,7 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       case RATE_COLUMN:          return true;
       case RATE_MULT_COLUMN:     return false; // Erika - should this be "true"?
       case UNITS_COLUMN:         return false;
+      case ANNOTATION_COLUMN:    return false;
       }
       return false;
     }
@@ -306,8 +336,8 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       }
     }
 
-    public Object getValueAt(int row, int col) {
-      FailureConsumptionSegment fcs = (FailureConsumptionSegment) getRowObject(row);
+    public Object getValue(int col, Object rowObject) {
+      FailureConsumptionSegment fcs = (FailureConsumptionSegment) rowObject;
       if (fcs == null) return null;
       switch (col) {
       case ENABLE_COLUMN:
@@ -334,6 +364,8 @@ public class FailureConsumptionRateManager extends ManagerBase implements Schedu
       }
       case UNITS_COLUMN:
         return fcs.theFailureConsumptionRate.theRateUnits;
+      case ANNOTATION_COLUMN:
+        return fcs.getAnnotation();
       }
       return null;
     }

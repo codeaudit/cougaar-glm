@@ -48,13 +48,13 @@ public class DODICSpecialPlugIn implements FailureConsumptionPlugIn, TimeConstan
       return result;
     }
 
-    public int getQuantity(long executionTime) {
+    public AnnotatedDouble getQuantity(long executionTime) {
       double qPerMilli = getQPerMilli();
       long elapsed = executionTime - previousTime;
       double dr = elapsed * qPerMilli;
-      int result = (int) Math.round(dr);
+      double result = Math.floor(dr);
       previousTime += (long) (result / qPerMilli);
-      return result;
+      return new AnnotatedDouble(result, "DODICSpecialPlugIn");
     }
 
     public long getTimeQuantum(long executionTime) {

@@ -13,6 +13,7 @@ public abstract class Timed implements Comparable {
   private static int nextTieBreaker = 0;
   private int tieBreaker = nextTieBreaker++;
   private boolean enabled = false;
+  private Object annotation = null; // Annotation supplied by plugin
 
   protected Timed() {
   }
@@ -35,6 +36,14 @@ public abstract class Timed implements Comparable {
   public abstract long getTime();
 
   public abstract String getCluster();
+
+  public void setAnnotation(Object o) {
+    annotation = o;
+  }
+
+  public Object getAnnotation() {
+    return annotation;
+  }
 
   public int compareTo(Object o) {
     Timed other = (Timed) o;

@@ -31,6 +31,10 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
     super(anEventGenerator);
   }
 
+  protected String getLogFileName(String prefix) {
+    return prefix + "InventoryReports" + LOGFILE_SUFFIX;
+  }
+
   public String getGUITitle() {
     return "Inventory Reports";
   }
@@ -62,7 +66,7 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
     }
   }
 
-  protected EGTableModel createTableModel() {
+  protected ManagerTableModel createTableModel() {
     return new InventoryReportTableModel();
   }
 
@@ -73,8 +77,20 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
     private static final int REPORT_TIME_COLUMN   = 3;
     private static final int ITEM_COLUMN          = 4;
     private static final int QUANTITY_COLUMN      = 5;
-    private static final int NCOLUMNS             = 6;
+    private static final int ANNOTATION_COLUMN    = 6;
+    private static final int NCOLUMNS             = 7;
     private final int ITEM_WIDTH = getCellWidth("Inventory: NSN/XXXXXXXXXXXXX");
+
+    public InventoryReportTableModel() {
+      logColumns = new int[] {
+        CLUSTER_COLUMN,
+        RECEIVE_TIME_COLUMN,
+        REPORT_TIME_COLUMN,
+        ITEM_COLUMN,
+        QUANTITY_COLUMN,
+        ANNOTATION_COLUMN,
+      };
+    }
 
     public int getColumnCount() {
       return NCOLUMNS;
@@ -88,6 +104,7 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
       case REPORT_TIME_COLUMN: return DATE_WIDTH;
       case ITEM_COLUMN: return ITEM_WIDTH;
       case QUANTITY_COLUMN: return QUANTITY_WIDTH;
+      case ANNOTATION_COLUMN:    return ANNOTATION_WIDTH;
       }
       return 75;
     }
@@ -100,6 +117,7 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
       case REPORT_TIME_COLUMN: return DATE_WIDTH;
       case ITEM_COLUMN: return ITEM_WIDTH / 2;
       case QUANTITY_COLUMN: return 50;
+      case ANNOTATION_COLUMN:    return ANNOTATION_WIDTH / 2;
       }
       return 75;
     }
@@ -112,6 +130,7 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
       case REPORT_TIME_COLUMN: return DATE_WIDTH;
       case ITEM_COLUMN: return Integer.MAX_VALUE;
       case QUANTITY_COLUMN: return Integer.MAX_VALUE;
+      case ANNOTATION_COLUMN:    return Integer.MAX_VALUE;
       }
       return 75;
     }
@@ -124,6 +143,7 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
       case REPORT_TIME_COLUMN: return "Report Time";
       case ITEM_COLUMN: return "Item";
       case QUANTITY_COLUMN: return "Quantity";
+      case ANNOTATION_COLUMN:    return "Comment";
       }
       return null;
     }
@@ -136,6 +156,7 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
       case REPORT_TIME_COLUMN: return EGDate.class;
       case ITEM_COLUMN: return String.class;
       case QUANTITY_COLUMN: return Double.class;
+      case ANNOTATION_COLUMN: return Object.class;
       }
       return null;
     }
@@ -148,6 +169,7 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
       case REPORT_TIME_COLUMN: return true;
       case ITEM_COLUMN: return false;
       case QUANTITY_COLUMN: return true;
+      case ANNOTATION_COLUMN: return false;
       }
       return false;
     }
@@ -226,8 +248,8 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
       tir.getModifiableInventoryReport();
     }
 
-    public Object getValueAt(int row, int col) {
-      TimedInventoryReport tir = (TimedInventoryReport) getRowObject(row);
+    public Object getValue(int col, Object rowObject) {
+      TimedInventoryReport tir = (TimedInventoryReport) rowObject;
       if (tir == null) return null;
       switch (col) {
       case ENABLE_COLUMN:
@@ -242,6 +264,8 @@ public class InventoryReportManager extends ManagerBase implements ScheduleManag
         return tir.theInventoryReport.theItemIdentification;
       case QUANTITY_COLUMN:
         return new Double(tir.theInventoryReport.theQuantity);
+      case ANNOTATION_COLUMN:
+        return tir.getAnnotation();
       }
       return null;
     }

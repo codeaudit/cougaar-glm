@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.Date;
 
 public class TimeGUI extends JPanel implements ActionListener, Runnable {
@@ -74,7 +75,7 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
       cosTable[i] = Math.cos(Math.PI * i / 30.0);
     }
   }
-  private GregorianCalendar calendar = new GregorianCalendar();
+  private GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
   private double theRate;             // The current rate
   private long lastNow;               // The start of this timing segment
   private long theOffset;             // The offset
@@ -270,7 +271,7 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
   private DateFormat noSecondsClockFormat = new SimpleDateFormat("HH:mm:00");
   private DateFormat noMinutesClockFormat = new SimpleDateFormat("HH:00:00");
   private DateFormat noHoursClockFormat = new SimpleDateFormat("00:00:00");
-  private GregorianCalendar tempCalendar = new GregorianCalendar();
+  private GregorianCalendar tempCalendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 
   private Font font = null;
   private FontMetrics fm;

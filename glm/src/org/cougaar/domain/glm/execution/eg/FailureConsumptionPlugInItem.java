@@ -26,7 +26,7 @@ public abstract class FailureConsumptionPlugInItem {
    * @param executionTime the time at which consumption might occur.
    * @return the failed or consumed quantity.
    **/
-  public abstract int getQuantity(long executionTime);
+  public abstract AnnotatedDouble getQuantity(long executionTime);
 
   /**
    * The interval that shoule elapse before invoking the plugin again

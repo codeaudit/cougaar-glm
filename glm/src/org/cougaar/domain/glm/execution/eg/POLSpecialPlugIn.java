@@ -156,9 +156,9 @@ public class POLSpecialPlugIn implements FailureConsumptionPlugIn, TimeConstants
     }
 
 
-    private double getQPerMilli(long executionTime) {
+    private AnnotatedDouble getQPerMilli(long executionTime) {
       if (executionTime - previousTime < MIN_INTERVAL) {
-        return 0.0;
+        return new AnnotatedDouble(0.0);
       }
       double multiplier = 1.0;
       TripletValue tv = (TripletValue)hash.get(tk);
@@ -173,23 +173,28 @@ public class POLSpecialPlugIn implements FailureConsumptionPlugIn, TimeConstants
 	   multiplier = tv.getMultiplier();
         }
       }
-      return ((theFailureConsumptionRate.theRateValue
-               * multiplier
-               / theFailureConsumptionRate.theRateMultiplier)
-              / ONE_DAY);
+      double result = ((theFailureConsumptionRate.theRateValue
+                        * multiplier
+                        / theFailureConsumptionRate.theRateMultiplier)
+                       / ONE_DAY);
+      return new AnnotatedDouble(result);
     }
 
-    public int getQuantity(long executionTime) {
-      double qPerMilli = getQPerMilli(executionTime);
-      if (qPerMilli <= 0.0) return 0;
+    public AnnotatedDouble getQuantity(long executionTime) {
+      AnnotatedDouble v = getQPerMilli(executionTime);
+      if (v.value <= 0.0) {
+        v.value = 0.0;
+        return v;
+      }
       long elapsed = executionTime - previousTime;
       previousTime = executionTime;
-      return random.nextPoisson(elapsed * qPerMilli);
+      v.value = random.nextPoisson(elapsed * v.value);
+      return v;
     }
 
     public long getTimeQuantum(long executionTime) {
-      double qPerMilli = getQPerMilli(executionTime);
-      return previousTime + ((long) (1.0 / qPerMilli)) - executionTime;
+      AnnotatedDouble v = getQPerMilli(executionTime);
+      return previousTime + ((long) (1.0 / v.value)) - executionTime;
     }
   }
 

@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -132,6 +133,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
   }
 
   public void initialize() {
+    initializeLogging();
     restore();
     String url = getContactURL();   // Get a toehold into the society
     try {
@@ -156,6 +158,19 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
     }
   }
 
+  private void initializeLogging() {
+    String prefix = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    for (Iterator managers = scheduleManagers.iterator(); managers.hasNext(); ) {
+      ScheduleManager manager = (ScheduleManager) managers.next();
+      try {
+        manager.enableLog(prefix); // Probably does nothing
+      } catch (IOException ioe) {
+        System.err.println("Failed to open log file for " + manager.getGUITitle());
+        ioe.printStackTrace();
+      }
+    }
+  }
+
   public void setTimeScript(List newScript) {
       if (newScript == null) {
           cancelTimeScript();
@@ -170,7 +185,6 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
 
   private void cancelTimeScript() {
     timeScript = null;
-    System.out.println("cancelTimeScript");
     getTimeGUI().disableControls();
   }
 

@@ -38,6 +38,19 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
     theInventoryReportManager = anInventoryReportManager;
   }
 
+  /**
+   * Override base class to suppress log file writing for this
+   * manager. The enableLog method simply does nothing leaving the log
+   * file disabled.
+   **/
+  public void enableLog(String prefix) {
+    // No logging of inventory schedules
+  }
+
+  protected String getLogFileName(String prefix) {
+    throw new RuntimeException("Unimplemented method");
+  }
+
   public String getGUITitle() {
     return "Inventory Schedules";
   }
@@ -148,7 +161,7 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
     theInventoryReportManager.receiveInventoryReports(source, reports);
   }
 
-  protected EGTableModel createTableModel() {
+  protected ManagerTableModel createTableModel() {
     return new InventoryScheduleTableModel();
   }
 
@@ -181,7 +194,8 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
     private static final int SCHEDULED_DATE_COLUMN = 2;
     private static final int STEP_COLUMN           = 3;
     private static final int ITEM_COLUMN           = 4;
-    private static final int NCOLUMNS              = 5;
+    private static final int ANNOTATION_COLUMN     = 5;
+    private static final int NCOLUMNS              = 6;
     private /*ns*/ final int ITEM_WIDTH = getCellWidth("Inventory: NSN/XXXXXXXXXXXXX");
 
     public int getColumnCount() {
@@ -195,6 +209,7 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
       case SCHEDULED_DATE_COLUMN: return DATE_WIDTH;
       case STEP_COLUMN: return STEP_WIDTH;
       case ITEM_COLUMN: return ITEM_WIDTH;
+      case ANNOTATION_COLUMN: return ANNOTATION_WIDTH;
       }
       return 75;
     }
@@ -206,6 +221,7 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
       case SCHEDULED_DATE_COLUMN: return DATE_WIDTH;
       case STEP_COLUMN: return STEP_WIDTH;
       case ITEM_COLUMN: return ITEM_WIDTH / 2;
+      case ANNOTATION_COLUMN: return ANNOTATION_WIDTH / 2;
       }
       return 75;
     }
@@ -217,6 +233,7 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
       case SCHEDULED_DATE_COLUMN: return DATE_WIDTH;
       case STEP_COLUMN: return STEP_WIDTH;
       case ITEM_COLUMN: return Integer.MAX_VALUE;
+      case ANNOTATION_COLUMN: return Integer.MAX_VALUE;
       }
       return 75;
     }
@@ -228,6 +245,7 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
       case SCHEDULED_DATE_COLUMN: return "Scheduled Time";
       case STEP_COLUMN: return "Period";
       case ITEM_COLUMN: return "Item";
+      case ANNOTATION_COLUMN: return "Comment";
       }
       return null;
     }
@@ -239,6 +257,7 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
       case SCHEDULED_DATE_COLUMN: return EGDate.class;
       case STEP_COLUMN: return String.class;
       case ITEM_COLUMN: return String.class;
+      case ANNOTATION_COLUMN: return Object.class;
       }
       return null;
     }
@@ -268,8 +287,8 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
       }
     }
 
-    public Object getValueAt(int row, int col) {
-      SteppedInventoryReportSchedule sirs = (SteppedInventoryReportSchedule) getRowObject(row);
+    public Object getValue(int col, Object rowObject) {
+      SteppedInventoryReportSchedule sirs = (SteppedInventoryReportSchedule) rowObject;
       if (sirs == null) return null;
       switch (col) {
       case ENABLE_COLUMN:
@@ -282,6 +301,8 @@ public class InventoryScheduleManager extends ManagerBase implements ScheduleMan
         return getNameForCalendarField(sirs.theInventoryReportSchedule.theStep);
       case ITEM_COLUMN:
         return sirs.theInventoryReportSchedule.theItemIdentification;
+      case ANNOTATION_COLUMN:
+        return sirs.getAnnotation();
       }
       return null;
     }

@@ -25,13 +25,13 @@ public class FailureConsumptionDefaultPlugIn implements FailureConsumptionPlugIn
       previousTime = Math.max(theExecutionTime, aRate.theStartTime);
     }
 
-    public int getQuantity(long executionTime) {
-      if (executionTime - previousTime < MIN_INTERVAL) return 0;
+    public AnnotatedDouble getQuantity(long executionTime) {
+      if (executionTime - previousTime < MIN_INTERVAL) return new AnnotatedDouble(0.0);
       double qPerMilli = theFailureConsumptionRate.theRateValue / ONE_DAY;
-      if (qPerMilli <= 0.0) return 0;
+      if (qPerMilli <= 0.0) return new AnnotatedDouble(0.0);
       long elapsed = executionTime - previousTime;
       previousTime = executionTime;
-      return random.nextPoisson(elapsed * qPerMilli);
+      return new AnnotatedDouble(random.nextPoisson(elapsed * qPerMilli));
     }
 
     /**

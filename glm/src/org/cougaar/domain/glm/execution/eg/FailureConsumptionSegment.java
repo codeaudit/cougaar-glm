@@ -46,6 +46,16 @@ public class FailureConsumptionSegment
     return getKey(theFailureConsumptionRate);
   }
 
+  protected int compareToTieBreaker(Timed other) {
+    if (other instanceof FailureConsumptionSegment) {
+      FailureConsumptionSegment that = (FailureConsumptionSegment) other;
+      long diff = this.theFailureConsumptionRate.theEndTime - that.theFailureConsumptionRate.theEndTime;
+      if (diff < 0) return -1;
+      if (diff > 0) return 1;
+    }
+    return super.compareToTieBreaker(other);
+  }
+
   public String getCluster() {
     return theSource;
   }
@@ -58,7 +68,8 @@ public class FailureConsumptionSegment
       .theEventGenerator
       .getSchedulingLookAhead();
     try {
-      int q = (int) Math.floor(thePlugInItem.getQuantity(schedulingTime));
+      AnnotatedDouble quantity = thePlugInItem.getQuantity(schedulingTime);
+      int q = (int) Math.floor(quantity.value);
       if (q > 0) {
 //          System.out.println(System.identityHashCode(this));
 //          System.out.println("Consumed "
@@ -73,7 +84,7 @@ public class FailureConsumptionSegment
                                        schedulingTime, schedulingTime, (double) q,
                                        theFailureConsumptionRate.theConsumer);
         theFailureConsumptionRateManager
-          .enqueueFailureConsumptionReport(theSource, theReport);
+          .enqueueFailureConsumptionReport(theSource, theReport, quantity.annotation);
       }
     } catch (Exception ioe) {
       ioe.printStackTrace();

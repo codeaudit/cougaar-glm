@@ -21,6 +21,9 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionListener;
 import java.awt.Component;
 import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -47,16 +50,25 @@ public abstract class ManagerBase {
   private TreeSet rawSchedule = new TreeSet();
   protected FilteredSet schedule = new FilteredSet(rawSchedule);
   private boolean scheduleChanged = false;
-  protected EGTableModel tableModel = null;
+  protected ManagerTableModel tableModel = null;
   protected HashMap map = new HashMap();
   private FilterGUI theFilterGUI = null;
   private ReportManagerGUI theReportManagerGUI;
   private List plugins = new ArrayList();
+  private PrintWriter logWriter = null;
+  protected static final String LOGFILE_SUFFIX = ".tsv";
 
   public ManagerBase(EventGenerator anEventGenerator) {
     theEventGenerator = anEventGenerator;
     installPlugins();
   }
+
+  public void enableLog(String prefix) throws IOException {
+    logWriter = new PrintWriter(new FileWriter(getLogFileName(prefix)), true);
+    writeLogHeader();
+  }
+
+  protected abstract String getLogFileName(String prefix);
 
   /**
    * Get the class of the default plugin. Override this if this
@@ -97,12 +109,14 @@ public abstract class ManagerBase {
         addPlugIn(plugin, disabled);
       } catch (Exception e) {
         System.err.println("Exception creating " + pluginInterface.getName() + ": " + e);
+        e.printStackTrace();
       }
     }
     try {
       addPlugIn((PlugIn) defaultPlugInClass.newInstance(), false);
     } catch (Exception e) {
       System.err.println("Exception creating " + defaultPlugInClass + ": " + e);
+      e.printStackTrace();
     }
   }
 
@@ -274,6 +288,8 @@ public abstract class ManagerBase {
             if (!didExpire) {
               addToSchedule(object);
               done = false;     // May need to process this again
+            } else {
+              writeLog(object);
             }
           }
           expiredReports.clear();
@@ -283,14 +299,53 @@ public abstract class ManagerBase {
     finishScheduleUpdate();
   }
 
-  public final EGTableModel getTableModel() {
+  // for readability
+  private static final char TAB = '\t';
+  private static final char QUOTE = '"';
+
+  protected void writeLog(Timed timed) {
+    if (logWriter != null) {
+      StringBuffer buf = new StringBuffer();
+      ManagerTableModel model = getTableModel();
+      int[] columns = model.getLogColumns();
+      for (int i = 0; i < columns.length; i++) {
+        Object o = model.getValue(columns[i], timed);
+        String val = o == null ? "" : o.toString();
+        boolean needQuote = val.indexOf(TAB) >= 0;
+        if ( i > 0) buf.append(TAB);
+        if (needQuote) buf.append(QUOTE);
+        buf.append(val);
+        if (needQuote) buf.append(QUOTE);
+      }
+      logWriter.println(buf.toString());
+    }
+  }
+
+  protected void writeLogHeader() {
+    if (logWriter != null) {
+      StringBuffer buf = new StringBuffer();
+      ManagerTableModel model = getTableModel();
+      int[] columns = model.getLogColumns();
+      for (int i = 0; i < columns.length; i++) {
+        String val = model.getColumnName(columns[i]);
+        boolean needQuote = val.indexOf(TAB) >= 0;
+        if ( i > 0) buf.append(TAB);
+        if (needQuote) buf.append(QUOTE);
+        buf.append(val);
+        if (needQuote) buf.append(QUOTE);
+      }
+      logWriter.println(buf.toString());
+    }
+  }
+
+  public final ManagerTableModel getTableModel() {
     if (tableModel == null) {
       tableModel = createTableModel();
     }
     return tableModel;
   }
 
-  protected abstract EGTableModel createTableModel();
+  protected abstract ManagerTableModel createTableModel();
 
   protected final void postErrorMessage(String message) {
     theEventGenerator.postErrorMessage(getGUI(), message);
@@ -382,8 +437,17 @@ public abstract class ManagerBase {
     plugins.add(item);
   }
 
+  protected static final int ANNOTATION_WIDTH = 120;
+
   protected abstract class ManagerTableModel extends EGTableModelBase implements EGTableModel {
+    protected int[] logColumns; // Filled in by subclass
+
     private Timed[] rows = null;
+
+    public int[] getLogColumns() {
+      if (logColumns == null) logColumns = new int[0];
+      return logColumns;
+    }
 
     public int getRowCount() {
       synchronized (schedule) {
@@ -410,5 +474,11 @@ public abstract class ManagerBase {
       }
       return null;
     }
+
+    public final Object getValueAt(int row, int col) {
+      return getValue(col, getRowObject(row));
+    }
+    
+    public abstract Object getValue(int col, Object rowObject);
   }
 }

@@ -18,7 +18,9 @@ import java.text.SimpleDateFormat;
  **/
 public class EGDate extends Date {
   private static final SimpleDateFormat format =
-    new SimpleDateFormat("MM/dd/yyyy HH:mm (EEE)");
+    new SimpleDateFormat("MM/dd/yyyy HH:mm");
+
+  private static Date fdate = new Date();
 
   public EGDate(long millis) {
     super(millis);
@@ -30,6 +32,13 @@ public class EGDate extends Date {
 
   public static String format(Date date) {
     return format.format(date);
+  }
+
+  public static String format(long time) {
+    synchronized (fdate) {
+      fdate.setTime(time);
+      return format(fdate);
+    }
   }
 
   public String toString() {

@@ -33,6 +33,10 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
     super(anEventGenerator);
   }
 
+  protected String getLogFileName(String prefix) {
+    return prefix + "TaskEvents" + LOGFILE_SUFFIX;
+  }
+
   public String getGUITitle() {
     return "TaskEvent Reports";
   }
@@ -190,11 +194,11 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
     }
   }
 
-  protected EGTableModel createTableModel() {
-    return new MyTableModel();
+  protected ManagerTableModel createTableModel() {
+    return new TaskEventReportTableModel();
   }
 
-  private class MyTableModel extends ManagerTableModel {
+  private class TaskEventReportTableModel extends ManagerTableModel {
     private static final int ENABLE_COLUMN        = 0;
     private static final int CLUSTER_COLUMN       = 1;
     private static final int RECEIVE_TIME_COLUMN  = 2;
@@ -204,12 +208,28 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
     private static final int DESC_COLUMN          = 6;
     private static final int ASPECT_TYPE_COLUMN   = 7;
     private static final int ASPECT_VALUE_COLUMN  = 8;
-    private static final int NCOLUMNS             = 9;
+    private static final int ANNOTATION_COLUMN    = 9;
+    private static final int NCOLUMNS             = 10;
     private /*ns*/ final int ASPECT_TYPE_WIDTH = getCellWidth("TOTAL_SHIPMENTS");
     private /*ns*/ final int TASK_UID_WIDTH = CLUSTER_WIDTH + getCellWidth("/XXXXXXXXXXXXX");
     private /*ns*/ final int DESC_WIDTH = getCellWidth("XXXXXXXXXXXXXXXXXXXXXXXXX");
 
     private EventGroup markedEventGroup = null;
+
+    public TaskEventReportTableModel() {
+      logColumns = new int[] {
+        ENABLE_COLUMN,
+        CLUSTER_COLUMN,
+        RECEIVE_TIME_COLUMN,
+        REPORT_TIME_COLUMN,
+        GROUP_ID_COLUMN,
+        TASK_UID_COLUMN,
+        DESC_COLUMN,
+        ASPECT_TYPE_COLUMN,
+        ASPECT_VALUE_COLUMN,
+        ANNOTATION_COLUMN,
+      };
+    }
 
     public void cellSelectionChanged(int row, int col) {
       col = GROUP_ID_COLUMN;
@@ -249,6 +269,7 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
       case DESC_COLUMN: return DESC_WIDTH;
       case ASPECT_TYPE_COLUMN: return ASPECT_TYPE_WIDTH;
       case ASPECT_VALUE_COLUMN: return DATE_WIDTH;
+      case ANNOTATION_COLUMN: return ANNOTATION_WIDTH;
       }
       return 75;
     }
@@ -264,6 +285,7 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
       case DESC_COLUMN: return DESC_WIDTH / 4;
       case ASPECT_TYPE_COLUMN: return 75;
       case ASPECT_VALUE_COLUMN: return 75;
+      case ANNOTATION_COLUMN: return ANNOTATION_WIDTH / 2;
       }
       return 75;
     }
@@ -279,6 +301,7 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
       case DESC_COLUMN: return Integer.MAX_VALUE;
       case ASPECT_TYPE_COLUMN: return Integer.MAX_VALUE;
       case ASPECT_VALUE_COLUMN: return Integer.MAX_VALUE;
+      case ANNOTATION_COLUMN: return Integer.MAX_VALUE;
       }
       return 75;
     }
@@ -294,6 +317,7 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
       case DESC_COLUMN: return "Description";
       case ASPECT_TYPE_COLUMN: return "Aspect Type";
       case ASPECT_VALUE_COLUMN: return "Aspect Value";
+      case ANNOTATION_COLUMN: return "Comment";
       }
       return null;
     }
@@ -309,6 +333,7 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
       case DESC_COLUMN: return String.class;
       case ASPECT_TYPE_COLUMN: return String.class;
       case ASPECT_VALUE_COLUMN: return Object.class;
+      case ANNOTATION_COLUMN:    return Object.class;
       }
       return null;
     }
@@ -455,8 +480,8 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
       ter.getModifiableTaskEventReport();
     }
 
-    public Object getValueAt(int row, int col) {
-      TimedTaskEventReport ter = (TimedTaskEventReport) getRowObject(row);
+    public Object getValue(int col, Object rowObject) {
+      TimedTaskEventReport ter = (TimedTaskEventReport) rowObject;
       if (ter == null) return null;
       switch (col) {
       case ENABLE_COLUMN:
@@ -493,6 +518,8 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
           return new Double(ter.theTaskEventReport.theAspectValue);
         }
         return new Double(ter.theTaskEventReport.theAspectValue);
+      case ANNOTATION_COLUMN:
+        return ter.getAnnotation();
       }
       return null;
     }

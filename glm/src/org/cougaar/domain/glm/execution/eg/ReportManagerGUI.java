@@ -65,7 +65,7 @@ public class ReportManagerGUI extends JPanel {
             setHorizontalAlignment(JLabel.RIGHT);
             if (Math.floor(d) == d) {
               doubleFormatter.setMinimumFractionDigits(0);
-              doubleFormatter.setMaximumFractionDigits (0);
+              doubleFormatter.setMaximumFractionDigits(0);
               setText(doubleFormatter.format(value) + ".   ");
             } else {
               doubleFormatter.setMinimumFractionDigits(3);

@@ -20,11 +20,13 @@ public class TimedFailureConsumptionReport extends Timed {
 
   public TimedFailureConsumptionReport(String aSource,
                                        FailureConsumptionReport aFailureConsumptionReport,
-                                       FailureConsumptionReportManager aFailureConsumptionReportManager)
+                                       FailureConsumptionReportManager aFailureConsumptionReportManager,
+                                       Object annotation)
   {
     theSource = aSource.intern();
     theFailureConsumptionReportManager = aFailureConsumptionReportManager;
     theFailureConsumptionReport = aFailureConsumptionReport;
+    setAnnotation(annotation);
     setEnabled(false);
   }
 

@@ -44,6 +44,10 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
     super(anEventGenerator);
   }
 
+  protected String getLogFileName(String prefix) {
+    return prefix + "FCEvents" + LOGFILE_SUFFIX;
+  }
+
   public String getGUITitle() {
     return "F/C Reports";
   }
@@ -58,10 +62,11 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
 
 
   public void enqueueFailureConsumptionReport(String theSource,
-                                              FailureConsumptionReport aFailureConsumptionReport)
+                                              FailureConsumptionReport aFailureConsumptionReport,
+                                              Object annotation)
   {
     TimedFailureConsumptionReport tfcr =
-      new TimedFailureConsumptionReport(theSource, aFailureConsumptionReport, this);
+      new TimedFailureConsumptionReport(theSource, aFailureConsumptionReport, this, annotation);
     addToSchedule(tfcr);
     finishScheduleUpdate();
   }
@@ -79,7 +84,7 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
     }
   }
 
-  protected EGTableModel createTableModel() {
+  protected ManagerTableModel createTableModel() {
     return new FailureConsumptionReportTableModel();
   }
 
@@ -90,10 +95,22 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
   private static final int CONSUMER_COLUMN      = 4;
   private static final int ITEM_COLUMN          = 5;
   private static final int QUANTITY_COLUMN      = 6;
-  private static final int NCOLUMNS             = 7;
+  private static final int ANNOTATION_COLUMN    = 7;
+  private static final int NCOLUMNS             = 8;
 
   private class FailureConsumptionReportTableModel extends ManagerTableModel {
 
+    public FailureConsumptionReportTableModel() {
+      logColumns = new int[] {
+        CLUSTER_COLUMN,
+        RECEIVE_TIME_COLUMN,
+        REPORT_TIME_COLUMN,
+        CONSUMER_COLUMN,
+        ITEM_COLUMN,
+        QUANTITY_COLUMN,
+        ANNOTATION_COLUMN
+      };
+    }
     public int getColumnCount() {
       return NCOLUMNS;
     }
@@ -107,6 +124,7 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
       case CONSUMER_COLUMN:      return CONSUMER_WIDTH;
       case ITEM_COLUMN:          return ITEM_WIDTH;
       case QUANTITY_COLUMN:      return QUANTITY_WIDTH;
+      case ANNOTATION_COLUMN:    return ANNOTATION_WIDTH;
       }
       return 75;
     }
@@ -120,6 +138,7 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
       case CONSUMER_COLUMN:      return CONSUMER_WIDTH / 2;
       case ITEM_COLUMN:          return ITEM_WIDTH / 2;
       case QUANTITY_COLUMN:      return QUANTITY_WIDTH / 2;
+      case ANNOTATION_COLUMN:    return ANNOTATION_WIDTH / 2;
       }
       return 75;
     }
@@ -133,6 +152,7 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
       case CONSUMER_COLUMN:      return Integer.MAX_VALUE;
       case ITEM_COLUMN:          return Integer.MAX_VALUE;
       case QUANTITY_COLUMN:      return Integer.MAX_VALUE;
+      case ANNOTATION_COLUMN:    return Integer.MAX_VALUE;
       }
       return 75;
     }
@@ -146,6 +166,7 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
       case CONSUMER_COLUMN:      return "Consumer";
       case ITEM_COLUMN:          return "Item";
       case QUANTITY_COLUMN:      return "Quantity";
+      case ANNOTATION_COLUMN:    return "Comment";
       }
       return null;
     }
@@ -159,6 +180,7 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
       case CONSUMER_COLUMN:      return String.class;
       case ITEM_COLUMN:          return String.class;
       case QUANTITY_COLUMN:      return Double.class;
+      case ANNOTATION_COLUMN:    return Object.class;
       }
       return null;
     }
@@ -251,8 +273,8 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
       }
     }
 
-    public Object getValueAt(int row, int col) {
-      TimedFailureConsumptionReport tfcr = (TimedFailureConsumptionReport) getRowObject(row);
+    public Object getValue(int col, Object rowObject) {
+      TimedFailureConsumptionReport tfcr = (TimedFailureConsumptionReport) rowObject;
       if (tfcr == null) return null;
       switch (col) {
       case ENABLE_COLUMN:
@@ -269,6 +291,8 @@ public class FailureConsumptionReportManager extends ManagerBase implements Sche
         return tfcr.theFailureConsumptionReport.theItemIdentification;
       case QUANTITY_COLUMN:
         return new Double(tfcr.theFailureConsumptionReport.theQuantity);
+      case ANNOTATION_COLUMN:
+        return tfcr.getAnnotation();
       }
       return null;
     }

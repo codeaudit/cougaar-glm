@@ -105,7 +105,7 @@ public class PSP_EventMonitor
     if (matches.size() > 0) {
 //        System.out.println("PSP_EventMonitor: Found a match for InventoryReport");
       Inventory inv = (Inventory) matches.iterator().next();
-      InventoryPG invpg = (InventoryPG)inv.searchForPropertyGroup(InventoryPG.class);
+      InventoryPG invpg = inv.getInventoryPG();
       if (invpg != null) {
 	  invpg.addInventoryReport(anInventoryReport);
 
