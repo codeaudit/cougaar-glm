@@ -25,7 +25,6 @@ import org.cougaar.domain.planning.ldm.plan.Role;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 
 import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.plan.GLMRelationship;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.planviewer.ConnectionHelper;
