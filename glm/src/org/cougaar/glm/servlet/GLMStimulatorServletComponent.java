@@ -14,7 +14,6 @@ import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.NamingService;
 import org.cougaar.core.service.SchedulerService;
 
-import org.cougaar.glm.servlet.GLMStimulatorSupport;
 import org.cougaar.util.ConfigFinder;
 
 /** 
