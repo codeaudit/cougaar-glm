@@ -245,16 +245,18 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
 	while (consumed_resources.hasMoreElements()) {
 	    resource = (Asset)consumed_resources.nextElement();
 	    rate_schedule = demand_spec.buildConsumptionRateSchedule(resource);
-            Double mult = demand_spec.getMultiplier(resource);
-            Vector theseTasks = createDemandTasks(parent_task, resource, rate_schedule,
-                                                  mult.doubleValue());
-            if (theseTasks.size() > 0) {
-                Task t = (Task) theseTasks.get(0);
-                if (t.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
-                    publishChangeProjection(parent_task, resource, theseTasks.elements());
-                    total_tasks += theseTasks.size();
-                } else {
-                    resource_demand.addAll(theseTasks);
+            if (!rate_schedule.isEmpty()) {
+                Double mult = demand_spec.getMultiplier(resource);
+                Vector theseTasks = createDemandTasks(parent_task, resource, rate_schedule,
+                                                      mult.doubleValue());
+                if (theseTasks.size() > 0) {
+                    Task t = (Task) theseTasks.get(0);
+                    if (t.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
+                        publishChangeProjection(parent_task, resource, theseTasks.elements());
+                        total_tasks += theseTasks.size();
+                    } else {
+                        resource_demand.addAll(theseTasks);
+                    }
                 }
             }
 	    num_parts++;
@@ -277,7 +279,8 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
      * @return Vector of PROJECTSUPPLY tasks */
     public Vector createDemandTasks(Task parent_task, Asset resource, 
                                     Schedule rate_schedule, double multiplier) {
-	if (createSupplyTasksForType(parent_task)) {
+	if (rate_schedule.isEmpty()) return new Vector(0);
+        if (createSupplyTasksForType(parent_task)) {
 	    printDebug(3, "createDemandTasks(), creating supply tasks for  "+TaskUtils.getTaskItemName(parent_task));
 	    return createPeriodicDemandTasks(parent_task,resource, rate_schedule);
 	}
