@@ -3,10 +3,10 @@ Database = jdbc:oracle:thin:@${org.cougaar.database}
 Username = ${org.cougaar.database.user}
 Password = ${org.cougaar.database.password}
 # First, get the personnel and generate an aggregate asset
-%SQLAggregateAssetCreator
-query = select 'Personnel' NSN, personnel QTY_OH, 'MilitaryPersonnel' NOMENCLATURE \
-	from ue_summary_mtmc \
-    	where uic = :uic
+# %SQLAggregateAssetCreator
+# query = select 'Personnel' NSN, personnel QTY_OH, 'MilitaryPersonnel' NOMENCLATURE \
+# 	from ue_summary_mtmc \
+#     	where uic = :uic
 
 # Next, get the MOS levels and generate an aggregate asset
 %SQLAggregateAssetCreator
