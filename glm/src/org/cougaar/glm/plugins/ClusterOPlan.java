@@ -77,7 +77,7 @@ public class ClusterOPlan implements Serializable {
   }
 
   // Re-calculate the overall start and end times for the OPlan
-  private void updateOPlanTimes() {
+  protected void updateOPlanTimes() {
     long end_time;
     long newET = Long.MIN_VALUE;
     long start_time;
