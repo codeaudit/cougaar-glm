@@ -299,33 +299,70 @@ public class GLSInitServlet extends ComponentPlugin
         //get c0 and next stage info from state object
         myPrivateState = (MyPrivateState)stateColl.iterator().next();
 	boolean haveOpInfo = (myPrivateState.opInfo != null);
-        if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- stateC0 is: " + (haveOpInfo ? ((Date)(myPrivateState.opInfo.getCDate())).toString() : "<undefined -- No OpInfo yet!>")); 
-        SortedSet stateSentStages = (haveOpInfo ? myPrivateState.opInfo.getSentStages() : new TreeSet()); 
-        if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- stateSentStages has size: " +stateSentStages.size()); 
+        if (logger.isDebugEnabled()) {
+	  logger.debug("GLSInitServlet- stateC0 is: " + 
+		       (haveOpInfo ? 
+			((Date)(myPrivateState.opInfo.getCDate())).toString() :
+			"<undefined -- No OpInfo yet!>")); 
+	}
+        SortedSet stateSentStages = (haveOpInfo ? 
+				     myPrivateState.opInfo.getSentStages() : 
+				     new TreeSet()); 
+        if (logger.isDebugEnabled()) {
+	  logger.debug("GLSInitServlet- stateSentStages has size: " + 
+		       stateSentStages.size()); 
+	}
 
         //get c0 and next stage info from gls task
         if (glsSubscription.isEmpty()) {
-          if (logger.isWarnEnabled()) logger.warn("GLSInitServlet- glsSubscription is empty on rehydration."); 
+          if (logger.isWarnEnabled()) {
+	    logger.warn("GLSInitServlet- glsSubscription is empty on rehydration."); 
+	  }
         }
         else {
-          PlanElement pe = (PlanElement) glsSubscription.first();
-          Task gls = pe.getTask();
+	  SortedSet maxGLSStages = null;
+	  
+	  for (Iterator iterator = glsSubscription.iterator();
+	       iterator.hasNext();) {
+	    PlanElement pe = (PlanElement) iterator.next();
+	    Task gls = pe.getTask();
+	    PrepositionalPhrase stagespp = 
+	      gls.getPrepositionalPhrase(FOR_OPLAN_STAGES);
+	    
+	    SortedSet glsStages = (SortedSet) stagespp.getIndirectObject();
 
-          PrepositionalPhrase stagespp = gls.getPrepositionalPhrase(FOR_OPLAN_STAGES);
-          SortedSet glsStages = (SortedSet)stagespp.getIndirectObject(); 
-          if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- glsStages have size: " +glsStages.size()); 
+	    if (logger.isDebugEnabled()) {
+	      logger.debug("GLSInitServlet- glsStages have size: " + 
+			   glsStages.size()); 
+	    }
 
-          PrepositionalPhrase c0pp = gls.getPrepositionalPhrase(WITH_C0);
-          long  gls_c0 = ((Long)(c0pp.getIndirectObject())).longValue();
-          Date gls_c0_date = new Date(gls_c0);
-          if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- gls_c0_date is: " +gls_c0_date); 
+	    maxGLSStages = (maxGLSStages == null) ?
+	      glsStages : 
+	      ((maxGLSStages.size() < glsStages.size()) ?
+	       glsStages : maxGLSStages);
+	    
+	    PrepositionalPhrase c0pp = gls.getPrepositionalPhrase(WITH_C0);
+	    long  gls_c0 = ((Long)(c0pp.getIndirectObject())).longValue();
+	    Date gls_c0_date = new Date(gls_c0);
+	    if (logger.isDebugEnabled()) {
+	      logger.debug("GLSInitServlet- gls_c0_date is: " + 
+			   gls_c0_date); 
+	    }
+	  }
+	    
+	  if (logger.isDebugEnabled()) {
+	    logger.debug("GLSInitServlet- maxGLSStages have size: " + 
+			 maxGLSStages.size()); 
+	  }
 
           //compare c0 from private state to c0 in gls task
           //TO_DO
           //compare number of sent stages  from private state to sent stages in gls task
-          if (stateSentStages.size() != glsStages.size()) {
+          if (stateSentStages.size() != maxGLSStages.size()) {
             if (logger.isErrorEnabled()) {
-              logger.error("GLSInitServlet: myPrivateState sent Stages do not match GLS task after rehyration.");
+              logger.error("GLSInitServlet: myPrivateState sent Stages do not match GLS task after rehyration - " +
+			   "stateSentStages = " + stateSentStages +
+			   ", glsStages = " + maxGLSStages);
             }
           }
         }
