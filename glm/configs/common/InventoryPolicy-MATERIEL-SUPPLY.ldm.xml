@@ -16,11 +16,11 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="7" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
@@ -47,7 +47,7 @@
 	</String>
     </RuleParam>
     <RuleParam name="DaysOnHand">
-	<Integer value="30" min="-1" max="90"> 
+	<Integer value="3" min="-1" max="90"> 
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
@@ -86,11 +86,11 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="7" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
@@ -125,7 +125,7 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="10" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
@@ -160,7 +160,7 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="5" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
@@ -191,11 +191,11 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="7" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">

@@ -16,11 +16,11 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="7" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
@@ -32,7 +32,7 @@
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
-        <Integer value="45" min="0" max="300">
+        <Integer value="60" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="TurnOffProjections">
@@ -86,11 +86,11 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="7" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="15" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
@@ -110,6 +110,10 @@
         </Boolean>
     </RuleParam>
     <RuleParam name="FillToCapacity">
+        <Boolean value="true">
+	</Boolean>
+    </RuleParam>
+    <RuleParam name="MaintainAtCapacity">
         <Boolean value="true">
 	</Boolean>
     </RuleParam>

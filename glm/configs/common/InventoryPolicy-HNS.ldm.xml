@@ -20,7 +20,7 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="1" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
@@ -55,7 +55,7 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="1" min="0" max="30">
+        <Integer value="0" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
