@@ -29,6 +29,17 @@ import org.cougaar.domain.planning.ldm.plan.Task;
   * the tasks the packer creates.
   */
 public class DefaultPreferenceAggregator implements PreferenceAggregator {
+  // Start time is set to 40 days prior to the specified end time
+  private static long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+  private static long START_DECREMENT = 40 * MILLIS_PER_DAY;
+
+  /* Increments added to specified end time to come up with an earliest, 
+   * best, and latest for TOPS. Distribution specified by
+   * tops team
+   */
+  private static long EARLIEST_INCREMENT = -(21 * MILLIS_PER_DAY);
+  private static long BEST_INCREMENT = 0 * MILLIS_PER_DAY;
+  private static long LATEST_INCREMENT = 7 * MILLIS_PER_DAY;
 
   private Calendar myCalendar = Calendar.getInstance();
 
@@ -68,10 +79,7 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
     // [1999/11/15:goldman]
     //
     // MSB 1-25-2000 : Make Start time 40 days before end_time
-    //startTime = endTime - (40.0*86400000.0);
-    myCalendar.setTime(new Date((long)endTime));
-    myCalendar.add(Calendar.DATE, -40);
-    startTime = myCalendar.getTime().getTime();
+    startTime = endTime - START_DECREMENT;
 
     prefs.add(makeStartPreference(startTime, rootFactory));
 
@@ -108,20 +116,17 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
       System.out.println("Aggregated end date - " + new Date((long)endDate));
     }
 
-    AspectValue latest = new AspectValue(AspectType.END_TIME, endDate);
-
-    // MSB 1-25-2000 : Set best to 7 days earlier than latest
-    myCalendar.setTime(new Date((long)endDate));
-    myCalendar.add(Calendar.DATE, -7);
-    AspectValue best = 
-      new AspectValue(AspectType.END_TIME, myCalendar.getTime().getTime());
-
-    // MSB 1-25-2000 : Set earliest to 21 days earlier than best
-    myCalendar.add(Calendar.DATE, -21);
     AspectValue earliest = 
-      new AspectValue(AspectType.END_TIME, myCalendar.getTime().getTime());
-    ScoringFunction sf = ScoringFunction.createVScoringFunction(earliest, best,
-                                                                latest);
+      new AspectValue(AspectType.END_TIME, endDate + EARLIEST_INCREMENT);
+
+    AspectValue best = 
+      new AspectValue(AspectType.END_TIME, endDate + BEST_INCREMENT);
+
+    AspectValue latest = 
+      new AspectValue(AspectType.END_TIME, endDate + LATEST_INCREMENT);
+
+    ScoringFunction sf = 
+      ScoringFunction.createVScoringFunction(earliest, best, latest);
     Preference pref = rootFactory.newPreference(AspectType.END_TIME, sf);
     return pref;
   }
