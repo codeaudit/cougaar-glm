@@ -209,7 +209,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
     }
     Expansion exp = PlugInHelper.wireExpansion(task, subtasks, theLDMF);
     //use the helper to publish the expansion and the wf subtasks all in one
-    PlugInHelper.publishAddExpansion(blackboard.getSubscriber(), exp);
+    PlugInHelper.publishAddExpansion(blackboard, exp);
   }
 
   /**

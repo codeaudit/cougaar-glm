@@ -216,7 +216,7 @@ public class GLSAllocatorPlugIn extends SimplePlugIn {
       Expansion newexp = ldmf.createExpansion(ldmf.getRealityPlan(), t, tmp, null);
       //publishMyPlanElement(newexp);
       //publish the Expansion and worflow subtasks all in one
-      PlugInHelper.publishAddExpansion(getSubscriber(), newexp);
+      PlugInHelper.publishAddExpansion(getBlackboardService(), newexp);
       //now allocate the tasks in the new workflow
       allocateGLS(tmp);
     } else {
