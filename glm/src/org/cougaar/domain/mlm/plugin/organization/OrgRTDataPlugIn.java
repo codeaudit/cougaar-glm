@@ -25,12 +25,15 @@ import org.cougaar.core.cluster.IncrementalSubscription;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.ClusterPG;
+import org.cougaar.domain.planning.ldm.asset.CommunityPGImpl;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPGImpl;
 import org.cougaar.domain.planning.ldm.asset.NewClusterPG;
+import org.cougaar.domain.planning.ldm.asset.NewCommunityPG;
 import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.domain.planning.ldm.asset.NewPropertyGroup;
 import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.asset.PropertyGroup;
+import org.cougaar.domain.planning.ldm.asset.PropertyGroupSchedule;
 
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.NewPrepositionalPhrase;
@@ -357,6 +360,18 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
     
     NewClusterPG cpg = (NewClusterPG)org.getClusterPG();
     cpg.setClusterIdentifier(ClusterIdentifier.getClusterIdentifier(orgStr));
+
+    CommunityPGImpl communityPG = 
+      (CommunityPGImpl)getFactory().createPropertyGroup(CommunityPGImpl.class);
+    PropertyGroupSchedule schedule = new PropertyGroupSchedule();
+
+    // add in COUGAAR community for default time span
+    ArrayList communities = new ArrayList(1);
+    communities.add("COUGAAR");
+    communityPG.setCommunities(communities);
+    communityPG.setTimeSpan(DEFAULT_START_TIME, DEFAULT_END_TIME);
+    schedule.add(communityPG);
+    org.setCommunityPGSchedule(schedule);
     
     return org;
   }
@@ -517,8 +532,18 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
 
                 NewClusterPG cpg = (NewClusterPG) org.getClusterPG();
                 cpg.setClusterIdentifier(ClusterIdentifier.getClusterIdentifier(clusterId));
+
+                CommunityPGImpl communityPG = 
+                  (CommunityPGImpl)getFactory().createPropertyGroup(CommunityPGImpl.class);
+                // add in default community
+                ArrayList communities = new ArrayList(1);
+                communities.add("COUGAAR");
+                communityPG.setCommunities(communities);
+                communityPG.setTimeSpan(DEFAULT_START_TIME, DEFAULT_END_TIME);
+                org.getCommunityPGSchedule().add(communityPG);
+                
               } else {
-                System.out.println("OrgRTDataPlugIn Error: [Prototype] value is null");
+                System.err.println("OrgRTDataPlugIn Error: [Prototype] value is null");
               }
               newVal = tokens.nextToken();
             } else if (dataItem.equals("[Relationship]")) {
@@ -533,7 +558,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
             } else {
               // if The token you read is not one of the valid
               // choices from above
-              System.out.println("OrgRTDataPlugIn Incorrect token: " + dataItem);
+              System.err.println("OrgRTDataPlugIn Incorrect token: " + dataItem);
             }
           } else {
             throw new RuntimeException("Format error in \""+filename+"\".");
@@ -856,7 +881,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
         e.printStackTrace();
       }
     } else {
-      System.out.println("OrgRTDataPlugIn Error: org is null");
+      System.err.println("OrgRTDataPlugIn Error: org is null");
     }
 
     return newVal;
