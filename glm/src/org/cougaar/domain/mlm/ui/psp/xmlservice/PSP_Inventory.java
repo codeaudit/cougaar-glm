@@ -129,6 +129,9 @@ public class PSP_Inventory
       inv.addNamedSchedule(ALLOCATED, inventory.getDueOutLaborSchedule());
       inv.addNamedSchedule(ON_HAND,   inventory.getOnHandSchedule());
     } else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
+
+      inventory.computeSimulatedProjectionSchedules();
+
       inv.addNamedSchedule(ON_HAND,                               inventory.getOnHandSchedule());
       inv.addNamedSchedule(DUE_IN,                                inventory.getDueInSchedule());
       inv.addNamedSchedule(UNCONFIRMED_DUE_IN,                    inventory.getUnconfirmedDueInSchedule());
@@ -151,6 +154,21 @@ public class PSP_Inventory
       inv.addNamedSchedule(PROJECTED_DUE_OUT           +INACTIVE, inventory.getInactiveProjectedDueOutSchedule());
       inv.addNamedSchedule(REQUESTED_DUE_OUT           +INACTIVE, inventory.getInactiveRequestedDueOutSchedule());
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT +INACTIVE, inventory.getInactiveProjectedRequestedDueOutSchedule());
+
+      //inv.addNamedSchedule(ON_HAND,                               inventory.getOnHandMockSchedule());
+      //inv.addNamedSchedule(PROJECTED_DUE_IN,                      inventory.getProjectedMockDueInSchedule());
+      //inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN,            inventory.getProjectedRequestedMockDueInSchedule());
+      //inv.addNamedSchedule(PROJECTED_DUE_OUT,                     inventory.getProjectedMockDueOutSchedule());
+      //inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT,           inventory.getProjectedRequestedMockDueOutSchedule());
+
+      inv.addNamedSchedule(ON_HAND_MOCK_PERIOD,                    inventory.getOnHandMockSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_IN_MOCK_PERIOD,           inventory.getProjectedMockDueInSchedule());
+      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN_MOCK_PERIOD, inventory.getProjectedRequestedMockDueInSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_OUT_MOCK_PERIOD,          inventory.getProjectedMockDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT_MOCK_PERIOD,inventory.getProjectedRequestedMockDueOutSchedule());
+      inv.addNamedSchedule(GOAL_LEVEL,              inventory.getGoalLevelSchedule());
+      inv.addNamedSchedule(REORDER_LEVEL,           inventory.getReorderLevelSchedule());
+      inv.addNamedSchedule(AVERAGE_DEMAND_LEVEL,    inventory.getAverageDemandSchedule());
 
     } 
     else if (scheduleType.equals(inventory.NO_INVENTORY_SCHEDULE_JUST_CONSUME)){
