@@ -1,7 +1,7 @@
 Driver = oracle.jdbc.driver.OracleDriver
-Database = jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
-Username = alp_plugin
-Password = alp_plugin 
+Database = jdbc:oracle:thin:@${org.cougaar.database}
+Username = ${org.cougaar.database.user}
+Password = ${org.cougaar.database.password} 
 
 pacing = '2320011077155', '2320013042278', '2330013035197'
 

@@ -1,7 +1,7 @@
 Driver = oracle.jdbc.driver.OracleDriver
-Database = jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
-Username = alp_plugin
-Password = alp_plugin
+Database = jdbc:oracle:thin:@${org.cougaar.database}
+Username = ${org.cougaar.database.user}
+Password = ${org.cougaar.database.password}
 # First, get the personnel and generate an aggregate asset
 %SQLAggregateAssetCreator
 query = select 'Personnel' NSN, personnel QTY_OH, 'MilitaryPersonnel' NOMENCLATURE \

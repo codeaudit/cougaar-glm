@@ -1,20 +1,20 @@
 # First, get the personnel and generate an aggregate asset
 %SQLAggregateAssetCreator
-DB_NAME1 = jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
+DB_NAME1 = jdbc:oracle:thin:@${org.cougaar.database}
 query1 = select 'Personnel' NSN, personnel QTY_OH, 'MilitaryPersonnel' NOMENCLATURE \
 	from ue_summary_mtmc \
     	where uic = :uic
 
 # Then, get the containers and generate an aggregate asset
 %SQLAggregateAssetCreator
-DB_NAME1 = jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
+DB_NAME1 = jdbc:oracle:thin:@${org.cougaar.database}
 query1 = select '8115001682275' NSN, container_20_ft_qty QTY_OH, 'Container' NOMENCLATURE \
 	from ue_summary_mtmc \
 	where uic = :uic
 
 # Make sure that all the assets we create use this to fill in consumption rates
 #Database=jdbc:oracle:thin:@amp-test2:1521:dart8i
-DB_NAME2=jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
+DB_NAME2=jdbc:oracle:thin:@${org.cougaar.database}
 headerQuery=select commodity, nsn, nomenclature, ui, ssc, price, icc, alt, plt, pcm, boq, diq, iaq, nso, qfd, rop, owrmrp, weight, cube, aac, slq from header where NSN = :nsns
 assetsQuery=select nsn, ric, purpose, condition, iaq from assets where NSN = :nsns
 nomen=select nomenclature from header where NSN = :nsns	
@@ -47,7 +47,7 @@ ConsumableNavyMDS=select MDS, NSN, OPTEMPO, DEMANDS_PER_DAY from NAVYAIR_SPARES_
 
 # Now, get the assets from jtav
 %SQLAssetCreator
-DB_NAME1 = jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
+DB_NAME1 = jdbc:oracle:thin:@${org.cougaar.database}
 query1 = select NSN, QTY_OH, NOMENCLATURE from jtav_equipment \
 where  UIC4 = substr(:uic, 1, 4) and \
   NSN in ('1055013296826', \

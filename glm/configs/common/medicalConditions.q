@@ -1,4 +1,4 @@
-Database=jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
+Database=jdbc:oracle:thin:@${org.cougaar.database}
 Driver = oracle.jdbc.driver.OracleDriver
 Username = blackjack8
 Password = blackjack8

@@ -1,4 +1,4 @@
-#Database=jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
+#Database=jdbc:oracle:thin:@${org.cougaar.database}
 #Database=jdbc:oracle:thin:@eiger.alpine.bbn.com:1521:alp
 Database=jdbc:oracle:thin:@alp-3.org.cougaar.isotic.org:1521:alp
 Driver = oracle.jdbc.driver.OracleDriver

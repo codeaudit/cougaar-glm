@@ -2,8 +2,8 @@
 
 %SQLNamedAssetCreator
 Database=jdbc:oracle:thin:@eiger.alpine.bbn.com:1521:alp
-Username=alp_plugin
-Password=alp_plugin
+Username = ${org.cougaar.database.user}
+Password = ${org.cougaar.database.password}
 query = select ac_type, tail_fleet, ac_type \
   from gdss_aircraft \
   where home_icao = :icao \
