@@ -428,7 +428,7 @@ public abstract class InventoryBG implements PGDelegate {
     private int addDueIn(Task refillTask, boolean filled) {
 	// Add Refill to daily schedule
 	// All times set to Midnight of that day
-	long time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getEndTime(refillTask));
+	long time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getRefillTime(refillTask));
 	int day = TimeUtils.getDaysBetween(getStartTime(), time);
 //    	GLMDebug.DEBUG("InventoryBG", null, "addDueIn(), Start: "+TimeUtils.dateString(getStartTime())+", task time: "+TimeUtils.dateString(time)+", day:"+day, 0);
 	if (day >= dueIns_.size()) {
