@@ -65,7 +65,8 @@ set osargs=""
 set os=`uname`
 if ("$os" == "Linux") then
     # only run with green threads, since SMP is still rare
-    set osargs="-green"
+    #set osargs="-green"
+    set osargs="-server"
     # set some system runtime limits
     limit stacksize 16m    #up from 8m
     limit coredumpsize 0   #down from 1g
