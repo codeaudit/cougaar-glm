@@ -609,9 +609,9 @@ public class GLSInitServlet extends LDMSQLPlugin {
 //       }
       if (command.equals(PUBLISHGLS)) {
 	//System.out.println("oplanID is " + request.getParameter("oplanID"));
- 	//System.out.println("cDay is " + request.getParameter("cDate"));
+ 	//System.out.println("cDay is " + request.getParameter("c0_date"));
         String oplanID = request.getParameter("oplanID");
-        String c0 = request.getParameter("cDate");
+        String c0 = request.getParameter("c0_date");
 	publishRootGLS(oplanID, c0);
       }
       if (command.equals(RESCINDGLS)) {
@@ -677,10 +677,4 @@ public class GLSInitServlet extends LDMSQLPlugin {
     }
   }
 }
-
-
-
-
-
-
 

@@ -89,7 +89,7 @@ public class GLSClient extends JPanel {
   private static final String RESCIND_COMMAND = "rescindgls";
   private static final String OPLAN_COMMAND = "sendoplan";
   private static final String OPLAN_PARAM_NAME = "&oplanID=";
-  private static final String CDATE_PARAM_NAME = "&cDate=";
+  private static final String CDATE_PARAM_NAME = "&c0_date=";
 
   private boolean stopping = false;
 
