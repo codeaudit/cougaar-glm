@@ -125,7 +125,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
    */
   protected void setupSubscriptions() {
     //setDebug();
-    setDebug(true);
+    setDebug(false);
     
     if (DEBUG) {
       printDebug(getClass()+" setting up subscriptions");
@@ -238,20 +238,6 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     }
 
     if (expansionsSub.hasChanged()) {
-      /* Debugging
-      Collection adds = expansionsSub.getAddedCollection();
-      
-      if (adds != null) {
-        for (Iterator iterator = adds.iterator();
-             iterator.hasNext();) {
-          Expansion expansion = (Expansion) iterator.next();
-          expansion.setObservedResult(expansion.getEstimatedResult());
-          publishChange(expansion);
-        }
-      }
-          
-      System.out.println(99);
-      */
       PlugInHelper.updateAllocationResult(expansionsSub);
     }
                                     
