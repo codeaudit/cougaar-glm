@@ -135,7 +135,7 @@ public class UTILAllocationCallback extends UTILFilterCallbackAdapter {
    *        allocation will fail again, be rescinded, and we're back where we 
    *        started.
    *
-   * @param Allocation to examine
+   * @param alloc Allocation to examine
    */
   protected void reactToChangedAlloc (Allocation alloc) {
     UTILAllocationListener listener = (UTILAllocationListener) myListener;

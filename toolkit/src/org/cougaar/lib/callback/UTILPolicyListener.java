@@ -33,14 +33,14 @@ import org.cougaar.planning.ldm.policy.Policy;
 public interface UTILPolicyListener extends UTILFilterCallbackListener {
   /** 
    * Defines policies you find interesting. 
-   * @param t Task to check for interest
-   * @return boolean true if task is interesting
+   * @param p Policy to check for interest
+   * @return true if task is interesting
    */
   boolean interestingPolicy(Policy p);
 
   /** 
    * Got an interesting policy, now handle it in some way
-   * @param t Task to handle
+   * @param np new Policies
    */
   void handleNewPolicies(Enumeration np);
 

@@ -75,7 +75,7 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
    *
    * See comment on UTILAggregatorPluginAdapter.needToRescind.
    *
-   * @param alloc allocation to check for
+   * @param agg Aggregation to check for
    * @return boolean true if task needs to be rescinded
    * @see #handleRescindedAggregation
    * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter#needToRescind
@@ -88,7 +88,7 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
    *
    * See comment on UTILAggregatorPluginAdapter.needToRescind.
    *
-   * @param aggregation that failed/has been rescinded by listener
+   * @param agg aggregation that failed/has been rescinded by listener
    * @return true if handled
    * @see #needToRescind
    * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter#needToRescind
@@ -98,7 +98,7 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
   /**
    * Updates and publishes allocation result of aggregation.
    *
-   * @param aggregation to report
+   * @param agg aggregation to report
    */
   void reportChangedAggregation(Aggregation agg);
 
@@ -130,7 +130,7 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
    *
    * Called when needToRescind returns TRUE.
    *
-   * @param aggregation to remove...
+   * @param agg aggregation to remove
    */
   void publishRemovalOfAggregation(Aggregation agg);
 }

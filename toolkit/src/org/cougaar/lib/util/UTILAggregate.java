@@ -58,7 +58,7 @@ public class UTILAggregate {
   /**
    * Set the logger -- may be misleading though
    *
-   * @param logger to use
+   * @param log logger to use
    */
   public UTILAggregate (Logger log) { 
     logger = log; 
@@ -71,10 +71,7 @@ public class UTILAggregate {
    * Creates an Aggregation for every parent task.
    *
    * @param ldmf the PlanningFactory
-   * @param pts an enum of parent tasks
-   * @param subtasks a vector of subtasks created from the parent tasks
-   * @param estimated AllocationResult
-   * @param Vector filled with created aggregation plan elements
+   * @param parentTasks parent tasks
    * @return MPTask representing composition
    */
 
@@ -294,11 +291,10 @@ public class UTILAggregate {
    * @param ldmf the PlanningFactory
    * @param source the cluster originating the task
    * @param plan the log plan
-   * @param parents an enum of parent tasks
+   * @param parentTasks an enum of parent tasks
    * @param verb the verb
    * @param prepphrases an enum of PrepositionalPhrases
    * @param obj the direct object
-   * @param penalty the penalty function associated with the new task
    * @return NewMPTask
    */
   public NewMPTask makeMPSubTask (PlanningFactory ldmf,

@@ -75,7 +75,7 @@ public class ParamTable implements ParamMap {
    * envParams MUST have a param "envFile".  It specifies the parse file!
    *
    * </pre>
-   * @param envParams vector of ParamParse-able strings
+   * @param logger the Logger to use
    */
   public ParamTable(Logger logger){
     paramTable = new HashMap ();

@@ -155,7 +155,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    *
    * Dumps to error info about the failed tasks.
    * </pre>
-   * @param expansion that failed
+   * @param exp expansion that failed
    * @param failedSubTaskResults - the subtasks of the expansion that failed
    */
   public void handleFailedExpansion(Expansion exp, List failedSubTaskResults) {
@@ -185,8 +185,8 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    *
    * Ideally, this will not happen very often, and when it does, we should hear about it.
    *
-   * @param expansion that failed
-   * @param list of Constraints that have been violated
+   * @param exp expansion that failed
+   * @param violatedConstraints list of Constraints that have been violated
    */
   public void handleConstraintViolation(Expansion exp, List violatedConstraints) {
     throw new UTILPluginException (getName (), 
@@ -208,7 +208,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    *
    * </pre>
    * @see org.cougaar.lib.util.UTILAllocate#scoreAgainstPreferences
-   * @param expansion to check
+   * @param exp expansion to check
    * @return true if plugin wants to change expansion
    */
   public boolean wantToChangeExpansion(Expansion exp) {
@@ -222,7 +222,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * Default does nothing.
    *
    * @see #wantToChangeExpansion
-   * @param expansion to change
+   * @param exp expansion to change
    */
   public void changeExpansion(Expansion exp) {}
 
@@ -230,7 +230,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * publish the change
    *
    * @see #wantToChangeExpansion
-   * @param expansion to change
+   * @param exp expansion to change
    */
   public void publishChangedExpansion(Expansion exp) {
     publishChange (exp);

@@ -82,7 +82,7 @@ public class UTILAsset {
    * Given a vector of objects, it creates an asset group
    * containing those objects.  
    *
-   * @param  ldm can be gotten from the getLDM() method inherited from PluginAdapter.
+   * @param  root can be gotten from the getLDM() method inherited from PluginAdapter.
    * @param  v a Vector of assets to be grouped
    * @return AssetGroup
    */

@@ -198,7 +198,7 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    *
    * ABSTRACT, so derived plugins must implement this.
    *
-   * @param List of tasks to handle
+   * @param tasks List of tasks to handle
    */
   public abstract void processTasks (List tasks);
 

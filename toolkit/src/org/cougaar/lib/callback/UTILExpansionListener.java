@@ -98,8 +98,8 @@ public interface UTILExpansionListener extends UTILFilterCallbackListener {
    * An expansion has failed.  It's up to the plugin how to deal with the
    * failure.
    *
-   * @param expansion that failed
-   * @param List of SubTaskResult objects, all of which have newly failed.
+   * @param exp expansion that failed
+   * @param failedSubTasks List of SubTaskResult objects, all of which have newly failed.
    * @see org.cougaar.planning.ldm.plan.SubTaskResult
    */
   void handleFailedExpansion(Expansion exp, List failedSubTasks);
@@ -108,8 +108,8 @@ public interface UTILExpansionListener extends UTILFilterCallbackListener {
    * At least one constraint has been violated.  It's up to the plugin how to deal 
    * with the violation(s).
    *
-   * @param expansion that failed
-   * @param list of Constraints that have been violated
+   * @param exp expansion that failed
+   * @param violatedConstraints list of Constraints that have been violated
    */
   void handleConstraintViolation(Expansion exp, List violatedConstraints);
 
@@ -120,7 +120,7 @@ public interface UTILExpansionListener extends UTILFilterCallbackListener {
    * plugin may want to alter the expansion.
    *
    * @see org.cougaar.lib.util.UTILAllocate#scoreAgainstPreferences
-   * @param expansion to check
+   * @param exp expansion to check
    * @return true if plugin wants to change expansion
    */
   boolean wantToChangeExpansion(Expansion exp);
@@ -128,30 +128,31 @@ public interface UTILExpansionListener extends UTILFilterCallbackListener {
   /**
    * The plugin changes the expansion.
    *
-   * @see #wantToChangeExpansion
-   * @param expansion to change
+   * @see #wantToChangeExpansion(Expansion)
+   * @param exp expansion to change
    */
   void changeExpansion(Expansion exp);
 
   /**
    * publish the change
    *
-   * @see #wantToChangeExpansion
-   * @param expansion to change
+   * @see #wantToChangeExpansion(Expansion)
+   * @param exp expansion to change
    */
   void publishChangedExpansion(Expansion exp);
 
   /**
    * Updates and publishes allocation result of expansion.
    *
-   * @param expansion to report
+   * @param exp expansion to report
    */
   void reportChangedExpansion(Expansion exp);
 
   /**
    * Updates and publishes allocation result of expansion.
    *
-   * @param expansion to report
+   * @param exp expansion to report
+   * @param successfulSubtasks list of successful subtasks
    */
   void handleSuccessfulExpansion(Expansion exp, List successfulSubtasks);
 }

@@ -70,8 +70,8 @@ public class UTILItinerary {
   /**
    * Return the first leg of this itinerary with the given role
    *
-   * @param Verb role of the itinerary element to return
-   * @param Schedule itinerary through which to search
+   * @param role role of the itinerary element to return
+   * @param itin itinerary through which to search
    * @return the first itinerary leg found in the enumeration 
    *   returned by the Schedule
    * @return null if no element is found
@@ -96,9 +96,9 @@ public class UTILItinerary {
    * NOTE that the vector is expected to be empty or at least 
    * initialized and ready to be added to- no initialization is done
    * 
-   * @param Verb role of the itinerary element to return 
-   * @param Schedule itinerary through which to search
-   * @param Vector of itinerary elements to return
+   * @param role role of the itinerary element to return 
+   * @param itin itinerary through which to search
+   * @param vec_to_return of itinerary elements to return
    */
   public void getItineraryLeg(Verb role,
 				     Schedule itin,
@@ -116,7 +116,7 @@ public class UTILItinerary {
   
   /**
    * makes the itinerary
-   * @param cof the ClusterObjectFactory
+   * @param ldmf The factory
    * @param itineraryElements an enum of all the legs.
    * @return Schedule the itinerary
    */

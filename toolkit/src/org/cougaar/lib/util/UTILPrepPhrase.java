@@ -103,7 +103,7 @@ public class UTILPrepPhrase {
   /**
    * Utility method extracting a PrepositionalPhrase from a
    * task
-   * @param task with preps
+   * @param t task with preps
    * @param prepName the String name of the Preposition
    * @return the preposition named prepName
    */
@@ -146,7 +146,7 @@ public class UTILPrepPhrase {
   /**
    * Add a prepositionalPhrase to a task. Changes list of phrases on task.
    *
-   * @param task to add prep phrase to
+   * @param tasktoAddTo task to add prep phrase to
    * @param prepPhrase to add to list of prep phrases on task
    */
   public void addPrepToTask (Task taskToAddTo, PrepositionalPhrase prepPhrase) {
@@ -159,7 +159,7 @@ public class UTILPrepPhrase {
    * Adds prepositionalPhrases to a task. Changes list of phrases on task.
    * Risky to use because it does not check whether the added Preps already exist.
    *
-   * @param task to add prep phrase to
+   * @param taskToAddTo task to add prep phrase to
    * @param preps Vector of PrepositionalPhrases to add to list of prep phrases on task
    */
   public void addPreps (Task taskToAddTo, Vector preps) {
@@ -219,7 +219,6 @@ public class UTILPrepPhrase {
    *
    * @param taskToChange task to remove the prep from
    * @param preps a Vector of String names of Prepositions to remove
-   * @return void
    */
   public void removePreps (Task taskToChange, Vector preps) {
     // Save all of the old prep phrases of the task
@@ -244,8 +243,8 @@ public class UTILPrepPhrase {
    *
    * @param ldmf the PlanningFactory
    * @param prep the Preposition
-   * @param object the indirect object - any generic Object
-   * @return PrepositionalPhrase
+   * @param indirectObject the indirect object - any generic Object
+   * @return the new PrepositionalPhrase
    */
   public PrepositionalPhrase makePrepositionalPhrase(PlanningFactory ldmf,
 						     String prep,

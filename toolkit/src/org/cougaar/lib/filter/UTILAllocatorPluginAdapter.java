@@ -201,7 +201,7 @@ public abstract class UTILAllocatorPluginAdapter
    * Does nothing by default.
    *
    * </pre>
-   * @param newAssets changed assets found in the container
+   * @param changedAssets changed assets found in the container
    */
   public void handleChangedAssets(Enumeration changedAssets) {}
 
@@ -314,8 +314,8 @@ public abstract class UTILAllocatorPluginAdapter
    *
    * </pre>
    * @param alloc the allocation that should be rescinded
-   * @see UTILPluginAdapter#updateAllocationResult
-   * @see UTILAllocationListener#updateAllocationResult
+   * @see UTILPluginAdapter#updateAllocationResult(PlanElement)
+   * @see UTILAllocationListener#updateAllocationResult(PlanElement)
    * @see org.cougaar.lib.callback.UTILAllocationCallback#reactToChangedAlloc
    * @see #needToRescind
    */

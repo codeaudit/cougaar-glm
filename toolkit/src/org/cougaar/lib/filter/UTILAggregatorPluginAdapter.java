@@ -206,7 +206,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * with the task that failed.  See UTILAllocate.isFailedPE.
    *
    * </pre>
-   * @param alloc allocation to check for
+   * @param agg aggregation to check
    * @return boolean true if task needs to be rescinded
    * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter
    * @see org.cougaar.lib.util.UTILAllocate#isFailedPE
@@ -222,7 +222,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * Updates and publishes allocation result of aggregation.
    *
    * </pre>
-   * @param aggregation to report
+   * @param agg aggregation to report
    */
   public void reportChangedAggregation(Aggregation agg) {
     updateAllocationResult (agg);
@@ -266,7 +266,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    *  1) publishRemove of aggregation
    *  2) publishChange of task
    * </pre>
-   * @param aggregation to remove
+   * @param aggToRemove aggregation to remove
    */
   public void publishRemovalOfAggregation (Aggregation aggToRemove) {
     Task changedTask = aggToRemove.getTask ();
@@ -287,7 +287,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * and physical assets.
    *
    * </pre>
-   * @return Enumeration of ALL assets found in container
+   * @return ALL assets found in container
    */
   protected final Iterator getAssets() {
     Collection assets = 

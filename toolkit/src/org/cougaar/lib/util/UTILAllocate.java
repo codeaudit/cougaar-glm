@@ -167,8 +167,8 @@ public class UTILAllocate {
    * @param plan the log plan
    * @param t the task to allocate
    * @param asset the asset assigned to handle the task
-   * @param estAR the allocationResult for the allocation
-   * @param AspectValue array -- aspect represented as aspectValues
+
+   * @param aspects AspectValue array -- aspect represented as aspectValues
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
@@ -222,7 +222,7 @@ public class UTILAllocate {
    * @param t the task to allocate
    * @param asset the asset assigned to handle the task 
    *        (Ignored if failed allocation.)
-   * @param estAR the allocationResult for the allocation
+
    * @param aspectarray  - array of aspect types 
    * @param resultsarray - array of aspect values
    * @param confidence in the allocation
@@ -478,7 +478,7 @@ public class UTILAllocate {
    * </pre>
    * @param ignoredCreator - currently ignored slot that could be used for debugging
    * @param ldmf PlanningFactory for making the plan elements
-   * @param t Task that failed to be allocated
+   * @param task Task that failed to be allocated
    * @return FailedDisposition 
    * @see #makeFailedDisposition (PlanningFactory, Task, AllocationResult)
    */
@@ -595,8 +595,8 @@ public class UTILAllocate {
   /**
    * Utility function for creating AspectValues from type and value arrays
    *
-   * @param aspect type array
-   * @param aspect value array
+   * @param aspectArray type array
+   * @param resultsArray value array
    * @return AspectValue array
    */
   public AspectValue [] getAspectsFromArrays (int [] aspectarray,
@@ -741,8 +741,8 @@ public class UTILAllocate {
    * Checks plan element's allocation result to see if it's a failed
    * plan element.
    *
-   * @param alloc the allocation to check
-   * @return boolean true if the allocation need to be rescinded
+   * @param pe the allocation to check
+   * @return true if the allocation need to be rescinded
    *         Also returns false if there is no report alloc result
    *         attached to allocation
    * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter#handleRescindedAlloc

@@ -45,7 +45,7 @@ public abstract class UTILSingleTaskAllocatorPlugin
    * Implemented for UTILSingleTaskWorkflowListener
    *
    * Public version of publishAdd
-   * @param alloc Allocation to remove from cluster's memory
+   * @param allocOrFailedAlloc Allocation to remove from cluster's memory
    */
   public void publishAddingOfAllocation (PlanElement allocOrFailedAlloc) { 
     if (isDebugEnabled()) {
@@ -64,7 +64,7 @@ public abstract class UTILSingleTaskAllocatorPlugin
    * be one.  This is sort of a strange situation as I believe this is 
    * effected by parameters instead of any hard-coded policy or methods.
    *
-   * @param List of tasks (only one) to handle
+   * @param tasks List of tasks (only one) to handle
    */
   public void processTasks (List tasks) {
     // Should only ever have one task in here

@@ -67,7 +67,7 @@ public interface UTILSingleTaskWorkflowPlugin {
 
   /**
    * Public version of publishAdd
-   * @param alloc the allocation or FailedAllocation to add...
+   * @param allocOrFailedAlloc the allocation or FailedAllocation to add...
    */
   void publishAddingOfAllocation(PlanElement allocOrFailedAlloc);
 }

@@ -33,20 +33,20 @@ public interface UTILAssetListener extends UTILFilterCallbackListener {
 
   /** 
    * Defines assets you find interesting. 
-   * @param a Asser to check for interest
+   * @param a Asset to check for interest
    * @return boolean true if asset is interesting
    */
   boolean interestingAsset (Asset a);
 
   /**
    * Place to handle updated assets.
-   * @param newAssets new assets found in the container
+   * @param e new assets found in the container
    */
   void handleNewAssets     (Enumeration e);
 
   /**
    * Place to handle changed assets.
-   * @param newAssets changed assets found in the container
+   * @param e changed assets found in the container
    */
   void handleChangedAssets (Enumeration e);
 }

@@ -270,8 +270,8 @@ public class UTILPreference {
   /**
     * Utility function to get preference from a task based on its aspect type
     * 
-    * @param Task task to examine for matching preference
-    * @param int aspect type you're hoping to find on the task's preference list
+    * @param taskToExamine task to examine for matching preference
+    * @param aspect_type aspect type you're hoping to find on the task's preference list
     * @return Preference first preference found (earliest in pref enum) with the
     *  specified aspect type, null if none found
     */
@@ -291,8 +291,8 @@ public class UTILPreference {
   /**
     * Utility function to remove pref from a task based on its aspect type
     * 
-    * @param Task task to examine for matching preference
-    * @param int aspect type you're hoping to find on the task's pref list
+    * @param taskToChange task to examine for matching preference
+    * @param aspect_type aspect type you're hoping to find on the task's pref list
     * @return Preference last preference found (latest in pref enum) with the
     *  specified aspect type, null if none found
     * NOTE that if more than one pref with this aspect type is found, ALL 

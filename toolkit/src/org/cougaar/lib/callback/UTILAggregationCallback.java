@@ -114,7 +114,7 @@ public class UTILAggregationCallback extends UTILFilterCallbackAdapter {
    *        aggregation will fail again, be rescinded, and we're back where we 
    *        started.
    *
-   * @param Aggregation to examine
+   * @param agg Aggregation to examine
    */
   protected void reactToChangedAgg (Aggregation agg) {
     UTILAggregationListener listener = (UTILAggregationListener) myListener;

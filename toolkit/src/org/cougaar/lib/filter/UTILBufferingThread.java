@@ -193,7 +193,7 @@ public class UTILBufferingThread {
    * @see #dispatchTasks
    * @see #alternateDispatchConditionMet
    * @see #alternateDispatch
-   * @param buffered tasks - tasks to check to see if we're ready
+   * @param notYetDispatched buffered tasks - tasks to check to see if we're ready
    *        also the tasks sent to dispatchTasks
    */
   protected boolean checkBuffer (List notYetDispatched) { 
@@ -274,7 +274,7 @@ public class UTILBufferingThread {
   /**
    * Defines when to dispatch buffered tasks
    *
-   * @param  the list of tasks to check for size
+   * @param tasks the list of tasks to check for size
    * @return true if there are more than MAXSIZE # of tasks OR
    *         there are more than MINSIZE and the MAXTIME has been exceeded
    */

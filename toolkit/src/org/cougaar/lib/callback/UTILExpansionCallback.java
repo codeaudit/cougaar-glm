@@ -152,7 +152,7 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
    * BOZO - 01/11/00 GWFV
    *
    * </pre>
-   * @param Expansion to examine
+   * @param exp Expansion to examine
    */
   public void reactToChangedExpansion (Expansion exp) {
     UTILExpansionListener listener = (UTILExpansionListener) myListener;
@@ -253,7 +253,7 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
   }
 
   /**
-   * @param exp Expansion to examine for failed sub tasks
+   * @param subtaskResults All subtask results
    * @return List of SubTaskResult objects, all of which have newly failed.
    */
   protected List getFailedSubTaskResults (List subtaskResults) {
@@ -287,7 +287,7 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
    * the reported alloc result will remain marked as failed, even
    * after the failed subtasks have been removed.
    *
-   * @param exp Expansion to examine for failed sub tasks
+   * @param SubTaskResults All subtask results
    * @return number of failed sub tasks
    */
   protected int getNumFailedSubTasks (List subtaskResults) {

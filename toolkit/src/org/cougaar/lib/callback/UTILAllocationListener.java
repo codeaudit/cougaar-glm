@@ -93,7 +93,7 @@ public interface UTILAllocationListener extends UTILFilterCallbackListener {
    *
    * (This is the COUGAAR notification mechanism.)
    *
-   * @param alloc the allocation that needs to be updated.
+   * @param cpe the PlanElement that needs to be updated.
    * @see #needToRescind
    */
   void updateAllocationResult (PlanElement cpe);
