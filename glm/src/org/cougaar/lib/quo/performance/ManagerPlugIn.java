@@ -80,21 +80,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	VERB=getParameterValue(p, "VERB");
     }
    
-    /**
-     * Predicate that matches "CHANGE_MIND"
-     */
-    private UnaryPredicate changedMindPredicate = new UnaryPredicate() {
-	    public boolean execute(Object o) {
-		if (o instanceof Task)
-		    {
-			Task task = (Task)o;
-			return task.getVerb().equals(Verb.getVerb("CHANGED_MIND"));
-		    }
-		return false;
-	    }
-	};
-
-  
+    
     public  static UnaryPredicate myAllocationPredicate = new UnaryPredicate() {
 	    public boolean execute(Object o) {
 		if (o instanceof Allocation) {
@@ -111,7 +97,6 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     protected void setupSubscriptions() {
 	parseParameter(); //read the plugIn arguments
 	addTask();
-	forceExecute= (IncrementalSubscription)subscribe(changedMindPredicate); 
 	allocations = (IncrementalSubscription)subscribe(myAllocationPredicate);
     }
 
@@ -120,7 +105,6 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
      */
     protected void execute () {
 	allocateChangedtasks(allocations.getChangedList()); // Process changed allocations
-	allocateChangedMind(forceExecute.getChangedList()); // Process changedMind allocations
     }
 
     protected void addTask() {
@@ -128,10 +112,6 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	t = makeTask(what_to_code, VERB);
 	setPreference(t, AspectType._ASPECT_COUNT, sequenceNum);
 	publishAdd(t);
-	//debug(DEBUG, FILENAME, fw,"\nManagerPlugIn::Adding task with num " +
-	//    t.getPreferredValue(AspectType._ASPECT_COUNT ) + " and Verb " + VERB); 
-	changedMind=makeTask(what_to_code, "CHANGED_MIND");
-	publishAdd(changedMind);
     }
   
     public void publishAsset(Asset asset, String nameOfAsset, String itemIdentification){
@@ -143,18 +123,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	publishAdd(asset); 
     }
 
-    protected void allocateChangedMind(Enumeration allo_enum){ // Process changed allocations  
-	double outstanding=sequenceNum-lastReceived;
-	while (allo_enum.hasMoreElements()) {
-	    //System.out.println("outstanding tasks: " + outstanding);
-	    Task task = (Task)allo_enum.nextElement() ;
-	    if (outstanding < OUTSTANDING_MESSAGES) {
-		changeTasks(t);
-		changeTasks(changedMind);
-	    }
-	}
-    }
-
+    
     protected void  allocateChangedtasks(Enumeration allo_enum){
 	AllocationResult est, rep;
 	double val=0;
@@ -177,7 +146,6 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 		    System.out.println(e);
 		}
 		changeTasks(t);
-		changeTasks(changedMind);
 	    }
 	    breakFromLoop(count, MAXCOUNT);
 	}
@@ -220,7 +188,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	    sequenceNum++;
 	setPreference(t, AspectType._ASPECT_COUNT, sequenceNum);
 	//debug(DEBUG, FILENAME, fw,"\nManagerPlugIn::Changing task " + t.getVerb() + " with num  " 
-	//    +t.getPreferredValue(AspectType._ASPECT_COUNT )); 
+	//  +t.getPreferredValue(AspectType._ASPECT_COUNT )); 
 	publishChange(t);
     }
 

@@ -28,7 +28,7 @@ import java.io.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.5 2001-11-01 16:19:02 psharma Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.6 2001-11-01 16:57:24 psharma Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 {
@@ -119,8 +119,8 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
     private void allocateTasks(Enumeration task_enum) {
 	while (task_enum.hasMoreElements()) {
 	    Task task = (Task)task_enum.nextElement();
-	    // debug(DEBUG, FILENAME, fw, "DevelopmentAllocatorPlugIn: Got task from blackboard.." 
-	    //  + task.getPreferredValue(AspectType._ASPECT_COUNT ) + " with verb " + task.getVerb());
+	    //debug(DEBUG, FILENAME, fw, "DevelopmentAllocatorPlugIn: Got task from blackboard.." 
+	    //+ task.getPreferredValue(AspectType._ASPECT_COUNT ) + " with verb " + task.getVerb());
 	    startTime = new Date();
 	    allocateTask(task, startMonth(task));
 	}
