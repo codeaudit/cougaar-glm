@@ -5,7 +5,7 @@ import org.cougaar.core.cluster.ClusterImpl;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.util.ConfigFileFinder;
-
+import org.cougaar.util.Parameters;
 import org.cougaar.domain.glm.debug.GLMDebug;
 import org.cougaar.domain.mlm.plugin.ldm.LDMEssentialPlugIn;
 import org.cougaar.domain.mlm.plugin.ldm.LDMConnectionPool;
@@ -220,6 +220,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     // document fileParameters_ hashtable
     protected String getParm(String name) {
 	String value = (String)fileParameters_.get(name);
+	value = Parameters.replaceParameters(value, fileParameters_);
 	if (value == null) {
 	    throw new RuntimeException(this.toString()+": Couldn't initializeDriver need to specify "+name);
 	}
@@ -230,7 +231,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     protected void initializeDriver() {
 	String driverName = getParm("Driver");
 	registerDriver(driverName);
-	url_ = getParm("Database");
+  	url_ = getParm("Database");
 	user_ = getParm("Username"); 
 	password_= getParm("Password");
 
