@@ -36,7 +36,6 @@ import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 

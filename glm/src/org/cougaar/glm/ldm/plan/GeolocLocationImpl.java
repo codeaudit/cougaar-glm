@@ -25,11 +25,9 @@ import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.mlm.ui.util.AsciiPrinter; 
-import org.cougaar.mlm.ui.util.SelfPrinter; 
  
 public class GeolocLocationImpl extends NamedPositionImpl
-  implements GeolocLocation, NewGeolocLocation, SelfPrinter {
+  implements GeolocLocation, NewGeolocLocation {
         
   String GeolocCode, InstallTypeCode, CSCode, CSName, IcaoCode;
         
@@ -106,17 +104,6 @@ public class GeolocLocationImpl extends NamedPositionImpl
        GeolocCode);
   }
 
-  public void printContent(AsciiPrinter pr) {
-    pr.print(GeolocCode, "GeolocCode");
-    pr.print(InstallTypeCode, "InstallationTypeCode");
-    pr.print(CSCode, "CountryStateCode");
-    pr.print(CSName, "CountryStateName");
-    pr.print(IcaoCode, "IcaoCode");
-    pr.print(getName(), "Name");
-    pr.print(lat, "Latitude");
-    pr.print(lon, "Longitude");
-  }
-
   public Object clone() {
     GeolocLocationImpl gli = new GeolocLocationImpl();
     gli.setGeolocCode(GeolocCode);
@@ -167,9 +154,3 @@ public class GeolocLocationImpl extends NamedPositionImpl
   }
 
 }
-
-
-
-
-
-
