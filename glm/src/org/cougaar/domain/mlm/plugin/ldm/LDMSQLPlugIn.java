@@ -22,6 +22,16 @@ import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.ClusterServesPlugIn;
 import org.cougaar.util.UnaryPredicate;
 
+import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.domain.planning.ldm.FactoryException;
+import org.cougaar.domain.planning.ldm.DomainService;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.domain.mlm.plugin.ldm.LDMEssentialPlugIn;
+
+import org.cougaar.core.component.ServiceRevokedListener;
+import org.cougaar.core.component.ServiceRevokedEvent;
+
+
 import org.cougaar.util.Parameters;
 
 import java.util.Vector;
@@ -94,6 +104,10 @@ import java.sql.*;
 public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 {
 
+
+		DomainService domainService = null;
+		private RootFactory theFactory = null;
+		
   public LDMSQLPlugIn() {}
 	
   // the global parameters table (String -> object/String
@@ -107,6 +121,19 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     // let the super run to deal with the uninteresting stuff
     //super.setupSubscriptions();
 		
+
+				// get the domain service  	
+				if (theFactory == null) {
+						domainService = (DomainService) getBindingSite().getServiceBroker().getService(
+				 																					 this, DomainService.class,
+																								 new ServiceRevokedListener() {
+	 										     						 public void serviceRevoked(ServiceRevokedEvent re) {
+																						 theFactory = null;
+		 			                                 }
+																										 });
+				}
+				theFactory = domainService.getFactory();
+				
     try {
       //load an initial driver
       DBConnectionPool.registerDriver ("oracle.jdbc.driver.OracleDriver");
@@ -117,8 +144,9 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     // set up the subscription
     // This could be a future site for maintaining a Container of created
     // LDMObjects for future updating.
-    if (!didRehydrate()) {	// Objects should already exist after rehydration
-      try {
+    //if (!didRehydrate()) {	// Objects should already exist after rehydration
+    if (!blackboard.didRehydrate()) {  
+				try {
 	// set up initial properties
 	initProperties();
 	// deal with the arguments.
@@ -168,8 +196,9 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
   // parse the query file
   private void parseQueryFile() {
-    try {
-      BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
+    try { 
+				BufferedReader in = new BufferedReader(new InputStreamReader(getConfigFinder().open(queryFile)));
+				//BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
       Properties pt = null;
       for (String line = in.readLine(); line != null; line=in.readLine()) {
         
@@ -211,8 +240,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	      cqh.initialize(this, // LDMEssentialPlugIn
 			     // this, // ldmservice
 			     getClusterIdentifier(),
-			     getCluster(),
-			     getFactory(),
+					 getCluster(),
+			     domainService.getFactory(),
 			     pt = (Properties)globalParameters.clone(),
 			     getBlackboardService());
 	      queries.addElement(cqh);

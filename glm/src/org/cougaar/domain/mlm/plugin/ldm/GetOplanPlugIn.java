@@ -30,7 +30,7 @@ import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.plan.QueryRequest;
 import org.cougaar.domain.glm.ldm.oplan.*;
 
-import org.cougaar.lib.util.UTILAsset;
+//import org.cougaar.lib.util.UTILAsset;
 
 public class GetOplanPlugIn extends SimplePlugIn {
 

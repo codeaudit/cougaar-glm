@@ -63,6 +63,10 @@ import org.cougaar.util.Parameters;
 
 import org.cougaar.util.UnaryPredicate;
 
+import org.cougaar.domain.planning.ldm.DomainServiceProvider;
+import org.cougaar.domain.planning.ldm.DomainServiceImpl;
+import org.cougaar.domain.planning.ldm.DomainService;
+
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -105,6 +109,8 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
   private Vector prototypeProviders = new Vector();
   private Vector propertyProviders = new Vector();
 
+		private DomainService domainService = null;
+		
   // Vector of LDMConnection Driver Pools
   private static Vector allDBConnections = new Vector();
 
@@ -296,8 +302,13 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
     // This could be a future site for maintaining a Container of created
     // LDMObjects for future updating.
 	
-	
-    if (!didRehydrate()) 
+			// get domain service - factory
+	 		domainService = (DomainService) getBindingSite().getServiceBroker().getService(
+				 																					 this, DomainService.class,
+																									 null);
+			
+			
+    if (!blackboard.didRehydrate()) 
       {	// Objects should already exist after rehydration
         try 
           {
@@ -319,7 +330,7 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
             try
               {
 	        // Locate the .cfg file
-	        InputStreamReader config = new InputStreamReader(getCluster().getConfigFinder().open(configFile));
+	        InputStreamReader config = new InputStreamReader(getConfigFinder().open(configFile));
 		  
 	        parseConfigFile(config);
 	   
@@ -342,7 +353,7 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
             //}
             try
               {
-	        InputStreamReader qs = new InputStreamReader(getCluster().getConfigFinder().open(queryFile));	 
+	        InputStreamReader qs = new InputStreamReader(getConfigFinder().open(queryFile));	 
 	        parseQueryFile(qs);
                 qs.close();
               } catch (Exception e)
@@ -827,7 +838,7 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
                         cqh.initializeQH(this, // LDMEssentialPlugIn			    		
                                          getClusterIdentifier(),
                                          getCluster(),
-                                         getFactory(),
+                                         domainService.getFactory(),
                                          pt = (Properties)globalParameters.clone(),
                                          getBlackboardService());
 			
