@@ -37,7 +37,7 @@ public class QueryHelper implements ActionListener,
   static final String CLEAR = "Clear";
   static final String SAVE = "Save";
   static final String MOVIE_MODE = "Movie Mode";
-  static final String CDAY_MODE = "Cdays";
+  static final String CDAY_MODE = InventoryChart.CDAY_MODE;
 
   String clusterURL;
   String PSP_package;
@@ -259,8 +259,8 @@ public class QueryHelper implements ActionListener,
 
   private JPanel createButtonsPanel() {
     JPanel panel = new JPanel();
-    panel.add(createButton("Print", false));
-    panel.add(createButton("Report", false));
+    //panel.add(createButton("Print", false));
+    //panel.add(createButton("Report", true));
 
     // if it's an applet, disable the save button
     if (isApplet)
@@ -296,7 +296,8 @@ public class QueryHelper implements ActionListener,
     JCheckBox cdaysModeCheck = new JCheckBox(CDAY_MODE,false);
     cdaysModeCheck.setActionCommand(CDAY_MODE);
     cdaysModeCheck.addItemListener(this);
-    panel.add(cdaysModeCheck);
+    //Moving to InventoryChart.java
+    //panel.add(cdaysModeCheck);
     
     return panel;
   }
