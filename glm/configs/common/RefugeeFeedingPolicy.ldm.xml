@@ -31,6 +31,8 @@
 	<RangeValue min="0" max="180">
 	  <RuleParam name="Enhancements">
       	    <KeySet value="">
+	    <KeyValue key="Fresh Fruits" value="0.0" />
+	    <KeyValue key="Fresh Vegetables" value="0.0" />
 	    </KeySet>
     	  </RuleParam>  
 	</RangeValue>
