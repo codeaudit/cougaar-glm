@@ -55,12 +55,8 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * Vesion of GLSExpander without SD support, for use with minitestconfig, eg.
  * The GLSMiniExpanderPlugin will take the intial GetLogSupport task received by
- * a cluster and expand it into getlogsupport for subordinates.
- * 
- * Componentized in Cougaar 8.3 now extends ComponentPlugin instead of SimplePlugin.
- * Note the significant changes can be found in setupSubscriptions().
+ * an agent and expand it into getlogsupport for subordinates.
  **/
-
 public class GLSMiniExpanderPlugin extends ComponentPlugin {
   /** Subscription to hold collection of input tasks **/
   private IncrementalSubscription expandableTasks;
@@ -280,7 +276,7 @@ public class GLSMiniExpanderPlugin extends ComponentPlugin {
     
     Vector prepphrases = new Vector();
     
-    // get the existing prep phrase(s) - look for FOR <Clustername>
+    // get the existing prep phrase(s) - look for FOR <Agentname>
     // and add that one to the new subtask
     Enumeration origpp = task.getPrepositionalPhrases();
     while (origpp.hasMoreElements()) {

@@ -363,17 +363,17 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
 
   protected void addRelationship(String typeId, String itemId,
-                                 String otherClusterId, String roleName,
+                                 String otherAgentId, String roleName,
                                  long start, long end) {
     super.addRelationship(typeId, itemId,
-			  otherClusterId, roleName,
+			  otherAgentId, roleName,
 			  start, end);
 
     if (myLogger.isInfoEnabled()) {
       myLogger.info("added relationship " +
 		    " other asset typeid = " + typeId + 
 		    ", itemId = " + itemId +
-		    ", clusterId = " + otherClusterId +
+		    ", agentId = " + otherAgentId +
 		    ", role = " + roleName + 
 		    ", start = " + start + 
 		    ", end = " + end);
@@ -385,7 +385,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
       }
     
 
-      super.addRelationship(typeId, itemId, otherClusterId, 
+      super.addRelationship(typeId, itemId, otherAgentId, 
 			    Constants.Role.OPERATIONALSUBORDINATE.toString(),
 			    start, end);
     }

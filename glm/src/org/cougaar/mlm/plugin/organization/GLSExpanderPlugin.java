@@ -68,11 +68,8 @@ import org.cougaar.util.UnaryPredicate;
 
 /**
  * The GLSExpanderPlugin will take the intial GetLogSupport task received by
- * a cluster and expand it into getlogsupport for subordinates.
+ * an agent and expand it into getlogsupport for subordinates.
  * 
- * Componentized in Cougaar 8.3 now extends ComponentPlugin instead of SimplePlugin.
- * Note the significant changes can be found in setupSubscriptions().
- *
  * @property org.cougaar.mlm.plugin.organization.GLSExpanderPlugin.persistEarly default false. When true, force a persist after this agent and all subordinates have received the GLS task. Used to avoid kill & restarts that rescind GLS task.
  **/
 public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
@@ -654,7 +651,7 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
     
     Vector prepphrases = new Vector();
     
-    // get the existing prep phrase(s) - look for FOR <Clustername>
+    // get the existing prep phrase(s) - look for FOR <Agentname>
     // and add that one to the new subtask
     Enumeration origpp = task.getPrepositionalPhrases();
     while (origpp.hasMoreElements()) {

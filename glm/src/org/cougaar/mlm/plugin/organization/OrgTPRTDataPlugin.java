@@ -99,10 +99,10 @@ import org.cougaar.planning.ldm.plan.RemotePlanElement;
 
 /**
 This is a modified version of the OrgRTDataPlugin. OrgTPRTDataPlugin reads time-dependent superior/subordinate 
-relationships from a <cluster-id>-relationships.ini file in place of the information found underneath the
+relationships from a <agent-id>-relationships.ini file in place of the information found underneath the
 [Relationships] section in the prototype-ini.dat file and puts the times associated with the relationships
 in the RFS and RFD tasks in place of the DEFAULT_START_TIME and DEFAULT_END_TIME. 
-If the <cluster-id>-relationships.ini is absent or has the wrong format, it defaults to the behavior 
+If the <agent-id>-relationships.ini is absent or has the wrong format, it defaults to the behavior 
 of the OrgRTDataPlugin.
 */
 
@@ -227,17 +227,17 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
    */
   protected void processOrganizations() {
     try {
-      String cId = getMessageAddress().getAddress();
-      ParsePrototypeFile(cId, GLMRelationship.SELF);
+      String aId = getMessageAddress().getAddress();
+      ParsePrototypeFile(aId, GLMRelationship.SELF);
 
       String organizations[][] = null;
 
 	  // get the time phased relations from teh relationship file
-      Vector relationshipsVector = parseRelationshipFile(cId, GLMRelationship.SELF);
+      Vector relationshipsVector = parseRelationshipFile(aId, GLMRelationship.SELF);
 
-	  // Put the organizations for this cluster into array
+	  // Put the organizations for this agent into array
 	  if (relationshipsVector != null) {
-		  //System.out.println(cId+": TPRTdataPlugin parsed relationships file");
+		  //System.out.println(aId+": TPRTdataPlugin parsed relationships file");
 	      organizations = new String[relationshipsVector.size()][5];
 	      relationshipsVector.copyInto(organizations);
 	  }
@@ -307,8 +307,8 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 
   
   // creates a copy of my "self" org with special capable roles to send to a
-  // cluster I am supporting.
-  // Also create a client org in this cluster
+  // agent I am supporting.
+  // Also create a client org in this agent
   protected void cloneMe(String sendto, String caproles, String startTimeStr, String endTimeStr) {
     if (selfOrg == null) {
       System.err.println("OrgRTDataPlugin: selfOrg is null in cloneMe");
@@ -380,7 +380,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
   }
   
   //create the RFD task to be sent to myself which will result in an asset transfer
-  // of myself being sent to the cluster I am supporting.
+  // of myself being sent to the agent I am supporting.
   protected NewTask createRFD(Organization sup, Organization sub, 
                               Collection roles, String startTimeStr, String endTimeStr) {
 	long[] times = parseTimeStrings(startTimeStr, endTimeStr);
@@ -393,7 +393,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
   }
 
   //create the RFD task to be sent to myself which will result in an asset transfer
-  // of myself being sent to the cluster I am supporting.
+  // of myself being sent to the agent I am supporting.
   protected NewTask createRFS(Organization client, Organization reportingOrg, 
                               Collection roles, String startTimeStr, String endTimeStr) {
 	long[] times = parseTimeStrings(startTimeStr, endTimeStr);
@@ -492,7 +492,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
   }
 
   //create the RFS task to be sent to myself which will result in an asset transfer
-  // of the copyofmyself being sent to the cluster I am supporting.
+  // of the copyofmyself being sent to the agent I am supporting.
   protected NewTask createReportTask(Organization reportingOrg, 
                                      OrganizationAdapter sendto,
                                      Collection roles,
@@ -549,7 +549,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
   /**
    * 
    */
-  protected void ParsePrototypeFile(String clusterId, String relationship) {
+  protected void ParsePrototypeFile(String agentId, String relationship) {
 
     // Use the same domainname for all org assets now
     String uic = "";
@@ -559,7 +559,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
     Organization org = null;
     int newVal;
 
-    String filename = clusterId + "-prototype-ini.dat";
+    String filename = agentId + "-prototype-ini.dat";
     BufferedReader input = null;
     Reader fileStream = null;
 
@@ -616,16 +616,16 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 	      	NewItemIdentificationPG itemIdPG = 
                   (NewItemIdentificationPG)org.getItemIdentificationPG();
                 itemIdPG.setItemIdentification(uic);
-	      	// Use unitName if it occurred, else use clusterId
+	      	// Use unitName if it occurred, else use agentId
 		if (unitName!=null) {
                   itemIdPG.setNomenclature(unitName);
 		} else {
-                  itemIdPG.setNomenclature(clusterId);
+                  itemIdPG.setNomenclature(agentId);
 	      	}
-		itemIdPG.setAlternateItemIdentification(clusterId);
+		itemIdPG.setAlternateItemIdentification(agentId);
 
                 NewClusterPG cpg = (NewClusterPG) org.getClusterPG();
-                cpg.setMessageAddress(MessageAddress.getMessageAddress(clusterId));
+                cpg.setMessageAddress(MessageAddress.getMessageAddress(agentId));
               } else {
                 System.out.println("OrgRTDataPlugin Error: [Prototype] value is null");
               }
@@ -700,10 +700,10 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
   /**
    * reads time-phased support and superior relationships from a file
    */
-   protected Vector parseRelationshipFile(String clusterId, String relationship) {
+   protected Vector parseRelationshipFile(String agentId, String relationship) {
 	
 		Vector relationshipsVector = new Vector(5,10);
-	    String filename = clusterId + "-relationships.ini";
+	    String filename = agentId + "-relationships.ini";
 
 		try {
 			StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(ConfigFinder.getInstance().open(filename))));
@@ -738,7 +738,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 				if ((GLMRelationship.SUPPORTING).equals(f.get(null))) {
 
 					if (tokenVector.size() == 5) {
-						// element 1 is clientClusterName
+						// element 1 is clientAgentName
 						relationshipsArray[1] = (String)tokenVector.elementAt(1);
 						// element 2 is roles
 						relationshipsArray[2] = (String)tokenVector.elementAt(2);
@@ -756,7 +756,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 				if ((GLMRelationship.SUPERIOR).equals(f.get(null))) {
 
 					if (tokenVector.size() == 4) {
-						// element 1 is subordinateClusterName
+						// element 1 is subordinateAgentName
 						relationshipsArray[1] = (String)tokenVector.elementAt(1);
 						// element 2 is startDate
 						relationshipsArray[3] = (String)tokenVector.elementAt(2);
@@ -765,7 +765,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 					}
 					else
 					if (tokenVector.size() == 5) {
-						// element 1 is subordinateClusterName
+						// element 1 is subordinateAgentName
 						relationshipsArray[1] = (String)tokenVector.elementAt(1);
 						// element 3 is startDate
 						relationshipsArray[3] = (String)tokenVector.elementAt(3);
@@ -1048,7 +1048,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
   }
 
   /**
-   * Fills in the organization_vector with arrays of relationship, clusterName and capableroles triples.
+   * Fills in the organization_vector with arrays of relationship, agentName and capableroles triples.
    */
   protected int FillOrganizationVector(Organization org, int newVal, StreamTokenizer tokens, String relationship) {
     organization_vector.removeAllElements(); // Clear out the organization_vector
@@ -1057,7 +1057,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
     if (org != null) {
       try {
 	while (newVal != StreamTokenizer.TT_EOF) {
-	  String organization_array[] = new String[5]; // An array of relationship, clusterName and capableroles triples
+	  String organization_array[] = new String[5]; // An array of relationship, agentName and capableroles triples
 	  newVal = tokens.nextToken();
 	  // Parse [Relationship] part of prototype-ini file
 	  if ((tokens.ttype == StreamTokenizer.TT_WORD) && !(tokens.sval.substring(0,1).equals("["))) {

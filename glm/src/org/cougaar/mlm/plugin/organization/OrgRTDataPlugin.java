@@ -228,14 +228,14 @@ public class OrgRTDataPlugin extends SimplePlugin {
    */
   protected void processOrganizations() {
     try {
-      String cId = getMessageAddress().getAddress();
-      String filename = cId + "-prototype-ini.dat";
+      String aId = getMessageAddress().getAddress();
+      String filename = aId + "-prototype-ini.dat";
       if (didSpawn ())
 		filename = originalAgentID + "-prototype-ini.dat";
 
-      ParsePrototypeFile(filename, cId, GLMRelationship.SELF);
+      ParsePrototypeFile(filename, aId, GLMRelationship.SELF);
 
-      // Put the organizations for this cluster into array
+      // Put the organizations for this agent into array
       String organizations[][] = new String[organization_vector.size()][3];
       organization_vector.copyInto(organizations);
       // For each organization, parse appropriate prototype-ini file
@@ -306,8 +306,8 @@ public class OrgRTDataPlugin extends SimplePlugin {
 
   
   // creates a copy of my "self" org with special capable roles to send to a
-  // cluster I am supporting.
-  // Also create a client org in this cluster
+  // agent I am supporting.
+  // Also create a client org in this agent
   protected void cloneMe(String sendto, String caproles) {
     if (selfOrg == null) {
       System.err.println("OrgRTDataPlugin: selfOrg is null in cloneMe");
@@ -397,7 +397,7 @@ public class OrgRTDataPlugin extends SimplePlugin {
   }
   
   //create the RFD task to be sent to myself which will result in an asset transfer
-  // of myself being sent to the cluster I am supporting.
+  // of myself being sent to the agent I am supporting.
   protected NewTask createRFD(Organization sup, Organization sub, 
                               Collection roles) {
     NewTask rfdTask = createReportTask(sub, sup, roles, DEFAULT_START_TIME, 
@@ -408,7 +408,7 @@ public class OrgRTDataPlugin extends SimplePlugin {
   }
 
   //create the RFD task to be sent to myself which will result in an asset transfer
-  // of myself being sent to the cluster I am supporting.
+  // of myself being sent to the agent I am supporting.
   protected NewTask createRFS(Organization client, Organization reportingOrg, 
                               Collection roles) {
     NewTask rfsTask = createReportTask(reportingOrg, client, roles, 
@@ -419,7 +419,7 @@ public class OrgRTDataPlugin extends SimplePlugin {
   }
 
   //create the RFS task to be sent to myself which will result in an asset transfer
-  // of the copyofmyself being sent to the cluster I am supporting.
+  // of the copyofmyself being sent to the agent I am supporting.
   protected NewTask createReportTask(Organization reportingOrg, 
                                      OrganizationAdapter sendto,
                                      Collection roles,
@@ -476,7 +476,7 @@ public class OrgRTDataPlugin extends SimplePlugin {
   /**
    * 
    */
-  protected void ParsePrototypeFile(String filename, String clusterId, String relationship) {
+  protected void ParsePrototypeFile(String filename, String agentId, String relationship) {
 
     // Use the same domainname for all org assets now
     String uic = "";
@@ -544,16 +544,16 @@ public class OrgRTDataPlugin extends SimplePlugin {
 	      	NewItemIdentificationPG itemIdPG = 
                   (NewItemIdentificationPG)org.getItemIdentificationPG();
                 itemIdPG.setItemIdentification(uic);
-	      	// Use unitName if it occurred, else use clusterId
+	      	// Use unitName if it occurred, else use agentId
 		if (unitName!=null) {
                   itemIdPG.setNomenclature(unitName);
 		} else {
-                  itemIdPG.setNomenclature(clusterId);
+                  itemIdPG.setNomenclature(agentId);
 	      	}
-		itemIdPG.setAlternateItemIdentification(clusterId);
+		itemIdPG.setAlternateItemIdentification(agentId);
 
                 NewClusterPG cpg = (NewClusterPG) org.getClusterPG();
-                cpg.setMessageAddress(MessageAddress.getMessageAddress(clusterId));
+                cpg.setMessageAddress(MessageAddress.getMessageAddress(agentId));
 
                 CommunityPGImpl communityPG = 
                   (CommunityPGImpl)getFactory().createPropertyGroup(CommunityPGImpl.class);
@@ -877,7 +877,7 @@ public class OrgRTDataPlugin extends SimplePlugin {
   }
 
   /**
-   * Fills in the organization_vector with arrays of relationship, clusterName and capableroles triples.
+   * Fills in the organization_vector with arrays of relationship, agentName and capableroles triples.
    */
   protected int FillOrganizationVector(Organization org, int newVal, StreamTokenizer tokens, String relationship) {
     organization_vector.removeAllElements(); // Clear out the organization_vector
@@ -886,7 +886,7 @@ public class OrgRTDataPlugin extends SimplePlugin {
     if (org != null) {
       try {
 	while (newVal != StreamTokenizer.TT_EOF) {
-	  String organization_array[] = new String[3]; // An array of relationship, clusterName and capableroles triples
+	  String organization_array[] = new String[3]; // An array of relationship, agentName and capableroles triples
 	  newVal = tokens.nextToken();
 	  // Parse [Relationship] part of prototype-ini file
 	  if ((tokens.ttype == StreamTokenizer.TT_WORD) && !(tokens.sval.substring(0,1).equals("["))) {
