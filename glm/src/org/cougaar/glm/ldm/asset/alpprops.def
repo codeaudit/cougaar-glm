@@ -21,7 +21,7 @@
 ; </copyright>
 ;
 
-includedefs=org/cougaar/domain/planning/ldm/asset/properties.def
+includedefs=org/cougaar/planning/ldm/asset/properties.def
 
 package=org.cougaar.glm.ldm.asset
 
