@@ -9,4 +9,4 @@ MAX_IN_POOL= 4
 TIMEOUT= 1
 NUMBER_OF_TRIES= 2
 
-losQuery=select * from LENGTH_OF_STAY where PC = :pc 
+losQuery=select * from LENGTH_OF_STAY 
