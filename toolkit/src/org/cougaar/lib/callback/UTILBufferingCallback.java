@@ -123,7 +123,19 @@ public class UTILBufferingCallback extends UTILFilterCallbackAdapter {
     }
   }
 
-  /** place where you can react to rehydration event */
+  /** 
+   * Place where you can react to rehydration event.  
+   *
+   * If the blackboard says "didRehydrate" then each callback 
+   * that is a RehydrateReactor will be called here.  
+   * This can happen on an agent move too.
+   *
+   * NOTE : The plugin will only look at *unplanned* tasks on rehydration.
+   *        I don't think this will cause problems.
+   *        Fix for bug #3356: http://bugs.cougaar.org/show_bug.cgi?id=3356
+   *
+   * @see org.cougaar.lib.filter.UTILPluginAdapter#execute
+   */
   public void reactToRehydrate () {
     Collection contents = mySub.getCollection ();
 	
@@ -137,11 +149,13 @@ public class UTILBufferingCallback extends UTILFilterCallbackAdapter {
       Task t = (Task) iter.next();
       
       if (isWellFormed (t)) {
-	workToBeDone = true; // Will need to have plugin wake up later
-	((UTILGenericListener) myListener).handleTask (t);
-	if (logger.isDebugEnabled())
-	  logger.debug ("UTILBufferingCallback.reactToRehydrate - Notifying " + myListener + 
-			" about " + t.getUID());
+	if (t.getPlanElement() == null) { // fix for bug #3356 - only look at unplanned tasks on rehydration
+	  workToBeDone = true; // Will need to have plugin wake up later
+	  ((UTILGenericListener) myListener).handleTask (t);
+	  if (logger.isDebugEnabled())
+	    logger.debug ("UTILBufferingCallback.reactToRehydrate - Notifying " + myListener + 
+			  " about " + t.getUID());
+	}
       }
     }
 
