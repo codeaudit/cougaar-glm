@@ -10,109 +10,226 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.plan.*;
+import java.util.*;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
-import java.util.*;
+import org.cougaar.domain.glm.plugins.TaskUtils;
+import org.cougaar.domain.glm.plugins.TimeUtils;
 
 // Simple plugin that says 'yes' to any task fed to it
 // Optionally, if arguments are given, will only allocate tasks with given verbs
 public class UniversalAllocatorPlugIn extends SimplePlugIn {
-
+    private static class Filter {
+        public Verb verb;
+        public Schedule schedule; // The schedule of failing periods (if any)
+        public String toString() {
+            if (schedule == null) return verb.toString();
+            StringBuffer buf = new StringBuffer();
+            buf.append(verb);
+            for (ListIterator i = schedule.listIterator();i.hasNext();) {
+                ScheduleElement el = (ScheduleElement) i.next();
+                buf.append(';');
+                if (el.getStartTime() > TimeSpan.MIN_VALUE) {
+                    buf.append(el.getStartDate());
+                }
+                buf.append("..");
+                if (el.getEndTime() < TimeSpan.MAX_VALUE) {
+                    buf.append(el.getEndDate());
+                }
+            }
+            return buf.toString();
+        }
+    }
     private IncrementalSubscription allTasks;
     private UnaryPredicate allTasksPredicate = new UnaryPredicate() {
-	public boolean execute(Object o) { return o instanceof Task; }
+	public boolean execute(Object o) {
+            if (o instanceof Task) {
+                if (verbMap.isEmpty()) return true;
+                if (verbMap.get(((Task) o).getVerb()) != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
     };
 
-    public void setupSubscriptions()
-    {
-      //System.out.println("In UniversalAllocatorPlugin.setupSubscriptions");
-	// Subscribe for all tasks
-	allTasks = (IncrementalSubscription)subscribe(allTasksPredicate);
+    /** Map a Verb to a Filter **/
+    private Map verbMap = new HashMap();
 
+    /**
+     * Create a single dummy asset to which to allocate all
+     * appropriate tasks
+     **/
+    private Asset sink_asset = null;
+    
+    public void setupSubscriptions() {
+	allTasks = (IncrementalSubscription)subscribe(allTasksPredicate);
+        parseParams();
+    }
+
+    /**
+     * Parameters are of the form:
+     *    [-]<verb>{;[<startdate>]..[<enddate>]}*
+     * ...optional minus, verb, and zero or more date ranges. The
+     * start or end of a date range may be omitted signifying min or
+     * max respectively. The initial minus signifies that the default
+     * is to fail the allocations. The date ranges specify exceptions
+     * to the default. So, for example:
+     *   Supply;9/7/2005..10/3/2005
+     * would fail in the time period from September 7, 2005 to October
+     * 3, 2005.
+     **/
+    private void parseParams() {
         StringBuffer assetName = new StringBuffer();
+
         assetName.append("UniversalSink");
-	Vector params = getParameters();
-	for (Enumeration e = params.elements();e.hasMoreElements();) {
+	for (Enumeration e = getParameters().elements();e.hasMoreElements();) {
 	    String param = (String) e.nextElement();
+            Filter filter = new Filter();
+            ScheduleElement el;
+            Schedule schedule = new ScheduleImpl();
+            boolean defaultIsFailure = param.startsWith("-");
+            if (defaultIsFailure) param = param.substring(1);
+            StringTokenizer tokens = new StringTokenizer(param, ";");
+            filter.verb = Verb.getVerb(tokens.nextToken());
+            while (tokens.hasMoreTokens()) {
+                String token = tokens.nextToken();
+                String sub;
+                int dotdot = token.indexOf("..");
+                long from = TimeSpan.MIN_VALUE;
+                long to = TimeSpan.MAX_VALUE;
+                if (dotdot < 0) {
+                    from = Date.parse(token);
+                } else {
+                    sub = token.substring(0, dotdot);
+                    if (sub.length() > 0) {
+                        from = Date.parse(sub);
+                    }
+                    sub = token.substring(dotdot + 2);
+                    if (sub.length() > 0) {
+                        to = Date.parse(sub);
+                    }
+                }
+                el = new ScheduleElementImpl(from, to);
+                schedule.add(el);
+            }
+            if (defaultIsFailure) {
+                /* We built a schedule of exceptions to failure (a
+                   success schedule). It must be converted to a
+                   failure schedule. */
+                long startTime = TimeSpan.MIN_VALUE;
+                filter.schedule = new ScheduleImpl();
+                for (ListIterator i = schedule.listIterator(); i.hasNext(); ) {
+                    ScheduleElement el2 = (ScheduleElement) i.next();
+                    el = new ScheduleElementImpl(startTime, el2.getStartTime());
+                    filter.schedule.add(el);
+                    startTime = el2.getEndTime();
+                }
+                el = new ScheduleElementImpl(startTime, TimeSpan.MAX_VALUE);
+                filter.schedule.add(el);
+            } else {
+                /* We build a schedule of exceptions to success (a
+                   failure schedule) and that is exactly what we need */
+                filter.schedule = schedule;
+            }
+            verbMap.put(filter.verb, filter);
+            System.out.println("UniversalAllocatorPlugIn adding " + filter);
             assetName.append('_');
-            assetName.append(param);
+            assetName.append(filter.verb);
         }
 	sink_asset = theLDMF.createPrototype("AbstractAsset", assetName.substring(0));
 	publishAdd(sink_asset);
     }
 
-    // Is this a task we're interested in? Either we didn't specify a verb,
-    // Or the task has a verb among those specified
+    /**
+     * Is this a task we're interested in? Either we didn't specify a
+     * verb, or the task has a verb among those specified
+     **/
     private boolean isInterestingTask(Task task) 
     {
-	String verb = task.getVerb().toString();
-	Vector params = getParameters();
-	if (params.size() == 0) return true;
-	for(Enumeration e = params.elements();e.hasMoreElements();) {
-	    String param = (String)e.nextElement();
-	    if (param.equals(verb)) return true;
-	}
-	return false;
+        return verbMap.size() == 0 || verbMap.get(task.getVerb()) != null;
     }
 
     public void execute() 
     {
       //	System.out.println("In UniversalAllocatorPlugin.execute");
 
-	for(Enumeration e = allTasks.getAddedList();e.hasMoreElements();) 
-	    {
-		Task task = (Task)e.nextElement();
-
-		if (!isInterestingTask(task))
-		    continue;
-
-		AllocationResult allocation_result = computeAllocationResult(task);
-
-		// Allocate task to sink_asset
-		Allocation allocation = 
-		    theLDMF.createAllocation(theLDMF.getRealityPlan(),
-					     task,
-					     sink_asset,
-					     allocation_result,
-					     Role.BOGUS);
-		//		System.out.println("Allocating Task " + task + " to " + allocation);
-		publishAdd(allocation);
-	    }
+        processTasks(allTasks.getAddedList());
+        processTasks(allTasks.getChangedList());
     }
 
-    // Return an allocation result that gives back a successful/optimistic answer
-    // consisting of the best value for every aspect
+    private void processTasks(Enumeration e) {
+	while (e.hasMoreElements()) {
+            Task task = (Task)e.nextElement();
+
+            if (!isInterestingTask(task))
+                continue;
+
+            AllocationResult ar = computeAllocationResult(task);
+
+            // Allocate task to sink_asset
+            Allocation allocation;
+            allocation = (Allocation) task.getPlanElement();
+            if (allocation == null) {
+                allocation = 
+                    theLDMF.createAllocation(theLDMF.getRealityPlan(),
+                                             task,
+                                             sink_asset,
+                                             ar,
+                                             Role.BOGUS);
+                publishAdd(allocation);
+            } else {
+                AllocationResult estAR = allocation.getEstimatedResult();
+                if (!ar.isEqual(estAR)) {
+                    allocation.setEstimatedResult(ar);
+                    publishChange(allocation);
+                }
+            }
+        }
+    }
+
+    /**
+     * Compute an allocation result for this task. We use an
+     * AllocationResultHelper to do most of the work. Our job is to
+     * enumerate the schedule failure time periods and ask the helper
+     * to indicate a failure (zero value) for the applicable part of
+     * those failure time intervals.
+     **/
     private AllocationResult computeAllocationResult(Task task) 
     {
-	int num_prefs = 0;
-	Enumeration prefs = task.getPreferences();
-	while(prefs.hasMoreElements()) {prefs.nextElement(); num_prefs++; }
-
-	int []types = new int[num_prefs];
-	double []results = new double[num_prefs];
-	prefs = task.getPreferences();
-
-	int index = 0;
-	while(prefs.hasMoreElements()) {
-	    Preference pref = (Preference)prefs.nextElement();
-	    types[index] = pref.getAspectType();
-	    results[index] = pref.getScoringFunction().getBest().getValue();
-	    //	    System.out.println("Types[" + index + "]= " + types[index] + 
-	    //			       " Results[" + index + "]= " + results[index]);
-	    index++;
-	}
-
-	AllocationResult result = theLDMF.newAllocationResult(1.0, // Rating,
-							      true, // Success,
-							      types,
-							      results);
-	return result;
+        Verb verb = task.getVerb();
+        Filter filter = (Filter) verbMap.get(verb);
+        AllocationResultHelper helper = new AllocationResultHelper(task, null);
+        boolean isSupply = verb.equals(Constants.Verb.SUPPLY);
+        boolean isProjectSupply = verb.equals(Constants.Verb.PROJECTSUPPLY);
+        if (filter != null && filter.schedule != null) { // There are some failure time periods
+            for (ListIterator i = filter.schedule.listIterator(); i.hasNext(); ) {
+                ScheduleElement el = (ScheduleElement) i.next();
+                if (isSupply) {
+                    helper.setFailed(AspectType.QUANTITY, el.getStartTime(), el.getEndTime());
+                    continue;
+                }
+                if (isProjectSupply) {
+                    helper.setFailed(AlpineAspectType.DEMANDRATE, el.getStartTime(), el.getEndTime());
+                    continue;
+                }
+                // Don't know how to fail anything else.
+            }
+        }
+//          if (false) {            // This code delivers everything a day early
+//              if (isSupply && !helper.isChanged()) {
+//                  long endTime = helper.getPhase(0).getEndTime() - TimeUtils.MSEC_PER_DAY;
+//                  AspectValue av = new TimeAspectValue(AspectType.END_TIME, endTime);
+//                  helper.setAspect(av);
+//              }
+//          }
+	return helper.getAllocationResult(1.0);
     }
-
-    // Create a single dummy asset to which to allocate all appropriate tasks
-    private Asset sink_asset = null;
-    
 }
