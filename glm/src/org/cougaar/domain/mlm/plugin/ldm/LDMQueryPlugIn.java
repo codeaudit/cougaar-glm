@@ -308,7 +308,7 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
 																									 null);
 			
 			
-    if (!blackboard.didRehydrate()) 
+    if (!getBlackboardService().didRehydrate()) 
       {	// Objects should already exist after rehydration
         try 
           {

@@ -242,7 +242,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       // the oplan
       orgActivityPredicate.setOplan(oplan);
       orgActivityPredicate.setOrgId(orgId);
-      Collection existingOrgActivities = blackboard.query(orgActivityPredicate);
+      Collection existingOrgActivities = getBlackboardService().query(orgActivityPredicate);
       for (Iterator iterator = existingOrgActivities.iterator();
            iterator.hasNext();) {
         OrgActivity orgActivity = (OrgActivity) iterator.next();
@@ -288,9 +288,9 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
 																										this, UIDService.class, null);
 	  
 		
-    blackboard.getSubscriber().setShouldBePersisted(false);
-    oplanSubscription = (IncrementalSubscription) blackboard.subscribe(oplanPredicate);
-    stateSubscription = (IncrementalSubscription) blackboard.subscribe(statePredicate);
+    getBlackboardService().getSubscriber().setShouldBePersisted(false);
+    oplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(oplanPredicate);
+    stateSubscription = (IncrementalSubscription) getBlackboardService().subscribe(statePredicate);
 
     contributors = new ArrayList(13);
     // refill contributors Collection on rehydrate
@@ -298,10 +298,10 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
 
     createGUI();
 
-    if (blackboard.didRehydrate()) {
+    if (getBlackboardService().didRehydrate()) {
       checkForPrivateState(stateSubscription.elements());
     } else {
-      blackboard.publishAdd(new MyPrivateState());
+      getBlackboardService().publishAdd(new MyPrivateState());
     }
   }	   		 
 
@@ -414,18 +414,18 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
   */
   private void publishOplan() {
     // Need to make separate add/remove/modify lists
-		 blackboard.openTransaction();
+		 getBlackboardService().openTransaction();
 
     for (Iterator iterator = newObjects.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
-      blackboard.publishAdd(object);
+      getBlackboardService().publishAdd(object);
 
       if (object instanceof Oplan) {
         OplanCoupon ow = new OplanCoupon(((Oplan) object).getUID(), 
                                          getClusterIdentifier());
         uidService.registerUniqueObject(ow);
-        blackboard.publishAdd(ow);
+        getBlackboardService().publishAdd(ow);
 
         myPrivateState.oplanExists = true;
       }
@@ -434,17 +434,17 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     for (Iterator iterator = modifiedObjects.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
-      blackboard.publishChange(object);
+      getBlackboardService().publishChange(object);
     }
 
     for (Iterator iterator = removedObjects.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
-      blackboard.publishRemove(object);
+      getBlackboardService().publishRemove(object);
     }
 
-    blackboard.publishChange(myPrivateState);
-    blackboard.closeTransaction(false);
+    getBlackboardService().publishChange(myPrivateState);
+    getBlackboardService().closeTransaction(false);
 
     newObjects.clear();
     modifiedObjects.clear();
@@ -468,7 +468,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       Oplan oplan = (Oplan) it.next();
       
       IncrementalSubscription is = (IncrementalSubscription) 
-	blackboard.subscribe(new ContributorPredicate(oplan.getUID()));
+	getBlackboardService().subscribe(new ContributorPredicate(oplan.getUID()));
       contributors.add(is);
     }
   }
@@ -486,15 +486,15 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       } else continue;
       
       changedOplans.add(oplanUID);
-    }
+    } 
 
     // Publish once for each changed oplan
     for (Iterator iterator = changedOplans.iterator(); iterator.hasNext();) {
       Collection coupons = 
-        blackboard.query(new CouponPredicate((UID) iterator.next()));
+        getBlackboardService().query(new CouponPredicate((UID) iterator.next()));
       for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
 	System.out.println("SQLOplanPlugIn: publishChanging OplanCoupon");
-	blackboard.publishChange(couponIt.next());
+	getBlackboardService().publishChange(couponIt.next());
       }
     }
   }
@@ -502,9 +502,9 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
   private void processOplanDeletes(Collection deletes) {
     for (Iterator it = deletes.iterator(); it.hasNext();) {
       Oplan oplan = (Oplan) it.next();
-      Collection coupons = blackboard.query(new CouponPredicate(oplan.getUID()));
+      Collection coupons = getBlackboardService().query(new CouponPredicate(oplan.getUID()));
       for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
-	blackboard.publishRemove(couponIt.next());
+	getBlackboardService().publishRemove(couponIt.next());
       }
     }
   }

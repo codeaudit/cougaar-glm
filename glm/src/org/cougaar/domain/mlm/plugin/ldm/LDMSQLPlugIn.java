@@ -145,7 +145,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     // This could be a future site for maintaining a Container of created
     // LDMObjects for future updating.
     //if (!didRehydrate()) {	// Objects should already exist after rehydration
-    if (!blackboard.didRehydrate()) {  
+    if (!getBlackboardService().didRehydrate()) {  
 				try {
 	// set up initial properties
 	initProperties();
@@ -240,7 +240,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	      cqh.initialize(this, // LDMEssentialPlugIn
 			     // this, // ldmservice
 			     getClusterIdentifier(),
-					 getCluster(),
+											 getCluster(),
 			     domainService.getFactory(),
 			     pt = (Properties)globalParameters.clone(),
 			     getBlackboardService());
