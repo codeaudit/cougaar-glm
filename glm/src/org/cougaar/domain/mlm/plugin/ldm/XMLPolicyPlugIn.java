@@ -18,6 +18,7 @@ import org.cougaar.domain.planning.ldm.policy.Policy;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * An instance of an LDMPlugIn that reads a Cluster's startup policy
@@ -32,7 +33,7 @@ import java.util.Vector;
  * </PRE>
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: XMLPolicyPlugIn.java,v 1.1 2000-12-15 20:17:46 mthome Exp $
+ * @version  $Id: XMLPolicyPlugIn.java,v 1.2 2001-01-10 20:36:56 jwinston Exp $
  */
 public class XMLPolicyPlugIn extends SimplePlugIn
 {
@@ -46,12 +47,23 @@ public class XMLPolicyPlugIn extends SimplePlugIn
     if (didRehydrate()) return; // Is this right?
 
     try {
-      getParams();
-      policyCreator = new XMLPolicyCreator(xmlfilename, theLDMF);
-      Policy policies[] = policyCreator.getPolicies();
 
-      for (int i=0; i<policies.length; i++) {
-	publishAdd(policies[i]);
+      Vector pv = getParameters();
+      if ( pv == null ) {
+	throw new RuntimeException( "XMLPolicyPlugIn requires a parameter" );
+      } else {
+	// iterate through the list of XML Policy files to parse
+	for (Iterator pi = pv.iterator(); pi.hasNext();) {
+	  xmlfilename = (String) pi.next();
+	  //System.out.println("XMLPolicyPlugIn processing file: " + xmlfilename);
+	  globalParameters.put( "XMLFile", xmlfilename ); // Why are we doing this?
+	  policyCreator = new XMLPolicyCreator(xmlfilename, theLDMF);
+	  Policy policies[] = policyCreator.getPolicies();
+
+	  for (int i=0; i<policies.length; i++) {
+	    publishAdd(policies[i]);
+	  }
+	}
       }
     } catch ( SubscriberException se ) {
       se.printStackTrace();
@@ -63,25 +75,6 @@ public class XMLPolicyPlugIn extends SimplePlugIn
    */
   public void execute() {}
 
-
-  /**
-   * Parse parameters passed to PlugIn
-   */
-  private void getParams() {
-    Vector pv = getParameters();
-    if ( pv == null ) {
-      throw new RuntimeException( "XMLPolicyPlugIn requires a parameter" );
-    } else {
-      try {
-	Enumeration ps = pv.elements();
-	String p = (String) ps.nextElement();
-	globalParameters.put( "XMLFile", p );
-	xmlfilename = p;
-      } catch( Exception e ) {
-	e.printStackTrace();
-      }
-    }
-  }
 }
 
 
