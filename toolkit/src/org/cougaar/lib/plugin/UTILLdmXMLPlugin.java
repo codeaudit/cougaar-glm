@@ -178,6 +178,12 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
       if (logger.isDebugEnabled())
 	logger.debug ("UTILLdmXMLPlugin.createAssets - Publishing " + asset + " to the log plan");
     }
+
+    // please garbage collect!
+    paramParser = null;
+    prototypeParser = null;
+    instanceParser = null;
+    aggregateAssetParser = null;
   }
 
   /**
@@ -244,6 +250,15 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
       if (inputStream == null) {
 	logger.error ("UTILLdmXMLPlugin.getParsedDocument - could not find " + 
 		      dfile + ".  Please check config path.", e);
+      }
+    }
+    finally {
+      if (inputStream != null) {
+	try {
+	  inputStream.close();
+	} catch (Exception ioe) {
+	  logger.error ("got exception " + ioe + " closing input stream for " + dfile);
+	}
       }
     }
 
