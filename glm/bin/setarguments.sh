@@ -10,11 +10,11 @@
 MYDOMAINS=""
 BOOTSTRAPPER=org.cougaar.core.society.Bootstrapper
 MYCLASSES=org.cougaar.core.society.Node
-if [ "$OS"=="Linux" ]; then
+OS=`uname`
+if [ "$OS" == "Linux" ]; then
   MYPROPERTIES="-green"
 fi
 MYPROPERTIES="$MYPROPERTIES $MYDOMAINS  -Dorg.cougaar.system.path=$ALP3RDPARTY -Dorg.cougaar.install.path=$ALP_INSTALL_PATH"
-MYPROPERTIES="$MYPROPERTIES -Duser.timezone=GMT -Dalp.useBootstrapper=true"
-OS=`uname`
+MYPROPERTIES="$MYPROPERTIES -Duser.timezone=GMT -Dorg.cougaar.core.useBootstrapper=true"
 
 MYMEMORY="-Xms100m -Xmx300m"
