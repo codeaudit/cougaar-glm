@@ -79,10 +79,7 @@ public class SQLFDMAggregateAssetCreator extends PeriodicQuery
 	String nomenclature = (String) data[TI_NM];
 
 	String tid = "NSN/" + nsn;
-	System.out.println(myClusterIdentifier.getAddress() + ": " +
-			   "Creating aggregate asset : " + tid + " " +
-			   count  + " " + nomenclature);
-
+//  	System.out.println(myClusterIdentifier.getAddress() + ": " + "Creating aggregate asset : " + tid + " " +count  + " " + nomenclature);
 	ClassVIIMajorEndItem proto = findPrototype(data,tid, nomenclature);
 	Asset newaggasset = ldmf.createAggregate((Asset)proto,  count.intValue());
 	setupAvailableSchedule(newaggasset);
@@ -119,8 +116,8 @@ public class SQLFDMAggregateAssetCreator extends PeriodicQuery
 	pp.setMass(Mass.newPounds(((Number)data[WEIGHT]).doubleValue()));
 	ldm.fillProperties(proto);
 	ldm.cachePrototype(tid, proto);
-	System.out.println
-	    ("SQLFDMAggregateAssetCreator, findPrototype returns: "+proto +" with id: "+tip.getTypeIdentification());
+//  	System.out.println
+//  	    ("SQLFDMAggregateAssetCreator, findPrototype returns: "+proto +" with id: "+tip.getTypeIdentification());
 	return proto;
     }
 
