@@ -100,7 +100,7 @@ public class GLSExpanderPlugin extends ComponentPlugin {
    **/
   protected void setupSubscriptions() {
     
-    //System.out.println("setupSubscriptions: "+this.getBindingSite().getAgentIdentifier());
+    //System.out.println("setupSubscriptions: "+((PluginBindingSite)this.getBindingSite()).getAgentIdentifier());
     //get the LDM service to access the object factories from my bindingsite's servicebroker
     LDMService ldmService = null;
     if (theLDMF == null) {
@@ -297,7 +297,7 @@ public class GLSExpanderPlugin extends ComponentPlugin {
   private NewTask createTask(Task task) {
     NewTask subtask = theLDMF.newTask();
     subtask.setParentTask(task);
-    subtask.setSource(this.getBindingSite().getAgentIdentifier());
+    subtask.setSource(this.getAgentIdentifier());
     if (task.getDirectObject() != null) {
       subtask.setDirectObject(theLDMF.cloneInstance(task.getDirectObject()));
     } else {
