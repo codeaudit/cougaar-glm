@@ -40,9 +40,12 @@ import org.cougaar.domain.planning.ldm.plan.AllocationResult;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.AspectValue;
 import org.cougaar.domain.planning.ldm.plan.Expansion;
+import org.cougaar.domain.planning.ldm.plan.HasRelationships;
 import org.cougaar.domain.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Preference;
+import org.cougaar.domain.planning.ldm.plan.Relationship;
+import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
@@ -62,6 +65,7 @@ import org.cougaar.domain.glm.plugins.TaskUtils;
 public class ReadinessAssessorPlugin extends ComponentPlugin {
 
   private long rollupSpan = 10;
+  private StringBuffer debugStart = new StringBuffer();
 
   private IncrementalSubscription readinessTaskSub;
   private final UnaryPredicate readinessTaskPred = 
@@ -71,7 +75,9 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	    Task t = (Task) o;
 	    if (t.getVerb().equals(Constants.Verb.AssessReadiness)) {
 	      if (!t.getPrepositionalPhrases().hasMoreElements()) {
-		return true;
+		if (t.getPlanElement() == null) {
+		  return true;
+		}
 	      }
 	    }
 	  }
@@ -96,6 +102,17 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       };
       
 
+  private IncrementalSubscription selfOrgSub;
+  private final UnaryPredicate selfOrgPred =
+    new UnaryPredicate() {
+	public boolean execute(Object o) {
+	  if (o instanceof Organization) {
+	    return ((Organization)o).isSelf();
+	  }
+	  return false;
+	}
+      };
+
   protected RootFactory rootFactory;
 
   // called by introspection
@@ -106,6 +123,10 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
   protected void setupSubscriptions() {
     projectSupplyTaskSub = (IncrementalSubscription) blackboard.subscribe(projectSupplyTaskPred);
     readinessTaskSub = (IncrementalSubscription) blackboard.subscribe(readinessTaskPred);
+    selfOrgSub = (IncrementalSubscription) blackboard.subscribe(selfOrgPred);
+
+    debugStart.append(getBindingSite().getAgentIdentifier());
+    debugStart.append(" ReadinessAssessor");
   }
 
 
@@ -126,14 +147,15 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
       earliest = Math.round(readinessTask.getPreferredValue(AspectType.START_TIME));
       rollupSpan = Math.round(readinessTask.getPreferredValue(AspectType.INTERVAL));
-      System.out.println("ReadinessAssessor got earliest date: " 
+      System.out.println(debugStart +" got earliest date: " 
 			 +new Date(earliest).toString() +
 			 " and rollupSpan: " + rollupSpan);
 
+      expandAndAllocateToSubordinates(readinessTask);
       HashMap pacingItems = new HashMap(13);
 
       // Sort project supply tasks by Maintained Item and OfType
-      System.out.println("ReadinessAssessor: sorting " + projectSupplyTaskSub.size() + " ProjectSupply tasks");
+      System.out.println(debugStart +" sorting " + projectSupplyTaskSub.size() + " ProjectSupply tasks");
       for (Iterator psIterator = projectSupplyTaskSub.iterator(); psIterator.hasNext();) {
 	Task psTask = (Task) psIterator.next();
 
@@ -160,7 +182,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	// find the buckets for that asset
 	HashMap itemBuckets = (HashMap) pacingItems.get(pacing);
 	if (itemBuckets == null) {
-	  System.out.println("ReadinessAssessor: adding new set of buckets for " + pacing.getTypeIdentification());
+	  System.out.println(debugStart + ": adding new set of buckets for " + pacing.getTypeIdentification());
 	  itemBuckets = new HashMap(13);
 	  pacingItems.put(pacing, itemBuckets);
 	}
@@ -170,7 +192,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	ArrayList results = (ArrayList) itemBuckets.get(directObject);
 
 	if (results == null) {
-	  System.out.println("ReadinessAssessor: adding new bucket for " + directObject.getClass().getName());
+	  System.out.println(debugStart + ": adding new bucket for " + directObject.getClass().getName());
 	  results = new ArrayList(13);
 	  itemBuckets.put(directObject, results);
 	}
@@ -180,17 +202,17 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  
 	  ArrayList al = splitResult(psTask.getPlanElement().getReportedResult(),
 				     psTask.getPreferredValue(AlpineAspectType.DEMANDRATE));
-	  //System.out.println("ReadinessAssessor: adding result to bucket " + al );
+	  //System.out.println(debugStart + ": adding result to bucket " + al );
 	  results.addAll(al);
 	} else {
-	  //System.out.println("ReadinessAssessor: ignoring non-BulkPOL result  ");   
+	  //System.out.println(debugStart + ": ignoring non-BulkPOL result  ");   
 	  //results.add(psTask.getPlanElement().getReportedResult());
 	}
       }	
 
       if (pacingItems.size() > 0) {
 	ArrayList results = calcResults(readinessTask, pacingItems, earliest, latest);
-	System.out.println("\n\nReadinessAssessor - cluster readiness");
+	System.out.println("\n\n" + debugStart + " - cluster readiness");
 	printResults(results);
 	// set the allocation result of the toplevel task
       }
@@ -233,7 +255,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
   	    if (inRange(day1, dayn, rse)) {
   	      in.add(rse);
   	      rseIt.remove(); // counted it once. won't need it again
-  	    }
+  	    } 
   	  }
 	  AspectValue[] avs = newReadinessAspectArray(day1, dayn, average(in));
   	  if (Double.isNaN(avs[2].getValue())) {
@@ -269,6 +291,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       publishAllocationResult(pacingTask, pacingResults);
 
       System.out.println();  System.out.println();
+      System.out.println(debugStart);
       System.out.println(pacingItem);
       printResults(pacingResults);
       pacingResults.clear();
@@ -281,7 +304,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     // sure hope these cover the same time span!
 
     if (oldList.size() != newList.size()) {
-      System.out.println("ReadinessAssessor.merge() - bad assumption, Bub. The results have different cardinalities!");
+      System.out.println(debugStart + ".merge() - bad assumption, Bub. The results have different cardinalities!");
     }
 
     for (int i = 0; i < oldList.size(); i++) {
@@ -290,10 +313,10 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
       // arrays should have the same three aspect types
       if (oldAV[0].getValue() != newAV[0].getValue()) {
-	System.out.println("ReadinessAssessor.merge() - bad assumption, Bub. The AspectValues have different start dates!");
+	System.out.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different start dates!");
       }
       if (oldAV[1].getValue() != newAV[1].getValue()) {
-	System.out.println("ReadinessAssessor.merge() - bad assumption, Bub. The AspectValues have different end dates!");
+	System.out.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different end dates!");
       }
 
       // You are the weekest link!
@@ -331,7 +354,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	    rate = avs[i].getValue();
 	    break;
 	  default:
-	    System.out.println("Unexpected AspectType: " + avs[i].getAspectType());
+	    System.out.println(debugStart + " Unexpected AspectType: " + avs[i].getAspectType());
 	    break;
 	    }
 	  if (start==-1 || end==-1 || rate==-1)
@@ -345,6 +368,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	    rse = new RateScheduleElement(day, rate/preferedRate);
 	  } else {
 	    rse = new RateScheduleElement(day, 1.0);
+	    System.out.println(debugStart + "preferedRate of task is zero. why?");
 	  }
 //  	  System.out.println("ReadinessAssessor.splitResult() adding " + rse);
 	  schedule.add(rse);
@@ -451,7 +475,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 								  phasedResults);
     PlanElement pe = task.getPlanElement();
     if (pe == null) {
-      // must be an allocation, rather than a expansion
+      // must be an disposition, rather than a expansion or allocation
       pe = rootFactory.createDisposition(task.getPlan(), 
 					 task,
 					 ar);
@@ -498,6 +522,49 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
   }
 
   
+  /**
+   * @param org Organization
+   * @return Collection of subordinates
+   */
+  private Collection findSubordinates(Organization org) {
+
+    Collection subordinates = org.getSubordinates(TimeSpan.MIN_VALUE,
+                                                  TimeSpan.MAX_VALUE);
+    return subordinates;
+  }
+
+  private void expandAndAllocateToSubordinates(Task parentTask) {
+    Organization selfOrg = getSelfOrg();
+    RelationshipSchedule rs = selfOrg.getRelationshipSchedule();
+
+    Collection subordinates =  selfOrg.getSubordinates(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
+
+    for (Iterator subOrgIt = subordinates.iterator(); subOrgIt.hasNext();) {
+
+      Relationship rel = (Relationship) subOrgIt.next();
+      Organization subOrg = (Organization) rs.getOther(rel);
+
+      // create new task
+      Task subtask = createSubTask(parentTask, null, null);
+
+      // add to expanstion
+      publishAddToExpansion(parentTask, subtask);
+      
+      // allocate it to the subordinate
+      PlanElement pe = rootFactory.createAllocation(subtask.getPlan(), 
+						    subtask,
+						    subOrg,
+						    null,
+						    Constants.Role.BOGUS);
+      blackboard.publishAdd(pe);
+    }
+  }
+
+  private Organization getSelfOrg() {
+    // better be something here!
+    return (Organization)selfOrgSub.iterator().next();
+  }
+
   private class RateScheduleElement {
     public long date;
     public double readiness;

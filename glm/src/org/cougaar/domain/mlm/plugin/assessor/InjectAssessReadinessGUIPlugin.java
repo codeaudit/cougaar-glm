@@ -71,7 +71,9 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
 	Task t = (Task)o;
 	if (t.getVerb().equals(Constants.Verb.AssessReadiness)) {
 	  if (!t.getPrepositionalPhrases().hasMoreElements()) {
-	    return true;
+	    if (t.getPlanElement() == null) {
+	      return true;
+	    }
 	  }
 	}
       }
