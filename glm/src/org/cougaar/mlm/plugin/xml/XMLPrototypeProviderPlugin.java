@@ -33,7 +33,7 @@ import org.w3c.dom.*;
  * file NSN-1234567890123.xml
  * 
  * </pre>
- * @see org.cougaar.lib.xml.parser.PrototypeProvider#cachePrototype
+ * @see org.cougaar.lib.xml.parser.PrototypeParser#cachePrototype
  * @see org.cougaar.util.ConfigFinder#parseXMLConfigFile
  **/
 public class XMLPrototypeProviderPlugin extends SimplePlugin
