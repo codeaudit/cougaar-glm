@@ -42,6 +42,7 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.EmptyEnumeration;
+import org.cougaar.util.MoreMath;
 
 public abstract class InventoryManager extends InventoryProcessor {
 
@@ -51,6 +52,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected IncrementalSubscription inventoryPolicySubscription_;
     private Inventory selectedInventory = null;
     private boolean forcePrintConcise = false;
+    private String concisePrefix = "";
 
     public static final int DONE = -1; 
     public static final double GOAL_LEVEL_BOOST_CAPACITY_FACTOR= 1.1;
@@ -194,7 +196,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     }
 
     public void printConcise(String s) {
-        if (isPrintConcise()) GLMDebug.DEBUG(className_, clusterId_, s, GLMDebug.ERROR_LEVEL);
+        if (isPrintConcise()) GLMDebug.DEBUG(className_, clusterId_, concisePrefix + s, GLMDebug.ERROR_LEVEL);
     }
 
     public boolean isPrintConcise() {
@@ -272,11 +274,11 @@ public abstract class InventoryManager extends InventoryProcessor {
 	    inventory = (Inventory)list.next();
 	    InventoryPG invpg = 
 		(InventoryPG)inventory.getInventoryPG();
-            if (selectedInventory == null) {
-                if (invpg.getResource().getTypeIdentificationPG().getTypeIdentification().equals("NSN/8970014329943")) {
-                    selectedInventory = inventory;
-                }
-            }
+//              if (selectedInventory == null) {
+//                  if (invpg.getResource().getTypeIdentificationPG().getTypeIdentification().equals("NSN/9150001806383")) {
+//                      selectedInventory = inventory;
+//                  }
+//              }
 	    invpg.resetInventory(inventory, startTime_);
 	}
     }
@@ -766,7 +768,9 @@ public abstract class InventoryManager extends InventoryProcessor {
 	while (inventories.hasNext()) {
             Inventory inventory = (Inventory) inventories.next();
 //              forcePrintConcise(inventory == selectedInventory);
+            concisePrefix = inventory.getInventoryPG().getResource().getTypeIdentificationPG().getTypeIdentification() + " ";
             adjustForInadequateInventory(inventory);
+            concisePrefix = "";
 //              forcePrintConcise(false);
         }
     }
@@ -830,19 +834,20 @@ public abstract class InventoryManager extends InventoryProcessor {
                         printConcise("target(" + TimeUtils.dateString(invpg.convertDayToTime(day))
                                      + ")=" + target);
                     double qty = convertScalarToDouble(invpg.getLevel(day)) + pendingDelta;
-                    delta = target - qty;
-                    if (delta != 0.0 && Math.abs(delta) / (Math.abs(target) + Math.abs(qty)) < 0.0001) delta = 0.0;
+                    double nextRefill = convertScalarToDouble(nextProjection);
+                    if (!MoreMath.nearlyEquals(qty, target, 0.0001)) {
+                        delta = Math.max(target - qty, -nextRefill); // Can only reduce by projection amount
+                    }
                     newRate = createIncrementedDailyRate(nextProjection, delta);
-                    if (newRate == null) delta = 0.0; // Can't do negative, cancel the delta
-                    if (false && isPrintConcise())
-                        printConcise("rate("
-                                     + TimeUtils.dateString(invpg.convertDayToTime(day))
-                                     + ")="
-                                     + newRate
-                                     + " delta="
-                                     + delta);
+                    if (newRate == null) delta = 0.0; // Can't do negative, cancel the delta (I think this does nothing)
                 }
                 if (isSameRate(currentRate, newRate)) {
+                    /* If we use the currentRate instead of newRate,
+                       then the delta we achieve is not the delta we
+                       computed above. Compute a new delta that
+                       reflects what the currentRate achieves. */
+//                      delta += (TaskUtils.getDailyQuantity(currentRate)
+//                                - TaskUtils.getDailyQuantity(newRate));
                     pendingDelta += delta;
                     continue;
                 }
@@ -869,9 +874,7 @@ public abstract class InventoryManager extends InventoryProcessor {
         if (rate1 == null || rate2 == null) return false;
         double val1 = rate1.getValue(rate1.getCommonUnit());
         double val2 = rate2.getValue(rate2.getCommonUnit());
-        if (val1 == val2) return true;
-        double diff = (val1 - val2) / (val1 + val2);
-        return (diff < 0.0001 && diff > -0.0001);
+        return MoreMath.nearlyEquals(val1, val2, 0.0001);
     }
 
     protected boolean checkFailedRefill(Inventory inventory, InventoryPG invpg, int day) {
