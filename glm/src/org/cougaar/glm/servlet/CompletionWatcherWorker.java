@@ -78,6 +78,8 @@ public class CompletionWatcherWorker extends ServletWorker {
   private static final int DURING_SECOND = 4;
   private static final int AFTER_SECOND  = 5;
 
+  private static final String USAGE_IMAGE = "WatcherServlet.jpg";
+
   /**
    * <pre>
    * Handles all HTTP and HTTPS service requests.
@@ -125,6 +127,11 @@ public class CompletionWatcherWorker extends ServletWorker {
 
     if (support.getLog().isDebugEnabled ())
       support.getLog().debug ("CompletionWatcherWorker.Invoked...");
+
+    if (getImage) {
+      getUsageImage (response);
+      return;
+    }
 
       // create a blackboard watcher
     watcher =
@@ -181,6 +188,48 @@ public class CompletionWatcherWorker extends ServletWorker {
 
     tm.unload ();
     tm.stop();
+  }
+
+  /** way to do img tags in a cougaar servlet */
+  protected void getUsageImage (HttpServletResponse response) throws IOException, ServletException {
+    InputStream fin;
+    String fileName = USAGE_IMAGE;
+    try {
+      fin = this.support.getConfigFinder().open(fileName);
+    } catch (IOException ioe) {
+      response.sendError(
+			 HttpServletResponse.SC_NOT_FOUND, 
+			 "Unable to open file \""+fileName+"\"");
+      return;
+    }
+
+    String contentType = guessContentType(fileName, fin);
+    if (contentType != null) {
+      response.setContentType(contentType);
+    }
+
+    // maybe add client "last-modified" header?
+
+    OutputStream out = response.getOutputStream();
+    byte[] buf = new byte[1024];
+    while (true) {
+      int len = fin.read(buf);
+      if (len < 0) {
+	break;
+      }
+      out.write(buf, 0, len);
+    }
+
+    fin.close();
+    out.flush();
+    out.close();
+  }
+
+  private String guessContentType(String fileName, 
+				  InputStream fin) throws IOException {
+    // examine the first couple bytes of the stream:
+    return java.net.URLConnection.guessContentTypeFromStream(fin);
+    // or instead examine the filename extention (.gif, etc)
   }
 
   /**
@@ -244,6 +293,8 @@ public class CompletionWatcherWorker extends ServletWorker {
       firstInterval = Integer.parseInt(value);
     else if (eq (name, CompletionWatcherServlet.SECOND_INTERVAL))
       secondInterval = Integer.parseInt(value);
+    else if (eq (name, "getImage"))
+      getImage = true;
   }
 
   /**
@@ -566,7 +617,8 @@ public class CompletionWatcherWorker extends ServletWorker {
   protected int state = BEFORE_FIRST;
   protected long start, end;
 
-  protected long firstInterval = 5000l, secondInterval = 10000l;
+  protected long firstInterval = 10l, secondInterval = 10l; // seconds
+  protected boolean getImage = false;
   protected Set incompleteTasks = new HashSet();
 
   protected CompletionWatcherSupport support;

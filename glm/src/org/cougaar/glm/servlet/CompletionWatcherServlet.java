@@ -46,8 +46,6 @@ import javax.swing.JLabel;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
 
-//import org.cougaar.glm.callback.GLMOrganizationCallback;
-//import org.cougaar.glm.callback.GLMOrganizationListener;
 import org.cougaar.glm.util.AssetUtil;
 
 import org.cougaar.planning.servlet.ServletBase;
@@ -56,37 +54,11 @@ import org.cougaar.core.servlet.SimpleServletSupport;
 
 /**
  * <pre>
- * A servlet that injects tasks into an agent.
- *
- * Parses an xml file that defines a batch of tasks.
- *
- * The servlet takes these parameters:
- * 1) The file name of the xml file
- *    URL param is inputFileName
- * 2) The number of batches of tasks to be sent (defaults to 1)
- *    URL param is numberOfBatches
- * 3) The interval to wait between batches being sent (defaults to 1 second)
- *    URL param is interval
- * 4) Whether to wait or not for each task to complete before sending the next
- *    This can be very useful for performance measurements.
- *    URL param is wait
- * 5) Which format you'd like the results back in : XML, HTML, or serialized objects
- *    The results, when you wait for each task to complete, is a list of completion times
- *    plus the total time to complete.  See GLMStimulatorResponseData for sample output.
- *
- * A typical URL would be :
- *
- * http://localhost:8800/$3-FSB/stimulator?inputFileName=Supply.dat.xml&tasksPerBatch=1&numberOfBatches=1&interval=1000&format=html
- *
- * It requires a special servlet component in the ini file (or equivalent CSMART entry) :
- *
- * plugin = org.cougaar.glm.servlet.GLMStimulatorServletComponent(org.cougaar.glm.servlet.GLMStimulatorServlet, /stimulator)
- *
- * Also, if the xml file that defines a task that needs a prototype that is not provided by the XMLPrototypeProvider, you 
- * may need to register the prototype using an xml file, e.g.:
- *
- * plugin = org.cougaar.lib.plugin.UTILLdmXMLPlugin(ldmFile={String}Ammo_AssetList.ldm.xml)
+ * A servlet that watches for when a batch of tasks have completed
+ * and returns the time it took to complete.
  * 
+ * See the documentation in glm/doc.
+ *
  * Gordon Vidaver
  * gvidaver@bbn.com
  * (617) 873-3558
@@ -121,6 +93,12 @@ public class CompletionWatcherServlet extends ServletBase {
     out.print("\">\n");
 
     out.print("<font size=+1>Wait for agent <b>" + support.getAgentIdentifier() + "</b> to complete.</font><p>\n");
+    String agentPath = support.getEncodedAgentName () + support.getPath();
+    out.print("<img alt='Watcher Servlet Screen Shot' " + 
+	      "src='/$" + agentPath + "?getImage=true'><br>");
+    out.print("<center><font size=+1>Although typically used to time the period between GLSInit and when the agent is done,<br>");
+    out.print("the servlet measures any busy period between two quiet periods.</font></center><p>");
+    out.print("Note that the servlet may not return if it cannot go through its states.<p>");
 
     out.println ("<table>\n");
 
