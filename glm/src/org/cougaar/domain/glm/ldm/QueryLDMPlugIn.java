@@ -226,15 +226,17 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 
 	  //only process query if it is a default query or it is a query for the type of database that is being used
 	  if (queryType.equals("default")) {
-	    line = Parameters.replaceParameters(line);
+	     // I don't think this needs to be done -- llg 
+	    //line = Parameters.replaceParameters(line);
 	    parseQueryLine(line);
 	  }
 	  else if (queryType.equalsIgnoreCase(dbType)){
 	    String startQuery = line.substring(0, dotIndex);
 	    String endQuery = line.substring(equalsIndex);
 	    String newLine = startQuery+endQuery;
-	    newLine = Parameters.replaceParameters(line);
-	    parseQueryLine(newLine);
+	    //newLine = Parameters.replaceParameters(line); 
+	    // I don't think this needs to be done -- llg 
+	    parseQueryLine(newLine, true);
 	  }
 	  else //skip if this query does not match this database type and is not a default query (WAN)
 	    continue;
@@ -266,8 +268,25 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
       String realVal = Parameters.replaceParameters(v); //WAN added
       dbType = getDBType(realVal);  //WAN
     }
-    fileParameters_.put(p,v);
+    if (!fileParameters_.containsKey(p)) {
+      fileParameters_.put(p,v);
+    }
   }
+   
+  // force the database specific query 
+  protected void parseQueryLine(String s, boolean dbSpecific) {
+    int i = s.indexOf('=');
+    if (i < 1) {
+      GLMDebug.ERROR(className_, " parseQueryLine cannot parse <"+s+">");
+      return;
+    }
+    String p = s.substring(0,i).trim();
+    String v = s.substring(i+1).trim();
+    if (dbSpecific) 
+      fileParameters_.put(p,v);
+  }
+
+
 
   // document fileParameters_ hashtable
   protected String getParm(String name) {
