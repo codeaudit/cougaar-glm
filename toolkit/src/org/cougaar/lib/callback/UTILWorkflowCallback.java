@@ -30,9 +30,6 @@ import org.cougaar.planning.ldm.plan.Workflow;
 
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.lib.util.UTILPrepPhrase;
-import org.cougaar.lib.util.UTILVerify;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Enumeration;
@@ -253,8 +250,8 @@ public class UTILWorkflowCallback extends UTILFilterCallbackAdapter implements U
   protected boolean isWellFormed (Task task) {
     UTILGenericListener genericListener = 
       (UTILGenericListener) myListener;
-    if (UTILVerify.isTaskTimingCorrect(task) && 
-	UTILVerify.hasRequiredFields  (task) &&
+    if (verify.isTaskTimingCorrect(task) && 
+	verify.hasRequiredFields  (task) &&
 	genericListener.isTaskWellFormed(task)) 
       return true;
     else

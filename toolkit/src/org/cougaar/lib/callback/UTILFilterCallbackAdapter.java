@@ -29,6 +29,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.cougaar.lib.util.UTILVerify;
 import org.cougaar.util.log.Logger;
 
 /**
@@ -45,6 +46,7 @@ public class UTILFilterCallbackAdapter implements UTILFilterCallback {
   public UTILFilterCallbackAdapter (UTILFilterCallbackListener listener, Logger logger) {
     myListener = listener;
     this.logger = logger;
+    verify = new UTILVerify (logger);
     mySub = myListener.subscribeFromCallback(getPredicate ());
   }
 
@@ -118,4 +120,5 @@ public class UTILFilterCallbackAdapter implements UTILFilterCallback {
   protected IncrementalSubscription mySub = null;
 
   protected Logger logger;
+  protected UTILVerify verify;
 }
