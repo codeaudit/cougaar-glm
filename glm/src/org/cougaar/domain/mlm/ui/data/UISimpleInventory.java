@@ -47,8 +47,12 @@ public class UISimpleInventory implements Serializable {
   }
 
   public void addNamedSchedule(String name, Vector schedule) {
-    if (schedule != null)
+    if (schedule != null) {
+//        System.out.println("Schedule " + name + " has " + schedule.size() + " elements");
       schedules.addElement(new UISimpleNamedSchedule(name, schedule));
+    } else {
+//        System.out.println("Schedule " + name + " is null");
+    }
   }
 
   public UISimpleNamedSchedule getNamedSchedule(String name) {
