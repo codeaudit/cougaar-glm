@@ -1,7 +1,7 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/GLMPlugin.java,v 1.1 2002-02-12 17:47:50 jwinston Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/GLMPlugin.java,v 1.2 2003-01-23 19:53:17 mthome Exp $ */
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify

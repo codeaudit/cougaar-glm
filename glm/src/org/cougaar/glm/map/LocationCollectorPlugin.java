@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 Clark Software Engineering (CSE) 
+ *  Copyright 1997-2003 Clark Software Engineering (CSE) 
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify

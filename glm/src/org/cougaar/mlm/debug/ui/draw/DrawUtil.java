@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -22,9 +22,9 @@
 // 
 // $Source: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/debug/ui/draw/DrawUtil.java,v $
 // $RCSfile: DrawUtil.java,v $
-// $Revision: 1.1 $
-// $Date: 2001-12-27 22:42:28 $
-// $Author: bdepass $
+// $Revision: 1.2 $
+// $Date: 2003-01-23 19:53:37 $
+// $Author: mthome $
 // 
 // **********************************************************************
 

@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugin.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: NewUniversalExpanderPlugin.java,v 1.3 2002-11-19 17:21:49 twright Exp $
+  * @version $Id: NewUniversalExpanderPlugin.java,v 1.4 2003-01-23 19:53:39 mthome Exp $
   **/
 
 public class NewUniversalExpanderPlugin extends ComponentPlugin {
