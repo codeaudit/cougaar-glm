@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/UnitHierarchy.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/UnitHierarchy.java,v 1.2 2001-01-18 03:52:06 gvidaver Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -16,9 +16,14 @@ package org.cougaar.domain.mlm.ui.tpfdd.producer;
 
 
 import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -33,8 +38,27 @@ import javax.swing.tree.TreePath;
 import java.awt.event.ActionListener;
 import javax.swing.event.MenuListener;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import java.io.IOException;
+import java.io.IOException;
+import java.io.StringReader;
 
+import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
+
+// modern xerces references
+//import org.apache.xerces.parsers.SAXParser;
+//import org.xml.sax.helpers.DefaultHandler;
+//import org.xml.sax.Attributes;
+
+// old IBM XML jar references
+import com.ibm.xml.parsers.SAXParser;
+import org.xml.sax.AttributeList;
+import org.xml.sax.HandlerBase;
+import org.xml.sax.Parser;
+import org.xml.sax.helpers.ParserFactory;
 
 public class UnitHierarchy implements TreeModel
 {
@@ -44,6 +68,31 @@ public class UnitHierarchy implements TreeModel
     private Hashtable reverseDepthHash;    // String -> Vector (upward command chain)
     private JTree myTree; // obnoxious intrusive callback that lets us force-expand when queried
 
+  private boolean debug = true;
+  private static String higherAuthority = "HigherAuthority";
+  
+  protected Map orgToSuperior = new HashMap ();
+  private Set demandRoots = new HashSet ();
+  private String host = "localhost";
+
+  /** who sets this? */
+  public void setHost(String host) { this.host = host; }
+
+  protected void getNames (Set nameSet, String names) {
+	StringTokenizer st = new StringTokenizer(names, ",");
+	while (st.hasMoreTokens()) {
+	  String name = st.nextToken();
+	  nameSet.add (name.trim());
+	}
+  }
+
+  private static String demandRootClusters = 
+    System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.demandRootClusters");
+  private static String testCluster = 
+    System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.testClusters");
+  private static boolean useHierarchyPSP = 
+    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.useHierarchyPSP"));
+  
     static final String[][] superiors = 
     { // { "Society", "HigherAuthority" },
       { "FUTURE", "HigherAuthority" },
@@ -147,22 +196,125 @@ public class UnitHierarchy implements TreeModel
 
     public UnitHierarchy()
     {
+	  if (demandRootClusters != null && demandRootClusters.length () > 1)
+		getNames (demandRoots, demandRootClusters);
+
 	immedHash = new Hashtable();
 	reverseImmedHash = new Hashtable();
 	depthHash = new Hashtable();
 	reverseDepthHash = new Hashtable();
 	// set up all the immediate relationships (a contains b if a directly commands b)
-	for ( int i = 0; i < superiors.length; i++ ) {
+	if (useHierarchyPSP) {
+	  determineHierarchyFromPSP ();
+	  for ( Iterator iter = orgToSuperior.keySet().iterator (); iter.hasNext (); ) {
+		String org = (String) iter.next ();
+		String superior = (String) orgToSuperior.get (org);
+		
+	    Vector mySubs = (Vector)(immedHash.get(superior));
+	    if ( mySubs == null )
+		  immedHash.put(superior, (mySubs = new Vector()));
+	    mySubs.add(org);
+	    reverseImmedHash.put(org, superior);
+	  }
+	}
+	else {
+	  for ( int i = 0; i < superiors.length; i++ ) {
 	    Vector mySubs = (Vector)(immedHash.get(superiors[i][1]));
 	    if ( mySubs == null )
-		immedHash.put(superiors[i][1], (mySubs = new Vector()));
+		  immedHash.put(superiors[i][1], (mySubs = new Vector()));
 	    mySubs.add(superiors[i][0]);
 	    reverseImmedHash.put(superiors[i][0], superiors[i][1]);
+	  }
 	}
+	
 	// expand to all ultimate relationships (a contains b if a above b in the command hierarchy)
 	fillInChildren("HigherAuthority", new Vector());
     }
-	
+
+  /** there may be more than one root demand cluster */
+  public void determineHierarchyFromPSP(){
+	for (Iterator iter = demandRoots.iterator (); iter.hasNext ();) {
+	  String org = (String) iter.next ();
+	  determineHierarchyFor (orgToSuperior, org);
+	  orgToSuperior.put (org, higherAuthority);
+	}
+	// so we can run with test input data from the GLMStimulatorPlugIn
+	if (testCluster != null) {
+	  orgToSuperior.put (testCluster, higherAuthority);
+	}
+  }
+
+  /**
+   * @see org.cougaar.domain.mlm.ui.psp.transportation.PSP_Hierarchy
+   **/
+  public void determineHierarchyFor(Map orgToSuperior, String rootDemandCluster){
+    ConnectionHelper helper = 
+      new ConnectionHelper (getClusterURL (rootDemandCluster),
+			    PSPClientConfig.PSP_package, 
+			    PSPClientConfig.HierarchyPSP_id + "?MODE=1");
+    try {
+      // talk to PSP
+      String response = new String (helper.getResponse());
+      if (debug)
+		System.out.println ("got response " + response);
+      // modern xerces jar
+      //	  SAXParser parser = new SAXParser();
+      // old IBM XML jar
+      Parser parser = ParserFactory.makeParser("com.ibm.xml.parsers.SAXParser");
+      // modern xerces jar
+      //	  parser.setContentHandler (new ClusterNameHandler());
+      // old IBM XML jar
+      parser.setDocumentHandler (new ClusterNameHandler(orgToSuperior));
+      parser.parse (new InputSource (new StringReader (response)));
+    }
+    catch ( IOException e ) {
+      OutputHandler.out("ClusterCache.setSubordinates - IOError in connection, url was : " + helper + 
+			"\nError was: " + e);
+    } catch (Exception e) {
+      System.err.println (e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  public String getClusterURL(String clusterName) { return "http://" + host + ":5555/$" + clusterName + "/";  }
+
+  /** 
+   * Expected format is:
+   * 
+   * <pre>
+   * Format is :
+   * <org name=xxx>
+   *  <subord name=xxx/>
+   *  <subord name=xxx/>
+   * </org>
+   * <org name=xxx>
+   *  <subord name=xxx/>
+   *  <subord name=xxx/>
+   * </org>
+   * ....
+   * </pre>
+   * @see org.cougaar.domain.mlm.ui.psp.transportation.PSP_Hierarchy
+   **/
+  // for modern Xerces jar
+  //  private class ClusterNameHandler extends DefaultHandler {
+  // for old (June 1999) IBM XML jar
+  public static class ClusterNameHandler extends HandlerBase {
+    Map orgToSuperior;
+	String superior;
+    public ClusterNameHandler(Map m){
+      orgToSuperior=m;
+    }
+	// for modern Xerces jar
+	//    public void startElement (String uri, String local, String name, Attributes atts) throws SAXException {
+	// for old (June 1999) IBM XML jar
+    public void startElement (String name, AttributeList atts) {
+	  if (name.equals ("org"))
+		superior = atts.getValue ("name");
+	  else if (name.equals ("subord"))
+		orgToSuperior.put (atts.getValue ("name"), superior);
+	}
+  }
+
     public void setTree(JTree tree)
     {
 	myTree = tree;
@@ -271,7 +423,8 @@ public class UnitHierarchy implements TreeModel
     // TreeModel Interface
     public Object getRoot()
     {
-	return superiors[0][1];
+	  //	return superiors[0][1];
+	  return higherAuthority;
     }
 
     private Object getParent(Object child)
