@@ -33,7 +33,7 @@ import java.awt.event.ActionListener;
 import java.awt.FileDialog;
 import java.io.File;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 /** Displays information in a tree.
   This supports dynamically expanded nodes (expanded when the
@@ -45,7 +45,7 @@ import org.cougaar.core.agent.ClusterIdentifier;
 public class UITreeDisplay implements Runnable, ActionListener {
   private UIPlugin uiPlugin;
   private String planName;
-  private ClusterIdentifier clusterId;
+  private MessageAddress clusterId;
   private String command;
   private UITreeNode root;
   private JFrame uiFrame;
@@ -64,7 +64,7 @@ public class UITreeDisplay implements Runnable, ActionListener {
    */
 
   public UITreeDisplay(UIPlugin uiPlugin, String planName, 
-		       ClusterIdentifier clusterId, String command) {
+		       MessageAddress clusterId, String command) {
     this.uiPlugin = uiPlugin;
     this.planName = planName;
     this.clusterId = clusterId;

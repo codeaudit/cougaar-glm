@@ -61,8 +61,8 @@ public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
 	if (!(o instanceof Task)) return false;
 	Task task = (Task) o;
 	if (!task.getVerb().equals(Constants.Verb.GETLOGSUPPORT)) return false;
-	if (!task.getSource().equals(getClusterIdentifier())) return false;
-	if (!task.getDestination().equals(getClusterIdentifier())) return false;
+	if (!task.getSource().equals(getMessageAddress())) return false;
+	if (!task.getDestination().equals(getMessageAddress())) return false;
 	return (task.getPrepositionalPhrase(forRoot) != null);
       }
     };

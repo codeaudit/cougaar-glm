@@ -7,7 +7,7 @@ package org.cougaar.glm.packer;
 // utils
 import java.util.*;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 // factories
 import org.cougaar.core.domain.RootFactory;

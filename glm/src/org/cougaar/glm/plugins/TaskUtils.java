@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.util.PluginHelper;
 import org.cougaar.util.MoreMath;
 import org.cougaar.planning.ldm.asset.Asset;

@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.TimeZone;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.mts.Message;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
@@ -38,15 +38,15 @@ import org.cougaar.planning.ldm.asset.Asset;
 public class UITask {
 
   /** Workaround for task source and destination
-    that can be strings or ClusterIdentifiers.
+    that can be strings or MessageAddresss.
     */
 
   private static String getClusterIdDescription(Object o) {
     String s = "";
     if (o == null)
       return s;
-    if (o instanceof ClusterIdentifier) 
-      return ((ClusterIdentifier)o).getAddress();
+    if (o instanceof MessageAddress) 
+      return ((MessageAddress)o).getAddress();
     if (o instanceof String) {
       System.out.println("Warning: task source or destination is a string: " + o);
       return (String)o;

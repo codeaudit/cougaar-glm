@@ -294,7 +294,7 @@ public final class DMPIClusterStartup extends SimplePlugin
   protected void setupSubscriptions() {
     ldm = (LDMServesPlugin) getLDM();
     ldmf = ldm.getFactory();
-    theKey = getClusterIdentifier().getAddress();
+    theKey = getMessageAddress().getAddress();
 
     if (!didRehydrate()) {	// Objects are already created after rehydration
       //first parse the data from the underlying file

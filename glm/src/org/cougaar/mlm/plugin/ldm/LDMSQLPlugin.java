@@ -29,7 +29,7 @@ import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.SubscriberException;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.util.UnaryPredicate;
 
@@ -174,7 +174,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
     protected void initProperties() {
     // default package for QueryHandler
     globalParameters.put("Package", "org.cougaar.mlm.plugin.ldm");
-    globalParameters.put("agent","'"+getClusterIdentifier()+"'");
+    globalParameters.put("agent","'"+getMessageAddress()+"'");
     //System.out.println("LDMSQLPlugin, globalParameters is: "+globalParameters);
   }
 
@@ -252,7 +252,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 	      //System.out.println("LDMSQLPlugin, pt is: "+pt);
 	      cqh.initialize(this, // LDMEssentialPlugin
 			     // this, // ldmservice
-			     getClusterIdentifier(),
+			     getMessageAddress(),
 			     getCluster(),
 			     domainService.getFactory(),
 			     pt,

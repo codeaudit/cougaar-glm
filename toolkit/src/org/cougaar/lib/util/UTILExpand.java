@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.domain.RootFactory;
 
@@ -110,7 +110,7 @@ public class UTILExpand {
 				    Asset obj, 
 				    Enumeration preferences,
 				    byte priority,
-				    ClusterIdentifier source) {
+				    MessageAddress source) {
     return makeSubTask(ldmf, plan, (parent != null) ? parent.getUID() : null, verb, prepphrases, 
 		       obj, preferences, priority, source);
   }
@@ -143,7 +143,7 @@ public class UTILExpand {
 				    Asset obj, 
 				    Enumeration preferences,
 				    byte priority,
-				    ClusterIdentifier source) {
+				    MessageAddress source) {
     NewTask task = ldmf.newTask();
 
     if(parent_uid != null)
@@ -223,7 +223,7 @@ public class UTILExpand {
   public NewTask makeSubTask(RootFactory ldmf,
 				    Task parent, 
 				    Asset obj, 
-				    ClusterIdentifier source) {
+				    MessageAddress source) {
     NewTask task = ldmf.newTask();
 
     if(parent != null)

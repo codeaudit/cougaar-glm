@@ -23,7 +23,7 @@ package org.cougaar.mlm.plugin.generic;
 
 import java.util.Collection;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
@@ -45,10 +45,10 @@ import org.cougaar.glm.ldm.asset.Organization;
 public class DestinationPredicate implements UnaryPredicate {
   protected String roles[];
 
-  protected ClusterIdentifier clusterId;
+  protected MessageAddress clusterId;
 
 
-  DestinationPredicate(String [] roles, ClusterIdentifier clusterId) {
+  DestinationPredicate(String [] roles, MessageAddress clusterId) {
     this.roles = roles;
     this.clusterId = clusterId;
 

@@ -25,7 +25,7 @@ package org.cougaar.mlm.debug.ui;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Enumeration;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Workflow;
@@ -49,7 +49,7 @@ public class UIWorkflowCollectionNode extends UITreeNode implements UISubscriber
     */
 
   public UIWorkflowCollectionNode(UIPlugin uiPlugin, String planName,
-		  ClusterIdentifier clusterId) throws UINoPlanException {
+		  MessageAddress clusterId) throws UINoPlanException {
     super();
     this.uiPlugin = uiPlugin;
     this.planName = planName;

@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Directive;
 import org.cougaar.planning.ldm.plan.DirectiveImpl;
 import org.cougaar.core.util.UniqueObject;
@@ -45,8 +45,8 @@ public class DetailReplyAssignment extends DirectiveImpl
 
   public DetailReplyAssignment(UniqueObject replyObj, 
 			       UID uid,
-			       ClusterIdentifier source,
-			       ClusterIdentifier dest) {
+			       MessageAddress source,
+			       MessageAddress dest) {
 
     _detailReply = replyObj;
     _uid = uid;

@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.UnaryPredicate;
 
 public class QueryRequestImpl
@@ -30,12 +30,12 @@ public class QueryRequestImpl
 
   UnaryPredicate _requestPredicate;
   UnaryPredicate _localPredicate;
-  ClusterIdentifier _sourceCid;
-  ClusterIdentifier _requestingCid;
+  MessageAddress _sourceCid;
+  MessageAddress _requestingCid;
 
   public QueryRequestImpl(UnaryPredicate requestPredicate,
-                          ClusterIdentifier sourceCid,
-                          ClusterIdentifier requestingCid) {
+                          MessageAddress sourceCid,
+                          MessageAddress requestingCid) {
     _requestPredicate = requestPredicate;
     _sourceCid = sourceCid;
     _requestingCid = requestingCid;
@@ -44,8 +44,8 @@ public class QueryRequestImpl
 
   public QueryRequestImpl(UnaryPredicate requestPredicate,
                           UnaryPredicate localPredicate,
-                          ClusterIdentifier sourceCid,
-                          ClusterIdentifier requestingCid) {
+                          MessageAddress sourceCid,
+                          MessageAddress requestingCid) {
     _requestPredicate = requestPredicate;
     _localPredicate = localPredicate;
     _sourceCid = sourceCid;
@@ -64,14 +64,14 @@ public class QueryRequestImpl
    * The cluster where the object lives, not the source of the request
    */
 
-  public ClusterIdentifier getSourceCluster() {
+  public MessageAddress getSourceCluster() {
     return  _sourceCid;
   }
 
   /**
    * The cluster requesting the object. The cluster the reply message will be sent to
    */
-  public ClusterIdentifier getRequestingCluster() {
+  public MessageAddress getRequestingCluster() {
     return  _requestingCid;
   }
 }

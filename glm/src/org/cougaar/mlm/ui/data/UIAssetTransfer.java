@@ -38,7 +38,7 @@ public interface UIAssetTransfer extends UIPlanElement {
   UUID getAssignee();
  
   /** Returns the Cluster that the asset is assigned from.
-   * @return String - ClusterIdentifier representing the source of the asset
+   * @return String - MessageAddress representing the source of the asset
    */
         
   String getAssignor();

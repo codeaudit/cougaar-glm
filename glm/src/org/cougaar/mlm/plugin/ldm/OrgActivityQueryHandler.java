@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.blackboard.Subscriber;
 import org.cougaar.core.domain.LDMServesPlugin;
@@ -457,7 +457,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
     OrgActivity orgActivity = new OrgActivity(orgName, myOplan.getUID());
     myComponent.getUIDServer().registerUniqueObject(orgActivity);
-    orgActivity.setOwner(myClusterIdentifier);
+    orgActivity.setOwner(myMessageAddress);
     orgActivity.setTimeSpan(makeOplanTimeSpan(startTime, endTime));
 
     if ((activity != null) &&

@@ -229,7 +229,7 @@ public class PSP_AddOplan
       OplanCoupon ow = 
         new OplanCoupon(
             oplan.getUID(), 
-            pi.getClusterIdentifier());
+            pi.getMessageAddress());
       pi.getCluster().getUIDServer().registerUniqueObject(ow);
       pi.publishAdd(ow);
     } catch (Exception e) {

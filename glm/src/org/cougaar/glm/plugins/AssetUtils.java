@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.LocationSchedulePG;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;

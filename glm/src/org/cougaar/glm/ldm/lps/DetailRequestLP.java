@@ -24,6 +24,7 @@ package org.cougaar.glm.ldm.lps;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logging;
 
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -58,7 +59,7 @@ public class DetailRequestLP
   extends LogPlanLogicProvider
   implements EnvelopeLogicProvider, RestartLogicProvider, MessageLogicProvider
 {
-  private final ClusterIdentifier self;
+  private final MessageAddress self;
   private transient GLMFactory _alpFactory=null;
   
   private transient HashMap outstandingRequests = new HashMap(7);
@@ -66,7 +67,7 @@ public class DetailRequestLP
   public DetailRequestLP(LogPlanServesLogicProvider logplan,
 			 ClusterServesLogicProvider cluster) {
     super(logplan,cluster);
-    self = cluster.getClusterIdentifier();
+    self = cluster.getMessageAddress();
   }
 
   private GLMFactory getGLMFactory() {
@@ -128,12 +129,12 @@ public class DetailRequestLP
    * Cluster restart handler. Resend all our DetailRequest
    * and QueryRequests to the restarted cluster. 
    **/
-  public void restart(final ClusterIdentifier cid) {
+  public void restart(final MessageAddress cid) {
     UnaryPredicate pred = new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof DetailRequest) {
           DetailRequest ir = (DetailRequest) o;
-          ClusterIdentifier dest = ir.getSourceCluster();
+          MessageAddress dest = ir.getSourceCluster();
           return 
             RestartLogicProviderHelper.matchesRestart(
                 self, cid, dest);
@@ -151,7 +152,7 @@ public class DetailRequestLP
       public boolean execute(Object o) {
         if (o instanceof QueryRequest) {
           QueryRequest ir = (QueryRequest) o;
-          ClusterIdentifier dest = ir.getSourceCluster();
+          MessageAddress dest = ir.getSourceCluster();
           return 
             RestartLogicProviderHelper.matchesRestart(
                 self, cid, dest);
@@ -212,7 +213,7 @@ public class DetailRequestLP
       }
       DetailReplyAssignment dra = getGLMFactory().newDetailReplyAssignment(uo,
                                                                            uid,
-                                                                           cluster.getClusterIdentifier(),
+                                                                           cluster.getMessageAddress(),
                                                                            request.getRequestingCluster());
 
       Logging.defaultLogger().debug("DetailReplyAssignment " + dra);
@@ -363,7 +364,7 @@ public class DetailRequestLP
       QueryReplyAssignment dra = getGLMFactory().newQueryReplyAssignment(collection,
                                                                          pred,
                                                                          request.getLocalQueryPredicate(),
-                                                                         cluster.getClusterIdentifier(),
+                                                                         cluster.getMessageAddress(),
                                                                          request.getRequestingCluster());
 
       Logging.defaultLogger().debug("QueryReplyAssignment " + dra);

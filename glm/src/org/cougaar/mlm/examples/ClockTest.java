@@ -25,7 +25,7 @@ import org.cougaar.core.plugin.SimplePlugin;
 import java.util.Date;
 import java.util.Vector;
 import org.cougaar.core.agent.ClusterServesPlugin;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 
 /** 
@@ -54,7 +54,7 @@ import org.cougaar.core.agent.ClusterIdentifier;
 public class ClockTest extends SimplePlugin
 {
   ClusterServesPlugin cluster = null;
-  ClusterIdentifier cid = null;
+  MessageAddress cid = null;
   
   public ClockTest() {
     setThreadingChoice(SINGLE_THREAD);
@@ -63,7 +63,7 @@ public class ClockTest extends SimplePlugin
   // "initialization" method
   public void setupSubscriptions() {
     cluster = getCluster();
-    cid = getClusterIdentifier();
+    cid = getMessageAddress();
     
     System.err.println("ClockTest at "+cid+" initializing.");
     // see if we are a supposed to be a setter

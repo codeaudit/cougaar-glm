@@ -21,6 +21,7 @@
 
 package org.cougaar.glm.ldm.lps;
 
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;

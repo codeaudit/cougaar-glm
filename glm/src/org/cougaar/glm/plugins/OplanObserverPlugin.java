@@ -72,7 +72,7 @@ public class OplanObserverPlugin extends SimplePlugin {
         trackOrgActivity = (trackOrgActivity || param.toLowerCase().equals("orgactivity"));
       }
 
-    myId = getClusterIdentifier().cleanToString();
+    myId = getMessageAddress().toAddress();
 
     oplans = (IncrementalSubscription)
       subscribe(oplansPred());

@@ -39,7 +39,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.policy.*;
 import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;

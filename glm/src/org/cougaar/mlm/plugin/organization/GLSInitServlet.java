@@ -168,8 +168,8 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 	if (!(o instanceof Task)) return false;
 	Task task = (Task) o;
 	if (!task.getVerb().equals(Constants.Verb.GETLOGSUPPORT)) return false;
-	if (!task.getSource().equals(getClusterIdentifier())) return false;
-	if (!task.getDestination().equals(getClusterIdentifier())) return false;
+	if (!task.getSource().equals(getMessageAddress())) return false;
+	if (!task.getDestination().equals(getMessageAddress())) return false;
 	return (task.getPrepositionalPhrase(forRoot) != null);
       }
     };
@@ -501,7 +501,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
         oplan =  new Oplan();
 
 	getUIDServer().registerUniqueObject(oplan);
-        oplan.setOwner(getClusterIdentifier());
+        oplan.setOwner(getMessageAddress());
         oplan.setOplanId(oplanID);
         oplans.add(oplan);
       }
@@ -525,7 +525,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 
       if (object instanceof Oplan) {
         OplanCoupon ow = new OplanCoupon(((Oplan) object).getUID(), 
-                                         getClusterIdentifier());
+                                         getMessageAddress());
         getUIDServer().registerUniqueObject(ow);
         getBlackboardService().publishAdd(ow);
 
@@ -681,8 +681,8 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
-    task.setSource(getClusterIdentifier());
-    task.setDestination(getClusterIdentifier());
+    task.setSource(getMessageAddress());
+    task.setDestination(getMessageAddress());
     
     // set prepositional phrases
     Vector phrases = new Vector(3);

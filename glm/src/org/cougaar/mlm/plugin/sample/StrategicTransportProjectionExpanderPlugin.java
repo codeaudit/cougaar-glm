@@ -31,7 +31,7 @@ import org.cougaar.core.domain.RootFactory;
 import org.cougaar.glm.ldm.plan.Capability;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
@@ -108,7 +108,7 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
     //	System.out.println("&&&&&&&&&&&&&&&&& DRtoST Starting to expand");
     Asset mystuff = null;
     //	System.out.println("&&&&&&&&&&&&&&&&&&&&& DRtoST myComponent is: " + myComponent);
-    ClusterIdentifier me = getClusterIdentifier();
+    MessageAddress me = getMessageAddress();
     Verb newverb = new Verb(Constants.Verb.TRANSPORT);
     startDate = rightNow.getTime();
     // increment date by 5 DAYS

@@ -24,7 +24,7 @@ package org.cougaar.mlm.debug.ui;
 
 import org.cougaar.core.plugin.SimplePlugin;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.agent.ClusterServesPlugin;
@@ -73,7 +73,7 @@ public class UIPlugin extends SimplePlugin
   private ClusterServesPlugin uiComponent = null;
   private Object componentLock = new Object();
   private ClusterObjectFactory clusterObjectFactory = null;
-  private ClusterIdentifier clusterIdentifier; // this cluster
+  private MessageAddress clusterIdentifier; // this cluster
   private Plan plan;
   private Hashtable subscribers = new Hashtable();
   private Vector clusters = new Vector(10); // clusters we know about
@@ -168,7 +168,7 @@ public class UIPlugin extends SimplePlugin
 	ItemIdentificationPG itemIdProp =  
 	  cluster.getItemIdentificationPG();
 	if (itemIdProp != null)
-	  clusterNames.addElement(cluster.getClusterIdentifier());
+	  clusterNames.addElement(cluster.getMessageAddress());
     }
     return clusterNames;
   }
@@ -195,11 +195,11 @@ public class UIPlugin extends SimplePlugin
     return assetNames;
   }
 
-  public ClusterIdentifier getClusterIdFromName(String clusterName) {
+  public MessageAddress getClusterIdFromName(String clusterName) {
     String s = "";
     for (int i = 0; i < clusters.size(); i++) {
       Organization cluster = (Organization)clusters.elementAt(i);
-      ClusterIdentifier cid = cluster.getClusterIdentifier();
+      MessageAddress cid = cluster.getMessageAddress();
       if (cid != null && cid.getAddress().equals(clusterName)) 
         return cid;
     }

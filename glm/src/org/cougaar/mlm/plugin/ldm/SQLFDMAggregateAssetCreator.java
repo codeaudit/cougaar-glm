@@ -79,7 +79,7 @@ public class SQLFDMAggregateAssetCreator extends PeriodicQuery
 	String nomenclature = (String) data[TI_NM];
 
 	String tid = "NSN/" + nsn;
-//  	System.out.println(myClusterIdentifier.getAddress() + ": " + "Creating aggregate asset : " + tid + " " +count  + " " + nomenclature);
+//  	System.out.println(myMessageAddress.getAddress() + ": " + "Creating aggregate asset : " + tid + " " +count  + " " + nomenclature);
 	ClassVIIMajorEndItem proto = findPrototype(data,tid, nomenclature);
 	Asset newaggasset = ldmf.createAggregate((Asset)proto,  count.intValue());
 	setupAvailableSchedule(newaggasset);
@@ -153,9 +153,9 @@ public class SQLFDMAggregateAssetCreator extends PeriodicQuery
 //  	Hashtable acrTable_;
 //  	Service service_ = null;
 //  	String theater_ = null;
-//  	ClusterIdentifier clusterId_ = null;
+//  	MessageAddress clusterId_ = null;
 
-//  	ACRHandler(Asset asset, ClusterIdentifier cid) {
+//  	ACRHandler(Asset asset, MessageAddress cid) {
 //  	    myAsset_ = asset;
 //  	    clusterId_ = cid;
 //  	    acrTable_ = new Hashtable();

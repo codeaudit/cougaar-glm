@@ -23,7 +23,7 @@
 package org.cougaar.glm.ldm.plan;
 
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.UnaryPredicate;
 
 /** QueryRequest Interface
@@ -47,12 +47,12 @@ public interface QueryRequest {
   /** Gets the Cluster where the object resides
     * @return The Cluster the request is being sent to.  
     */
-  ClusterIdentifier getSourceCluster();
+  MessageAddress getSourceCluster();
 
   /** 
-    * @return The ClusterIdentifier where the request originated
+    * @return The MessageAddress where the request originated
     */
-  ClusterIdentifier getRequestingCluster();
+  MessageAddress getRequestingCluster();
   
 }
   

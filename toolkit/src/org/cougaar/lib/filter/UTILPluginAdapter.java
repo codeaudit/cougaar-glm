@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.core.component.StateObject;
@@ -87,7 +87,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
       return originalAgentID;
   }
 
-  protected ClusterIdentifier getOriginalAgentID () {
+  protected MessageAddress getOriginalAgentID () {
     return originalAgentID;
   }
   
@@ -102,7 +102,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * @param o the state saved before
    */
   public void setState(Object o) {
-    originalAgentID = (ClusterIdentifier) o;
+    originalAgentID = (MessageAddress) o;
   }
 
   /** true iff originalAgentID is not null -- i.e. setState got called */
@@ -266,7 +266,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
       myP = new Vector ();
 
     // create the parameter table
-    ClusterIdentifier agentID = (didSpawn () ? 
+    MessageAddress agentID = (didSpawn () ? 
 				 getOriginalAgentID () :
 				 ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
 								 
@@ -292,7 +292,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * Subclass to return a different ParamTable.
    */
   protected ParamMap createParamTable (Vector envParams, 
-				       ClusterIdentifier ident) {
+				       MessageAddress ident) {
     if (isDebugEnabled()) {
       debug (getName () + " - creating param table, identifier was " + ident);
       for (Iterator i = envParams.iterator(); i.hasNext();) {
@@ -687,7 +687,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   protected boolean skipLowConfidence = true;
   protected double HIGH_CONFIDENCE = 0.99d;
   protected PersistentState persistentState;
-  private ClusterIdentifier originalAgentID = null;
+  private MessageAddress originalAgentID = null;
   protected String myName;
   protected LoggingService logger;
 

@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.ConfigFinder;
 
 import java.io.File;
@@ -78,7 +78,7 @@ public class UTILParamTable extends ParamTable {
    * @param envParams vector of environment parameters
    * @param cluster pointer to the cluster
    */
-  public UTILParamTable(Vector envParams, ClusterIdentifier cluster, Logger logger){
+  public UTILParamTable(Vector envParams, MessageAddress cluster, Logger logger){
     super(logger);
     addIniParameters (addEnvFileParam(envParams, cluster));
   }
@@ -89,7 +89,7 @@ public class UTILParamTable extends ParamTable {
    * (and passed in the envParams variable) then it is set
    * to be the name of the cluster plus env.xml.
    */
-  private Vector addEnvFileParam(final Vector envParams, ClusterIdentifier cluster){
+  private Vector addEnvFileParam(final Vector envParams, MessageAddress cluster){
     boolean hasfile = false;
     boolean hasdir = false;
 

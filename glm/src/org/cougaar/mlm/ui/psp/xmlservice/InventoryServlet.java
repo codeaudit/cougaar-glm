@@ -30,7 +30,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -631,11 +631,11 @@ class RolePredicate implements UnaryPredicate {
   
 class InventoryPredicate implements UnaryPredicate {
   String desiredAssetName; // nomenclature:type id
-  ClusterIdentifier myClusterId;
+  MessageAddress myClusterId;
     
   public InventoryPredicate(String desiredAssetName, String myCluster) {
     this.desiredAssetName = desiredAssetName;
-    myClusterId = new ClusterIdentifier(myCluster);
+    myClusterId = MessageAddress.getMessageAddress(myCluster);
   }
     
   private boolean assetMatch(Asset asset) {

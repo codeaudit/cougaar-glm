@@ -25,7 +25,7 @@ package org.cougaar.mlm.debug.ui;
 import java.util.Date;
 import java.util.Enumeration;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Task;
@@ -62,8 +62,8 @@ public class UITaskNode extends UITreeNode {
     String s = "";
     if (o == null)
       return s;
-    if (o instanceof ClusterIdentifier) 
-      return ((ClusterIdentifier)o).getAddress();
+    if (o instanceof MessageAddress) 
+      return ((MessageAddress)o).getAddress();
     return o.toString();
   }
 

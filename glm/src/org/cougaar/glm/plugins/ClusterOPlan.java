@@ -20,7 +20,7 @@
  */
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.util.UID;
 
@@ -36,13 +36,13 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 public class ClusterOPlan implements Serializable {
-    ClusterIdentifier clusterId_;
+    MessageAddress clusterId_;
     long startTime_, endTime_;
     Vector orgActivities_ = null;
     Oplan oplan_;
 //      IncrementalSubscription orgActivitySubscription_;
 
-    public ClusterOPlan(ClusterIdentifier id, Oplan op/*, IncrementalSubscription sub*/) {
+    public ClusterOPlan(MessageAddress id, Oplan op/*, IncrementalSubscription sub*/) {
 //  	System.out.println("--- Creating ClusterOPlan for "+id+", oplan "+op);
 	clusterId_ = id;
 	oplan_ = op;

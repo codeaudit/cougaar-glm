@@ -25,7 +25,7 @@ package org.cougaar.glm.ldm.oplan;
 import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.core.util.XMLize;
 import org.cougaar.core.util.XMLizable;
@@ -44,14 +44,14 @@ public class OplanCoupon extends OwnedUniqueObject
   private UID _oplanUID;
 
   public OplanCoupon(UID oplanUID,
-		      ClusterIdentifier homeClusterID) {
+		      MessageAddress homeClusterID) {
     _oplanUID = oplanUID;
     setOwner(homeClusterID);
   }
 
   public OplanCoupon(UID thisUID,
 		      UID oplanUID,
-		      ClusterIdentifier homeClusterID) {
+		      MessageAddress homeClusterID) {
     setUID(thisUID);
     _oplanUID = oplanUID;
     setOwner(homeClusterID);
@@ -65,11 +65,11 @@ public class OplanCoupon extends OwnedUniqueObject
     return _oplanUID;
   }
 
-  public void setHomeClusterID(ClusterIdentifier homeClusterID) {
+  public void setHomeClusterID(MessageAddress homeClusterID) {
     setOwner(homeClusterID);
   }
 
-  public ClusterIdentifier getHomeClusterID() {
+  public MessageAddress getHomeClusterID() {
     return getOwner();
   }
 

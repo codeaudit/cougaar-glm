@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import java.lang.Class;
 import java.text.DateFormat;

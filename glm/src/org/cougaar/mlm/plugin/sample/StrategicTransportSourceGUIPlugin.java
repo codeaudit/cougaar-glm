@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.domain.RootFactory;
 
@@ -268,7 +268,7 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
 
   protected Task startSource(
         Oplan oplan, Organization selfOrg) {
-    ClusterIdentifier clusterID = this.getCluster().getClusterIdentifier();
+    MessageAddress clusterID = this.getCluster().getMessageAddress();
 
     NewTask task = ldmf.newTask();
 

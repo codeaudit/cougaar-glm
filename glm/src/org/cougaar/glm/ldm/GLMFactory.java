@@ -28,7 +28,7 @@ import org.cougaar.core.domain.RootFactory;
 import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.blackboard.LogPlan;
 import org.cougaar.core.agent.ClusterServesLogicProvider;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.UID;
 import org.cougaar.util.UnaryPredicate;
@@ -230,14 +230,14 @@ public class GLMFactory implements org.cougaar.core.domain.Factory {
 
   public static DetailReplyAssignment newDetailReplyAssignment(UniqueObject replyObj,
 							       UID requestedUID,
-							       ClusterIdentifier replyFrom,
-							       ClusterIdentifier replyTo) {
+							       MessageAddress replyFrom,
+							       MessageAddress replyTo) {
     return new DetailReplyAssignment(replyObj, requestedUID, replyFrom, replyTo);
   }
 
   public static DetailRequest newDetailRequest(UID desiredObject,
-					       ClusterIdentifier sourceCluster,
-					       ClusterIdentifier requestingCluster) {
+					       MessageAddress sourceCluster,
+					       MessageAddress requestingCluster) {
     return new DetailRequestImpl(desiredObject,
 				 sourceCluster,
 				 requestingCluster);
@@ -250,22 +250,22 @@ public class GLMFactory implements org.cougaar.core.domain.Factory {
 
   public static QueryReplyAssignment newQueryReplyAssignment(Collection reply,
                                                              UnaryPredicate requestQuery,
-                                                             ClusterIdentifier replyFrom,
-                                                             ClusterIdentifier replyTo) {
+                                                             MessageAddress replyFrom,
+                                                             MessageAddress replyTo) {
     return new QueryReplyAssignment(reply, requestQuery, replyFrom, replyTo);
   }
 
   public static QueryReplyAssignment newQueryReplyAssignment(Collection reply,
                                                              UnaryPredicate requestQuery,
                                                              UnaryPredicate localQuery,
-                                                             ClusterIdentifier replyFrom,
-                                                             ClusterIdentifier replyTo) {
+                                                             MessageAddress replyFrom,
+                                                             MessageAddress replyTo) {
     return new QueryReplyAssignment(reply, requestQuery, localQuery, replyFrom, replyTo);
   }
 
   public static QueryRequest newQueryRequest(UnaryPredicate queryPredicate,
-                                             ClusterIdentifier sourceCluster,
-                                             ClusterIdentifier requestingCluster) {
+                                             MessageAddress sourceCluster,
+                                             MessageAddress requestingCluster) {
     return new QueryRequestImpl(queryPredicate,
                                 sourceCluster,
                                 requestingCluster);
@@ -273,8 +273,8 @@ public class GLMFactory implements org.cougaar.core.domain.Factory {
 
   public static QueryRequest newQueryRequest(UnaryPredicate queryPredicate,
                                              UnaryPredicate localPredicate,
-                                             ClusterIdentifier sourceCluster,
-                                             ClusterIdentifier requestingCluster) {
+                                             MessageAddress sourceCluster,
+                                             MessageAddress requestingCluster) {
     return new QueryRequestImpl(queryPredicate,
                                 localPredicate,
                                 sourceCluster,

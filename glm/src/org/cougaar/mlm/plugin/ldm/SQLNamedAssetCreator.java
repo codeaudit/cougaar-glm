@@ -44,7 +44,7 @@ public class SQLNamedAssetCreator extends PeriodicQuery {
     String bumper = (String)data[1];
     String nomenclature = (String) data[2];
 
-    System.out.println(myClusterIdentifier.getAddress() + ": " +
+    System.out.println(myMessageAddress.getAddress() + ": " +
 		       "Creating an instance of NSN/" + nsn + " " + bumper + " " + nomenclature);
 
       Asset newasset = createAsset("NSN/" + nsn, bumper, nomenclature);

@@ -51,7 +51,7 @@ import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
@@ -84,7 +84,7 @@ public class UIDisplay implements ActionListener, Runnable {
   private UIPlugin uiPlugin;      // plugin we're a part of
   private PluginDelegate delegate;
   private Plan plan = null;       // plan we're examining
-  private ClusterIdentifier myClusterId; // local cluster id
+  private MessageAddress myClusterId; // local cluster id
   private String myClusterName;
   private static int WIDTH = 250; // width and height of initial frame
   private static int HEIGHT = 550;
@@ -144,7 +144,7 @@ public class UIDisplay implements ActionListener, Runnable {
    */
 
   public void run() {
-    myClusterId = delegate.getClusterIdentifier();
+    myClusterId = delegate.getMessageAddress();
     myClusterName = myClusterId.getAddress();
     // get the plan
     plan = uiPlugin.getPlan();

@@ -88,7 +88,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.agent.ClusterServesPlugin;
@@ -314,7 +314,7 @@ public final class AddAssetsGUIPlugin extends SimplePlugin {
 
   private String getClusterID() {
     try {
-      return getCluster().getClusterIdentifier().toString();
+      return getCluster().getMessageAddress().toString();
     } catch (Exception e) {
       return "<UNKNOWN>";
     }

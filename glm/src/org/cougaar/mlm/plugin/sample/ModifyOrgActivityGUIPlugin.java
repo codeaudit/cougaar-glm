@@ -311,7 +311,7 @@ public class ModifyOrgActivityGUIPlugin extends SimplePlugin {
 
   private String getClusterID() {
     try {
-      return getCluster().getClusterIdentifier().toString();
+      return getCluster().getMessageAddress().toString();
     } catch (Exception e) {
       return "<UNKNOWN>";
     }
@@ -423,7 +423,7 @@ public class ModifyOrgActivityGUIPlugin extends SimplePlugin {
     String s = null;
     try {
       // FOR NOW:
-      s = org.getClusterPG().getClusterIdentifier().toString();
+      s = org.getClusterPG().getMessageAddress().toString();
       // FOR LATER:
       //s = org.getItemIdentificationPG().getItemIdentification();
     } catch (Exception e) {}

@@ -24,7 +24,7 @@ package org.cougaar.mlm.plugin.strategictransport;
 import org.cougaar.glm.ldm.Constants;
 
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
@@ -204,7 +204,7 @@ public class StrategicTransportExpanderPlugin extends SimplePlugin
      */
   private NewTask doExpansion( Task task ) {
 	
-    ClusterIdentifier me = getClusterIdentifier();
+    MessageAddress me = getMessageAddress();
     NewTask subtask = ldmf.newTask();
 	
     // Create copy of parent Task

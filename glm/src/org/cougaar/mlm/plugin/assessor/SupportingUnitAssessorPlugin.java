@@ -30,7 +30,7 @@ import java.text.MessageFormat;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.planning.ldm.asset.Asset;
@@ -124,7 +124,7 @@ public class SupportingUnitAssessorPlugin extends SimplePlugin {
   private void initMessageArgs() {
     myMessageArgs = new String[3];
 
-    myMessageArgs[0] = getClusterIdentifier().cleanToString();
+    myMessageArgs[0] = getMessageAddress().toString();
   }
 
   /**

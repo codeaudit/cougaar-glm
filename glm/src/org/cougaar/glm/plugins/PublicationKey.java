@@ -77,7 +77,7 @@ public class PublicationKey
 	    key += "aggregate QTY ="+((AggregateAsset)a).getQuantity();
 	    a = ((AggregateAsset)a).getAsset();
 	} else if (a instanceof Organization) {
-	    key += " ORG:"+((Organization)a).getClusterIdentifier().getAddress();
+	    key += " ORG:"+((Organization)a).getMessageAddress().getAddress();
 	} else {
 	    ScheduledContentPG prop = (ScheduledContentPG) a.searchForPropertyGroup(ScheduledContentPG.class);
 	    if ((a instanceof Inventory) && (prop != null)) {

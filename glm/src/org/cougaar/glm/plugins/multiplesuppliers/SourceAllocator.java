@@ -21,6 +21,7 @@
 package org.cougaar.glm.plugins.multiplesuppliers;
 
 import org.cougaar.*;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -139,7 +140,7 @@ public class SourceAllocator extends SimplePlugin {
    * Store cluster name and setup subscriptions for SOURCE subtasks and for Allocations.
    */
   protected void setupSubscriptions() {
-    clusterName = getClusterIdentifier().getAddress();
+    clusterName = getMessageAddress().getAddress();
     sourceSubtasks  = (IncrementalSubscription)subscribe( new SourceSubtasksP());
     allocations     = (IncrementalSubscription)subscribe( new AllocationsP());
   }

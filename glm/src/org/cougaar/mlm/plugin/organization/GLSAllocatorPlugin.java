@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
 
@@ -113,7 +113,7 @@ public class GLSAllocatorPlugin extends SimplePlugin {
 	
   public synchronized void execute() {
     if (me == null) {
-      me = getClusterIdentifier().getAddress();
+      me = getMessageAddress().getAddress();
     }
 
     // check your asset container for new Subordinates
@@ -338,7 +338,7 @@ public class GLSAllocatorPlugin extends SimplePlugin {
   private Task createSubTasks(Task t, Asset subasset) {
     Vector prepphrases = new Vector();
     
-    ClusterIdentifier me = this.getCluster().getClusterIdentifier();
+    MessageAddress me = this.getCluster().getMessageAddress();
     NewTask subtask = ldmf.newTask();
     
     // Create copy of parent Task

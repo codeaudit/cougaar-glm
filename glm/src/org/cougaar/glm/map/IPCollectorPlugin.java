@@ -11,7 +11,7 @@ package org.cougaar.glm.map;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.agent.MetricsSnapshot;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -297,7 +297,7 @@ public class IPCollectorPlugin extends org.cougaar.core.plugin.SimplePlugin
 	    	
 	    	
 	      selfOrg   = org;
-	      ClusterIdentifier c = org.getClusterIdentifier();
+	      MessageAddress c = org.getMessageAddress();
 	      myOrgString = c.toString();
 	      if(locationDebug)
            System.out.println("%%%% LocationCollector SelfOrg " + c);

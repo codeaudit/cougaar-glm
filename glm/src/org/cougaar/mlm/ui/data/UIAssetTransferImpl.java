@@ -54,7 +54,7 @@ public class UIAssetTransferImpl extends UIPlanElementImpl implements UIAssetTra
   }
  
   /** Returns the Cluster that the asset is assigned from.
-   * @return String - ClusterIdentifier representing the source of the asset
+   * @return String - MessageAddress representing the source of the asset
    */
         
   public String getAssignor() {

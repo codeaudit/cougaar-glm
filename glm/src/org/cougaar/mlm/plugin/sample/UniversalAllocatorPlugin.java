@@ -94,7 +94,7 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
             getDelegate().getServiceBroker()
             .getService(this, LoggingService.class, null);
         logger = LoggingServiceWithPrefix
-            .add(logger, getAgentIdentifier().cleanToString() + ": ");
+            .add(logger, getAgentIdentifier().toString() + ": ");
 	allTasks = (IncrementalSubscription)subscribe(allTasksPredicate);
         parseParams();
     }

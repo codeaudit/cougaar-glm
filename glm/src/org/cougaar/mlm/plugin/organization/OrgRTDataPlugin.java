@@ -31,7 +31,7 @@ import java.lang.reflect.Constructor;
 
 import java.util.*;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.planning.ldm.asset.Asset;
@@ -214,7 +214,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
         remoteTask = createRFD(orgBClone, orgAClone, rfdRoles);
         publish(remoteTask);
         
-        System.out.println("OrgRTData: execute from " + getClusterIdentifier() + " " +
+        System.out.println("OrgRTData: execute from " + getMessageAddress() + " " +
                            orgAClone.getItemIdentificationPG().getItemIdentification() + 
                            " reporting for service to " + 
                            orgBClone.getItemIdentificationPG().getItemIdentification());
@@ -231,7 +231,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
    */
   protected void processOrganizations() {
     try {
-      String cId = getClusterIdentifier().getAddress();
+      String cId = getMessageAddress().getAddress();
       String filename = cId + "-prototype-ini.dat";
       if (didSpawn ())
 		filename = originalAgentID + "-prototype-ini.dat";
@@ -263,7 +263,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
   protected void createSuperior(String sup) {
     if ((sup == null) ||
         (sup.equals(""))) {
-      System.err.println("OrgRTDataPlugin@" + getClusterIdentifier() + " ignoring Superior specified as \"\"");
+      System.err.println("OrgRTDataPlugin@" + getMessageAddress() + " ignoring Superior specified as \"\"");
       return;
     }
 
@@ -319,7 +319,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
 
     if ((sendto == null) ||
         (sendto.equals(""))) {
-      System.err.println("OrgRTDataPlugin@" + getClusterIdentifier() + " ignoring " + caproles + " customer specified as \"\"");
+      System.err.println("OrgRTDataPlugin@" + getMessageAddress() + " ignoring " + caproles + " customer specified as \"\"");
       return;
     }
 
@@ -382,7 +382,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
     itemIdProp.setAlternateItemIdentification(orgStr);
     
     NewClusterPG cpg = (NewClusterPG)org.getClusterPG();
-    cpg.setClusterIdentifier(ClusterIdentifier.getClusterIdentifier(orgStr));
+    cpg.setMessageAddress(MessageAddress.getMessageAddress(orgStr));
 
     CommunityPGImpl communityPG = 
       (CommunityPGImpl)getFactory().createPropertyGroup(CommunityPGImpl.class);
@@ -444,7 +444,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
     reportTask.setPrepositionalPhrases(prepPhrases.elements());
 
     reportTask.setPlan(getFactory().getRealityPlan());
-    reportTask.setSource(getClusterIdentifier());
+    reportTask.setSource(getMessageAddress());
 
     AspectValue startTAV = 
       TimeAspectValue.create(AspectType.START_TIME, startTime);
@@ -530,7 +530,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
 	      	uic = tokens.sval;
 
 		if (originalAgentID != null)
-		  uic = getClusterIdentifier().getAddress();
+		  uic = getMessageAddress().getAddress();
 		// This is a silly fix to a dumb bug
 		if (!uic.startsWith("UIC/")) {
 		  uic = "UIC/" + uic;
@@ -556,7 +556,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
 		itemIdPG.setAlternateItemIdentification(clusterId);
 
                 NewClusterPG cpg = (NewClusterPG) org.getClusterPG();
-                cpg.setClusterIdentifier(ClusterIdentifier.getClusterIdentifier(clusterId));
+                cpg.setMessageAddress(MessageAddress.getMessageAddress(clusterId));
 
                 CommunityPGImpl communityPG = 
                   (CommunityPGImpl)getFactory().createPropertyGroup(CommunityPGImpl.class);
@@ -976,7 +976,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
     // initialize the classmap with some common ones
     classes = new HashMap();
 
-    classes.put("ClusterIdentifier", ClusterIdentifier.class);
+    classes.put("MessageAddress", MessageAddress.class);
 
     // precache some builtins
     classes.put("long", Long.TYPE);
@@ -1172,7 +1172,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
    */
   public Object getState() {
     if (originalAgentID == null)
-	  return getClusterIdentifier().getAddress();
+	  return getMessageAddress().getAddress();
     else 
 	  return originalAgentID;
   }

@@ -57,7 +57,7 @@ public class SQLMOSAggregateAssetCreator extends PeriodicQuery {
     String nomenclature = (String) data[2];
 
     String tid = "NSN/" + nsn;
-    // System.out.println(myClusterIdentifier.getAddress() + ": " +
+    // System.out.println(myMessageAddress.getAddress() + ": " +
     //                   "Creating aggregate asset : " + tid + " " +
     //                   count  + " " + nomenclature);Skill
 

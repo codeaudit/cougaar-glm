@@ -27,7 +27,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
@@ -52,7 +52,7 @@ public class UIAllAssetsNode extends UITreeNode implements UISubscriber {
     */
 
   public UIAllAssetsNode(UIPlugin uiPlugin, String planName, 
-			 ClusterIdentifier clusterId) throws UINoPlanException {
+			 MessageAddress clusterId) throws UINoPlanException {
     super();
     this.uiPlugin = uiPlugin;
     this.planName = planName;

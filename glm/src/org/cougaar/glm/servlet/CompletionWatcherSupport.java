@@ -1,6 +1,6 @@
 package org.cougaar.glm.servlet;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.BlackboardService;
@@ -22,7 +22,7 @@ import org.cougaar.core.servlet.BlackboardServletSupport;
 public class CompletionWatcherSupport extends BlackboardServletSupport {
   public CompletionWatcherSupport(
       String path,
-      ClusterIdentifier agentId,
+      MessageAddress agentId,
       BlackboardQueryService blackboardQuery,
       NamingService ns,
       LoggingService logger,

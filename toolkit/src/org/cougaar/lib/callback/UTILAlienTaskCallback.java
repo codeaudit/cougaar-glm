@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.util.UnaryPredicate;
  
@@ -48,7 +48,7 @@ public class UTILAlienTaskCallback extends UTILFilterCallbackAdapter {
 	  Task aTask = (Task) o;
 	  UTILAlienListener alienListener = (UTILAlienListener) myListener;
 	  boolean fromOtherCluster = 
-	    !(aTask.getSource().equals(new ClusterIdentifier(alienListener.getClusterName ())));
+	    !(aTask.getSource().equals(MessageAddress.getMessageAddress(alienListener.getClusterName ())));
 	  return (fromOtherCluster &&
 		  alienListener.interestingTask (aTask));
 	}

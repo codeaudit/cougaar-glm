@@ -170,7 +170,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
     public synchronized void execute() {
 	String clusterId="unitialized clusterId";
 	if(myOrganization_!=null){
-	    clusterId = myOrganization_.getClusterPG().getClusterIdentifier().toString();
+	    clusterId = myOrganization_.getClusterPG().getMessageAddress().toString();
 	}
         aggMILTask_ = null;
         if (detReqSubscription_.hasChanged()) {
@@ -626,7 +626,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	Enumeration initialInv = FileUtils.readConfigFile(invFile, getConfigFinder());
 	if (initialInv != null) {
 	    stashInventoryInformation(type, initialInv);
-	    GLMDebug.DEBUG("InventoryPlugin", getClusterIdentifier(), 
+	    GLMDebug.DEBUG("InventoryPlugin", getMessageAddress(), 
 			      "initializeInventory(), Inventory file is "+invFile+" for "+type);
 	}
     }
@@ -639,7 +639,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	    result = inv_file;
 	} 
 	else {
-  	    result = getClusterSuffix(myOrganization_.getClusterPG().getClusterIdentifier().toString()) +
+  	    result = getClusterSuffix(myOrganization_.getClusterPG().getMessageAddress().toString()) +
   		"_"+type.toLowerCase()+".inv";
 	}
 	return result;
@@ -682,7 +682,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
         GregorianCalendar reportBaseDate;
         int reportStepKind;
 	int entries = 0;
-	GLMDebug.DEBUG("InventoryPlugin",getClusterIdentifier(), "<"+type+"> Stashing inventories info...");
+	GLMDebug.DEBUG("InventoryPlugin",getMessageAddress(), "<"+type+"> Stashing inventories info...");
 	
 	while(initInv.hasMoreElements()) {
 	    line = (String) initInv.nextElement();

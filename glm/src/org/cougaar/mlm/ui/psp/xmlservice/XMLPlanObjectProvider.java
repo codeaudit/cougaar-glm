@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.util.XMLizable;
@@ -203,8 +203,8 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
 
   public static void main(String[] args) {
     // create fake task object to test against
-    //    ClusterIdentifierImpl ci= new ClusterIdentifierImpl("myCluster");
-    ClusterIdentifier ci = new ClusterIdentifier("myCluster");
+    //    MessageAddressImpl ci= MessageAddress.getMessageAddressImpl("myCluster");
+    MessageAddress ci = MessageAddress.getMessageAddress("myCluster");
     ClusterObjectFactoryImpl cof = new ClusterObjectFactoryImpl(ci);
     NewTask testTask = cof.newTask();
     testTask.setSource(ci);

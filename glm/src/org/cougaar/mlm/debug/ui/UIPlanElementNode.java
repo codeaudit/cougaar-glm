@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Workflow;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 /** A tree node for a PlanElement.
   Overrides the UITreeNode loadChildren, toString and isLeaf
@@ -191,7 +191,7 @@ public class UIPlanElementNode extends UITreeNode {
 	  i = i + loadAssets((AggregateAsset)asset, i, "");
 	else
 	  insert(new UIAssetNode(asset, ""), i++);
-      ClusterIdentifier assignor = ((AssetTransfer)planElement).getAssignor();
+      MessageAddress assignor = ((AssetTransfer)planElement).getAssignor();
       String assignorString = "Assigned By: ";
       if (assignor != null)
 	assignorString = assignorString + assignor.getAddress();

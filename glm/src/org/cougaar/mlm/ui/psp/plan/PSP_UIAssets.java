@@ -236,8 +236,8 @@ public class PSP_UIAssets extends PSP_BaseAdapter
 
            UIOrgRelationship relation = new UIOrgRelationship();
          
-           relation.setTargetOrganizationCID(self.getClusterPG().getClusterIdentifier().toString());
-           relation.setProviderOrganizationCID(other.getClusterPG().getClusterIdentifier().toString());
+           relation.setTargetOrganizationCID(self.getClusterPG().getMessageAddress().toString());
+           relation.setProviderOrganizationCID(other.getClusterPG().getMessageAddress().toString());
          
            relation.setTargetOrganizationUID(self.getUID());
            relation.setProviderOrganizationUID(other.getUID());

@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Directive;
 import org.cougaar.planning.ldm.plan.DirectiveImpl;
 import org.cougaar.util.UnaryPredicate;
@@ -47,8 +47,8 @@ public class QueryReplyAssignment extends DirectiveImpl
 
   public QueryReplyAssignment(Collection reply, 
 			      UnaryPredicate queryPredicate,
-			      ClusterIdentifier source,
-			      ClusterIdentifier dest) {
+			      MessageAddress source,
+			      MessageAddress dest) {
 
     _queryReply = reply;
     _predicate = queryPredicate;
@@ -60,8 +60,8 @@ public class QueryReplyAssignment extends DirectiveImpl
   public QueryReplyAssignment(Collection reply, 
 			      UnaryPredicate queryPredicate,
 			      UnaryPredicate localPredicate,
-			      ClusterIdentifier source,
-			      ClusterIdentifier dest) {
+			      MessageAddress source,
+			      MessageAddress dest) {
 
     _queryReply = reply;
     _predicate = queryPredicate;

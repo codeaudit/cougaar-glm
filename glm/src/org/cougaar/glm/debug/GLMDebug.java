@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.debug;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import java.io.*;
 
@@ -185,7 +185,7 @@ public class GLMDebug {
      * @param cid         cluster identifer
      * @param arg         string to print 
      */
-    public final static void DEBUG(String class_name, ClusterIdentifier cid, String arg)
+    public final static void DEBUG(String class_name, MessageAddress cid, String arg)
     {    
 	if (debug_ == null)
 	    debug_ = new GLMDebug();
@@ -201,11 +201,11 @@ public class GLMDebug {
      * @param arg         string to print 
      * @param priority 
      */
-    public final static void DEBUG(int priority, String class_name, ClusterIdentifier cid, String arg) {
+    public final static void DEBUG(int priority, String class_name, MessageAddress cid, String arg) {
         DEBUG(class_name, cid, arg, priority);
     }
 
-    public final static void DEBUG(String class_name, ClusterIdentifier cid, String arg, int priority)
+    public final static void DEBUG(String class_name, MessageAddress cid, String arg, int priority)
     {    
 	if (debug_ == null)
 	    debug_ = new GLMDebug();
@@ -230,7 +230,7 @@ public class GLMDebug {
      * @param cid         cluster identifer
      * @param arg         string to print 
      */
-    public final static void ERROR(String class_name, ClusterIdentifier cid, String arg)
+    public final static void ERROR(String class_name, MessageAddress cid, String arg)
     {
 	if (debug_ == null)
 	    debug_ = new GLMDebug();
@@ -239,7 +239,7 @@ public class GLMDebug {
 	logToFile(class_name, cid, "GLM-ERROR "+arg);
     }
     
-    private static void outputLine(String hdr, String class_name, ClusterIdentifier cid, String arg) 
+    private static void outputLine(String hdr, String class_name, MessageAddress cid, String arg) 
     {
         if (delayedSeparatorMessage != null) {
             debug_.getOutputStream().println();
@@ -263,7 +263,7 @@ public class GLMDebug {
         delayedSeparatorMessage = null;
     }
     
-    private final static void logToFile(String class_name, ClusterIdentifier cid, String arg)
+    private final static void logToFile(String class_name, MessageAddress cid, String arg)
     {
 	if (!isLogged()) return;
 	PrintWriter pw = debug_.getLogStream();
@@ -277,7 +277,7 @@ public class GLMDebug {
      * @param cid cluster identifer
      * @param arg string to print 
      */
-    public final static void LOG(String class_name, ClusterIdentifier cid, String arg)
+    public final static void LOG(String class_name, MessageAddress cid, String arg)
     {
 	if (debug_ == null)
 	    debug_ = new GLMDebug();

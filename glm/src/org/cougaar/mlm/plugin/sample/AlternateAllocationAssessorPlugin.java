@@ -36,7 +36,7 @@ import java.util.TreeSet;
 import java.util.Comparator;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Alert;
@@ -158,7 +158,7 @@ public class AlternateAllocationAssessorPlugin extends SimplePlugin
 
   /** GUI to display failed allocation info **/
   private void createGUI() {
-    frame = new JFrame("AlternateAllocationAssessorPlugin for " + getClusterIdentifier());
+    frame = new JFrame("AlternateAllocationAssessorPlugin for " + getMessageAddress());
     frame.setLocation(0,160);
     Container panel = frame.getContentPane();
     panel.add(allocCountLabel, BorderLayout.NORTH);

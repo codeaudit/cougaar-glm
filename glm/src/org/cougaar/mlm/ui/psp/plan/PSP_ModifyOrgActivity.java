@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -422,7 +423,7 @@ public class PSP_ModifyOrgActivity
     String s = null;
     try {
       // FOR NOW:
-      s = org.getClusterPG().getClusterIdentifier().toString();
+      s = org.getClusterPG().getMessageAddress().toString();
       // FOR LATER:
       //s = org.getItemIdentificationPG().getItemIdentification();
     } catch (Exception e) {}

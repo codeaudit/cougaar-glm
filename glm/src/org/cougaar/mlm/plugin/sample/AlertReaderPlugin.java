@@ -26,7 +26,7 @@ import java.awt.*;
 import java.util.Enumeration;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Alert;
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.core.plugin.PluginAdapter;

@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.Map;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.glm.debug.*;
 import org.cougaar.glm.execution.common.InventoryReport;
@@ -247,7 +247,7 @@ public class InventoryBG implements PGDelegate {
   /**
    * Record all demand tasks as dueouts. As a side effect compute the firstDayOfDemand_
    **/
-  public int withdrawFromInventory(Inventory inventory, ClusterIdentifier clusterID) {
+  public int withdrawFromInventory(Inventory inventory, MessageAddress clusterID) {
     Enumeration role_sched = inventory.getRoleSchedule().getRoleScheduleElements();
     long earliestDemand = Long.MAX_VALUE;
     while (role_sched.hasMoreElements()) {
@@ -1083,7 +1083,7 @@ public class InventoryBG implements PGDelegate {
     return new Date(latest_time);
   }
 
-  public Integer getFirstOverflow(int i, ClusterIdentifier cluster) {
+  public Integer getFirstOverflow(int i, MessageAddress cluster) {
     if (level_ == null)
       determineInventoryLevels();
     int size = level_.length;
@@ -1627,7 +1627,7 @@ public class InventoryBG implements PGDelegate {
 
 
 
-  public int printInventoryLevels(Inventory inventory, ClusterIdentifier clusterID) {
+  public int printInventoryLevels(Inventory inventory, MessageAddress clusterID) {
     if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), Day 0 is "+TimeUtils.dateString(getStartTime()));
     if (level_ != null) {
       int size = level_.length;

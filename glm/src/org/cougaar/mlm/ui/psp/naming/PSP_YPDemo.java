@@ -38,7 +38,7 @@ import org.cougaar.util.*;
 import org.cougaar.core.util.*;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.CollectionSubscription;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.lib.planserver.server.FDSURL;
 
 import org.cougaar.core.naming.*;
@@ -151,7 +151,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
               processFormPOST(query_parameters, psc, qObject, session, out);
         }
         PluginDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
-        displayUserSearchCheckBoxes(out,  query_parameters, qObject, session, psc, pd.getClusterIdentifier().cleanToString());
+        displayUserSearchCheckBoxes(out,  query_parameters, qObject, session, psc, pd.getMessageAddress().toString());
         out.flush();
   }
 

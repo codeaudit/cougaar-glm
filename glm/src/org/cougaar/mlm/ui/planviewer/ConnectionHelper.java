@@ -29,7 +29,7 @@ import java.net.URLConnection;
 import java.util.Hashtable;
 import org.cougaar.util.OptionPane;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 /**
  * Creates connection between client and XML Plan Server.

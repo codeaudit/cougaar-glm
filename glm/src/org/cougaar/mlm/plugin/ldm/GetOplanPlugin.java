@@ -35,7 +35,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AssetGroup;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.glm.ldm.GLMFactory;
 import org.cougaar.glm.ldm.plan.QueryRequest;
@@ -80,7 +80,7 @@ public class GetOplanPlugin extends SimplePlugin {
 	  OplanCoupon ow = (OplanCoupon) addIterator.next();
 	  // We shouldn't run the plugin in the same cluster where
 	  // the oplan is published, but if we do, just ignore the coupon
-	  if (!ow.getOwner().equals(getClusterIdentifier())) {
+	  if (!ow.getOwner().equals(getMessageAddress())) {
 	    requestOplan(ow);
 	  }
 	}
@@ -90,7 +90,7 @@ public class GetOplanPlugin extends SimplePlugin {
       if (changes != null) {
 	for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
 	  OplanCoupon ow = (OplanCoupon) changeIterator.next();
-	  if (!ow.getOwner().equals(getClusterIdentifier())) {
+	  if (!ow.getOwner().equals(getMessageAddress())) {
 	    requestOplan(ow);
 	  }
 	}
@@ -99,7 +99,7 @@ public class GetOplanPlugin extends SimplePlugin {
       if (deletes != null) {
 	for (Iterator delIterator = deletes.iterator(); delIterator.hasNext();) {
 	  OplanCoupon ow = (OplanCoupon) delIterator.next();
-	  if (!ow.getOwner().equals(getClusterIdentifier())) {
+	  if (!ow.getOwner().equals(getMessageAddress())) {
 	    removeOplan(ow);
 	  }
 	}
@@ -112,7 +112,7 @@ public class GetOplanPlugin extends SimplePlugin {
     // BOGUS We make the assumption that the _only_ organization in
     // this cluster has the same name as the cluster. This assumption
     // is false on both counts.
-    String orgID = getClusterIdentifier().toString();
+    String orgID = getMessageAddress().toString();
     OplanPredicate oplanPred = 
       new OplanPredicate(oplanCoupon.getOplanUID(), orgID);
 
@@ -125,7 +125,7 @@ public class GetOplanPlugin extends SimplePlugin {
       qr = alpFactory.newQueryRequest(oplanPred,
                                       localPred,
 				      oplanCoupon.getHomeClusterID(),
-				      getClusterIdentifier());
+				      getMessageAddress());
     } catch (RuntimeException e) {
       e.printStackTrace();
       return;
@@ -143,7 +143,7 @@ public class GetOplanPlugin extends SimplePlugin {
   private void removeOplan(OplanCoupon ow) {
 
     // BOGUS See comment above
-    String orgID = getClusterIdentifier().toString();
+    String orgID = getMessageAddress().toString();
     OplanPredicate op = new OplanPredicate(ow.getOplanUID(), orgID);
 
     Collection oplanObjs = query(op);

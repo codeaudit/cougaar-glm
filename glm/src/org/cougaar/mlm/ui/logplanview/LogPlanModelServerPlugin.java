@@ -21,6 +21,7 @@
 package org.cougaar.mlm.ui.logplanview;
 
 import org.cougaar.*;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -118,7 +119,7 @@ public class LogPlanModelServerPlugin extends SimplePlugin {
    * this plugin with the LogPlans view.
    */
   protected void setupSubscriptions() {
-    clusterName = getClusterIdentifier().getAddress();
+    clusterName = getMessageAddress().getAddress();
 
     allocations               = (IncrementalSubscription)subscribe( new AllocationsP());
     tasks                     = (IncrementalSubscription)subscribe( new TasksP());

@@ -28,7 +28,7 @@ package=org.cougaar.glm.ldm.asset
 import= org.cougaar.glm.ldm.plan.*,\
 	org.cougaar.glm.ldm.oplan.*,\
 	org.cougaar.glm.ldm.policy.*,\
-        org.cougaar.core.agent.ClusterIdentifier,\
+        org.cougaar.core.mts.MessageAddress,\
 	org.cougaar.glm.execution.common.InventoryReport
 
 factoryExtends=org.cougaar.planning.ldm.asset.PropertyGroupFactory
@@ -680,7 +680,7 @@ slots= String breakCause, \
 [DetailKeyPG]
 doc=describes an object and where to find it for LightweightManifest
 slots=org.cougaar.core.util.UID detailObject, \
-	org.cougaar.core.agent.ClusterIdentifier sourceCluster
+	org.cougaar.core.mts.MessageAddress sourceCluster
 
 ; For SRA
 [PersonnelReadinessPG]
@@ -730,7 +730,7 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	int getFirstPlanningDay();\
 	Scalar getLevel(long day);\
 	Scalar getLevel(int day);\
-	int withdrawFromInventory(Inventory inventory, ClusterIdentifier cluster);\
+	int withdrawFromInventory(Inventory inventory, MessageAddress cluster);\
 	double getNDaysDemand(int day);\
 	double getReorderLevel(int day);\
 	double getGoalLevel(int day);\
@@ -746,7 +746,7 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	Scalar getProjected(int day);\
 	Scalar getProjectedRefill(int day);\
 	Date lastDemandTaskEnd(Inventory inventory);\
-	Integer getFirstOverflow(int day, ClusterIdentifier cluster); \
+	Integer getFirstOverflow(int day, MessageAddress cluster); \
 	DueOut getLowestPriorityDueOutBeforeDay(int end);\
         List updateDueOutAllocations();\
 	int updateContentSchedule(Inventory inventory);\
@@ -755,7 +755,7 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	int updateInventoryLevelsSchedule(Inventory inventory);\
 	int clearInventoryLevelsSchedule(Inventory inventory);\
 	int printQuantityScheduleTimes(Schedule sched);\
-	int printInventoryLevels(Inventory inventory, ClusterIdentifier clusterID);\
+	int printInventoryLevels(Inventory inventory, MessageAddress clusterID);\
 	PGDelegate copy(PropertyGroup pg);\
 	Enumeration getAllDueIns();\	
 	ProjectionWeight getProjectionWeight();\

@@ -31,7 +31,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.glm.ldm.asset.PhysicalAsset;
@@ -46,7 +46,7 @@ import org.cougaar.util.UnaryPredicate;
 public class UIBarGraphDisplay implements Runnable, ActionListener, UISubscriber {
   private UIPlugin uiPlugin;
   private String planName;
-  private ClusterIdentifier clusterId;
+  private MessageAddress clusterId;
   private String command;
   private UIBarGraph uiBarGraph;
   private UIBarGraphSource dataSource;
@@ -70,7 +70,7 @@ public class UIBarGraphDisplay implements Runnable, ActionListener, UISubscriber
    */
 
   public UIBarGraphDisplay(UIPlugin uiPlugin, String planName, 
-			   ClusterIdentifier clusterId, String command) {
+			   MessageAddress clusterId, String command) {
     this.uiPlugin = uiPlugin;
     this.planName = planName;
     this.clusterId = clusterId;

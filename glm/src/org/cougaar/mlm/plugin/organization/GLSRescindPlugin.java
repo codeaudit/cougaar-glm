@@ -21,7 +21,7 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.asset.Asset;

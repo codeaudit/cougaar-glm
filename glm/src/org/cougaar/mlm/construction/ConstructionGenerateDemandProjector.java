@@ -32,7 +32,7 @@ import java.sql.SQLException;
 import java.sql.DriverManager;
 
 // core
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
@@ -87,7 +87,7 @@ public class ConstructionGenerateDemandProjector extends BasicProcessor {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	private ClusterIdentifier meCluster = null;
+	private MessageAddress meCluster = null;
 	private GLMDecorationPlugin thisPlugin_ = null;
 
 	protected IncrementalSubscription constructionDemandSub;

@@ -32,7 +32,7 @@ import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 //import org.cougaar.component.ObjectEvent;
 
@@ -49,7 +49,7 @@ import org.cougaar.util.UnaryPredicate;
 public class UIAssets implements UIBarGraphSource, UISubscriber {
   private UIPlugin uiPlugin;
   private Vector listeners;
-  private ClusterIdentifier clusterId;
+  private MessageAddress clusterId;
   private Date startDate;
   private int numberOfXIntervals;
   private String xLegend;
@@ -74,7 +74,7 @@ public class UIAssets implements UIBarGraphSource, UISubscriber {
   */
 
   public UIAssets(UIPlugin uiPlugin, String planName, 
-		  ClusterIdentifier clusterId, 
+		  MessageAddress clusterId, 
 		  Object listener) throws UINoPlanException {
     listeners = new Vector(1);
     listeners.addElement(listener);

@@ -805,7 +805,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   protected static String getOrgID(Organization org) {
     try {
       // FOR NOW:
-      return org.getClusterPG().getClusterIdentifier().toString();
+      return org.getClusterPG().getMessageAddress().toString();
       // FOR LATER:
       //return org.getItemIdentificationPG().getItemIdentifier().toString();
     } catch (Exception e) {
@@ -1108,7 +1108,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     subtask.setVerb( Constants.Verb.Transport );
     subtask.setPlan( drTask.getPlan() );
     subtask.setPreferences( prefs.elements() );
-    subtask.setSource( getClusterIdentifier() );
+    subtask.setSource( getMessageAddress() );
 
     // add to workflow
     wf.addTask(subtask);

@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.core.util.UID;

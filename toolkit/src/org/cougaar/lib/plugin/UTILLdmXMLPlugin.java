@@ -126,7 +126,7 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
       logger.debug ("UTILLdmXMLPlugin.getState called ");
 	
     if (originalAgentID == null)
-      return getClusterIdentifier().getAddress();
+      return getMessageAddress().getAddress();
     else 
       return originalAgentID;
   }
@@ -284,7 +284,7 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
 
     String ldmFile = getStringParam ("ldmFile");
     if (ldmFile == null)
-      ldmFile = getClusterIdentifier().getAddress() + ".ldm.xml";
+      ldmFile = getMessageAddress().getAddress() + ".ldm.xml";
 	
     dfile = dfile + ldmFile;
     return dfile;

@@ -21,7 +21,7 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
@@ -105,8 +105,8 @@ public abstract class GLSGUIBasePlugin extends SimplePlugin {
       public boolean execute(Object o) {
 	if (!(o instanceof Task)) return false;
 	Task task = (Task) o;
-	if (!task.getSource().equals(getTheClusterIdentifier())) return false;
-	if (!task.getDestination().equals(getTheClusterIdentifier())) return false;
+	if (!task.getSource().equals(getTheMessageAddress())) return false;
+	if (!task.getDestination().equals(getTheMessageAddress())) return false;
 	if (!task.getVerb().equals(Constants.Verb.GETLOGSUPPORT)) return false;
 	return (task.getPrepositionalPhrase(forRoot) != null);
       }
@@ -155,8 +155,8 @@ public abstract class GLSGUIBasePlugin extends SimplePlugin {
     closeTransaction(b);
   }
 
-  public ClusterIdentifier getTheClusterIdentifier() {
-    return getClusterIdentifier();
+  public MessageAddress getTheMessageAddress() {
+    return getMessageAddress();
   }
 
   private void createGUI() {

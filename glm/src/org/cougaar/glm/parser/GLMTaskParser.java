@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.domain.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.plan.*;
@@ -69,7 +69,7 @@ public class GLMTaskParser{
    */
   public GLMTaskParser(String pfile, 
 		       RootFactory ldmf, 
-		       ClusterIdentifier clusterIdentifier, 
+		       MessageAddress clusterIdentifier, 
 		       ConfigFinder configFinder,
 		       LDMServesPlugin ldmServesPlugin,
 		       Logger logger) {
@@ -137,7 +137,7 @@ public class GLMTaskParser{
     return taskbuf;
   }
 
-  private ClusterIdentifier   clusterIdentifier  = null;
+  private MessageAddress   clusterIdentifier  = null;
   private RootFactory           myLdmf     = null;
   private Vector                myTasks    = null;
   private LDMServesPlugin       myLdm      = null;

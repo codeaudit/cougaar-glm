@@ -46,7 +46,7 @@ import org.cougaar.lib.util.UTILAllocate;
 
 import org.cougaar.glm.map.MapLocationInfo;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import java.util.Enumeration;
 
@@ -106,7 +106,7 @@ public class ChangeForOrganizationPlugin extends org.cougaar.core.plugin.SimpleP
     public boolean execute(Object o) {
       if (o instanceof Organization )
       {
-      	ClusterIdentifier c = ((Organization) o).getClusterIdentifier();
+      	MessageAddress c = ((Organization) o).getMessageAddress();
       	//System.out.println("&&&clusterid = " + c);
       	if(c.toString().startsWith("LocationInfo"))
       	  return true;
@@ -156,7 +156,7 @@ public class ChangeForOrganizationPlugin extends org.cougaar.core.plugin.SimpleP
       //LocationInfoOrg = (Organization) mapInfoOrganization.nextElement();
 //      LocationInfoOrg = (Organization) orgIter.next();
       lio = (Organization) orgIter.next();
-    	ClusterIdentifier c = lio.getClusterIdentifier();
+    	MessageAddress c = lio.getMessageAddress();
     	idNum = c.toString().substring("LocationInfo".length());
 //System.out.println("&&&clusterid = " + c);
       

@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.util.UID;
 
 public class DetailRequestImpl
@@ -29,12 +29,12 @@ public class DetailRequestImpl
 {
 
   UID _requestedObject;
-  ClusterIdentifier _sourceCid;
-  ClusterIdentifier _requestingCid;
+  MessageAddress _sourceCid;
+  MessageAddress _requestingCid;
 
   public DetailRequestImpl(UID requestedObject,
-			   ClusterIdentifier sourceCid,
-			   ClusterIdentifier requestingCid) {
+			   MessageAddress sourceCid,
+			   MessageAddress requestingCid) {
     _requestedObject = requestedObject;
     _sourceCid = sourceCid;
     _requestingCid = requestingCid;
@@ -48,14 +48,14 @@ public class DetailRequestImpl
    * The cluster where the object lives, not the source of the request
    */
 
-  public ClusterIdentifier getSourceCluster() {
+  public MessageAddress getSourceCluster() {
     return  _sourceCid;
   }
 
   /**
    * The cluster requesting the object. The cluster the reply message will be sent to
    */
-  public ClusterIdentifier getRequestingCluster() {
+  public MessageAddress getRequestingCluster() {
     return  _requestingCid;
   }
 }

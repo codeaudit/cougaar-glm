@@ -251,7 +251,7 @@ public class OPlanPlugin extends SimplePlugin
           publishAdd(iterator.next());
         }
 
-        OplanCoupon ow = new OplanCoupon(oplan.getUID(), getClusterIdentifier());
+        OplanCoupon ow = new OplanCoupon(oplan.getUID(), getMessageAddress());
         getCluster().getUIDServer().registerUniqueObject(ow);
         publishAdd(ow);
       }

@@ -21,6 +21,7 @@
 
 package org.cougaar.glm.ldm.lps;
 
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -86,7 +87,7 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
     Enumeration enum = logplan.searchLogPlan(new UnaryPredicate() {
         public boolean execute(Object o) {
           if (o instanceof Organization) {
-            return orgID.equals(((Organization)o).getClusterIdentifier().toString());
+            return orgID.equals(((Organization)o).getMessageAddress().toString());
           } 
           return false;
         }});
@@ -105,7 +106,7 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
     Asset a = logplan.findAsset(orgID);
 
     if (! (a instanceof Organization)) {
-      System.err.println("OPlanWatcher("+cluster.getClusterIdentifier()+
+      System.err.println("OPlanWatcher("+cluster.getMessageAddress()+
                          ") found non org asset "+a+" in logplan by name: "+orgID);
       return;
     }

@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -62,7 +62,7 @@ public abstract class BasicProcessor {
     /** 'hook' to plugin's methods */
     protected PluginDelegate delegate_;
     /** organization cluster identifier */
-    protected ClusterIdentifier clusterId_;
+    protected MessageAddress clusterId_;
     protected Organization myOrganization_ = null;
     // The name of my organization -- used for UsingGLMSource
     protected String myOrgName_ = null;
@@ -93,7 +93,7 @@ public abstract class BasicProcessor {
 	myOrganization_ = org;
 	myOrgName_ = myOrganization_.getItemIdentificationPG().getItemIdentification();
 	delegate_ = plugin_.getMyDelegate();
-	clusterId_ = delegate_.getClusterIdentifier();    
+	clusterId_ = delegate_.getMessageAddress();    
  	ldmFactory_ = delegate_.getLDM().getFactory();
 
 	// initialize quantity formater

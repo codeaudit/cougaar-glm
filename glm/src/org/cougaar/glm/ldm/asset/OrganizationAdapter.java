@@ -33,7 +33,7 @@ import java.io.IOException;
 
 import java.util.Collection;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.ClusterPG;
 import org.cougaar.planning.ldm.asset.RelationshipBG;
 import org.cougaar.planning.ldm.asset.NewRelationshipPG;
@@ -60,16 +60,16 @@ public abstract class OrganizationAdapter extends GLMAsset {
     super(prototype);
   }
 
-  private transient ClusterIdentifier cid = null;
+  private transient MessageAddress cid = null;
   private transient boolean cidComputed = false;
 
-  public ClusterIdentifier getClusterIdentifier()  {
+  public MessageAddress getMessageAddress()  {
     synchronized (this) {
       if (cidComputed) return cid;
 
       ClusterPG cpg = getClusterPG();
       if (cpg != null)
-        cid = cpg.getClusterIdentifier();
+        cid = cpg.getMessageAddress();
       cidComputed = true;
       return cid;
     }
@@ -127,7 +127,7 @@ public abstract class OrganizationAdapter extends GLMAsset {
   static {
     try {
       properties = new PropertyDescriptor[1];
-      properties[0] = new PropertyDescriptor("ClusterIdentifier", OrganizationAdapter.class, "getClusterIdentifier", null);
+      properties[0] = new PropertyDescriptor("MessageAddress", OrganizationAdapter.class, "getMessageAddress", null);
     } catch (IntrospectionException ie) {}
   }
 

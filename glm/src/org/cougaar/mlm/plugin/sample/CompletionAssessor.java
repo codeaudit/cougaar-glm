@@ -20,7 +20,7 @@
  */
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.PlanElementSet;
@@ -559,7 +559,7 @@ public class CompletionAssessor extends SimplePlugin
     table.setDefaultRenderer(Task.class, renderer);
     table.setDefaultRenderer(PlanElement.class, renderer);
     table.setDefaultRenderer(String.class, renderer);
-    frame = new JFrame(getClusterIdentifier() + " Completion Assessor");
+    frame = new JFrame(getMessageAddress() + " Completion Assessor");
     Container panel = frame.getContentPane();
     panel.setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();

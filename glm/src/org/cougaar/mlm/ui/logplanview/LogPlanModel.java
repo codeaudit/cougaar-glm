@@ -21,6 +21,7 @@
 package org.cougaar.mlm.ui.logplanview;
 
 import org.cougaar.*;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -779,8 +780,8 @@ public class LogPlanModel extends DefaultTreeModel {
       } else if ( o instanceof Task) {
         Task task = (Task)o;
         retVal = task.getUID().toString();
-      } else if ( o instanceof ClusterIdentifier) {
-        ClusterIdentifier cid = (ClusterIdentifier)o;
+      } else if ( o instanceof MessageAddress) {
+        MessageAddress cid = (MessageAddress)o;
         String cidString = cid.getAddress();
         if ( retVal == "")
           retVal = cidString;

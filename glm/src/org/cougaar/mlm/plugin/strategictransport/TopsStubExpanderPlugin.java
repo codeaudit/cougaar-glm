@@ -23,7 +23,7 @@ package org.cougaar.mlm.plugin.strategictransport;
 
 import org.cougaar.glm.ldm.Constants;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
@@ -131,7 +131,7 @@ public class TopsStubExpanderPlugin extends SimplePlugin
     }
 
     private NewTask doExpansion( Task task ) {
-	ClusterIdentifier me = this.getCluster().getClusterIdentifier();
+	MessageAddress me = this.getCluster().getMessageAddress();
 	NewTask subtask = theLDMF.newTask();
 	
 	// Create copy of parent Task

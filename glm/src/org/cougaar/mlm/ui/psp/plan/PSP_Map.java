@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -91,7 +92,7 @@ public class PSP_Map extends PSP_BaseAdapter
 
           // Walk self orgs relationship schedule
           if (self != null) {
-            String id = self.getClusterPG().getClusterIdentifier().toString();
+            String id = self.getClusterPG().getMessageAddress().toString();
             RelationshipSchedule schedule = self.getRelationshipSchedule();
 
             for (Iterator iterator = new ArrayList(schedule).iterator();

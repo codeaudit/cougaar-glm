@@ -33,7 +33,7 @@ import java.util.TreeSet;
 import java.text.NumberFormat;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Alert;
@@ -95,7 +95,7 @@ public class AllocationAssessorPlugin extends SimplePlugin
 
   /** GUI to display failed allocation info **/
   private void createGUI() {
-    frame = new JFrame("AllocationAssessorPlugin for " + getClusterIdentifier());
+    frame = new JFrame("AllocationAssessorPlugin for " + getMessageAddress());
     Container panel = frame.getContentPane();
     panel.setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();

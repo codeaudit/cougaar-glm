@@ -97,7 +97,7 @@ public class ConstructionInventoryPlugin extends InventoryPlugin {
       }
 
       if (!success) {
-        GLMDebug.DEBUG("*****ConstructionInventoryPlugin", getClusterIdentifier(), "createInventory(), cannot create inventory for "+id);
+        GLMDebug.DEBUG("*****ConstructionInventoryPlugin", getMessageAddress(), "createInventory(), cannot create inventory for "+id);
         return null;
       }
 

@@ -20,7 +20,7 @@ package org.cougaar.glm.ldm.asset;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.core.plugin.PluginDelegate;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import java.io.Serializable;
 import org.cougaar.glm.ldm.asset.Organization;

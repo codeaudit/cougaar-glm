@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.core.domain.RootFactory;
@@ -220,8 +220,8 @@ public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
-    task.setSource(this.getCluster().getClusterIdentifier());
-    task.setDestination(this.getCluster().getClusterIdentifier());
+    task.setSource(this.getCluster().getMessageAddress());
+    task.setDestination(this.getCluster().getMessageAddress());
     
     // set prepositional phrases
     Vector phrases = new Vector(3);

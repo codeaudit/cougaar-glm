@@ -964,7 +964,7 @@ public class MDBConfigWriter {
   // Nomenclature String <Nomenclature>
   // AlternateTypeIdentification String "SRC/<SRC>"
   // [ClusterPG]
-  // ClusterIdentifier String <OrganizationName>
+  // MessageAddress String <OrganizationName>
   // [OrganizationPG]
   // Roles Collection<Role> <Role>
   // [MilitaryOrgPG]
@@ -1050,7 +1050,7 @@ public class MDBConfigWriter {
     	
 	    // Print ClusterPG info
 	    org_file.println("\n[ClusterPG]");
-	    org_file.println("ClusterIdentifier String " + '"' + org_name + '"');
+	    org_file.println("MessageAddress String " + '"' + org_name + '"');
     	
 	    // Print OrganizationPG (Roles) info
 	    org_file.println("\n[OrganizationPG]");

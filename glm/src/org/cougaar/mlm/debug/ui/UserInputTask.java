@@ -22,7 +22,7 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.glm.ldm.plan.Capability;
 import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
 import org.cougaar.planning.ldm.plan.NewPlanElement;
@@ -51,7 +51,7 @@ public class UserInputTask {
   NewTask task;
   UIPlugin uiPlugin;
   ClusterObjectFactory cof;
-  ClusterIdentifier myClusterId;
+  MessageAddress myClusterId;
   String myClusterName;
   Plan plan;
   PluginDelegate delegate;
@@ -75,7 +75,7 @@ public class UserInputTask {
     this.uiPlugin = uiPlugin;
     this.delegate = delegate;
     cof = delegate.getFactory();
-    myClusterId = delegate.getClusterIdentifier();
+    myClusterId = delegate.getMessageAddress();
     myClusterName = myClusterId.getAddress();
     plan = cof.getRealityPlan();
     task = cof.newTask();

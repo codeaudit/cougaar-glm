@@ -27,6 +27,7 @@ import org.cougaar.util.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;

@@ -255,7 +255,7 @@ public class PredictorExpanderPlugin extends SimplePlugin
         prefs.addElement(endPref);
         
         subtask.setPreferences(prefs.elements());
-        subtask.setSource(getClusterIdentifier());
+        subtask.setSource(getMessageAddress());
         wf.addTask(subtask);
         subtask.setWorkflow(wf);
         publishAdd(subtask);

@@ -22,6 +22,7 @@
 
 package org.cougaar.glm.ldm.lps;
 
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -36,7 +37,7 @@ import org.cougaar.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.planning.ldm.plan.NewTransferableAssignment;
 import org.cougaar.planning.ldm.plan.NewTransferableRescind;
 import org.cougaar.planning.ldm.plan.NewTransferableVerification;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Collection;
@@ -54,12 +55,12 @@ public class TransferableLP
   implements EnvelopeLogicProvider, RestartLogicProvider
 {
 
-  private final ClusterIdentifier self;
+  private final MessageAddress self;
 
   public TransferableLP(LogPlanServesLogicProvider logplan,
 			ClusterServesLogicProvider cluster) {
     super(logplan,cluster);
-    self = cluster.getClusterIdentifier();
+    self = cluster.getMessageAddress();
   }
 
 
@@ -75,7 +76,7 @@ public class TransferableLP
     Object obj = o.getObject();
     if (obj instanceof TransferableTransfer) {
       TransferableTransfer tt = (TransferableTransfer) obj;
-      ClusterIdentifier dest = ((Organization)tt.getAsset()).getClusterIdentifier();
+      MessageAddress dest = ((Organization)tt.getAsset()).getMessageAddress();
       if (o.isAdd()) {
         processTransferableTransferAdded(tt, dest);
       } else if (o.isRemove()) {
@@ -93,13 +94,13 @@ public class TransferableLP
    * cluster. The restarted cluster will rescind them if they are no
    * longer valid.
    **/
-  public void restart(final ClusterIdentifier cid) {
+  public void restart(final MessageAddress cid) {
     UnaryPredicate pred = new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof TransferableTransfer) {
           TransferableTransfer tt = (TransferableTransfer) o;
-          ClusterIdentifier dest = 
-            ((Organization)tt.getAsset()).getClusterIdentifier();
+          MessageAddress dest = 
+            ((Organization)tt.getAsset()).getMessageAddress();
           return 
             RestartLogicProviderHelper.matchesRestart(
                 self, cid, dest);
@@ -110,7 +111,7 @@ public class TransferableLP
     Enumeration enum = logplan.searchBlackboard(pred);
     while (enum.hasMoreElements()) {
       TransferableTransfer tt = (TransferableTransfer) enum.nextElement();
-      ClusterIdentifier dest = ((Organization)tt.getAsset()).getClusterIdentifier();
+      MessageAddress dest = ((Organization)tt.getAsset()).getMessageAddress();
       processTransferableTransferAdded(tt, dest);
     }
     pred = new UnaryPredicate() {
@@ -119,7 +120,7 @@ public class TransferableLP
           Transferable transferable = (Transferable) o;
           // we can't use "isFrom(..)", since we'll later need the
           // specific destination if we want to send a verification
-          ClusterIdentifier dest = transferable.getSource();
+          MessageAddress dest = transferable.getSource();
           return 
             RestartLogicProviderHelper.matchesRestart(
                 self, cid, dest);
@@ -130,14 +131,14 @@ public class TransferableLP
     for (enum = logplan.searchBlackboard(pred); enum.hasMoreElements(); ) {
       Transferable transferable = (Transferable) enum.nextElement();
       NewTransferableVerification nav = ldmf.newTransferableVerification(transferable);
-      nav.setSource(cluster.getClusterIdentifier());
+      nav.setSource(cluster.getMessageAddress());
       nav.setDestination(transferable.getSource());
       logplan.sendDirective(nav);
     }
   }
 
   private void processTransferableTransferAdded(TransferableTransfer tt,
-                                                ClusterIdentifier dest)
+                                                MessageAddress dest)
   {
     // create an TransferableAssignment task
     NewTransferableAssignment nta = ldmf.newTransferableAssignment();
@@ -149,7 +150,7 @@ public class TransferableLP
   }
   
   private void processTransferableTransferRemoved(TransferableTransfer tt,
-                                                  ClusterIdentifier dest)
+                                                  MessageAddress dest)
   {
     // create an TransferableRescind task
     NewTransferableRescind ntr = ldmf.newTransferableRescind();

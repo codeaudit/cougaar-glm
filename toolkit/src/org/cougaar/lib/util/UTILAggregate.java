@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
@@ -92,7 +92,7 @@ public class UTILAggregate {
 				     Vector prepPhrases,
 				     Vector directObjects,
 				     Vector preferences,
-				     ClusterIdentifier sourceClusterID,
+				     MessageAddress sourceClusterID,
 				     AspectValue [] aspectValues,
 				     double confidence) {
     List stuffToPublish = new ArrayList ();
@@ -192,7 +192,7 @@ public class UTILAggregate {
 				     Vector prepPhrases,
 				     Vector directObjects,
 				     Vector preferences,
-				     ClusterIdentifier sourceClusterID,
+				     MessageAddress sourceClusterID,
 				     Map taskToAspectValues,
 				     double confidence) {
     List stuffToPublish = new ArrayList ();
@@ -308,7 +308,7 @@ public class UTILAggregate {
 					 Asset obj,
 					 Enumeration preferences,
 					 byte priority,
-					 ClusterIdentifier source) {
+					 MessageAddress source) {
  
     NewMPTask mpt = ldmf.newMPTask();
     mpt.setPlan(plan);

@@ -31,7 +31,7 @@ import java.lang.reflect.Constructor;
 
 import java.util.*;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.planning.ldm.asset.Asset;
@@ -216,7 +216,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
         remoteTask = createRFD(orgBClone, orgAClone, rfdRoles);
         publish(remoteTask);
         
-        System.out.println("OrgRTData: execute from " + getClusterIdentifier() + " " +
+        System.out.println("OrgRTData: execute from " + getMessageAddress() + " " +
                            orgAClone.getItemIdentificationPG().getItemIdentification() + 
                            " reporting for service to " + 
                            orgBClone.getItemIdentificationPG().getItemIdentification());
@@ -233,7 +233,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
    */
   protected void processOrganizations() {
     try {
-      String cId = getClusterIdentifier().getAddress();
+      String cId = getMessageAddress().getAddress();
       ParsePrototypeFile(cId, GLMRelationship.SELF);
 
       String organizations[][] = null;
@@ -380,7 +380,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
     itemIdProp.setAlternateItemIdentification(orgStr);
     
     NewClusterPG cpg = (NewClusterPG)org.getClusterPG();
-    cpg.setClusterIdentifier(ClusterIdentifier.getClusterIdentifier(orgStr));
+    cpg.setMessageAddress(MessageAddress.getMessageAddress(orgStr));
     
     return org;
   }
@@ -520,7 +520,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
     reportTask.setPrepositionalPhrases(prepPhrases.elements());
 
     reportTask.setPlan(getFactory().getRealityPlan());
-    reportTask.setSource(getClusterIdentifier());
+    reportTask.setSource(getMessageAddress());
 
     AspectValue startTAV = 
       TimeAspectValue.create(AspectType.START_TIME, startTime);
@@ -631,7 +631,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 		itemIdPG.setAlternateItemIdentification(clusterId);
 
                 NewClusterPG cpg = (NewClusterPG) org.getClusterPG();
-                cpg.setClusterIdentifier(ClusterIdentifier.getClusterIdentifier(clusterId));
+                cpg.setMessageAddress(MessageAddress.getMessageAddress(clusterId));
               } else {
                 System.out.println("OrgRTDataPlugin Error: [Prototype] value is null");
               }
@@ -1150,7 +1150,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
     // initialize the classmap with some common ones
     classes = new HashMap();
 
-    classes.put("ClusterIdentifier", ClusterIdentifier.class);
+    classes.put("MessageAddress", MessageAddress.class);
 
     // precache some builtins
     classes.put("long", Long.TYPE);

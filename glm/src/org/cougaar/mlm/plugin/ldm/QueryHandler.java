@@ -26,7 +26,7 @@ import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.util.Parameters;
 
@@ -39,7 +39,7 @@ public abstract class QueryHandler {
   public QueryHandler() {}
 	
   protected LDMSQLPlugin myLDMPlugin;
-  protected ClusterIdentifier myClusterIdentifier;
+  protected MessageAddress myMessageAddress;
   protected ClusterServesPlugin myComponent;
   protected RootFactory ldmf;
   protected Properties myParameters;
@@ -47,14 +47,14 @@ public abstract class QueryHandler {
   protected LDMServesPlugin ldm;
 
   protected void initialize( LDMSQLPlugin ldmplugin,
-                             ClusterIdentifier cid,
+                             MessageAddress cid,
                              ClusterServesPlugin comp,
                              RootFactory aldmf,
                              Properties params,
                              BlackboardService sub) {
     myLDMPlugin = ldmplugin;
     ldm = comp.getLDM();
-    myClusterIdentifier = cid;
+    myMessageAddress = cid;
     myComponent = comp;
     ldmf = aldmf;
     myParameters = params;

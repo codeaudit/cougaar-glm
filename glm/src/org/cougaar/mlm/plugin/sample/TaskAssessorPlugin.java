@@ -35,7 +35,7 @@ import java.util.TreeSet;
 import java.util.Comparator;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.Expansion;
@@ -169,7 +169,7 @@ public class TaskAssessorPlugin extends SimplePlugin
 
   /** GUI to display failed task info **/
   private void createGUI() {
-    frame = new JFrame("TaskAssessorPlugin for " + getClusterIdentifier());
+    frame = new JFrame("TaskAssessorPlugin for " + getMessageAddress());
     frame.setLocation(0,160);
     Container panel = frame.getContentPane();
     panel.add(allocCountLabel, BorderLayout.NORTH);

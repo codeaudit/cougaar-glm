@@ -21,6 +21,7 @@
 package org.cougaar.glm.plugins.multiplesuppliers;
 
 import org.cougaar.*;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -200,7 +201,7 @@ public class SourceExpander extends SimplePlugin {
    * Store cluster name and setup subscriptions for input Tasks, Expansions and Allocations.
    */
   protected void setupSubscriptions() {
-    clusterName = getClusterIdentifier().getAddress();
+    clusterName = getMessageAddress().getAddress();
 
     orgAssets   = (IncrementalSubscription)subscribe( new OrganizationAssetsP());
     inputTasks  = (IncrementalSubscription)subscribe( new InputTasksP());

@@ -36,7 +36,7 @@ import org.cougaar.glm.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.glm.ldm.oplan.*;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
@@ -277,7 +277,7 @@ public class GenericTablePlugin extends SimplePlugin {
       String name, String[] roles) {
     System.err.println("******************************************");
     System.err.println("DEBUG GenericTablePlugin.isCapable for Exceptions!!!");
-    System.err.println("Cluster: "+getClusterIdentifier());
+    System.err.println("Cluster: "+getMessageAddress());
     System.err.println("Arguments:");
     System.err.println("  org: "+org);
     if (name != null)
@@ -288,14 +288,14 @@ public class GenericTablePlugin extends SimplePlugin {
       if (name != null) {
         // If name is specified, it alone qualifies!
         System.err.println("check name:");
-        System.err.println("  org.getClusterIdentifier(): ");
-        System.err.println("    "+org.getClusterIdentifier());
+        System.err.println("  org.getMessageAddress(): ");
+        System.err.println("    "+org.getMessageAddress());
         System.err.println("  .getAddress(): ");
         System.err.println("    "+
-          ((MessageAddress)org.getClusterIdentifier()).getAddress());
+          ((MessageAddress)org.getMessageAddress()).getAddress());
         System.err.println("  .equals("+name+"): ");
         String clustername = 
-          ((MessageAddress)org.getClusterIdentifier()).getAddress();
+          ((MessageAddress)org.getMessageAddress()).getAddress();
         System.err.println("    "+
            clustername.equals(name));
         return clustername.equals(name);
@@ -348,7 +348,7 @@ public class GenericTablePlugin extends SimplePlugin {
                     
     NewPrepositionalPhrase npp = f.newPrepositionalPhrase();
     npp.setPreposition(Constants.Preposition.FOR);
-    ClusterIdentifier ci = new ClusterIdentifier(toTask.taskFor);
+    MessageAddress ci = MessageAddress.getMessageAddress(toTask.taskFor);
     npp.setIndirectObject(ci);
 
     NewPrepositionalPhrase npp1 = f.newPrepositionalPhrase();
@@ -597,10 +597,10 @@ public class GenericTablePlugin extends SimplePlugin {
         return false;
       String hasFor;
       Object indObj = p.getIndirectObject();
-      if (indObj instanceof ClusterIdentifier)
+      if (indObj instanceof MessageAddress)
         hasFor = ((MessageAddress)indObj).toString();
       else if (indObj instanceof Organization)
-        hasFor = ((Organization)indObj).getClusterIdentifier().toString();
+        hasFor = ((Organization)indObj).getMessageAddress().toString();
       else
         hasFor = null;
       if (!(pfor.equals(hasFor)))

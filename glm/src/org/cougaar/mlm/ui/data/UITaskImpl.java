@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.Location;
@@ -236,8 +236,8 @@ public class UITaskImpl implements UITask, XMLUIPlanObject {
       PrepositionalPhrase prepPhrase = (PrepositionalPhrase)(prepPhrases.nextElement());
       if (prepPhrase.getPreposition().equals("For")) {
         Object obj = prepPhrase.getIndirectObject();
-        if (ClusterIdentifier.class.isInstance(obj))
-          return ((ClusterIdentifier)obj).getAddress();
+        if (MessageAddress.class.isInstance(obj))
+          return ((MessageAddress)obj).getAddress();
         else
           return null;
       }

@@ -22,6 +22,7 @@
 package org.cougaar.mlm.construction;
  
 import org.cougaar.*;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;

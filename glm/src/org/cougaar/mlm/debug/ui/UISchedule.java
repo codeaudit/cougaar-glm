@@ -42,7 +42,7 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.glm.ldm.asset.PhysicalAsset;
@@ -88,7 +88,7 @@ public class UISchedule implements UIBarGraphSource, UISubscriber {
     */
 
   public UISchedule(UIPlugin uiPlugin, String planName, 
-		    ClusterIdentifier clusterId, 
+		    MessageAddress clusterId, 
 		    String assetName, Object listener) throws UINoPlanException {
     if (assetName != null) {
       singleAsset = true;

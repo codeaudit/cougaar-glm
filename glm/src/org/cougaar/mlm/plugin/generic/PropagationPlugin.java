@@ -261,7 +261,7 @@ public class PropagationPlugin extends SimplePlugin
 
                 DestinationPredicate dp = 
                   new DestinationPredicate(caps, 
-                                           getCluster().getClusterIdentifier());
+                                           getCluster().getMessageAddress());
 
                 IncrementalSubscription ts
                   = (IncrementalSubscription)transferableSubscriptions.get(tp);

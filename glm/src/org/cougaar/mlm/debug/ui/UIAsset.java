@@ -22,7 +22,7 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
 import org.cougaar.glm.ldm.plan.QuantityRangeScheduleElement;

@@ -20,7 +20,7 @@
  */
 package org.cougaar.glm.ldm;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.agent.ClusterImpl;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
@@ -49,7 +49,7 @@ import java.util.*;
 public abstract class QueryLDMPlugin extends LDMEssentialPlugin {
   protected Hashtable fileParameters_ = new Hashtable();
   protected String url_, user_, password_;
-  protected ClusterIdentifier clusterId_;
+  protected MessageAddress clusterId_;
   protected Vector cannotHandle_ = new Vector();
   protected String className_ = null;
   protected Hashtable myParams_ = new Hashtable();
@@ -62,7 +62,7 @@ public abstract class QueryLDMPlugin extends LDMEssentialPlugin {
   protected void setupSubscriptions() {
     parseArguments();
     initializeDriver();
-    clusterId_ = getClusterIdentifier();
+    clusterId_ = getMessageAddress();
     className_ = this.getClass().getName();
     int indx = className_.lastIndexOf(".");
     if (indx > -1) {
@@ -156,11 +156,11 @@ public abstract class QueryLDMPlugin extends LDMEssentialPlugin {
 	}
 	else if (s.charAt(0) == '+') {
 	  myParams_.put(new String(s.substring(1)), new Boolean(true));
-	  //GLMDebug.DEBUG("QueryLDMPlugin", getClusterIdentifier(), "parseArguments(), adding "+s.substring(1));
+	  //GLMDebug.DEBUG("QueryLDMPlugin", getMessageAddress(), "parseArguments(), adding "+s.substring(1));
 	}
 	else if (s.charAt(0) == '-') {
 	  myParams_.put(new String(s.substring(1)), new Boolean(false));
-	  //GLMDebug.DEBUG("QueryLDMPlugin", getClusterIdentifier(), "parseArguments(), adding "+s.substring(1));
+	  //GLMDebug.DEBUG("QueryLDMPlugin", getMessageAddress(), "parseArguments(), adding "+s.substring(1));
 	}
 	else {
 	  // If it was not a key/value pair then it is a query file

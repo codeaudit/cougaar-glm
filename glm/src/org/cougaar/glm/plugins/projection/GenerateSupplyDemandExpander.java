@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.projection;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.Rate;
 import org.cougaar.planning.ldm.plan.*;
@@ -55,13 +55,13 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
   /** Tasks that published by this processor **/
   public static class ProjectionTasksPredicate implements UnaryPredicate
   {
-    ClusterIdentifier clusterId_;
+    MessageAddress clusterId_;
     String myOrgName_;
     Vector resourceTypes_;
 
     public ProjectionTasksPredicate(GLMDecorationPlugin pi, Organization org, Vector types) {
       myOrgName_ = org.getItemIdentificationPG().getItemIdentification();
-      clusterId_ = pi.getMyDelegate().getClusterIdentifier();
+      clusterId_ = pi.getMyDelegate().getMessageAddress();
       resourceTypes_ = types;
     }
 

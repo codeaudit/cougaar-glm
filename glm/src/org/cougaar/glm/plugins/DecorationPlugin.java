@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
@@ -54,7 +54,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
     /** a vector of BasicProcessors for this plugin */
     protected Vector                       taskProcessors_;
     /** this plugin's Organization cluster identifier */
-    protected ClusterIdentifier            clusterId_;
+    protected MessageAddress            clusterId_;
     protected boolean                      configured_ = false;
     protected Organization                 myOrganization_ = null;
     private IncrementalSubscription        selfOrganizations_;
@@ -127,7 +127,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
 	    Enumeration new_orgs = selfOrganizations_.elements();
 	    if (new_orgs.hasMoreElements()) {
 		myOrganization_ = (Organization) new_orgs.nextElement();
-		String clusterId= myOrganization_.getClusterPG().getClusterIdentifier().toString();
+		String clusterId= myOrganization_.getClusterPG().getMessageAddress().toString();
                 myOrgName_ = myOrganization_.getItemIdentificationPG().getItemIdentification();
 	    }
 	}
@@ -160,7 +160,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
             System.out.println(myOrgName_ + " adding consumers of " + consumerRole_);
             while (consumerRelationIterator.hasNext()) {
                 String customer = ((Organization)((Relationship)consumerRelationIterator.next()).getA()).
-                    getClusterPG().getClusterIdentifier().toString();
+                    getClusterPG().getMessageAddress().toString();
                 System.out.println(myOrgName_ + " adding " + customer);
                 consumers_.add(customer);
             }
@@ -173,7 +173,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
 	if (seenConsumers_.add(consumer)) {
             if (consumer.equals(myOrgName_)) selfConsumer = 1;
 	    System.out.println("####### Seeing new consumer: "+consumer+" at supplier: "+
-			       myOrganization_.getClusterPG().getClusterIdentifier().toString());
+			       myOrganization_.getClusterPG().getMessageAddress().toString());
             if (customerAlarm_ != null) {
                 /* Cancel current alarm */
                 customerAlarm_.cancel();
@@ -188,17 +188,17 @@ public abstract class DecorationPlugin extends SimplePlugin {
                 System.out.println("####### All " + seenConsumers_.size()
                                    + " of " + consumerCount
                                    + " consumers seen at supplier: "
-                                   + myOrganization_.getClusterPG().getClusterIdentifier().toString());
+                                   + myOrganization_.getClusterPG().getMessageAddress().toString());
             } else {
                 System.out.println("####### Only " + seenConsumers_.size()
                                    + " of " + consumerCount
                                    + " consumers seen at supplier: "
-                                   + myOrganization_.getClusterPG().getClusterIdentifier().toString());
+                                   + myOrganization_.getClusterPG().getMessageAddress().toString());
                 customerAlarm_ = wakeAfterRealTime(NEW_CUSTOMER_WAIT);
             }
 	} else {
 //  	    System.out.println("####### Seeing old consumer: "+consumer+" at supplier: "+
-//  			       myOrganization_.getClusterPG().getClusterIdentifier().toString());
+//  			       myOrganization_.getClusterPG().getMessageAddress().toString());
 	}
     }
 
@@ -208,7 +208,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
         selfConsumer = 0;
         seenConsumers_.clear();
         System.out.println("####### Removing seen consumers: at supplier: "+
-                           myOrganization_.getClusterPG().getClusterIdentifier().toString());
+                           myOrganization_.getClusterPG().getMessageAddress().toString());
         if (customerAlarm_ != null) {
             /* Cancel current alarm */
             customerAlarm_.cancel();
@@ -239,7 +239,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
     protected abstract void decoratePlugin();
 
     protected void setupSubscriptions() {
- 	clusterId_ = getClusterIdentifier();
+ 	clusterId_ = getMessageAddress();
 	selfOrganizations_ = (IncrementalSubscription)subscribe( orgsPredicate_);
 	monitorPluginSubscription(selfOrganizations_);	
 
@@ -461,7 +461,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
 	Vector supply_types = new Vector();
 
 	if (p.isEmpty()) {
-	    GLMDebug.DEBUG(className_, getClusterIdentifier(),
+	    GLMDebug.DEBUG(className_, getMessageAddress(),
 			    "getParameters(), Using default decorator");
 	    // no parameters to read so our work here is done
 	    return;
@@ -470,12 +470,12 @@ public abstract class DecorationPlugin extends SimplePlugin {
 	    String s = (String)e.nextElement();
 	    if (s.charAt(0) == '+') {
 		myParams_.put(new String(s.substring(1)), new Boolean(true));
-		GLMDebug.DEBUG(className_, getClusterIdentifier(),
+		GLMDebug.DEBUG(className_, getMessageAddress(),
 				"readParameters(), adding "+s.substring(1));
 	    }
 	    else if (s.charAt(0) == '-') {
 		myParams_.put(new String(s.substring(1)), new Boolean(false));
-		GLMDebug.DEBUG(className_, getClusterIdentifier(),
+		GLMDebug.DEBUG(className_, getMessageAddress(),
 				"readParameters(), removing "+s.substring(1));
 	    }
 	    else if (s.indexOf('=') != -1) {
@@ -491,7 +491,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
 		    myParams_.put(SUPPLYTYPES, types);
 		}
 		types.add(s);
-		GLMDebug.DEBUG(className_, getClusterIdentifier(),
+		GLMDebug.DEBUG(className_, getMessageAddress(),
 			       "readParameters(), assuming a demand type parameter: "+s);
 	    }		
 	}

@@ -44,11 +44,11 @@ public class SQLNonNSNAssetCreator extends SQLAssetCreator {
     Number count = (Number)data[1];
     String nomenclature = (String) data[2];
 
-    //System.out.println(myClusterIdentifier.getAddress() + ": " +
+    //System.out.println(myMessageAddress.getAddress() + ": " +
 		//       "Creating " + count + " instances of NSN/" + nsn + " " + nomenclature);
 
     for (int i = 1; i <= count.intValue() ; i++) {
-      String bumper = createUniqueID(myClusterIdentifier.getAddress(), nsn, i);
+      String bumper = createUniqueID(myMessageAddress.getAddress(), nsn, i);
       Asset newasset = createAsset(nsn, bumper, nomenclature);
       setupAvailableSchedule(newasset);
       

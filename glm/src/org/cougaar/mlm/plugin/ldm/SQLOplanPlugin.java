@@ -376,7 +376,7 @@ public class SQLOplanPlugin extends LDMSQLPlugin implements SQLOplanBase{
         //getCluster().getUID...
 	getUIDServer().registerUniqueObject(oplan);
         //uidService.registerUniqueObject(oplan);
-        oplan.setOwner(getClusterIdentifier());
+        oplan.setOwner(getMessageAddress());
         oplan.setOplanId(oplanID);
         
         oplans.add(oplan);
@@ -477,7 +477,7 @@ public class SQLOplanPlugin extends LDMSQLPlugin implements SQLOplanBase{
 
       if (object instanceof Oplan) {
         OplanCoupon ow = new OplanCoupon(((Oplan) object).getUID(), 
-                                         getClusterIdentifier());
+                                         getMessageAddress());
         getUIDServer().registerUniqueObject(ow);
         getBlackboardService().publishAdd(ow);
 

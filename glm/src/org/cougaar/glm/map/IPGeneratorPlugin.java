@@ -28,7 +28,7 @@ import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.lib.util.UTILAllocate;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.node.Communications;
 //import org.cougaar.core.node.NameServer;
@@ -106,7 +106,7 @@ public class IPGeneratorPlugin extends org.cougaar.core.plugin.SimplePlugin
     public boolean execute(Object o) {
       if (o instanceof Organization )
       {
-      	ClusterIdentifier c = ((Organization) o).getClusterIdentifier();
+      	MessageAddress c = ((Organization) o).getMessageAddress();
       	//System.out.println("&&&clusterid = " + c);
       	if(c.toString().startsWith("LocationInfo"))
       	  return true;
@@ -182,7 +182,7 @@ public class IPGeneratorPlugin extends org.cougaar.core.plugin.SimplePlugin
     	}
     	else
     	  doHeartBeat = false;
-    	System.out.println("%%%% got startHB for cluster " + myOrganization.getClusterIdentifier());
+    	System.out.println("%%%% got startHB for cluster " + myOrganization.getMessageAddress());
     }
      	 
       mapInfoExists = true;
@@ -191,7 +191,7 @@ public class IPGeneratorPlugin extends org.cougaar.core.plugin.SimplePlugin
   	
   	heartbeatTime = timeoutTime;
   	System.out.println("%%%% setting HB timeout to " + heartbeatTime + " msec");
-    String org = theLDMF.getClusterIdentifier().getAddress();
+    String org = theLDMF.getMessageAddress().getAddress();
     
     //System.out.println("%%%% for cluster " + org);
     if(mapInfoExists)

@@ -267,14 +267,14 @@ public class LoadAllocatorPlugin extends SimplePlugin {
 
   public void execute() 
   {
-    //System.out.println(getCluster().getClusterIdentifier() + " In LoadAllocatorPlugin.execute");
+    //System.out.println(getCluster().getMessageAddress() + " In LoadAllocatorPlugin.execute");
 
     for (Enumeration e = thisOrgSubs.getAddedList();e.hasMoreElements();) {
       // only expecting one
       thisOrg = (Organization)e.nextElement();
       // Are we an MSB?
       isTransporter = isMSB();
-//            	    System.out.println(getCluster().getClusterIdentifier() 
+//            	    System.out.println(getCluster().getMessageAddress() 
 //            			       + " LoadAllocator got self "
 //            			       + thisOrg 
 //          			       + " isTransporter " + isTransporter);
@@ -338,7 +338,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
       Task task = (Task)e.nextElement();
 
       if (isTransporter) {
-        System.out.println(getCluster().getClusterIdentifier() +
+        System.out.println(getCluster().getMessageAddress() +
                            " LoadAllocator: Why do we have LOAD Tasks here? Isn't this the MSB?");
         break;
       }
@@ -347,19 +347,19 @@ public class LoadAllocatorPlugin extends SimplePlugin {
       if (task.getDirectObject() instanceof BulkPOL) {
         asset = fuelHandlingCapacity.getCapacity();
         fuelHandlingCapacity.changed(true);
-        //  		System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator got Load fuel task");
+        //  		System.out.println(getCluster().getMessageAddress() + " LoadAllocator got Load fuel task");
       }
       else if (task.getDirectObject() instanceof Ammunition){
         asset = ammoHandlingCapacity.getCapacity();
         ammoHandlingCapacity.changed(true);
-        //  		System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator got Load ammo task");
+        //  		System.out.println(getCluster().getMessageAddress() + " LoadAllocator got Load ammo task");
       } else {
-        System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator got task of unexpected type :" 
+        System.err.println(getCluster().getMessageAddress() + " LoadAllocator got task of unexpected type :" 
                            + task);
         continue;
       }
 
-      //  		System.out.println(getCluster().getClusterIdentifier() + "Creating AllocationResult for Load task");
+      //  		System.out.println(getCluster().getMessageAddress() + "Creating AllocationResult for Load task");
       AllocationResult allocation_result = computeAllocationResult(task);
 	  
       Allocation allocation = 
@@ -368,7 +368,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
                                  asset,
                                  allocation_result,
                                  Constants.Role.HANDLER);
-//          	    System.out.println(getCluster().getClusterIdentifier() + " Allocating Handle Task " /*+ task*/ + " to " + asset);
+//          	    System.out.println(getCluster().getMessageAddress() + " Allocating Handle Task " /*+ task*/ + " to " + asset);
       publishAdd(allocation);
       thePlan = task.getPlan();
     }
@@ -386,11 +386,11 @@ public class LoadAllocatorPlugin extends SimplePlugin {
           asset = fuelTransportCapacity.getCapacity();
           fuelTransportCapacity.changed(true);
 	  role = Constants.Role.FUELTRANSPORTPROVIDER;
-          //  		    System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator got Transport fuel task");
+          //  		    System.out.println(getCluster().getMessageAddress() + " LoadAllocator got Transport fuel task");
         } else if (dobj  instanceof Ammunition){
           asset = ammoTransportCapacity.getCapacity();
           ammoTransportCapacity.changed(true);
-          //  		    System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator got Transport ammo task");
+          //  		    System.out.println(getCluster().getMessageAddress() + " LoadAllocator got Transport ammo task");
         } else if (dobj instanceof AggregateAsset){
           Object o = ((AggregateAsset)task.getDirectObject()).getAsset();
           if (o instanceof Ammunition) {
@@ -402,7 +402,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
           } else{
 	    // we don't deal with whatever ends up here
 	    continue;
-            //System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator asset of unknown type: " + dobj);
+            //System.err.println(getCluster().getMessageAddress() + " LoadAllocator asset of unknown type: " + dobj);
           }
         }
       } 
@@ -415,11 +415,11 @@ public class LoadAllocatorPlugin extends SimplePlugin {
         asset = getRoleProvider(Constants.Role.AMMUNITIONTRANSPORTPROVIDER, false);
 
       if (asset == null) {
-        System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator - no MSB, can't forward the Transport task");
+        System.err.println(getCluster().getMessageAddress() + " LoadAllocator - no MSB, can't forward the Transport task");
       }
       else {
         // create and publish the allocation
-        //  		System.out.println(getCluster().getClusterIdentifier() + "Creating AllocationResult for Transport task");
+        //  		System.out.println(getCluster().getMessageAddress() + "Creating AllocationResult for Transport task");
         AllocationResult allocation_result = computeAllocationResult(task);
 	  
         Allocation allocation = 
@@ -428,7 +428,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
                                    asset,
                                    allocation_result,
                                    Constants.Role.TRANSPORTER);
-//    		System.out.println(getCluster().getClusterIdentifier() + "Allocating Transport Task " /*+ task*/ + " to " + asset);
+//    		System.out.println(getCluster().getMessageAddress() + "Allocating Transport Task " /*+ task*/ + " to " + asset);
         publishAdd(allocation);
         thePlan = task.getPlan();
       }
@@ -510,7 +510,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
           unit = Mass.TONS;
         }
         else {
-          System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator:createCapacity() got unexpected asset type :" + asset);
+          System.err.println(getCluster().getMessageAddress() + " LoadAllocator:createCapacity() got unexpected asset type :" + asset);
           return null;
         }
       }
@@ -526,16 +526,16 @@ public class LoadAllocatorPlugin extends SimplePlugin {
           unit = Mass.TONS;
         }
         else {
-          System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator:createCapacity() got unexpected asset type :" + asset);
+          System.err.println(getCluster().getMessageAddress() + " LoadAllocator:createCapacity() got unexpected asset type :" + asset);
           return null;
         }
       }
       else {
-        System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator:createCapacity() got unexpected verb :" + verb);
+        System.err.println(getCluster().getMessageAddress() + " LoadAllocator:createCapacity() got unexpected verb :" + verb);
         return null;
       }
     } catch (Exception exc) {
-      System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator - problem creating a Capacity asset.");
+      System.out.println(getCluster().getMessageAddress() + " LoadAllocator - problem creating a Capacity asset.");
       exc.printStackTrace();
     }
 
@@ -555,13 +555,13 @@ public class LoadAllocatorPlugin extends SimplePlugin {
       css = getCSSCapabilityType(cssPG, typeIdProp.getTypeIdentification());
     }
     if (css == null) {
-      System.out.println(getCluster().getClusterIdentifier() + "LoadAllocatorPlugin  - No capacity for "
+      System.out.println(getCluster().getMessageAddress() + "LoadAllocatorPlugin  - No capacity for "
                          + typeIdProp.getTypeIdentification()
                          + " in CSSCapabilityType - using default value");
 
     } else
       qty = css.getCapacity().getQuantity().getValue(unit);
-    //System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator using " + qty +
+    //System.out.println(getCluster().getMessageAddress() + " LoadAllocator using " + qty +
     //                   "as capacity for " + typeIdProp.getTypeIdentification());
     cse.setQuantity(qty);
 
@@ -582,7 +582,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
     try {
       c =(org.cougaar.glm.ldm.asset.Capacity) theLDMF.createAsset(Capacity.class);
     } catch (Exception exc) {
-      System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator - problem creating a Capacity asset.");
+      System.out.println(getCluster().getMessageAddress() + " LoadAllocator - problem creating a Capacity asset.");
       exc.printStackTrace();
       c = new Capacity();
     }
@@ -599,7 +599,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
                                              new Date (oplanEndTime));
     ((NewRoleSchedule)c.getRoleSchedule()).setAvailableSchedule( ss );
 
-//      System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator created Capacity Object "
+//      System.out.println(getCluster().getMessageAddress() + " LoadAllocator created Capacity Object "
 //                         + c.getUID());
     return c;
   }    
@@ -612,18 +612,18 @@ public class LoadAllocatorPlugin extends SimplePlugin {
   // that it gets excactly the additional capacity it asks for.
   private void checkOverruns(LACapacity mycapacity) {
 
-    //  	System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator in checkOverruns");
+    //  	System.out.println(getCluster().getMessageAddress() + " LoadAllocator in checkOverruns");
     Capacity capacity = mycapacity.getCapacity();
     if (capacity == null) {
       // This should never happen
-      System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator:checkOverruns() no capacity object!");
+      System.err.println(getCluster().getMessageAddress() + " LoadAllocator:checkOverruns() no capacity object!");
       return;
     }
     RoleSchedule rs = capacity.getRoleSchedule();
-    //	System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator:checkOverruns() Capacity.RoleSchedule:" + rs);
+    //	System.out.println(getCluster().getMessageAddress() + " LoadAllocator:checkOverruns() Capacity.RoleSchedule:" + rs);
     if (rs == null) {
       // This should never happen
-      System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator:checkOverruns() the capacity has no role schedule");
+      System.err.println(getCluster().getMessageAddress() + " LoadAllocator:checkOverruns() the capacity has no role schedule");
       return;
     }
     long currentDate = oplanStartTime;
@@ -632,7 +632,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
     Schedule capacitySchedule = capacity.getScheduledContentPG().getSchedule();
     if (capacitySchedule == null) {
       // This should never happen
-      System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator:checkOverruns() the capacity's ScheduleContentPG has no schedule");
+      System.err.println(getCluster().getMessageAddress() + " LoadAllocator:checkOverruns() the capacity's ScheduleContentPG has no schedule");
       return;
     }
 
@@ -658,12 +658,12 @@ public class LoadAllocatorPlugin extends SimplePlugin {
 	// Have we allocated more than we have?
         overrun = qtyAsked - qtyAvailable;
 
-        //       		System.out.println(getCluster().getClusterIdentifier() 
+        //       		System.out.println(getCluster().getMessageAddress() 
         //        				   + " LoadAllocator:checkOverruns() overrun=" + overrun
         //       				   + "  qtyAsked=" + qtyAsked 
         //      				   + "  qtyAvaiable=" + qtyAvailable);
       } else {
-        //        		System.out.println(getCluster().getClusterIdentifier() 
+        //        		System.out.println(getCluster().getMessageAddress() 
         //        				   + " LoadAllocator:checkOverruns() No schedule for " 
         //        				   + currentDate);
       }
@@ -700,7 +700,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
           QuantityScheduleElement qse = mycapacity.getQSE();
           if (qse == null) {
             // Don't know why this would happen, but...
-            System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator QSE missing");
+            System.err.println(getCluster().getMessageAddress() + " LoadAllocator QSE missing");
             NewQuantityScheduleElement cse = new QuantityScheduleElementImpl();
             cse.setQuantity(0d);
             cse.setStartTime(currentDate);
@@ -739,12 +739,12 @@ public class LoadAllocatorPlugin extends SimplePlugin {
       publishSupportRequestAllocation(mycapacity);
     }
     if (publishNew) {
-      //  	    System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator publishing changed capacity and new SupportRequest");
+      //  	    System.out.println(getCluster().getMessageAddress() + " LoadAllocator publishing changed capacity and new SupportRequest");
       publishChange(capacity);
       publishAdd(mycapacity.getSupportRequest());
       publishNew = false;
     } else if (publishChanges) {
-      //  	    System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator publishing changed capacity and SupportRequest");
+      //  	    System.out.println(getCluster().getMessageAddress() + " LoadAllocator publishing changed capacity and SupportRequest");
       publishChange(capacity);
       publishChange(mycapacity.getSupportRequest());
       publishChanges = false;
@@ -753,7 +753,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
 
   private Task createSupportRequest(Capacity capacity, double qty,
                                     long startDate, long endDate ) {
-    //System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator in createSupportRequest");
+    //System.out.println(getCluster().getMessageAddress() + " LoadAllocator in createSupportRequest");
 
     NewTask t = theLDMF.newTask();
     t.setPlan(/*thePlan*/theLDMF.getRealityPlan());
@@ -880,7 +880,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
     Organization supportForceProvider = getRoleProvider(Constants.Role.SUPPORTFORCEPROVIDER, false);
     // Can't forward the task if there is no place to send it.
     if (supportForceProvider == null) {
-      System.err.println(getCluster().getClusterIdentifier() + " LoadAllocator:publishSupportRequestAllocation - No SupportForceProvider!");
+      System.err.println(getCluster().getMessageAddress() + " LoadAllocator:publishSupportRequestAllocation - No SupportForceProvider!");
       return;
     }
 
@@ -895,11 +895,11 @@ public class LoadAllocatorPlugin extends SimplePlugin {
                                  Constants.Role.TRANSPORTER);
       mycapacity.setSupportRequestAllocation(allocation);
       publishAdd(allocation);
-      //  	    System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator Publishing new SupportRequest allocation " + allocation);
+      //  	    System.out.println(getCluster().getMessageAddress() + " LoadAllocator Publishing new SupportRequest allocation " + allocation);
     } else {
       allocation.setEstimatedResult(allocation_result);
       publishChange(allocation);
-      //  	    System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator publishChange SupportRequest allocation " + allocation);
+      //  	    System.out.println(getCluster().getMessageAddress() + " LoadAllocator publishChange SupportRequest allocation " + allocation);
     }
   }
 

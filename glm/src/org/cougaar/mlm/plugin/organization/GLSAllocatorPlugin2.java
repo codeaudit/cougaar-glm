@@ -26,7 +26,7 @@ import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AbstractAsset;
 
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
 
@@ -93,7 +93,7 @@ public class GLSAllocatorPlugin2 extends SimplePlugin {
   
     //Override the setupSubscriptions() in the SimplePlugin.
   protected void setupSubscriptions() {
-    me = getCluster().getClusterIdentifier().getAddress();
+    me = getCluster().getMessageAddress().getAddress();
 
     // subscribe for GLS tasks for subordinates
     allocatableGLSTask = (IncrementalSubscription)subscribe(allocGLSPred);
@@ -285,7 +285,7 @@ public class GLSAllocatorPlugin2 extends SimplePlugin {
     // in a real expander you would want to distribute the parents preferences
     // across the subtasks.
     subtask.setPreferences( t.getPreferences() );
-    subtask.setSource(this.getCluster().getClusterIdentifier());
+    subtask.setSource(this.getCluster().getMessageAddress());
     
     return subtask;
 
