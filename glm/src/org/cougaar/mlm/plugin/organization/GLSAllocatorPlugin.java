@@ -534,19 +534,22 @@ public class GLSAllocatorPlugin extends SimplePlugin {
       public boolean execute(Object o) {
 	if (o instanceof Expansion) {
 	  Workflow wf = ((Expansion)o).getWorkflow();
-	  Enumeration wftasks = wf.getTasks();
-	  while (wftasks.hasMoreElements()) {
-	    Task t = (Task) wftasks.nextElement();
-	    if (t.getVerb().equals(verbGLS)) {
-	      Enumeration pp = t.getPrepositionalPhrases();
-	      while (pp.hasMoreElements()) {
-		PrepositionalPhrase app = (PrepositionalPhrase) pp.nextElement();
-		if ((app.getPreposition().equals(Constants.Preposition.FOR)) && (app.getIndirectObject() instanceof Organization) ) {
-		  return true;
+	  // Synchronize so we can walk tasks safely
+	  synchronized (wf) { 
+	    Enumeration wftasks = wf.getTasks();
+	    while (wftasks.hasMoreElements()) {
+	      Task t = (Task) wftasks.nextElement();
+	      if (t.getVerb().equals(verbGLS)) {
+		Enumeration pp = t.getPrepositionalPhrases();
+		while (pp.hasMoreElements()) {
+		  PrepositionalPhrase app = (PrepositionalPhrase) pp.nextElement();
+		  if ((app.getPreposition().equals(Constants.Preposition.FOR)) && (app.getIndirectObject() instanceof Organization) ) {
+		    return true;
+		  }
 		}
 	      }
 	    }
-	  }
+	  } // end synchronization of workflow
 	}
 	return false;
       }
