@@ -25,7 +25,7 @@
  * Heavily modified from original to be an LDMPlugin
  */
 
-package org.cougaar.mlm.plugin.completion;
+package org.cougaar.glm.plugin.completion;
 
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.core.plugin.completion.CompletionTargetPlugin;

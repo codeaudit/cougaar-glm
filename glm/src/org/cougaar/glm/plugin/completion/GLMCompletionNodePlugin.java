@@ -19,7 +19,7 @@
  * </copyright>
  */
 
-package org.cougaar.mlm.plugin.completion;
+package org.cougaar.glm.plugin.completion;
 
 import org.cougaar.core.plugin.completion.CompletionNodePlugin;
 
