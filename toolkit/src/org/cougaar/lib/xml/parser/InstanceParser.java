@@ -29,6 +29,7 @@ import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.NewRoleSchedule;
 
 import org.cougaar.lib.util.UTILAsset;
+import org.cougaar.util.log.Logger;
 
 import java.util.Date;
 import java.util.Vector;
@@ -46,7 +47,12 @@ import org.w3c.dom.NodeList;
  */
 public class InstanceParser{
 
-  public static List getInstance(LDMServesPlugin ldm, Node node){
+  public InstanceParser (Logger logger) { 
+    scheduleParser = new ScheduleParser(); 
+    assetHelper    = new UTILAsset(logger);
+  }
+
+  public List getInstance(LDMServesPlugin ldm, Node node){
 
     Schedule newSchedule = null; 
     List newAssets = new ArrayList ();
@@ -64,7 +70,7 @@ public class InstanceParser{
 	String  childname   = child.getNodeName();
 	if(child.getNodeType() == Node.ELEMENT_NODE) {
 	  if(child.getNodeName().equals("schedule")){
-	    newSchedule = ScheduleParser.getSchedule(ldm, child);
+	    newSchedule = scheduleParser.getSchedule(ldm, child);
 	  }
 	}
       }
@@ -99,22 +105,25 @@ public class InstanceParser{
    * @param newScheduler - initial availability
    * @return the new asset!
    */
-    protected static Asset makeNewAsset (LDMServesPlugin ldm, 
-					 String prototype, 
-					 String id, 
-					 Schedule newSchedule) {
-      // Create the instance
-      Asset newAsset = UTILAsset.createInstance(ldm,
-					       prototype, id );
+  protected Asset makeNewAsset (LDMServesPlugin ldm, 
+				String prototype, 
+				String id, 
+				Schedule newSchedule) {
+    // Create the instance
+    Asset newAsset = assetHelper.createInstance(ldm,
+						prototype, id );
 
-      Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
-								 new Date(newSchedule.getEndTime()));
-      // Set the Schedule
-      ((NewRoleSchedule)newAsset.getRoleSchedule()).setAvailableSchedule(newSchedule);
+    Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
+							       new Date(newSchedule.getEndTime()));
+    // Set the Schedule
+    ((NewRoleSchedule)newAsset.getRoleSchedule()).setAvailableSchedule(newSchedule);
 
-      //logger.debug ("Making new asset " + newAsset + " with UID " + 
-      //newAsset.getUID());
-      return newAsset;
-    }
+    //logger.debug ("Making new asset " + newAsset + " with UID " + 
+    //newAsset.getUID());
+    return newAsset;
+  }
+
+  protected ScheduleParser scheduleParser;
+  protected UTILAsset assetHelper;
 }
 

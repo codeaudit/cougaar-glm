@@ -42,11 +42,27 @@ import org.cougaar.util.log.Logger;
  * Creates the objects.
  */
 public class ObjectParser{
-  
   static final String PG_STRING = "PG";
-  public static Logger logger;
-  public static void setLogger (Logger l) { logger = l; }
-  public static Object getObject(LDMServesPlugin ldm, Node node){
+  /** creates a field parser */
+  public ObjectParser (Logger l) { 
+    logger = l; 
+    fieldParser = new FieldParser(l, this);
+  }
+
+  /** 
+   * <pre>
+   * Create an object based on its name defined by <tt>node</tt>. 
+   *
+   * Potentially tries a number of different possibilities for 
+   * object type when creating the asset/property group.
+   *
+   * Uses FieldParser to populate the fields of the object.
+   *
+   * </pre>
+   * @param node defines the object
+   * @param ldm used to create assets, property groups, etc.
+   */
+  public Object getObject(LDMServesPlugin ldm, Node node){
     RootFactory ldmFactory = ldm.getFactory();
     Object obj = null;
 
@@ -114,7 +130,7 @@ public class ObjectParser{
       // notice that the ldm factory extends the cof.
       if(obj == null){
 	try{
-	  String method_name = ObjectParser.getMethodName(className);
+	  String method_name = getMethodName(className);
 	  Method method = ldmFactory.getClass().getMethod(method_name, null);
 	  obj = method.invoke(ldmFactory, null);
 	  // logger.debug("*** OBJECT PARSER CREATED : from factory " + obj);
@@ -124,7 +140,7 @@ public class ObjectParser{
 	    if (obj == null) {
 	      Factory af = ldm.getFactory("glm");
 	      if (af != null) {
-		  String method_name = ObjectParser.getMethodName(className);
+		  String method_name = getMethodName(className);
 		  Method method = af.getClass().getMethod(method_name, null);
 		  obj = method.invoke(af, null);
 	      }
@@ -168,6 +184,7 @@ public class ObjectParser{
 	// BOZO: need to throw exception here.
 	// perhaps use the new operator (?)
 	logger.error("ObjectParser: Could not create: " + className);
+	return null;
       }
       
       for(int i = 0; i < nlength; i++){
@@ -180,7 +197,7 @@ public class ObjectParser{
 	    // field on.  In most cases that will be the same as in its 
 	    // third argument, but in the weird measure classes case that
 	    // return value is the actual measure class created.
-	    obj = FieldParser.setField(ldm, child, obj);
+	    obj = fieldParser.setField(ldm, child, obj);
 	  }
         }
       }
@@ -193,7 +210,7 @@ public class ObjectParser{
    * try to get a method name that could be used in the 
    * cluster object factory.
    */
-  public static String getMethodName(String name){
+  public String getMethodName(String name){
     char[] name_array = name.toCharArray();
     
     int marker = 0;
@@ -222,5 +239,7 @@ public class ObjectParser{
     
   }
 
+  protected Logger logger;
+  protected FieldParser fieldParser;
 }
 

@@ -31,7 +31,7 @@ import org.cougaar.planning.ldm.plan.Verb;
  */
 public class VerbParser{
 
-  public static Verb getVerb(Node node){
+  public Verb getVerb(Node node){
     NodeList  nlist    = node.getChildNodes();      
     int       nlength  = nlist.getLength();
     Verb      verb     = null;

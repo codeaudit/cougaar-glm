@@ -28,20 +28,28 @@ import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.core.domain.RootFactory;
 import org.cougaar.lib.util.UTILPreference;
+import org.cougaar.util.log.Logger;
 
 /**
+ * <pre>
  * Parses preferences of tasks in test input files.
  *
  * Currently handles start time, end time, and cost preferences.
  * Start time is expected to have a ready at date.
  * End   time is expected to have an early, best, and latest date.
+ * </pre>
  */
 public class PreferencesParser{
   
+  public PreferencesParser (Logger logger) {
+    prefHelper = new UTILPreference(logger);
+    dateParser = new DateParser();
+  }
+
   /**
    * Get the cost preference
    */
-  public static Preference getCost(RootFactory ldmf, Node node){
+  public Preference getCost(RootFactory ldmf, Node node){
     NodeList  nlist    = node.getChildNodes();      
     int       nlength  = nlist.getLength();
     double    cost     = 0.0;
@@ -52,13 +60,13 @@ public class PreferencesParser{
       Double  d = new Double(child.getNodeValue());
       cost = d.doubleValue();
     }
-    return UTILPreference.makeCostPreference(ldmf, cost);
+    return prefHelper.makeCostPreference(ldmf, cost);
   }
 
   /**
    * Get the quantity preference
    */
-  public static Preference getQuantity(RootFactory ldmf, Node node){
+  public Preference getQuantity(RootFactory ldmf, Node node){
     NodeList  nlist    = node.getChildNodes();      
     int       nlength  = nlist.getLength();
     long      quantity = 0l;
@@ -69,14 +77,14 @@ public class PreferencesParser{
       Long l = new Long(child.getNodeValue());
       quantity = l.longValue();
     }
-    return UTILPreference.makeQuantityPreference(ldmf, quantity);
+    return prefHelper.makeQuantityPreference(ldmf, quantity);
   }
 
 
   /**
    * Get the start date preference
    */
-  public static Preference getStartDate(RootFactory ldmf, Node node){
+  public Preference getStartDate(RootFactory ldmf, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
     Date      readyatdate = null;
@@ -87,17 +95,17 @@ public class PreferencesParser{
       
       if(child.getNodeType() == Node.ELEMENT_NODE){
 	if(childname.equals("readyatdate")){
-	  readyatdate = DateParser.getDate(child);
+	  readyatdate = dateParser.getDate(child);
 	}
       }
     }
-    return UTILPreference.makeStartDatePreference(ldmf, readyatdate);
+    return prefHelper.makeStartDatePreference(ldmf, readyatdate);
   }
 
   /**
    * Get the end date preference
    */
-  public static Preference getEndDate(RootFactory ldmf, Node node){
+  public Preference getEndDate(RootFactory ldmf, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
     Date      earldate  = null;
@@ -110,21 +118,23 @@ public class PreferencesParser{
       
       if(child.getNodeType() == Node.ELEMENT_NODE){
 	if(childname.equals("earlydate")){
-	  earldate = DateParser.getDate(child);
+	  earldate = dateParser.getDate(child);
 	}
 	else if(childname.equals("bestdate")){
-	  bestdate = DateParser.getDate(child);
+	  bestdate = dateParser.getDate(child);
 	}
 	else if(childname.equals("latedate")){
-	  latedate = DateParser.getDate(child);
+	  latedate = dateParser.getDate(child);
 	}
       }
     }
 
     if (earldate == null || latedate == null)
-      return UTILPreference.makeEndDateBelowPreference(ldmf, bestdate);
+      return prefHelper.makeEndDateBelowPreference(ldmf, bestdate);
     else
-      return UTILPreference.makeEndDatePreference(ldmf, earldate, bestdate, latedate);
+      return prefHelper.makeEndDatePreference(ldmf, earldate, bestdate, latedate);
   }
 
+  protected UTILPreference prefHelper;
+  protected DateParser dateParser;
 }

@@ -41,13 +41,15 @@ import org.cougaar.util.log.Logger;
  */
 public class FieldParser{
 
-  public static Logger logger;
-  public static void setLogger (Logger l) { logger = l; }
+  public FieldParser (Logger l, ObjectParser objectParser) { 
+    logger = l; 
+    valueParser = new ValueParser(l, objectParser);
+  }
 
   /**
    * set a field given by node in an object obj
    */
-  public static Object setField(LDMServesPlugin ldm, Node node, Object obj){
+  public Object setField(LDMServesPlugin ldm, Node node, Object obj){
 
     if(node.getNodeName().equals("field")){
 
@@ -74,20 +76,20 @@ public class FieldParser{
       if(fieldSetter == null){
         try {
           setterName     = "set" + fieldName;
-          fieldClass     = FieldParser.getFieldClass(fieldType);
+          fieldClass     = getFieldClass(fieldType);
           origFieldClass = fieldClass;
           //fieldSetter  = objClass.getMethod(setterName, fieldClass);
-          fieldSetter = FieldParser.getSetterMethod(objClass, setterName, fieldClass);
+          fieldSetter = getSetterMethod(objClass, setterName, fieldClass);
 
           if (fieldSetter != null) {
             if(fieldName.equals("TypeIdentificationPG")){
-              fieldValue = FieldParser.getTypeIdentificationPG(ldm, node, (Asset)obj);
+              fieldValue = getTypeIdentificationPG(ldm, node, (Asset)obj);
             } else {
               fieldValue = 
                 ((javaUtilCollectionClass.isAssignableFrom(fieldClass)) ?
-                 FieldParser.getFieldCollection(ldm, node, fieldClass) :
-                 FieldParser.getFieldValue(ldm, node));
-              FieldParser.callMethod(obj, fieldSetter, fieldValue, fieldType);
+                 getFieldCollection(ldm, node, fieldClass) :
+                 getFieldValue(ldm, node));
+              callMethod(obj, fieldSetter, fieldValue, fieldType);
             }
           }
         }
@@ -105,16 +107,16 @@ public class FieldParser{
       if(fieldSetter == null){ 
         try{
           setterName    = "addOtherPropertyGroup";
-          fieldClass    = FieldParser.getFieldClass("org.cougaar.planning.ldm.asset.PropertyGroup");
+          fieldClass    = getFieldClass("org.cougaar.planning.ldm.asset.PropertyGroup");
           //fieldSetter = objClass.getMethod(setterName, fieldClass);
-          fieldSetter   = FieldParser.getSetterMethod(objClass, setterName, fieldClass);
+          fieldSetter   = getSetterMethod(objClass, setterName, fieldClass);
 
 	  if (fieldSetter != null) {
             fieldValue = 
               ((javaUtilCollectionClass.isAssignableFrom(fieldClass)) ?
-               FieldParser.getFieldCollection(ldm, node, fieldClass) :
-               FieldParser.getFieldValue(ldm, node));
-            FieldParser.callMethod(obj, fieldSetter, fieldValue, fieldType);
+               getFieldCollection(ldm, node, fieldClass) :
+               getFieldValue(ldm, node));
+            callMethod(obj, fieldSetter, fieldValue, fieldType);
 	  }
         }
         catch(Exception e){
@@ -132,16 +134,16 @@ public class FieldParser{
         try{
           objClass      = (Class)obj;  // for this very special case
           setterName    = "new" + fieldName;
-          fieldClass    = FieldParser.getFieldClass(fieldType);
+          fieldClass    = getFieldClass(fieldType);
           //fieldSetter = objClass.getMethod(setterName, fieldClass);
-          fieldSetter   = FieldParser.getSetterMethod(objClass, setterName, fieldClass);
+          fieldSetter   = getSetterMethod(objClass, setterName, fieldClass);
 
 	  if (fieldSetter != null) {
             fieldValue = 
               ((javaUtilCollectionClass.isAssignableFrom(fieldClass)) ?
-               FieldParser.getFieldCollection(ldm, node, fieldClass) :
-               FieldParser.getFieldValue(ldm, node));
-            obj = FieldParser.callMethod(null, fieldSetter, fieldValue, fieldType);
+               getFieldCollection(ldm, node, fieldClass) :
+               getFieldValue(ldm, node));
+            obj = callMethod(null, fieldSetter, fieldValue, fieldType);
 	  }
         }
         catch(Exception e){
@@ -182,9 +184,9 @@ public class FieldParser{
     } catch (Exception e) { }
   }
 
-  static Hashtable seen_classmethods = new Hashtable();
   static final Class PG_CLASS = org.cougaar.planning.ldm.asset.PropertyGroup.class;
   /**
+   * <pre>
    * Wrapper arround the java.lang.Class functionality to allow to 
    * get a method on an object that is called with a superclass of its
    * argument.  Assumes only one argument per method (good for setters).
@@ -197,8 +199,9 @@ public class FieldParser{
    * an open question whether it is faster to do the compare (endsWith("PG"))
    * before looking for the method or whether one should just let the 
    * NoSuchMethodException be thrown before trying the PG approach.
+   * </pre>
    */
-  private static Method getSetterMethod(Class objc, String name, Class argtype){
+  private Method getSetterMethod(Class objc, String name, Class argtype){
     Method method  = null;
     Class[] argclasses = { argtype };
     // For strict accuracy we should also add the argtype to the 
@@ -383,7 +386,7 @@ public class FieldParser{
    * are returned as strings, it is the callers responsibility
    * to do the conversion.
    */
-  private static Object getFieldValue(LDMServesPlugin ldm, Node node){
+  private Object getFieldValue(LDMServesPlugin ldm, Node node){
     Object     retval   = null;
     NodeList   nlist    = node.getChildNodes();      
     int        nlength  = nlist.getLength();
@@ -394,7 +397,7 @@ public class FieldParser{
       
       if(child.getNodeType() == Node.ELEMENT_NODE){
         if(childname.equals("value")){
-          retval = ValueParser.getValue(ldm, child);
+          retval = valueParser.getValue(ldm, child);
         }
       }
     }
@@ -406,7 +409,7 @@ public class FieldParser{
    * are returned as strings, it is the callers responsibility
    * to do the conversion.
    */
-  private static Collection getFieldCollection(
+  private Collection getFieldCollection(
       LDMServesPlugin ldm, Node node, Class collectionClass){
     Collection retcoll;
     NodeList   nlist    = node.getChildNodes();      
@@ -415,9 +418,8 @@ public class FieldParser{
     try {
       retcoll = (Collection)collectionClass.newInstance();
     } catch (Exception noInstanceE) {
-      logger.error(
-        "Unable to create instance of Collection Class "+collectionClass);
-      noInstanceE.printStackTrace();
+      logger.error("Unable to create instance of Collection Class "+collectionClass, 
+		   noInstanceE);
       return null;
     }
 
@@ -427,7 +429,7 @@ public class FieldParser{
       
       if(child.getNodeType() == Node.ELEMENT_NODE){
         if(childname.equals("value")){
-          Object collObj = ValueParser.getValue(ldm, child);
+          Object collObj = valueParser.getValue(ldm, child);
           if(collObj != null) {
             retcoll.add(collObj);
           }
@@ -437,7 +439,7 @@ public class FieldParser{
     return retcoll;
   }
 
-  private static TypeIdentificationPG getTypeIdentificationPG(LDMServesPlugin ldm, 
+  private TypeIdentificationPG getTypeIdentificationPG(LDMServesPlugin ldm, 
                                                               Node node, Asset obj){
     NewTypeIdentificationPG ntip = (NewTypeIdentificationPG)obj.getTypeIdentificationPG();
     TypeIdentificationPG    tip  = null;
@@ -451,7 +453,7 @@ public class FieldParser{
       
       if(child.getNodeType() == Node.ELEMENT_NODE){
         if(childname.equals("value")){
-          tip = (TypeIdentificationPG)ValueParser.getValue(ldm, child);
+          tip = (TypeIdentificationPG)valueParser.getValue(ldm, child);
           // OK, this is not the most general way, I could dynamicallly
           // get all the methods that TypeIdentification has dynamically
           // and then call the setters, but hell...
@@ -469,8 +471,7 @@ public class FieldParser{
    * Get the Class of a field taking into account that it 
    * could be a Java primitive.
    */
-  private static Class getFieldClass(String fieldType){
-    
+  private Class getFieldClass(String fieldType){
     Class retval = null;
 
     if(fieldType.equals("byte")){
@@ -507,5 +508,10 @@ public class FieldParser{
     }
     return retval;
   }
+
+  protected Logger logger;
+
+  protected Hashtable seen_classmethods = new Hashtable();
+  protected ValueParser valueParser;
 }
 

@@ -38,7 +38,7 @@ public class DateParser{
    *
    * @author Gordon Vidaver 7/2/99
    */
-  public static Date getDate(Node node){
+  public Date getDate(Node node){
     Calendar  cal       = Calendar.getInstance();
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();

@@ -46,6 +46,11 @@ import org.cougaar.util.log.*;
 public class AggregateAssetParser{
   private static final boolean testing = false;
 
+  public AggregateAssetParser(Logger log) { 
+    logger = log; 
+    scheduleParser = new ScheduleParser();
+  }
+
   /**
    * This function is for use with the UTILLdmXMLPlugin. <p>
    *
@@ -55,42 +60,42 @@ public class AggregateAssetParser{
    * @param node       - the AggregateAsset document node itself
    * @return an aggregate asset that corresponds to the node
    */
-  public static AggregateAsset getAggregate(LDMServesPlugin ldm, Node node){
+  public AggregateAsset getAggregate(LDMServesPlugin ldm, Node node){
     AggregateAsset newAsset = null;
 
     if (node.getNodeName().toLowerCase().equals("aggregateasset")){
       NamedNodeMap map = node.getAttributes ();
 
       Node prototypeNode = map.getNamedItem("prototype");
-	  if (prototypeNode == null) {
-		prototypeNode = getNodeNamed (node.getChildNodes(), "prototype");
-		prototypeNode = prototypeNode.getChildNodes().item(0);
-	  }
+      if (prototypeNode == null) {
+	prototypeNode = getNodeNamed (node.getChildNodes(), "prototype");
+	prototypeNode = prototypeNode.getChildNodes().item(0);
+      }
 	  
       Node quantityNode  = map.getNamedItem("quantity");
-	  if (quantityNode == null) {
-		quantityNode = getNodeNamed (node.getChildNodes(), "quantity");
-		quantityNode = quantityNode.getChildNodes().item(0);
-	  }
+      if (quantityNode == null) {
+	quantityNode = getNodeNamed (node.getChildNodes(), "quantity");
+	quantityNode = quantityNode.getChildNodes().item(0);
+      }
 
       String prototype;
       int quantity;
       try {
-		String quantityNodeValue = quantityNode.getNodeValue();
-		quantity = (new Integer(quantityNodeValue)).intValue();
+	String quantityNodeValue = quantityNode.getNodeValue();
+	quantity = (new Integer(quantityNodeValue)).intValue();
       } catch (NullPointerException npe) {
-	logger.debug (classname + 
-			    ".getAggregate - XML syntax error : expecting *quantity* attribute on tag <" + 
-			    node.getNodeName() + "> or child node.");
+	logger.error (classname + 
+		      ".getAggregate - XML syntax error : expecting *quantity* attribute on tag <" + 
+		      node.getNodeName() + "> or child node.");
 	return null;
       }
 
       try {
 	prototype = prototypeNode.getNodeValue ();
       } catch (NullPointerException npe) {
-	logger.debug (classname + 
-			    ".getAggregate - XML syntax error : expecting *prototype* attribute on tag <" + 
-			    node.getNodeName() + "> or child node.");
+	logger.error (classname + 
+		      ".getAggregate - XML syntax error : expecting *prototype* attribute on tag <" + 
+		      node.getNodeName() + "> or child node.");
 	return null;
       }
       
@@ -100,10 +105,10 @@ public class AggregateAssetParser{
       Asset proto = ldm.getFactory().getPrototype(prototype);
 	  
       if (proto == null)
-	logger.debug (classname + 
-			    ".getAggregate - XML syntax error : no prototype " + prototype + 
-			    " known. Check cluster's ldm.xml file to make sure " + prototype + 
-			    "'s prototype file is included."); 
+	logger.error (classname + 
+		      ".getAggregate - XML syntax error : no prototype " + prototype + 
+		      " known. Check cluster's ldm.xml file to make sure " + prototype + 
+		      "'s prototype file is included."); 
 
       else {
 	newAsset = (AggregateAsset)ldm.getFactory().createAggregate(proto, quantity);
@@ -116,35 +121,35 @@ public class AggregateAssetParser{
       }
     }
     else {
-      logger.debug (classname + 
-			  ".getAggregate - XML syntax error : expecting <AggregateAsset> instead got <" + 
-			  node.getNodeName() + ">"); 
+      logger.error (classname + 
+		    ".getAggregate - XML syntax error : expecting <AggregateAsset> instead got <" + 
+		    node.getNodeName() + ">"); 
     }
     return newAsset;
   }
 
-  protected static Node getNodeNamed (NodeList nlist, String name) {
-	for(int i = 0; i < nlist.getLength(); i++) {
-	  Node    child       = nlist.item(i);
-	  String  childname   = child.getNodeName();
-	  if (childname.equals (name)) {
-		return child;
-	  }
-	}
-	return null;
+  protected Node getNodeNamed (NodeList nlist, String name) {
+    for(int i = 0; i < nlist.getLength(); i++) {
+      Node    child       = nlist.item(i);
+      String  childname   = child.getNodeName();
+      if (childname.equals (name)) {
+	return child;
+      }
+    }
+    return null;
   }
   
-  protected static Schedule getSchedule (LDMServesPlugin ldm, NodeList nlist) {
+  protected Schedule getSchedule (LDMServesPlugin ldm, NodeList nlist) {
     // Only expect one schedule per instance
-      for(int i = 0; i < nlist.getLength(); i++) {
-	Node    child       = nlist.item(i);
-	String  childname   = child.getNodeName();
-	if(child.getNodeType() == Node.ELEMENT_NODE) {
-	  if(child.getNodeName().equals("schedule")){
-	    return ScheduleParser.getSchedule(ldm, child);
-	  }
+    for(int i = 0; i < nlist.getLength(); i++) {
+      Node    child       = nlist.item(i);
+      String  childname   = child.getNodeName();
+      if(child.getNodeType() == Node.ELEMENT_NODE) {
+	if(child.getNodeName().equals("schedule")){
+	  return scheduleParser.getSchedule(ldm, child);
 	}
       }
+    }
     return null;
   }
   
@@ -155,20 +160,18 @@ public class AggregateAssetParser{
    * @param asset       - to modify
    * @param newSchedule - initial availability
    */
-  protected static void setSchedule (LDMServesPlugin ldm, 
-				     Asset asset, 
-				     Schedule newSchedule) {
+  protected void setSchedule (LDMServesPlugin ldm, 
+			      Asset asset, 
+			      Schedule newSchedule) {
     if (logger.isDebugEnabled())
       logger.debug ("setSchedule");
     Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
 							       new Date(newSchedule.getEndTime()));
     // Set the Schedule
-      ((NewRoleSchedule)asset.getRoleSchedule()).setAvailableSchedule(newSchedule);
+    ((NewRoleSchedule)asset.getRoleSchedule()).setAvailableSchedule(newSchedule);
   }
   
-  /** no one instance should ever be created */
-  private AggregateAssetParser(){}
-  
   private static String classname = AggregateAssetParser.class.getName ();
-  private static Logger logger=LoggerFactory.getInstance().createLogger("AggregateAssetParser");
+  protected Logger logger;
+  protected ScheduleParser scheduleParser;
 }

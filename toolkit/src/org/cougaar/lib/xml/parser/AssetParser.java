@@ -33,10 +33,12 @@ import org.cougaar.util.log.*;
  * Creates an asset instance.
  */
 public class AssetParser{
+  public AssetParser(Logger logger){ 
+    this.logger = logger;
+    assetHelper = new UTILAsset (logger);
+  }
 
-  private static Logger logger=LoggerFactory.getInstance().createLogger("AssetParser");
-
-  public static Asset getAsset(LDMServesPlugin ldm, Node node){
+  public Asset getAsset(LDMServesPlugin ldm, Node node){
     Asset asset = null;
     String data = null;
     String bumperno = null;
@@ -44,23 +46,25 @@ public class AssetParser{
       bumperno = node.getAttributes().getNamedItem("id").getNodeValue();
     } catch (Exception e) {
       logger.error("\nGot exception processing Node <" + 
-			 node.getNodeName() + ">.  Missing id attribute.  It gives the asset a unique item id.");
+		   node.getNodeName() + 
+		   ">.  Missing id attribute.  It gives the asset a unique item id.");
     }
     try {
       data  = node.getFirstChild().getNodeValue();
     } catch(Exception e){
       logger.error("\nGot exception processing Node <" + 
-			 node.getNodeName() + ">.  Expecting prototype name to be in body of tag.");
+		   node.getNodeName() + ">.  Expecting prototype name to be in body of tag.");
     }
     try {
-      asset = UTILAsset.createInstance(ldm, data, bumperno);
+      asset = assetHelper.createInstance(ldm, data, bumperno);
     } catch(RuntimeException e){
       logger.error("\nGot exception processing Node <" + 
-			 node.getNodeName() + ">.  Could not create instance of " + data + " with unique id " + bumperno);
+		   node.getNodeName() + 
+		   ">.  Could not create instance of " + data + " with unique id " + bumperno);
     }
     return asset; 
   }
 
-  private AssetParser(){}
-
+  protected Logger logger;
+  protected UTILAsset assetHelper;
 }

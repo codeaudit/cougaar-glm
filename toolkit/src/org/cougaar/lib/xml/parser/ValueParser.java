@@ -26,12 +26,18 @@ import org.w3c.dom.NodeList;
 import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.domain.LDMServesPlugin;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * Parses the value portion of an object in an xml file.
  */
 public class ValueParser{
-  
-  public static Object getValue(LDMServesPlugin ldm, Node node){
+
+  public ValueParser (Logger logger, ObjectParser objectParser) { 
+    this.objectParser = objectParser;
+  }
+
+  public Object getValue(LDMServesPlugin ldm, Node node){
     // Note need the LDMServesPlugin to be able to call ObjectParser.
 
     Object retval = null;
@@ -47,12 +53,12 @@ public class ValueParser{
 	if(child.getNodeType() == Node.ELEMENT_NODE){
 	  
 	  if(childname.equals("object")){
-            retval = ObjectParser.getObject(ldm, child);
+            retval = objectParser.getObject(ldm, child);
           }
 	  else if(childname.equals("array")){
 	    // BOZO: need to do a loop and get the 
 	    // list one by one.
-            ValueParser.getValue(ldm, child);
+            getValue(ldm, child);
           }
 	}
 	else if(child.getNodeType() == Node.TEXT_NODE ){
@@ -67,5 +73,7 @@ public class ValueParser{
 
     return retval;
   }
+
+  protected ObjectParser objectParser;
 }
 

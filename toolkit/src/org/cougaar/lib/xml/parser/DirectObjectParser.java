@@ -33,7 +33,14 @@ import org.cougaar.util.log.*;
  */
 public class DirectObjectParser{
 
-  public static Asset getDirectObject(LDMServesPlugin ldm, Node node){
+  public DirectObjectParser(Logger log) { 
+    logger = log; 
+    assetParser = new AssetParser(log);
+    aggregateAssetParser = new AggregateAssetParser(log);
+    assetGroupParser = new AssetGroupParser(log);
+  }
+
+  public Asset getDirectObject(LDMServesPlugin ldm, Node node){
     Asset asset = null;
     try{
       NodeList  nlist    = node.getChildNodes();      
@@ -44,19 +51,18 @@ public class DirectObjectParser{
 	String  childname   = child.getNodeName();
 
         if(child.getNodeType() == Node.ELEMENT_NODE){
-	
 	  if(childname.equals("asset")){
-	    asset = AssetParser.getAsset(ldm, child);
+	    asset = assetParser.getAsset(ldm, child);
 	  }
 	  else if(childname.equals("aggregateasset")){
-	    asset = AggregateAssetParser.getAggregate(ldm, child);
+	    asset = aggregateAssetParser.getAggregate(ldm, child);
 	  }
 	  else if(childname.equals("assetgroup")){
-	    asset = AssetGroupParser.getAssetGroup(ldm, child);
+	    asset = assetGroupParser.getAssetGroup(ldm, child);
 	  }
 	  else {
-	    logger.debug ("DirectObjectParser - XML Syntax error : " + 
-				"expecting one of <asset>, <aggregateasset>, or <assetgroup> but got <" + childname + ">");
+	    logger.error ("DirectObjectParser - XML Syntax error : " + 
+			  "expecting one of <asset>, <aggregateasset>, or <assetgroup> but got <" + childname + ">");
 	  }
 	}
       }
@@ -68,7 +74,8 @@ public class DirectObjectParser{
     return asset;
   }
 
-  private DirectObjectParser(){}
-
-  private static Logger logger=LoggerFactory.getInstance().createLogger("DirectObjectParser");
+  protected Logger logger;
+  protected AssetParser assetParser;
+  protected AggregateAssetParser aggregateAssetParser;
+  protected AssetGroupParser assetGroupParser;
 }

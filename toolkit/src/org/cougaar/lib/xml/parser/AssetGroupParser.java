@@ -39,20 +39,24 @@ import org.cougaar.util.log.*;
  * Creates an asset group -- primarily used in parsing test input files.
  */
 public class AssetGroupParser{
+  public AssetGroupParser (Logger log) { 
+    logger = log; 
+    assetHelper = new UTILAsset (log);
+    assetParser = new AssetParser (log);
+    aggregateAssetParser = new AggregateAssetParser (log);
+  }
 
-  private static Logger logger=LoggerFactory.getInstance().createLogger("AssetGroupParser");
-
-  public static AssetGroup getAssetGroup(LDMServesPlugin ldm, Node node){
+  public AssetGroup getAssetGroup(LDMServesPlugin ldm, Node node){
     AssetGroup ag = null;
     try{
       NodeList  nlist    = node.getChildNodes();      
       int       nlength  = nlist.getLength();
       Node      idNode   = node.getAttributes().getNamedItem("id");
-	  String id = null;
+      String id = null;
 	  
-	  if (idNode == null)
-		id = "" + new Date ().getTime ();
-	  else
+      if (idNode == null)
+	id = "" + new Date ().getTime ();
+      else
         id = idNode.getNodeValue();
 
       Vector    assets   = new Vector();
@@ -62,35 +66,36 @@ public class AssetGroupParser{
 	String  childname   = child.getNodeName();
 
 	if(childname.equals("asset")){
-	  Asset asset = AssetParser.getAsset(ldm, child);
+	  Asset asset = assetParser.getAsset(ldm, child);
 	  assets.addElement(asset);
 	}
 	else if(childname.equals("aggregateasset")){
-	  AggregateAsset asset = AggregateAssetParser.getAggregate(ldm, child);
+	  AggregateAsset asset = aggregateAssetParser.getAggregate(ldm, child);
 	  assets.addElement(asset);
 	}
 	else if(childname.equals("assetgroup")){
-	  AssetGroup asset = AssetGroupParser.getAssetGroup(ldm, child);
+	  AssetGroup asset = getAssetGroup(ldm, child); // RECURSE
 	  assets.addElement(asset);
 	}
 	else if(!childname.equals("#text")){
-	  logger.debug ("AssetGroupParser - XML Syntax error : " + 
-			      "expecting one of <asset>, <aggregateasset>, or <assetgroup> but got <" + childname + ">");
+	  logger.error ("AssetGroupParser - XML Syntax error : " + 
+			"expecting one of <asset>, <aggregateasset>, or <assetgroup> but got <" + childname + ">");
 	}
       }
       if (ldm.getFactory() == null) 
 	logger.error("WARNING: LDM Factory is null in xmlparser!");
-      ag = UTILAsset.makeAssetGroup(ldm.getFactory(), id);
+      ag = assetHelper.makeAssetGroup(ldm.getFactory(), id);
       ag.setAssets(assets);
     }
     catch(Exception e){
-      logger.error(e.getMessage());
-      e.printStackTrace();
+      logger.error(e.getMessage(), e);
     }
 
     return ag; 
   }
 
-  private AssetGroupParser(){}
-
+  protected Logger logger;
+  protected UTILAsset assetHelper;
+  protected AssetParser assetParser;
+  protected AggregateAssetParser aggregateAssetParser;
 }

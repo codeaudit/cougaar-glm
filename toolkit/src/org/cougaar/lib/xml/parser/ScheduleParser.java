@@ -36,8 +36,10 @@ import org.cougaar.util.log.*;
  * availability of an asset.
  */
 public class ScheduleParser{
+  private static Logger logger;
+  public void setLogger (Logger log) { logger = log; }
 
-  public static Schedule getSchedule( LDMServesPlugin ldm, Node node){
+  public Schedule getSchedule( LDMServesPlugin ldm, Node node){
 
     Schedule newSchedule = null;
 
@@ -51,18 +53,16 @@ public class ScheduleParser{
 	Date startDate = df.parse(start);
 	Date endDate = df.parse(end);
 	if (endDate.before (startDate))
-	  logger.debug ("Hey! in creating asset instance, start date " + startDate +
+	  logger.error ("Hey! in creating asset instance, start date " + startDate +
 			      " is after " + endDate);
 	newSchedule = ldm.getFactory().newSimpleSchedule(startDate,endDate);
       }
       catch (Exception e) {
-	e.printStackTrace();
+	logger.error ("Got exception ", e);
       }
     }
     // then throw some sort of error if not object should not get here!
     return newSchedule;
   }   
-
-  private static Logger logger=LoggerFactory.getInstance().createLogger("ScheduleParser");
 }
 

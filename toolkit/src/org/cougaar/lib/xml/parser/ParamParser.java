@@ -45,7 +45,7 @@ public class ParamParser {
    * @param ntv name=[{type}]value
    * @return param
    */
-  public static Param getParam(String ntv){
+  public Param getParam(String ntv){
     Param p = null;
     if (ntv != null) {
       int eq = ntv.indexOf("=");
@@ -64,7 +64,7 @@ public class ParamParser {
    * @param tv [{type}]value of the parameter: parse "{type}value"
    * @return param
    */
-  private static Param getParam(String n, String tv){
+  protected Param getParam(String n, String tv){
     Param p = null;
     if (tv != null) {
       int endcb = tv.indexOf('}');
@@ -88,7 +88,7 @@ public class ParamParser {
    * @param v String value of the parameter
    * @return param
    */
-  private static Param getParam(String n, String t, String v){
+  protected Param getParam(String n, String t, String v){
     Param p = null;
     try {
       if ((t == null) || (t.equals("String")))
