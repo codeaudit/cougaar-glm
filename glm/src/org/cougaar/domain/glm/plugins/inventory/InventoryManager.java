@@ -1028,6 +1028,11 @@ public abstract class InventoryManager extends InventoryProcessor {
 	    invpg = (InventoryPG)inventory.getInventoryPG();
 // 	    invpg.printInventoryLevels(inventory, clusterId_);
 	    invpg.updateContentSchedule(inventory);
+	    // detailed Inventory Schedule for demo purposes only
+	    Boolean detailed = (Boolean)inventoryPlugIn_.getParam("Detailed");
+	    if ((detailed != null) && detailed.booleanValue()) {
+	      invpg.updateDetailedContentSchedule(inventory);
+	    }
 	    invpg.updateInventoryLevelsSchedule(inventory);
 	}
     }
