@@ -335,6 +335,9 @@ public abstract class ManagerBase {
     GridBagConstraints gbc = new GridBagConstraints();
     for (int i = 0, n = plugins.size(); i < n; i++) {
       PlugInItem item = (PlugInItem) plugins.get(i);
+      if (item.thePlugIn.getClass() == getDefaultPlugInClass()) {
+          item.disable();
+      }
       gbc.gridy = i;
       gbc.gridx = 0;
       gbc.anchor = gbc.WEST;
