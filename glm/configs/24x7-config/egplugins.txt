@@ -1,1 +1,0 @@
-org.cougaar.domain.glm.execution.eg.TwentyFourBySevenPlugIn/http://alp-115:5555/$Measure2/alpine/demo/SENSOR.PSP?sensor=%
