@@ -113,7 +113,7 @@ public class PSP_Inventory
 
   private UISimpleInventory getInventoryForClient(UIInventoryImpl inventory,
 						  boolean provider,
-						  Date cDay) {
+						  Date startingCDay) {
     UISimpleInventory inv = new UISimpleInventory();
     
     inv.setAssetName(inventory.getAssetName());
@@ -125,7 +125,7 @@ public class PSP_Inventory
       System.out.println("WARNING: Treating Other schedule as total inventory");
     }
     inv.setScheduleType(scheduleType);
-    inv.setBaseCDay(cDay);
+    inv.setBaseCDay(startingCDay);
 
     if (scheduleType.equals(PlanScheduleType.TOTAL_CAPACITY)) {
       inv.addNamedSchedule(ALLOCATED,   inventory.getDueOutLaborSchedule());
@@ -374,18 +374,7 @@ public class PSP_Inventory
       psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
     } // end getting asset name from UID
 
-    Date cDay=null;
-
-    // get oplan
-    Subscription oplanSubscription =
-      psc.getServerPluginSupport().subscribe(this, oplanPredicate());
-    Collection oplanCollection =
-      ((CollectionSubscription)oplanSubscription).getCollection();
-    if (!oplanCollection.isEmpty()) {
-      Oplan plan = (Oplan) ((CollectionSubscription)oplanSubscription).first();
-      cDay = plan.getCday();
-      psc.getServerPluginSupport().unsubscribeForSubscriber(oplanSubscription);
-    }
+    Date startDay=getStartDate(psc);
 
     // get roles and determine if this cluster is a provider (or consumer)
     Subscription roleSubscription =
@@ -428,7 +417,7 @@ public class PSP_Inventory
 
     // set values in UISimpleInventory, a serializable object
     UISimpleInventory simpleInventory = 
-      getInventoryForClient(inventory, provider, cDay);
+      getInventoryForClient(inventory, provider, startDay);
 
     // send the UISimpleInventory object
     if (simpleInventory != null) {
@@ -436,6 +425,22 @@ public class PSP_Inventory
       p.writeObject(simpleInventory);
       System.out.println("Sent XML document");
     }
+  }
+
+  protected Date getStartDate(PlanServiceContext psc) {
+      Date startingCDay=null;
+      
+      // get oplan
+      Subscription oplanSubscription =
+	  psc.getServerPluginSupport().subscribe(this, oplanPredicate());
+      Collection oplanCollection =
+	  ((CollectionSubscription)oplanSubscription).getCollection();
+      if (!oplanCollection.isEmpty()) {
+	  Oplan plan = (Oplan) ((CollectionSubscription)oplanSubscription).first();
+	  startingCDay = plan.getCday();
+	  psc.getServerPluginSupport().unsubscribeForSubscriber(oplanSubscription);     
+    }
+    return startingCDay;
   }
 
   public boolean returnsXML() {
