@@ -34,6 +34,8 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.plugins.TaskUtils;
 import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.core.naming.Glob;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.core.logging.LoggingServiceWithPrefix;
 
 // Simple plugin that says 'yes' to any task fed to it
 // Optionally, if arguments are given, will only allocate tasks with given verbs
@@ -59,6 +61,9 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
             }
             return buf.toString();
         }
+        public boolean mayFail() {
+            return schedule != null && !schedule.isEmpty();
+        }
     }
     private IncrementalSubscription allTasks;
     private UnaryPredicate allTasksPredicate = new UnaryPredicate() {
@@ -76,6 +81,8 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
     /** Map a Verb to a Filter **/
     private Map verbMap = new HashMap();
 
+    private LoggingService logger;
+
     /**
      * Create a single dummy asset to which to allocate all
      * appropriate tasks
@@ -83,6 +90,11 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
     private Asset sink_asset = null;
     
     public void setupSubscriptions() {
+        logger = (LoggingService)
+            getDelegate().getServiceBroker()
+            .getService(this, LoggingService.class, null);
+        logger = LoggingServiceWithPrefix
+            .add(logger, getAgentIdentifier().cleanToString() + ": ");
 	allTasks = (IncrementalSubscription)subscribe(allTasksPredicate);
         parseParams();
     }
@@ -293,6 +305,43 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
 //                  helper.setAspect(av);
 //              }
 //          }
-	return helper.getAllocationResult(1.0);
+	AllocationResult ret = helper.getAllocationResult(1.0);
+        if (ret.isSuccess() || filter.mayFail()) return ret;
+        if (logger.isWarnEnabled()) {
+            AspectValue[] avs = ret.getAspectValueResults();
+            boolean found = false;
+            for (int i = 0; i < avs.length; i++) {
+                AspectValue av = avs[i];
+                int aspectType = av.getAspectType();
+                Preference pref = task.getPreference(aspectType);
+                ScoringFunction sf = pref.getScoringFunction();
+                double thisScore = sf.getScore(av);
+                AspectValue best = pref.getScoringFunction().getBest().getAspectValue();
+                if (thisScore >= ScoringFunction.HIGH_THRESHOLD) {
+                    String avRateClass = null;
+                    String bestRateClass = null;
+                    if (best instanceof AspectRate) {
+                        ((AspectRate) best).getRateValue().getClass().getName();
+                    }
+                    if (av instanceof AspectRate) {
+                        ((AspectRate) av).getRateValue().getClass().getName();
+                    }
+                    logger.warn("Unexpected failure in computeAllocationResult:"
+                                + " task=" + task
+                                + " AspectType=" + aspectType
+                                + " AspectValue=" + av
+                                + " scoringFunction=" + sf
+                                + " best=" + best
+                                + " score=" + thisScore
+                                + " avRateClass=" + avRateClass
+                                + " bestRateClass=" + bestRateClass);
+                    found = true;
+                }
+            }
+            if (!found) {
+                logger.warn("Failure in computeAllocationResult with not apparent reason");
+            }
+        }
+        return helper.getAllocationResult(1.0, true);
     }
 }

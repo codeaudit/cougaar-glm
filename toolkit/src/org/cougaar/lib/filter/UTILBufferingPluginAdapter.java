@@ -21,8 +21,11 @@
 
 package org.cougaar.lib.filter;
 
+import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.ThreadService;
+import org.cougaar.core.agent.service.alarm.Alarm;
 
+import org.cougaar.core.thread.CougaarThread;
 import org.cougaar.core.thread.Schedulable;
 
 import org.cougaar.planning.ldm.plan.Task;
@@ -72,9 +75,7 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   public void localSetup() {
     super.localSetup ();
 
-    schedulable = 
-      threadService.getThread (this, getBufferingThread(), getName()+"_bufferingThread");
-    schedulable.start();
+    wakeUp ();
 
     verify = new UTILVerify (logger);
     prefHelper = new UTILPreference (logger);
@@ -188,22 +189,6 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   /** accessor */
   protected UTILBufferingThread getBufferingThread () { return bufferingThread; }
 
-  /** 
-   * Implemented for UTILBufferingPlugin
-   *
-   * needed to lock the subscriber in the nested class   
-   * public version of a protected method
-   */
-  public void startTransaction() { blackboard.openTransaction(); }
-
-  /** 
-   * Implemented for UTILBufferingPlugin
-   *
-   * needed to unlock the subscriber in the nested class   
-   * public version of a protected method
-   */
-  public void endTransaction()   { blackboard.closeTransactionDontReset();  }
-
   /**
    * Implemented for UTILBufferingPlugin
    *
@@ -215,26 +200,77 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    */
   public abstract void processTasks (List tasks);
 
-  /** maybe a good idea for later... */
-  public void setThreadService (ThreadService ts) {
-    threadService = ts;
-  }
-
-  public void suspend () {
-    super.suspend ();
-
-    getBufferingThread().pleaseStop(); // tell thread to stop
-
-    schedulable.cancel ();             // tell scheduler not to schedule this thread again
-  } 
-
   public void resume  () {
     super.resume ();
 
-    schedulable = 
-      threadService.getThread (this, getBufferingThread(), getName()+"_bufferingThread");
-    schedulable.start();
+    wakeUp ();
   } 
+
+  public void wakeUp () {
+    if (isInfoEnabled())
+      info (getName () + " wakeUp called.");
+
+    examineBufferAgainIn (10l);
+  }
+
+  /** Buffering runnable wants to restart later */
+  public void examineBufferAgainIn (long delayTime) {
+    if (isInfoEnabled())
+      info (getName () + " asking to be restarted in " + delayTime);
+
+    if (currentAlarm != null)
+      currentAlarm.cancel ();
+
+    long absTime = System.currentTimeMillis()+delayTime;
+    alarmService.addRealTimeAlarm (currentAlarm = new PluginAlarm (absTime));
+  }
+
+  /** lifted from PluginAdapter -- can't reuse it from there, sigh... */
+  public class PluginAlarm implements Alarm {
+    private long expiresAt;
+    private boolean expired = false;
+    public PluginAlarm (long expirationTime) {
+      expiresAt = expirationTime;
+    }
+    public long getExpirationTime() { return expiresAt; }
+    public synchronized void expire() {
+      if (!expired) {
+        expired = true;
+        getBlackboardService().signalClientActivity();
+      }
+    }
+    public boolean hasExpired() { return expired; }
+    public synchronized boolean cancel() {
+      boolean was = expired;
+      expired=true;
+      return was;
+    }
+    public String toString() {
+      return "<PluginAlarm "+expiresAt+
+        (expired?"(Expired) ":" ")+
+        "for "+UTILBufferingPluginAdapter.this.toString()+">";
+    }
+  }
+
+  /** 
+   * Called every time one of the filterCallback subscriptions
+   * change.
+   *
+   * What the plugin does in response to a changed subscription.
+   *
+   * Directs the filterCallback with the changed subscription
+   * to react to the change in some way.
+   */
+  protected void execute() {
+    if (isDebugEnabled ())
+      debug (getName () + " : cycle called (a subscription changed)");
+
+    super.execute ();
+
+    if (currentAlarm.hasExpired()) {
+      bufferingThread.run();
+    }
+  }
 
   protected UTILBufferingThread  bufferingThread = null;
 
@@ -243,4 +279,5 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   protected UTILVerify verify;
   protected UTILPreference prefHelper;
   protected ThreadService threadService;
+  protected PluginAlarm currentAlarm;
 }

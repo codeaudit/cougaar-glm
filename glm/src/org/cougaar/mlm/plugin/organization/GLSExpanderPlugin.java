@@ -320,7 +320,9 @@ public class GLSExpanderPlugin extends ComponentPlugin {
     }
     
     subtask.setPlan(task.getPlan());
-    subtask.setPreferences(task.getPreferences());
+    synchronized (task) {
+      subtask.setPreferences(task.getPreferences());
+    }
     ContextOfUIDs context = (ContextOfUIDs) task.getContext();
     if (context == null) {
     } else {

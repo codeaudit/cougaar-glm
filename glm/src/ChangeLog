@@ -1,3 +1,63 @@
+2002-08-26  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/organization/GLSExpanderPlugin.java: 
+	* org/cougaar/mlm/plugin/organization/GLSAllocatorPlugin.java:
+	Bug #2102 -- concurrent mod exception in Univ Allocator during rehydration
+	Synchronize the task before enumerating its preferences to avoid
+	potential ConcurrentModificationException (not very likely, but it
+	can't hurt).
+
+2002-08-20  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/plugin/completion/GLMCompletionTargetPlugin.java:
+	Bug #2083 -- Completion plugins should ignore tasks past the end of level 2 planning
+	Create a predicate that ignores tasks have certain verbs with end
+	times more the a number of days in the future as given by the
+	value of the level2 OperatingMode.
+
+	* org/cougaar/mlm/plugin/sample/UniversalAllocatorPlugin.java:
+	Bug #2013 -- Universal Allocator sporadically failing at HNS
+	Yet another printout mod to compare the Rate classes of the
+	AspectRates. Classes should be the same. I suspect they are not.
+	
+	* org/cougaar/mlm/plugin/sample/UniversalAllocatorPlugin.java:
+	Bug #2013 -- Universal Allocator sporadically failing at HNS
+	The evidence implicates the ScoringFunction since it appears to
+	yield a score of 1.0 (bad) for its "best" value.
+	Revised warning to print the scoring function and its best value.
+
+2002-08-15  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/sample/UniversalAllocatorPlugin.java: 
+	Bug #2013 -- Universal Allocator sporadically failing at HNS
+	Check for "no failure schedule" was incorrect. Failures can occur
+	only when there is a filter, the filter has a schedule, and the
+	schedule is non-empty. The last term was omitted.
+
+2002-08-13  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/sample/UniversalAllocatorPlugin.java:
+	Bug #2013 -- Universal Allocator sporadically failing at HNS
+	Cannot reproduce this bug. Added code to check for a failing
+	result when there is no failure schedule. Log warnings for every
+	preference with a failing score (using the same value for failure
+	as the AllocationResultHelper uses). If there is no failing score,
+	say so. Return an AllocationResult with success forced on.
+
+2002-08-09  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/plugin/completion/GLMCompletionSocietyPlugin.java:
+	Bug #1997 -- Completion plugins publish oplan and GLS before agents are ready
+	Disable publish oplan send gls actions restore wait for gls action.
+
+2002-08-05  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/ldm/lps/ReceiveTransferableLP.java:
+	Bug #1969 -- NPE in Envelope.removeObject
+	Rescinding a Transferable that is not present or has already been
+	rescinded. Probably occured during resynchronization after
+	rehydration. Fix is to ignore such rescinds.
+
 2002-06-13  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/mlm/plugin/organization/GLSInitServlet.java:

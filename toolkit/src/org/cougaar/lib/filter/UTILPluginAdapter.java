@@ -424,7 +424,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
     synchronized (mySubscriptions) {
       for (int i = 0; i < mySubscriptions.size ();  i++) {
         UTILFilterCallback cb = (UTILFilterCallback) mySubscriptions.elementAt (i);
-	if (blackboard.didRehydrate ()) {
+	if (blackboard.didRehydrate () && !checkedDidRehydrate) {
 	  if (cb instanceof UTILRehydrateReactor) {
 	    ((UTILRehydrateReactor)cb).reactToRehydrate();
 	    // don't react to a changed filter, since react to rehydrate should
@@ -442,6 +442,8 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
           cb.reactToChangedFilter ();
         }
       }
+
+      checkedDidRehydrate = true; // so we don't get those Failed to find persisted state messages
     }
   }
 
@@ -696,4 +698,6 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   protected UTILAllocate allocHelper;
   protected UTILExpand expandHelper;
   protected UTILVerify verifyHelper;
+
+  protected boolean checkedDidRehydrate = false;
 }

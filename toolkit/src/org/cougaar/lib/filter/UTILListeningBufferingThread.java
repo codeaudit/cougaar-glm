@@ -66,6 +66,10 @@ public class UTILListeningBufferingThread
     return myPlugin.interestingTask (t);
   }
 
+  public void handleAll (Collection tasks) {
+    addAll (tasks);
+  }
+
   /** 
    * Handling a task as a generic listener means buffering it.
    * When the task thresholds are reached, then UTILBufferingThread
@@ -117,6 +121,10 @@ public class UTILListeningBufferingThread
   public IncrementalSubscription subscribeFromCallback(UnaryPredicate pred,
 						       Collection specialContainer) {
     return myPlugin.subscribeFromCallback(pred, specialContainer);
+  }
+
+  public void wakeUp () {
+    myPlugin.wakeUp ();
   }
 
   private static final String classname = 

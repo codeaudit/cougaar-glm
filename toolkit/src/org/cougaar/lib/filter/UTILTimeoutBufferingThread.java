@@ -159,14 +159,11 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
    *
    * Records that there all "leftover" tasks have been handled.
    *
-   * wraps processLeftoverTasks call in COUGAAR transaction
-   *
    * calls UTILBufferingPlugin.processTasks
    * </pre>
    * @see UTILBufferingPlugin#processTasks
    */
   protected void alternateDispatch () {
-    myPlugin.startTransaction();
     try{
       ((UTILTimeoutBufferingPlugin)myPlugin).processLeftoverTasks ();
       // we've taken care of all leftover tasks, 
@@ -177,8 +174,6 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
       e.printStackTrace();
     }
     finally{
-      // end the transaction
-      myPlugin.endTransaction();
     }
   }
 

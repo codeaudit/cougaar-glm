@@ -136,11 +136,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * Subscribe.
    */
   protected void setupSubscriptions() {
-    //setDebug();
-    setDebug(false);
-    
-    if (DEBUG) {
-      printDebug(getClass()+" setting up subscriptions");
+    if (logger.isInfoEnabled()) {
+      printInfo(getClass()+" setting up subscriptions");
     }
 
     setDefaults(getParameters().elements());
@@ -208,15 +205,15 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   protected void execute() {
                   
     if (selfOrgsSub.hasChanged()) {
-      if (DEBUG) {
-        printDebug("selfOrgs hasChanged");
+      if (logger.isInfoEnabled()) {
+        printInfo("selfOrgs hasChanged");
       }
       watchAddedSelfOrgs(selfOrgsSub.getAddedList());
     }
 
     if (orgDeployActsSub.hasChanged()) {
-      if (DEBUG) {
-        printDebug("orgDeployActs hasChanged");
+      if (logger.isInfoEnabled()) {
+        printInfo("orgDeployActs hasChanged");
       }
       watchChangedOrgDeployActs(orgDeployActsSub.getChangedList());
       watchRemovedOrgDeployActs(orgDeployActsSub.getRemovedList());
@@ -225,8 +222,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
 
     if (drTasksSub.hasChanged()) {
-      if (DEBUG) {
-        printDebug("DetermineReqs Tasks hasChanged");
+      if (logger.isInfoEnabled()) {
+        printInfo("DetermineReqs Tasks hasChanged");
       }
       watchChangedDetermineRequirementsTasks(
           drTasksSub.getChangedList());
@@ -241,8 +238,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
     
     if (transAssetsPersonSub.hasChanged()) {
-      if (DEBUG) {
-        printDebug("Transportable Assets hasChanged");
+      if (logger.isInfoEnabled()) {
+        printInfo("Transportable Assets hasChanged");
       }
       watchChangedTransportableAssets(transAssetsPersonSub.getChangedList());
       watchRemovedTransportableAssets(transAssetsPersonSub.getRemovedList());
@@ -250,8 +247,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     }
 
     if (transAssetsEquipmentSub.hasChanged()) {
-      if (DEBUG) {
-        printDebug("Transportable Assets hasChanged");
+      if (logger.isInfoEnabled()) {
+        printInfo("Transportable Assets hasChanged");
       }
       watchChangedTransportableAssets(transAssetsEquipmentSub.getChangedList());
       watchRemovedTransportableAssets(transAssetsEquipmentSub.getRemovedList());
@@ -259,8 +256,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     }
 
     if (failedDRAllocsSub.hasChanged()) {
-      if (DEBUG) {
-        printDebug("Failed DR Subtask Allocation hasChanged");
+      if (logger.isInfoEnabled()) {
+        printInfo("Failed DR Subtask Allocation hasChanged");
       }
       watchFailedDispositions(failedDRAllocsSub.getChangedList());
     }
@@ -292,8 +289,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     if (eSelfOrgs.hasMoreElements()) {
       this.selfOrg = (Organization)eSelfOrgs.nextElement();
       this.selfOrgId = getOrgID(selfOrg);
-      if (DEBUG) {
-        printDebug("Found Self: "+this.selfOrgId);
+      if (logger.isInfoEnabled()) {
+        printInfo("Found Self: "+this.selfOrgId);
       }
       if (eSelfOrgs.hasMoreElements()) {
         printError(
@@ -340,10 +337,16 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   protected void watchDueDetermineRequirementsTasks() {
     if ((unhandledDetermineRequirementsTask != null) &&
         (unhandledDetermineRequirementsTask.isDue())) {
-      if (DEBUG) {
-        printDebug("watchDueDetermineRequirementsTask - resubmitting dr task");
+      if (logger.isInfoEnabled()) {
+        printInfo("watchDueDetermineRequirementsTask - resubmitting dr task");
       }
       handleDetermineRequirementsTask(unhandledDetermineRequirementsTask.task);
+    }
+    else if (logger.isInfoEnabled ()) {
+        printDebug("watchDueDetermineRequirementsTask - ignoring call to watch due, since unhandled d.r. is " +
+		   unhandledDetermineRequirementsTask + 
+		   ((unhandledDetermineRequirementsTask == null) ? "" : " or isDue is " + 
+		    unhandledDetermineRequirementsTask.isDue ()));
     }
   }
   
@@ -372,6 +375,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     if (drTask != null) {
       handleDetermineRequirementsTask(drTask);
     }
+    else if (logger.isInfoEnabled ())
+      printInfo ("watchChangedDetermineRequirementsTasks - could not find D.R. task?");
   }
 
   /**
@@ -383,8 +388,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   protected void watchRemovedDetermineRequirementsTasks(Enumeration eTasks) {
     Task drTask = findSingleDetermineRequirementsTask(eTasks);
     if (drTask != null) {
-      if (DEBUG) {
-        printDebug("Remove DetReqs Task");
+      if (logger.isInfoEnabled()) {
+        printInfo("Remove DetReqs Task");
       }
       DeployPlan dp = getDeployPlan();
       if (dp == null) {
@@ -405,8 +410,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * OrgActivity-based <code>DeployPlan</code> saved.
    */
   protected void watchAddedSelfOrgDeployAct(OrgActivity selfOrgAct) {
-    if (DEBUG) {
-      printDebug("Adding orgActivity!: "+selfOrgAct+"\nbegin");
+    if (logger.isInfoEnabled()) {
+      printInfo("Adding orgActivity!: "+selfOrgAct+"\nbegin");
     }
 
     DeployPlan oldDeployPlan = getDeployPlan();
@@ -421,8 +426,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     // light of the new Org Activity
     watchDueDetermineRequirementsTasks();
 
-    if (DEBUG) {
-      printDebug("Added orgActivity!: "+selfOrgAct+"\ndone");
+    if (logger.isInfoEnabled()) {
+      printInfo("Added orgActivity!: "+selfOrgAct+"\ndone");
     }
   }
 
@@ -439,14 +444,14 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * </ol>
    */
   protected void watchChangedSelfOrgDeployAct(OrgActivity selfOrgAct) {
-    if (DEBUG) {
-      printDebug("Changed orgActivity!: "+selfOrgAct+"\nbegin");
+    if (logger.isInfoEnabled()) {
+      printInfo("Changed orgActivity!: "+selfOrgAct+"\nbegin");
     }
 
     watchAddedSelfOrgDeployAct(selfOrgAct);
 
-    if (DEBUG) {
-      printDebug("Changed orgActivity!: "+selfOrgAct+"\ndone");
+    if (logger.isInfoEnabled()) {
+      printInfo("Changed orgActivity!: "+selfOrgAct+"\ndone");
     }
   }
 
@@ -460,8 +465,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     // throw away the deploy plan
     DeployPlan oldDeployPlan = getDeployPlan();
     if (oldDeployPlan != null) {
-      if (DEBUG) {
-        printDebug("Remove Deployment Plan!\nOLD:\n"+oldDeployPlan);
+      if (logger.isInfoEnabled()) {
+        printInfo("Remove Deployment Plan!\nOLD:\n"+oldDeployPlan);
       }
       setDeployPlan(null);
 
@@ -486,21 +491,21 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     DeployPlan dp = getDeployPlan();
     if (dp == null) {
       // no deploy plan yet
-      if (DEBUG) {
-        printDebug("Assets added, waiting for OrgActivity");
+      if (logger.isInfoEnabled()) {
+        printInfo("Assets added, waiting for OrgActivity");
       }
       return;
     }
     Task drTask = dp.detReqsTask;
     if (drTask == null) {
       // no determine requirements task yet
-      if (DEBUG) {
-        printDebug("Assets added, waiting for OrgActivity");
+      if (logger.isInfoEnabled()) {
+        printInfo("Assets added, waiting for OrgActivity");
       }
       return;
     }
-    if (DEBUG) {
-      printDebug("Adding Assets with DP: "+ dp);
+    if (logger.isInfoEnabled()) {
+      printInfo("Adding Assets with DP: "+ dp);
     }
     expandDetermineRequirements(dp, drTask, eAssets);
   }
@@ -521,8 +526,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       // no assets changed
       return;
     }
-    if (DEBUG) {
-      printDebug("Changed assets!");
+    if (logger.isInfoEnabled()) {
+      printInfo("Changed assets!");
     }
     Vector v = new Vector();
     while (eAssets.hasMoreElements()) {
@@ -543,8 +548,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       // no assets
       return;
     }
-    if (DEBUG) {
-      printDebug("Handle Asset removal");
+    if (logger.isInfoEnabled()) {
+      printInfo("Handle Asset removal");
     }
     // get workflow
     DeployPlan dp = getDeployPlan();
@@ -562,8 +567,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     Vector workflowRemoveTasks = new Vector();
     while (eAssets.hasMoreElements()) {
       Asset assetForTrans = (Asset)eAssets.nextElement();
-      if (DEBUG) {
-        printDebug("Look for removed asset: "+assetForTrans);
+      if (logger.isInfoEnabled()) {
+        printInfo("Look for removed asset: "+assetForTrans);
       }
       workflowRemoveTasks.clear();
       Enumeration subTE = wf.getTasks();
@@ -571,8 +576,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
         Task subT = (Task)subTE.nextElement();
         // FIXME! what if asset group!
         if (subT.getDirectObject() == assetForTrans) {
-          if (DEBUG) {
-            printDebug("  Will remove Task: "+subT+
+          if (logger.isInfoEnabled()) {
+            printInfo("  Will remove Task: "+subT+
                        " with DO: "+assetForTrans);
           }
           workflowRemoveTasks.add(subT);
@@ -581,16 +586,16 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       }
       for (int i = workflowRemoveTasks.size(); --i >= 0; ) {
         Task removeWFT = (Task)workflowRemoveTasks.elementAt(i);
-        if (DEBUG) {
-          printDebug("Remove from workflow Task: "+removeWFT);
+        if (logger.isInfoEnabled()) {
+          printInfo("Remove from workflow Task: "+removeWFT);
         }
         wf.removeTask(removeWFT);
       }
     }
     for (int i = publishRemoveTasks.size(); --i >= 0; ) {
       Task removeT = (Task)publishRemoveTasks.elementAt(i);
-      if (DEBUG) {
-        printDebug("publishRemove Task: "+removeT);
+      if (logger.isInfoEnabled()) {
+        printInfo("publishRemove Task: "+removeT);
       }
       publishRemove(removeT);
     }
@@ -624,15 +629,10 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     do {
       Allocation failedAlloc = (Allocation)eFailedAllocs.nextElement();
       NewTask tFailed = (NewTask)failedAlloc.getTask();
-      if (DEBUG) {
-        printDebug("Failed Allocation: "+failedAlloc.toString()+
-                   " of Task: "+tFailed.toString());
+      if (logger.isWarnEnabled()) {
+        printWarn("Failed Allocation: "+failedAlloc.toString()+
+		  " of Task: "+tFailed.toString());
       }
-      /* this is a really bad idea, and we won't do it anymore */
-      //      if (!(updateFailedTaskPreferences(tFailed,
-      //              adjustDurationDays, earliestDate))) {
-      //        printError("Unable to fix a failed allocation: "+failedAlloc);
-      //      }
     } while (eFailedAllocs.hasMoreElements());
   }
   
@@ -644,8 +644,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * Little utility to remove a workflow and expansion
    */
   protected void killWorkflow(Workflow wf) {
-    if (DEBUG) {
-      printDebug("  kill workflow: "+wf);
+    if (logger.isInfoEnabled()) {
+      printInfo("  kill workflow: "+wf);
     }
     
     // Only need to kill subtasks if wf was set to not propagate
@@ -653,8 +653,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       Enumeration subtasksE = wf.getTasks();
       while (subtasksE.hasMoreElements()) {
         Task subt = (Task)subtasksE.nextElement();
-        if (DEBUG) {
-          printDebug("    remove task: "+subt);
+        if (logger.isInfoEnabled()) {
+          printInfo("    remove task: "+subt);
         }
         publishRemove(subt);
       }
@@ -665,18 +665,20 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     if (ptask != null) {
       PlanElement ppe = ptask.getPlanElement();
       if (ppe != null) {
-        if (DEBUG) {
-          printDebug("  remove planElement: "+ppe);
+        if (logger.isInfoEnabled()) {
+          printInfo("  remove planElement: "+ppe);
+          printInfo("  publish change the parent task: "+ptask.getUID());
         }
         publishRemove(ppe);
+	publishChange(ptask);
       } else {
-        if (DEBUG) {
-          printDebug("   no wf parent planElement");
+        if (logger.isInfoEnabled()) {
+          printInfo("   no wf parent planElement");
         }
       }
     } else {
-      if (DEBUG) {
-        printDebug("   no wf parent");
+      if (logger.isInfoEnabled()) {
+        printInfo("   no wf parent");
       }
     }
   }
@@ -699,8 +701,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     DeployPlan newDP = 
       new DeployPlan(selfOrg, selfOrgAct, adjustDurationDays, overrideFromLocation,  
                      prepoStartDate);
-    if (DEBUG) {
-      printDebug(newDP.toString());
+    if (logger.isInfoEnabled()) {
+      printInfo(newDP.toString());
     }
 
     if (!newDP.isValid()) {
@@ -711,8 +713,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     } else {
       DeployPlan oldDP = getDeployPlan();
       if (oldDP != null) {
-        if (DEBUG) {
-          printDebug("Replace Deployment Plan!\n"+
+        if (logger.isInfoEnabled()) {
+          printInfo("Replace Deployment Plan!\n"+
                      "OLD:\n"+oldDP+"\n"+
                      "NEW:\n"+newDP);
         }
@@ -721,63 +723,29 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     }
   }
 
-  
-  protected boolean DEBUG = false;
-  protected String debugPrefix;
-  protected String errorPrefix;
   /** 
-   * Debug is set in this order:<br>
-   * <ol>
-   *   <li> if parameter "debug=true" is set</li>
-   *   <li> if system property "THISCLASS.debug=true" is set</li>
-   *   <li> default is false</li>
-   * </ol>
-   */
-  protected boolean setDebug() {
-    // set debug prefix string
-    String clusterName = getClusterIdentifier().toString();
-    if (clusterName.startsWith("<"))
-      clusterName = clusterName.substring(1);
-    if (clusterName.endsWith(">"))
-      clusterName = clusterName.substring(0,clusterName.length()-1);
-    debugPrefix = "DEBUG "+clusterName+".StratTrans ";
-    errorPrefix = "ERROR "+clusterName+".StratTrans ";
-    // first try plugin parameters
-    Enumeration eParams = getParameters().elements();
-    while (eParams.hasMoreElements()) {
-      String sParam = (String)eParams.nextElement();
-      if (sParam.startsWith("debug=")) {
-        DEBUG = "true".equalsIgnoreCase(
-                  sParam.substring("debug=".length()));
-        return DEBUG;
-      }
-    }
-    // next try system property
-    String sysProp = System.getProperty(this.getClass().getName()+".debug");
-    if (sysProp != null) {
-      DEBUG = "true".equalsIgnoreCase(sysProp);
-      return DEBUG;
-    }
-    // default
-    DEBUG = false;
-    return DEBUG;
-  }
-  protected void setDebug(boolean b) {DEBUG=b;}
-
-  /** 
-   * Debug printer which only prints if DEBUG boolean is true.
+   * Debug printer
    */
   protected final void printDebug(String s) {
-    if (logger.isDebugEnabled())
-      logger.debug (getBindingSite().getAgentIdentifier() + " - " + s);
-    //    System.out.println(
-    //        StringUtility.prefixLines(debugPrefix, s));
+    logger.debug (getBindingSite().getAgentIdentifier() + " - " + s);
+  }
+
+  /** 
+   * Info printer
+   */
+  protected final void printInfo(String s) {
+    logger.info (getBindingSite().getAgentIdentifier() + " - " + s);
+  }
+
+  /** 
+   * Warn printer
+   */
+  protected final void printWarn(String s) {
+    logger.warn (getBindingSite().getAgentIdentifier() + " - " + s);
   }
 
   protected final void printError(String s) {
     logger.error (getBindingSite().getAgentIdentifier() + " - " + s);
-    //    System.out.println(
-    //        StringUtility.prefixLines(errorPrefix, s));
   }
 
   protected void setDefaults(Enumeration eParams) {
@@ -853,7 +821,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   protected void expandDetermineRequirements(
       DeployPlan dp, Task drTask, 
       Enumeration assetsEnum) {
-    if (DEBUG) {
+    if (logger.isDebugEnabled()) {
       printDebug("Expand task: "+drTask+" with DP: "+ dp);
     }
 
@@ -1035,23 +1003,23 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     NewWorkflow wf = dp.expandedWorkflow;
     boolean newWf = (wf == null);
     if (newWf) {
-      if (DEBUG) {
-        printDebug("New workflow");
-      }
       wf = theLDMF.newWorkflow();
       dp.expandedWorkflow = wf;
 
       wf.setIsPropagatingToSubtasks(true);
       wf.setParentTask(drTask);
+      if (logger.isDebugEnabled()) {
+        printDebug("made new workflow - " + wf);
+      }
     } else {
-      if (DEBUG) {
-        printDebug("Existing workflow");
+      if (logger.isDebugEnabled()) {
+        printDebug("Using existing workflow - " + wf + " that has these tasks : ");
       }
       Enumeration eT = wf.getTasks();
       while (eT.hasMoreElements()) {
         Task ewft = (Task)eT.nextElement();
-        if (DEBUG) {
-          printDebug(" task: "+ewft.getVerb()+
+        if (logger.isDebugEnabled()) {
+          printDebug(" task: "+ewft.getVerb()+ " (" + ewft.getUID() + ") " +
                      " asset: "+ewft.getDirectObject());
         }
       }
@@ -1065,18 +1033,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     Asset assetForTransport = firstAssetForTransport;
     while (true) {
       // Create transport task 
-      NewTask subtask = theLDMF.newTask();
-      subtask.setParentTask( drTask );
-      subtask.setDirectObject( assetForTransport );
-      subtask.setPrepositionalPhrases( prepphrases.elements() );
-      subtask.setVerb( Constants.Verb.Transport );
-      subtask.setPlan( drTask.getPlan() );
-      subtask.setPreferences( prefs.elements() );
-      subtask.setSource( getClusterIdentifier() );
-
-      // add to workflow
-      wf.addTask(subtask);
-      subtask.setWorkflow(wf);
+      NewTask subtask = makeTransportTask (drTask, assetForTransport, prepphrases, prefs, wf);
 
       // publish task
       publishAdd(subtask);
@@ -1107,8 +1064,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
     if (newWf) {
       // make the expansion
-      if (DEBUG) {
-        printDebug("Create expansion");
+      if (logger.isDebugEnabled()) {
+        printDebug("Create expansion of determine requirement task " + drTask.getUID());
       }
       AllocationResult estimatedResult = 
         PluginHelper.createEstimatedAllocationResult(drTask, theLDMF, 1.0, true);
@@ -1119,12 +1076,36 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
           wf,
           estimatedResult);
       publishAdd(pe);
-    }
 
-    if (DEBUG) {
-      printDebug("Published new DetermineReqs Task Expansion");
+      if (logger.isDebugEnabled()) {
+	printDebug("Published new DetermineReqs Task Expansion for d.r. task " + drTask.getUID());
+      }
+    }
+    else {
+      if (logger.isDebugEnabled()) {
+	printDebug("Publish changed expansion of d.r. task " + drTask.getUID());
+      }
+	
+      publishChange (wf.getParentTask().getPlanElement());
     }
   }
+
+  protected NewTask makeTransportTask (Task drTask, Asset assetForTransport, Vector prepphrases, Vector prefs, NewWorkflow wf) {
+    NewTask subtask = theLDMF.newTask();
+    subtask.setParentTask( drTask );
+    subtask.setDirectObject( assetForTransport );
+    subtask.setPrepositionalPhrases( prepphrases.elements() );
+    subtask.setVerb( Constants.Verb.Transport );
+    subtask.setPlan( drTask.getPlan() );
+    subtask.setPreferences( prefs.elements() );
+    subtask.setSource( getClusterIdentifier() );
+
+    // add to workflow
+    wf.addTask(subtask);
+    subtask.setWorkflow(wf);
+
+    return subtask;
+  } 
 
   /** 
    * Filter out invalid zero quantity aggregates from those to make transport tasks for 
@@ -1158,8 +1139,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     DeployPlan dp = getDeployPlan();
     if (dp == null) {
       // no deploy plan so put in unhandled
-      if (DEBUG) {
-        printDebug("handleDetermineRequirementsTask - no deploy plan so waiting on dr task");
+      if (logger.isInfoEnabled()) {
+        printInfo("handleDetermineRequirementsTask - no deploy plan so waiting on dr task");
       }
       unhandledDetermineRequirementsTask = new WaitingTask(0, drTask);
       return;
@@ -1169,10 +1150,10 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     }
 
     
-    if (DEBUG) {
-      printDebug("Add drTask with Deploy Plan: "+dp);
+    if (logger.isInfoEnabled()) {
+      printInfo("Add drTask with Deploy Plan: "+dp);
       if ((dp.detReqsTask != null) && (dp.detReqsTask != drTask)) {
-        printDebug("  Different drTask!  "+drTask+" != "+dp.detReqsTask);
+        printInfo("  Different drTask!  "+drTask+" != "+dp.detReqsTask);
       }
     }
     dp.detReqsTask = drTask;
@@ -1188,16 +1169,16 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     if (eAssets.hasMoreElements()) {
       expandDetermineRequirements(dp, drTask, eAssets);
     } else {
-      if (DEBUG) {
-        printDebug("No assets to transport");
+      if (logger.isInfoEnabled()) {
+        printInfo("No assets to transport");
       }
     }
     eAssets = transAssetsEquipmentSub.elements();
     if (eAssets.hasMoreElements()) {
       expandDetermineRequirements(dp, drTask, eAssets);
     } else {
-      if (DEBUG) {
-        printDebug("No assets to transport");
+      if (logger.isInfoEnabled()) {
+        printInfo("No assets to transport");
       }
     }
   }
@@ -1205,131 +1186,19 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   private void reprocessDetermineRequirementsTask(Task drTask) {
     if (delayReprocessMillis > 0) {
       // delay specified millis before re-adding task
-      if (DEBUG) {
-        printDebug("  delay re-add drTask: "+drTask);
+      if (logger.isInfoEnabled()) {
+        printInfo("  delay re-add drTask: "+drTask);
       }
       unhandledDetermineRequirementsTask = new WaitingTask(delayReprocessMillis,
                                                            drTask);
       wakeAfterRealTime(delayReprocessMillis);
     } else {
       // handle task immediately
-      if (DEBUG) {
-        printDebug("  immediate re-add drTask: "+drTask);
+      if (logger.isInfoEnabled()) {
+        printInfo("  immediate re-add drTask: "+drTask);
       }
       handleDetermineRequirementsTask(drTask);
     }
-  }
-
-  /**
-   * NO NO NO -- Don't use this function!
-   * 
-   * If we get a FailedDisposition (AllocationResult.isSuccess() == false),
-   * then we want to change our Preferences a bit and try again...
-   * <p>
-   * We do this by adjusting the start and end dates back, making sure we
-   * don't slide them to before the earliest allowable date.
-   * <p>
-   * N.B. if this Plugin was running in a more complex society, we may want to
-   * incorporate some thread-safe code here...
-   * <p>
-   * @param t subtask of determineRequirement's Task
-   * @param adjustDurationDays number of days to slide start/end down
-   * @param earliestDate Date that neither start nor stop time can be before
-   * @return preferences updated
-   */
-  protected boolean updateFailedTaskPreferences(
-      NewTask t, int adjustDurationDays, Date earliestDate) {
-    System.err.println ("Don't use this function! Gordon Vidaver 07/17/02. gvidaver@bbn.com");
-    Thread.dumpStack ();
-    if (DEBUG) {
-      printDebug("Adjust task begin/end dates");
-    }
-    AspectValue beginAspect;
-    Date beginDate;
-    try {
-      // get begin date
-      Preference beginPref = t.getPreference(AspectType.START_TIME);
-      beginAspect =
-        beginPref.getScoringFunction().getBest().getAspectValue();
-      beginDate = new Date(beginAspect.longValue());
-      if (DEBUG) {
-        printDebug("  Start: "+ beginDate);
-      }
-    } catch (Exception e) {
-      printError("Unable to get failed task begin date: "+e.getMessage());
-      return false;
-    }
-    AspectValue endEarliestAspect;
-    AspectValue endBestAspect;
-    AspectValue endLatestAspect;
-    Date oldEndEarliestDate;
-    Date oldEndBestDate;
-    Date oldEndLatestDate;
-    try {
-      // get end dates (earliest, best, and latest)
-      Preference endPref = t.getPreference(AspectType.END_TIME);
-      ScoringFunction endSF = endPref.getScoringFunction();
-      Enumeration endVRs = endSF.getValidRanges(null,null);
-      AspectScoreRange endASR = (AspectScoreRange)endVRs.nextElement();
-      endEarliestAspect = 
-        endASR.getRangeStartPoint().getAspectValue();
-      endBestAspect =
-        endSF.getBest().getAspectValue();
-      endLatestAspect =
-        endASR.getRangeEndPoint().getAspectValue();
-      oldEndEarliestDate = new Date(endEarliestAspect.longValue());
-      oldEndBestDate = new Date(endBestAspect.longValue());
-      oldEndLatestDate = new Date(endLatestAspect.longValue());
-      if (DEBUG) {
-        printDebug("  Old End:\n    "+oldEndEarliestDate+" <= "+
-                   oldEndBestDate+" <= "+oldEndLatestDate);
-      }
-    } catch (Exception e) {
-      printError("Unable to get failed task end dates: "+e.getMessage());
-      return false;
-    }
-    try {
-      // slide end dates
-      Date newEndEarliestDate =
-        ShortDateFormat.adjustDate(oldEndEarliestDate, 0, adjustDurationDays);
-      Date newEndBestDate = 
-        ShortDateFormat.adjustDate(oldEndBestDate, 0, adjustDurationDays);
-      Date newEndLatestDate = 
-        ShortDateFormat.adjustDate(oldEndLatestDate, 0, adjustDurationDays);
-      if (DEBUG) {
-        printDebug("  New End:\n    "+newEndEarliestDate+" <= "+
-                   newEndBestDate+" <= "+newEndLatestDate);
-      }
-      // check dates
-      if (!beginDate.before(newEndEarliestDate)) {
-        printError(".updateFailedTaskPreferences - Found failed task " + t.getUID() + 
-		   "\nTried to move the end date preference back and reissue, but couldn't " +
-		   "\nSince refusing to adjust task End Date to before Start Date: "+
-                   beginDate +"\nCurrent end date preferences :\n" +
-		   "Early " + oldEndEarliestDate +
-		   "Best  " + oldEndEarliestDate +
-		   "Late  " + oldEndLatestDate +
-		   "\nAttempted (adjusting back " + adjustDurationDays + " days) end dates :\n" +
-		   "Early " + newEndEarliestDate +
-		   "Best  " + newEndEarliestDate +
-		   "Late  " + newEndLatestDate);
-        return false;
-      }
-      if ((earliestDate != null) &&
-          !earliestDate.before(newEndEarliestDate)) {
-        printError("Refuse to adjust task Dates to before: "+earliestDate);
-        return false;
-      }
-      // set the new end dates
-      endEarliestAspect.setValue(newEndEarliestDate.getTime());
-      endBestAspect.setValue(newEndBestDate.getTime());
-      endLatestAspect.setValue(newEndLatestDate.getTime());
-      publishChange((Task) t);
-    } catch (Exception e) {
-      printError("Unable to adjust failed task end dates: "+e.getMessage());
-      return false;
-    }
-    return true;
   }
 
   /**
@@ -1675,5 +1544,4 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * Everybody needs a logger
    **/
   protected LoggingService logger;
-
 }

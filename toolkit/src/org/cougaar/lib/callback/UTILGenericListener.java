@@ -44,5 +44,7 @@ public interface UTILGenericListener extends UTILFilterCallbackListener, UTILTas
   void    handleTask     (Task t);
 
   void    handleRemovedTask (Task t);
+
+  void    wakeUp ();
 }
 

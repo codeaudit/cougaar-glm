@@ -59,16 +59,14 @@ public interface UTILBufferingPlugin extends UTILFilterCallbackListener, UTILTas
    */
   boolean interestingTask(Task t);
 
-  /** needed to lock the subscriber in the nested class */
-  void startTransaction();
-
-  /** needed to unlock the subscriber in the nested class */
-  void endTransaction();
-
   /**
    * Deal with the tasks that we have accumulated.
    * Derived plugins must implement this.
    * @param tasks the tasks to handle
    */
   void processTasks (List tasks);
+
+  void examineBufferAgainIn (long millis);
+
+  void wakeUp ();
 }

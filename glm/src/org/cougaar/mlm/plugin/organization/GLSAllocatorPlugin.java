@@ -375,7 +375,9 @@ public class GLSAllocatorPlugin extends SimplePlugin {
     // for now set the preferences the same as the parent task's
     // in a real expander you would want to distribute the parents preferences
     // across the subtasks.
-    subtask.setPreferences(t.getPreferences());
+    synchronized (t) {
+      subtask.setPreferences(t.getPreferences());
+    }
     subtask.setSource(me);
     
     return subtask;
@@ -441,32 +443,34 @@ public class GLSAllocatorPlugin extends SimplePlugin {
   }
 	
   private AllocationResult createEstimatedAllocationResult(Task t) {
-    Enumeration preferences = t.getPreferences();
-    if ( preferences != null && preferences.hasMoreElements() ) {
-      // do something really simple for now.
-      Vector aspects = new Vector();
-      Vector results = new Vector();
-      while (preferences.hasMoreElements()) {
-	Preference pref = (Preference) preferences.nextElement();
-	int at = pref.getAspectType();
-	aspects.addElement(new Integer(at));
-	ScoringFunction sf = pref.getScoringFunction();
-	// allocate as if you can do it at the "Best" point
-	double myresult = ((AspectScorePoint)sf.getBest()).getValue();
-	results.addElement(new Double(myresult));
-      }
-      int[] aspectarray = new int[aspects.size()];
-      double[] resultsarray = new double[results.size()];
-      for (int i = 0; i < aspectarray.length; i++)
-	aspectarray[i] = (int) ((Integer)aspects.elementAt(i)).intValue();
-      for (int j = 0; j < resultsarray.length; j++ )
-	resultsarray[j] = (double) ((Double)results.elementAt(j)).doubleValue();
+    synchronized (t) {
+      Enumeration preferences = t.getPreferences();
+      if ( preferences != null && preferences.hasMoreElements() ) {
+        // do something really simple for now.
+        Vector aspects = new Vector();
+        Vector results = new Vector();
+        while (preferences.hasMoreElements()) {
+          Preference pref = (Preference) preferences.nextElement();
+          int at = pref.getAspectType();
+          aspects.addElement(new Integer(at));
+          ScoringFunction sf = pref.getScoringFunction();
+          // allocate as if you can do it at the "Best" point
+          double myresult = ((AspectScorePoint)sf.getBest()).getValue();
+          results.addElement(new Double(myresult));
+        }
+        int[] aspectarray = new int[aspects.size()];
+        double[] resultsarray = new double[results.size()];
+        for (int i = 0; i < aspectarray.length; i++)
+          aspectarray[i] = (int) ((Integer)aspects.elementAt(i)).intValue();
+        for (int j = 0; j < resultsarray.length; j++ )
+          resultsarray[j] = (double) ((Double)results.elementAt(j)).doubleValue();
         
-      AllocationResult myestimate = ldmf.newAllocationResult(0.0, true, aspectarray, resultsarray);
-      return myestimate;
+        AllocationResult myestimate = ldmf.newAllocationResult(0.0, true, aspectarray, resultsarray);
+        return myestimate;
+      }
+      // if there were no preferences...return a null estimate for the allocation result (for now)
+      return null;
     }
-    // if there were no preferences...return a null estimate for the allocation result (for now)
-    return null;
   }
       
 

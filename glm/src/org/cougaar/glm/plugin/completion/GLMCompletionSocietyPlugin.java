@@ -27,18 +27,22 @@
 
 package org.cougaar.glm.plugin.completion;
 
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.core.plugin.completion.CompletionSocietyPlugin;
 import org.cougaar.core.blackboard.CollectionSubscription;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.plugin.completion.CompletionSocietyPlugin;
+import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.mlm.plugin.organization.GLSInitServlet;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.UnaryPredicate;
 
 public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
-  private static final long SEND_OPLAN_DELAY = 60000L;
-  private static final long PUBLISH_GLS_DELAY = 10000L;
+  private static final long DEFAULT_SEND_OPLAN_DELAY = 60000L;
+  private static final long DEFAULT_PUBLISH_GLS_DELAY = 10000L;
+  private static final long DEFAULT_WAIT_GLS_DELAY = 1000L;
   private static final String forRoot = "ForRoot";
+  private long SEND_OPLAN_DELAY = DEFAULT_SEND_OPLAN_DELAY;
+  private long PUBLISH_GLS_DELAY = DEFAULT_PUBLISH_GLS_DELAY;
+  private long WAIT_GLS_DELAY = DEFAULT_WAIT_GLS_DELAY;
   private long timeout;
   private CollectionSubscription oplanSubscription;
   private CollectionSubscription glsSubscription;
@@ -82,7 +86,7 @@ public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
     new CompletionAction() {
       public boolean checkCompletion(boolean haveLaggard) {
         if (haveLaggard) {
-          timeout = now + PUBLISH_GLS_DELAY;
+          timeout = now + WAIT_GLS_DELAY;
         } else if (now > timeout) {
           publishGLS();
           return  true;
@@ -93,9 +97,24 @@ public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
         return "CompletionAction(publishGLS)";
       }
     };
+  private CompletionAction waitGLSAction =
+    new CompletionAction() {
+      public boolean checkCompletion(boolean haveLaggard) {
+        if (haveLaggard) {
+          timeout = now + PUBLISH_GLS_DELAY;
+        } else if (now > timeout) {
+          return !blackboard.query(glsPredicate).isEmpty();
+        }
+        return false;
+      }
+      public String toString() {
+        return "CompletionAction(waitGLS)";
+      }
+    };
   private CompletionAction[] myCompletionActions = {
-    sendOplanAction,
-    publishGLSAction
+//     sendOplanAction,
+//     publishGLSAction
+    waitGLSAction
   };
 
   public void setupSubscriptions() {
