@@ -315,6 +315,14 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     }
   }	   		 
 
+    protected void initProperties() {
+	// default package for QueryHandler
+	super.initProperties();
+	globalParameters.put("exptid", System.getProperty("org.cougaar.experiment.id"));
+	System.out.println("Experiment ID is: "+globalParameters.get("exptid"));
+    }
+
+
   private Oplan addOplan(String oplanID) {
     Oplan oplan;
 

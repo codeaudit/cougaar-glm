@@ -177,7 +177,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   // empty execute
   public void execute() {}
 
-  private void initProperties() {
+    protected void initProperties() {
     // default package for QueryHandler
     globalParameters.put("Package", "org.cougaar.domain.mlm.plugin.ldm");
   }
@@ -412,6 +412,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       // do Param substitution
       String sql;
       sql = produceQuery(qh, rawSql);
+      
+      System.out.println("\n\nSubstituted sql is: "+sql);
 
       Properties props = new Properties();
       String user = qh.getParameter("Username");

@@ -57,7 +57,9 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
    * Subclasses are required to implement this method.
    **/
   public String getQuery() { 
-    return (String) getParameter(QUERY_NAME);
+      String query = getParameter(QUERY_NAME);
+      System.out.println("\n\nOPLAN query is: "+query);
+    return (String) query;
   }
     
   /** Process a single row in a result set,
@@ -68,10 +70,11 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
       System.err.println("OplanQueryHandler.processRow()- expected 3 columns of data, " +
                          " got " + rowData.length);
     }
-
+    
     myOperationName = (String) rowData[0];
     myPriority = (String) rowData[1];
     myCday = (Date) rowData[2];
+    System.out.println("OplanQueryHandler, gets: myOperationName="+myOperationName+" myPriority= "+myPriority+"myCday ="+myCday);
   }
   
 
