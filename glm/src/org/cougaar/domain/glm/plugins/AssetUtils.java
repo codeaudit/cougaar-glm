@@ -29,6 +29,7 @@ import org.cougaar.util.Enumerator;
 import org.cougaar.util.MutableTimeSpan;
 import org.cougaar.util.TimeSpan;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -125,12 +126,14 @@ public class AssetUtils {
     
     public static void printRelationshipSchedule(Organization myOrg) {
 	RelationshipSchedule sched = myOrg.getRelationshipSchedule();
-	Enumeration enum = sched.getAllScheduleElements();
-	Relationship r;
 	GLMDebug.DEBUG("AssetUtils",null,"____________________________________________________________");
-	while (enum.hasMoreElements()) {
-	    r = (Relationship)enum.nextElement();
-	    GLMDebug.DEBUG("AssetUtils",null,r.getRoleA()+", "+r.getRoleB()+", start: "+r.getStartTime()+", end: "+
+	for(Iterator iterator = new ArrayList(sched).iterator();
+            iterator.hasNext();) {
+	    Relationship r = (Relationship)iterator.next();
+	    GLMDebug.DEBUG("AssetUtils",null,
+                           r.getRoleA()+", "+r.getRoleB()+
+                           ", start: "+r.getStartTime()+
+                           ", end: "+
 			   r.getEndTime());
 	}
     }

@@ -190,7 +190,7 @@ public class PSP_ClusterRelationships extends PSP_BaseAdapter
         if (myState.htmlFlag) {
           RelationshipSchedule schedule = org.getRelationshipSchedule();
 
-          for (Iterator schedIter = schedule.iterator();
+          for (Iterator schedIter = new ArrayList(schedule).iterator();
                schedIter.hasNext();) {
             Relationship relationship = (Relationship)schedIter.next();
 

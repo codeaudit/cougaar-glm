@@ -115,13 +115,16 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
       final UID oaUID = oa.getUID();  // the uuid of the org activity.
       
       // find old element(s) in ls with matching oaUIDs
-      Collection found = Filters.filter(ls, new UnaryPredicate() {
-          public boolean execute(Object o) {
-            if (o instanceof OrgActivity.OAScheduleElement) {
-              return oaUID.equals(((OrgActivity.OAScheduleElement)o).getOrgActivityUID());
-            } else {
-              return false;
-            }}});
+      Collection found = ls.filter(new UnaryPredicate() {
+        public boolean execute(Object o) {
+          if (o instanceof OrgActivity.OAScheduleElement) {
+            return oaUID.equals(((OrgActivity.OAScheduleElement)o).getOrgActivityUID());
+          } else {
+            return false;
+          }
+        }
+      });
+
       switch (action) {
       case Envelope.ADD:        // 
         {

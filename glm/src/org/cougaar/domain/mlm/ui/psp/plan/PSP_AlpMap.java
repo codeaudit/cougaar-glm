@@ -79,7 +79,7 @@ public class PSP_AlpMap extends PSP_BaseAdapter
             String id = self.getClusterPG().getClusterIdentifier().toString();
             RelationshipSchedule schedule = self.getRelationshipSchedule();
 
-            for (Iterator iterator = schedule.iterator();
+            for (Iterator iterator = new ArrayList(schedule).iterator();
                  iterator.hasNext();) {
               Relationship relationship = (Relationship)iterator.next();
               Organization other = 

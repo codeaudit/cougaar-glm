@@ -217,7 +217,7 @@ public class PSP_UIAssets extends PSP_BaseAdapter
        if (self != null) {
          RelationshipSchedule schedule = self.getRelationshipSchedule();
 
-         for (Iterator iterator = schedule.iterator();
+         for (Iterator iterator = new ArrayList(schedule).iterator();
               iterator.hasNext();) {
            Relationship relationship = (Relationship)iterator.next();
            Organization other = 
