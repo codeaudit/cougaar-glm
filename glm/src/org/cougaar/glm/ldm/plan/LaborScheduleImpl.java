@@ -155,7 +155,7 @@ public class LaborScheduleImpl
       
     String qestring = qtySchedule.toString();
     String restring = rateSchedule.toString();
-    return "<LaborSchedule "+tstring+" "+setstring+"\n\tQuantities: "+qestring+
-      "\n\tRates: "+restring+">\n";
+    return "<LaborSchedule "+tstring+" "+setstring+EOL+"\tQuantities: "+qestring+
+      EOL+"\tRates: "+restring+">"+EOL;
   }
 }
