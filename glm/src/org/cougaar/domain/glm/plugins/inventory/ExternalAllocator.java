@@ -18,7 +18,10 @@
 package org.cougaar.domain.glm.plugins.inventory;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.domain.planning.ldm.plan.Allocation;
 import org.cougaar.domain.planning.ldm.plan.AllocationResult;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
@@ -44,7 +47,8 @@ import org.cougaar.domain.glm.plugins.AssetUtils;
 
 public class ExternalAllocator extends InventoryProcessor {
 
-    protected IncrementalSubscription        providerOrgs_ = null;
+    protected IncrementalSubscription refillAllocs_ = null;
+    protected IncrementalSubscription providerOrgs_ = null;
     /** Organizations with the right type of role */
     public Vector providers_ = new Vector();
     protected Role providerRole_;
@@ -55,8 +59,39 @@ public class ExternalAllocator extends InventoryProcessor {
 	super(plugin, org, type);
 	providerRole_ = role;
  	providerOrgs_ = subscribe(new ItemProviderPredicate(org, providerRole_));
+	refillAllocs_ = subscribe(new RefillAllocPredicate(supplyType_, myOrgName_));
     }
 	
+    //Allocation of refill tasks
+    static class RefillAllocPredicate implements UnaryPredicate
+    {
+	String type_;
+	String orgName_;
+
+	public RefillAllocPredicate(String type, String orgName) {
+	    type_ = type;
+	    orgName_ = orgName;
+	}
+
+	public boolean execute(Object o) {
+	    if (o instanceof Allocation ) {
+		Task task = ((Allocation)o).getTask();
+                Verb verb = task.getVerb();
+		if (verb.equals(Constants.Verb.SUPPLY)
+                    || verb.equals(Constants.Verb.PROJECTSUPPLY)) {
+		    if (TaskUtils.isDirectObjectOfType(task, type_)) {
+			// need to check if externally allocated
+			if(((Allocation)o).getAsset() instanceof Organization) {
+                            if (TaskUtils.isMyRefillTask(task, orgName_)){
+                                return true;
+                            }
+                        }
+                    }
+		}
+	    }
+	    return false;
+	}
+    }
     
     /** Test if we have an Organization that is a provider_. */ 
     public static class ItemProviderPredicate implements UnaryPredicate {
@@ -92,6 +127,7 @@ public class ExternalAllocator extends InventoryProcessor {
 	    allocateRefillTasks(refillTasks_.getAddedList());
 	    // Allocate inventory projections
 	    allocateRefillTasks(myProjectionTasks_.getAddedList());
+            PlugInHelper.updateAllocationResult(refillAllocs_);
 	}
     }
 
@@ -142,15 +178,27 @@ public class ExternalAllocator extends InventoryProcessor {
     public Organization findBestSource(Task task) {
 	// PAS FILL THIS IN
 	Enumeration enum = providers_.elements();
-	Enumeration support_orgs = AssetUtils.getSupportingOrgs(myOrganization_, providerRole_, 
-								TaskUtils.getStartTime(task), TaskUtils.getEndTime(task));
+	Enumeration support_orgs;
+        if (TaskUtils.isProjection(task)) {
+            /* For a projection, should be time-phased as support
+               changes over time. We ignore that, for now */
+            support_orgs = AssetUtils.getSupportingOrgs(myOrganization_, providerRole_, 
+                                                        TaskUtils.getStartTime(task), TaskUtils.getEndTime(task));
+        } else {
+            support_orgs = AssetUtils.getSupportingOrgs(myOrganization_, providerRole_, 
+                                                        TaskUtils.getEndTime(task));
+        }
 	if (support_orgs.hasMoreElements()) {
 	    // For now, returning the first supporting org during the time span
 	    return (Organization)support_orgs.nextElement();
 	}
 	else {
-	    printError("No "+providerRole_+", during "+TimeUtils.dateString(TaskUtils.getStartTime(task))+
-		       TimeUtils.dateString(TaskUtils.getEndTime(task)));
+	    if (TaskUtils.isProjection(task)) {
+		printError("No "+providerRole_+", during "+TimeUtils.dateString(TaskUtils.getStartTime(task))+
+			   TimeUtils.dateString(TaskUtils.getEndTime(task)));
+	    } else {
+		printError("No "+providerRole_+", during "+TimeUtils.dateString(TaskUtils.getEndTime(task)));
+	    }
 	}
 	return null;
     }
@@ -167,9 +215,8 @@ public class ExternalAllocator extends InventoryProcessor {
 	    }
 	} else {
 // 	    printDebug("allocateRefillTask "+task+" to "+provider);
-	    AllocationResult ar = createEstimatedAllocationResult(task);
+	    AllocationResult ar =  new AllocationResultHelper(task, null).getAllocationResult(1.0);
 	    publishAllocation(task, provider, providerRole_, ar);
 	}
     }
-
 }
