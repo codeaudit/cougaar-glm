@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/ParseableImpl.java,v 1.1 2001-02-22 22:42:38 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/ParseableImpl.java,v 1.2 2001-02-23 01:02:23 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,7 +12,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.xml;
+package org.cougaar.domain.mlm.ui.newtpfdd.xml;
 
 
 import java.lang.IllegalAccessException;
@@ -25,15 +25,15 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.PathString;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Copiable;
-import org.cougaar.domain.mlm.ui.tpfdd.util.BeanInfoProvider;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.CopiableImpl;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.PathString;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Copiable;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.BeanInfoProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.CopiableImpl;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.UIVector;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.UIVector;
 
 
 public class ParseableImpl extends CopiableImpl implements Parseable

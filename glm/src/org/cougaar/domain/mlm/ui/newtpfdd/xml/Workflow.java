@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/Workflow.java,v 1.1 2001-02-22 22:42:41 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/Workflow.java,v 1.2 2001-02-23 01:02:24 wseitz Exp $ */
 
 /*
   Copyright (C) 1998-1999 Ascent Technology Inc. (Program).  All rights
@@ -12,12 +12,12 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.xml;
+package org.cougaar.domain.mlm.ui.newtpfdd.xml;
 
 
 import org.w3c.dom.Element;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.AbstractProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.AbstractProducer;
 
 
 public class Workflow extends LogPlanObject

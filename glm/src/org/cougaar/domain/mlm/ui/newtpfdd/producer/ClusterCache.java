@@ -17,7 +17,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.producer;
+package org.cougaar.domain.mlm.ui.newtpfdd.producer;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -28,15 +28,13 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import javax.swing.JOptionPane;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
 
-import org.cougaar.domain.mlm.ui.tpfdd.xml.ClusterList;
+import org.cougaar.domain.mlm.ui.newtpfdd.xml.ClusterList;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.view.QueryData;
-
-import org.cougaar.domain.mlm.ui.tpfdd.aggregation.Server;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.QueryData;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
@@ -118,18 +116,18 @@ public class ClusterCache
 	itineraryCache = new Hashtable();
 	Debug.out("CC:CC leave");
 
-	String clusterNameProp = System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.rootCluster");
+	String clusterNameProp = System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.rootCluster");
 	if (clusterNameProp != null)
 	  rootCluster = clusterNameProp;
 	if (debug) 
 	  System.out.println ("ClusterCache.ctor - root cluster now " + rootCluster);
-	String defaultHostNameProp = System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.defaultHostName");
+	String defaultHostNameProp = System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.defaultHostName");
 	if (defaultHostNameProp != null) {
 	  defaultHostName = defaultHostNameProp;
 	  host = defaultHostName;
 	}
 	noHostPrompt = 
-	  ("true".equals(System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.noHostPrompt")));
+	  ("true".equals(System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.noHostPrompt")));
 	if (debug && noHostPrompt) 
 	  System.out.println ("ClusterCache.ctor - skipping host dialog, connecting directly to " + defaultHostName);
 	if (debug) {

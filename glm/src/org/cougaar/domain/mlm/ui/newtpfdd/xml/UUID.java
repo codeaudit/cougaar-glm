@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/UUID.java,v 1.1 2001-02-22 22:42:41 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/UUID.java,v 1.2 2001-02-23 01:02:24 wseitz Exp $ */
 
 /*
  * Copyright 1999 BBN Systems and Technologies, A Division of BBN Corporation
@@ -6,10 +6,10 @@
  */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.xml;
+package org.cougaar.domain.mlm.ui.newtpfdd.xml;
 
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.MismatchException;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.MismatchException;
 
 
 public interface UUID

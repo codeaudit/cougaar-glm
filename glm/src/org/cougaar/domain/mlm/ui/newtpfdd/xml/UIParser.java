@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/UIParser.java,v 1.1 2001-02-22 22:42:41 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/UIParser.java,v 1.2 2001-02-23 01:02:24 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,7 +12,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.xml;
+package org.cougaar.domain.mlm.ui.newtpfdd.xml;
 
 import java.io.ByteArrayInputStream;
 
@@ -22,12 +22,12 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.MismatchException;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.MismatchException;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.UIVector;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.UIVector;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
 
 
 public class UIParser

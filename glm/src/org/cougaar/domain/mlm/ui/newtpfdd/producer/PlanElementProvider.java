@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/PlanElementProvider.java,v 1.1 2001-02-22 22:42:31 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/PlanElementProvider.java,v 1.2 2001-02-23 01:02:19 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,29 +12,30 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.producer;
+package org.cougaar.domain.mlm.ui.newtpfdd.producer;
 
 
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.Date;
 
 import org.cougaar.util.TimeSpan;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.MismatchException;
-import org.cougaar.domain.mlm.ui.tpfdd.util.PathString;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Callback;
-import org.cougaar.domain.mlm.ui.tpfdd.util.VectorHashtable;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.MismatchException;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.PathString;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Callback;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.VectorHashtable;
 
-import org.cougaar.domain.mlm.ui.tpfdd.xml.LogPlanObject;
-import org.cougaar.domain.mlm.ui.tpfdd.xml.Location;
+import org.cougaar.domain.mlm.ui.newtpfdd.xml.LogPlanObject;
+import org.cougaar.domain.mlm.ui.newtpfdd.xml.Location;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.view.TaskNode;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.Node;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.ItemPoolModelListener;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.ItemPoolModelListener;
 
 import org.cougaar.domain.mlm.ui.psp.transportation.data.UITaskItinerary;
 
@@ -51,13 +52,14 @@ public class PlanElementProvider implements ItemPoolModelListener
     // this is common to all PEPs now that we will have multiple ones each with a filtered viewpoint
     private static Hashtable locationPool = new Hashtable();
     // top level tasks, one per gantt chart row or per fully-collapsed treetable row
-    protected TreeMap UIRowMapli;
-    private static TaskNode root = new TaskNode();
     private long minTaskStart, maxTaskEnd;
 
     private static int itinCounter = 0; // kludge to create unique IDs for itineraries
     private static int clusterCounter = 0; // kludge to create unique IDs for itineraries
     private boolean cannedMode; // data source is from file; don't try to query clusters
+
+    protected HashMap allNodes = new HashMap();
+    private Node root = new Node(allNodes,"ROOT"); // used to be static
     
     public PlanElementProvider(ClusterCache clusterCache, boolean cannedMode)
     {
@@ -65,19 +67,13 @@ public class PlanElementProvider implements ItemPoolModelListener
 	this.cannedMode = cannedMode;
 	UUIDPool = new Hashtable();
 	callbacks = new VectorHashtable();
-	UIRowMap = new TreeMap(this);
 	minTaskStart = TimeSpan.MAX_VALUE;
 	maxTaskEnd = TimeSpan.MIN_VALUE;
     }
 
-    public TaskNode getRoot()
+    public Node getRoot()
     {
 	return root;
-    }
-
-    public TreeMap getRowMap()
-    {
-	return UIRowMap;
     }
 
     // AlpineConsumer portion of ItemPoolModelListener interface
@@ -111,7 +107,7 @@ public class PlanElementProvider implements ItemPoolModelListener
 	}
 	LogPlanObject lpObject = (LogPlanObject)item;
 	String UUID = lpObject.getUUID();
-	// we receive items as Tasks, store them as TaskNodes
+	// we receive items as Tasks, store them as Nodes
 	LogPlanObject storedObject = (LogPlanObject)UUIDPool.get(UUID);
 	if ( storedObject == null ) {
 	    OutputHandler.out("PEP:fIVC attempt to change unknown object in hashtable keyed to " + UUID);
@@ -140,17 +136,16 @@ public class PlanElementProvider implements ItemPoolModelListener
 	}
 	LogPlanObject lpObject = (LogPlanObject)item;
 	String UUID = lpObject.getUUID();
-	TaskNode deletedNode = (TaskNode)UUIDPool.remove(UUID);
+	Node deletedNode = (Node)UUIDPool.remove(UUID);
 	if ( deletedNode == null ) {
 	    OutputHandler.out("PEP:fID attempt to delete unknown object from hashtable keyed to " + UUID);
 	    return;
 	}
 
-	if ( UIRowMap.remove(deletedNode) == null ) {
-	    // not a root task, need to fix up children pointers
-	    TaskNode parentNode = (TaskNode)(UUIDPool.get(deletedNode.getParent_().getUUID()));
-	    parentNode.removeChild(deletedNode);
-	}
+	// need to fix up children pointers
+	Node parentNode = (Node)(UUIDPool.get(deletedNode.getParent().getUUID()));
+	parentNode.removeChild(deletedNode);
+
 	// ??? What are semantics of task deletion? All children thereof
 	// deleted, or do children get orphaned to toplevel task? Assuming former.
 	deleteFromHash(deletedNode);
@@ -162,11 +157,11 @@ public class PlanElementProvider implements ItemPoolModelListener
     }
 
     // helper for fireItemDeleted
-    private void deleteFromHash(TaskNode node)
+    private void deleteFromHash(Node node)
     {
 	if ( node.hasChildren() )
-	    for ( Iterator i = node.getChildren_().values().iterator(); i.hasNext(); )
-		deleteFromHash((TaskNode)i.next());
+	    for ( Iterator i = node.getChildren().iterator(); i.hasNext(); )
+		deleteFromHash((Node)i.next());
 	UUIDPool.remove(node);
     }
 
@@ -182,12 +177,10 @@ public class PlanElementProvider implements ItemPoolModelListener
 	if ( UUIDPool.get(UUID) != null )
 	    return;
 	
-	if ( lpObject instanceof TaskNode ) {
+	if ( lpObject instanceof Node ) {
 	    // important: work with a copy so every PEP uses a local copy, not a shared one
-	    TaskNode node = ((TaskNode)lpObject).copy();
-	    node.reconstituteSerialized(this);
 	    // from parent view or agg. server
-	    handleNewTaskNode((TaskNode)node);
+	    handleNewNode((Node)lpObject);
 	}
 	else {
 	    UUIDPool.put(UUID, lpObject);
@@ -202,122 +195,33 @@ public class PlanElementProvider implements ItemPoolModelListener
 	}
     }
 
-    protected void handleNewTaskNode(TaskNode node)
-    {
-	TaskNode possibleParent;
-	if ( !node.getParentUUID().equals("!ROOT") 
-	     && node.getParent_() == root 
-	     && (possibleParent = ((TaskNode)(warmRead(node.getParentUUID())))) != null ) {
-          node.setParent_(possibleParent);
-        }
+    protected void handleNewNode(Node node) {
+	// Nodes come in with DBIDs for their parents and children
+	// There is no need to connect them
 
 	UUIDPool.put(node.getUUID(), node);
-
-	int rootIndex;
-	if ( node.getParent_() == root ) {
-	  // orphan nodes will be childrened into 'node'
-	    Vector orphans = UIRowMap.putAndRemoveOrphans(node); 
-	    if ( orphans != null ) {
-		TaskNode orphan;
-		int orphanIndex;
-		for ( int i = 0; i < orphans.size(); i++ ) {
-		    orphan = (TaskNode)(orphans.get(i));
-		    orphanIndex = UIRowMap.indexOf(orphan);
-		    if ( UIRowMap.remove(orphan) == null ) {
-			OutputHandler.out("PEP:hNTN Error: removing non-existent orphan: " + orphan);
-			continue;
-		    }
-		    node.addChild(orphan);
-		    orphan.setParent_(node);
-		}
-	    }
-	}
-	else {
-	    TaskNode parentNode = node.getParent_();
-	    parentNode.addChild(node);
-	    Vector orphans = UIRowMap.removeOrphansOf(node);
-	    if ( orphans != null ) {
-		for ( int i = 0; i < orphans.size(); i++ ) {
-		    TaskNode orphan = (TaskNode)(orphans.get(i));
-		    int orphanIndex = UIRowMap.indexOf(orphan);
-		    if ( UIRowMap.remove(orphan) == null ) {
-			OutputHandler.out("PEP:hNTN Error: removing non-existent orphan: " + orphan);
-			continue;
-		    }
-		    node.addChild(orphan);
-		    orphan.setParent_(node);
-		}
-	    }
-	}
+	allNodes.put(node.getUUID(), node);
     }
 
-    public void proxyChangeNotify(TaskNode node)
+
+    public void proxyChangeNotify(Node node)
     {
 	// no default action; see clientpep for details
     }
     
-    public void remap(TaskNode node, long newActualStart)
+    public LogPlanObject warmRead(String key)
     {
-	boolean isThere = (UIRowMap.indexOf(node) != -1);
-	if ( isThere )
-	    UIRowMap.remove(node);
-	node.setActualStartValue_(newActualStart);
-	if ( isThere )
-	    UIRowMap.putAndRemoveOrphans(node);
+	// Debug.out("PEP:wR check for " + key + ", result " + UUIDPool.get(key));
+	return (LogPlanObject)(UUIDPool.get(key));
     }
 
-//     Following two functions never used
-//     public void summon(String objectType, String location)
-//     {
-// 	LogPlanProducer producer = clusterCache.getLogPlanProducer(location, false);
-
-// 	producer.request(objectType);
-//     }
-
-//     public LogPlanObject warmRead(String key)
-//     {
-// 	// Debug.out("PEP:wR check for " + key + ", result " + UUIDPool.get(key));
-// 	return (LogPlanObject)(UUIDPool.get(key));
-//     }
-
-//     public void summon(String objectType, String key, String location, String field, Callback callback)
-//     {
-// 	// Debug.out("PEP:summon enter " + objectType + "." + field + "=" + key);
-
-// 	if ( field == null )
-// 	    field = "UID";
-// 	String query = objectType + "." + field + "=" + key;
-// 	Object cacheLookup;
-// 	if ( callback != null && field.equals("UID")
-// 	     && (cacheLookup = UUIDPool.get(key)) != null ) {
-// 	    callback.execute(cacheLookup);
-// 	    // Debug.out("PEP:summon warm read for " + query);
-// 	    return;
-// 	}
-// 	if ( cannedMode )
-// 	    return;
-
-// 	if ( location == null )
-// 	    location = PathString.dirname(key);
-// 	callbacks.put(key, callback);
-// 	LogPlanProducer producer = clusterCache.getLogPlanProducer(location, false);
-// 	if ( producer != null )
-// 	    producer.request(query);
-// 	// Debug.out("PEP:summon leave " + query);
-//     }
-
-    public int getChildCount(TaskNode parent)
+    public int getChildCount(Node parent)
     {
-	if ( parent == root ) {
-	    int size = UIRowMap.size();
-	    // Debug.out("PEP:gCC root ret " + size);
-	    return size;
-	}
-	if ( !(parent instanceof TaskNode) ) {
+	if ( !(parent instanceof Node) ) {
 	    OutputHandler.out("PEP:gCC Error: parent of type " + parent.getClass());
 	    return 0;
 	}
-	return ((TaskNode)parent).getChildCount_();
+	return ((Node)parent).getChildCount();
     }
 
     public Object getChild(Object parent, int index)
@@ -327,54 +231,42 @@ public class PlanElementProvider implements ItemPoolModelListener
 			      + (parent == getRoot() ? "root" : parent));
 	    return null;
 	}
-	if ( parent == root ) {
-	    if ( index >= UIRowMap.size() ) {
-		OutputHandler.out("PEP:gC Error: out of bounds index " + index
-				   + " for toplevel task set of size " + UIRowMap.size());
-		return null;
-	    }
-	    // Debug.out("PEP:gC of root: i " + index + " UID " + ((TaskNode)UIRowMap.get(index)).getUUID());
-	    return UIRowMap.get(index);
-	}
-	if ( !(parent instanceof TaskNode) ) {
+	if ( !(parent instanceof Node) ) {
 	    OutputHandler.out("PEP:gC Error: parent of type " + parent.getClass().getName());
 	    return null;
 	}
-	TaskNode node = (TaskNode)parent;
-	int childCount = node.getChildCount_();
+	Node node = (Node)parent;
+	int childCount = node.getChildCount();
 	if ( index >= childCount ) {
 	    OutputHandler.out("PEP:gC Error: out of bounds index " + index +
 			      " for task children of count " + childCount);
 	    return null;
 	}
-	return node.getChild_(index);
+	return node.getChild(index);
     }
 
     public int getIndexOfChild(Object parent, Object child)
     {
-	if ( parent == root ) {
-	    return UIRowMap.indexOf((TaskNode)child);
-	}
-	if ( !(parent instanceof TaskNode) ) {
+	if ( !(parent instanceof Node) ) {
 	    OutputHandler.out("PEP:gIOC Error: parent of type " + parent.getClass().getName());
 	    return -1;
 	}
-	if ( !(child instanceof TaskNode) ) {
+	if ( !(child instanceof Node) ) {
 	    OutputHandler.out("PEP:gIOC Error: child of type " + child.getClass().getName());
 	    return -1;
 	}
-	return ((TaskNode)parent).getChildren_().indexOf((TaskNode)child);
+	return ((Node)parent).getChildren().indexOf((Node)child);
     }
 
-    public int getIndexOfTopTaskOfTask(TaskNode node)
+    public int getIndexOfTopTaskOfTask(Node node)
     {
 	// Debug.out("PEP:gIOTTOT " + this + " enter: " + node.getUUID());
-	while ( node.getParent_() != root ) {
-	    if ( node.getParent_() == null ) {
+	while ( node.getParent() != root ) {
+	    if ( node.getParent() == null ) {
 		OutputHandler.out("PEP:gIOTTOT " + this + " Error: parent of " + node.getUUID() + " is null!");
 		return -1;
 	    }
-	    node = node.getParent_();
+	    node = node.getParent();
 	}
 	return getIndexOfChild(root, node);
     }
@@ -417,7 +309,7 @@ public class PlanElementProvider implements ItemPoolModelListener
 	locationPool.put(code, location);
     }
 
-    public Iterator getTaskNodeIterator()
+    public Iterator getNodeIterator()
     {
 	return UUIDPool.values().iterator();
     }

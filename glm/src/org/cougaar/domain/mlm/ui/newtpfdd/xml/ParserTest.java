@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/ParserTest.java,v 1.1 2001-02-22 22:42:38 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/ParserTest.java,v 1.2 2001-02-23 01:02:23 wseitz Exp $ */
 
 /*
   Copyright (C) 1998-1999 Ascent Technology Inc. (Program).  All rights
@@ -12,7 +12,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.xml;
+package org.cougaar.domain.mlm.ui.newtpfdd.xml;
 
 
 import java.io.File;
@@ -20,9 +20,9 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.util.Enumeration;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.MismatchException;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.MismatchException;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.UIVector;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.UIVector;
 
 
 public class ParserTest

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/UnitPanel.java,v 1.1 2001-02-22 22:42:30 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/UnitPanel.java,v 1.2 2001-02-23 01:02:18 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -11,7 +11,7 @@
   @author Daniel Bromberg
 */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import java.util.Vector;
@@ -31,13 +31,13 @@ import javax.swing.event.TreeSelectionListener;
 import java.awt.Color;
 import java.awt.BorderLayout;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.TPFDDColor;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.TPFDDColor;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.UnitHierarchy;
 
 
 public class UnitPanel extends JPanel

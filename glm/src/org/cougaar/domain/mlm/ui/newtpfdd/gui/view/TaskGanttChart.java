@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TaskGanttChart.java,v 1.1 2001-02-22 22:42:28 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TaskGanttChart.java,v 1.2 2001-02-23 01:02:18 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,7 +12,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 import java.util.Enumeration;
 import java.util.Vector;
@@ -22,20 +22,21 @@ import java.util.Date;
 import java.awt.*;
 import java.awt.geom.*;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.SwingQueue;
+import java.util.List;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.TPFDDColor;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.SwingQueue;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.GanttChart;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.LozengeRow;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.Lozenge;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.LozengeLabel;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.RowLabel;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.TPFDDColor;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.TreeMap;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.GanttChart;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.LozengeRow;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.Lozenge;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.LozengeLabel;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.RowLabel;
+
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
 
 
 public class TaskGanttChart extends GanttChart
@@ -105,19 +106,19 @@ public class TaskGanttChart extends GanttChart
     public Object readItem(int row)
     {
 	// Debug.out("TaskGanttChart:rI enter " + row);
-	TaskNode rootTask = (TaskNode)provider.getChild(provider.getRoot(), row);
+	Node rootTask = (Node)provider.getChild(provider.getRoot(), row);
 	return rootTask;
     }
 
     protected LozengeRow makeLozengeRow(Object o)
     {
-	if ( o == null || !(o instanceof TaskNode) ) {
+	if ( o == null || !(o instanceof Node) ) {
 	    OutputHandler.out("TaskGanttChart:mLR Error: received junk: " + o);
 	    return null;
 	}
 	
-	TaskNode node = (TaskNode)o;
-	if ( !node.isRoot_() ) {
+	Node node = (Node)o;
+	if ( !node.isRoot() ) {
 	    Debug.out("TaskGanttChart:mLR Non root node " + node + " received, ignoring.");
 	    return null;
 	}
@@ -131,13 +132,13 @@ public class TaskGanttChart extends GanttChart
 
     protected LozengeRow makeLabelRow(Object o)
     {
-	if ( o == null || !(o instanceof TaskNode) ) {
+	if ( o == null || !(o instanceof Node) ) {
 	    OutputHandler.out("TaskGanttChart:mLabR Error: Received junk: " + o);
 	    return null;
 	}
 	    
-	TaskNode node = (TaskNode)o;
-	if ( !node.isRoot_() )
+	Node node = (Node)o;
+	if ( !node.isRoot() )
 	    return null;
 	String s = node.getUnitName() + ":" + node.getDisplayName();
 
@@ -167,7 +168,7 @@ public class TaskGanttChart extends GanttChart
      * depth=1: Use n and its immediate children
      * ...
      **/
-    public LozengeRow makeLozengeRowByTaskFlattening(TaskNode n, int depth)
+    public LozengeRow makeLozengeRowByTaskFlattening(Node n, int depth)
     {
 	// Debug.out("TaskGanttChart:mLRBTF " + n + " " + depth);
 	int i;
@@ -178,13 +179,13 @@ public class TaskGanttChart extends GanttChart
 
 	// Filter tasks with no schedule
 	for ( i = 0; i < tasks.size(); i++ ) {
-	    TaskNode t = (TaskNode)(tasks.elementAt(i));
+	    Node t = (Node)(tasks.elementAt(i));
 	    if ( getStartValue(t) == 0 || getEndValue(t) == 0 ) {
 		tasks.removeElementAt(i);
 		i--;
 	    }
 	    // Remove tasks that have been marked as non trip
-	    if (t.getTripTag() == TaskNode.NON_TRIP_TAG) {
+	    if (t.getTripTag() == Node.NON_TRIP_TAG) {
 		tasks.removeElementAt(i);
 		i--;
 	    }
@@ -203,10 +204,10 @@ public class TaskGanttChart extends GanttChart
 	LozengeRow lozrow = new LozengeRow(this);
 	SortedTaskList taskleaves = new SortedTaskList();
 	double heightOffset = 0.0;
-	TaskNode t = null, oldt = null;
+	Node t = null, oldt = null;
 	for ( i = 0; i < tasks.size(); i++ ) {
 	    oldt = t;
-	    t = (TaskNode)(tasks.elementAt(i));
+	    t = (Node)(tasks.elementAt(i));
 	    if ( i > 1 ) {
 		long startVal = getStartValue(t);
 		long oldEndVal = getEndValue(oldt);
@@ -228,13 +229,13 @@ public class TaskGanttChart extends GanttChart
 
 	    loz.setRelativeHeight(0.3);
 	    loz.setRelativeHeightOffset(heightOffset);
-	    String lStr = TaskNode.longDate(getStartValue(t));
-	    String rStr = TaskNode.longDate(getEndValue(t));
+	    String lStr = Node.longDate(getStartValueDate(t));
+	    String rStr = Node.longDate(getEndValueDate(t));
 
 	    loz.setLozengeDescription(t.getCarrierName() + " " + t.getFromName() +"->"+ t.getToName()
 				      + "[" + lStr + "-" + rStr + "]");
 
-	    if ( t.hasChildren() && (((TaskNode)(t.getChild_(0))).isTransport()) ) {
+	    if ( t.hasChildren() && (((Node)(t.getChild(0))).isTransport()) ) {
 		// if children don't cover all of their parent,
 		//  warning color will show through
 		loz.setForeground(Color.red);
@@ -255,20 +256,20 @@ public class TaskGanttChart extends GanttChart
 				   : t.getCarrierType() + ": " + t.getCarrierName());
 		loz.addLozengeLabel(new LozengeLabel(longName, t.getCarrierType(), LozengeLabel.CENTER));
 		switch( t.getMode() ) {
-		case TaskNode.MODE_GROUND:
+		case Node.MODE_GROUND:
 		    loz.setForeground(TPFDDColor.TPFDDDullerYellow);
 		    break;
-		case TaskNode.MODE_SEA:
+		case Node.MODE_SEA:
 		    loz.setForeground(TPFDDColor.TPFDDGreen);
 		    // These are the only legs for which we know carrier names right now
 		    break;
-		case TaskNode.MODE_AIR:
+		case Node.MODE_AIR:
 		    loz.setForeground(TPFDDColor.TPFDDBlue);
 		    break;
-		case TaskNode.MODE_AGGREGATE:
+		case Node.MODE_AGGREGATE:
 		    loz.setForeground(TPFDDColor.TPFDDPurple);
 		    break;
-		case TaskNode.MODE_UNKNOWN:
+		case Node.MODE_UNKNOWN:
 		    loz.setForeground(Color.gray);
 		    break;
 		default:
@@ -293,7 +294,7 @@ public class TaskGanttChart extends GanttChart
 	    loz.setLozengeVirtualXSize(DAYLEN);
 	    loz.setRelativeHeight(1.0);
 	    loz.addLozengeLabel(new LozengeLabel(t.getFromName(), t.getFromCode(), LozengeLabel.CENTER));
-	    String tilStr = TaskNode.longDate(getStartValue(t));
+	    String tilStr = Node.longDate(getStartValueDate(t));
 
 	    loz.setLozengeDescription(t.getFromName() + "(-- " + tilStr + "]");
 
@@ -309,18 +310,18 @@ public class TaskGanttChart extends GanttChart
 	    loz.setLozengeVirtualXSize(DAYLEN);
 	    loz.setRelativeHeight(1.0);
 	    loz.addLozengeLabel(new LozengeLabel(t.getToName(), t.getToCode(), LozengeLabel.CENTER));
-	    String sinceStr = TaskNode.longDate(getEndValue(t));
+	    String sinceStr = Node.longDate(getEndValueDate(t));
 	    loz.setLozengeDescription(t.getToName() + "[" + sinceStr + "-)");
 	    loz.setForeground(TPFDDColor.TPFDDBlueGreen);
 	    waystations.add(loz);
 
 	    // Create waypoints
 	    Enumeration e = taskleaves.elements();
-	    TaskNode prevLeg, nextLeg;
-	    nextLeg = (TaskNode)(e.nextElement());
+	    Node prevLeg, nextLeg;
+	    nextLeg = (Node)(e.nextElement());
 	    while ( e.hasMoreElements() ) {
 		prevLeg = nextLeg;
-		nextLeg = (TaskNode)(e.nextElement());
+		nextLeg = (Node)(e.nextElement());
 
 		// Skip ill-formed waypoints
 		if ( getStartValue(nextLeg) < getEndValue(prevLeg) )
@@ -339,8 +340,8 @@ public class TaskGanttChart extends GanttChart
 		    loz.setLozengeVirtualXSize(getStartValue(nextLeg) - getEndValue(prevLeg));
 		    loz.addLozengeLabel(new LozengeLabel(prevLeg.getToName(), prevLeg.getToCode(),
 							 LozengeLabel.CENTER));
-		    String lStr = TaskNode.longDate(getEndValue(prevLeg));
-		    String rStr = TaskNode.longDate(getStartValue(nextLeg));
+		    String lStr = Node.longDate(getEndValueDate(prevLeg));
+		    String rStr = Node.longDate(getStartValueDate(nextLeg));
 		    loz.setLozengeDescription(prevLeg.getToName() + " " + "[" + lStr + "-" + rStr + "]");
 		}
 		else {
@@ -351,7 +352,7 @@ public class TaskGanttChart extends GanttChart
 		    loz.setLozengeVirtualXSize(halfWidth);
 		    loz.addLozengeLabel(new LozengeLabel(prevLeg.getToName(), prevLeg.getToCode(),
 							 LozengeLabel.RIGHT));
-		    String lStr = TaskNode.longDate(getEndValue(prevLeg));
+		    String lStr = Node.longDate(getEndValueDate(prevLeg));
 		    loz.setLozengeDescription(prevLeg.getToName() + " " + "[" + lStr + "-???]");
 
 		    loz = new Lozenge(this, t);
@@ -363,7 +364,7 @@ public class TaskGanttChart extends GanttChart
 		    loz.setRelativeHeight(1.0);
 		    loz.addLozengeLabel(new LozengeLabel(nextLeg.getFromName(), nextLeg.getFromCode(),
 							 LozengeLabel.LEFT));
-		    String rStr = TaskNode.longDate(getStartValue(nextLeg));
+		    String rStr = Node.longDate(getStartValueDate(nextLeg));
 		    loz.setLozengeDescription(nextLeg.getFromName() + " " + " [???-" + rStr + "]");
 		    waystations.add(loz);
 		}
@@ -381,7 +382,7 @@ public class TaskGanttChart extends GanttChart
     }
 
     /**
-     * Keeps a list of TaskNodes in chronologically sorted order.
+     * Keeps a list of Nodes in chronologically sorted order.
      **/
     private class SortedTaskList
     {
@@ -392,16 +393,16 @@ public class TaskGanttChart extends GanttChart
 	 * starting time is greater than or equal to n.  (including
 	 * the index beyond the end the list.)
 	 **/
-	public int findPlace(TaskNode n)
+	public int findPlace(Node n)
 	{
 	    int i;
 	    for ( i = 0; i < tasks.size(); i++ )
-		if ( getStartValue((TaskNode)tasks.elementAt(i)) >= getStartValue(n) )
+		if ( getStartValue((Node)tasks.elementAt(i)) >= getStartValue(n) )
 		    break;
 	    return i;
 	}
 
-	public void add(TaskNode n)
+	public void add(Node n)
 	{
 	    int i = findPlace(n);
 	    if ( i > tasks.size() - 1 )
@@ -425,19 +426,19 @@ public class TaskGanttChart extends GanttChart
 	    return tasks.size();
 	}
 	
-	public TaskNode firstElement()
+	public Node firstElement()
 	{
-	    return (TaskNode)(tasks.firstElement());
+	    return (Node)(tasks.firstElement());
 	}
 	
-	public TaskNode lastElement()
+	public Node lastElement()
 	{
-	    return (TaskNode)(tasks.lastElement());
+	    return (Node)(tasks.lastElement());
 	}
 	
-	public TaskNode elementAt(int i)
+	public Node elementAt(int i)
 	{
-	    return (TaskNode)(tasks.elementAt(i));
+	    return (Node)(tasks.elementAt(i));
 	}
     }
 
@@ -446,7 +447,7 @@ public class TaskGanttChart extends GanttChart
      * depth = 0 results in just n; depth=1 results in
      * n and all its immediate children; and so on.
      **/
-    private Vector expandToDepth(TaskNode node, int depth)
+    private Vector expandToDepth(Node node, int depth)
     {
       // System.out.println("expanding to " + depth + " " +
       //node.getDisplayName());
@@ -459,15 +460,15 @@ public class TaskGanttChart extends GanttChart
 	int d = 0;
 	while ( d < depth || depth < 0 ) {
 	    for ( int i = start; i < end; i++ ) {
-		TaskNode parent = (TaskNode)(stack.elementAt(i));
-		List children = parent.getChildren_();
+		Node parent = (Node)(stack.elementAt(i));
+		List children = parent.getChildren();
 		if ( children != null )
 		    for( int j = 0; j < children.size(); j++ ) {
 			if ( children.get(j) == null ) {
 			    OutputHandler.out("Null child # " + i + " of task " + parent.getUUID() + "!");
 			    continue;
 			}
-			if ( ((TaskNode)children.get(j)).isTransport() )
+			if ( ((Node)children.get(j)).isTransport() )
 			    stack.addElement(children.get(j));
 		    }
 	    }
@@ -481,17 +482,16 @@ public class TaskGanttChart extends GanttChart
 	return stack;
     }
 
-    private long getStartValue(TaskNode t)
-    {
-	if ( t.getActualStart() != 0 )
-	    return t.getActualStart();
-	return t.getEstimatedStart();
+    private long getStartValue(Node t) {
+	    return t.getActualStart().getTime();
     }
-
-    private long getEndValue(TaskNode t)
-    {
-	if ( t.getActualEnd() != 0 )
+    private long getEndValue(Node t) {
+	    return t.getActualEnd().getTime();
+    }
+    private Date getStartValueDate(Node t) {
+	    return t.getActualStart();
+    }
+    private Date getEndValueDate(Node t) {
 	    return t.getActualEnd();
-	return t.getEstimatedEnd();
     }
 }

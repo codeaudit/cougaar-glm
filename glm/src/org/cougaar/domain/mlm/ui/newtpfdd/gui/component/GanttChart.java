@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/component/Attic/GanttChart.java,v 1.1 2001-02-22 22:42:21 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/component/Attic/GanttChart.java,v 1.2 2001-02-23 01:02:15 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,7 +12,7 @@
           Daniel Bromberg
 */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.component;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.component;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.SwingQueue;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.SwingQueue;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.RowModelListener;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.ProxyRowModelListener;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.RowModelListener;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.ProxyRowModelListener;
 
 
 public class GanttChart extends Container 

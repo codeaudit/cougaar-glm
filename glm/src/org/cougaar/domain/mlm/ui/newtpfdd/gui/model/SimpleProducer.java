@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/model/Attic/SimpleProducer.java,v 1.1 2001-02-22 22:42:24 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/model/Attic/SimpleProducer.java,v 1.2 2001-02-23 01:02:16 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -16,16 +16,16 @@
  * Straightforward implementation of AscentProducer interface.
  */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.model;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.model;
 
 
 import java.util.Vector;
 import java.util.Iterator;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Producer;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Consumer;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Producer;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Consumer;
 
 
 public class SimpleProducer implements Producer

@@ -10,7 +10,7 @@
   @author Daniel Bromberg
 */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import java.security.AccessControlException;
@@ -52,20 +52,20 @@ import java.util.Iterator;
 
 import org.cougaar.domain.mlm.ui.psp.transportation.PSP_Itinerary;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.PathString;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.PathString;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.SimpleProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.SimpleProducer;
 
-import org.cougaar.domain.mlm.ui.tpfdd.TPFDDConstants;
+import org.cougaar.domain.mlm.ui.newtpfdd.TPFDDConstants;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ThreadedProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.LogPlanProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ItineraryProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PSPClientConfig;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ClusterCache;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ThreadedProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.LogPlanProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ItineraryProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PSPClientConfig;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache;
 
 
 public class TPFDDShell extends JApplet implements ActionListener,
@@ -93,7 +93,7 @@ public class TPFDDShell extends JApplet implements ActionListener,
     private JPanel ivjtilingPane = null;
 
   private static boolean debug = 
-    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.gui.view.TPFDDShell.debug"));
+    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.gui.view.TPFDDShell.debug"));
   
 
   private JLabel machineText = null;
@@ -160,7 +160,7 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	if ( provider == null ) {
 	    try {
 		Debug.out("TS:gP new PEP");
-		provider = new ClientPlanElementProvider(getclusterCache(), false, true);
+		provider = new ClientPlanElementProvider(getclusterCache(), false);
 	    } catch (Exception ivjExc) {
 		handleException(ivjExc);
 	    }
@@ -1014,7 +1014,7 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	else
 	    myCargoString = "All cargo";
 
-	ClientPlanElementProvider childProvider = new ClientPlanElementProvider(clusterCache, false, false);
+	ClientPlanElementProvider childProvider = new ClientPlanElementProvider(clusterCache, false);
 
 	SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yy HH:mm:ss");
 	String date = formatter.format(new Date());
@@ -1071,10 +1071,10 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	try {
 	    JFrame frame = new JFrame();
 	    TPFDDShell aTPFDDShell;
-	    Class iiCls = Class.forName("org.cougaar.domain.mlm.ui.tpfdd.gui.view.TPFDDShell");
+	    Class iiCls = Class.forName("org.cougaar.domain.mlm.ui.newtpfdd.gui.view.TPFDDShell");
 	    ClassLoader iiClsLoader = iiCls.getClassLoader();
 	    aTPFDDShell = (TPFDDShell)java.beans.Beans.instantiate(iiClsLoader,
-							  "org.cougaar.domain.mlm.ui.tpfdd.gui.view.TPFDDShell");
+							  "org.cougaar.domain.mlm.ui.newtpfdd.gui.view.TPFDDShell");
 	    frame.getContentPane().add(aTPFDDShell, BorderLayout.CENTER);
 	    frame.setSize(aTPFDDShell.getSize());
 	    frame.addWindowListener(new WindowAdapter() {

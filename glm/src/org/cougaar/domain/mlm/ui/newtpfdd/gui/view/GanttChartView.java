@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/GanttChartView.java,v 1.1 2001-02-22 22:42:26 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/GanttChartView.java,v 1.2 2001-02-23 01:02:17 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -15,7 +15,7 @@
    Simple wrapper to set up a Task-based GanttChart view.
 */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import java.util.Date;
@@ -29,17 +29,17 @@ import java.text.ParseException;
 
 import javax.swing.JPanel;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.SwingQueue;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.SwingQueue;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.GanttChart;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.LongXRuler;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.GanttChart;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.LongXRuler;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.TPFDDColor;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.TPFDDColor;
 
 
 public class GanttChartView extends JPanel

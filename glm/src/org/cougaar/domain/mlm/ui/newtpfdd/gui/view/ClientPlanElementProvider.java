@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.1 2001-02-22 22:42:25 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.2 2001-02-23 01:02:17 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,47 +12,39 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Iterator;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.SimpleRowModelProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.SimpleItemPoolModelProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.ItemPoolModelListener;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.RowModelListener;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.SimpleRowModelProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.SimpleItemPoolModelProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.ItemPoolModelListener;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.RowModelListener;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ClusterCache;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ThreadedProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PSPClientConfig;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ThreadedProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PSPClientConfig;
 
-import org.cougaar.domain.mlm.ui.tpfdd.TPFDDConstants;
+import org.cougaar.domain.mlm.ui.newtpfdd.TPFDDConstants;
 
 
 public class ClientPlanElementProvider extends PlanElementProvider
 {
     private SimpleRowModelProducer rowProducer;
     private SimpleItemPoolModelProducer itemProducer;
-    private Hashtable localUUIDPool;
-
-    private boolean isMaster;
-    private boolean didMaster = false; // handle master TPFDD special case
-
 
 //     Removed Filter from constructor
-    public ClientPlanElementProvider(ClusterCache clusterCache,
-				     boolean cannedMode, boolean isMaster)
+    public ClientPlanElementProvider(ClusterCache clusterCache, boolean cannedMode)
     {
 	super(clusterCache, cannedMode);
-	this.isMaster = isMaster;
-	localUUIDPool = new Hashtable();
 	rowProducer = new SimpleRowModelProducer();
 	itemProducer = new SimpleItemPoolModelProducer();
     }
@@ -73,7 +65,7 @@ public class ClientPlanElementProvider extends PlanElementProvider
 	    if ( ((Object[])item).length == 0 )
 		return;
 	    Object first = ((Object[])item)[0];
-	    if ( first instanceof TaskNode )
+	    if ( first instanceof Node )
 		handleBatch((Object[])item);
 	    else if ( first instanceof Hashtable ) {
 		synchronized(this) {
@@ -113,33 +105,13 @@ public class ClientPlanElementProvider extends PlanElementProvider
 	Vector newNodes = new Vector();
 	boolean doneAnything = false;
 	for ( int i = 0; i < nodes.length; i++ ) {
-	    TaskNode node = (TaskNode)(nodes[i]);
-// 	    Next two lines commented because Query request should have already handled this
-// 	    if ( !filter.admits(node) )
-// 		continue;
+	    Node node = (Node)(nodes[i]);
 	    String UUID = node.getUUID();
-	    if ( !isMaster ) {
-		String localUUID = UUID.substring(0, UUID.indexOf('/'))
-		    + UUID.substring(UUID.indexOf(": ") + 2, UUID.length());
-                /*
-                  // MIK: this comment fixes the infamous 10linesofcode buggo,
-                  // which prevented the nodes from getting hooked up properly.
-                  // perhaps there are negative side effects, but it looks pretty 
-                  // good to me.
-		if ( localUUIDPool.get(localUUID) != null )
-		    continue;
-                */
-		localUUIDPool.put(localUUID, node);
-	    }
 	    if ( UUIDPool.get(UUID) != null )
 		continue;
-	    // important: work with a copy so every PEP uses a local copy, not a shared one
-	    TaskNode copyNode = node.copy();
-	    copyNode.reconstituteSerialized(this);
-	    
 	    doneAnything = true;
-	    handleNewTaskNode(copyNode);
-	    newNodes.add(copyNode);
+	    handleNewTaskNode(node);
+	    newNodes.add(node);
 	    if ( i % 250 == 0 )
 		OutputHandler.out(String.valueOf(i), false, false);
 	    else if ( i % 50 == 0 )
@@ -152,19 +124,7 @@ public class ClientPlanElementProvider extends PlanElementProvider
 	OutputHandler.out("CPEP:hB firing batch update...");
 	rowProducer.setSuspended(false);
 	itemProducer.setSuspended(false);
-	if ( isMaster ) {
-	    if ( !didMaster ) {
-		didMaster = true;
-		for ( int i = 0; i < UIRowMap.size(); i++ )
-		    rowProducer.addRowNotify(i);
-	    }
-	    else
-		for ( int i = 0; i < UIRowMap.size(); i++ )
-		    rowProducer.changeRowNotify(i);
-	}
-	else
-	    for ( int i = 0; i < UIRowMap.size(); i++ )
-		rowProducer.addRowNotify(i);
+
 	for ( Iterator i = newNodes.iterator(); i.hasNext(); )
 	    itemProducer.addItemNotify(i.next());
 

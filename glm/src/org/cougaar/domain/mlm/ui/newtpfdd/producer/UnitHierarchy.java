@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/UnitHierarchy.java,v 1.1 2001-02-22 22:42:31 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/UnitHierarchy.java,v 1.2 2001-02-23 01:02:19 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,7 +12,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.producer;
+package org.cougaar.domain.mlm.ui.newtpfdd.producer;
 
 
 import java.util.Hashtable;
@@ -42,8 +42,8 @@ import java.io.IOException;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
@@ -86,13 +86,13 @@ public class UnitHierarchy implements TreeModel
   }
 
   private static String demandRootClusters = 
-    System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.demandRootClusters");
+    System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.UnitHierarchy.demandRootClusters");
   private static String testCluster = 
-    System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.testClusters");
+    System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.UnitHierarchy.testClusters");
   private static boolean useHierarchyPSP = 
-    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.useHierarchyPSP"));
+    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.UnitHierarchy.useHierarchyPSP"));
   private static boolean debug = 
-    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.debug"));
+    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.UnitHierarchy.debug"));
   
     static final String[][] superiors = 
     { // { "Society", "HigherAuthority" },

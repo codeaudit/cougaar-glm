@@ -4,20 +4,22 @@ import java.io.Serializable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
 
 import java.text.SimpleDateFormat;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
 
-import org.cougaar.domain.mlm.ui.tpfdd.xml.Location;
-import org.cougaar.domain.mlm.ui.tpfdd.xml.LogPlanObject;
+import org.cougaar.domain.mlm.ui.newtpfdd.xml.Location;
+import org.cougaar.domain.mlm.ui.newtpfdd.xml.LogPlanObject;
 
-public class Node { //extends LogPlanObject implements Serializable, Cloneable {
-    // Constants
+public class Node extends LogPlanObject implements Serializable, Cloneable {
 
     // Tree Hierarchy Information
+    private transient HashMap idToNode;
+    private transient List children; // of DBID
     private String parentUUID; // parents name
-    private transient List children; // of UUID
+    private String nodeDBID; // self-identifier
 
     // Real Data
     private String unitName;
@@ -46,20 +48,28 @@ public class Node { //extends LogPlanObject implements Serializable, Cloneable {
     public static final int MODE_AGGREGATE = 8;
     public static final int MODE_UNKNOWN = 9;
 
+    // Constructors
+    public Node(HashMap idToNode, String nodeDBID) {
+	super(nodeDBID,null);
+	this.nodeDBID = nodeDBID;
+	this.idToNode = idToNode;
+    }
+
     // G/SETTERS FOR TREE STUFF
     public String getParentUUID() { return parentUUID; }
     public void setParentUUID(String parentUUID) { this.parentUUID = parentUUID; }
 
-
- //    public Node getParent() { return parent; }
-//     public void setParent(Node parent) { 
-// 	if ( parent == null ) parent = provider.getRoot();
-// 	this.parent = parent;
-//     }
-
+    public Node getParent() { 
+	return (Node)idToNode.get(parentUUID); 
+    }
+    public void setParent(Node parent) { 
+	parentUUID = parent.getUUID();
+	idToNode.put(parentUUID,parent);
+    }
 
     public void addChild(Node child) {
-	children.add(child);
+	children.add(child.getUUID());
+	idToNode.put(child.getUUID(),child);
     }
     public void removeChild(Node child) {
 	children.remove(child);
@@ -93,11 +103,19 @@ public class Node { //extends LogPlanObject implements Serializable, Cloneable {
     public String getUnitNameDBID() { return unitNameDBID; }; 
     public void setUnitNameDBID(String unitNameDBID) { this.unitNameDBID = unitNameDBID; }
 
-//     public Location getFrom() { return from; }; 
-//     public void setFrom(Location from) { this.from = from; }
+    public String getFrom() { return from; }; 
+    public String getFromName() { return from; }; 
+    public void setFrom(String from) { this.from = from; }
 
-//     public Location getTo() { return to; }; 
-//     public void setTo(Location to) { this.to = to; }
+    public String getTo() { return to; }; 
+    public String getToName() { return to; }; 
+    public void setTo(String to) { this.to = to; }
+
+    public String getFromCode() { return fromCode; }; 
+    public void setFromCode(String fromCode) { this.fromCode = fromCode; }
+
+    public String getToCode() { return toCode; }; 
+    public void setToCode(String toCode) { this.toCode = toCode; }
 
     public Date getReadyAt() { return readyAt; }; 
     public void setReadyAt(Date readyAt) { this.readyAt = readyAt; }
@@ -129,7 +147,7 @@ public class Node { //extends LogPlanObject implements Serializable, Cloneable {
 
 
     public String toString() {
-	return getUUID(); 
+	return nodeDBID; 
     }
 
     // DATE OUTPUT STUFF
@@ -148,5 +166,23 @@ public class Node { //extends LogPlanObject implements Serializable, Cloneable {
     //    alert someone so they can be redrawn or whatever. This existed as
     //    proxyChangeNotify in a previous incarnation.
 
+    // The following is some crappy stuff leftover from TaskNode kept for compatibility
+    // Try to not use this stuff and is possible get rid of it
+    public static final int ROLLUP = 1;
+    public static final int ROLLUP_FORCED_ROOT = 2;
+    public static final int EQUIPMENT = 3;
+    public static final int BY_CARRIER_TYPE = 4;
+    public static final int BY_CARRIER_NAME = 5;
+    public static final int BY_CARGO_TYPE = 6;
+    public static final int BY_CARGO_NAME = 7;
+    public static final int CARRIER_TYPE = 8;
+    public static final int CARRIER_NAME = 9;
+    public static final int CARGO_TYPE = 10;
+    public static final int CARGO_NAME = 11;
+    public static final int LAST_STRUCTURE_CODE = 11;
+
+    public static final int ITINERARY = 20;
+    public static final int ITINERARY_LEG = 21;
+    public static final int TASK = 22;
 }
 

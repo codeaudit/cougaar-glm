@@ -1,17 +1,17 @@
-package org.cougaar.domain.mlm.ui.tpfdd.transit;
+package org.cougaar.domain.mlm.ui.newtpfdd.transit;
 import java.util.*;
 import java.io.Serializable;
 
-import org.cougaar.domain.mlm.ui.tpfdd.transit.TagChronicle.TagTransitData;
-import org.cougaar.domain.mlm.ui.tpfdd.transit.TagChronicle.TagTally;
-import org.cougaar.domain.mlm.ui.tpfdd.transit.TagChronicle.TagTallier;
-import org.cougaar.domain.mlm.ui.tpfdd.transit.Chronicle.Frame;
+import org.cougaar.domain.mlm.ui.newtpfdd.transit.TagChronicle.TagTransitData;
+import org.cougaar.domain.mlm.ui.newtpfdd.transit.TagChronicle.TagTally;
+import org.cougaar.domain.mlm.ui.newtpfdd.transit.TagChronicle.TagTallier;
+import org.cougaar.domain.mlm.ui.newtpfdd.transit.Chronicle.Frame;
 
 /**
  * Holds a Chronicle of data about the flow of a Assets
  *
  * @author Benjamin Lubin; last modified by $Author: wseitz $
- * @version $Revision: 1.1 $; Last modified on $Date: 2001-02-22 22:42:32 $
+ * @version $Revision: 1.2 $; Last modified on $Date: 2001-02-23 01:02:20 $
  * @since 12/01/00
  */
 public class AssetFlowChronicle extends AssetClassChronicle{

@@ -1,5 +1,7 @@
 package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
+import java.util.HashMap;
+
 public class TypeNode extends ByNode {
     private String carrierName;
     private String carrierType;
@@ -10,6 +12,10 @@ public class TypeNode extends ByNode {
     private String cargoNameDBID;
     private String cargoTypeDBID;
     
+    public TypeNode(HashMap idToNode, String nodeDBID) {
+	super(idToNode,nodeDBID);
+    }
+
     public String getCarrierName() { return carrierName; }
     public void setCarrierName(String carrierName) { this.carrierName = carrierName; }
 

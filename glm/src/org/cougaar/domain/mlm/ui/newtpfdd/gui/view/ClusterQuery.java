@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClusterQuery.java,v 1.1 2001-02-22 22:42:25 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClusterQuery.java,v 1.2 2001-02-23 01:02:17 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -11,7 +11,7 @@
   @author Daniel Bromberg
 */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import javax.swing.JDialog;
@@ -53,16 +53,16 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.Hashtable;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.SimpleProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.SimpleProducer;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ClusterCache;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.AssetManifest;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.UIVector;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.AssetManifest;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.UIVector;
 
 
 public class ClusterQuery extends JDialog implements ActionListener, TreeSelectionListener

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/util/Attic/Consumer.java,v 1.1 2001-02-22 22:42:33 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/util/Attic/Consumer.java,v 1.2 2001-02-23 01:02:20 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -20,7 +20,7 @@
  * well as using this common base.
  */
 
-package org.cougaar.domain.mlm.ui.tpfdd.util;
+package org.cougaar.domain.mlm.ui.newtpfdd.util;
 
 
 public interface Consumer

@@ -1,8 +1,8 @@
 
-package org.cougaar.domain.mlm.ui.tpfdd.producer;
+package org.cougaar.domain.mlm.ui.newtpfdd.producer;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.view.Query;
-import org.cougaar.domain.mlm.ui.tpfdd.gui.view.QueryResponse;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.Query;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.QueryResponse;
 
 public interface DataGrabber {
     public QueryResponse queryDatabase(Query query); // Given a Query returns a QueryResponse

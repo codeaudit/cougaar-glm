@@ -1,4 +1,4 @@
-package org.cougaar.domain.mlm.ui.tpfdd.transit;
+package org.cougaar.domain.mlm.ui.newtpfdd.transit;
 import java.util.*;
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Holds a Chronicle of data about the location of some String indexed property
  *
  * @author Benjamin Lubin; last modified by $Author: wseitz $
- * @version $Revision: 1.1 $; Last modified on $Date: 2001-02-22 22:42:32 $
+ * @version $Revision: 1.2 $; Last modified on $Date: 2001-02-23 01:02:20 $
  * @since 11/15/00
  */
 public class TagChronicle extends Chronicle{

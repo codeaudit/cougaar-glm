@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/model/Attic/RowModelListener.java,v 1.1 2001-02-22 22:42:24 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/model/Attic/RowModelListener.java,v 1.2 2001-02-23 01:02:16 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -18,10 +18,10 @@
  * to be told to do something inconsistent with known model.
 */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.model;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.model;
 
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Consumer;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Consumer;
 
 
 public interface RowModelListener extends Consumer

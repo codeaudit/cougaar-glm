@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/model/Attic/SimpleItemPoolModelProducer.java,v 1.1 2001-02-22 22:42:24 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/model/Attic/SimpleItemPoolModelProducer.java,v 1.2 2001-02-23 01:02:16 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -16,13 +16,13 @@
  * extended or contained by classes that really get items to produce.
  */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.model;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.model;
 
 
 import java.util.Iterator;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
 
 
 public class SimpleItemPoolModelProducer extends SimpleProducer

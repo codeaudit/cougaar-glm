@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/ConnectionHelper.java,v 1.1 2001-02-22 22:42:30 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/ConnectionHelper.java,v 1.2 2001-02-23 01:02:19 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -16,7 +16,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.producer;
+package org.cougaar.domain.mlm.ui.newtpfdd.producer;
 
 
 import java.io.ByteArrayOutputStream;
@@ -33,8 +33,8 @@ import java.net.URLConnection;
 
 import java.util.Hashtable;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
 
 
 public class ConnectionHelper

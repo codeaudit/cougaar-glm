@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TaskModel.java,v 1.1 2001-02-22 22:42:29 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TaskModel.java,v 1.2 2001-02-23 01:02:18 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,17 +12,17 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import java.util.Date;
 import java.util.Vector;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ClusterCache;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
 
 
 public class TaskModel extends AbstractTreeTableModel implements TreeTableModel
@@ -109,7 +109,7 @@ public class TaskModel extends AbstractTreeTableModel implements TreeTableModel
     //
     public int getChildCount(Object parent)
     {
-	return provider.getChildCount((TaskNode)parent);
+	return provider.getChildCount((Node)parent);
     }
 
     public Object getChild(Object node, int index)
@@ -130,7 +130,7 @@ public class TaskModel extends AbstractTreeTableModel implements TreeTableModel
     { 
 	if ( node == root )
 	    return false;
-	return !((TaskNode)node).hasChildren();
+	return !((Node)node).hasChildren();
     }
 
     //
@@ -161,12 +161,12 @@ public class TaskModel extends AbstractTreeTableModel implements TreeTableModel
 
     public Object getValueAt(Object item, int column)
     {
-	if ( !(item instanceof TaskNode) ) {
+	if ( !(item instanceof Node) ) {
 	    OutputHandler.out("Error: getValueAt() received item of class " + item.getClass()
-			       + ", expecting TaskNode");
+			       + ", expecting Node");
 	    return null;
 	}
-	TaskNode node = (TaskNode)item;
+	Node node = (Node)item;
 
 
 
@@ -184,14 +184,15 @@ public class TaskModel extends AbstractTreeTableModel implements TreeTableModel
 	    case 0:
 		return node.getDisplayName();
 	    case 1:
-		return node.getDirectObjectName();
+		if (node instanceof TypeNode)
+		    return ((TypeNode)node).getCargoName();
 	    case 2:
-		if ( node.getSourceType() == TaskNode.ITINERARY )
-		    return node.getChild_(0).getFromName();
+		if ( node instanceof ItineraryNode )
+		    return node.getChild(0).getFromName();
 		return node.getFromName();
 	    case 3:
-		if ( node.getSourceType() == TaskNode.ITINERARY )
-		    return node.getChild_(node.getChildCount_() - 1).getToName();
+		if ( node instanceof ItineraryNode )
+		    return node.getChild(node.getChildCount() - 1).getToName();
 		return node.getToName();
 
 	    case 4:

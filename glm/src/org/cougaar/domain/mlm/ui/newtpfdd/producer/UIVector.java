@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/UIVector.java,v 1.1 2001-02-22 22:42:31 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/UIVector.java,v 1.2 2001-02-23 01:02:19 wseitz Exp $ */
 
 /*
   portions Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,14 +12,14 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.producer;
+package org.cougaar.domain.mlm.ui.newtpfdd.producer;
 
 
 import java.util.Vector;
 
 import org.w3c.dom.Node;
 
-import org.cougaar.domain.mlm.ui.tpfdd.xml.*;
+import org.cougaar.domain.mlm.ui.newtpfdd.xml.*;
 
 import org.cougaar.domain.mlm.ui.psp.transportation.data.UITaskItinerary;
 

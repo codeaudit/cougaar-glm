@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/QueryData.java,v 1.1 2001-02-22 22:42:27 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/QueryData.java,v 1.2 2001-02-23 01:02:17 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -11,12 +11,12 @@
   @author Daniel Bromberg
 */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 
-import org.cougaar.domain.mlm.ui.tpfdd.xml.LogPlanObject;
+import org.cougaar.domain.mlm.ui.newtpfdd.xml.LogPlanObject;
 
 
 public class QueryData extends LogPlanObject

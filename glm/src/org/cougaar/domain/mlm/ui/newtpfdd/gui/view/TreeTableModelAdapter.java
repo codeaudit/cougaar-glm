@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TreeTableModelAdapter.java,v 1.1 2001-02-22 22:42:29 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TreeTableModelAdapter.java,v 1.2 2001-02-23 01:02:18 wseitz Exp $ */
 
 /*
  * %W% %E%
@@ -14,7 +14,7 @@
  * you entered into with Sun.
  */
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.JTree;

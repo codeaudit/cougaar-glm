@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/LogPlanObject.java,v 1.1 2001-02-22 22:42:37 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/LogPlanObject.java,v 1.2 2001-02-23 01:02:23 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -12,7 +12,7 @@
 */
 
 
-package org.cougaar.domain.mlm.ui.tpfdd.xml;
+package org.cougaar.domain.mlm.ui.newtpfdd.xml;
 
 
 import java.io.Serializable;
@@ -21,17 +21,16 @@ import java.lang.reflect.Method;
 
 import org.w3c.dom.Element;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.MismatchException;
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.MismatchException;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 
 
 public class LogPlanObject implements Parseable, UUID, Serializable
 {
     private transient ParseableImpl parseable;
     protected String UUID;
-    protected transient PlanElementProvider provider;
 
     // pseudo-constructor for transient part of remotely created object
     public void reconstituteSerialized()
@@ -41,13 +40,6 @@ public class LogPlanObject implements Parseable, UUID, Serializable
 
     public LogPlanObject(String UUID, Element xml)
     {
-	this.UUID = UUID;
-	parseable = new ParseableImpl(this, xml);
-    }
-
-    public LogPlanObject(PlanElementProvider provider, String UUID, Element xml)
-    {
-	this.provider = provider;
 	this.UUID = UUID;
 	parseable = new ParseableImpl(this, xml);
     }

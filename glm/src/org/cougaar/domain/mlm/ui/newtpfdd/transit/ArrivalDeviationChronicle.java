@@ -1,15 +1,15 @@
-package org.cougaar.domain.mlm.ui.tpfdd.transit;
+package org.cougaar.domain.mlm.ui.newtpfdd.transit;
 import java.util.*;
 import java.io.Serializable;
 
-import org.cougaar.domain.mlm.ui.tpfdd.transit.UnitChronicle.UnitTransitData;
-import org.cougaar.domain.mlm.ui.tpfdd.transit.UnitChronicle.UnitTally;
+import org.cougaar.domain.mlm.ui.newtpfdd.transit.UnitChronicle.UnitTransitData;
+import org.cougaar.domain.mlm.ui.newtpfdd.transit.UnitChronicle.UnitTally;
 
 /**
  * Holds a Chronicle of data about the location of a unit's arrival deviation
  *
  * @author Benjamin Lubin; last modified by $Author: wseitz $
- * @version $Revision: 1.1 $; Last modified on $Date: 2001-02-22 22:42:32 $
+ * @version $Revision: 1.2 $; Last modified on $Date: 2001-02-23 01:02:19 $
  * @since 12/02/00
  */
 public class ArrivalDeviationChronicle extends UnitChronicle{
