@@ -63,9 +63,11 @@ import org.cougaar.util.UnaryPredicate;
  * <pre>
  * One created for every URL access.
  *
- * If either ... true, uses a blackboard
+ * Uses a blackboard
  * service, a watcher, and a trigger to monitor published tasks to see
  * when they are complete.
+ *
+ * Note : may not return if it can't go through all it's states.
  * </pre>
  **/
 public class CompletionWatcherWorker extends ServletWorker {
@@ -78,15 +80,36 @@ public class CompletionWatcherWorker extends ServletWorker {
 
   /**
    * <pre>
-   * Here is our inner class that will handle all HTTP and
-   * HTTPS service requests.
+   * Handles all HTTP and HTTPS service requests.
    *
-   * If we should wait until the batch is complete, we make a watcher to watch
-   * the blackboard, a trigger that will call blackboardChanged (), and a trigger model
-   * to connect them.
+   * Makes a watcher to watch
+   * the blackboard, a trigger that will call blackboardChanged (), 
+   * and a trigger model to connect them.
+   *
+   * When a change to a subscription happens, the method call cascade is :
+   *  1) The watcher's signalNotify method is called, which
+   *  2) Triggers the TriggerModel
+   *  3) The TriggerModel queues the trigger with the SchedulerService
+   *  4) The SchedulerService calls my Trigger's trigger method
+   *  5) That trigger method calls blackboardChanged
+   *
+   * Does these in order :
+   *  - Creates all the watcher, trigger model, trigger overhead
+   *  - Creates subscriptions to tasks and plan elements
+   *  - Calls getResult
+   *  - Writes results to output stream with writeResponse ()
+   *  - Unsubscribes
+   *  - Has the watcher unregister interest
+   *  - Tells the trigger model to stop.
    *
    * </pre>
+   * @see #getResult
    * @see #blackboardChanged
+   * @see org.cougaar.planning.servlet.ServletWorker#writeResponse
+   * @see org.cougaar.core.blackboard.SubscriptionWatcher#signalNotify
+   * @see org.cougaar.util.Trigger#trigger
+   * @see org.cougaar.util.SyncTriggerModelImpl
+   * @see org.cougaar.core.service.SchedulerService
    */
   public void execute(HttpServletRequest request,
                       HttpServletResponse response,
@@ -122,7 +145,7 @@ public class CompletionWatcherWorker extends ServletWorker {
           // no need to "sync" when using "SyncTriggerModel"
           public void trigger() {
             watcher.clearSignal();
-            blackboardChanged(false);
+            blackboardChanged();
           }
           public String toString() {
             return "Trigger("+CompletionWatcherWorker.this.toString()+")";
@@ -154,15 +177,15 @@ public class CompletionWatcherWorker extends ServletWorker {
     bb.unsubscribe(taskSubscription);
     bb.unsubscribe(planElementSubscription);
     bb.closeTransaction();
-
     bb.unregisterInterest(watcher);
+
     tm.unload ();
     tm.stop();
   }
 
   /**
    * Matches PlanElements for tasks that we have sent and which are
-   * complete, i.e. have plan elements and 100% confident reported
+   * complete, i.e. have plan elements and 100% confident reported/estimated
    * allocation results. Both Failure and Success are accepted.
    **/
   private DynamicUnaryPredicate planElementPredicate = new DynamicUnaryPredicate() {
@@ -170,40 +193,25 @@ public class CompletionWatcherWorker extends ServletWorker {
       if (o instanceof PlanElement) {
         PlanElement pe = (PlanElement) o;
         Task task = pe.getTask();
-        if (incompleteTasks.contains(task)) {
-	    boolean hasReported = (pe.getReportedResult () != null);
-	    boolean hasEstimated = (pe.getEstimatedResult () != null);
-	    boolean highConfidence = false;
+	boolean hasReported  = (pe.getReportedResult  () != null);
+	boolean hasEstimated = (pe.getEstimatedResult () != null);
+	boolean highConfidence = false;
 
-	    if (!hasReported && !hasEstimated)
-	      return false;
+	if (hasReported)
+	  highConfidence = 
+	    (pe.getReportedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
+	else if (hasEstimated)
+	  highConfidence = 
+	    (pe.getEstimatedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
 	    
-	    if (hasEstimated) {
-	      highConfidence = (pe.getEstimatedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
-	      if (!highConfidence)
-		support.getLog ().debug ("CompletionWatcherWorker - Interested in task with low confidence estimated. " + task.getUID());
-	    }
-	    else if (hasReported) {
-	      highConfidence = (pe.getReportedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
-	      if (!highConfidence)
-		support.getLog ().debug ("CompletionWatcherWorker - Interested in task with low confidence reported. " + task.getUID());
-	    }
-	    
-	    return (!highConfidence);
-	}
+	return highConfidence;
       }
       return false;
     }
   };
 
   /**
-   * Subscription to PlanElements disposing of our tasks
-   **/
-  private IncrementalSubscription planElementSubscription;
-
-  /**
-   * Looking for NOT complete tasks -- when this number is zero, we're at a quiet point
-   * 
+   * Looking for non-ReportForService tasks
    **/
   private DynamicUnaryPredicate taskPredicate = new DynamicUnaryPredicate() {
     public boolean execute(Object o) {
@@ -223,7 +231,7 @@ public class CompletionWatcherWorker extends ServletWorker {
    * <pre>
    * Use a query parameter to set a field
    *
-   * Sets the recognized parameters : inputFile, debug, totalBatches, tasksPerBatch, interval, and wait
+   * Sets the recognized parameters : firstInterval, secondInterval
    * </pre>
    */
   public void getSettings(String name, String value) {
@@ -236,42 +244,13 @@ public class CompletionWatcherWorker extends ServletWorker {
       firstInterval = Integer.parseInt(value);
     else if (eq (name, CompletionWatcherServlet.SECOND_INTERVAL))
       secondInterval = Integer.parseInt(value);
-
-    /*
-    if (eq (name, CompletionWatcherServlet.INPUT_FILE))
-      inputFile = value;
-    else if (eq (name, "debug"))
-      debug = eq (value, "true");
-    else if (eq (name, CompletionWatcherServlet.NUM_BATCHES))
-      totalBatches = Integer.parseInt(value);
-    else if (eq (name, CompletionWatcherServlet.TASKS_PER_BATCH))
-      tasksPerBatch = Integer.parseInt(value);
-    else if (eq (name, CompletionWatcherServlet.INTERVAL)) {
-      try {
-        interval = Long.parseLong(value);
-        if (interval < MIN_INTERVAL)
-          interval = MIN_INTERVAL;
-      } catch (Exception e) { interval = 1000l; }
-    } else if (eq (name, CompletionWatcherServlet.WAIT_BEFORE)) {
-      waitBefore = eq (value, "true");
-    } else if (eq (name, CompletionWatcherServlet.WAIT_AFTER)) {
-      waitAfter = eq (value, "true");
-    } else if (eq (name, CompletionWatcherServlet.RESCIND_AFTER_COMPLETE)) {
-      rescindAfterComplete = eq (value, "true");
-    } else if (eq (name, CompletionWatcherServlet.USE_CONFIDENCE)) {
-      useConfidence = eq (value, "true");
-    }
-    */
   }
 
   /**
    * Main work done here. <p>
    *
-   * Sends the first batch of tasks, and keeps sending until totalBatches have been
-   * sent.  If should wait for completion, waits until notified by blackboardChanged (). <p>
-   *
-   * Will wait <b>interval</b> milliseconds between batches if there are
-   * more than one batches to send.
+   * Calls blackboard changed initially, then waits until the state machine has reached "done." <p>
+   * Then records run elapsed time.
    *
    * @see #getSettings
    * @see #blackboardChanged
@@ -282,7 +261,7 @@ public class CompletionWatcherWorker extends ServletWorker {
       if (support.getLog().isDebugEnabled ())
 	support.getLog().debug ("CompletionWatcherWorker.getResult - checking quiet...");
 
-      blackboardChanged (true);
+      blackboardChanged ();
 
       synchronized (doneSignal) {
 	if (!isDone())
@@ -299,91 +278,142 @@ public class CompletionWatcherWorker extends ServletWorker {
   }
 
   /**
-   * Called when one of the tasks that was added to the blackboard has
-   * it's plan element change.
+   * <pre>
+   * Called when either 
+   *
+   * 1) the task subscription changes
+   * 2) the plan element subscription changes
+   * 3) a timer expires
    * 
+   * Does book-keeping to keep track of incomplete tasks. 
+   * (If a plan element has completed, it's task is removed from the
+   * set of incomplete tasks.)
+   *
+   * Given whether all tasks are complete, if any arrived in the last transaction,
+   * or if a timer expired, calls advance state.
+   *
+   * </pre>
    **/
-  protected void blackboardChanged(boolean calledInitially) {
+  protected void blackboardChanged() {
     try {
-      //      Thread.dumpStack();
       support.getBlackboardService().openTransaction();
 
       boolean haveChanged = support.getBlackboardService().haveCollectionsChanged();
 
       boolean planElementChanged = planElementSubscription.hasChanged();
       boolean taskChanged        = taskSubscription.hasChanged();
+      Collection addedCollection = taskSubscription.getAddedCollection ();
+      boolean hadNewTasks        = !addedCollection.isEmpty();
+      
+      if (hadNewTasks && support.getLog().isDebugEnabled())
+	support.getLog ().debug ("blackboardChanged called - had " + 
+				 addedCollection.size() + " NEW tasks.");
 
       if (taskChanged)
-	incompleteTasks.addAll(taskSubscription.getAddedCollection ());
+	incompleteTasks.addAll(addedCollection);
+
+      int numBefore = incompleteTasks.size ();
+      int numPEAdded   = planElementSubscription.getAddedCollection ().size();
 
       if (planElementChanged) {
-        Collection changedItems = planElementSubscription.getChangedCollection();
-	for (Iterator iter = changedItems.iterator (); iter.hasNext();) {
+	Collection addedItems = planElementSubscription.getAddedCollection();
+	numPEAdded = addedItems.size ();
+
+	for (Iterator iter = addedItems.iterator (); iter.hasNext();) {
 	  PlanElement pe = (PlanElement) iter.next();
+	  support.getLog ().debug ("blackboardChanged called - complete PE " + pe.getUID() + " added.");
 	  incompleteTasks.remove (pe.getTask());
 	}
       }
 
-      if (calledInitially ||
-	  planElementChanged || 
-	  (timerStarted() && timerExpired ())) {
-	support.getLog ().debug ("blackboardChanged called - " + 
-				 ((planElementChanged) ? " PE sub changed " : 
-				  ((timerExpired() ? " timer expired" : " huh?"))));
-	advanceState ();
+      if (support.getLog().isDebugEnabled()) {
+	int numPEChanged = planElementSubscription.getChangedCollection ().size();
+	int numPERemoved = planElementSubscription.getRemovedCollection ().size();
+	support.getLog ().debug ("blackboardChanged called - incomplete tasks before " + numBefore + 
+				 " after " + incompleteTasks.size());
+	support.getLog ().debug ("blackboardChanged called - complete PE added " + numPEAdded + 
+				 " changed " + numPEChanged + 
+				 " removed " + numPERemoved + 
+				 " total "   + planElementSubscription.getCollection().size());
       }
       
-      /*
-      else if (!taskSubscription.getAddedCollection().isEmpty() ||
-	       !taskSubscription.getRemovedCollection().isEmpty() ||
-	       !taskSubscription.getChangedCollection().isEmpty())
-	support.getLog ().debug ("blackboardChanged - " + 
-				 " added "   + taskSubscription.getAddedCollection().size() +
-				 " removed " + taskSubscription.getRemovedCollection().size() +
-				 " changed " + taskSubscription.getChangedCollection().size());
-      */
-
+      boolean allComplete = incompleteTasks.isEmpty ();
+      if (allComplete ||
+	  planElementChanged || 
+	  taskChanged ||
+	  timerExpired ())
+	advanceState (allComplete, hadNewTasks, timerExpired ());
     } catch (Exception exc) {}
     finally{
       support.getBlackboardService().closeTransaction();
     }
   }
 
-  protected void advanceState () {
-    boolean allComplete = incompleteTasks.isEmpty ();
+  /** 
+   * Calls changeState -- then tests if isDone and if so signals doneSignal in getResult ().
+   * @see #getResult
+   */
+  protected void advanceState (boolean allComplete, boolean hadNewTasks, boolean expired) {
     int before = state;
-    changeState (timerExpired(), allComplete); 
-    if (state != before)
-      support.getLog ().debug ("advanceState - state before " + before + 
-			       " timerExpired " + timerExpired () + 
-			       " all tasks complete " + allComplete + 
-			       " new state " + state + 
-			       " incompleteTasks " + incompleteTasks.size());
-    else {
-      support.getLog ().debug ("advanceState - incompleteTasks is " + incompleteTasks.size() + 
-			       " added "   + taskSubscription.getAddedCollection().size() +
-			       " removed " + taskSubscription.getRemovedCollection().size() +
-			       " changed " + taskSubscription.getChangedCollection().size());
+    changeState (expired, allComplete, hadNewTasks); 
+
+    if (support.getLog ().isInfoEnabled() ||
+	support.getLog ().isDebugEnabled()) {
+      if (state != before) {
+	support.getLog ().info ("advanceState - state before " + before + " after " + state);
+	support.getLog ().debug ("advanceState - timerExpired " + expired + 
+				 " all tasks complete " + allComplete + 
+				 " had new tasks " + hadNewTasks + 
+				 " incompleteTasks " + incompleteTasks.size());
+      }
+      else {
+	support.getLog ().debug ("advanceState - incompleteTasks is " + incompleteTasks.size() + 
+				 " added "   + taskSubscription.getAddedCollection().size() +
+				 " removed " + taskSubscription.getRemovedCollection().size() +
+				 " changed " + taskSubscription.getChangedCollection().size());
+	support.getLog ().debug ("advanceState - state (" + state + ")" +
+				 " timerExpired " + expired + 
+				 " all tasks complete " + allComplete + 
+				 " had new tasks " + hadNewTasks);
+      }
     }
 
     if (isDone ()) {
       synchronized (doneSignal) {
 	doneSignal.notify ();
+
+	if (support.getLog ().isInfoEnabled())
+	  support.getLog ().info ("advanceState - run time was " + (end-start) + " millis.");
       }
     }
   } 
 
-  /*
-  else if (!changed && !timerExpired())
-  support.getLog ().debug ("advanceState - doing nothing, task sub hasn't changed && timer not expired.");
-  else 
-    support.getLog ().debug ("advanceState - doing nothing, since task sub hasn't changed.");
-}
-  */
-
+  /** we're done if the state machine is in the final state */
   protected boolean isDone () { return (state == AFTER_SECOND); }
 
-  protected void changeState (boolean waitedLongEnough, boolean allComplete) { 
+  /**
+   * <pre>
+   * States are :
+   *  BEFORE_FIRST - some tasks are incomplete
+   *   Transition : when all are complete, start first timer, go to next state
+   *  DURING_FIRST - all tasks are complete
+   *   Transition : waited first interval, go to next state
+   *   Transition : saw incomplete task before time elapsed, go to previous state
+   *  END_OF_FIRST - the required quiet interval has elapsed
+   *   Transition : saw first incomplete task, mark time, go to next state
+   *  AFTER_FIRST  - there are some incomplete tasks
+   *   Transition : all tasks complete, mark time, start second timer, go to next state
+   *  DURING_SECOND - all tasks are complete again, we're possibly done
+   *   Transition : waited second interval, go to next state
+   *   Transition : saw incomplete task before time elapsed, forget end time, go to previous state
+   *  AFTER_SECOND - we waited long enough to make sure we're done
+   * 
+   * </pre>
+   * @param waitedLongEnough -- if the timer expired, signaling the required wait was completed
+   * @param allComplete - are all tasks complete
+   * @param hadNewTasks - even if all tasks were complete, did any new tasks appear?
+   */
+  protected void changeState (boolean waitedLongEnough, boolean allComplete, boolean hadNewTasks) { 
     switch (state) {
     case BEFORE_FIRST:
       if (allComplete) {
@@ -394,6 +424,7 @@ public class CompletionWatcherWorker extends ServletWorker {
     case DURING_FIRST:
       if (waitedLongEnough) {
 	state++;
+	cancelTimer ();
       }
       else if (!allComplete) {
 	state--;
@@ -401,9 +432,9 @@ public class CompletionWatcherWorker extends ServletWorker {
       }
       break;
     case END_OF_FIRST : 
-      if (!allComplete) {
+      if (!allComplete || hadNewTasks) {
 	start = System.currentTimeMillis ();
-	support.getLog().debug ("start is " + new Date(start));
+	support.getLog().info ("start is " + new Date(start));
 	state++;
       }
       break;
@@ -411,14 +442,14 @@ public class CompletionWatcherWorker extends ServletWorker {
       if (allComplete) {
 	state++;
 	end = System.currentTimeMillis ();
-	support.getLog().debug ("possible end is " + new Date(end));
+	support.getLog().info ("possible end is " + new Date(end));
 	startSecondWait ();
       }
       break;
     case DURING_SECOND:
       if (waitedLongEnough) 
 	state++;
-      else if (!allComplete) {
+      else if (!allComplete || hadNewTasks) {
 	state--;
 	cancelTimer ();
       }
@@ -443,8 +474,11 @@ public class CompletionWatcherWorker extends ServletWorker {
   }
 
   /**
-   * Schedule a update wakeup after some interval of time
+   * Schedule a update wakeup after some interval of time. <p>
+   * Uses an alarm.
    * @param delay how long to delay before the timer expires.
+   * @see org.cougaar.core.agent.service.alarm.Alarm
+   * @see org.cougaar.core.service.AlarmService#addRealTimeAlarm
    **/
   protected void startTimer(final long delay) {
     if (timer != null) return;  // update already scheduled
@@ -452,7 +486,7 @@ public class CompletionWatcherWorker extends ServletWorker {
       support.getLog().debug("Starting timer with delay " + delay);
 
     timer = new Alarm() {
-      long expirationTime = System.currentTimeMillis() + delay;
+      long expirationTime = System.currentTimeMillis() + delay*1000l;
       boolean expired = false;
       public long getExpirationTime() {return expirationTime;}
       public synchronized void expire() {
@@ -481,8 +515,6 @@ public class CompletionWatcherWorker extends ServletWorker {
     timer.cancel();
     timer = null;
   }
-
-  protected boolean timerStarted () { return (timer != null); }
 
   /**
    * Test if the timer has expired.
@@ -513,6 +545,11 @@ public class CompletionWatcherWorker extends ServletWorker {
   /**
    * Subscription to PlanElements disposing of our tasks
    **/
+  private IncrementalSubscription planElementSubscription;
+
+  /**
+   * Subscription to PlanElements disposing of our tasks
+   **/
   private IncrementalSubscription taskSubscription;
 
   /** for waiting for a subscription on the blackboard */
@@ -524,9 +561,6 @@ public class CompletionWatcherWorker extends ServletWorker {
 
   /** returned response */
   protected GLMStimulatorResponseData responseData=new GLMStimulatorResponseData();
-
-  /** dump debug output if true */
-  protected boolean debug = false;
 
   protected Object doneSignal = new Object ();
   protected int state = BEFORE_FIRST;
