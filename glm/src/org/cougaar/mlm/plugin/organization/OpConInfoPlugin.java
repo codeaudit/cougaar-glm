@@ -86,17 +86,6 @@ public class OpConInfoPlugin extends ComponentPlugin {
   protected void execute() {
     if (mySelfOrgs.hasChanged()) {
       initIdInfo();
-      Iterator it = myOpConInfoRelaySubscription.iterator();
-      while (it.hasNext()) {
-        OpConInfoRelay opir = (OpConInfoRelay) it.next();
-        if (opir.getResponse() == null) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("Updating the relay with: " +idInfo);
-          }
-          opir.updateResponse(null, idInfo); 
-          getBlackboardService().publishChange(opir);
-        }
-      }
     }
 
     if (myOpConInfoRelaySubscription.hasChanged()) {
