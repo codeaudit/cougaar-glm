@@ -353,9 +353,11 @@ public class ClusterCache
 	return (ItineraryProducer)(getProducer(clusterName, itineraryCache, cold, false));
     }
 
-    public LogPlanProducer getLogPlanProducer(String clusterName, boolean cold)
+    public ThreadedProducer getLogPlanProducer(String clusterName, boolean cold)
     {
-	return (LogPlanProducer)(getProducer(clusterName, logPlanCache, cold, true));
+	// The LogPlanProducer has been replaced by Folger's crystals. Let's see if anyone notices!
+	//return (LogPlanProducer)(getProducer(clusterName, logPlanCache, cold, true));
+	return (ThreadedProducer)(getProducer(clusterName,logPlanCache,cold,true));
     }
 
     private AbstractProducer getProducer(String clusterName, Hashtable cache, boolean cold, boolean autoStart)
@@ -388,9 +390,11 @@ public class ClusterCache
 
 	// Debug.out("CC:gP making new producer");
 	if ( clusterName.equals("Aggregation") )
-	    producer = new LogPlanProducer(host, CLIENT_PORT, this);
+	    producer = new LogPlanProducer(clusterName, this);
+// 	    producer = new LogPlanProducer(host, CLIENT_PORT, this);
 	else if ( cache == logPlanCache )
 	    producer = new LogPlanProducer(clusterName, this);
+// 	    producer = new LogPlanProducer(clusterName, this);
 	else if ( cache == itineraryCache )
 	    producer = new ItineraryProducer(clusterName, this, getallowOrgNames().contains(clusterName));
 	putProducerForCluster(clusterName, producer); // this kills off any old one in the same slot
