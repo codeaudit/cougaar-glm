@@ -324,7 +324,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin {
    * estimated fields.
    * </pre>
    */
-  public final void updateAllocationResult(PlanElement cpe) {
+  public void updateAllocationResult(PlanElement cpe) {
     if (isDebugEnabled ())
       debug (getName () + " : Received changed pe " + 
 			  cpe.getUID () + " for task " + 
@@ -344,8 +344,8 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin {
 	if (isDebugEnabled ())
           debug (getName () + " : Swapping Alloc Results for task " + 
                               cpe.getTask ().getUID ());
-        if (isWarnEnabled() && !reportedresult.isSuccess ())
-          warn (getName () + " : " + 
+        if (isInfoEnabled() && !reportedresult.isSuccess ())
+          info (getName () + " : " +
 		cpe.getTask ().getUID () + " failed to allocate.");
 
         cpe.setEstimatedResult(reportedresult);
