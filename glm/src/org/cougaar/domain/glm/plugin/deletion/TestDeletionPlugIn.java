@@ -91,14 +91,17 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     /** The preposition used to specify task duration **/
     private static final String DURATION = "OfDuration";
 
-    private long minRootTaskDelay     =  3 * 86400000L;
-    private long maxRootTaskDelay     = 14 * 86400000L;
-    private long minRootTaskDuration  =  3 * 86400000L;
-    private long maxRootTaskDuration  = 14 * 86400000L;
-    private long minInterTaskInterval =  1 * 3600000L;
-    private long maxInterTaskInterval = 24 * 3600000L;
-    private long AGGREGATION_PERIOD   =  5 * 86400000L;
-    private long testDuration         =  0 * 86400000L; // Run test for 120 days
+    private static final long ONE_DAY  = 86400000L;
+    private static final long ONE_HOUR =  3600000L;
+
+    private long minRootTaskDelay     = 30 * ONE_DAY;
+    private long maxRootTaskDelay     = 60 * ONE_DAY;
+    private long minRootTaskDuration  =  3 * ONE_DAY;
+    private long maxRootTaskDuration  = 14 * ONE_DAY;
+    private long minInterTaskInterval =  1 * ONE_HOUR;
+    private long maxInterTaskInterval = 24 * ONE_HOUR;
+    private long AGGREGATION_PERIOD   =  5 * ONE_DAY;
+    private long testDuration         =  0 * ONE_DAY; // Run test for 120 days
     private int nRoots = 2;     // Generate this many roots (0 means infinite);
     private int rootCount = 0;  // Number of roots so far
     private int level = 0;      // Our level
@@ -203,6 +206,7 @@ public class TestDeletionPlugIn extends SimplePlugIn {
 
     public void execute() {
         System.out.println("TestDeletionPlugIn.execute()");
+        long startTime = currentTimeMillis();
         if (useProvider) {
             if (provider == null) {
                 if (selfOrgs.hasChanged()) {
@@ -242,7 +246,14 @@ public class TestDeletionPlugIn extends SimplePlugIn {
             rootCount++;
             setNewRootTimer();
         }
+        long endTime = currentTimeMillis();
+        long elapsed = endTime - startTime;
+        if (elapsed > maxElapsed) {
+            System.out.println("time to run execute(): " + elapsed);
+            maxElapsed = elapsed;
+        }
     }
+    private long maxElapsed = 0L;
 
     private void checkSelfOrgs(Enumeration orgs) {
         if (orgs.hasMoreElements()) {
@@ -281,15 +292,26 @@ public class TestDeletionPlugIn extends SimplePlugIn {
     private void handleExpTasksAdded(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task expTask = (Task) tasks.nextElement();
-            System.out.println("Exp task added: " + format(expTask));
-            expandTask(expTask);
+            try {
+                checkTaskValid(expTask);
+                System.out.println("Exp task added: " + format(expTask));
+                expandTask(expTask);
+            } catch (RuntimeException re) {
+                System.err.println("handleExpTasksAdded: " + re);
+                failTask(expTask);
+            }
         }
     }
 
     private void handleExpTasksChanged(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
             Task expTask = (Task) tasks.nextElement();
-            System.out.println("Exp task changed: " + format(expTask));
+            try {
+                checkTaskValid(expTask);
+                System.out.println("Exp task changed: " + format(expTask));
+            } catch (RuntimeException re) {
+                System.err.println("handleExpTasksChanged: " + re);
+            }
         }
     }
 
@@ -303,50 +325,122 @@ public class TestDeletionPlugIn extends SimplePlugIn {
 
     private void handleSubTasksAdded(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
-            Task subtask = (Task) tasks.nextElement();
-            System.out.println("subtask added: " + format(subtask));
-            aggregateSubtask(subtask);
+            Task subTask = (Task) tasks.nextElement();
+            try {
+                checkTaskValid(subTask);
+                System.out.println("subTask added: " + format(subTask));
+                aggregateSubtask(subTask);
+            } catch (RuntimeException re) {
+                System.err.println("handleSubTasksAdded: " + re);
+                failTask(subTask);
+            }
         }
     }
 
     private void handleSubTasksChanged(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
-            Task subtask = (Task) tasks.nextElement();
-            System.out.println("subtask changed: " + format(subtask));
+            Task subTask = (Task) tasks.nextElement();
+            try {
+                checkTaskValid(subTask);
+                System.out.println("subTask changed: " + format(subTask));
+            } catch (RuntimeException re) {
+                System.err.println("handleSubTasksChanged: " + re);
+            }
         }
     }
 
     private void handleSubTasksRemoved(Enumeration tasks) {
         while (tasks.hasMoreElements()) {
-            Task subtask = (Task) tasks.nextElement();
-            System.out.println("subtask removed:. " + format(subtask));
+            Task subTask = (Task) tasks.nextElement();
+            System.out.println("subTask removed:. " + format(subTask));
         }
     }
 
     private void handleAggTasksAdded(Enumeration tasks, boolean remote) {
         while (tasks.hasMoreElements()) {
-            Task aggtask = (Task) tasks.nextElement();
-            System.out.println("aggtask added: " + format(aggtask));
-            allocateAggtask(aggtask, remote);
+            Task aggTask = (Task) tasks.nextElement();
+            try {
+                checkTaskValid(aggTask);
+                System.out.println("aggTask added: " + format(aggTask));
+                allocateAggtask(aggTask, remote);
+            } catch (RuntimeException re) {
+                System.err.println("handleAggTasksAdded: " + re);
+                failTask(aggTask);
+            }
         }
     }
 
     private void handleAggTasksChanged(Enumeration tasks, boolean remote) {
         while (tasks.hasMoreElements()) {
-            Task aggtask = (Task) tasks.nextElement();
-            System.out.println("aggtask changed: " + format(aggtask));
-            reallocateAggtask(aggtask, remote);
+            Task aggTask = (Task) tasks.nextElement();
+            try {
+                checkTaskValid(aggTask);
+                System.out.println("aggTask changed: " + format(aggTask));
+                reallocateAggtask(aggTask, remote);
+            } catch (RuntimeException re) {
+                System.err.println("handleAggTasksChanged: " + re);
+            }
         }
     }
 
     private void handleAggTasksRemoved(Enumeration tasks, boolean remote) {
         while (tasks.hasMoreElements()) {
-            Task aggtask = (Task) tasks.nextElement();
-            System.out.println("aggtask removed:. " + format(aggtask));
-            int subtype = getSubtype(aggtask);
-            mpTasks[subtype].remove(aggtask);
-            advanceScheduleStartTime(aggtask, remote);
+            Task aggTask = (Task) tasks.nextElement();
+            int subtype = getSubtype(aggTask);
+            mpTasks[subtype].remove(aggTask);
+            advanceScheduleStartTime(aggTask, remote);
         }
+    }
+
+    private void checkTaskValid(Task task) {
+        Date date = task.getCommitmentDate();
+        long t;
+        if (date != null) {
+            t = date.getTime();
+        } else {
+            try {
+                t = PlugInHelper.getStartTime(task);
+            } catch (IllegalArgumentException iae) {
+                try {
+                    t = PlugInHelper.getEndTime(task);
+                } catch (IllegalArgumentException iae2) {
+                    t = -1L;
+                }
+            }
+        }
+        if (t == -1L) {
+            throw new RuntimeException("Task has no valid time");
+        }
+        long now = currentTimeMillis();
+        if (now >= t) {
+            throw new RuntimeException(dateFormat.format(new Date(now))
+                                       + " is past the commitment time of: "
+                                       +  format(task));
+        }
+    }
+
+    protected boolean publishAdd(Task task) {
+        boolean result = super.publishAdd(task);
+        if (!result) {
+            System.err.println("publishAdd failed: " + format(task));
+        }
+        return result;
+    }
+
+    protected boolean publishChange(Task task) {
+        boolean result = super.publishChange(task);
+        if (!result) {
+            System.err.println("publishChange failed: " + format(task));
+        }
+        return result;
+    }
+
+    protected boolean publishRemove(Task task) {
+        boolean result = super.publishRemove(task);
+        if (!result) {
+            System.err.println("publishRemove failed: " + format(task));
+        }
+        return result;
     }
 
     /**
@@ -405,6 +499,12 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         publishAdd(exp);
     }
 
+    private void failTask(Task task) {
+        AllocationResult ar = PlugInHelper.createEstimatedAllocationResult(task, theLDMF, 1.0, false);
+        Disposition disp = theLDMF.createFailedDisposition(task.getPlan(), task, ar);
+        publishAdd(disp);
+    }
+
     /**
      * Find an aggregation for which the timespan can accomodate the
      * subtask. If a suitable aggregation is not found, create a new
@@ -414,12 +514,25 @@ public class TestDeletionPlugIn extends SimplePlugIn {
         int subtype = getSubtype(subtask);
         long startTime = TaskUtils.getStartTime(subtask);
         long endTime = TaskUtils.getEndTime(subtask);
+        long now = currentTimeMillis();
+        long minTime = now + 2 * ONE_DAY;
+        if (startTime < minTime) {
+            System.out.println("subtask starts too soon after "
+                               + dateFormat.format(new Date(now))
+                               + ": "
+                               + format(subtask));
+            failTask(subtask);
+            return;
+        }
         for (Iterator i = mpTasks[subtype].iterator(); i.hasNext(); ) {
             NewMPTask mpTask = (NewMPTask) i.next();
             long mpStartTime = TaskUtils.getStartTime(mpTask);
+            if (mpStartTime > minTime) {
+                continue;       // Can't use if about to start
+            }
             long mpEndTime = TaskUtils.getEndTime(mpTask);
             if (mpStartTime + AGGREGATION_PERIOD > endTime
-                || mpEndTime - AGGREGATION_PERIOD < startTime) {
+                && mpEndTime - AGGREGATION_PERIOD < startTime) {
                 createAggregation(subtask, mpTask);
                 return;
             }
@@ -459,6 +572,8 @@ public class TestDeletionPlugIn extends SimplePlugIn {
                                                                    newStartTime));
         pref = theLDMF.newPreference(AspectType.START_TIME, sf);
         mpTask.setPreference(pref);
+//          mpTask.setCommitmentDate(new Date(newStartTime));
+
     }
 
     private void setEndTimePreference(NewTask mpTask, long newEndTime) {
@@ -568,6 +683,7 @@ public class TestDeletionPlugIn extends SimplePlugIn {
 
         task.setPrepositionalPhrases(phrases.elements());
 	task.setDirectObject(asset);
+//          task.setCommitmentDate(new Date(startTime));
         ScoringFunction sf;
         Preference pref;
         long slop = ((endTime - startTime) - duration) / 2L;
