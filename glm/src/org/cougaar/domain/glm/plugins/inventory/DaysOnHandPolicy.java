@@ -30,7 +30,7 @@ import org.cougaar.domain.planning.ldm.policy.StringRuleParameter;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: DaysOnHandPolicy.java,v 1.3 2001-02-05 17:18:15 afedyk Exp $
+ * @version  $Id: DaysOnHandPolicy.java,v 1.4 2001-02-07 17:42:17 afedyk Exp $
  */
 
 public class DaysOnHandPolicy extends Policy {
@@ -80,7 +80,6 @@ public class DaysOnHandPolicy extends Policy {
 	} catch (RuleParameterIllegalValueException ex) {
 	    System.out.println(ex);
 	}
-	System.out.println("Added "+GoalLevelMultiplier+": "+drp);
 	Add(drp);
     }
 
