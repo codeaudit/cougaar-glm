@@ -55,7 +55,7 @@ public class GetOplanPlugIn extends SimplePlugIn {
   };
 
   protected void setupSubscriptions() {
-    alpFactory = (GLMFactory)getFactory("alp");
+    alpFactory = (GLMFactory)getFactory("glm");
 
     oplanCoupons = (IncrementalSubscription)subscribe(oplanCouponPred);
   }

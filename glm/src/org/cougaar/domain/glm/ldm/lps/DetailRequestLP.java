@@ -50,7 +50,7 @@ public class DetailRequestLP
 
   private GLMFactory getGLMFactory() {
     if (_alpFactory==null) {
-      _alpFactory = (GLMFactory)cluster.getFactory("alp");
+      _alpFactory = (GLMFactory)cluster.getFactory("glm");
     }
     return _alpFactory;
   }

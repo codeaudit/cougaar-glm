@@ -134,7 +134,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   */
 
   protected void setupSubscriptions() {
-    aldmf = (GLMFactory)getFactory("alp");
+    aldmf = (GLMFactory)getFactory("glm");
     getSubscriber().setShouldBePersisted(false);
 
     if (!didRehydrate()) {

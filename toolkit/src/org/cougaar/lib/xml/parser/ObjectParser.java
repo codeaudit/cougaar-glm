@@ -108,7 +108,7 @@ public class ObjectParser{
 	catch(Exception e){
 	  try {
 	    if (obj == null) {
-	      Factory af = ldm.getFactory("alp");
+	      Factory af = ldm.getFactory("glm");
 	      if (af != null) {
 		  String method_name = ObjectParser.getMethodName(className);
 		  Method method = af.getClass().getMethod(method_name, null);

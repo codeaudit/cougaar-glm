@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/LocationParser.java,v 1.5 2001-03-29 21:51:22 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/LocationParser.java,v 1.6 2001-03-30 16:46:01 mthome Exp $
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -26,7 +26,7 @@ import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 public class LocationParser{
 
   public static GeolocLocation getLocation(LDMServesPlugIn ldm, Node node){
-    GLMFactory af = (GLMFactory)ldm.getFactory("alp");
+    GLMFactory af = (GLMFactory)ldm.getFactory("glm");
 
     NodeList  nlist      = node.getChildNodes();      
     int       nlength    = nlist.getLength();

@@ -1,3 +1,8 @@
+2001-03-30  Michael Thome  <mthome@bbn.com>
+
+	* GLMDomain
+	Add glm, mlm, alp aliases.  We now expect it to be loaded as "glm"
+
 2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/domain/glm/ldm/Oplan.java:

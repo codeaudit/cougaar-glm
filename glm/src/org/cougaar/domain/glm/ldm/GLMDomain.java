@@ -57,4 +57,12 @@ public class GLMDomain implements Domain {
     l.add(new OPlanWatcherLP(logplan, cluster));
     return l;
   }
+
+  public Collection getAliases() {
+    ArrayList l = new ArrayList(3);
+    l.add("glm");
+    l.add("mlm");
+    l.add("alp");
+    return l;
+  }
 }
