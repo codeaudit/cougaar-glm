@@ -414,22 +414,17 @@ public abstract class InventoryManager extends InventoryProcessor {
 	long start_time = defaultRefillStartTime(time,inv);
 
 	p_start = createDateAfterPreference(AspectType.START_TIME, start_time);
+	p_end = createDateBeforePreference(AspectType.END_TIME,end_time);
+
 	// AMY - SF need early (OPlan Start date), best (defaultRefillEndDate) and Late (Plan End date)
-	ClusterOPlan oplan = null;
-//          oplan = ((GLMDecorationPlugIn)inventoryPlugIn_).getOperativeOPlan(start_time);
-	if (oplan != null) {
-	    double early = (double)oplan.getStartTime();
-	    double best = (double)end_time;
-	    double late = (double)oplan.getEndTime();
-	    AspectValue earlyAV = new AspectValue(AspectType.END_TIME, early);
-	    AspectValue bestAV = new AspectValue(AspectType.END_TIME, best);
-	    AspectValue lateAV = new AspectValue(AspectType.END_TIME, late);
-	    ScoringFunction endTimeSF = ScoringFunction.createVScoringFunction(earlyAV, bestAV, lateAV);
-	    p_end = ldmFactory_.newPreference(AspectType.END_TIME, endTimeSF);
-	}
-	else {
-	    p_end = createDateBeforePreference(AspectType.END_TIME,end_time);
-	}
+//  	    double early = (double)oplan.getStartTime();
+//  	    double best = (double)end_time;
+//  	    double late = (double)oplan.getEndTime();
+//  	    AspectValue earlyAV = new AspectValue(AspectType.END_TIME, early);
+//  	    AspectValue bestAV = new AspectValue(AspectType.END_TIME, best);
+//  	    AspectValue lateAV = new AspectValue(AspectType.END_TIME, late);
+//  	    ScoringFunction endTimeSF = ScoringFunction.createVScoringFunction(earlyAV, bestAV, lateAV);
+//  	    p_end = ldmFactory_.newPreference(AspectType.END_TIME, endTimeSF);
 
 	AspectValue lowAV = new AspectValue(AspectType.QUANTITY, 0.01);
 	AspectValue bestAV = new AspectValue(AspectType.QUANTITY, refill_qty);
@@ -449,13 +444,13 @@ public abstract class InventoryManager extends InventoryProcessor {
 	pp_vector.add(newPrepositionalPhrase(Constants.Preposition.OFTYPE, supplyType_));
 
 	Object io;
-	if ((oplan != null)&&(oplan.getGeoLoc(start_time) instanceof GeolocLocation)) {
-	    io = oplan.getGeoLoc(start_time);
+	Enumeration geolocs = AssetUtils.getGeolocLocationAtTime(myOrganization_, start_time);
+	if (geolocs.hasMoreElements()) {
+	    io = (GeolocLocation)geolocs.nextElement();
 	} else {
 	    io = thisGeoloc_;
 	}
-	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO,
-								io));
+	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO, io));
 
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.REFILL));
 
