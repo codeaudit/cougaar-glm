@@ -168,7 +168,7 @@ public class UIAssetAttributeNode extends UITreeNode {
       Object o = dynamic.nextElement();
       try {
         PropertyGroup p = (PropertyGroup)o;
-        Class interfaceToUse = Class.forName(p.getImmutableClass());
+        Class interfaceToUse = p.getPrimaryClass();
 	//	System.out.println("Introspecting on: " + interfaceToUse);
 	//System.out.println("Introspecting on: " + interfaceToUse +
 	//" for " + asset.toString());
