@@ -82,13 +82,13 @@ public class YPDemoJNDI
                     subKontext = (DirContext)agents.lookup(subContextName);
               }
               System.out.println("Created Subdirectory=" + subKontext.getNameInNamespace());
-                          //subKontext.bind("Roles", new AgentRole("http://www.ultralog.net")); //, new BasicAttributes("name", role.getName()));
-
               System.out.println("Binding attributes, size=" + attributes.size() );
               subKontext.bind(objName, bindingObject, attributes );
 
          } catch ( NamingException ex ) {
-              // Hmmm, complain
+              //
+              // Hmmm, no idea on how to recover from this, just complain and return
+              //
               ex.printStackTrace();
               return false;
          }
@@ -122,7 +122,10 @@ public class YPDemoJNDI
 
 
      //###########################################################################
-     // Traverses directory structure and prints HTMLized represetnation of contents
+     // Traverses directory structure starting from the JNDI root
+     // and prints HTMLized representation of contents.
+     //
+     // @return String HTMLized representation.
      //
      public static String describeAllDirContexts( NamingService nserve  )
      {
@@ -148,27 +151,28 @@ public class YPDemoJNDI
      }
 
      //###########################################################################
+     //  Private helper method used by describeAllDirContexts()
+     //
      private static void describeNamingEnumeration( CompositeName tail, NamingEnumeration en,
                                  PrintStream stream,  NamingService nserve,  int depth ) throws NamingException
      {
+         DirContext rootCtx = nserve.getRootContext();
          while( en.hasMoreElements() ) {
              Object obj = en.nextElement();
              Binding bind = (Binding)obj;
 
              if( bind.getObject() instanceof NamingDirContext)
              {
-                  Context ctx = nserve.getRootContext();
                   CompositeName t = new CompositeName(tail.toString());
                   t.add(bind.getName());
 
                   stream.println("<TR>");
                   for(int i=0; i< depth-1; i++) stream.println("<TD>.</TD>");
-                  stream.println("<TD BGCOLOR=RED><FONT SIZE=-1>" + t.toString() + "</FONT></TD>");
+                  stream.println(DescribeObjectAsHTML.describeWithinTableColumn(t.toString(),bind.getObject()));
+                  //stream.println("<TD BGCOLOR=RED><FONT SIZE=-1>" + t.toString() + "</FONT></TD>");
                   stream.println("</TR>");
-                  //stream.println("\nNamingDirContext[ list(CompositeName)=" + t.toString()
-                  //           + "]");
 
-                  describeNamingEnumeration(t, ctx.listBindings(t.toString()), stream, nserve, depth+1);
+                  describeNamingEnumeration(t, rootCtx.listBindings(t.toString()), stream, nserve, depth+1);
              }
              else {
                   CompositeName t = new CompositeName(tail.toString());
@@ -176,21 +180,37 @@ public class YPDemoJNDI
                   stream.println("<TR>");
                   for(int i=0; i< depth-1; i++) stream.println("<TD>.</TD>");
                   if( bind.getObject() instanceof FDSURL) {
-                        FDSURL furl = (FDSURL)bind.getObject();
-                        stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</FONT>:" + furl.myURL + "</TD>");
+                        //FDSURL furl = (FDSURL)bind.getObject();
+                        stream.println(DescribeObjectAsHTML.describeWithinTableColumn(bind.getName(),bind.getObject()));
+                        //stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</FONT>:" + furl.myURL + "</TD>");
                   }
                   else if( bind.getObject() instanceof AgentRole) {
-                        AgentRole role = (AgentRole)bind.getObject();
-                        stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</FONT>, namespace=" + role.namespace + "</TD>");
+                        //AgentRole role = (AgentRole)bind.getObject();
+                        //stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</FONT>, namespace=" + role.namespace + "</TD>");
+
+                         stream.println(DescribeObjectAsHTML.describeWithinTableColumn(bind.getName(),bind.getObject()));
+                         DirContext ctx = (DirContext)rootCtx.lookup(tail.toString());
+                         Attributes atts = ctx.getAttributes(bind.getName());
+
+                         //System.out.println("######## tail.toString()=" + tail.toString() + ", bind.getName()=" + bind.getName()
+                         // + ", atts.size()=" + atts.size());
+
+                         NamingEnumeration nen = atts.getAll();
+                         stream.println("<TD><TABLE>");
+                         while(nen.hasMore()){
+                              Attribute a = (Attribute)nen.next();
+                              //System.out.println("############# Attribute a = " + a);
+                              stream.println("<TR>");
+                              stream.println(DescribeObjectAsHTML.describeWithinTableColumn(a.toString(),a));
+                              stream.println("</TR>");
+                         }
+                         stream.println("</TABLE></TD>");
                   }
                   else {
-                        stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</font>:" + bind.getClassName() + "</TD>");
+                        //stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</font>:" + bind.getClassName() + "</TD>");
+                        stream.println(DescribeObjectAsHTML.describeWithinTableColumn(bind.getName(),bind));
                   }
                   stream.println("</TR>");
-                  //stream.println("\nEntity[ list(CompositeName)=" + t.toString()
-                  //           + ", pair.getClassName()=" + pair.getClassName()
-                  //           + "]");
-                  //stream.println("NOT NamingDirContext type discovered=" + pair.getName()+ "," + pair.getClassName());
              }
          }
      }

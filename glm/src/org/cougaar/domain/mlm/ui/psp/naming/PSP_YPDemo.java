@@ -51,16 +51,13 @@ import org.cougaar.domain.planning.ldm.plan.Relationship;
 /**
  * .<pre>
  * This is a simple JNDI demonstratino/illustration PSP implementation.
- * Contents of this file are:
  *
- *    1.) number of specialized, light-weight helper classes (non-public)
- *    2.) public PSP_YPDemo class which is the demo JNDI PSP.
+ * The PSP_YPDemo class relies upon the YPDemoJNDI class for its
+ * JNDI-specific logic.  Consult this class for the specific JNDI
+ * use-patterns.
  *
  * </pre>
  **/
-
-
-
 
 //###########################################################################
 //###########################################################################
@@ -275,11 +272,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
               {
                   //System.out.println("Organization=" + og.getItemIdentificationPG().getNomenclature());
                   String ret = new String();
-                  /**
-                  ret += "<TABLE><TR><TD><FONT COLOR=" + TEXT_COLOR + ">Roles attributed to "
-                               + og.getItemIdentificationPG().getNomenclature()
-                               + "</FONT></TD><TD></TD></TR>";
-                  **/
+
                   session.addHeader("Roles attributed to " + og.getItemIdentificationPG().getNomenclature());
 
                   //
@@ -297,9 +290,14 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                   for(int i=0; i< relations.size(); i++){
                       Relationship rel = (Relationship)arr[i];
                       Role role = rel.getRoleA();
-                      session.add("<TR><TD></TD><TD><FONT SIZE=-1 COLOR=RED>" + role.getName() + "</FONT></TD></TR>");
                       BasicAttribute attribute = new BasicAttribute(role.getName(), "true");
                       attributes.put(attribute);
+
+                      session.add("<TR><TD></TD>");
+                      session.add( DescribeObjectAsHTML.describeWithinTableColumn(role.getName(),attribute));
+                      //<TD><FONT SIZE=-1 COLOR=RED>" + role.getName() + "</FONT></TD>");
+                      session.add("</TR>");
+
                   }
                   session.add("</TABLE>");
                   session.doPrepend();
@@ -401,27 +399,6 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
           }
     }
 
-    /**
-    public static String decode(String s) {
-    ByteArrayOutputStream out = new ByteArrayOutputStream(s.length());
-    for (int i = 0; i < s.length(); i++) {
-      int c = (int) s.charAt(i);
-      if (c == '+') {
-        out.write(' ');
-      }
-      else if (c == '%') {
-        int c1 = Character.digit(s.charAt(++i), 16);
-        int c2 = Character.digit(s.charAt(++i), 16);
-        out.write((char) (c1 * 16 + c2));
-      }
-      else {
-        out.write(c);
-      }
-    } // end for
-
-    return out.toString();
-  }
-  **/
 
     //###############################################################################
     //
