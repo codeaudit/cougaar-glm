@@ -69,8 +69,9 @@ public class CompletionWatcherServlet extends ServletBase {
     super.setSimpleServletSupport(support);
   }
 
-  public static final String FIRST_INTERVAL  = "firstInterval";
-  public static final String SECOND_INTERVAL = "secondInterval";
+  public static final String FIRST_INTERVAL   = "firstInterval";
+  public static final String SECOND_INTERVAL  = "secondInterval";
+  public static final String VERBS_TO_INCLUDE = "verbsToInclude";
 
   public static final boolean DEBUG = false;
   public static boolean VERBOSE = false;
@@ -116,6 +117,14 @@ public class CompletionWatcherServlet extends ServletBase {
     out.print("</td><td>");
     out.print("<INPUT TYPE=\"text\" NAME=\"" + SECOND_INTERVAL + "\" "+
 	      "VALUE=\"10\">");
+    out.println("</td></tr>");
+
+    // get verbs to include
+    out.print("<tr><td>");
+    out.print("Verbs of tasks to examine (empty means all).  Comma separated.");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + VERBS_TO_INCLUDE + "\" "+
+	      "VALUE=\"\">");
     out.println("</td></tr>");
 
     out.println ("</table><p>");

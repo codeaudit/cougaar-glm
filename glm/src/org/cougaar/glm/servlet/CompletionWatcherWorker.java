@@ -49,6 +49,7 @@ import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.servlet.ServletBase;
 import org.cougaar.planning.servlet.ServletWorker;
 import org.cougaar.planning.servlet.data.xml.*;
@@ -244,6 +245,10 @@ public class CompletionWatcherWorker extends ServletWorker {
       if (o instanceof PlanElement) {
         PlanElement pe = (PlanElement) o;
         Task task = pe.getTask();
+
+	if (!isVerbIncluded (task.getVerb()))
+	  return false;
+
 	boolean hasReported  = (pe.getReportedResult  () != null);
 	boolean hasEstimated = (pe.getEstimatedResult () != null);
 	boolean highConfidence = false;
@@ -268,12 +273,20 @@ public class CompletionWatcherWorker extends ServletWorker {
     public boolean execute(Object o) {
       if (o instanceof Task) {
 	Task task = (Task) o;
-
-	return !(task.getVerb().equals(Constants.Verb.ReportForService));
+	return isVerbIncluded (task.getVerb());
       } 
       return false;
     }
   };
+
+  protected boolean isVerbIncluded (Verb verb) {
+    if (verb.equals(Constants.Verb.ReportForService))
+      return false;
+    else if (verbsToInclude.isEmpty())
+      return true;
+    else
+      return verbsToInclude.contains (verb);
+  }
 
   // unused
   protected String getPrefix () { return "CompletionWatcher at "; }
@@ -295,8 +308,20 @@ public class CompletionWatcherWorker extends ServletWorker {
       firstInterval = Integer.parseInt(value);
     else if (eq (name, CompletionWatcherServlet.SECOND_INTERVAL))
       secondInterval = Integer.parseInt(value);
+    else if (eq (name, CompletionWatcherServlet.VERBS_TO_INCLUDE))
+      verbsToInclude = parseVerbs(value);
     else if (eq (name, "getImage"))
       getImage = true;
+  }
+
+  protected Collection parseVerbs (String verbs) {
+    StringTokenizer tokenizer = new StringTokenizer(verbs, ",");
+    Set verbSet = new HashSet ();
+
+    while (tokenizer.hasMoreTokens())
+      verbSet.add (Verb.getVerb(tokenizer.nextToken().trim()));
+
+    return verbSet;
   }
 
   /**
@@ -622,6 +647,7 @@ public class CompletionWatcherWorker extends ServletWorker {
   protected long firstInterval = 10l, secondInterval = 10l; // seconds
   protected boolean getImage = false;
   protected Set incompleteTasks = new HashSet();
+  protected Collection verbsToInclude = new HashSet();
 
   protected CompletionWatcherSupport support;
 }
