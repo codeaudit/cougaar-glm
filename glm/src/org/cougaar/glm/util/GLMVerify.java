@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMVerify.java,v 1.3 2003-01-23 19:53:33 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMVerify.java,v 1.4 2003-12-09 17:55:14 rtomlinson Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -22,19 +22,13 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.planning.ldm.measure.Longitude;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Task;
-
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
-
-import java.util.Date;
-
 import org.cougaar.lib.util.UTILVerify;
-import org.cougaar.util.log.*;
+import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.log.Logger;
 
 /**
  * Helper classes to see if a task is consistent and 

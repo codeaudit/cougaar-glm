@@ -21,8 +21,9 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.measure.*;
-import java.io.*;
+import java.io.Serializable;
+
+import org.cougaar.planning.ldm.measure.Capacity;
 
 /**
  * representation of a CSS capability of a resource and a Capacity.

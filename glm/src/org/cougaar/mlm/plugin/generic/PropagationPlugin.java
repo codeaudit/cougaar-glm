@@ -21,25 +21,23 @@
 
 package org.cougaar.mlm.plugin.generic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
 
 import org.cougaar.core.blackboard.AnonymousChangeReport;
 import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.oplan.OplanContributor;
-import org.cougaar.planning.ldm.plan.TransferableTransfer;
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.planning.ldm.plan.RelationshipSchedule;
+import org.cougaar.planning.ldm.plan.Transferable;
+import org.cougaar.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.util.UnaryPredicate;
-
-import java.io.*;
-
 import org.cougaar.util.Filters;
-
+import org.cougaar.util.UnaryPredicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

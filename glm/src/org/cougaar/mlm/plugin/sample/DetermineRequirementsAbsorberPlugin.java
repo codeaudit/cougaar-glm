@@ -22,22 +22,23 @@
 package org.cougaar.mlm.plugin.sample;
 
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Disposition;
-import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.ExpanderHelper;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.agent.service.alarm.Alarm;
 
 public class DetermineRequirementsAbsorberPlugin extends SimplePlugin {
 

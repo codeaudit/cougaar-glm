@@ -21,37 +21,24 @@
 
 package org.cougaar.glm.parser;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.xerces.parsers.DOMParser;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.domain.*;
-import org.cougaar.planning.ldm.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.measure.*;
-
-import org.cougaar.util.ConfigFinder;
-
+import org.cougaar.glm.xml.parser.TaskParser;
 import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.util.UTILRuntimeException;
-import org.cougaar.glm.xml.parser.TaskParser;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.ConfigFinder;
 import org.cougaar.util.log.Logger;
-
-import org.apache.xerces.parsers.DOMParser;
-
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
 /**

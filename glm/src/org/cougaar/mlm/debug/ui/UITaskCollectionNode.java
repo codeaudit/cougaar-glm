@@ -21,13 +21,12 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Enumeration;
 
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.UnaryPredicate;
 
 /** A tree for an expandable task collection.
   */

@@ -21,12 +21,11 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
+import java.util.Date;
+
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
-import java.util.Date;
 
 public interface NewOplanPlugin {
   LoggingService getLoggingService();

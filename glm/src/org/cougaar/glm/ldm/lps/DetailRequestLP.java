@@ -21,30 +21,33 @@
 
 package org.cougaar.glm.ldm.lps;
 
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.log.Logging;
-
-import org.cougaar.core.agent.*;
-import org.cougaar.core.domain.*;
-import org.cougaar.core.blackboard.*;
-import org.cougaar.core.mts.Message;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.util.UniqueObject;
-import org.cougaar.core.util.UID;
-import org.cougaar.core.blackboard.Directive;
-import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.glm.ldm.GLMFactory;
-import org.cougaar.glm.ldm.plan.DetailRequest;
-import org.cougaar.glm.ldm.plan.DetailRequestAssignment;
-import org.cougaar.glm.ldm.plan.DetailReplyAssignment;
-import org.cougaar.glm.ldm.plan.QueryRequest;
-import org.cougaar.glm.ldm.plan.QueryRequestAssignment;
-import org.cougaar.glm.ldm.plan.QueryReplyAssignment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.cougaar.core.blackboard.Directive;
+import org.cougaar.core.blackboard.EnvelopeTuple;
+import org.cougaar.core.domain.EnvelopeLogicProvider;
+import org.cougaar.core.domain.LogicProvider;
+import org.cougaar.core.domain.MessageLogicProvider;
+import org.cougaar.core.domain.RestartLogicProvider;
+import org.cougaar.core.domain.RestartLogicProviderHelper;
+import org.cougaar.core.domain.RootPlan;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.util.UID;
+import org.cougaar.core.util.UniqueObject;
+import org.cougaar.glm.ldm.GLMFactory;
+import org.cougaar.glm.ldm.plan.DetailReplyAssignment;
+import org.cougaar.glm.ldm.plan.DetailRequest;
+import org.cougaar.glm.ldm.plan.DetailRequestAssignment;
+import org.cougaar.glm.ldm.plan.QueryReplyAssignment;
+import org.cougaar.glm.ldm.plan.QueryRequest;
+import org.cougaar.glm.ldm.plan.QueryRequestAssignment;
+import org.cougaar.planning.ldm.plan.Transferable;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logging;
 
 
 /**

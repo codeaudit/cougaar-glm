@@ -21,18 +21,11 @@
 
 package org.cougaar.mlm.examples;
 
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
+import org.cougaar.glm.ldm.asset.PhysicalAsset;
 import org.cougaar.planning.ldm.PrototypeProvider;
-
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.*;
-
-
-import org.cougaar.glm.ldm.*;import org.cougaar.glm.ldm.*;import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 
 /** This plugin knows how to build protypes with typeids
  * beginning with "NSN/". Actually, it only understands

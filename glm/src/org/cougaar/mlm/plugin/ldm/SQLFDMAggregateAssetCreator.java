@@ -21,20 +21,20 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.NewSchedule;
-import org.cougaar.planning.ldm.plan.NewRoleSchedule;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.cougaar.glm.ldm.asset.ClassVIIMajorEndItem;
 import org.cougaar.glm.ldm.asset.NewMovabilityPG;
 import org.cougaar.glm.ldm.asset.NewPhysicalPG;
-import org.cougaar.planning.ldm.measure.*;
-import java.math.BigDecimal;
-
-import java.util.Calendar;
-import java.util.Date;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.measure.Area;
+import org.cougaar.planning.ldm.measure.Distance;
+import org.cougaar.planning.ldm.measure.Mass;
+import org.cougaar.planning.ldm.measure.Volume;
+import org.cougaar.planning.ldm.plan.NewRoleSchedule;
+import org.cougaar.planning.ldm.plan.NewSchedule;
 
 
 /** AggregateAssetCreator implements QueryHandler to create sql queries 

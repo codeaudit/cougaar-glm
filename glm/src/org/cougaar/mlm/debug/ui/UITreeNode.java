@@ -21,12 +21,12 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-
-import java.util.Enumeration;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /** Support a dynamically expanded and updated tree node.  
   This overrides methods defined in DefaultMutableTreeNode (swing class) 

@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.NewScheduleElement;
 /**
  * NewQuantityRangeScheduleElement provides setters to build a complete object.
  **/

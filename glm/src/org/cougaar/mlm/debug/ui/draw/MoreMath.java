@@ -22,7 +22,6 @@
 
 package org.cougaar.mlm.debug.ui.draw;
  
-import java.lang.Math;
 
 /** Class MoreMath
  *

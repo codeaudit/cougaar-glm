@@ -22,59 +22,29 @@
 package org.cougaar.mlm.plugin.organization;
 
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
-
-
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.Vector;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
+import org.cougaar.core.util.UID;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.mlm.plugin.RandomButtonPusher;
+import org.cougaar.mlm.plugin.UICoordinator;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
-import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
-import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
-import org.cougaar.planning.ldm.plan.Verb;
-
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
-import org.cougaar.planning.plugin.legacy.PluginDelegate;
-
-import org.cougaar.core.util.UID;
-
-import org.cougaar.util.Enumerator;
-import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.glm.ldm.asset.Organization;
-
-import org.cougaar.glm.ldm.oplan.Oplan;
-
-import org.cougaar.mlm.plugin.RandomButtonPusher;
-import org.cougaar.mlm.plugin.UICoordinator;
 
 /**
  * The GLSGUIInitPlugin will create the initial GetLogSupport task

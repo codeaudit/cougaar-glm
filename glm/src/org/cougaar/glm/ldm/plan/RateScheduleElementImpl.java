@@ -21,10 +21,10 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.glm.ldm.plan.NewRateScheduleElement;
-import org.cougaar.glm.ldm.plan.RateScheduleElement;
 import java.util.Date;
-import org.cougaar.planning.ldm.plan.*;
+
+import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
+import org.cougaar.planning.ldm.plan.ScheduleElementWithValue;
 
 /**
  * A RateScheduleElement is an encapsulation of temporal relationships

@@ -21,9 +21,8 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.glm.ldm.plan.NewQuantityRangeScheduleElement;
-import org.cougaar.glm.ldm.plan.QuantityRangeScheduleElement;
 import java.util.Date;
+
 import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
 
 /**

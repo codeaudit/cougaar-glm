@@ -21,18 +21,14 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.util.StateModelException;
+import java.util.Properties;
+
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.BlackboardService;
-import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.util.Parameters;
-
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Properties;
 
 
 public abstract class QueryHandler {

@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/ItineraryParser.java,v 1.5 2003-01-23 19:53:33 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/ItineraryParser.java,v 1.6 2003-12-09 17:55:14 rtomlinson Exp $
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -22,18 +22,16 @@
 
 package org.cougaar.glm.xml.parser;
 
-import java.util.Date;
 import java.util.Vector;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
-import org.cougaar.planning.ldm.plan.NewItineraryElement;
-import org.cougaar.planning.ldm.plan.ItineraryElement;
 
 import org.cougaar.lib.xml.parser.DateParser;
 import org.cougaar.lib.xml.parser.VerbParser;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.plan.ItineraryElement;
+import org.cougaar.planning.ldm.plan.NewItineraryElement;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Copyright (c) 1999 BBN Technologies 

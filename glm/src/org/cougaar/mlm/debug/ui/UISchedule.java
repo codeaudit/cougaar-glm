@@ -24,7 +24,6 @@ package org.cougaar.mlm.debug.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,19 +33,18 @@ import java.util.Hashtable;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.ldm.asset.PhysicalAsset;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
-
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.glm.ldm.asset.PhysicalAsset;
-import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
 /** Creates the values for a bar graph for displaying assets vs. time.

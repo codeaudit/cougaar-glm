@@ -21,54 +21,43 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.legacy.PluginDelegate;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Disposition;
-import org.cougaar.planning.ldm.plan.RoleSchedule;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.Role;
-
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AbstractAsset;
-import org.cougaar.glm.ldm.asset.CargoVehicle;
-
-import org.cougaar.planning.ldm.trigger.TriggerAction;
-import org.cougaar.planning.ldm.trigger.Trigger;
-import org.cougaar.planning.ldm.trigger.TriggerMonitor;
-import org.cougaar.planning.ldm.trigger.TriggerPredicateBasedMonitor;
-
-
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.ListIterator;
 import java.util.List;
+import java.util.ListIterator;
 
-import java.awt.event.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import java.awt.*;
-
-import javax.swing.*;
-
-import org.cougaar.util.UnaryPredicate;
-
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.CargoVehicle;
 import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.AbstractAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.trigger.Trigger;
+import org.cougaar.planning.ldm.trigger.TriggerAction;
+import org.cougaar.planning.ldm.trigger.TriggerMonitor;
+import org.cougaar.planning.ldm.trigger.TriggerPredicateBasedMonitor;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 public class MCCTriggerCreatorPlugin extends SimplePlugin
 {

@@ -24,17 +24,11 @@ package org.cougaar.mlm.plugin.generic;
 import java.util.Collection;
 
 import org.cougaar.core.mts.MessageAddress;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
+import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.plan.Role;
-
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Organization;
 
 /**
  * DestinationPredicate - Unary Predicate describing the 

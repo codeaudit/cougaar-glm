@@ -20,8 +20,8 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.io.IOException;
 import java.io.EOFException;
+import java.io.IOException;
 import java.util.Collection;
 
 public class EGObjectArray extends EGObjectBase implements EGObject {

@@ -20,16 +20,18 @@
  */
 package org.cougaar.mlm.plugin.sample;
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
+import java.awt.FlowLayout;
 import java.util.Enumeration;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Alert;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**

@@ -21,28 +21,10 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import java.util.Date;
-
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
-
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.planning.ldm.measure.Longitude;
-
-
-import org.cougaar.util.Parameters;
-
 import org.cougaar.glm.ldm.GLMFactory;
 import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
 
 /** Reads alploc info from a database table. Assumes it's being invoked on
  * behalf of SQLOplanPlugin. Updates SQLOplanPlugin's geoloc table with alplocs.

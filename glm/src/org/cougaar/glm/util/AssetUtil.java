@@ -21,68 +21,56 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AssetGroup;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.planning.ldm.asset.PropertyGroup;
-
-import org.cougaar.planning.ldm.measure.Area;
-import org.cougaar.planning.ldm.measure.Distance;
-import org.cougaar.planning.ldm.measure.Mass;
-import org.cougaar.planning.ldm.measure.Volume;
-
-
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Relationship;
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.planning.ldm.plan.RoleSchedule;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.Task;
-
-import org.cougaar.util.TimeSpan;
-
+import org.cougaar.glm.GLMConst;
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.GLMAsset;
 import org.cougaar.glm.ldm.asset.Ammunition;
 import org.cougaar.glm.ldm.asset.CargoShip;
 import org.cougaar.glm.ldm.asset.Consumable;
 import org.cougaar.glm.ldm.asset.Container;
 import org.cougaar.glm.ldm.asset.Convoy;
-import org.cougaar.glm.ldm.asset.GroundVehiclePG;
+import org.cougaar.glm.ldm.asset.GLMAsset;
 import org.cougaar.glm.ldm.asset.MovabilityPG;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.asset.Person;
 import org.cougaar.glm.ldm.asset.PhysicalPG;
-import org.cougaar.glm.ldm.asset.PositionPG;
 import org.cougaar.glm.ldm.asset.Repairable;
 import org.cougaar.glm.ldm.asset.TransportationNode;
 import org.cougaar.glm.ldm.asset.TransportationRoute;
-
 import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
-
-import org.cougaar.glm.GLMConst;
-import org.cougaar.glm.util.GLMPreference;
-
-
 import org.cougaar.lib.util.UTILAsset;
 import org.cougaar.lib.util.UTILPluginException;
 import org.cougaar.lib.util.UTILRuntimeException;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AssetGroup;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.asset.PropertyGroup;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.measure.Area;
+import org.cougaar.planning.ldm.measure.Distance;
+import org.cougaar.planning.ldm.measure.Mass;
+import org.cougaar.planning.ldm.measure.Volume;
+import org.cougaar.planning.ldm.plan.Relationship;
+import org.cougaar.planning.ldm.plan.RelationshipSchedule;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.TimeSpan;
 import org.cougaar.util.log.Logger;
-
-import java.util.*;
 
 
 /**

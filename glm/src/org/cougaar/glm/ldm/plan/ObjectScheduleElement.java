@@ -22,6 +22,7 @@
 package org.cougaar.glm.ldm.plan;
 
 import java.util.Date;
+
 import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
 
 /**

@@ -21,12 +21,10 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.glm.ldm.plan.NewCapacityScheduleElement;
-import org.cougaar.glm.ldm.plan.CapacityScheduleElement;
-
-import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
-import org.cougaar.planning.ldm.measure.Capacity;
 import java.util.Date;
+
+import org.cougaar.planning.ldm.measure.Capacity;
+import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
 
 /**
  * A CapacityScheduleElement is an encapsulation of temporal relationships

@@ -22,7 +22,6 @@
 package org.cougaar.glm.util;
 
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.Verb;
 
 /**
  * Dummy Interface. Just to stick with the convention, doesn't really

@@ -22,21 +22,16 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.glm.ldm.asset.PhysicalAsset;
-import org.cougaar.glm.ldm.asset.Organization;
+import javax.swing.JFrame;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.OptionPane;
 import org.cougaar.util.UnaryPredicate;
 

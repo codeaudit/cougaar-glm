@@ -21,23 +21,12 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import java.util.Date;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
-
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.util.Parameters;
-import org.cougaar.util.TimeSpanSet;
 
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OplanFactory;
@@ -45,6 +34,7 @@ import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.oplan.OrgActivityImpl;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.util.TimeSpanSet;
 
 /** Reads OrgActivity for specified Oplan from a database table. Assumes it's 
  * being invoked on behalf of SQLOplanPlugin. Updates orgactivities maintained 

@@ -20,7 +20,7 @@
  */
 
 package org.cougaar.glm.ldm.plan;
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
 
 /**
  * A QuantityRangeScheduleElement is a subclass of ScheduleElement which provides

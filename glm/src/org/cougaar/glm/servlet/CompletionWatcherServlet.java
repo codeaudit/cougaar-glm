@@ -21,47 +21,11 @@
 
 package org.cougaar.glm.servlet;
 
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Relationship;
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-
-import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.planning.ldm.plan.Task;
-
-import org.cougaar.util.ConfigFinder;
-import org.cougaar.util.Filters;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.TimeSpan;
-
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.Date;
-
 import java.io.PrintWriter;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Organization;
-
-import org.cougaar.glm.util.AssetUtil;
-
+import org.cougaar.core.servlet.SimpleServletSupport;
 import org.cougaar.planning.servlet.ServletBase;
 import org.cougaar.planning.servlet.ServletWorker;
-import org.cougaar.core.servlet.SimpleServletSupport;
 
 /**
  * <pre>

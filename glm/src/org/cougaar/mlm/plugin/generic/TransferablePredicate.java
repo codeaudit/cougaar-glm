@@ -20,11 +20,8 @@
  */
 
 package org.cougaar.mlm.plugin.generic;
-import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.glm.ldm.asset.Organization;
-import java.util.Vector;
-import java.util.Enumeration;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * TransferablePredicate - Unary Predicate that listens for a specific

@@ -21,15 +21,13 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.core.blackboard.SubscriberException;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
-import org.cougaar.planning.ldm.policy.Policy;
-
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.Iterator;
+
+import org.cougaar.core.blackboard.SubscriberException;
+import org.cougaar.planning.ldm.policy.Policy;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 /**
  * An instance of an LDMPlugin that reads a Cluster's startup policy

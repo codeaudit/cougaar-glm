@@ -20,31 +20,23 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.inventory;
 
-import org.cougaar.*;
-import org.cougaar.core.mts.*;
-import org.cougaar.core.agent.*;
-import org.cougaar.core.domain.*;
-import org.cougaar.core.blackboard.*;
-import org.cougaar.core.mts.Message;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.plugin.util.AllocationResultHelper;
-import org.cougaar.core.domain.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.util.UnaryPredicate;
-import java.io.*;
-import java.lang.*;
-import java.util.*;
-import org.cougaar.glm.ldm.asset.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.GLMFactory;
-import org.cougaar.glm.plugins.*;
-import org.cougaar.glm.debug.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.asset.ProjectionWeight;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.glm.plugins.MaintainedItem;
+import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.util.UnaryPredicate;
 
 /** Allocate SUPPLY tasks to local inventory (if there is any) or to 
  *  the closest supplier.

@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.Schedule;
 
 /**
  * A LaborSchedule is a special class of Schedule that actually contains 2

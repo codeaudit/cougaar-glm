@@ -28,11 +28,11 @@
 package org.cougaar.glm.plugin.completion;
 
 import org.cougaar.core.blackboard.CollectionSubscription;
-import org.cougaar.planning.plugin.completion.CompletionSocietyPlugin;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.mlm.plugin.organization.GLSInitServlet;
 import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.plugin.completion.CompletionSocietyPlugin;
 import org.cougaar.util.UnaryPredicate;
 
 public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {

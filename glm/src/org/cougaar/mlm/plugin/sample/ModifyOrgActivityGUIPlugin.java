@@ -39,23 +39,17 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.glm.ldm.*;import org.cougaar.glm.ldm.*;import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
-
-import java.util.Enumeration;
-import java.util.Date;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Date;
+import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -64,18 +58,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
-
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
 import org.cougaar.util.ShortDateFormat;
-
 import org.cougaar.util.UnaryPredicate;
 
 public class ModifyOrgActivityGUIPlugin extends SimplePlugin {

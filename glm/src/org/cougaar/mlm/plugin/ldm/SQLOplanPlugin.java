@@ -21,40 +21,32 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import javax.swing.*;
-import java.awt.event.*;
 import java.awt.LayoutManager;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.util.UID;
-
-import org.cougaar.util.UnaryPredicate;
-  
 import org.cougaar.core.service.UIDService;
-
-//import org.cougaar.core.component.ServiceRevokedListener;
-//import org.cougaar.core.component.ServiceRevokedEvent;
-
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NamedPosition;
+import org.cougaar.core.util.UID;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OplanContributor;
 import org.cougaar.glm.ldm.oplan.OplanCoupon;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.ldm.plan.NamedPosition;
 import org.cougaar.mlm.plugin.UICoordinator;
-
-import java.io.*;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The SQLOplanPlugin instantiates the Oplan and adds it to the LogPlan.  Essentially

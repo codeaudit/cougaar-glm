@@ -21,18 +21,15 @@
 
 package org.cougaar.mlm.examples;
 
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
+import org.cougaar.glm.ldm.asset.GLMAsset;
+import org.cougaar.glm.ldm.asset.NewPhysicalPG;
 import org.cougaar.planning.ldm.PropertyProvider;
-
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
-
-import org.cougaar.glm.ldm.*;import org.cougaar.glm.ldm.*;import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.measure.Area;
+import org.cougaar.planning.ldm.measure.Distance;
+import org.cougaar.planning.ldm.measure.Mass;
+import org.cougaar.planning.ldm.measure.Volume;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 
 /** This plugin knows how to fill Widget prototypes
  * with physical attribute data.

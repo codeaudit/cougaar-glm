@@ -22,16 +22,15 @@
 
 package org.cougaar.mlm.debug.ui;
 
+import java.awt.FileDialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JFrame;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.FileDialog;
-import java.io.File;
 
 import org.cougaar.core.mts.MessageAddress;
 

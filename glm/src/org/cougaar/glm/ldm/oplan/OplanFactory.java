@@ -20,25 +20,7 @@
  */
 package org.cougaar.glm.ldm.oplan;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.Serializable;
-import java.util.HashMap;
-
-import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.core.util.UID;
-import org.cougaar.core.util.UniqueObject;
-
-import org.cougaar.planning.ldm.plan.Location;
-import org.cougaar.planning.ldm.plan.LocationScheduleElement;
-import org.cougaar.planning.ldm.plan.LocationScheduleElementImpl;
-import org.cougaar.planning.ldm.plan.TaggedLocationScheduleElement;
-import org.cougaar.planning.ldm.plan.Transferable;
-
-
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 
 /**
  * Factory for the various oplan component implementations

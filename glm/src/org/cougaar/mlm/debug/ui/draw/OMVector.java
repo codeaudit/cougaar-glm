@@ -22,9 +22,9 @@
 
 package org.cougaar.mlm.debug.ui.draw;
 
-import java.util.Vector;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
+import java.util.Vector;
 
 /** Class OMVector
  *

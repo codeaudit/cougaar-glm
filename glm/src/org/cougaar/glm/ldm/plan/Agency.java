@@ -21,8 +21,12 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * An enumeration of known valid military and civilian/idustrial agencies.

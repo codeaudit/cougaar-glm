@@ -20,42 +20,22 @@
 * --------------------------------------------------------------------------*/
 package org.cougaar.mlm.construction;
 
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.NewSchedule;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.ScheduleType;
-import org.cougaar.planning.ldm.plan.ScheduleUtilities;
-import org.cougaar.util.TimeSpan;
-
-import org.cougaar.planning.ldm.measure.CountRate;
-import org.cougaar.planning.ldm.measure.FlowRate;
-import org.cougaar.planning.ldm.measure.Rate;
-
-import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import java.io.IOException;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Vector;
-import java.util.Map;
 
 import org.cougaar.glm.ldm.asset.AssetConsumptionRatePG;
 import org.cougaar.glm.ldm.asset.BulkPOL;
-import org.cougaar.glm.ldm.oplan.OpTempo;
-import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.plan.ObjectScheduleElement;
 import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
 import org.cougaar.glm.ldm.plan.Service;
-import org.cougaar.glm.plugins.AssetUtils;
-//import org.cougaar.glm.plugins.ClusterOPlan;
 import org.cougaar.glm.plugins.projection.ConsumerSpec;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.measure.CountRate;
+import org.cougaar.planning.ldm.measure.FlowRate;
+import org.cougaar.planning.ldm.measure.Rate;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
 
 /*
  * Construction (ClassIV) Demand Spec for producing inventory demand 

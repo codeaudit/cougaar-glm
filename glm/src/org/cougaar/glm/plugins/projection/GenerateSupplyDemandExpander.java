@@ -20,27 +20,30 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.projection;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.Rate;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.util.UnaryPredicate;
-
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.debug.GLMDebug;
-import org.cougaar.glm.plugins.ClusterOPlan;
-import org.cougaar.glm.plugins.GLMDecorationPlugin;
 import org.cougaar.glm.plugins.AssetUtils;
+import org.cougaar.glm.plugins.GLMDecorationPlugin;
 import org.cougaar.glm.plugins.MaintainedItem;
 import org.cougaar.glm.plugins.TaskUtils;
-import org.cougaar.glm.plugins.TimeUtils;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.measure.Rate;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.UnaryPredicate;
 
 /** Specifies how to create SUPPLY demand tasks for demand projection.
  **/

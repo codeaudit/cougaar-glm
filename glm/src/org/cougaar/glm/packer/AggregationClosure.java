@@ -21,9 +21,9 @@
 
 package org.cougaar.glm.packer;
 
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.NewMPTask;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
   * This class is used to wrap up an aggregation's state into an

@@ -20,9 +20,10 @@
  */
 package org.cougaar.glm.plugins;
 
-import org.cougaar.glm.debug.GLMDebug;
 import java.io.Serializable;
 import java.util.HashMap;
+
+import org.cougaar.glm.debug.GLMDebug;
 /**
  * Trimmed down, representation of an asset
  **/

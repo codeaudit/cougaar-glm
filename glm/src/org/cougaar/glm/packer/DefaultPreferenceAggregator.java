@@ -24,13 +24,9 @@ package org.cougaar.glm.packer;
 //utils
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 
-
-
 import org.cougaar.planning.ldm.PlanningFactory;
-
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.Preference;

@@ -22,44 +22,27 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.planning.ldm.LDMPluginServesLDM;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.util.StateModelException;
-import org.cougaar.util.DBConnectionPool;
-import org.cougaar.core.service.BlackboardService;
-import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.SubscriberException;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.domain.FactoryException;
-import org.cougaar.core.service.DomainService;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.mlm.plugin.ldm.LDMEssentialPlugin;
-
-import org.cougaar.core.component.ServiceRevokedListener;
-import org.cougaar.core.component.ServiceRevokedEvent;
-
-
-import org.cougaar.util.Parameters;
-
-import java.util.Vector;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Hashtable;
+import java.util.Vector;
 
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.File;
-
-import java.sql.*;
+import org.cougaar.core.blackboard.SubscriberException;
+import org.cougaar.core.component.ServiceRevokedEvent;
+import org.cougaar.core.component.ServiceRevokedListener;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.util.DBConnectionPool;
+import org.cougaar.util.Parameters;
 
 /**
  * Provide a JDBC binding to an COUGAAR cluster using MB5.0 interfaces.

@@ -21,30 +21,35 @@
 
 package org.cougaar.mlm.ui.data;
 
-import org.cougaar.glm.ldm.*;
-import org.cougaar.glm.ldm.*;
-import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
+
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.GLMFactory;
 import org.cougaar.glm.ldm.asset.Capacity;
+import org.cougaar.glm.ldm.asset.GLMAsset;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.InventoryLevelsPG;
+import org.cougaar.glm.ldm.asset.InventoryPG;
 import org.cougaar.glm.ldm.asset.Person;
+import org.cougaar.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.glm.ldm.plan.LaborSchedule;
+import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.glm.ldm.plan.PlanScheduleType;
+import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.glm.plugins.ScheduleUtils;
 import org.cougaar.glm.plugins.TaskUtils;
 import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.glm.plugins.ScheduleUtils;
-import org.cougaar.planning.ldm.measure.Rate;
-import org.cougaar.planning.ldm.measure.FlowRate;
-import org.cougaar.planning.ldm.measure.CountRate;
-import org.cougaar.planning.ldm.measure.MassTransferRate;
-
-import java.text.DateFormat;
-import java.util.*;
-
-import org.cougaar.core.util.*;
-import org.cougaar.planning.plugin.util.*;
-import org.cougaar.util.*;
-
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.measure.CountRate;
+import org.cougaar.planning.ldm.measure.FlowRate;
+import org.cougaar.planning.ldm.measure.MassTransferRate;
+import org.cougaar.planning.ldm.measure.Rate;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectRate;
@@ -55,20 +60,15 @@ import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.RoleSchedule;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.ScheduleType;
+import org.cougaar.planning.ldm.plan.ScheduleImpl;
 import org.cougaar.planning.ldm.plan.ScheduleUtilities;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
-import org.cougaar.planning.ldm.plan.ScheduleUtilities;
-import org.cougaar.planning.ldm.plan.ScheduleImpl;
 import org.cougaar.planning.ldm.plan.Verb;
-
-import org.cougaar.glm.ldm.asset.ScheduledContentPG;
-import org.cougaar.glm.ldm.plan.LaborSchedule;
-import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
-import org.cougaar.glm.ldm.Constants;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
+import org.cougaar.util.TimeSpan;
+import org.cougaar.util.TimeSpanSet;
 
 /** Composes inventory and capacity schedules from COUGAAR log plan objects.
   Note that the getters return null if the schedule requested is null

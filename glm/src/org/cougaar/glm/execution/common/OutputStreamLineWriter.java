@@ -20,13 +20,10 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.io.OutputStreamWriter;
-import java.io.OutputStream;
-import java.io.ObjectOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.BufferedWriter;
-import java.io.Serializable;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 public class OutputStreamLineWriter extends LineWriterBase implements LineWriter {
   private BufferedWriter writer;

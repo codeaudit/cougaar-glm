@@ -21,24 +21,43 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.logging.LoggingServiceWithPrefix;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.planning.ldm.asset.AbstractAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectRate;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
+import org.cougaar.planning.ldm.plan.ScheduleImpl;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.AllocationResultHelper;
-import org.cougaar.glm.ldm.plan.AlpineAspectType;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AbstractAsset;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.glm.plugins.TaskUtils;
-import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.logging.LoggingServiceWithPrefix;
 
 // Simple plugin that says 'yes' to any task fed to it
 // Optionally, if arguments are given, will only allocate tasks with given verbs

@@ -22,24 +22,21 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import java.util.*;
-import java.io.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Vector;
 
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.ConfigFinder;
-import org.cougaar.util.Filters;
-
-import org.cougaar.core.util.UniqueObject;
-import org.cougaar.core.util.UID;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AssetGroup;
-import org.cougaar.core.mts.MessageAddress;
-
+import org.cougaar.core.util.UID;
 import org.cougaar.glm.ldm.GLMFactory;
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.glm.ldm.oplan.OplanContributor;
+import org.cougaar.glm.ldm.oplan.OplanCoupon;
+import org.cougaar.glm.ldm.oplan.OrgActivity;
+import org.cougaar.glm.ldm.oplan.OrgRelation;
 import org.cougaar.glm.ldm.plan.QueryRequest;
-import org.cougaar.glm.ldm.oplan.*;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 //import org.cougaar.lib.util.UTILAsset;
 

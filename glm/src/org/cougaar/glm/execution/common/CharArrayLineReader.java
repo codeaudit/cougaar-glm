@@ -20,7 +20,6 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.io.IOException;
 import java.io.CharArrayReader;
 
 public class CharArrayLineReader extends InputStreamLineReader implements LineReader {

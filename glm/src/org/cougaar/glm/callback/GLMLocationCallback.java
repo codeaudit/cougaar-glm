@@ -21,15 +21,12 @@
 
 package org.cougaar.glm.callback;
 
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.glm.ldm.asset.TransportationNode;
-
 import java.util.Enumeration;
 
+import org.cougaar.glm.ldm.asset.TransportationNode;
 import org.cougaar.lib.callback.UTILFilterCallbackAdapter;
 import org.cougaar.lib.callback.UTILFilterCallbackListener;
-
+import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 
 /**

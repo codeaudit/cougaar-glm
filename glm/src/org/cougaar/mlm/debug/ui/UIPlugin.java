@@ -22,27 +22,21 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
-import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.PhysicalAsset;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import java.lang.Thread;
-import org.cougaar.planning.plugin.legacy.PluginDelegate;
-
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.PhysicalAsset;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
 
   /** This is an example of a User Interface Plugin.

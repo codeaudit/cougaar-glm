@@ -21,30 +21,15 @@
 
 package org.cougaar.mlm.construction;
  
-import org.cougaar.*;
-import org.cougaar.core.mts.*;
-import org.cougaar.core.agent.*;
-import org.cougaar.core.domain.*;
-import org.cougaar.core.blackboard.*;
-import org.cougaar.core.mts.Message;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.domain.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.util.ConfigFileFinder;
-import org.cougaar.util.UnaryPredicate;
-
-import java.io.*;
-import java.lang.*;
-import java.util.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.plugins.*;
-import org.cougaar.glm.plugins.inventory.*;
-import org.cougaar.glm.ldm.asset.*;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.glm.plugins.TimeUtils;
+import org.cougaar.glm.plugins.inventory.GeneralInventoryManager;
+import org.cougaar.glm.plugins.inventory.InventoryPlugin;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.Task;
 
 /** Allocate SUPPLY tasks for construction supplies to local construction inventory
  *  (if there is any) or to the closest supplier.

@@ -22,8 +22,6 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import java.util.Enumeration;
-
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 

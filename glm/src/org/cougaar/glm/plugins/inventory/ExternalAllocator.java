@@ -20,33 +20,25 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.inventory;
 
+import java.util.Enumeration;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.planning.plugin.util.AllocationResultHelper;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.plugins.AssetUtils;
+import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Relationship;
 import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.util.MutableTimeSpan;
-import org.cougaar.util.NewTimeSpan;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Vector;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.AssignedPG;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Inventory;
-import org.cougaar.glm.plugins.TaskUtils;
-import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.glm.plugins.AssetUtils;
 
 public class ExternalAllocator extends InventoryProcessor {
 

@@ -25,19 +25,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.oplan.OplanFactory;
+
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
-import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.util.DBProperties;
 import org.cougaar.util.TimeSpanSet;
 

@@ -21,15 +21,14 @@
 
  package org.cougaar.mlm.construction;
 
-import org.cougaar.glm.plugins.*;
-import org.cougaar.glm.plugins.inventory.*;
-import org.cougaar.glm.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.Constants;
-
-import java.io.*;
-import java.lang.*;
-import java.util.*;
+import org.cougaar.glm.ldm.plan.Agency;
+import org.cougaar.glm.ldm.plan.Service;
+import org.cougaar.glm.plugins.PluginDecorator;
+import org.cougaar.glm.plugins.inventory.ExternalAllocator;
+import org.cougaar.glm.plugins.inventory.InventoryPlugin;
+import org.cougaar.glm.plugins.inventory.SupplyExpander;
+import org.cougaar.glm.plugins.inventory.WithdrawAllocator;
 
  /** Establishes necessary processes for Construction Inventory.
   * @author  ALPINE <alpine-software@bbn.com>

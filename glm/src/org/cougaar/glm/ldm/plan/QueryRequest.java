@@ -22,7 +22,6 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.UnaryPredicate;
 

@@ -23,11 +23,12 @@ package org.cougaar.glm.plugin.completion;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.cougaar.planning.plugin.completion.CompletionCalculator;
-import org.cougaar.planning.plugin.util.PluginHelper;
+
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.plugin.completion.CompletionCalculator;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 
 /**

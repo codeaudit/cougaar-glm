@@ -20,31 +20,33 @@
  */
 package org.cougaar.glm.plugins.multiplesuppliers;
 
-import org.cougaar.*;
-import org.cougaar.core.mts.*;
-import org.cougaar.core.agent.*;
-import org.cougaar.core.domain.*;
-import org.cougaar.core.blackboard.*;
-import org.cougaar.core.mts.Message;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.plugin.legacy.*;
-import org.cougaar.core.plugin.*;
-import org.cougaar.core.domain.*;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.util.*;
-import org.cougaar.lib.util.*;
-
-import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.oplan.*;
-import org.cougaar.glm.ldm.asset.*;
-
-import java.util.*;
-import java.text.*;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.lib.util.UTILExpand;
+import org.cougaar.lib.util.UTILPreference;
+import org.cougaar.lib.util.UTILPrepPhrase;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The Base SourceExpander class.

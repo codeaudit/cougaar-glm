@@ -22,23 +22,6 @@
 package org.cougaar.glm.ldm.plan;
 
 
-import org.cougaar.glm.ldm.plan.CasRep;
-import org.cougaar.glm.ldm.plan.NewCasRep;
-
-import org.cougaar.core.util.UID;
-
-import java.lang.String;
-import java.util.Vector;
-import java.util.Date;
-import java.io.*;
-import java.io.Serializable;
-import java.util.Enumeration;
-import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.planning.ldm.asset.*;
- 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.beans.PropertyChangeEvent;
 
 public class CasRepChangeIndicatorImpl extends CasRepImpl
 {

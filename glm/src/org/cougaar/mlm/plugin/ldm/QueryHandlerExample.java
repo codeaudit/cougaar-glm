@@ -21,9 +21,6 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.asset.Asset;
-import java.util.Vector;
 
 public class QueryHandlerExample extends QueryHandler {
   public QueryHandlerExample() {}

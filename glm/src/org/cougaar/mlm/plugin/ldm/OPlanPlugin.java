@@ -21,37 +21,28 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import javax.swing.*;
-import java.awt.event.*;
 import java.awt.LayoutManager;
-
-//import java.io.*;
-  
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.blackboard.Subscription;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.core.util.UID;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.util.UnaryPredicate;
-
-/*  
-import org.cougaar.glm.ldm.*;
-import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-*/
-import org.cougaar.glm.ldm.oplan.*;
-
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.glm.ldm.oplan.OplanContributor;
+import org.cougaar.glm.ldm.oplan.OplanCoupon;
 import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 
 /**

@@ -21,23 +21,13 @@
 
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.policy.IntegerRuleParameter;
-import org.cougaar.planning.ldm.policy.Policy;
-import org.cougaar.planning.ldm.policy.RuleParameter;
-import org.cougaar.planning.ldm.policy.RuleParameterIllegalValueException;
-import org.cougaar.planning.ldm.policy.StringRuleParameter;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.util.UnaryPredicate;
-
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
@@ -48,7 +38,14 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.glm.debug.GLMDebug;
+import org.cougaar.planning.ldm.policy.IntegerRuleParameter;
+import org.cougaar.planning.ldm.policy.Policy;
+import org.cougaar.planning.ldm.policy.RuleParameter;
+import org.cougaar.planning.ldm.policy.StringRuleParameter;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The Policy GUI Plugin based on

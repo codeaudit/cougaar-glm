@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPrepPhrase.java,v 1.4 2003-01-23 19:53:33 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPrepPhrase.java,v 1.5 2003-12-09 17:55:14 rtomlinson Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -22,31 +22,13 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
-
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
-
-import org.cougaar.planning.ldm.plan.NewItineraryElement;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
 import org.cougaar.lib.util.UTILPrepPhrase;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.util.log.Logger;
 
 /** 

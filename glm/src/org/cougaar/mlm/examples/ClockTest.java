@@ -21,11 +21,12 @@
 
 package org.cougaar.mlm.examples;
 
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import java.util.Date;
 import java.util.Vector;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
+
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 
 /** 

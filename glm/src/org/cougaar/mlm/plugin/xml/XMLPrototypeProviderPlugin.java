@@ -21,17 +21,16 @@
 
 package org.cougaar.mlm.plugin.xml;
 
-import java.io.*;
-import org.cougaar.core.plugin.*;
-import org.cougaar.planning.ldm.*;
-import org.cougaar.planning.plugin.legacy.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.util.*;
-import org.cougaar.lib.xml.parser.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.util.*;
-import org.w3c.dom.*;
+import org.cougaar.lib.xml.parser.PrototypeParser;
+import org.cougaar.planning.ldm.PrototypeProvider;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * <pre>

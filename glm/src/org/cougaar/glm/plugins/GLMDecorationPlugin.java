@@ -20,27 +20,21 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.ContextOfUIDs;
-import org.cougaar.core.util.UID;
-
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.util.UnaryPredicate;
-
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
-import org.cougaar.glm.ldm.oplan.OrgActivity;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.util.UID;
 import org.cougaar.glm.debug.GLMDebug;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.glm.ldm.oplan.OrgActivity;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.planning.ldm.plan.ContextOfUIDs;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * Defines common functions described in SimplePlugin.

@@ -23,57 +23,54 @@
 package org.cougaar.mlm.plugin.sample;
 
 
-import org.cougaar.glm.ldm.Constants;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
-
-
-import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-
+import java.util.Vector;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
-
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.planning.ldm.measure.Longitude;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.core.util.UID;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.ClassVIIMajorEndItem;
+import org.cougaar.glm.ldm.asset.MovabilityPG;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.Person;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.xml.parser.LocationParser;
-import org.cougaar.planning.ldm.plan.*;
-
-
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.AbstractAsset;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AssetGroup;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPGImpl;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.MPTask;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.ExpanderHelper;
 import org.cougaar.planning.plugin.util.PluginHelper;
-
-
-import org.cougaar.util.SingleElementEnumeration;
-import org.cougaar.util.ShortDateFormat;
-import org.cougaar.util.StringUtility;
-import org.cougaar.core.util.UID;
-import org.cougaar.core.service.LoggingService;
-
-
-import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.DynamicUnaryPredicate;
-
-
+import org.cougaar.util.ShortDateFormat;
+import org.cougaar.util.UnaryPredicate;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
 
 
 /**

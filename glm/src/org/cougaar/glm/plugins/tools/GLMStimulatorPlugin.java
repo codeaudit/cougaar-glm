@@ -21,24 +21,9 @@
 
 package org.cougaar.glm.plugins.tools;
 
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Relationship;
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-
-import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.planning.ldm.plan.Task;
-
-import org.cougaar.util.ConfigFinder;
-import org.cougaar.util.Filters;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.TimeSpan;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -47,22 +32,27 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JLabel;
-
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Organization;
 
 import org.cougaar.glm.callback.GLMOrganizationCallback;
 import org.cougaar.glm.callback.GLMOrganizationListener;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.parser.GLMTaskParser;
 import org.cougaar.glm.util.AssetUtil;
-
 import org.cougaar.lib.filter.UTILPluginAdapter;
-
 import org.cougaar.lib.util.UTILAllocate;
-import org.cougaar.lib.util.UTILPreference;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Relationship;
+import org.cougaar.planning.ldm.plan.RelationshipSchedule;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.ConfigFinder;
+import org.cougaar.util.TimeSpan;
 
 /**
  * <pre>

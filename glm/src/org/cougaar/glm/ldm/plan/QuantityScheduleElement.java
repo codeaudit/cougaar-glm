@@ -21,7 +21,8 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.ScheduleElementWithValue;
 
 /**
  * A QuantityScheduleElement is a subclass of ScheduleElement which provides

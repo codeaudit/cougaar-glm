@@ -23,58 +23,40 @@ package org.cougaar.mlm.plugin.assessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.Vector;
-import java.io.Serializable;
 
-import org.cougaar.util.TimeSpan;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.util.UID;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.planning.service.LDMService;
-import org.cougaar.planning.plugin.util.PluginHelper;
-
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.glm.plugins.MaintainedItem;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.HasRelationships;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.Relationship;
 import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TaskScoreTable;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.Workflow;
-
-import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.glm.ldm.plan.AlpineAspectType;
-
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.BulkPOL;
-import org.cougaar.glm.plugins.MaintainedItem;
-
-import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.planning.service.LDMService;
+import org.cougaar.util.TimeSpan;
+import org.cougaar.util.UnaryPredicate;
 
 public class ReadinessAssessorPlugin extends ComponentPlugin {
 

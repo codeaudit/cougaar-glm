@@ -21,24 +21,24 @@
 
 package org.cougaar.mlm.plugin;
 
-import org.cougaar.util.ConfigFinder;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.HashMap;
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.cougaar.util.ConfigFinder;
 
 public class UICoordinator {
   static HashMap locations = new HashMap();

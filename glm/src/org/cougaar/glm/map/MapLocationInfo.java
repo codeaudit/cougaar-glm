@@ -20,26 +20,9 @@
  */
 package org.cougaar.glm.map;
 
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.planning.ldm.plan.LocationScheduleElement;
-
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-
-import java.io.PrintStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.io.DataOutputStream;
-import java.io.DataInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.ObjectInputStream;
-import java.io.BufferedInputStream;
-import java.net.URLConnection;
-import java.net.URL;
 import java.io.Serializable;
-
 import java.util.Vector;
-import java.util.Hashtable;
 
 public class MapLocationInfo implements Serializable
 {

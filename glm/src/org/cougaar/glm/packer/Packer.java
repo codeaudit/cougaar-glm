@@ -21,22 +21,20 @@
 
 package org.cougaar.glm.packer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.plugin.util.PluginHelper;
-
-import org.cougaar.planning.Constants;
-
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.Sortings;
 import org.cougaar.util.UnaryPredicate;
 

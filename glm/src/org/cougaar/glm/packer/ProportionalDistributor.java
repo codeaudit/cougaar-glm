@@ -22,12 +22,12 @@
 package org.cougaar.glm.packer;
 
 import java.io.Serializable;
-
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Vector;
 
-import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
 import org.cougaar.planning.ldm.plan.AspectScorePoint;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
@@ -36,8 +36,6 @@ import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TaskScoreTable;
-
-import org.cougaar.core.service.LoggingService;
 
 
 /**

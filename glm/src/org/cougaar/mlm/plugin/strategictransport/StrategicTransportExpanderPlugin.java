@@ -21,40 +21,23 @@
 
 package org.cougaar.mlm.plugin.strategictransport;
 
-import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.mts.MessageAddress;
+import java.util.Enumeration;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.NewPlanElement;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.NewWorkflow;
-import org.cougaar.planning.ldm.plan.Preposition;
+import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Allocation;
-//Start new imports
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.ScoringFunction;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.AspectScorePoint;
-
-
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-import java.util.Enumeration;
-
 import org.cougaar.util.UnaryPredicate;
 
 /**

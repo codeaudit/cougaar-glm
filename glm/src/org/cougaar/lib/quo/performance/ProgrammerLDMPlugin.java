@@ -22,12 +22,14 @@
 //package org.cougaar.lib.quo.performance;
 package org.cougaar.lib.quo.performance;
 
-import org.cougaar.core.plugin.*;
-import org.cougaar.planning.plugin.legacy.*;
-import org.cougaar.lib.quo.performance.assets.*;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.lib.quo.performance.assets.LanguagePG;
+import org.cougaar.lib.quo.performance.assets.NewLanguagePG;
+import org.cougaar.lib.quo.performance.assets.NewSkillsPG;
+import org.cougaar.lib.quo.performance.assets.ProgrammerAsset;
+import org.cougaar.lib.quo.performance.assets.SkillsPG;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.

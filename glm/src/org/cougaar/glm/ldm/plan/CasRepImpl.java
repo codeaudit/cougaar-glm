@@ -21,26 +21,15 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.glm.ldm.plan.CasRep;
-import org.cougaar.glm.ldm.plan.NewCasRep;
-
-import org.cougaar.core.util.UID;
-import org.cougaar.core.util.UniqueObject;
-import org.cougaar.core.util.OwnedUniqueObject;
-
-import java.lang.String;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.io.*;
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Date;
-import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.planning.ldm.asset.*;
- 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.beans.PropertyChangeEvent;
+import java.util.Date;
+import java.util.Hashtable;
+
+import org.cougaar.core.util.OwnedUniqueObject;
+import org.cougaar.core.util.UID;
+import org.cougaar.core.util.UniqueObject;
+import org.cougaar.planning.ldm.plan.Transferable;
 
 public class CasRepImpl extends OwnedUniqueObject
   implements CasRep, NewCasRep, Transferable, UniqueObject

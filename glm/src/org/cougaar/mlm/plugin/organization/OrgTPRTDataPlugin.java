@@ -24,19 +24,35 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Constructor;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.ClusterPG;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPGImpl;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.GLMFactory;
+import org.cougaar.glm.ldm.asset.AssignedPGImpl;
+import org.cougaar.glm.ldm.asset.Facility;
+import org.cougaar.glm.ldm.asset.NewAssignedPG;
+import org.cougaar.glm.ldm.asset.NewAssignmentPG;
+import org.cougaar.glm.ldm.asset.NewPositionPG;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationAdapter;
+import org.cougaar.glm.ldm.asset.PositionPGImpl;
+import org.cougaar.glm.ldm.asset.TransportationNode;
+import org.cougaar.glm.ldm.plan.GLMRelationship;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.glm.ldm.plan.NewPosition;
 import org.cougaar.planning.ldm.asset.LocationSchedulePG;
 import org.cougaar.planning.ldm.asset.LocationSchedulePGImpl;
 import org.cougaar.planning.ldm.asset.NewClusterPG;
@@ -45,9 +61,9 @@ import org.cougaar.planning.ldm.asset.NewLocationSchedulePG;
 import org.cougaar.planning.ldm.asset.NewPropertyGroup;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.planning.ldm.asset.PropertyGroup;
-
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Location;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.NewRoleSchedule;
 import org.cougaar.planning.ldm.plan.NewSchedule;
@@ -57,40 +73,12 @@ import org.cougaar.planning.ldm.plan.Relationship;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
-import org.cougaar.planning.ldm.plan.TimeAspectValue;
-import org.cougaar.planning.ldm.plan.LocationScheduleElement;
-import org.cougaar.planning.ldm.plan.LocationScheduleElementImpl;
 import org.cougaar.planning.ldm.plan.TaggedLocationScheduleElement;
-import org.cougaar.planning.ldm.plan.Location;
-
+import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
+import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.Reflect;
 import org.cougaar.util.TimeSpan;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.EmptyEnumeration;
-
-
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.GLMFactory;
-
-import org.cougaar.glm.ldm.asset.AssignedPG;
-import org.cougaar.glm.ldm.asset.AssignedPGImpl;
-import org.cougaar.glm.ldm.asset.NewAssignedPG;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.OrganizationAdapter;
-
-import org.cougaar.glm.ldm.plan.GLMRelationship;
-
-// ADDED BY TOPS
-import org.cougaar.glm.ldm.asset.Facility;
-import org.cougaar.glm.ldm.asset.NewAssignmentPG;
-import org.cougaar.glm.ldm.asset.NewPositionPG;
-import org.cougaar.glm.ldm.asset.PositionPGImpl;
-import org.cougaar.glm.ldm.asset.TransportationNode;
-
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-import org.cougaar.glm.ldm.plan.NewPosition;
 
 // END ADDED BY TOPS
 

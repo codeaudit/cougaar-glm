@@ -23,10 +23,11 @@
 
 package org.cougaar.lib.quo.performance;
 
-import org.cougaar.planning.ldm.asset.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Vector;
+
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import java.util.*;
-import java.io.*;
 
 /**
  * This COUGAAR Plugin performs the common task as reading all the parameters 

@@ -21,20 +21,20 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
-
-import org.cougaar.planning.ldm.PlanningFactory;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.ldm.plan.GeolocLocationImpl;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.planning.ldm.asset.AbstractAsset;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
@@ -45,23 +45,13 @@ import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Predictor;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Relationship;
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
-
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.util.ExpanderHelper;
-
 import org.cougaar.util.UnaryPredicate;
-
-import java.util.*;
 
 /**
  * This class implements a Plugin that uses a Predictor (if available) to

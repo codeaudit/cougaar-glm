@@ -21,16 +21,16 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
 
 public class UIFile implements Runnable {
 

@@ -21,26 +21,31 @@
 
 package org.cougaar.mlm.construction;
 
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.util.UID;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
-import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewWorkflow;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.planning.plugin.util.ExpanderHelper;
-import org.cougaar.core.util.UID;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
-
-
-import java.util.*;
 
 
 /** ExpanderPlugin that takes Determine Requirements of Type construction tasks and expands them into predefined construction tasks. 

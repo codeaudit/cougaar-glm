@@ -23,20 +23,19 @@
 
 package org.cougaar.glm.packer;
 
-import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
-import java.util.*;
-
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
+import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
-import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.MPTask;
 import org.cougaar.planning.ldm.plan.NewComposition;
@@ -44,16 +43,9 @@ import org.cougaar.planning.ldm.plan.NewMPTask;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
-
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.logging.LoggingControlService;
-
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 

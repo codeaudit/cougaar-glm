@@ -21,37 +21,40 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.glm.ldm.plan.Capability;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-import org.cougaar.core.mts.MessageAddress;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AbstractAsset;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-
+import org.cougaar.glm.ldm.plan.GeolocLocationImpl;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.AbstractAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewExpansion;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.PrepositionalPhraseImpl;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.SubTaskResult;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.ExpanderHelper;
 import org.cougaar.planning.plugin.util.PluginHelper;
-
 import org.cougaar.util.UnaryPredicate;
-
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Iterator;
 
 public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
 	

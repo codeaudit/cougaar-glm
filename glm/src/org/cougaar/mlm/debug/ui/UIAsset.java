@@ -22,22 +22,13 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import org.cougaar.core.mts.MessageAddress;
-
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
-import org.cougaar.glm.ldm.plan.QuantityRangeScheduleElement;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-
-import org.cougaar.planning.ldm.asset.AbstractAsset;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.asset.PhysicalAsset;
+import org.cougaar.planning.ldm.asset.AbstractAsset;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-
-import java.util.Enumeration;
 
 /** Return a string description of a physical asset or cluster; used
  *  to display asset information in log plans, etc.

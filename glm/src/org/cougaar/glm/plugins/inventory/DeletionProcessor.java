@@ -22,11 +22,11 @@
 package org.cougaar.glm.plugins.inventory;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.glm.execution.common.InventoryReport;
 import org.cougaar.glm.ldm.Constants;
@@ -38,7 +38,6 @@ import org.cougaar.glm.plugins.TaskUtils;
 import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;

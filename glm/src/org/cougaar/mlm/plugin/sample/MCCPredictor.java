@@ -21,16 +21,15 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.planning.plugin.legacy.PluginDelegate;
+import java.util.Date;
+import java.util.Enumeration;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.Predictor;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.Task;
-
-import java.util.Date;
-import java.util.Enumeration;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 public class MCCPredictor implements Predictor
 {

@@ -19,10 +19,8 @@
  * </copyright>
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.ldm.asset;
-import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.glm.plugins.TaskUtils;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.glm.plugins.*;
-import org.cougaar.glm.debug.*;
 
 public class DueOut extends DueIO implements InventoryTask {
     boolean previouslyFilled_;

@@ -21,7 +21,6 @@
 package org.cougaar.glm.execution.common;
 
 import java.io.IOException;
-import org.cougaar.core.util.UID;
 
 /**
  * Report the Observable Aspects of a Task.

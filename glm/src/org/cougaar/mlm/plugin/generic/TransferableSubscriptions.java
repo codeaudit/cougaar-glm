@@ -21,9 +21,8 @@
 
 package org.cougaar.mlm.plugin.generic;
 
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * A class that holds subscriptions for a Transferable and its desired

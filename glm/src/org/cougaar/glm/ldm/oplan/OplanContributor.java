@@ -20,10 +20,8 @@
  */
  
 package org.cougaar.glm.ldm.oplan;
-import java.util.Vector;
-import java.util.Enumeration;
-import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.core.util.UID;
+import org.cougaar.planning.ldm.plan.Transferable;
 
 /**
  * Unify a bunch of getters that oplan sub-objects (hence "contributor"s)

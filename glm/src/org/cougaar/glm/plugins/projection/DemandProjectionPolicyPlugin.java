@@ -21,8 +21,8 @@
 
 package org.cougaar.glm.plugins.projection;
 
-import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.plugins.GLMPolicyPlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The DemandProjectionPolicy GUI Plugin based on

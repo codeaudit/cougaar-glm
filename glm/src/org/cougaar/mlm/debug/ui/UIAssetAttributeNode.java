@@ -22,15 +22,18 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import org.cougaar.planning.ldm.asset.Asset;
-
-import java.util.Hashtable;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
-import java.util.Vector;
-import java.lang.reflect.*;
-import java.beans.*;
-import org.cougaar.planning.ldm.asset.PropertyGroup;
 import java.util.Hashtable;
+import java.util.Vector;
+
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.PropertyGroup;
 
 /** A tree node for an asset and its attributes.
   Overrides the UITreeNode loadChildren, toString and isLeaf

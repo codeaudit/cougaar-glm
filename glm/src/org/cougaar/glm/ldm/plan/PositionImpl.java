@@ -21,8 +21,8 @@
  
 package org.cougaar.glm.ldm.plan;
  
-import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.plan.LatLonPointImpl;
  
  

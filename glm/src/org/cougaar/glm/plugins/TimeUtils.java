@@ -20,16 +20,11 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.mts.MessageAddress;
-
-import java.lang.Class;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
-
-import org.cougaar.glm.debug.GLMDebug;
 
 /** Provides convenience methods. */
 public class TimeUtils {

@@ -21,11 +21,9 @@
 
 package org.cougaar.glm.ldm.oplan;
 
-import java.beans.IndexedPropertyDescriptor;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
-import java.util.Enumeration;
 
 /**
    Override the default property descriptors.

@@ -21,17 +21,16 @@
 
 package org.cougaar.mlm.plugin;
 
+import java.awt.Component;
+import java.util.Random;
+
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.util.MinMaxPanel;
 import org.cougaar.util.UnaryPredicate;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Random;
-import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 public class RandomButtonPusher implements java.io.Serializable {
 

@@ -23,8 +23,6 @@ package org.cougaar.mlm.debug.ui;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
-import java.util.Enumeration;
-
 /** A tree node for an asset.
   Overrides the UITreeNode loadChildren, toString and isLeaf
   methods to dynamically display the asset which has no children.

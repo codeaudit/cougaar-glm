@@ -21,8 +21,8 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.measure.Capacity;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
 
 /**
  * A CapacityScheduleElement is a subclass of ScheduleElement which

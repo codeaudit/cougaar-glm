@@ -20,8 +20,8 @@
  */
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.plan.AssetPreferenceImpl;
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.AssetPreferenceImpl;
 
 public class AssetPreferenceWithDeck extends AssetPreferenceImpl
 {

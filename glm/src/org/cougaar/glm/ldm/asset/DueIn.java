@@ -19,10 +19,7 @@
  * </copyright>
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.ldm.asset;
-import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.glm.plugins.*;
-import org.cougaar.glm.debug.*;
 
 public class DueIn extends DueIO implements InventoryTask {
     public DueIn(Task request, boolean filled) {

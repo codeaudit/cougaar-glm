@@ -23,10 +23,11 @@
 /* original contributed by ALPIcis group, BBN Technologies/GTE */
 
 package org.cougaar.glm.ldm.plan;
-import java.util.*;
 import java.io.Serializable;
-import org.cougaar.planning.ldm.measure.Rate;
+import java.util.Enumeration;
+
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.measure.Rate;
 
 /** Representation of Consumption Rate structure for a particular Asset.
  * May also be used as Failure rate for 

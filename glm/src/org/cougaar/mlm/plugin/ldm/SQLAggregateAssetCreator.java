@@ -21,15 +21,14 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.NewSchedule;
-import org.cougaar.planning.ldm.plan.NewRoleSchedule;
-
 import java.util.Calendar;
 import java.util.Date;
+
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.plan.NewRoleSchedule;
+import org.cougaar.planning.ldm.plan.NewSchedule;
 
 
 /** AggregateAssetCreator implements QueryHandler to create sql queries 

@@ -21,15 +21,10 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.blackboard.Directive;
 import org.cougaar.core.blackboard.DirectiveImpl;
-import org.cougaar.core.util.UniqueObject;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.util.UID;
-
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.IOException;
+import org.cougaar.core.util.UniqueObject;
 
 /**
  * The message sent back from a cluster containing the result of 

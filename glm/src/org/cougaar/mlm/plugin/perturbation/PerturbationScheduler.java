@@ -21,13 +21,11 @@
 package org.cougaar.mlm.plugin.perturbation;
 
   import java.util.Calendar;
-  import java.util.Date;
-  import java.util.Vector ;
+import java.util.Date;
+import java.util.Vector;
 
-  import org.cougaar.planning.ldm.ClusterServesPlugin;
-  
-  import org.cougaar.util.ReusableThread ;
-  import org.cougaar.util.ReusableThreadPool ;
+import org.cougaar.util.ReusableThread;
+import org.cougaar.util.ReusableThreadPool;
 
 /**
   * The PerturbationScheduler class schedules the PerturbationNodes

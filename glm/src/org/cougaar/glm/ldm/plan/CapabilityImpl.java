@@ -23,11 +23,8 @@ package org.cougaar.glm.ldm.plan;
 
 // import org.cougaar.planning.ldm.plan.*;
 
-import org.cougaar.glm.ldm.plan.Capability;
-
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 

@@ -23,17 +23,16 @@
 
 package org.cougaar.glm.ldm.asset;
 
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.measure.*;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.IOException;
-import java.util.Vector;
-import java.beans.PropertyDescriptor;
-import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Vector;
+
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
 public class TransportationGraph extends Facility {
   public TransportationGraph() {
     this(new Vector(), Longitude.newLongitude(179.0d), 

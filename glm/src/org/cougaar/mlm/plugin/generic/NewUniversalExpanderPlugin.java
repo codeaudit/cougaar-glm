@@ -21,26 +21,41 @@
 
 package org.cougaar.mlm.plugin.generic;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.component.ServiceRevokedEvent;
 import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
-import org.cougaar.glm.ldm.asset.NewSupplyClassPG;
 import org.cougaar.core.service.DomainService;
+import org.cougaar.glm.ldm.asset.NewSupplyClassPG;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.*;
-
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.Parameters;
-import java.util.*;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.DriverManager;
+import org.cougaar.util.UnaryPredicate;
 
 
 /** ExpanderPlugin that takes arguments of verbs to determine what kinds
@@ -55,7 +70,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugin.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: NewUniversalExpanderPlugin.java,v 1.4 2003-01-23 19:53:39 mthome Exp $
+  * @version $Id: NewUniversalExpanderPlugin.java,v 1.5 2003-12-09 17:55:15 rtomlinson Exp $
   **/
 
 public class NewUniversalExpanderPlugin extends ComponentPlugin {

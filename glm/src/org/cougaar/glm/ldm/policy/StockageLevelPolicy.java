@@ -21,7 +21,10 @@
  
 package org.cougaar.glm.ldm.policy;
 
-import org.cougaar.planning.ldm.policy.*;
+import org.cougaar.planning.ldm.policy.BooleanRuleParameter;
+import org.cougaar.planning.ldm.policy.IntegerRuleParameter;
+import org.cougaar.planning.ldm.policy.Policy;
+import org.cougaar.planning.ldm.policy.RuleParameterIllegalValueException;
 
 /**
  * StockLevelPolicy

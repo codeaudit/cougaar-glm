@@ -23,6 +23,7 @@
 package org.cougaar.mlm.debug.ui;
 
 import javax.swing.JFrame;
+
 import org.cougaar.util.OptionPane;
 
 /** Display an error dialog box with optionally specified message.

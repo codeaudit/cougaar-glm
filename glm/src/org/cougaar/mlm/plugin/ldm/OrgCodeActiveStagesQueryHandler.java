@@ -22,13 +22,11 @@
 package org.cougaar.mlm.plugin.ldm;
 
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.planning.ldm.PlanningFactory;
+
 import org.cougaar.util.DBProperties;
 
 /** For OrgCode based agents: Reads oplan info from a database table. 

@@ -21,20 +21,29 @@
 
 package org.cougaar.mlm.ui.glsinit;
 
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
-
-import javax.swing.border.Border;
-import javax.swing.*;
-
-import java.util.ArrayList;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.JTextField;
 
 import org.cougaar.mlm.ui.SwingWorker;
 

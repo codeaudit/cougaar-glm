@@ -20,16 +20,12 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.projection;
 
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.util.UnaryPredicate;
-
-import java.util.Enumeration;
-import java.util.Vector;
-
 import org.cougaar.glm.ldm.asset.ClassVIIMajorEndItem;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.Service;
 import org.cougaar.glm.plugins.PluginDecorator;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.util.UnaryPredicate;
 
 /** Associates proper SupplyProjector with a given SupplyProjectionPlugin. 
  * @see SupplyProjectionPlugin

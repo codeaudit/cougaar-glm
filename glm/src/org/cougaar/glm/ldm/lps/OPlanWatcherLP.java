@@ -21,36 +21,25 @@
 
 package org.cougaar.glm.ldm.lps;
 
-import org.cougaar.core.agent.*;
-import org.cougaar.core.domain.*;
-import org.cougaar.core.blackboard.*;
-import org.cougaar.core.mts.Message;
-import org.cougaar.core.mts.MessageAddress;
+import java.util.Collection;
+import java.util.Enumeration;
 
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.blackboard.Directive;
-import org.cougaar.planning.ldm.plan.TransferableAssignment;
-import org.cougaar.planning.ldm.plan.TransferableRescind;
-import org.cougaar.planning.ldm.plan.TransferableTransfer;
-import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.planning.ldm.plan.NewTransferableRescind;
-import org.cougaar.planning.ldm.plan.TransferableVerification;
-
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.oplan.OplanContributor;
-import org.cougaar.glm.ldm.oplan.OrgActivity;
-
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.plan.*;
-
-import java.util.*;
-import org.cougaar.core.util.*;
-import org.cougaar.util.*;
+import org.cougaar.core.blackboard.Envelope;
+import org.cougaar.core.blackboard.EnvelopeTuple;
+import org.cougaar.core.domain.EnvelopeLogicProvider;
+import org.cougaar.core.domain.LogicProvider;
+import org.cougaar.core.domain.RootPlan;
 import org.cougaar.core.util.UID;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.oplan.OrgActivity;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.LocationSchedulePG;
+import org.cougaar.planning.ldm.asset.LocationSchedulePGImpl;
+import org.cougaar.planning.ldm.asset.NewLocationSchedulePG;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.util.EmptyEnumeration;
+import org.cougaar.util.UnaryPredicate;
 
 
 

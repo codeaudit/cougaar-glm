@@ -21,17 +21,6 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import java.util.Date;
-import java.util.Properties;
-
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.util.Parameters;
-
 import org.cougaar.glm.ldm.oplan.Oplan;
 
 

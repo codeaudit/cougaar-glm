@@ -21,16 +21,15 @@
 package org.cougaar.glm.servlet;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.domain.*;
-import org.cougaar.planning.ldm.*;
 import org.cougaar.core.service.AlarmService;
-import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.BlackboardQueryService;
+import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.SchedulerService;
-import org.cougaar.core.servlet.SimpleServletSupportImpl;
-import org.cougaar.util.ConfigFinder;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.servlet.BlackboardServletSupport;
+import org.cougaar.util.ConfigFinder;
 
 /** 
  * <pre>

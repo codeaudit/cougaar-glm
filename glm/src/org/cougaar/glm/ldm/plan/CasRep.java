@@ -21,10 +21,8 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import java.util.Enumeration;
-import java.util.Vector;
 import java.util.Hashtable;
-import java.util.Date;
+
 import org.cougaar.core.util.UniqueObject;
 
 public interface CasRep

@@ -21,12 +21,12 @@
 
 package org.cougaar.glm.util;
 
-import java.lang.Math;
+import org.cougaar.glm.ldm.plan.Position;
 import org.cougaar.planning.ldm.measure.Distance;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.util.log.*;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.LoggerFactory;
 
 /**
  * A class containing static methods for geographic computations, 

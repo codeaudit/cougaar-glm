@@ -20,7 +20,11 @@
  */
 package org.cougaar.glm.ldm.policy;
 
-import org.cougaar.planning.ldm.policy.*;
+import org.cougaar.planning.ldm.policy.DoubleRuleParameter;
+import org.cougaar.planning.ldm.policy.Policy;
+import org.cougaar.planning.ldm.policy.RuleParameter;
+import org.cougaar.planning.ldm.policy.RuleParameterIllegalValueException;
+import org.cougaar.planning.ldm.policy.StringRuleParameter;
 
 /**
  * Answers the question, "What should our policy be for interpreting acr factors?" In the absence of an explicit policy, the answer is to multiply the factor by 1.0.

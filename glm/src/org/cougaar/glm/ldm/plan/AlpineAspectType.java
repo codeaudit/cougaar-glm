@@ -20,12 +20,10 @@
  */
 package org.cougaar.glm.ldm.plan;
 
+import org.cougaar.planning.ldm.plan.AspectRate;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.AspectRate;
 import org.cougaar.planning.ldm.plan.FloatAspectValue;
-
-import org.cougaar.planning.ldm.measure.CountRate;
 
 public class AlpineAspectType implements AspectType {
   public static final int DEMANDRATE       = N_CORE_ASPECTS + 0;

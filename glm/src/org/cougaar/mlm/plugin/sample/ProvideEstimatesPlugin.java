@@ -21,33 +21,27 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.util.UID;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.BulkEstimate;
 import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.NewBulkEstimate;
 import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.BulkEstimate;
-import org.cougaar.planning.ldm.plan.NewBulkEstimate;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.util.UID;
-
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.Enumerator;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ListIterator;
-import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.Arrays;
-
 import org.cougaar.util.UnaryPredicate;
 
 /** Plugin that subscribes to all BulkEstimate objects.  For each BulkEstimate

@@ -21,23 +21,23 @@
 
 package org.cougaar.glm.ldm;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.cougaar.core.component.ServiceBroker;
+import org.cougaar.core.domain.DomainAdapter;
+import org.cougaar.core.domain.Factory;
+import org.cougaar.core.domain.RootPlan;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.AgentIdentificationService;
 import org.cougaar.core.service.DomainService;
-
-import org.cougaar.core.domain.*;
-import org.cougaar.core.component.BindingSite;
-import org.cougaar.core.component.ServiceBroker;
-
-import org.cougaar.core.domain.DomainAdapter;
-
-import org.cougaar.glm.ldm.lps.*;
-import org.cougaar.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.glm.ldm.asset.AssetFactory;
 import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
-
+import org.cougaar.glm.ldm.lps.DetailRequestLP;
+import org.cougaar.glm.ldm.lps.OPlanWatcherLP;
+import org.cougaar.glm.ldm.lps.ReceiveTransferableLP;
+import org.cougaar.glm.ldm.lps.TransferableLP;
+import org.cougaar.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.LDMService;

@@ -22,18 +22,16 @@
 /* hand generated! */
 
 package org.cougaar.glm.ldm.asset;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
-
-import org.cougaar.planning.ldm.measure.*;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.IOException;
-import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.measure.Distance;
 
 // Lots of stuff from TransportationGraph won't work with this because 
 // of the way links are handled. Links were removed and then readded.

@@ -21,9 +21,9 @@
 
 package org.cougaar.mlm.construction;
 
-import org.cougaar.glm.plugins.GLMDecorationPlugin;
-
 import java.util.Vector;
+
+import org.cougaar.glm.plugins.GLMDecorationPlugin;
 
 /*
  * Construction (ClassIV) Projection Plugin 

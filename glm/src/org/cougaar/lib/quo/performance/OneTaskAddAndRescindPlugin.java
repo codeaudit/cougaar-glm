@@ -22,13 +22,25 @@
 
 package org.cougaar.lib.quo.performance;
 //package org.cougaar.lib.quo;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import java.io.FileWriter;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.plan.*;
-import java.util.*;
-import java.io.*;
 
 /**
  * Adds a task and then immediately removes it

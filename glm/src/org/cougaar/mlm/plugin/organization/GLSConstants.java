@@ -21,8 +21,8 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.glm.ldm.Constants;
+import org.cougaar.planning.ldm.plan.Verb;
 
 public interface GLSConstants {
   final String FOR_OPLAN_STAGES = "ForOplanStages";

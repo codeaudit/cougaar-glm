@@ -20,15 +20,12 @@
  */
 package org.cougaar.glm.ldm.oplan;
 
-import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.core.util.OwnedUniqueObject;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Enumeration;
-import java.util.Vector;
+
+import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.planning.ldm.plan.Transferable;
 
 public class DFSP
   extends OwnedUniqueObject

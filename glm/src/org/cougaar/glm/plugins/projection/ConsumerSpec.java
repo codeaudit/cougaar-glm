@@ -20,25 +20,20 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.projection;
 
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.measure.Rate;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.ScheduleImpl;
-import org.cougaar.planning.ldm.plan.ScheduleType;
-import org.cougaar.util.TimeSpan;
-
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
-import org.cougaar.glm.ldm.GLMFactory;
+import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.plan.ObjectScheduleElement;
-import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
 import org.cougaar.glm.ldm.plan.PlanScheduleElementType;
-import org.cougaar.glm.ldm.plan.PlanScheduleType;
-import org.cougaar.glm.debug.*;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.measure.Rate;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleImpl;
+import org.cougaar.planning.ldm.plan.ScheduleType;
+import org.cougaar.util.TimeSpan;
 
 public abstract class ConsumerSpec implements Serializable {
     protected Object consumer_;

@@ -20,27 +20,40 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.inventory;
 
-import org.cougaar.core.mts.MessageAddress;
+import java.text.NumberFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.agent.service.alarm.Alarm;
-import org.cougaar.core.domain.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.policy.*;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.TimeSpan;
-
-import java.text.NumberFormat;
-import java.util.*;
-
-import org.cougaar.glm.ldm.GLMFactory;
-import org.cougaar.glm.ldm.asset.*;
+import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.debug.*;
-import org.cougaar.glm.plugins.*;
+import org.cougaar.glm.ldm.GLMFactory;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.glm.plugins.AssetUtils;
+import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.glm.plugins.TimeUtils;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.TimeAspectValue;
+import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.util.UnaryPredicate;
 
 
 /** Common code for all sourcing processors

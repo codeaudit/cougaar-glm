@@ -22,14 +22,11 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Enumeration;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Workflow;
-import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
 /** A tree for an allocatable workflow collection.

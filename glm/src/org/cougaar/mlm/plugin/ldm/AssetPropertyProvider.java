@@ -21,23 +21,8 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.NewScheduleElement;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPGImpl;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.util.UnaryPredicate;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Vector;
 
 /** A QueryHandler which can convert a TypeIdentification code
  * into an Asset Prototype.

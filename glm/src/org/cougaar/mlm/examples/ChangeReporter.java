@@ -21,18 +21,15 @@
 
 package org.cougaar.mlm.examples;
 
-import java.util.*;
-import org.cougaar.core.util.*;
-import org.cougaar.util.*;
-import org.cougaar.planning.ldm.plan.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.cougaar.core.blackboard.AnonymousChangeReport;
+import org.cougaar.core.blackboard.ChangeReport;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.mts.*;
-import org.cougaar.core.agent.*;
-import org.cougaar.core.domain.*;
-import org.cougaar.core.blackboard.*;
-import org.cougaar.core.mts.Message;
-import org.cougaar.core.mts.MessageAddress;
 
 /**
  * ChangeReporter subscribes for everything, and prints

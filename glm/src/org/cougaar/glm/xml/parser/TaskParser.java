@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.11 2003-01-23 19:53:33 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.12 2003-12-09 17:55:14 rtomlinson Exp $
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -24,32 +24,27 @@ package org.cougaar.glm.xml.parser;
 
 import java.util.Date;
 import java.util.Vector;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
-import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AbstractAsset;
-
 import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.lib.xml.parser.AssetParser;
+import org.cougaar.glm.plugins.MaintainedItem;
 import org.cougaar.lib.xml.parser.DateParser;
 import org.cougaar.lib.xml.parser.DirectObjectParser;
 import org.cougaar.lib.xml.parser.PreferencesParser;
 import org.cougaar.lib.xml.parser.VerbParser;
-import org.cougaar.glm.plugins.MaintainedItem;
-import org.cougaar.util.log.*;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.util.log.Logger;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Copyright (c) 1999-2002 BBN Technologies 

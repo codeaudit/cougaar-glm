@@ -20,18 +20,12 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.io.ObjectInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.BufferedReader;
-import java.io.Reader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-import java.io.IOException;
 import java.io.EOFException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * An implementation of the LineReader interface that reads from an

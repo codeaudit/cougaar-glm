@@ -29,52 +29,32 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import org.cougaar.core.mts.MessageAddress;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.component.ServiceRevokedEvent;
 import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.LoggingService;
-
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
-import org.cougaar.glm.ldm.plan.*;
-
+import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.PlanningFactory;
-
 import org.cougaar.planning.ldm.asset.AbstractAsset;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPGImpl;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
-
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
-import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
 import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.NewExpansion;
-import org.cougaar.planning.ldm.plan.NewPlanElement;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewWorkflow;
-import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TaskScoreTable;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
-
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.planning.service.LDMService;
-
 import org.cougaar.util.UnaryPredicate;
 
 

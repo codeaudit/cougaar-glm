@@ -22,23 +22,16 @@
 
 package org.cougaar.mlm.debug.ui;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+
 import javax.swing.JComponent;
 
-import java.awt.Dimension;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.FontMetrics;
-import java.awt.Font;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import org.cougaar.mlm.debug.ui.draw.OMVector;
 import org.cougaar.mlm.debug.ui.draw.DrawUtil;
+import org.cougaar.mlm.debug.ui.draw.OMVector;
 
 /** Creates a vertical bar graph display.  Takes a two dimensional array
   of values, and uses a different color bar to display each set of values.

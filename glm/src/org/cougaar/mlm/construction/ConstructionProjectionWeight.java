@@ -21,14 +21,12 @@
 
 package org.cougaar.mlm.construction;
 
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
 import java.io.Serializable;
+
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.ProjectionWeight;
-import org.cougaar.glm.plugins.DecorationPlugin;
-import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 
 public class ConstructionProjectionWeight implements ProjectionWeight, Serializable {
 

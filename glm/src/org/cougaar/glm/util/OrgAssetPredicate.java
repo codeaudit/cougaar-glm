@@ -21,8 +21,8 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.util.UnaryPredicate;
 
 public class OrgAssetPredicate  implements UnaryPredicate, NewOrgAssetPredicate {
     public boolean execute(Object o) {

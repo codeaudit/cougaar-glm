@@ -20,37 +20,48 @@
  */
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.PlanElementSet;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.util.UnaryPredicate;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.TreeMap;
 import java.util.SortedMap;
-import javax.swing.*;
-import javax.swing.table.*;
-import org.cougaar.planning.ldm.plan.PlanElementImpl;
+import java.util.TreeMap;
+
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.PlanElementSet;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * @author       ALPINE <alpine-software@bbn.com>

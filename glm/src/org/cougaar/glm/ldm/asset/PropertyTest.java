@@ -20,8 +20,10 @@
  */
 package org.cougaar.glm.ldm.asset;
 
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
+import org.cougaar.planning.ldm.measure.Area;
+import org.cougaar.planning.ldm.measure.Distance;
+import org.cougaar.planning.ldm.measure.Mass;
+import org.cougaar.planning.ldm.measure.Volume;
 
 public class PropertyTest {
   public static void main(String args[]) {

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.5 2003-01-23 19:53:33 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.6 2003-12-09 17:55:14 rtomlinson Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -22,23 +22,16 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.planning.ldm.measure.Longitude;
+import java.util.Enumeration;
+
+import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.planning.ldm.plan.AspectLocation;
 import org.cougaar.planning.ldm.plan.AspectScorePoint;
-import org.cougaar.planning.ldm.plan.AspectScoreRange;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-
 import org.cougaar.util.Empty;
 import org.cougaar.util.log.Logger;
-
-import java.util.Enumeration;
 
 /** 
  * Represents a location scoring function - score gets worse (higher or lower?)

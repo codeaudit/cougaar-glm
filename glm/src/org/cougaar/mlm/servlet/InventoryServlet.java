@@ -21,48 +21,45 @@
  
 package org.cougaar.mlm.servlet;
 
-import java.io.*;
-import java.lang.reflect.Method;
-import java.lang.ClassNotFoundException;
-
-import java.util.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.blackboard.CollectionSubscription;
-import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.util.*;
-import org.cougaar.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cougaar.core.servlet.SimpleServletSupport;
-import org.cougaar.core.util.UID;
-import org.cougaar.planning.ldm.asset.Asset;
-
+import org.cougaar.core.blackboard.Subscription;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.LoggingService;
-
-import org.cougaar.glm.ldm.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.policy.*;
+import org.cougaar.core.servlet.SimpleServletSupport;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.GLMAsset;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.glm.ldm.asset.SupplyClassPG;
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.glm.ldm.plan.PlanScheduleType;
 import org.cougaar.mlm.ui.data.UIInventoryImpl;
-import org.cougaar.mlm.ui.data.UIQuantityScheduleElement;
 import org.cougaar.mlm.ui.data.UISimpleInventory;
-import org.cougaar.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.mlm.ui.data.UISimpleNamedScheduleNames;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.ScheduleType;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.UnaryPredicate;
 
 public class InventoryServlet
   extends HttpServlet 

@@ -22,36 +22,27 @@
 package org.cougaar.mlm.plugin.sample;
 
 
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
-import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.NewComposition;
-import org.cougaar.planning.ldm.plan.Aggregation;
-import org.cougaar.planning.ldm.plan.MPTask;
-import org.cougaar.planning.ldm.plan.NewMPTask;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
-
-import org.cougaar.planning.ldm.asset.AssetGroup;
-
-import org.cougaar.util.UnaryPredicate;
-
-import java.lang.Math;
-
 import java.util.Enumeration;
 import java.util.Vector;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.planning.ldm.asset.AssetGroup;
+import org.cougaar.planning.ldm.plan.Aggregation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
+import org.cougaar.planning.ldm.plan.NewComposition;
+import org.cougaar.planning.ldm.plan.NewMPTask;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 public class MCCAggregatorPlugin extends SimplePlugin
 {

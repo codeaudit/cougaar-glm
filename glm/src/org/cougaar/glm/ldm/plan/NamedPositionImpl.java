@@ -21,10 +21,8 @@
  
 package org.cougaar.glm.ldm.plan;
  
-import org.cougaar.glm.ldm.plan.NamedPosition;
-import org.cougaar.glm.ldm.plan.NewNamedPosition;
-import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
  
  
 public class NamedPositionImpl extends PositionImpl

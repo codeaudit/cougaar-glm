@@ -21,9 +21,9 @@
 
 package org.cougaar.glm.packer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.PlanningFactory;
 
 /**

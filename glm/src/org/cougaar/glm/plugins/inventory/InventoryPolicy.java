@@ -21,10 +21,9 @@
 package org.cougaar.glm.plugins.inventory;
 
 import org.cougaar.planning.ldm.policy.BooleanRuleParameter;
-import org.cougaar.planning.ldm.policy.IntegerRuleParameter;
 import org.cougaar.planning.ldm.policy.DoubleRuleParameter;
+import org.cougaar.planning.ldm.policy.IntegerRuleParameter;
 import org.cougaar.planning.ldm.policy.Policy;
-import org.cougaar.planning.ldm.policy.RuleParameter;
 import org.cougaar.planning.ldm.policy.RuleParameterIllegalValueException;
 import org.cougaar.planning.ldm.policy.StringRuleParameter;
 

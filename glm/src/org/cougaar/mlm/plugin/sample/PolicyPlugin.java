@@ -21,34 +21,31 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.glm.ldm.*;import org.cougaar.glm.ldm.*;import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
-import org.cougaar.glm.ldm.policy.*;
-
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import java.awt.event.*;
-import java.awt.*;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.beans.PropertyChangeListener;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.policy.*;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.glm.ldm.policy.ShipPolicy;
 import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.ldm.policy.EnumerationRuleParameter;
+import org.cougaar.planning.ldm.policy.IntegerRuleParameter;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The PolicyPlugin

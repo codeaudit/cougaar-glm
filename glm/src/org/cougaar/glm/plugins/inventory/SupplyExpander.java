@@ -20,21 +20,28 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.inventory;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.planning.plugin.util.AllocationResultHelper;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.CountRate;
-import org.cougaar.planning.ldm.measure.FlowRate;
-import org.cougaar.planning.ldm.measure.Rate;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.plugins.AssetUtils;
+import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
-import org.cougaar.planning.ldm.plan.TaskScoreTable;
 import org.cougaar.planning.ldm.plan.AspectRate;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.Constraint;
-import org.cougaar.planning.ldm.plan.Disposition;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewConstraint;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -43,25 +50,13 @@ import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.TaskScoreTable;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.ArrayList;
-import java.util.List;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Inventory;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.plan.AlpineAspectType;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.plugins.AssetUtils;
-import org.cougaar.glm.plugins.ScheduleUtils;
-import org.cougaar.glm.plugins.TaskUtils;
-import org.cougaar.glm.plugins.TimeUtils;
 
 /** SupplyExpander expands supply tasks into withdraw tasks and if needed 
  *  Transport and Load Tasks.  The SupplyExpander also updates the allocation

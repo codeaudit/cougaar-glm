@@ -21,8 +21,8 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.planning.plugin.asset.AssetDataReader;
 import org.cougaar.planning.plugin.asset.AssetDataParamReader;
+import org.cougaar.planning.plugin.asset.AssetDataReader;
 
 /**
  * Extension of OrgDataPlugin which always uses the ParameterizedDataReader to

@@ -20,10 +20,9 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.projection;
 
-import org.cougaar.glm.plugins.GLMDecorationPlugin;
-
-import java.util.Enumeration;
 import java.util.Vector;
+
+import org.cougaar.glm.plugins.GLMDecorationPlugin;
 
 /**
  * The plugin is decorated with the SupplyProjector processor 

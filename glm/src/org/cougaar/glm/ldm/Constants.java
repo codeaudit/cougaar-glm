@@ -21,7 +21,6 @@
 
 package org.cougaar.glm.ldm;
 
-import org.cougaar.planning.ldm.plan.AspectType;
 
 /** Holder of constants for GLM users.
  * @note Any attempt to instantiate it will result in a thrown exception.

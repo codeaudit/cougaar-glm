@@ -20,25 +20,25 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.inventory;
 
-import org.cougaar.core.mts.MessageAddress;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.plugin.util.AllocationResultHelper;
-import org.cougaar.core.domain.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
-import org.cougaar.planning.ldm.plan.*;
-
-import org.cougaar.util.UnaryPredicate;
-
-import java.util.*;
-
+import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.debug.*;
+import org.cougaar.glm.ldm.asset.Ammunition;
+import org.cougaar.glm.ldm.asset.BulkPOL;
+import org.cougaar.glm.ldm.asset.Consumable;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.PackagedPOL;
 import org.cougaar.glm.plugins.TaskUtils;
 import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.glm.plugins.AssetUtils;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
 
 public class WithdrawAllocator extends InventoryProcessor {
 

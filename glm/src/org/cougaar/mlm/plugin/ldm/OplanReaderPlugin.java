@@ -21,7 +21,6 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -30,13 +29,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.SubscriberException;
-import org.cougaar.core.component.ServiceRevokedEvent;
-import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
@@ -52,14 +48,12 @@ import org.cougaar.glm.ldm.oplan.TimeSpan;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.mlm.plugin.organization.GLSConstants;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.Context;
 import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.util.CSVUtility;
 import org.cougaar.util.DBProperties;
-import org.cougaar.util.Parameters;
 import org.cougaar.util.TimeSpanSet;
 import org.cougaar.util.UnaryPredicate;
 

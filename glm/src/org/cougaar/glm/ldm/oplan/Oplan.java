@@ -37,24 +37,19 @@
 	
 package org.cougaar.glm.ldm.oplan;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.planning.ldm.plan.Transferable;
-
+import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.core.util.OwnedUniqueObject;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.beans.PropertyChangeEvent;
-import java.io.Serializable;
+import org.cougaar.planning.ldm.plan.Transferable;
 
 /**
  * Oplan

@@ -22,8 +22,8 @@
 package org.cougaar.mlm.ui.data;
 
 import java.io.Serializable;
-import java.util.Vector;
 import java.util.Date;
+import java.util.Vector;
 
 public class UISimpleInventory implements Serializable {
   String assetName;

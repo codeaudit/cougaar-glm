@@ -21,17 +21,9 @@
 
 package org.cougaar.glm.servlet;
 
-import javax.servlet.Servlet;
-
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.service.BlackboardService;
-import org.cougaar.core.service.BlackboardQueryService;
-import org.cougaar.planning.service.LDMService;
-import org.cougaar.util.ConfigFinder;
 import org.cougaar.core.service.AlarmService;
-import org.cougaar.core.service.SchedulerService;
-import org.cougaar.planning.servlet.BlackboardServletComponent;
 import org.cougaar.core.servlet.SimpleServletSupport;
+import org.cougaar.planning.servlet.BlackboardServletComponent;
 
 public class CompletionWatcherServletComponent extends BlackboardServletComponent {
   public final void setAlarmService(AlarmService s) {

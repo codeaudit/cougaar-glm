@@ -24,17 +24,34 @@ package org.cougaar.mlm.plugin.strategictransport;
 // Simple scheduler to generate multileg expansions for transporation tasks
 // To be used as a TOPS stub in conjunction with GSS for AIR, GROUND, SEA
 
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.*;import org.cougaar.glm.ldm.*;import org.cougaar.glm.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.*;
-import java.util.*;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Person;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.ldm.plan.GeolocLocationImpl;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.Location;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.util.UnaryPredicate;
 
 public class SimpleMultilegExpanderPlugin extends org.cougaar.planning.plugin.legacy.SimplePlugin

@@ -19,13 +19,13 @@
  * </copyright>
  * --------------------------------------------------------------------------*/
 package org.cougaar.mlm.construction;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.planning.ldm.measure.Count;
-import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.glm.debug.GLMDebug;
-import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.glm.ldm.asset.InventoryBG;
+import org.cougaar.glm.ldm.asset.InventoryPG;
+import org.cougaar.glm.ldm.asset.NewInventoryPG;
+import org.cougaar.planning.ldm.asset.PGDelegate;
+import org.cougaar.planning.ldm.asset.PropertyGroup;
+import org.cougaar.planning.ldm.measure.Count;
 
 public  class ConstructionInventoryBG extends InventoryBG {
 

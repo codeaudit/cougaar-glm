@@ -21,10 +21,8 @@
 
 package org.cougaar.glm.ldm.plan;
  
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
  
 public class GeolocLocationImpl extends NamedPositionImpl
   implements GeolocLocation, NewGeolocLocation {

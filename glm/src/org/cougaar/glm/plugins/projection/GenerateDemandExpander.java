@@ -20,49 +20,32 @@
  */
 package org.cougaar.glm.plugins.projection;
 
-import org.cougaar.core.mts.MessageAddress;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.plan.ObjectScheduleElement;
+import org.cougaar.glm.plugins.AssetUtils;
+import org.cougaar.glm.plugins.BasicProcessor;
+import org.cougaar.glm.plugins.DecorationPlugin;
+import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AbstractAsset;
-import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.measure.CostRate;
 import org.cougaar.planning.ldm.measure.CountRate;
 import org.cougaar.planning.ldm.measure.FlowRate;
 import org.cougaar.planning.ldm.measure.MassTransferRate;
 import org.cougaar.planning.ldm.measure.Rate;
 import org.cougaar.planning.ldm.measure.TimeRate;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Workflow;
-import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
-
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
-
-import org.cougaar.glm.ldm.GLMFactory;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.ScheduledContentPG;
-import org.cougaar.glm.ldm.plan.ObjectScheduleElement;
-import org.cougaar.glm.ldm.plan.PlanScheduleType;
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
-
-import org.cougaar.glm.plugins.AssetUtils;
-import org.cougaar.glm.plugins.BasicProcessor;
-import org.cougaar.glm.plugins.DecorationPlugin;
-import org.cougaar.glm.plugins.TaskUtils;
-import org.cougaar.glm.plugins.TimeUtils;
 
 /**
  * Projects demand for assets consumed by some consumer.

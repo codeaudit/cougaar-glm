@@ -22,23 +22,22 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AssetTransfer;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Workflow;
-import org.cougaar.core.mts.MessageAddress;
 
 /** A tree node for a PlanElement.
   Overrides the UITreeNode loadChildren, toString and isLeaf

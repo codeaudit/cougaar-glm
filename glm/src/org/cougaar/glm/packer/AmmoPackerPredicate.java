@@ -21,16 +21,11 @@
 
 package org.cougaar.glm.packer; 
 
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.Preposition;
- 
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Ammunition;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.UnaryPredicate;
 
 /**
   * This UnaryPredicate is used to test whether Tasks should be

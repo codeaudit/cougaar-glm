@@ -21,8 +21,6 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import java.util.Enumeration;
-import java.util.*;
 import java.util.Date;
 
 public interface NewCasRep extends CasRep

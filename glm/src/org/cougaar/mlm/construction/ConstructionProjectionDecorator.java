@@ -21,16 +21,13 @@
 
 package org.cougaar.mlm.construction;
 
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.util.UnaryPredicate;
-import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.glm.ldm.asset.ClassVIIMajorEndItem;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.Service;
 import org.cougaar.glm.plugins.PluginDecorator;
 import org.cougaar.glm.plugins.projection.GenerateSupplyDemandExpander;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * Construction Decorator Stub

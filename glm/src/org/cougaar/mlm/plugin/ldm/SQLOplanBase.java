@@ -21,14 +21,11 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.glm.ldm.plan.NamedPosition;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.oplan.OplanContributor;
-import org.cougaar.glm.ldm.oplan.OplanCoupon;
-import org.cougaar.glm.ldm.oplan.OrgActivity;
-
 import java.util.Collection;
+
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.ldm.plan.NamedPosition;
 
 /** Defines minimum interface required to be an SQLOplanPlugin */
 public interface SQLOplanBase {

@@ -20,10 +20,10 @@
  */
 package org.cougaar.glm.ldm.oplan;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.*;
-import java.io.Serializable;
 
 /**
  * TimeSpan.

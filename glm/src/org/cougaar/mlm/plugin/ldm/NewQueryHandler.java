@@ -21,17 +21,16 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.service.LoggingService;
-import org.cougaar.util.DBProperties;
-import org.cougaar.util.Parameters;
-import org.cougaar.util.DBConnectionPool;
-import java.util.Collection;
-import java.sql.Statement;
-import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collection;
+
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.util.DBConnectionPool;
+import org.cougaar.util.DBProperties;
+import org.cougaar.util.Parameters;
 
 public abstract class NewQueryHandler {
   protected DBProperties dbp;

@@ -21,32 +21,23 @@
 
 package org.cougaar.mlm.plugin.assessor;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.text.MessageFormat;
 
-import org.cougaar.util.TimeSpan;
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-
 import org.cougaar.planning.ldm.plan.NewReport;
 import org.cougaar.planning.ldm.plan.Relationship;
 import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.plan.Role;
-
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
-
-import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.util.TimeSpan;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The SupportingUnitAssessorPlugin monitors organization assets and generates

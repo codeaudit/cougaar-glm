@@ -20,31 +20,28 @@
  */
 package org.cougaar.mlm.plugin.sample;
 
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.text.NumberFormat;
-import java.awt.event.*;
-import java.awt.*;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.TreeSet;
 import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.TreeSet;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.Aggregation;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AssetTransfer;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.AssetTransfer;
-import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**

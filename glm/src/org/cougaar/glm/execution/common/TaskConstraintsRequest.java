@@ -21,6 +21,7 @@
 package org.cougaar.glm.execution.common;
 
 import java.io.IOException;
+
 import org.cougaar.core.util.UID;
 
 public class TaskConstraintsRequest extends EGObjectBase implements EGObject {

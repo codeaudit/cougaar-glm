@@ -20,16 +20,10 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.io.ObjectInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.ObjectInputStream;
+
 import org.cougaar.core.util.UID;
 
 /**

@@ -20,16 +20,20 @@
  */
 package org.cougaar.mlm.construction;
 
-import org.cougaar.glm.plugins.inventory.InventoryPlugin;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.glm.ldm.plan.Agency;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.debug.*;
-
-
-
 import java.util.GregorianCalendar;
-import java.io.*;
+
+import org.cougaar.glm.debug.GLMDebug;
+import org.cougaar.glm.ldm.asset.Inventory;
+import org.cougaar.glm.ldm.asset.InventoryBG;
+import org.cougaar.glm.ldm.asset.NewInventoryPG;
+import org.cougaar.glm.ldm.asset.NewReportSchedulePG;
+import org.cougaar.glm.ldm.asset.NewScheduledContentPG;
+import org.cougaar.glm.ldm.asset.ProjectionWeight;
+import org.cougaar.glm.ldm.plan.Agency;
+import org.cougaar.glm.plugins.inventory.InventoryPlugin;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 
 /** Plugin for Construction Inventory.  Contains methods to setup and create construction
  *  inventory.

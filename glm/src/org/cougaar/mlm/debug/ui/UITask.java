@@ -27,13 +27,10 @@ import java.util.Enumeration;
 import java.util.TimeZone;
 
 import org.cougaar.core.mts.MessageAddress;
-
-import org.cougaar.core.mts.Message;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 
 public class UITask {
 

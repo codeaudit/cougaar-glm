@@ -20,23 +20,24 @@
  */
 package org.cougaar.glm.ldm;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.util.Parameters;
-import org.cougaar.util.DBConnectionPool;
-import org.cougaar.glm.debug.GLMDebug;
-import org.cougaar.mlm.plugin.ldm.LDMEssentialPlugin;
-
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.sql.SQLException;
-import java.util.*;
+import java.sql.Statement;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.debug.GLMDebug;
+import org.cougaar.mlm.plugin.ldm.LDMEssentialPlugin;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.util.DBConnectionPool;
+import org.cougaar.util.Parameters;
 
 /**
  * Provides wrappers around the query routines.

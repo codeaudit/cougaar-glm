@@ -21,12 +21,15 @@
 
 package org.cougaar.glm.plugins;
 
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.glm.ldm.oplan.*;
-import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.glm.ldm.oplan.ForcePackage;
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.glm.ldm.oplan.OrgActivity;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 public class OplanObserverPlugin extends SimplePlugin {
 

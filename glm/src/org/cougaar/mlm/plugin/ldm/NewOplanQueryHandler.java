@@ -21,17 +21,15 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import java.util.Date;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.ArrayList;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.util.DBProperties;
-import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.util.DBProperties;
 
 
 /** Reads oplan info from a database table. Assumes it's being invoked on

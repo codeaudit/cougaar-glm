@@ -22,41 +22,20 @@ package org.cougaar.mlm.plugin.perturbation;
   
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-  
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.Date;
-
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Vector;
 
 import org.cougaar.core.blackboard.Subscriber;
-
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
-
+import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.AggregateAssetAdapter;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-  
-import org.cougaar.planning.ldm.measure.Mass;
-import org.cougaar.planning.ldm.measure.Volume;
-  
-import org.cougaar.glm.ldm.oplan.Oplan;
-
-import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.RoleSchedule;
 import org.cougaar.planning.ldm.plan.RoleScheduleImpl;
+import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleImpl;
-
-import org.cougaar.util.ReusableThread;
-import org.cougaar.util.ReusableThreadPool;
-	
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

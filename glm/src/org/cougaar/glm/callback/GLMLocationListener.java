@@ -22,8 +22,8 @@
 package org.cougaar.glm.callback;
 
 import java.util.Enumeration;
-import org.cougaar.glm.ldm.asset.TransportationNode;
 
+import org.cougaar.glm.ldm.asset.TransportationNode;
 import org.cougaar.lib.callback.UTILFilterCallbackListener;
 
 /**

@@ -31,34 +31,17 @@ package org.cougaar.mlm.plugin;
  * Imports
  */
 
-import org.cougaar.planning.ldm.asset.Asset;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.ldm.PrototypeProvider;
-import org.cougaar.util.StateModelException;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.LDMPluginServesLDM;
-
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.glm.ldm.asset.PhysicalAsset;
-import org.cougaar.glm.ldm.asset.AmmunitionPG;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.glm.ldm.asset.NewPhysicalPG;
-import org.cougaar.glm.ldm.asset.PhysicalPG;
-import org.cougaar.glm.ldm.asset.PhysicalPGImpl;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
+import org.cougaar.planning.ldm.LDMPluginServesLDM;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.ConfigFinder;
 
 /**

@@ -21,37 +21,27 @@
 package org.cougaar.glm.packer;
 
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Vector;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.GLMAsset;
+import org.cougaar.glm.ldm.asset.NewContentsPG;
+import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.planning.ldm.asset.PropertyGroupSchedule;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-
 import org.cougaar.planning.ldm.measure.Mass;
-
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
-import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.NewMPTask;
 import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
-
-import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.glm.ldm.asset.GLMAsset;
-import org.cougaar.glm.ldm.asset.NewContentsPG;
-import org.cougaar.glm.ldm.asset.NewPhysicalPG;
-import org.cougaar.glm.ldm.asset.PhysicalPG;
-import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
 
 
 class Filler {

@@ -21,56 +21,41 @@
 
 package org.cougaar.mlm.construction;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.DriverManager;
-
-// core
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.NewSchedule;
-
-import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.planning.ldm.measure.*;
-
-import org.cougaar.glm.ldm.plan.ObjectScheduleElement;
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
-
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleImpl;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.Parameters;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.Person;
-import org.cougaar.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
 import org.cougaar.glm.ldm.asset.NewSupplyClassPG;
-import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.glm.util.AllocatorHelper;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.ScheduledContentPG;
 import org.cougaar.glm.plugins.AssetUtils;
-import org.cougaar.glm.plugins.ClusterOPlan;
-import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.glm.plugins.BasicProcessor;
+import org.cougaar.glm.plugins.GLMDecorationPlugin;
 import org.cougaar.glm.plugins.ScheduleUtils;
 import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.glm.plugins.projection.ConsumerSpec;
-//import org.cougaar.planning.ldm.PlanningFactory;
-
-// glm
-import org.cougaar.glm.plugins.BasicProcessor;
-import org.cougaar.glm.plugins.GLMDecorationPlugin;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.measure.Count;
+import org.cougaar.planning.ldm.measure.CountRate;
+import org.cougaar.planning.ldm.measure.Duration;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.util.Parameters;
+import org.cougaar.util.UnaryPredicate;
 
 /*
  * Construction (ClassIV) plugin that takes construction tasks and 

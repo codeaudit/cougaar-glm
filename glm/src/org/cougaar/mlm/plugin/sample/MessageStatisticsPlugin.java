@@ -21,8 +21,9 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.core.mts.MessageStatistics;
 import java.util.Vector;
+
+import org.cougaar.core.mts.MessageStatistics;
 
 /**
  * Scalability plugin at leaf : allocate tasks to assets based on value 

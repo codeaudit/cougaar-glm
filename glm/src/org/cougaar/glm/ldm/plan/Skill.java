@@ -20,9 +20,11 @@
  */
 
 package org.cougaar.glm.ldm.plan;
-import java.io.*;
-import org.cougaar.core.util.*;
-import org.cougaar.util.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
+import org.cougaar.util.UnaryPredicate;
 
 /** Abstract Representation of a personal skill or capability.
  * Examples of Skills:

@@ -20,34 +20,21 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.AspectScorePoint;
-import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.ScheduleUtilities;
-import org.cougaar.planning.ldm.plan.ScoringFunction;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.plugin.legacy.PluginDelegate;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import org.cougaar.glm.ldm.GLMFactory;
 import org.cougaar.glm.ldm.asset.NewScheduledContentPG;
-import org.cougaar.glm.ldm.asset.ScheduledContentPG;
 import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
+import org.cougaar.glm.ldm.asset.ScheduledContentPG;
 import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
 import org.cougaar.glm.ldm.plan.PlanScheduleType;
-import org.cougaar.glm.debug.GLMDebug;
+import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.ScheduleUtilities;
 
 /** Provide convenience methods for creating objects. */
 public class ScheduleUtils {

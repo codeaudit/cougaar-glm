@@ -21,21 +21,58 @@
 
 package org.cougaar.glm.ldm;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import org.cougaar.core.domain.Factory;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.UID;
+import org.cougaar.core.util.UniqueObject;
+import org.cougaar.glm.ldm.plan.Capability;
+import org.cougaar.glm.ldm.plan.CapabilityImpl;
+import org.cougaar.glm.ldm.plan.CapacityScheduleElement;
+import org.cougaar.glm.ldm.plan.CapacityScheduleElementImpl;
+import org.cougaar.glm.ldm.plan.CasRepChangeIndicatorImpl;
+import org.cougaar.glm.ldm.plan.CasRepImpl;
+import org.cougaar.glm.ldm.plan.DetailReplyAssignment;
+import org.cougaar.glm.ldm.plan.DetailRequest;
+import org.cougaar.glm.ldm.plan.DetailRequestAssignment;
+import org.cougaar.glm.ldm.plan.DetailRequestImpl;
+import org.cougaar.glm.ldm.plan.GeolocLocationImpl;
+import org.cougaar.glm.ldm.plan.IcaoLocationImpl;
+import org.cougaar.glm.ldm.plan.LaborSchedule;
+import org.cougaar.glm.ldm.plan.LaborScheduleImpl;
+import org.cougaar.glm.ldm.plan.NamedPositionImpl;
+import org.cougaar.glm.ldm.plan.NewCapacityScheduleElement;
+import org.cougaar.glm.ldm.plan.NewCasRep;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.glm.ldm.plan.NewIcaoLocation;
+import org.cougaar.glm.ldm.plan.NewNamedPosition;
+import org.cougaar.glm.ldm.plan.NewPosition;
+import org.cougaar.glm.ldm.plan.NewQuantityRangeScheduleElement;
+import org.cougaar.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.glm.ldm.plan.NewRateScheduleElement;
+import org.cougaar.glm.ldm.plan.PlanScheduleElementType;
+import org.cougaar.glm.ldm.plan.PositionImpl;
+import org.cougaar.glm.ldm.plan.QuantityRangeScheduleElement;
+import org.cougaar.glm.ldm.plan.QuantityRangeScheduleElementImpl;
+import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.glm.ldm.plan.QuantityScheduleElementImpl;
+import org.cougaar.glm.ldm.plan.QueryReplyAssignment;
+import org.cougaar.glm.ldm.plan.QueryRequest;
+import org.cougaar.glm.ldm.plan.QueryRequestAssignment;
+import org.cougaar.glm.ldm.plan.QueryRequestImpl;
+import org.cougaar.glm.ldm.plan.RateScheduleElement;
+import org.cougaar.glm.ldm.plan.RateScheduleElementImpl;
+import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
+import org.cougaar.planning.ldm.plan.Location;
+import org.cougaar.planning.ldm.plan.NewSchedule;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.ScheduleImpl;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.measure.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.oplan.*;
-import org.cougaar.glm.ldm.policy.*;
-import org.cougaar.glm.ldm.asset.*;
 
 /**
  * FGI Domain package definition.

@@ -20,8 +20,10 @@
  */
 
 package org.cougaar.glm.ldm.plan;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Vector;
+
 import org.cougaar.util.StringUtility;
 
 /** Refinement of Skill to represent Aircrew Skills

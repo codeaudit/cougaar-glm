@@ -20,9 +20,10 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.util.GregorianCalendar;
-import org.cougaar.glm.ldm.asset.ReportSchedulePG;
 import java.io.IOException;
+import java.util.GregorianCalendar;
+
+import org.cougaar.glm.ldm.asset.ReportSchedulePG;
 
 public class ReportSchedule extends EGObjectBase implements EGObject {
 

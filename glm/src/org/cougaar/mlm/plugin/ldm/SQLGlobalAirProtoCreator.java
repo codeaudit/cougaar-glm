@@ -21,8 +21,8 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
 
 /** GlobalAirProtoCreator is a subclass of ComAirCreator which creates sql queries
  * (through its superclass) and processes the query results by creating prototype assets

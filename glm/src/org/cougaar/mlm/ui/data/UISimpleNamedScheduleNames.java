@@ -21,8 +21,6 @@
 
 package org.cougaar.mlm.ui.data;
 
-import java.io.Serializable;
-import java.util.Vector;
 
 public interface UISimpleNamedScheduleNames {
   String ON_HAND = "On Hand";

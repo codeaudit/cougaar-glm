@@ -21,8 +21,6 @@
  
 package org.cougaar.glm.ldm.plan;
  
-import org.cougaar.glm.ldm.plan.IcaoLocation;
-import org.cougaar.glm.ldm.plan.NewIcaoLocation;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
  

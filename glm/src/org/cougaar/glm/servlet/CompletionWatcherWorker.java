@@ -21,44 +21,38 @@
 
 package org.cougaar.glm.servlet;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
-
-import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.SubscriptionWatcher;
-
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.SchedulerService;
-
 import org.cougaar.core.servlet.SimpleServletSupport;
-import org.cougaar.planning.servlet.BlackboardServletSupport;
-
-import org.cougaar.glm.parser.GLMTaskParser;
-
-import org.cougaar.lib.util.UTILAllocate;
-
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.servlet.ServletBase;
 import org.cougaar.planning.servlet.ServletWorker;
-import org.cougaar.planning.servlet.data.xml.*;
-
+import org.cougaar.planning.servlet.data.xml.XMLable;
 import org.cougaar.util.DynamicUnaryPredicate;
 import org.cougaar.util.SyncTriggerModelImpl;
 import org.cougaar.util.Trigger;
 import org.cougaar.util.TriggerModel;
-import org.cougaar.util.UnaryPredicate;
 
 /**
  * <pre>

@@ -23,12 +23,10 @@
 package org.cougaar.glm.servlet;
 
 import org.cougaar.core.adaptivity.OperatingMode;
-import org.cougaar.core.component.ServiceBroker;
-import org.cougaar.planning.plugin.completion.CompletionCalculator;
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.OperatingModeService;
 import org.cougaar.glm.plugin.completion.GLMCompletionCalculator;
-
+import org.cougaar.planning.plugin.completion.CompletionCalculator;
 import org.cougaar.planning.servlet.CompletionServlet;
 
 /**

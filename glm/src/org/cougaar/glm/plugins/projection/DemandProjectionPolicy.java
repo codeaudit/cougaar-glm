@@ -22,7 +22,6 @@ package org.cougaar.glm.plugins.projection;
 
 import org.cougaar.planning.ldm.policy.IntegerRuleParameter;
 import org.cougaar.planning.ldm.policy.Policy;
-import org.cougaar.planning.ldm.policy.RuleParameter;
 import org.cougaar.planning.ldm.policy.RuleParameterIllegalValueException;
 import org.cougaar.planning.ldm.policy.StringRuleParameter;
 

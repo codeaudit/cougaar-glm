@@ -22,23 +22,19 @@
 package org.cougaar.glm.util;
 
 
-import org.cougaar.core.domain.Factory;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.measure.Longitude;
-import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.planning.ldm.measure.Distance;
-
-import org.cougaar.glm.ldm.GLMFactory;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.cougaar.glm.ldm.GLMFactory;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.lib.util.UTILPluginException;
+import org.cougaar.planning.ldm.measure.Distance;
+import org.cougaar.planning.ldm.measure.Latitude;
+import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.util.log.Logger;
 
 /**

@@ -21,31 +21,32 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.ContextOfUIDs;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.core.util.UID;
-import org.cougaar.util.UnaryPredicate;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collection;
-import javax.swing.*;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.util.UID;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.mlm.plugin.RandomButtonPusher;
 import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.ldm.plan.ContextOfUIDs;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The GLSGUIBasePlugin supports both init and rescind plugins by

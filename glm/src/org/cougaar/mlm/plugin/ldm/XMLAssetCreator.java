@@ -22,33 +22,16 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.Schedule;
-
-import org.cougaar.planning.ldm.LDMServesPlugin;
-
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
-
-import org.cougaar.planning.ldm.plan.NewRoleSchedule;
-
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.Hashtable;
-import java.util.Date;
-
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 
-//import com.sun.xml.parser.Resolver;
-//import com.sun.xml.tree.XmlDocument;
-
-import org.xml.sax.InputSource;
-
-import org.w3c.dom.Element;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.NewRoleSchedule;
+import org.cougaar.planning.ldm.plan.Schedule;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

@@ -21,41 +21,34 @@
 
 package org.cougaar.mlm.plugin.assessor;
 
-import javax.swing.*;
-import java.awt.event.*;
 import java.awt.LayoutManager;
-
-//import java.io.*;
-  
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.blackboard.Subscription;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.planning.service.LDMService;
 import org.cougaar.core.util.UID;
-
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.oplan.Oplan;
+import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
+import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.Verb;
-
+import org.cougaar.planning.service.LDMService;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.mlm.plugin.UICoordinator;
-
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.oplan.Oplan;
 
 /**
  * Publishes an AssessReadiness task to the logplan every time the button is pressed.

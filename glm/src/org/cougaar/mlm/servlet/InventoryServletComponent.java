@@ -21,16 +21,12 @@
  
 package org.cougaar.mlm.servlet;
 
-import java.lang.reflect.Method;
-import java.lang.ClassNotFoundException;
+import javax.servlet.Servlet;
 
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.component.ServiceBroker;
-import org.cougaar.core.servlet.SimpleServletSupport;
 import org.cougaar.core.servlet.SimpleServletComponent;
-
-import javax.servlet.Servlet;
+import org.cougaar.core.servlet.SimpleServletSupport;
 
 /** 
  * <pre>

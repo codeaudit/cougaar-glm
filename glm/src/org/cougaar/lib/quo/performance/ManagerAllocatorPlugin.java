@@ -21,22 +21,19 @@
  */
 package org.cougaar.lib.quo.performance;
 
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationPG;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.*;
-
-import java.util.Enumeration;
-import java.util.Vector;
-
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.OrganizationPG;
-import org.cougaar.planning.ldm.plan.Role;
 
 
 /**

@@ -20,19 +20,18 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.util.ConfigFinder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
-import java.lang.Runtime;
-import java.lang.System;
 import java.util.Enumeration;
 import java.util.Vector;
-import org.cougaar.glm.debug.*;
+
+import org.cougaar.glm.debug.GLMDebug;
+import org.cougaar.util.ConfigFinder;
 
 public final class FileUtils {
 

@@ -20,28 +20,30 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.mts.MessageAddress;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
+
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.debug.GLMDebug;
+import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.glm.ldm.Constants.Role;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Relationship;
+import org.cougaar.planning.ldm.plan.RelationshipSchedule;
+import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.glm.debug.GLMDebug;
-
-import org.cougaar.glm.ldm.asset.Organization;
-
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Defines common functions described in SimplePlugin.

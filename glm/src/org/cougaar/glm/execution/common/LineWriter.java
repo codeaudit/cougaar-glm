@@ -20,9 +20,9 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.util.GregorianCalendar;
-import java.io.Serializable;
 import java.io.IOException;
+import java.io.Serializable;
+
 import org.cougaar.core.util.UID;
 
 /**

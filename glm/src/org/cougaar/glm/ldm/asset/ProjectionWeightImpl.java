@@ -20,17 +20,12 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.ldm.asset;
 
+import java.io.Serializable;
+
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.plugin.legacy.PluginDelegate;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import java.io.Serializable;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.ProjectionWeight;
-import org.cougaar.glm.plugins.DecorationPlugin;
-import org.cougaar.glm.plugins.TaskUtils;
 
 public class ProjectionWeightImpl implements ProjectionWeight, Serializable {
 

@@ -21,18 +21,15 @@
 
 package org.cougaar.mlm.plugin.sample;
 
-import org.cougaar.glm.ldm.Constants;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Date;
-
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -40,30 +37,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
 import org.cougaar.core.mts.MessageAddress;
-
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.planning.ldm.PlanningFactory;
-
 import org.cougaar.planning.ldm.asset.AbstractAsset;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.glm.ldm.asset.Organization;
-
-import org.cougaar.glm.ldm.oplan.Oplan;
-
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.ldm.plan.Verb;
-
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
 import org.cougaar.util.UnaryPredicate;
 
 /**

@@ -21,19 +21,11 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.planning.plugin.asset.AssetReportPlugin;
-
-import org.cougaar.planning.ldm.plan.AssetTransfer;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.planning.ldm.plan.AssetTransfer;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.plugin.asset.AssetReportPlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * OrgReportPlugin manages REPORTFORDUTY and REPORTFORSERVICE relationships

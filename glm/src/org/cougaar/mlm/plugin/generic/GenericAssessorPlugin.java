@@ -21,27 +21,20 @@
 
 package org.cougaar.mlm.plugin.generic;
 
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.PlanningFactory;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.util.Vector;
 
-import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
 import org.cougaar.glm.GLMPlugin;
-import org.cougaar.core.plugin.*;
-
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.util.UnaryPredicate;
 
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Calendar;
-import java.util.Date;
-import java.io.*;
-
-import FESI.jslib.*; 
+import FESI.jslib.JSException;
+import FESI.jslib.JSGlobalObject;
+import FESI.jslib.JSUtil;
 
 public class GenericAssessorPlugin 
   extends GLMPlugin 

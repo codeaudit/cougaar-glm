@@ -21,21 +21,16 @@
 
 package org.cougaar.mlm.plugin.generic;
 
+import java.util.Enumeration;
+
 import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.Workflow;
-
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.Asset;
-
-import java.util.Enumeration;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.util.UnaryPredicate;
 
 
 public class GenericScriptHelper {

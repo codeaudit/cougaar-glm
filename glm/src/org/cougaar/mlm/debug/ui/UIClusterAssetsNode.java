@@ -21,12 +21,13 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Enumeration;
-import org.cougaar.glm.ldm.asset.Organization;
 
-import org.cougaar.core.mts.MessageAddress;
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.util.UnaryPredicate;
 
 /** An object passed to UITreeNode (a dynamically expandable

@@ -22,45 +22,34 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Enumeration;
-import java.util.TimeZone;
 import java.util.Vector;
 
-import org.cougaar.glm.ldm.plan.Capability;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
 import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.plan.Capability;
 import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
 import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Verb;
-
 import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 /** Supports task creation by users.

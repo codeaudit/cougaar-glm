@@ -21,24 +21,17 @@
 
 package org.cougaar.mlm.plugin.sample;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.NewClusterPG;
-
-import org.cougaar.planning.ldm.plan.AssetTransfer;
-import org.cougaar.planning.ldm.plan.Predictor;
-
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
 import org.cougaar.util.Enumerator;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.Constants;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * MCCPredictorPlugin - 

@@ -21,12 +21,11 @@
 
 package org.cougaar.glm.packer;
 
+import org.cougaar.glm.ldm.GLMFactory;
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
-
-import org.cougaar.glm.ldm.GLMFactory;
-import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-import org.cougaar.glm.ldm.plan.GeolocLocation;
 
 
 /**

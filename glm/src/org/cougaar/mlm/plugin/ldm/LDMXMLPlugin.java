@@ -20,47 +20,26 @@
  */
 
 package org.cougaar.mlm.plugin.ldm;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.blackboard.SubscriberException;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.PropertyGroup;
-import org.cougaar.planning.ldm.asset.AssetFactory;
-import org.cougaar.planning.ldm.asset.NewPropertyGroup;
-
-import org.cougaar.planning.ldm.plan.Schedule;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.domain.FactoryException;
-
-import org.cougaar.core.service.DomainService;
-import org.cougaar.planning.service.PrototypeRegistryService;
-import org.cougaar.planning.service.LDMService;
-import org.cougaar.core.component.ServiceRevokedListener;
-import org.cougaar.core.component.ServiceRevokedEvent;
-
-
-// This is only for interim use!
-import org.cougaar.planning.ldm.plan.NewRoleSchedule;
-
-import org.cougaar.core.plugin.ComponentPlugin;
- 
+import java.io.File;
 import java.lang.reflect.Method;
-
-import java.util.Vector;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Hashtable;
-import java.util.Date;
+import java.util.Vector;
 
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.File;
-
-import java.text.DateFormat;
-
+import org.cougaar.core.blackboard.SubscriberException;
+import org.cougaar.core.component.ServiceRevokedEvent;
+import org.cougaar.core.component.ServiceRevokedListener;
+import org.cougaar.core.domain.FactoryException;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewPropertyGroup;
+import org.cougaar.planning.ldm.asset.PropertyGroup;
+import org.cougaar.planning.ldm.plan.NewRoleSchedule;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.service.PrototypeRegistryService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

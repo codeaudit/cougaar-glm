@@ -21,17 +21,13 @@
 
 package org.cougaar.glm.ldm.plan;
 
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
-import org.cougaar.glm.ldm.plan.RateScheduleElement;
+import java.util.ArrayList;
+import java.util.Date;
+
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleImpl;
-import org.cougaar.glm.ldm.plan.LaborSchedule;
-import org.cougaar.planning.ldm.plan.ScheduleElementType;
-import org.cougaar.planning.ldm.plan.ScheduleType;
-import org.cougaar.core.util.*;
-import org.cougaar.util.*;
-import java.util.*;
+import org.cougaar.util.Collectors;
+import org.cougaar.util.Thunk;
 
 public class LaborScheduleImpl 
   extends ScheduleImpl 

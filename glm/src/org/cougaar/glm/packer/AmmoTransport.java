@@ -22,39 +22,25 @@
 package org.cougaar.glm.packer;
 
 // utils
-import java.util.*;
-
-import org.cougaar.core.mts.MessageAddress;
-
-// factories
-import org.cougaar.planning.ldm.PlanningFactory;
-
-// tasks
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.NewMPTask;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Priority;
-
-// Assets, etc.
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.planning.ldm.asset.PropertyGroupSchedule;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.cougaar.glm.ldm.Constants;
-
-import org.cougaar.glm.ldm.asset.GLMAsset;
 import org.cougaar.glm.ldm.asset.Container;
 import org.cougaar.glm.ldm.asset.NewContentsPG;
 import org.cougaar.glm.ldm.asset.NewMovabilityPG;
-import org.cougaar.glm.ldm.asset.NewPhysicalPG;
-import org.cougaar.glm.ldm.asset.PhysicalPG;
 import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
-
 import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.ldm.plan.GeolocLocationImpl;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.plan.NewMPTask;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.Priority;
+import org.cougaar.planning.ldm.plan.Task;
 
 
 

@@ -20,30 +20,30 @@
  */
 package org.cougaar.mlm.plugin.sample;
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.text.NumberFormat;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.TreeSet;
-import java.text.NumberFormat;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.ldm.plan.Alert;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Alert;
 import org.cougaar.planning.ldm.plan.NewAlert;
 import org.cougaar.planning.ldm.plan.NewAlertParameter;
-import org.cougaar.planning.ldm.plan.AlertParameter;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.mlm.plugin.UICoordinator;
 
 /**
  * The AllocationsAssessorPlugin publishes an Alert for each

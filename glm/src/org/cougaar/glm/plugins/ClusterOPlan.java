@@ -20,20 +20,16 @@
  */
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.util.UID;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Vector;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.util.UID;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
-import org.cougaar.glm.debug.GLMDebug;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
 
 public class ClusterOPlan implements Serializable {
     MessageAddress clusterId_;

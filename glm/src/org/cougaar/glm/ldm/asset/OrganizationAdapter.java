@@ -23,30 +23,17 @@
 
 package org.cougaar.glm.ldm.asset;
 
-import java.beans.PropertyDescriptor;
-import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
-
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.IOException;
-
+import java.beans.PropertyDescriptor;
 import java.util.Collection;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.asset.ClusterPG;
-import org.cougaar.planning.ldm.asset.RelationshipBG;
-import org.cougaar.planning.ldm.asset.NewRelationshipPG;
-import org.cougaar.planning.ldm.asset.RelationshipPGImpl;
-
-import org.cougaar.planning.ldm.plan.HasRelationships;
-import org.cougaar.planning.ldm.plan.RelationshipImpl;
-import org.cougaar.planning.ldm.plan.RelationshipSchedule;
-import org.cougaar.planning.ldm.plan.RelationshipScheduleImpl;
-import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.util.TimeSpan;
-
 import org.cougaar.glm.ldm.Constants;
+import org.cougaar.planning.ldm.asset.ClusterPG;
+import org.cougaar.planning.ldm.asset.NewRelationshipPG;
+import org.cougaar.planning.ldm.asset.RelationshipBG;
+import org.cougaar.planning.ldm.plan.HasRelationships;
+import org.cougaar.util.TimeSpan;
 
 
 public abstract class OrganizationAdapter extends GLMAsset {

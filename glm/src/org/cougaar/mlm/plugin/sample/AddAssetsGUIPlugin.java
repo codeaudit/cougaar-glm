@@ -56,63 +56,46 @@ package org.cougaar.mlm.plugin.sample;
 /*
  * Imports
  */
-import java.util.Calendar;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.FileInputStream;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import java.io.FileInputStream;
-
-import java.text.SimpleDateFormat;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.Insets;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.FlowLayout;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.planning.ldm.plan.Schedule;
-
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
-import org.cougaar.util.ShortDateFormat;
-
-// This should only be temporary...
-// We are breaking the COUGAAR Code!
-import org.cougaar.planning.ldm.plan.RoleScheduleImpl;
-
-import org.cougaar.util.UnaryPredicate;
-
-import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.apache.xerces.parsers.DOMParser;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.plan.RoleScheduleImpl;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.ShortDateFormat;
+import org.cougaar.util.UnaryPredicate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 public final class AddAssetsGUIPlugin extends SimplePlugin {
 

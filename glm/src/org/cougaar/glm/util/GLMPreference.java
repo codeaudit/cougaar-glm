@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.6 2003-01-23 19:53:33 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.7 2003-12-09 17:55:14 rtomlinson Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -22,31 +22,21 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.planning.ldm.PlanningFactory;
+import java.util.Date;
 
+import org.cougaar.glm.ldm.plan.GeolocLocation;
+import org.cougaar.lib.util.UTILPluginException;
+import org.cougaar.lib.util.UTILPreference;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectLocation;
-import org.cougaar.planning.ldm.plan.AspectScorePoint;
-import org.cougaar.planning.ldm.plan.AspectScoreRange;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.TimeAspectValue;
-
-import org.cougaar.glm.ldm.plan.GeolocLocation;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import org.cougaar.util.log.Logger;
-import org.cougaar.lib.util.UTILPreference;
-import org.cougaar.lib.util.UTILPluginException;
 
 /** 
  * This class contains preference-related methods.

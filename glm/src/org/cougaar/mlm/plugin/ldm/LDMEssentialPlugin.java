@@ -22,16 +22,10 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-//import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.blackboard.Subscriber;
 import org.cougaar.planning.ldm.PropertyProvider;
 import org.cougaar.planning.ldm.PrototypeProvider;
-//import org.cougaar.planning.ldm.LDMPluginServesLDM;
-import org.cougaar.util.StateModelException;
-import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.blackboard.SubscriberException;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 /**
  * The purpose of this class is to provide a base class for the creation of LDMPlugins.

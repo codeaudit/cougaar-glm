@@ -29,10 +29,9 @@ package org.cougaar.glm.plugin.completion;
 
 import org.cougaar.core.adaptivity.OperatingMode;
 import org.cougaar.core.component.ServiceBroker;
+import org.cougaar.core.service.OperatingModeService;
 import org.cougaar.planning.plugin.completion.CompletionCalculator;
 import org.cougaar.planning.plugin.completion.CompletionTargetPlugin;
-import org.cougaar.core.service.OperatingModeService;
-import org.cougaar.util.UnaryPredicate;
 
 public class GLMCompletionTargetPlugin 
 extends CompletionTargetPlugin 

@@ -20,9 +20,9 @@
  */
 package org.cougaar.glm.execution.common;
 
-import java.io.Serializable;
-import org.cougaar.glm.ldm.asset.ReportSchedulePG;
 import java.io.IOException;
+
+import org.cougaar.glm.ldm.asset.ReportSchedulePG;
 
 public class InventoryReportSchedule extends ReportSchedule implements EGObject {
   public static class Rescind extends InventoryReportSchedule {

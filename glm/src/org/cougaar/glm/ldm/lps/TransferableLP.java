@@ -22,24 +22,24 @@
 
 package org.cougaar.glm.ldm.lps;
 
-import org.cougaar.core.agent.*;
-import org.cougaar.core.domain.*;
-import org.cougaar.core.blackboard.*;
-import org.cougaar.core.mts.Message;
-import org.cougaar.core.mts.MessageAddress;
+import java.util.Collection;
+import java.util.Enumeration;
 
+import org.cougaar.core.blackboard.EnvelopeTuple;
+import org.cougaar.core.domain.EnvelopeLogicProvider;
+import org.cougaar.core.domain.LogicProvider;
+import org.cougaar.core.domain.RestartLogicProvider;
+import org.cougaar.core.domain.RestartLogicProviderHelper;
+import org.cougaar.core.domain.RootPlan;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.planning.ldm.plan.TransferableAssignment;
-import org.cougaar.planning.ldm.plan.TransferableRescind;
-import org.cougaar.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.planning.ldm.plan.NewTransferableAssignment;
 import org.cougaar.planning.ldm.plan.NewTransferableRescind;
 import org.cougaar.planning.ldm.plan.NewTransferableVerification;
+import org.cougaar.planning.ldm.plan.Transferable;
+import org.cougaar.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.util.UnaryPredicate;
-import java.util.Enumeration;
-import java.util.Collection;
 
 /** TransferableLP is a "LogPlan Logic Provider":
   *

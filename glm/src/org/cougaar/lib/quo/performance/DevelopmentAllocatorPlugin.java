@@ -21,25 +21,29 @@
 //package org.cougaar.lib.quo.performance;
 package org.cougaar.lib.quo.performance;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.util.UnaryPredicate;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collection;
+import java.io.FileWriter;
 import java.util.Collections;
 import java.util.Date;
-import org.cougaar.lib.quo.performance.assets.*;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.ChangeReport;
-import org.cougaar.planning.ldm.plan.Annotation;
-import java.io.*;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.lib.quo.performance.assets.ProgrammerAsset;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2003-01-23 19:53:33 mthome Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-12-09 17:55:14 rtomlinson Exp $
  **/
 public class DevelopmentAllocatorPlugin extends CommonUtilPlugin
 {

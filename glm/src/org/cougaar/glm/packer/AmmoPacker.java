@@ -21,19 +21,10 @@
 
 package org.cougaar.glm.packer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
-import org.cougaar.util.Sortings;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Ammunition;
 
 /**
  * AmmoPacker - handles packing ammo supply requests

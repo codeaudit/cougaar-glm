@@ -21,35 +21,15 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.plugin.legacy.PluginAdapter;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-import org.cougaar.util.StateModelException;
-import org.cougaar.util.UnaryPredicate;
-import java.awt.*;
-import java.awt.event.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Vector;
-import java.util.Collection;
-import javax.swing.*;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.oplan.Oplan;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.mlm.plugin.RandomButtonPusher;
 import org.cougaar.mlm.plugin.UICoordinator;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * The GSLRescindPlugin will rescind the ?? task

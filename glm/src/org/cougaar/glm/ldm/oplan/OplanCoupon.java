@@ -22,13 +22,13 @@
 package org.cougaar.glm.ldm.oplan;
 
 
+import java.io.Serializable;
+
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Transferable;
-
-import java.io.Serializable;
 
 /**
  * Redeem for one Oplan and accompanying OplanContributors
