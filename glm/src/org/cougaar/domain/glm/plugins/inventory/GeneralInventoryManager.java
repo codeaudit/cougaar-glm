@@ -41,7 +41,7 @@ import org.cougaar.domain.glm.ldm.asset.ProjectionWeight;
 /** Allocate SUPPLY tasks to local inventory (if there is any) or to 
  *  the closest supplier.
  */
-public abstract class GeneralInventoryManager extends InventoryManager {
+public class GeneralInventoryManager extends InventoryManager {
   public final int REFILL_ALTER_TASK = 0;
   public final int REFILL_REPLACE_TASK = 1;
   public final int REFILL_ADD_TASK = 2; // This one doesn't work. Don't use it.
@@ -171,11 +171,6 @@ public abstract class GeneralInventoryManager extends InventoryManager {
   // ********************************************************
 
   // Refill Inventories
-
-  protected void refillInventories() {
-    // Done as part of adjustForInadequateInventory
-  }
-
 
   /**
    * Generate a refill order to replenish the item in storage,
