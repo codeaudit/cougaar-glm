@@ -56,6 +56,13 @@ public abstract class ConsumerSpec implements Serializable {
 	resourceType_ = type;
     }
 
+    /** The merged schedule drives the consumer spec.
+     *  It is only calculated once unless reset() is called.
+     **/
+    public void reset() {
+	mergedSchedule_ = null;
+    }
+
     // what is consumed
     public abstract Enumeration getConsumed();
     // when is it consumed
