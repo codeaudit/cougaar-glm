@@ -1009,7 +1009,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 
       if (isDefinitelyNotDirect)
 	  leg.setIsDirectElement(false);
-      else if (ie.getRole() == Constants.Verb.Transit)
+      else if (ie.getRole() == Constants.Verb.Transport)
 	  leg.setIsDirectElement(false);
       else
 	  leg.setIsDirectElement(true);
@@ -1333,6 +1333,63 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       return;
     }
     Task task = alloc.getTask();
+
+    // look for itinerary info.
+
+    // BEGIN "IMPLIED" FIX
+
+    // find "Transport" schedule elements
+    int nLegs = 0;
+    PrepositionalPhrase prepItinerary =
+      task.getPrepositionalPhrase(
+         Constants.Preposition.ITINERARYOF);
+    if (prepItinerary != null) {
+      Object itinIndObj = prepItinerary.getIndirectObject();
+      if (itinIndObj instanceof Schedule) {
+        Enumeration schedElems = 
+           ((Schedule)itinIndObj).getAllScheduleElements();
+        while (schedElems.hasMoreElements()) {
+	  ItineraryElement ie = 
+	    (ItineraryElement)schedElems.nextElement();
+	  Verb v = ie.getRole();
+	  if ((Constants.Verb.Transport).equals(v)) {
+            // found a transport leg
+            //
+            // "interpolate" forced OFF!!!
+            nLegs++;
+            addLegFromItineraryElement(
+              toLegsList, leg.copy(), ie,
+              false, false);
+	  } else if ((Constants.Verb.Fuel).equals(v)) {
+            // found a fuel leg
+            nLegs++;
+            addLegFromItineraryElement(
+              toLegsList, leg.copy(), ie,
+              false, false);
+          } else {
+            // ignore; we only want "transport" and "fuel"
+          }
+        }
+      }
+    }
+
+    if (nLegs == 0) {
+      // no legs in the itinerary
+      //
+      // at least make an "overall" leg
+      if (setElementSchedule(
+            leg, task, 
+            false, false)) {
+        toLegsList.add(leg);
+      }
+    }
+
+    // done.  ignore the "ancient" code below...
+    return;
+
+    /*
+     * DISABLE FOR "IMPLIED" FIX
+
     // check for simple case
     if (!myState.interpolate && !myState.includeUnload) {
       // build non-interpolated leg from task
@@ -1341,15 +1398,11 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       }
       return;
     }
-    // look for itinerary info.
+
     // currently we're only interested in transit and unload
     ItineraryElement transIE = null;
     ItineraryElement unloadIE = null;
     ItineraryElement loadIE = null;
-    // look in preposition
-    PrepositionalPhrase prepItinerary =
-      task.getPrepositionalPhrase(Constants.Preposition.ITINERARYOF);
-
 
     // If tasks ever get marked for indirect, but the check in here
     // Check the task for the indirect intinerary Preposition
@@ -1365,7 +1418,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       if (itinIndObj instanceof Schedule) {
 
         // will use itinerary and task route for interpolation
-        // make sure that schedElems includes both Transit and Load
+        // make sure that schedElems includes both Transport and Load
         Enumeration schedElems = 
            ((Schedule)itinIndObj).getAllScheduleElements();
 
@@ -1392,7 +1445,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 	   Verb v = ie.getRole();
 	   if ((Constants.Verb.Load).equals(v)) {
 	       loadIE = ie;
-	   } else if ((Constants.Verb.Transit).equals(v)) {
+	   } else if ((Constants.Verb.Transport).equals(v)) {
 	       if (myState.interpolate) {
 		   transIE = ie;
 	       }
@@ -1448,6 +1501,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 	}
     }
       
+    */
 
   }
 
@@ -2013,7 +2067,10 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
               if ((Constants.Verb.Transport).equals(v) ||
                   (Constants.Verb.TransportationMission).equals(v) ||
                   (Constants.Verb.Supply).equals(v)) {
-                return true;
+                // BEGIN "IMPLIED" FIX
+                if (task.getPrepositionalPhrase("IMPLIED") == null) {
+                  return true;
+                }
               }
             }
           }
@@ -2610,7 +2667,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 
     setDefaultInformation(
       itin, 
-      psc.getServerPluginSupport().getClusterIDAsString()); 
+      psc.getServerPlugInSupport().getClusterIDAsString()); 
     setTaskInformation(itin, task);
 
     // Grab the three legs of the mission, CONUS_GROUND, SEA/AIR, THEATER_GROUND
