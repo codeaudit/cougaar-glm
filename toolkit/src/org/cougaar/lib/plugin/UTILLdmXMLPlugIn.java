@@ -28,8 +28,6 @@ import org.cougaar.lib.xml.parser.PrototypeParser;
 import org.cougaar.lib.xml.parser.InstanceParser;
 import org.cougaar.lib.xml.parser.AggregateAssetParser;
 
-import com.ibm.xml.parsers.DOMParser;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
@@ -37,6 +35,8 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+
+import org.apache.xerces.parsers.DOMParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -136,9 +136,8 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
       try {
 	  InputStream inputStream = ConfigFinder.getInstance().open(dfile);
 
-	  parser.setExpandEntityReferences(true);
-	  parser.setNodeExpansion(DOMParser.FULL); 
-	  parser.setAllowJavaEncodingName(true);
+	  parser.setFeature(
+		 "http://apache.org/xml/features/allow-java-encodings", true);
 	  parser.setEntityResolver (new UTILEntityResolver ());
 	  parser.parse(new InputSource (inputStream));
       }
