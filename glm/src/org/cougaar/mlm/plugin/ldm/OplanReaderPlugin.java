@@ -26,6 +26,8 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
+import java.io.Serializable;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -96,7 +98,7 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   private UIDService uidService;
   private PlanningFactory theFactory;
 
-  private static class MyStages {
+  private static class MyStages implements Serializable {
     private TreeSet myStages;
 
     public MyStages() {
