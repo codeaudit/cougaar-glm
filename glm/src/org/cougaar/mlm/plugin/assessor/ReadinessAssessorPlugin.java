@@ -40,7 +40,6 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.PluginBindingSite;
 import org.cougaar.core.plugin.LDMService;
 import org.cougaar.core.plugin.util.PluginHelper;
 
@@ -163,7 +162,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     selfOrgSub = (IncrementalSubscription) blackboard.subscribe(selfOrgPred);
     readinessPESub = (IncrementalSubscription) blackboard.subscribe(readinessPEPred);
 
-    debugStart.append(((PluginBindingSite)getBindingSite()).getAgentIdentifier());
+    debugStart.append(getAgentIdentifier());
     debugStart.append(" ReadinessAssessor");
   }
 

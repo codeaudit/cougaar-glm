@@ -108,7 +108,7 @@ public class GLSExpanderPlugin extends ComponentPlugin {
    **/
   protected void setupSubscriptions() {
     
-    //System.out.println("setupSubscriptions: "+((PluginBindingSite)this.getBindingSite()).getAgentIdentifier());
+    //System.out.println("setupSubscriptions: "+getAgentIdentifier());
     //get the LDM service to access the object factories from my bindingsite's servicebroker
     LDMService ldmService = null;
     if (theLDMF == null) {

@@ -28,7 +28,6 @@ import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.NamingService;
 import org.cougaar.core.plugin.LDMService;
-import org.cougaar.core.plugin.PluginBindingSite;
 import org.cougaar.util.ConfigFinder;
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.SchedulerService;

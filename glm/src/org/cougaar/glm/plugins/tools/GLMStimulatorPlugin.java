@@ -63,7 +63,6 @@ import org.cougaar.lib.filter.UTILPluginAdapter;
 
 import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.lib.util.UTILPreference;
-import org.cougaar.core.plugin.PluginBindingSite;
 
 /**
  * <pre>
@@ -480,7 +479,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
     Collection tasks = null;
     try {
       GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, 
-					   ((PluginBindingSite) getBindingSite()).getAgentIdentifier(),
+					   getAgentIdentifier(),
 					   getConfigFinder(),
 					   getLDMService().getLDM(),
 					   logger);

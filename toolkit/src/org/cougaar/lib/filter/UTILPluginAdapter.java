@@ -35,10 +35,8 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.core.component.StateObject;
 import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.PluginAdapter;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.LDMService;
-import org.cougaar.core.plugin.PluginBindingSite;
 import org.cougaar.core.service.LoggingService;
 
 import org.cougaar.planning.ldm.asset.Asset;
@@ -82,7 +80,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    */
   public Object getState() {
     if (originalAgentID == null)
-      return ((PluginBindingSite)getBindingSite()).getAgentIdentifier();
+      return getAgentIdentifier();
     else 
       return originalAgentID;
   }
@@ -146,7 +144,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    */
   private void setInstanceVariables () {
     ldmf = getLDMService().getFactory();
-    myClusterName = ((PluginBindingSite)getBindingSite()).getAgentIdentifier().getAddress();
+    myClusterName = getAgentIdentifier().getAddress();
     realityPlan = ldmf.getRealityPlan();
     mySubscriptions = new Vector ();
   }
@@ -268,7 +266,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
     // create the parameter table
     MessageAddress agentID = (didSpawn () ? 
 				 getOriginalAgentID () :
-				 ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
+				 getAgentIdentifier());
 								 
     myParams = createParamTable (myP, agentID);
 
@@ -401,9 +399,9 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 	blackboard.publishChange(cpe);
       }
     }
-    else if (!cpe.getTask().getSource ().equals (((PluginBindingSite)getBindingSite()).getAgentIdentifier())) {
-      error ("ERROR! " + getName () + 
-	     " : "     + cpe.getTask ().getUID () + 
+    else if (!cpe.getTask().getSource().equals(getAgentIdentifier())) {
+      error ("ERROR! " + getName() + 
+	     " : "     + cpe.getTask().getUID() + 
 	     " has a null reported allocation.");
     }
   }
@@ -659,7 +657,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   public String getName () { 
     if (myClusterName == null) {
       myName = null;
-      myClusterName = ((PluginBindingSite)getBindingSite()).getAgentIdentifier().getAddress();
+      myClusterName = getAgentIdentifier().getAddress();
     }
     if (myName == null)
       myName = getClusterName () + "/" + getClassName ();
