@@ -564,7 +564,7 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
                 communities.add("COUGAAR");
                 communityPG.setCommunities(communities);
                 communityPG.setTimeSpan(DEFAULT_START_TIME, DEFAULT_END_TIME);
-                org.getCommunityPGSchedule().add(communityPG);
+                org.setCommunityPG(communityPG);
                 
               } else {
                 System.err.println("OrgRTDataPlugin Error: [Prototype] value is null");
