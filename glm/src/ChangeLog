@@ -1,3 +1,9 @@
+2001-03-14 Amy Fedyk <afedyk@bbn.com>
+	Changed expansion of ProjectWithdraws from ProjectSupply tasks to only expand into a single ProjectWithdraw 
+	which contains the demand rate info of the parent.  Handling of the daily withdraws is calculated in the InventoryBG.java
+	InventoryBG.java
+	SupplyExpander.java
+	
 2001-03-9 Noelle Givler  <NGivler@bbn.com>
 
 	* XMLPolicyCreator
