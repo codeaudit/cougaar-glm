@@ -2628,6 +2628,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 
     private static String getForUnit(Task task) {
 	String unit = grabUnit((Asset)task.getDirectObject());
+	if (unit == null) System.err.println("WARNING: Bad For Unit on asset: "+task.getDirectObject());
 	if (unit != null) unit = unit.trim();
 	return unit;
     }
