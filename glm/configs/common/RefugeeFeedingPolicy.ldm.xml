@@ -48,8 +48,8 @@
         <RangeValue min="0"  max="180">
   	  <RuleParam name="BottledWater">
       	    <KeySet value="">
-      	    	<KeyValue key="BottledWater" value="3.0" />
-    	    </KeySet>
+	    <KeyValue key="BottledWater" value="0.0" />
+	    </KeySet>
     	  </RuleParam>  
 	</RangeValue>
       </RangeSet>
