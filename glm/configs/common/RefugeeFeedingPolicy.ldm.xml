@@ -3,13 +3,24 @@
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
 
 <Policies>
- <Policy name="RefugeeFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.SubsistencePolicy">
+ <Policy name="REFUGEEFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.SubsistencePolicy">
     <RuleParam name="MealPolicy">
       <RangeSet value="">
-        <RangeValue min="0"  max="80">
+        <RangeValue min="0"  max="09">
+	  <RuleParam name="Meals">
+      	    <KeySet value="">
+	      <KeyValue key="Breakfast" value="NONE" />
+    	      <KeyValue key="Lunch" value="NONE" />
+              <KeyValue key="Dinner" value="NONE" />
+	    </KeySet>
+  	  </RuleParam>
+         </RangeValue>
+        <RangeValue min="10"  max="40">
 	  <RuleParam name="Meals">
       	    <KeySet value="">
 	      <KeyValue key="Breakfast" value="HDR" />
+	      <KeyValue key="Lunch" value="NONE" />
+	      <KeyValue key="Dinner" value="NONE" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
