@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 
 import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Producer;
 import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
 
 import org.cougaar.domain.mlm.ui.newtpfdd.xml.ClusterList;
@@ -66,8 +67,10 @@ public class ClusterCache
     // Hashtable mapping cluster IDs to URL
     private Hashtable clusterURLs;
     // Hashtables mapping cluster IDs to appropriate active Producer of that cluster
-    private Hashtable logPlanCache;
-    private Hashtable itineraryCache;
+  //    private Hashtable logPlanCache;
+  //    private Hashtable itineraryCache;
+  protected AbstractProducer myProducer;
+  
     private String host = "localhost";
     private boolean clientMode;
 
@@ -82,7 +85,7 @@ public class ClusterCache
   // are we asking the subordinates PSP for the subords of rootCluster?
   private boolean usingSubordinatesPSP;
   // turn off initial dialog and talk to default host
-  private boolean noHostPrompt = false;
+  private boolean hostPrompt = false;
 
   private boolean debug = true;
 
@@ -99,8 +102,8 @@ public class ClusterCache
 	this.allowOrgList = allowOrgList;
 	this.clientMode = clientMode;
 	clusterURLs = new Hashtable();
-	logPlanCache = new Hashtable();
-	itineraryCache = new Hashtable();
+	//	logPlanCache = new Hashtable();
+	//	itineraryCache = new Hashtable();
 	Debug.out("CC:CC leave");
     }
 
@@ -112,8 +115,8 @@ public class ClusterCache
 	this.allowOrgList = allowOrgList;
 	this.clientMode = clientMode;
 	clusterURLs = new Hashtable();
-	logPlanCache = new Hashtable();
-	itineraryCache = new Hashtable();
+	//	logPlanCache = new Hashtable();
+	//	itineraryCache = new Hashtable();
 	Debug.out("CC:CC leave");
 
 	String clusterNameProp = System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.rootCluster");
@@ -121,19 +124,21 @@ public class ClusterCache
 	  rootCluster = clusterNameProp;
 	if (debug) 
 	  System.out.println ("ClusterCache.ctor - root cluster now " + rootCluster);
-	String defaultHostNameProp = System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.defaultHostName");
+	String defaultHostNameProp = 
+	  System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache.defaultHostName");
 	if (defaultHostNameProp != null) {
 	  defaultHostName = defaultHostNameProp;
 	  host = defaultHostName;
 	}
-	noHostPrompt = 
-	  ("true".equals(System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.noHostPrompt")));
-	if (debug && noHostPrompt) 
+	hostPrompt = 
+	  "true".equals(System.getProperty ("org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache.hostPrompt", 
+										 "true"));
+	if (debug && !hostPrompt) 
 	  System.out.println ("ClusterCache.ctor - skipping host dialog, connecting directly to " + defaultHostName);
 	if (debug) {
 	  System.out.println ("ClusterCache.ctor - root cluster property " + clusterNameProp + " - if null means use default");
 	  System.out.println ("ClusterCache.ctor - default host " + defaultHostName);
-	  System.out.println ("ClusterCache.ctor - noHostPrompt " + noHostPrompt);
+	  System.out.println ("ClusterCache.ctor - " + ((hostPrompt) ? "showing" : "skipping") + " host prompt.");
 	}
   }
 
@@ -153,7 +158,7 @@ public class ClusterCache
    */
   public String guiSetHost()
   {
-	if (noHostPrompt) {
+	if (!hostPrompt) {
 	  host = defaultHostName;
 	  if (debug)
 		System.out.println ("ClusterCache.guiSetHost - no host prompt, host is " + host);
@@ -176,7 +181,7 @@ public class ClusterCache
   //
   public String clientGuiSetHost(String defHost)
   {
-	if (noHostPrompt) {
+	if (!hostPrompt) {
 	  host = defaultHostName;
 	  if (debug)
 		System.out.println ("ClusterCache.clientGuiSetHost - no host prompt, host is " + host);
@@ -186,7 +191,7 @@ public class ClusterCache
     host = (String)JOptionPane.showInputDialog(null,
              "Enter Aggregation Server Location","Location",
              JOptionPane.INFORMATION_MESSAGE,
-             null, null, defHost);
+             null, null, defaultHostName);
     if ( host != null )
       host = host.trim();
     return host;
@@ -312,6 +317,7 @@ public class ClusterCache
 	return getclusterNames().contains(clusterName);
     }
 
+  /*
     private void putProducerForCluster(String clusterName, AbstractProducer producer)
     {
 	if ( !(getclusterNames().contains(clusterName)) ) {
@@ -322,8 +328,11 @@ public class ClusterCache
 	    putItineraryProducerForCluster(clusterName, (ItineraryProducer)producer);
 	else if ( producer instanceof LogPlanProducer )
 	    putLogPlanProducerForCluster(clusterName, (LogPlanProducer)producer);
-	else
-	    OutputHandler.out("CC:pPFC Error: unexpected producer type: " + producer.getClass().getName());
+	else {
+	    putLogPlanProducerForCluster(clusterName, (LogPlanProducer)producer);
+	  OutputHandler.out("CC:pPFC Error: unexpected producer type: " + producer.getClass().getName());
+	}
+	
     }
 
     private void putItineraryProducerForCluster(String clusterName, ItineraryProducer producer)
@@ -359,18 +368,26 @@ public class ClusterCache
 	//return (LogPlanProducer)(getProducer(clusterName, logPlanCache, cold, true));
 	return (ThreadedProducer)(getProducer(clusterName,logPlanCache,cold,true));
     }
+  */
 
-    private AbstractProducer getProducer(String clusterName, Hashtable cache, boolean cold, boolean autoStart)
+  //    private AbstractProducer getProducer(String clusterName, Hashtable cache, boolean cold, boolean autoStart)
+    public AbstractProducer getProducer(String clusterName, boolean cold)
     {
+	  if (debug)
+		System.out.println ("ClusterCache.getProducer - clusterName " + clusterName);
+
+	  if (myProducer == null) {
+		myProducer = makeProducer (clusterName);
+		myProducer.start();
+	  }
+
+	  return myProducer;
+	  /*
+
       if (clusterName == null) {
         OutputHandler.out("CC:gP Warning: clusterName is null");
         return null;
       }
-	// Debug.out("CC:gP enter " + clusterName);
-	if ( clusterName.equals("MCCGlobalMode") ) {
-	    OutputHandler.out("CC:gP Warning: forcing old 'MCCGlobalMode' to updated 'TRANSCOM'");
-	    clusterName = "TRANSCOM";
-	}
 	// Debug.out("CC:gP checking cluster name validity " + clusterName);
 	if ( !isValidClusterName(clusterName) ) {
 	    OutputHandler.out("CC:gP Error: " + clusterName + " is an invalid cluster name!");
@@ -389,6 +406,24 @@ public class ClusterCache
 	}
 
 	// Debug.out("CC:gP making new producer");
+	producer = makeProducer (clusterName);
+
+	putProducerForCluster(clusterName, producer); // this kills off any old one in the same slot
+	if ( autoStart )
+	    producer.start();
+	//Debug.out("CC:gP returning cold " + producer + " to request " + clusterName);
+	return producer;
+	  */
+    }
+
+  protected AbstractProducer makeProducer(String clusterName) {
+	return new DataGrabberProducer (clusterName, this, getHost ());
+  }
+  
+  /*
+  protected AbstractProducer makeOldProducer(String clusterName, Hashtable cache) {
+	AbstractProducer producer = null;
+	
 	if ( clusterName.equals("Aggregation") )
 	    producer = new LogPlanProducer(clusterName, this);
 // 	    producer = new LogPlanProducer(host, CLIENT_PORT, this);
@@ -397,12 +432,11 @@ public class ClusterCache
 // 	    producer = new LogPlanProducer(clusterName, this);
 	else if ( cache == itineraryCache )
 	    producer = new ItineraryProducer(clusterName, this, getallowOrgNames().contains(clusterName));
-	putProducerForCluster(clusterName, producer); // this kills off any old one in the same slot
-	if ( autoStart )
-	    producer.start();
-	//Debug.out("CC:gP returning cold " + producer + " to request " + clusterName);
+
 	return producer;
-    }
+  }
+  */
+  
 
   /** Test as standalone class  -- gets the names of the subordinates of rootCluster */
   public static void main (String args[]) {
