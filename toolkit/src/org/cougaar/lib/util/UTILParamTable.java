@@ -74,7 +74,7 @@ public class UTILParamTable extends ParamTable {
    * is derived from the name of the cluster. 
    * For example TRANSCOM.env.xml.
    *
-   * @see org.cougaar.lib.param.ParamTable#ParamTable(Vector)
+   * @see org.cougaar.lib.param.ParamTable#ParamTable
    * @param envParams vector of environment parameters
    * @param cluster pointer to the cluster
    */
