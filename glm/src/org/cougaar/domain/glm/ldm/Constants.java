@@ -26,6 +26,7 @@ public class Constants implements org.cougaar.domain.planning.Constants {
     // Keep in alphabetical order
     public static final String ACCOUNTFORSUPPLY = "AccountForSupply";
     public static final String ARM = "Arm";
+    public static final String ASSESSREADINESS = "AssessReadiness";
     public static final String BULKESTIMATE = "BulkEstimate";
     public static final String DETERMINEREQUIREMENTS = "DetermineRequirements";
     public static final String ESTABLISHMISSIONREQUIREMENTS = "EstablishMissionRequirements";
@@ -68,6 +69,7 @@ public class Constants implements org.cougaar.domain.planning.Constants {
 
     public static final org.cougaar.domain.planning.ldm.plan.Verb AccountForSupply = org.cougaar.domain.planning.ldm.plan.Verb.getVerb("AccountForSupply");
     public static final org.cougaar.domain.planning.ldm.plan.Verb Arm = org.cougaar.domain.planning.ldm.plan.Verb.getVerb("Arm");
+    public static final org.cougaar.domain.planning.ldm.plan.Verb AssessReadiness = org.cougaar.domain.planning.ldm.plan.Verb.getVerb("AssessReadiness");
     public static final org.cougaar.domain.planning.ldm.plan.Verb BulkEstimate = org.cougaar.domain.planning.ldm.plan.Verb.getVerb("BulkEstimate");
     public static final org.cougaar.domain.planning.ldm.plan.Verb DetermineRequirements = org.cougaar.domain.planning.ldm.plan.Verb.getVerb("DetermineRequirements");
     public static final org.cougaar.domain.planning.ldm.plan.Verb EstablishMissionRequirements = org.cougaar.domain.planning.ldm.plan.Verb.getVerb("EstablishMissionRequirements");
