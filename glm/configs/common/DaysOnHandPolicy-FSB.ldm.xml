@@ -22,4 +22,22 @@
 	</Integer>
     </RuleParam>
   </Policy>
+ <Policy name="BulkPOLOnHandPolicy" type="org.cougaar.domain.glm.plugins.inventory.DaysOnHandPolicy">
+    <RuleParam name="ResourceType">
+      	<String value ="BulkPOL">
+	</String>
+    </RuleParam>
+    <RuleParam name="DaysOnHand">
+	<Integer value="0" min="-1" max="90"> 
+	</Integer>
+    </RuleParam>
+    <RuleParam name="DaysForward">
+        <Integer value="1" min="0" max="30">
+	</Integer>
+    </RuleParam>
+    <RuleParam name="DaysBackward">
+        <Integer value="1" min="0" max="30">
+	</Integer>
+    </RuleParam>
+  </Policy>
 </Policies>
