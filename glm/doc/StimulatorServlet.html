@@ -1,424 +1,491 @@
 <!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-        
+            
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-        
+            
   <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
-        
+            
   <meta name="Template" content="C:\Program Files\Microsoft Office\Office\html.dot">
   <title>GLM Stimulator Servlet Usage Guide</title>
-   
 </head>
   <body link="#0000ff" vlink="#800080">
-  &nbsp;  
+   &nbsp;   
 <table border="0" cellspacing="0" cellpadding="0" width="600">
-  <tbody>
-    <tr>
-      <td align="Center" width="200"><a href="HTTPS://www.alpine.bbn.com/"><img src="alpine-logo-small.gif" border="0" height="83" width="95">
-      </a>
-      </td>
-      <td align="Center" width="200">
+   <tbody>
+     <tr>
+       <td align="Center" width="200"><a href="HTTPS://www.alpine.bbn.com/"><img src="alpine-logo-small.gif" border="0" height="83" width="95">
+       </a>
+       </td>
+       <td align="Center" width="200">       
       <h2><b><font size="+2">GLM Stimulator Servlet&nbsp;</font></b></h2>
+       
       <h2><b><font size="+2">Usage Guide</font></b></h2>
-      </td>
-      <td align="Center" width="200"><a href="http://www.cougaar.org"><img src="cougaar-smalllogo.jpg" border="0">
-      </a>
-      </td>
-    </tr>
-  </tbody>
+       </td>
+       <td align="Center" width="200"><a href="http://www.cougaar.org"><img src="cougaar-smalllogo.jpg" border="0">
+       </a>
+       </td>
+     </tr>
+   
+  </tbody> 
 </table>
+ 
 <table align="Left" border="0" cellspacing="0" cellpadding="0" width="600">
-  <tbody>
-    <tr>
-      <td align="Left" width="600">
-      <hr>
+   <tbody>
+     <tr>
+       <td align="Left" width="600">       
+      <hr>       
       <p>Jump down to:&nbsp; </p>
+       
       <ul>
-        <li><a href="#overview">Introduction to the Stimulator Servlet</a>
-        </li>
+         <li><a href="#overview">Introduction to the Stimulator Servlet</a>
+         </li>
+         
         <ul>
-          <li><a href="#timing_information">Timing Information</a>
-          </li>
+           <li><a href="#timing_information">Timing Information</a>
+           </li>
+         
         </ul>
-        <li><a href="#Sample_URL">Sample URL</a>
-        </li>
-        <li><a href="#File_locations">File Locations</a>
-        </li>
+         <li><a href="#Sample_URL">Sample URL</a>
+         </li>
+         <li><a href="#File_locations">File Locations</a>
+         </li>
+         
         <ul>
-          <li><a href="#Config_Path">Config Path</a>
-          </li>
+           <li><a href="#Config_Path">Config Path</a>
+           </li>
+         
         </ul>
-        <li><a href="#Necessary_Plugin">Necessary Plugins</a>
-        </li>
-        <li><a href="#Input_file_format">Input File Format</a>
-        </li>
+         <li><a href="#Necessary_Plugin">Necessary Plugins</a>
+         </li>
+         <li><a href="#Input_file_format">Input File Format</a>
+         </li>
+         
         <ul>
-          <li><a href="#Verbs">Verb</a>
-            <br>
-          </li>
+           <li><a href="#Verbs">Verb</a>
+             <br>
+           </li>
+         
         </ul>
+         
         <ul>
-          <li><a href="#Direct_Objects">Direct Object</a>
-          </li>
-          <li><a href="#Prepositions">Prepositions</a>
-          </li>
-          <li><a href="#Preferences">Preferences</a>
-            <br>
-          </li>
+           <li><a href="#Direct_Objects">Direct Object</a>
+           </li>
+           <li><a href="#Prepositions">Prepositions</a>
+           </li>
+           <li><a href="#Preferences">Preferences</a>
+             <br>
+           </li>
+         
         </ul>
-        <li><a href="#bugs">Known bugs and other issues</a>
-        </li>
+         <li><a href="#bugs">Known bugs and other issues</a>
+         </li>
+       
       </ul>
-      <hr>
+       
+      <hr>       
       <h2><a name="overview"></a>
- Introduction</h2>
-The GLM Stimulator Servlet allows the user to inject one or more tasks into
+  Introduction</h2>
+ The GLM Stimulator Servlet allows the user to inject one or more tasks into 
 an agent. &nbsp;<br>
-These tasks are created from an xml file that defines the fields of the tasks.
-&nbsp;<br>
-Each batch of tasks that is read in is then published to the log plan. &nbsp;<br>
-There are a number of options, as illustrated in this screen shot of the
+ These tasks are created from an xml file that defines the fields of the
+tasks. &nbsp;<br>
+ Each batch of tasks that is read in is then published to the log plan. &nbsp;<br>
+ There are a number of options, as illustrated in this screen shot of the 
 servlet :<br>
-      <br>
-      <img src="StimulatorServletScreenShot.jpg" alt="Servlet Screen Shot" width="532" height="500">
-      <br>
-      <br>
-The fields are, in order :<br>
+       <br>
+       <img src="StimulatorServletScreenShot.jpg" alt="Servlet Screen Shot">
+       <br>
+       <br>
+ The fields are, in order :<br>
+       
       <ul>
-        <li>the file that specifies the input task</li>
+         <li>the file that specifies the input task</li>
+         
         <ul>
-          <li>parameter : inputFileName </li>
+           <li>parameter : inputFileName </li>
+         
         </ul>
-        <li>the number of batches (copies of the tasks in the xml file)</li>
+         <li>the number of batches (copies of the tasks in the xml file)</li>
+         
         <ul>
-          <li>parameter : numberOfBatches<br>
+           <li>parameter : numberOfBatches<br>
+           </li>
+         
+        </ul>
+         <li>the wait interval between sending the batches</li>
+         
+        <ul>
+           <li>parameter : interval<br>
+           </li>
+         
+        </ul>
+         <li>wait for a batch to complete before sending the next batch</li>
+         
+        <ul>
+           <li>parameter : &nbsp;waitBefore<br>
+           </li>
+         
+        </ul>
+         <li>wait for all tasks to complete before returning, but not necessarily
+wait between batches</li>
+         
+        <ul>
+           <li>parameter : &nbsp;waitAfter<br>
+           </li>
+         
+        </ul>
+         <li>remove tasks after all complete</li>
+         
+        <ul>
+           <li>parameter : &nbsp;rescindAfterComplete</li>
+        </ul>
+        <li>use confidence in determining whether a task is complete, otherwise,
+just wait for a plan element to be attached<br>
+        </li>
+        <ul>
+          <li>parameter : &nbsp;useConfidence<br>
           </li>
+         
         </ul>
-        <li>the wait interval between sending the batches</li>
+         <li>show results as either html, xml, or serialized java objects</li>
+         
         <ul>
-          <li>parameter : interval<br>
-          </li>
+           <li>parameter : format = html, xml, or data<br>
+           </li>
+         
         </ul>
-        <li>wait for tasks to complete checkbox, which enables you to wait
-for a batch to complete before sending the next batch</li>
-        <ul>
-          <li>parameter : &nbsp;wait<br>
-          </li>
-        </ul>
-        <li>show results as either html, xml, or serialized java objects</li>
-        <ul>
-          <li>parameter : format = html, xml, or data<br>
-          </li>
-        </ul>
+       
       </ul>
-The test format of the test file is described below, and obeys the ClusterInput.dat.dtd
+ The test format of the test file is described below, and obeys the ClusterInput.dat.dtd 
 file.<br>
+       <br>
+ If you specify waiting between batches, you get back <a name="timing_information"></a>
+ timing information like this :<br>
+       <br>
+&lt;response&gt;<br>
+&nbsp;&lt;results totalTime=""&gt;<br>
+&nbsp; &lt;task id="TRANSCOM/1021062530512" time="2:00:092"/&gt;<br>
+&nbsp; &lt;task id="TRANSCOM/1021062530514" time="2:00:092"/&gt;<br>
+&nbsp;&lt;/results&gt;<br>
+&nbsp;&lt;histogram minBucket="15" maxBucket="15"&gt;<br>
+&nbsp; &lt;bucket elapsedTime="100000..200000" count="2"/&gt;<br>
+&nbsp;&lt;/histogram&gt;<br>
+&lt;/response&gt;<br>
       <br>
-If you specify waiting between batches, you get back <a name="timing_information"></a>
-timing information like this :<br>
+ This is the html that is the GLMStimulatorServletResponseData produces.
+&nbsp;In this example, there was one batch with two tasks.<br>
       <br>
-&lt;results totalTime="0:30:003"&gt;<br>
-&nbsp;&lt;task id="TRANSCOM/1015543024951" time="0:26:598"/&gt;<br>
-&nbsp;&lt;task id="TRANSCOM/1015543024953" time="0:26:588"/&gt;<br>
-&nbsp;&lt;task id="TRANSCOM/1015543024967" time="0:03:405"/&gt;<br>
-&nbsp;&lt;task id="TRANSCOM/1015543024969" time="0:00:370"/&gt;<br>
-&lt;/results&gt;<br>
+The histogram data shows the bucket information, where the time is broken
+down into 100 second buckets. &nbsp;The two tasks fell into the same bucket,
+going from 100 to 200 seconds.<br>
       <br>
-This is the html that is the GLMStimulatorServletResponseData produces. &nbsp;In
-this example, there were two batches of two tasks each.<br>
-If you are writing a client, you can get this object back directly from the
-URL, or parse xml results.<br>
-      <br>
-If you want to send tasks that vary in requested end time, you should define
+ If you are writing a client, you can get this object back directly from
+the URL, or parse xml results.<br>
+       <br>
+ If you want to send tasks that vary in requested end time, you should define 
 multiple tasks in the tasks xml file. <br>
-If requested, we could also add the option to advance the end time of every
+ If requested, we could also add the option to advance the end time of every 
 task with each batch by a constant. <br>
+       
       <h2><a name="Sample_URL"></a>
-Sample URL</h2>
-A sample URL access of the servlet is <br>
-      <br>
-http://localhost:8800/$TRANSCOM/stimulator?inputFileName=Test.dat.xml&amp;numberOfBatches=2&amp;interval=1000&amp;wait=true&amp;format=html<br>
+ Sample URL</h2>
+ A sample URL access of the servlet is <br>
+       <br>
+ http://localhost:8800/$TRANSCOM/stimulator?inputFileName=Test.dat.xml&amp;numberOfBatches=2&amp;interval=1000&amp;wait=true&amp;format=html<br>
+       
       <h2><a name="File_locations"></a>
-File locations</h2>
-The test input files are in glm/data/testinput. &nbsp;Here you'll also find
-the dtd for the test files and a sample ammo_prototype file that describes
-an ammo prototype and a ldm.xml suitable for use with the UTILLdmXMLPlugin.
-&nbsp;See note on necessary plugins below.
+ File locations</h2>
+ The test input files are in glm/data/testinput. &nbsp;Here you'll also find 
+the dtd for the test files and a sample ammo_prototype file that describes 
+an ammo prototype and a ldm.xml suitable for use with the UTILLdmXMLPlugin. 
+&nbsp;See note on necessary plugins below.       
       <h3>&nbsp;&nbsp;&nbsp; <a name="Config_Path"></a>
-Config Path</h3>
-For the servlet to find the test file, dtd file, and any prototype files,
-they must be on the config path. &nbsp;So you may have to add the glm/data/testinput
+ Config Path</h3>
+ For the servlet to find the test file, dtd file, and any prototype files, 
+they must be on the config path. &nbsp;So you may have to add the glm/data/testinput 
 directory to the config path, e.g. :<br>
-      <br>
--Dorg.cougaar.config.path=$COUGAAR_INSTALL_PATH/glm/data/testinput<b>;</b>
- &nbsp;(<b>Note</b> the trailing semi-colon, which is required).<br>
-      <br>
-The source files are in the glm module at org.cougaar.glm.servlet.
+       <br>
+ -Dorg.cougaar.config.path=$COUGAAR_INSTALL_PATH/glm/data/testinput<b>;</b>
+  &nbsp;(<b>Note</b> the trailing semi-colon, which is required).<br>
+       <br>
+ The source files are in the glm module at org.cougaar.glm.servlet.     
+ 
       <h2><a name="Necessary_Plugin"></a>
-Necessary Plugins</h2>
-The necessary component is (as from an ini file) :<br>
-      <br>
-plugin =org.cougaar.glm.servlet.GLMStimulatorServletComponent(org.cougaar.glm.servlet.GLMStimulatorServlet,
+ Necessary Plugins</h2>
+ The necessary component is (as from an ini file) :<br>
+       <br>
+plugin = org.cougaar.core.servlet.BlackboardServletComponent(org.cougaar.glm.servlet.GLMStimulatorServlet,
 /stimulator)<br>
       <br>
-If the test file refers to a prototype that is not already loaded, you'll
-need to load it explicitly. &nbsp;In the sample test task, I loaded an ammo
+ If the test file refers to a prototype that is not already loaded, you'll 
+need to load it explicitly. &nbsp;In the sample test task, I loaded an ammo 
 prototype using the UTILLdmXMLPlugin :<br>
-      <br>
-plugin =org.cougaar.lib.plugin.UTILLdmXMLPlugin(ldmFile={String}Ammo_AssetList.ldm.xml)<br>
-      <br>
-Here it refers to an ldm xml file that defines the prototype.
+       <br>
+ plugin =org.cougaar.lib.plugin.UTILLdmXMLPlugin(ldmFile={String}Ammo_AssetList.ldm.xml)<br>
+       <br>
+ Here it refers to an ldm xml file that defines the prototype.       
       <h2><a name="Input_file_format"></a>
- Input file format</h2>
-The sample Supply task illustrates the file format:<br>
-      <br>
-&lt;tasklist&gt;<br>
-&nbsp; &lt;task id="test_task"&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;verb&gt;Supply&lt;/verb&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;directobject&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;asset id="ammo-1000"&gt;Ammo_Prototype&lt;/asset&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/directobject&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;for&gt;3-69-ARBN&lt;/for&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;oftype&gt;Ammunition&lt;/oftype&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;to&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;RUINS&lt;/geoloc&gt; &lt;!--
+  Input file format</h2>
+ The sample Supply task illustrates the file format:<br>
+       <br>
+ &lt;tasklist&gt;<br>
+ &nbsp; &lt;task id="test_task"&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;verb&gt;Supply&lt;/verb&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;directobject&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;asset id="ammo-1000"&gt;Ammo_Prototype&lt;/asset&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;/directobject&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;for&gt;3-69-ARBN&lt;/for&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;oftype&gt;Ammunition&lt;/oftype&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;to&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;RUINS&lt;/geoloc&gt; &lt;!-- 
 TAA location from EritreaNetwork --&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;39.9167&lt;/latitude&gt;&nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;39.9167&lt;/latitude&gt;&nbsp;&nbsp;&nbsp; 
       <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;37.1167&lt;/longitude&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;RUINS&lt;/name&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/to&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;maintaining&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;type&gt;Inventory&lt;/type&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;nomen&gt;120MM APFSDS-T M829A1&lt;/nomen&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;typeID&gt;DODIC/C380&lt;/typeID&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/maintaining&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;refill/&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;enddate&gt;&nbsp;&nbsp;&nbsp; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bestdate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt;
-      <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;10&lt;/month&gt;
-      <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;15&lt;/day&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;
-      <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/bestdate&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/enddate&gt;&nbsp;&nbsp; <br>
-&nbsp;&nbsp;&nbsp; &lt;quantity&gt;1&lt;/quantity&gt; &lt;!-- quantity preference
---&gt;<br>
-&nbsp; &lt;/task&gt;<br>
-&lt;/tasklist&gt;<br>
-      <br>
-Inside of the tasklist tag you can define multiple tasks. &nbsp;Each of which
-takes a Verb, a Direct Object, Prepositions and Preferences. <br>
-      <h3></h3>
-      <h3><a name="Verbs"></a>
-Verbs</h3>
-The verb is just the contents of the Verb tag, e.g.<br>
-      <br>
-&lt;verb&gt;Supply&lt;/verb&gt; <br>
-      <br>
-The verb is Supply.<br>
-      <h3><a name="Direct_Objects"></a>
-Direct Objects</h3>
- The direct object can be a vanilla asset, as in the example, or an asset 
-group or an aggregate asset. &nbsp;The asset tag requires a unique identifier 
-to go in the item identification PG of the asset, and the prototype the asset 
-is an instance of. &nbsp;E.g. <br>
-      <br>
-&lt;asset id="ammo-1000"&gt;Ammo_Prototype&lt;/asset&gt;<br>
-      <br>
-Here the item id is "ammo-1000" and the prototype the asset will be made
-from is the prototype named "Ammo_Prototype."<br>
-      <br>
-An asset group would look like :<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br>
-&lt;directobject&gt;<br>
-&nbsp; &lt;assetgroup id="ag-001"&gt;<br>
-&nbsp; &nbsp; &lt;aggregateasset prototype="PASSENGER" quantity="20000"/&gt;<br>
-&nbsp; &nbsp; &lt;aggregateasset prototype="TANK" quantity="300"/&gt;<br>
-&nbsp; &lt;/assetgroup&gt;<br>
-&lt;/directobject&gt;<br>
-      <br>
-This defines an asset group containing two aggregate assets. &nbsp;These
-illustrate the format of an aggregate asset definition : the prototype followed
-by the aggregate quantity.
-      <h3><a name="Prepositions"></a>
-Prepositions</h3>
-The prepositions currently supported are : 
-      <h4>from</h4>
-&nbsp; The from preposition wraps a geoloc location (the indirect object
-of the preposition will be a geoloc object), e.g. <br>
-&nbsp;&nbsp;&nbsp; &lt;from&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;HKUZ&lt;/geoloc&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;31.850000&lt;/latitude&gt;&nbsp;&nbsp;&nbsp;
-      <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;-81.60000&lt;/longitude&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;Ft. Stewart&lt;/name&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/from&gt;<br>
-      <h4>to</h4>
-&nbsp;Just like the from prep, except the tag is named "to."<br>
-      <h4>with</h4>
-      <h4>using</h4>
-&nbsp;These preps wrap assets, e.g. <br>
-&nbsp; &nbsp; &lt;with&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&lt;asset id="tank-001"&gt;TANK&lt;/asset&gt;<br>
- &nbsp;&nbsp;&nbsp; &lt;/with&gt;<br>
-      <h4>maintaining</h4>
-Wraps a MaintainedItem object, used with the inventory manager e.g. <br>
-&nbsp;&nbsp;&nbsp; &lt;maintaining&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;37.1167&lt;/longitude&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;RUINS&lt;/name&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;/to&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;maintaining&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;type&gt;Inventory&lt;/type&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;nomen&gt;120MM APFSDS-T M829A1&lt;/nomen&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;typeID&gt;DODIC/C380&lt;/typeID&gt;<br>
- &nbsp;&nbsp;&nbsp; &lt;/maintaining&gt;
-      <h4>for</h4>
-&nbsp;Specifies which unit the task is for, wrapping a String, e.g. <br>
-&nbsp;&nbsp;&nbsp; &lt;for&gt;3-69-ARBN&lt;/for&gt;
-      <h4>oftype</h4>
-&nbsp;Specifes the type of asset being handled, wrapping a String, e.g.<br>
-&nbsp;&nbsp;&nbsp; &lt;oftype&gt;Ammunition&lt;/oftype&gt;
-      <h4>prepo</h4>
-&nbsp;A marker preposition, e.g. <br>
-&nbsp; &nbsp; &lt;prepo/&gt;
-      <h4>refill</h4>
-&nbsp;A marker preposition, e.g. <br>
-&nbsp; &nbsp; &lt;refill/&gt;
-      <h4>ItineraryOf</h4>
-&nbsp;Lets you attach schedules to a task, hanging off the ItineraryOf prep,
-e.g.<br>
-      <br>
-&lt;ItineraryOf&gt;<br>
-&nbsp; &lt;ItineraryElement&gt;<br>
-&nbsp; &nbsp;&lt;StartLocation&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;HKUZ&lt;/geoloc&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;31.850000&lt;/latitude&gt;&nbsp;&nbsp;&nbsp;
-      <br>
- &nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;-81.60000&lt;/longitude&gt;<br>
-  &nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;Ft. Stewart&lt;/name&gt;<br>
-&nbsp; &lt;/StartLocation&gt;<br>
-&nbsp; &lt;EndLocation&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;XXXX&lt;/geoloc&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;14.88&lt;/latitude&gt;&nbsp;&nbsp;&nbsp;
-      <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;39.32&lt;/longitude&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;Eriteria&lt;/name&gt;<br>
-&nbsp; &lt;/EndLocation&gt;<br>
-&nbsp; &lt;StartDate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;08&lt;/month&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;1&lt;/day&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
-&nbsp; &lt;/StartDate&gt;<br>
-&nbsp; &lt;EndDate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;09&lt;/month&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;1&lt;/day&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt; <br>
-&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
- &nbsp; &lt;/EndDate&gt; &nbsp; <br>
-&nbsp; &lt;ItineraryElement&gt;<br>
-&lt;ItineraryOf&gt;<br>
-      <br>
-&nbsp;In English, this defines a LocationSchedule with one Location Schedule
-Element, going from Ft. Stewart to Eriteria, from August 1st, 2005 to September
-1st, 2005.
-      <h4>RespondTo</h4>
-Used to indicate an organization to respond to, e.g. <br>
-      <br>
-&nbsp; &lt;RespondTo&gt;AEF&lt;/RespondTo&gt;
-      <h3><a name="Preferences"></a>
-Preferences </h3>
-      <h4>startdate</h4>
-Defines the start time preference. &nbsp;Wraps the ready at tag which defines
-the time after which a task can be performed. &nbsp;<br>
-This becomes a NearOrAbove Scoring Function, e.g. <br>
-      <br>
-&nbsp;&nbsp;&nbsp; &lt;startdate&gt;&nbsp; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;readyatdate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;01&lt;/day&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/readyatdate&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/startdate&gt; 
-      <h4>enddate</h4>
-Defines the end time preference. &nbsp;Can be either a VScoringFunction,
-defined by three points, or a NearOrBelow scoring function, if only one point
-is given.<br>
-      <br>
-For example, a three point scoring function, with earliest, best, and latest
-arrival specified would be : <br>
-      <br>
-&nbsp;&nbsp;&nbsp; &lt;enddate&gt;&nbsp;&nbsp;&nbsp; <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;earlydate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;03&lt;/day&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;06&lt;/hour&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/earlydate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bestdate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;03&lt;/day&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/bestdate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;latedate&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;03&lt;/day&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;18&lt;/hour&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/latedate&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/enddate&gt; <br>
-      <br>
-And a simpler one point scoring function might look like (i.e. just having
-a best date) :<br>
-      <br>
-&nbsp;&nbsp;&nbsp; &lt;enddate&gt;&nbsp;&nbsp;&nbsp; <br>
+ &nbsp;&nbsp;&nbsp; &lt;/maintaining&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;refill/&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;enddate&gt;&nbsp;&nbsp;&nbsp; <br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bestdate&gt;<br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt; 
       <br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;10&lt;/month&gt;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;10&lt;/month&gt; 
       <br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;15&lt;/day&gt; <br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt; <br>
- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt; 
       <br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/bestdate&gt;<br>
- &nbsp;&nbsp;&nbsp; &lt;/enddate&gt;&nbsp;&nbsp; 
-      <h4>cost</h4>
-&nbsp;Defines the cost preference, becoming a NearOrBelow scoring function:<br>
-&lt;cost&gt;1000000&lt;/cost&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;/enddate&gt;&nbsp;&nbsp; <br>
+ &nbsp;&nbsp;&nbsp; &lt;quantity&gt;1&lt;/quantity&gt; &lt;!-- quantity preference 
+--&gt;<br>
+ &nbsp; &lt;/task&gt;<br>
+ &lt;/tasklist&gt;<br>
+       <br>
+ Inside of the tasklist tag you can define multiple tasks. &nbsp;Each of
+which takes a Verb, a Direct Object, Prepositions and Preferences. <br>
+       
+      <h3></h3>
+       
+      <h3><a name="Verbs"></a>
+ Verbs</h3>
+ The verb is just the contents of the Verb tag, e.g.<br>
+       <br>
+ &lt;verb&gt;Supply&lt;/verb&gt; <br>
+       <br>
+ The verb is Supply.<br>
+       
+      <h3><a name="Direct_Objects"></a>
+ Direct Objects</h3>
+  The direct object can be a vanilla asset, as in the example, or an asset
+ group or an aggregate asset. &nbsp;The asset tag requires a unique identifier
+ to go in the item identification PG of the asset, and the prototype the
+asset  is an instance of. &nbsp;E.g. <br>
+       <br>
+ &lt;asset id="ammo-1000"&gt;Ammo_Prototype&lt;/asset&gt;<br>
+       <br>
+ Here the item id is "ammo-1000" and the prototype the asset will be made 
+from is the prototype named "Ammo_Prototype."<br>
+       <br>
+ An asset group would look like :<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br>
+ &lt;directobject&gt;<br>
+ &nbsp; &lt;assetgroup id="ag-001"&gt;<br>
+ &nbsp; &nbsp; &lt;aggregateasset prototype="PASSENGER" quantity="20000"/&gt;<br>
+ &nbsp; &nbsp; &lt;aggregateasset prototype="TANK" quantity="300"/&gt;<br>
+ &nbsp; &lt;/assetgroup&gt;<br>
+ &lt;/directobject&gt;<br>
+       <br>
+ This defines an asset group containing two aggregate assets. &nbsp;These 
+illustrate the format of an aggregate asset definition : the prototype followed 
+by the aggregate quantity.       
+      <h3><a name="Prepositions"></a>
+ Prepositions</h3>
+ The prepositions currently supported are :        
+      <h4>from</h4>
+ &nbsp; The from preposition wraps a geoloc location (the indirect object 
+of the preposition will be a geoloc object), e.g. <br>
+ &nbsp;&nbsp;&nbsp; &lt;from&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;HKUZ&lt;/geoloc&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;31.850000&lt;/latitude&gt;&nbsp;&nbsp;&nbsp; 
       <br>
-Indicates a requirement for a cost less than $1 million dollars.
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;-81.60000&lt;/longitude&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;Ft. Stewart&lt;/name&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;/from&gt;<br>
+       
+      <h4>to</h4>
+ &nbsp;Just like the from prep, except the tag is named "to."<br>
+       
+      <h4>with</h4>
+       
+      <h4>using</h4>
+ &nbsp;These preps wrap assets, e.g. <br>
+ &nbsp; &nbsp; &lt;with&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&lt;asset id="tank-001"&gt;TANK&lt;/asset&gt;<br>
+  &nbsp;&nbsp;&nbsp; &lt;/with&gt;<br>
+       
+      <h4>maintaining</h4>
+ Wraps a MaintainedItem object, used with the inventory manager e.g. <br>
+ &nbsp;&nbsp;&nbsp; &lt;maintaining&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;type&gt;Inventory&lt;/type&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;nomen&gt;120MM APFSDS-T M829A1&lt;/nomen&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;typeID&gt;DODIC/C380&lt;/typeID&gt;<br>
+  &nbsp;&nbsp;&nbsp; &lt;/maintaining&gt;       
+      <h4>for</h4>
+ &nbsp;Specifies which unit the task is for, wrapping a String, e.g. <br>
+ &nbsp;&nbsp;&nbsp; &lt;for&gt;3-69-ARBN&lt;/for&gt;       
+      <h4>oftype</h4>
+ &nbsp;Specifes the type of asset being handled, wrapping a String, e.g.<br>
+ &nbsp;&nbsp;&nbsp; &lt;oftype&gt;Ammunition&lt;/oftype&gt;       
+      <h4>prepo</h4>
+ &nbsp;A marker preposition, e.g. <br>
+ &nbsp; &nbsp; &lt;prepo/&gt;       
+      <h4>refill</h4>
+ &nbsp;A marker preposition, e.g. <br>
+ &nbsp; &nbsp; &lt;refill/&gt;       
+      <h4>ItineraryOf</h4>
+ &nbsp;Lets you attach schedules to a task, hanging off the ItineraryOf prep, 
+e.g.<br>
+       <br>
+ &lt;ItineraryOf&gt;<br>
+ &nbsp; &lt;ItineraryElement&gt;<br>
+ &nbsp; &nbsp;&lt;StartLocation&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;HKUZ&lt;/geoloc&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;31.850000&lt;/latitude&gt;&nbsp;&nbsp;&nbsp; 
+      <br>
+  &nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;-81.60000&lt;/longitude&gt;<br>
+   &nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;Ft. Stewart&lt;/name&gt;<br>
+ &nbsp; &lt;/StartLocation&gt;<br>
+ &nbsp; &lt;EndLocation&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;geoloc&gt;XXXX&lt;/geoloc&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;latitude&gt;14.88&lt;/latitude&gt;&nbsp;&nbsp;&nbsp; 
+      <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;longitude&gt;39.32&lt;/longitude&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp; &lt;name&gt;Eriteria&lt;/name&gt;<br>
+ &nbsp; &lt;/EndLocation&gt;<br>
+ &nbsp; &lt;StartDate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;08&lt;/month&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;1&lt;/day&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
+ &nbsp; &lt;/StartDate&gt;<br>
+ &nbsp; &lt;EndDate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;09&lt;/month&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;1&lt;/day&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
+  &nbsp; &lt;/EndDate&gt; &nbsp; <br>
+ &nbsp; &lt;ItineraryElement&gt;<br>
+ &lt;ItineraryOf&gt;<br>
+       <br>
+ &nbsp;In English, this defines a LocationSchedule with one Location Schedule 
+Element, going from Ft. Stewart to Eriteria, from August 1st, 2005 to September 
+1st, 2005.       
+      <h4>RespondTo</h4>
+ Used to indicate an organization to respond to, e.g. <br>
+       <br>
+ &nbsp; &lt;RespondTo&gt;AEF&lt;/RespondTo&gt;       
+      <h3><a name="Preferences"></a>
+ Preferences </h3>
+       
+      <h4>startdate</h4>
+ Defines the start time preference. &nbsp;Wraps the ready at tag which defines 
+the time after which a task can be performed. &nbsp;<br>
+ This becomes a NearOrAbove Scoring Function, e.g. <br>
+       <br>
+ &nbsp;&nbsp;&nbsp; &lt;startdate&gt;&nbsp; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;readyatdate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;01&lt;/day&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/readyatdate&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;/startdate&gt;        
+      <h4>enddate</h4>
+ Defines the end time preference. &nbsp;Can be either a VScoringFunction, 
+defined by three points, or a NearOrBelow scoring function, if only one point 
+is given.<br>
+       <br>
+ For example, a three point scoring function, with earliest, best, and latest 
+arrival specified would be : <br>
+       <br>
+ &nbsp;&nbsp;&nbsp; &lt;enddate&gt;&nbsp;&nbsp;&nbsp; <br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;earlydate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;03&lt;/day&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;06&lt;/hour&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/earlydate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bestdate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;03&lt;/day&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/bestdate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;latedate&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2000&lt;/year&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;06&lt;/month&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;03&lt;/day&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;18&lt;/hour&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/latedate&gt;<br>
+ &nbsp;&nbsp;&nbsp; &lt;/enddate&gt; <br>
+       <br>
+ And a simpler one point scoring function might look like (i.e. just having 
+a best date) :<br>
+       <br>
+ &nbsp;&nbsp;&nbsp; &lt;enddate&gt;&nbsp;&nbsp;&nbsp; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bestdate&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;year&gt;2005&lt;/year&gt; 
+      <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;month&gt;10&lt;/month&gt; 
+      <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;day&gt;15&lt;/day&gt; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hour&gt;12&lt;/hour&gt;
+      <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;minute&gt;00&lt;/minute&gt; 
+      <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;second&gt;00&lt;/second&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/bestdate&gt;<br>
+  &nbsp;&nbsp;&nbsp; &lt;/enddate&gt;&nbsp;&nbsp;        
+      <h4>cost</h4>
+ &nbsp;Defines the cost preference, becoming a NearOrBelow scoring function:<br>
+ &lt;cost&gt;1000000&lt;/cost&gt;<br>
+       <br>
+ Indicates a requirement for a cost less than $1 million dollars.       
       <h4>quantity</h4>
-&nbsp;Indicates a preferred quantity of the direct object, e.g. <br>
-&nbsp;&nbsp; &lt;quantity&gt;1&lt;/quantity&gt;<br>
-        
+ &nbsp;Indicates a preferred quantity of the direct object, e.g. <br>
+ &nbsp;&nbsp; &lt;quantity&gt;1&lt;/quantity&gt;<br>
+                
       <h2><a name="bugs"></a>
- Known bugs and other issues</h2>
-  None known.&nbsp;</td>
-    </tr>
-    <tr>
-      <td valign="Top"><br>
-      </td>
-    </tr>
-  </tbody>
+  Known bugs and other issues</h2>
+   None known.&nbsp;</td>
+     </tr>
+     <tr>
+       <td valign="Top"><br>
+       </td>
+     </tr>
+   
+  </tbody> 
 </table>
+ 
 </body>
 </html>
