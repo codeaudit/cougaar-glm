@@ -132,27 +132,30 @@ public class GLSAllocatorPlugin extends SimplePlugin implements GLSConstants {
    **/
   public synchronized void execute() {
     if (myAllocatableTasks.hasChanged() ) {
-      Enumeration tasks = myAllocatableTasks.getAddedList();
-      
-      Collection subs = retrieveSubOrgs(myOrgAssets.getCollection());
-      if (myLogger.isDebugEnabled()) {
-        myLogger.debug("Expanding "
-                     + myAllocatableTasks.getAddedCollection().size()
-                     + " added tasks");
+      Collection tasks = myAllocatableTasks.getAddedCollection();
+
+      if (!tasks.isEmpty()) {
+	if (myLogger.isDebugEnabled()) {
+	  myLogger.debug("Expanding " + tasks.size()
+			 + " added tasks");
+	}
+
+	Collection subs = retrieveSubOrgs(myOrgAssets.getCollection());
+	for (Iterator iterator = tasks.iterator();
+	     iterator.hasNext();) {
+	  Task task = (Task) iterator.next();
+	  expand(task, subs);
+	}
       }
-      while (tasks.hasMoreElements()) {
-        Task task = (Task) tasks.nextElement();
-	expand(task, subs);
-      }
-      tasks = myAllocatableTasks.getChangedList();
-      if (myLogger.isDebugEnabled()) {
-        myLogger.debug("Updating "
-                     + myAllocatableTasks.getChangedCollection().size()
-                     + " changed tasks");
-      }
-      while (tasks.hasMoreElements()) {
-        Task task = (Task) tasks.nextElement();
-	update(task);
+
+      // Should never get changed GLS tasks so don't even try to handle them.
+      // Last attempt to process changes led to months of debugging.
+      tasks = myAllocatableTasks.getChangedCollection();
+      if (!tasks.isEmpty()) {
+	for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
+	  myLogger.error(getAgentIdentifier() + " ignoring a changed task " +
+			 (Task) iterator.next());
+	}
       }
     }
 
@@ -233,48 +236,6 @@ public class GLSAllocatorPlugin extends SimplePlugin implements GLSConstants {
     }
   }
 
-  private void update(Task task) {
-    NewExpansion exp = (NewExpansion) task.getPlanElement();
-    Workflow wf = exp.getWorkflow();
-    boolean subs = false;
-
-    for (Enumeration subtasks = wf.getTasks(); subtasks.hasMoreElements(); ) {
-      subs = true;
-      NewTask subtask = (NewTask) subtasks.nextElement();
-      Vector newPhrases = new Vector(3);
-      for (Enumeration e = subtask.getPrepositionalPhrases(); e.hasMoreElements(); ) {
-        PrepositionalPhrase pp = (PrepositionalPhrase) e.nextElement();
-        if (FOR_OPLAN_STAGES.equals(pp.getPreposition())) {
-          pp = task.getPrepositionalPhrase(FOR_OPLAN_STAGES);
-        }
-        newPhrases.addElement(pp);
-      }
-      subtask.setPrepositionalPhrases(newPhrases.elements());
-      publishChange(subtask);
-      if (myLogger.isDebugEnabled()) {
-        myLogger.debug("Changed GLS subtask " + subtask);
-      }
-      NewPlanElement alloc = (NewPlanElement) subtask.getPlanElement();
-      alloc
-        .setEstimatedResult(PluginHelper
-                            .createEstimatedAllocationResult(subtask,
-                                                             theLDMF,
-                                                             0.0,
-                                                             true));
-      publishChange(alloc);
-    }
-
-
-
-    // Confidence should be 1.0 if there are no subtasks - task is not 
-    // propagating any farther.
-    double conf = (subs) ? 0.0 : 1.0; 
-    
-    exp.setEstimatedResult(PluginHelper
-                           .createEstimatedAllocationResult(task, theLDMF, conf, true));
-    publishChange(exp);
-  }
-
   /**
    * Expand a new task to include the given subordinates.
    **/
@@ -315,8 +276,6 @@ public class GLSAllocatorPlugin extends SimplePlugin implements GLSConstants {
       }
     }
   }
-
-  static final Role cinc = Role.getRole("CINC");
 
   private synchronized void augmentExpansion(Expansion exp, Collection subs) {
     if (subs.size() > 0) {
@@ -441,24 +400,6 @@ public class GLSAllocatorPlugin extends SimplePlugin implements GLSConstants {
             }
           }
         }
-      
-        /** BOZO - how would this relationship ever get created? 
-         **/
-        orgCollection = 
-          schedule.getMatchingRelationships(cinc.getConverse(),
-                                            TimeSpan.MIN_VALUE,
-                                            TimeSpan.MAX_VALUE);
-        if (orgCollection.size() > 0) {
-          for (Iterator relIterator = orgCollection.iterator();
-               relIterator.hasNext();) {
-            Relationship relationship = (Relationship) relIterator.next();
-            HasRelationships sub = schedule.getOther(relationship);
-            
-            if (!subs.contains(sub)) {
-              subs.add(sub);
-            }
-          }
-        }
       } 
     }
     return subs;
@@ -497,6 +438,12 @@ public class GLSAllocatorPlugin extends SimplePlugin implements GLSConstants {
     }
   };
 }
+
+
+
+
+
+
 
 
 

@@ -385,15 +385,10 @@ public class GLSInitServlet extends ComponentPlugin
           myPrivateState.listening_to = LISTENING_TO_GLS;
           if (myPrivateState.initialSendGLS) {
             myPrivateState.initialSendGLS = false;
-            myPrivateState.opInfo.advanceStage();
-            sendGLS();
-          }
-          else {
-            if (logger.isDebugEnabled()) {
-              logger.debug("GLSInitServlet: automatically advancing to next Stage");
-            }
-            updateRootGLS();
-          }
+          } else if (logger.isDebugEnabled()) {
+	    logger.debug("GLSInitServlet: automatically advancing to next Stage");
+	  }
+	  sendRootGLS();
         }
       }
       break;
@@ -417,7 +412,6 @@ public class GLSInitServlet extends ComponentPlugin
   }
 
   private boolean checkForFindProviders(){
-    
     SortedSet remaining = myPrivateState.opInfo.getRemainingStages(); 
     if (!remaining.isEmpty()) {
       int nextStageNum = ((OplanStage)(remaining.first())).getNumber();
@@ -432,12 +426,13 @@ public class GLSInitServlet extends ComponentPlugin
   }
 
 
-  private boolean checkIfStageComplete(Collection changedRootTasks) {
+  private boolean checkIfStageComplete(Collection changedRootTaskPlanElements) {
     double confidence = 0;
-    if (changedRootTasks.size() > 1 ) {
-      logger.error("GLSInitServlet: More than 1 root task of a certain type." );
+    if (changedRootTaskPlanElements.size() > 1 ) {
+      logger.error("GLSInitServlet: Mulitple root task plan element changed - " +
+		   changedRootTaskPlanElements);
     }
-    for (Iterator i = changedRootTasks.iterator(); i.hasNext(); ) {
+    for (Iterator i = changedRootTaskPlanElements.iterator(); i.hasNext(); ) {
       PlanElement pe = (PlanElement) i.next();
 
       AllocationResult ar = null;
@@ -640,161 +635,40 @@ public class GLSInitServlet extends ComponentPlugin
     sendGLS();
   }
 
-  public void publishRootGLS(String oplanID, String c0_date) {
+  public void PublishRootTask(String oplanID, String c0_date) {
     blackboard.openTransaction();
-    if (myPrivateState.initialSendGLS){
+    if (myPrivateState.initialSendGLS) {
       myPrivateState.opInfo.setCDate(c0_date); 
       myPrivateState.listening_to = LISTENING_TO_PROP_REG_SRVCS;
       sendPropagateRegisterServices();
-    }
-    else {
-      boolean hasFindProvidersStep = checkForFindProviders();
-      if (hasFindProvidersStep) {
-        myPrivateState.listening_to = LISTENING_TO_PROP_FIND_PROV;
-        myPrivateState.opInfo.advanceStage();
-        if (myPrivateState.initialSendFindProv){
-          myPrivateState.initialSendFindProv = false;
-          sendPropagateFindProviders();
-        }
-        else {
-          updateRootPropFindProviders();
-        }
+    } else if (checkForFindProviders()) {
+      myPrivateState.listening_to = LISTENING_TO_PROP_FIND_PROV;
+      myPrivateState.opInfo.advanceStage();
+      if (myPrivateState.initialSendFindProv) {
+	myPrivateState.initialSendFindProv = false;
+	sendPropagateFindProviders();
       }
-      else {
-        myPrivateState.listening_to = LISTENING_TO_GLS;
-        updateRootGLS();
-      }
+    } else {
+      myPrivateState.listening_to = LISTENING_TO_GLS;
+      sendRootGLS();
     }
     blackboard.closeTransactionDontReset();
   }
 
-  private void updateRootPropFindProviders(){
+  public void sendRootGLS() {
     SortedSet remaining =myPrivateState.opInfo.getRemainingStages(); 
     if (remaining.isEmpty()) {
       return;
     }
     myPrivateState.opInfo.advanceStage();
-    updatePropFindProviders();
-    blackboard.publishChange(myPrivateState);    
-    if (logger.isDebugEnabled()) {
-      logger.debug("updateRootPropFindProviders: remainingStages are " 
-                   +myPrivateState.opInfo.getRemainingStages() );
-    }
-
-  }
-  private void updatePropFindProviders(){
-    Vector prepphrases = new Vector();
-    PlanElement pe = (PlanElement) findProvSubscription.first();
-    Task pfp = pe.getTask();
-
-    NewPrepositionalPhrase pp = makeForOplanStagesPhrase();
-
-    // Get the curr EstimatedResult. If it is not 1.0, complain loudly
-    // with a Stacktrace
-    AllocationResult currAR = pe.getEstimatedResult();
-    if (currAR != null && currAR.getConfidenceRating() < 1.0) {
-      logger.error("updatePropFindProviders asked to change OplanStages to " 
-                   + pp.getIndirectObject() + " when confidence was " 
-                   + currAR.getConfidenceRating(), new Throwable());
-      return;
-    }
-
-    Enumeration origpp = pfp.getPrepositionalPhrases();
-    while (origpp.hasMoreElements()) {
-      PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
-      if (theorigpp.getPreposition().equals("ForOplanStages")) {
-        prepphrases.addElement(pp); // Substitute new phrase
-      } else {
- 	prepphrases.addElement(theorigpp);
-      }
-    }
-    ((NewTask)pfp).setPrepositionalPhrases(prepphrases.elements());
-
-    if (logger.isInfoEnabled()) {
-      logger.info("updatePropFindProviders: sentStages changing to: " 
-                  + pp.getIndirectObject());
-    }
-
-    blackboard.publishChange(pfp);
-
-    // Explicitely set confidence to 0.0 so we don't get premature completion
-    pe.setEstimatedResult(PluginHelper.createEstimatedAllocationResult(pfp,
-								       theLDMF,
-								       0.0,
-								       true));
-    blackboard.publishChange(pe);
-    
-    if (logger.isDebugEnabled()) {
-      logger.debug("\n" + formatDate(System.currentTimeMillis()) 
-                   + " Updating Task: " + pfp);
-    }
-
-  }
-
-  public void updateRootGLS() {
-    SortedSet remaining =myPrivateState.opInfo.getRemainingStages(); 
-    if (remaining.isEmpty()) {
-      return;
-    }
-    myPrivateState.opInfo.advanceStage();
-    updateGLS();
-    blackboard.publishChange(myPrivateState);    
-    if (logger.isDebugEnabled()) {
-      logger.debug("updateRootGLS: remainingStages are " 
-                   +myPrivateState.opInfo.getRemainingStages() );
-    }
-  }
-
-  private void updateGLS() {
     sendGLS();
-    /*
-    Vector prepphrases = new Vector();
-    PlanElement pe = (PlanElement) glsSubscription.first();
-    Task gls = pe.getTask();
-
-    NewPrepositionalPhrase pp = makeForOplanStagesPhrase();
-
-    // Get the curr EstimatedResult. If it is not 1.0, complain loudly
-    // with a Stacktrace
-    AllocationResult currAR = pe.getEstimatedResult();
-    if (currAR != null && currAR.getConfidenceRating() < 1.0) {
-      logger.error("updateGLS asked to change OplanStages to " + pp.getIndirectObject() 
-                   + " when confidence was " 
-                   + currAR.getConfidenceRating(), new Throwable());
-      return;
-    }
-
-    Enumeration origpp = gls.getPrepositionalPhrases();
-    while (origpp.hasMoreElements()) {
-      PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
-      if (theorigpp.getPreposition().equals("ForOplanStages")) {
-        prepphrases.addElement(pp); // Substitute new phrase
-      } else {
- 	prepphrases.addElement(theorigpp);
-      }
-    }
-    ((NewTask)gls).setPrepositionalPhrases(prepphrases.elements());
-
-    if (logger.isInfoEnabled()) {
-      logger.info("updateGLS: sentStages changing to: " + pp.getIndirectObject());
-    }
-
-    blackboard.publishChange(gls);
-
-    // Explicitely set confidence to 0.0 so we don't get premature completion
-    pe.setEstimatedResult(PluginHelper.createEstimatedAllocationResult(gls,
-								       theLDMF,
-								       0.0,
-								       true));
-    blackboard.publishChange(pe);
-    
+    blackboard.publishChange(myPrivateState);    
     if (logger.isDebugEnabled()) {
-      logger.debug("\n" + formatDate(System.currentTimeMillis()) 
-                   + " Adding Task: " + gls);
+      logger.debug(getAgentIdentifier() + 
+		   "sendRootGLS: remainingStages are " +
+                   myPrivateState.opInfo.getRemainingStages() );
     }
-    */
   }
-
 
   private void sendPropagateRegisterServices() {
     NewTask task = theLDMF.newTask();
@@ -1091,7 +965,7 @@ public class GLSInitServlet extends ComponentPlugin
  	if (logger.isDebugEnabled()) logger.debug("cDay is " + request.getParameter("c0_date"));
         String oplanID = request.getParameter("oplanID");
         String c0 = request.getParameter("c0_date");
-	publishRootGLS(oplanID, c0);
+	PublishRootTask(oplanID, c0);
       }
     }
   }

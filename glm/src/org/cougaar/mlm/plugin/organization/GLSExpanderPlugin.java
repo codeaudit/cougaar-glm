@@ -270,11 +270,6 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
       handleNewTasks(adds);
 
       Collection changes = myRegisterServicesTasks.getChangedCollection();
-      if (logger.isDebugEnabled()) {
-        logger.debug("Updating " + changes.size()
-                     + " PropagateRegisterServices tasks");
-      }
-      
       handleChangedTasks(changes);
     }
 
@@ -288,11 +283,6 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
       handleNewTasks(adds);
 
       Collection changes = myFindProvidersTasks.getChangedCollection();
-      if (logger.isDebugEnabled()) {
-        logger.debug("Updating " + changes.size()
-                     + " PropagateFindProviders tasks");
-      }
-      
       handleChangedTasks(changes);
     }
 
@@ -306,11 +296,6 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
       handleNewTasks(adds);
 
       Collection changes = myGLSTasks.getChangedCollection();
-      if (logger.isDebugEnabled()) {
-        logger.debug("Updating " + changes.size()
-                     + " GLS tasks");
-      }
-      
       handleChangedTasks(changes);
     }
 
@@ -343,9 +328,11 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
       Task task = (Task) iterator.next();
       if (task.getPlanElement () != null) {
 	if (logger.isWarnEnabled())
-	  logger.warn ("GLSExpanderPlugin.execute - strange, task " +task.getUID() + 
-		       "\nhas already been expanded with p.e.:\n"+
-		     task.getPlanElement() + "\nSo skipping already expanded task.");
+	  logger.warn("GLSExpanderPlugin.execute - strange, task " + 
+		      task.getUID() + 
+		      "\nhas already been expanded with p.e.:\n" +
+		      task.getPlanElement() + 
+		      "\nSo skipping already expanded task.");
       }
       else {
 	expand(task);
@@ -354,17 +341,11 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
   }
 
   private void handleChangedTasks(Collection changes) {
+    // Should never get changed GLS tasks so don't even try to handle them.
+    // Last attempt to process changes led to months of debugging.
     for (Iterator iterator = changes.iterator(); iterator.hasNext();) {
-      Task task = (Task) iterator.next();
-      if (task.getPlanElement() == null) {
-	if (logger.isWarnEnabled())
-	  logger.warn ("GLSExpanderPlugin.execute - strange, modified task " + 
-		     task.getUID() + 
-		     "\nhas not been expanded");
-	expand(task);
-      } else {
-	update(task);
-      }
+      logger.error(getAgentIdentifier() + " ignoring a changed task " +
+		     (Task) iterator.next());
     }
   } 
 
@@ -474,116 +455,6 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
         logger.debug("Add DR task " + myParams[i]);
       }
     }
-  }
-
-  /**
-   * Search for and update the phrases of the GetLogSupport for subordinates task
-   **/
-  private void update(Task task) {
-    NewExpansion exp = (NewExpansion) task.getPlanElement();
-    Workflow wf = exp.getWorkflow();
-    boolean haveDetermineRequirements = false;
-    boolean haveGetLogSupport = false;
-    for (Enumeration subtasks = wf.getTasks(); subtasks.hasMoreElements(); ) {
-      NewTask subtask = (NewTask) subtasks.nextElement();
-      Verb verb = subtask.getVerb();
-
-      PrepositionalPhrase newOplanStagesPhrase = null;
-      for (Enumeration enum = task.getPrepositionalPhrases();
-	   enum.hasMoreElements(); ) {
-	PrepositionalPhrase pp = (PrepositionalPhrase) enum.nextElement();
-	if (FOR_OPLAN_STAGES.equals(pp.getPreposition())) {
-	  newOplanStagesPhrase = pp;
-	  break;
-	}
-      }
-
-      // Check confidence on expansion
-      if (!Constants.Verb.DetermineRequirements.equals(verb)) {
-	PlanElement pe = subtask.getPlanElement();
-	if (pe == null) {
-	  logger.error(getAgentIdentifier() + " receive GLS change before " + verb +
-		       " had a PlanElement.");
-	} else {
-	  double confidence =
-	    pe.getEstimatedResult().getConfidenceRating();
-	  if (confidence != 1.0) {
-	    logger.error(getAgentIdentifier() + " receive GLS change when " + verb +
-			 " had a confidence of - " + confidence);
-	    if (newOplanStagesPhrase != null) {
-	      SortedSet ss = (SortedSet) newOplanStagesPhrase.getIndirectObject();
-	      logger.error("    when newStages is " + ss.toString());
-	    }
-	  }
-	}
-      }
-      
-      if (task.getVerb().equals(verb)) {
-	// Found for subordinates phrase - propagate prep phrase changes
-        Vector newPhrases = new Vector(3);
-
-        for (Enumeration enum = subtask.getPrepositionalPhrases();
-             enum.hasMoreElements(); ) {
-          PrepositionalPhrase pp = (PrepositionalPhrase) enum.nextElement();
-          if (FOR_OPLAN_STAGES.equals(pp.getPreposition())) {
-	    pp = copyOplanStagesPhrase(newOplanStagesPhrase);
-          }
-          newPhrases.add(pp);
-        }
-        subtask.setPrepositionalPhrases(newPhrases.elements());
-        blackboard.publishChange(subtask);
-        if (logger.isDebugEnabled()) {
-          logger.debug("Changed oplan stages for subtask " + subtask);
-        }
-
-	//Explicitly set conf to 0. Conf won't go back to 1.0 until
-	// task has been allocated to all subordinates.
-	PlanElement pe = subtask.getPlanElement();
-	AllocationResult estResult = 
-	  PluginHelper.createEstimatedAllocationResult(task, 
-						       theLDMF, 
-						       0.0, 
-						       true);
-	pe.setEstimatedResult(estResult);
-	blackboard.publishChange(pe);
-
-	if (logger.isDebugEnabled())
-	  logger.debug(getAgentIdentifier() + " setting " + verb + 
-		     " confidence to 0.0");
-
-      } else if (Constants.Verb.RegisterServices.equals(verb) ||
-		 Constants.Verb.FindProviders.equals(verb)) {
-	// Pass along the oplan stages
-	// Not currently used but this leaves the possibility open.
-        Vector newPhrases = new Vector(1);
-
-        for (Enumeration enum = subtask.getPrepositionalPhrases();
-             enum.hasMoreElements(); ) {
-          PrepositionalPhrase pp = (PrepositionalPhrase) enum.nextElement();
-          if (FOR_OPLAN_STAGES.equals(pp.getPreposition())) {
-	    pp = copyOplanStagesPhrase(pp);
-          }
-          newPhrases.add(pp);
-        }
-        subtask.setPrepositionalPhrases(newPhrases.elements());
-        blackboard.publishChange(subtask);
-        if (logger.isDebugEnabled()) {
-          logger.debug("Changed oplan stages for subtask " + subtask);
-        }
-      }
-    }
-
-   if (task.getVerb().equals(GET_LOG_SUPPORT)){ 
-     maybeAddDetermineRequirementsTasks(task);
-   }
-
-   // Set overall conf to 0.0
-   exp.setEstimatedResult(PluginHelper
-			  .createEstimatedAllocationResult(task,
-							   theLDMF,
-							   0.0,
-							   true));
-   blackboard.publishChange(exp);
   }
 
   /**
