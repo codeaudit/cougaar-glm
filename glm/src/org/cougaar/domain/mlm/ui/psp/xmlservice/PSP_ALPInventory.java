@@ -121,19 +121,28 @@ public class PSP_ALPInventory
       inv.addNamedSchedule(ALLOCATED, inventory.getDueOutLaborSchedule());
       inv.addNamedSchedule(ON_HAND,   inventory.getOnHandSchedule());
     } else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
-      inv.addNamedSchedule(ON_HAND,                     inventory.getOnHandSchedule());
-      inv.addNamedSchedule(DUE_IN,                      inventory.getDueInSchedule());
-      inv.addNamedSchedule(UNCONFIRMED_DUE_IN,          inventory.getUnconfirmedDueInSchedule());
-      inv.addNamedSchedule(REQUESTED_DUE_IN,            inventory.getRequestedDueInSchedule());
-      inv.addNamedSchedule(DUE_IN            +INACTIVE, inventory.getDueInSchedule());
-      inv.addNamedSchedule(UNCONFIRMED_DUE_IN+INACTIVE, inventory.getUnconfirmedDueInSchedule());
-      inv.addNamedSchedule(REQUESTED_DUE_IN  +INACTIVE, inventory.getRequestedDueInSchedule());
+      inv.addNamedSchedule(ON_HAND,                               inventory.getOnHandSchedule());
+      inv.addNamedSchedule(DUE_IN,                                inventory.getDueInSchedule());
+      inv.addNamedSchedule(UNCONFIRMED_DUE_IN,                    inventory.getUnconfirmedDueInSchedule());
+      inv.addNamedSchedule(REQUESTED_DUE_IN,                      inventory.getRequestedDueInSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_IN,                      inventory.getProjectedDueInSchedule());
+      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN,            inventory.getProjectedRequestedDueInSchedule());
 
-      inv.addNamedSchedule(DUE_OUT,                     inventory.getDueOutSchedule());
-      inv.addNamedSchedule(PROJECTED_DUE_OUT,           inventory.getProjectedDueOutSchedule());
-                           
-      inv.addNamedSchedule(REQUESTED_DUE_OUT,           inventory.getRequestedDueOutSchedule());
-      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT, inventory.getProjectedRequestedDueOutSchedule());
+      inv.addNamedSchedule(DUE_IN                      +INACTIVE, inventory.getInactiveDueInSchedule());
+      inv.addNamedSchedule(UNCONFIRMED_DUE_IN          +INACTIVE, inventory.getInactiveUnconfirmedDueInSchedule());
+      inv.addNamedSchedule(REQUESTED_DUE_IN            +INACTIVE, inventory.getInactiveRequestedDueInSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_IN            +INACTIVE, inventory.getInactiveProjectedDueInSchedule());
+      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN  +INACTIVE, inventory.getInactiveProjectedRequestedDueInSchedule());
+          
+      inv.addNamedSchedule(DUE_OUT,                               inventory.getDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_OUT,                     inventory.getProjectedDueOutSchedule());
+      inv.addNamedSchedule(REQUESTED_DUE_OUT,                     inventory.getRequestedDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT,           inventory.getProjectedRequestedDueOutSchedule());
+                                     
+      inv.addNamedSchedule(DUE_OUT                     +INACTIVE, inventory.getInactiveDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_OUT           +INACTIVE, inventory.getInactiveProjectedDueOutSchedule());
+      inv.addNamedSchedule(REQUESTED_DUE_OUT           +INACTIVE, inventory.getInactiveRequestedDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT +INACTIVE, inventory.getInactiveProjectedRequestedDueOutSchedule());
 
 //    inv.addNamedSchedule(REQUESTED_DUE_OUT_SHORTFALL, inventory.getDueOutShortfallSchedule());
     } 

@@ -516,60 +516,65 @@ public class UIInventoryImpl {
     IF isSuccess IS FALSE. */
 
   public void addDueInSchedule(Allocation allocation) {
-      if (allocation.getReportedResult() == null) {
-	  // if unconfirmed add to dueInSchedule
-          Task task = allocation.getTask();
-          if (TaskUtils.isProjection(task)) {
-            for (int i = 0; i < 2; i++) {
-              boolean isInactive = (i == 0);
-              Vector schedule = getScheduleFromProjectionTask(task, true, isInactive);
-	      if (schedule != null) {
-//                  if (debug) {
-//                    System.out.println("Adding projected due in schedule from allocation: " + 
-//                                       allocation.getUID());
-//                    for (int j = 0; j < schedule.size(); j++) 
-//                      printQuantityScheduleElement((UIQuantityScheduleElement) schedule.elementAt(j));
-//                  }
-                if (isInactive) {
-                  inactiveProjectedDueInSchedule.addAll(schedule);
-                } else {
-                  projectedDueInSchedule.addAll(schedule);
-                }
-	      }		  		  
+    Task task = allocation.getTask();
+    AllocationResult ar = allocation.getReportedResult();
+    if (TaskUtils.isProjection(task)) {
+      /* Use requested value for now. Due to fill-or-kill request and
+         actual should match */
+      if (ar == null || ar.isSuccess()) {
+        // if unconfirmed or successful add to dueInSchedule
+        for (int i = 0; i < 2; i++) {
+          boolean isInactive = (i == 0);
+          Vector schedule = getScheduleFromProjectionTask(task, true, isInactive);
+	  if (schedule != null) {
+//          if (debug) {
+//            System.out.println("Adding projected due in schedule from allocation: " + 
+//                               allocation.getUID());
+//            for (int j = 0; j < schedule.size(); j++) 
+//              printQuantityScheduleElement((UIQuantityScheduleElement) schedule.elementAt(j));
+//          }
+            if (isInactive) {
+              inactiveProjectedDueInSchedule.addAll(schedule);
+            } else {
+              projectedDueInSchedule.addAll(schedule);
             }
-          } else {
-            UIQuantityScheduleElement se = 
-              getScheduleElementFromTask(task, false); // Use end time for due-ins
-            if (se != null) {
-//  	        if (debug) {
-//  		  System.out.println("Adding unconfirmed due in schedule from allocation: " + 
-//  				     allocation.getUID());
-//  		  printQuantityScheduleElement(se);
-//  	        }
-              if (isInactive(task, se)) {
-                inactiveUnconfirmedDueInSchedule.add(se);
-              } else {
-                unconfirmedDueInSchedule.add(se);
-              }
-            }
-          }
-      } else if (allocation.getReportedResult().isSuccess()) {
-        UIQuantityScheduleElement se = 
-          getScheduleFromAllocation(allocation.getReportedResult(), false);
-        if (se != null) {
-          //  	      if (debug) {
-          //                  System.out.println("Adding due in schedule from allocation: " + 
-          //                                     allocation.getUID());
-          //                  printQuantityScheduleElement(se);
-          if (isInactive(allocation, se)) {
-            inactiveDueInSchedule.add(se);
-          } else {
-            dueInSchedule.add(se);
           }
         }
-      } else {
-        // Ignore if not successful
       }
+    } else if (ar == null) {
+      // Use request if no allocation result
+      UIQuantityScheduleElement se = 
+        getScheduleElementFromTask(task, false); // Use end time for due-ins
+      if (se != null) {
+//      if (debug) {
+//  	  System.out.println("Adding unconfirmed due in schedule from allocation: " + 
+//			     allocation.getUID());
+//  	  printQuantityScheduleElement(se);
+//  	}
+        if (isInactive(task, se)) {
+          inactiveUnconfirmedDueInSchedule.add(se);
+        } else {
+          unconfirmedDueInSchedule.add(se);
+        }
+      }
+    } else if (ar.isSuccess()) {
+      UIQuantityScheduleElement se = 
+        getScheduleFromAllocation(allocation.getReportedResult(), false);
+      if (se != null) {
+//      if (debug) {
+//        System.out.println("Adding due in schedule from allocation: " + 
+//                           allocation.getUID());
+//        printQuantityScheduleElement(se);
+//      }
+        if (isInactive(allocation, se)) {
+          inactiveDueInSchedule.add(se);
+        } else {
+          dueInSchedule.add(se);
+        }
+      }
+    } else {
+      // Ignore if not successful
+    }
   }
 
   /** Add schedule elements from the preferences in the task in the due-in schedule.
