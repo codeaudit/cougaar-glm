@@ -578,14 +578,18 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     Organization selfOrg = getSelfOrg();
     if (selfOrg == null) {
       // ERROR - should never have OrgActivities w/o a self org.
+      myLogger.error("getAdConRelationship ran but selfOrg is null!", new Throwable());
+      return null;
     } else {
       RelationshipSchedule relationshipSchedule = 
 	selfOrg.getRelationshipSchedule();
       Collection relationships = 
 	relationshipSchedule.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
       if (relationships.isEmpty()) {
-	if (myLogger.isWarnEnabled())
-	  myLogger.warn("getAdConRelationship found no AdministrativeSuperior!");
+	// OrgDataPlugin is intended for only complex users - with Oplans and
+	// OpCons and AdCons. Try using SimpleOrgDataPlugin, or, even better
+	// org.cougaar.planning.plugin.asset.AssetDataPlugin
+	  myLogger.error("getAdConRelationship found no AdministrativeSuperior! Should you be using SimpleOrgDataPlugin?", new Throwable("No AdministrativeSuperior for " + selfOrg.getMessageAddress()));
       } else if (relationships.size() != 1) {
 	myLogger.error("getAdConRelationship - " +
 		       " found multiple administrative superiors " +
