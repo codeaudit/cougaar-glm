@@ -290,14 +290,11 @@ public abstract class TripletFCPlugIn implements FailureConsumptionPlugIn, TimeC
         new TripletKey(ALL_CONSUMABLES, ALL_CONSUMERS, aSegment.theSource),
         new TripletKey(ALL_CONSUMABLES, ALL_CONSUMERS, ALL_CLUSTERS)
       };
-      long quantum = getTimeQuantum(theExecutionTime);
+      long quantum = getRawTimeQuantum(theExecutionTime);
       previousTime = Math.max(theExecutionTime - quantum, aRate.theStartTime);
     }
 
     private AnnotatedDouble getQPerMilli(long executionTime) {
-      if (executionTime - previousTime < MIN_INTERVAL) {
-        return new AnnotatedDouble(0.0);
-      }
       AnnotatedDouble multiplier = null;
       TripletValue tv = null;
       for (int i = 0; tv == null && i < tks.length; i++) {
@@ -336,11 +333,17 @@ public abstract class TripletFCPlugIn implements FailureConsumptionPlugIn, TimeC
      * Use a time quantum such that a quantity of at least one is expected.
      **/
     public long getTimeQuantum(long executionTime) {
+      long interval = getRawTimeQuantum(executionTime);
+      return previousTime + interval - executionTime;
+    }
+
+    public long getRawTimeQuantum(long executionTime) {
       AnnotatedDouble v = getQPerMilli(executionTime);
+      if (v.value <= 0.0) return MAX_INTERVAL;
       long interval = (long) (1.0 / v.value);
       if (interval < MIN_INTERVAL) interval = MIN_INTERVAL;
       if (interval > MAX_INTERVAL) interval = MAX_INTERVAL;
-      return previousTime + interval - executionTime;
+      return interval;
     }
   }
 
