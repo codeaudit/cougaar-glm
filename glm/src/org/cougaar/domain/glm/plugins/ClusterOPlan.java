@@ -97,7 +97,11 @@ public class ClusterOPlan implements Serializable {
 	}
 	return null;
     }
-
+  
+    public long getOplanCday() {
+      return  oplan_.getCday().getTime();
+    } 
+    
     public OrgActivity getOrgActivity(long t) {
 	long end_time, start_time;
 	Enumeration enum = orgActivities_.elements();
@@ -113,3 +117,8 @@ public class ClusterOPlan implements Serializable {
 	return null;
     }
 }
+
+
+
+
+
