@@ -18,6 +18,7 @@
 package org.cougaar.domain.glm.plugins.inventory;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.CountRate;
 import org.cougaar.domain.planning.ldm.measure.FlowRate;
@@ -158,8 +159,28 @@ public class SupplyExpander extends InventoryProcessor {
 	updateProjectionResults(projectExpansionElements_.getChangedList());
     }
 
-    public void updateProjectionResults(Enumeration expansion){
-	// does nothig for now
+    /** This is not the right way to do this. We need to update the
+        estimated AllocationResult of our expansions, but we have no
+        subscription to such expansions. Indeed, we can't construct a
+        UnaryPredicate to select them because that logic is hidden
+        from us. Instead, we take advantage of the crock that the
+        ProjectWithdraw task is "changed" when its Allocation's
+        AllocationResult is changed. Those changed tasks come here and
+        we update the expansion.
+    **/
+    public void updateProjectionResults(Enumeration pes){
+	while (pes.hasMoreElements()) {
+            PlanElement pe = (PlanElement) pes.nextElement(); // The disposition of the subtask
+            Task subtask = pe.getTask();
+            if (subtask != null) {
+                Workflow wf = subtask.getWorkflow();
+                if (wf != null) {
+                    Task parent = wf.getParentTask();
+                    PlanElement expansion = parent.getPlanElement();
+                    PlugInHelper.updatePlanElement(expansion);
+                }
+            }
+        }
     }
 
     private boolean needUpdate() {
