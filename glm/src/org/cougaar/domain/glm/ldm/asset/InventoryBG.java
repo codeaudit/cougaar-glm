@@ -494,27 +494,23 @@ public abstract class InventoryBG implements PGDelegate {
     }
 
     private void addProjection(Task task, boolean filled) {
-	long start_time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getStartTime(task));
-	long end_time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getEndTime(task));
- 	int start = TimeUtils.getDaysBetween(getStartTime(), start_time);
-	int end = TimeUtils.getDaysBetween(getStartTime(), end_time);
+	long start_time = TaskUtils.getStartTime(task);
+	long end_time = TaskUtils.getEndTime(task);
+        int day0 = (int) (getStartTime() / TimeUtils.MSEC_PER_DAY);
+ 	int start = ((int) (start_time / TimeUtils.MSEC_PER_DAY)) - day0;
+ 	int end = ((int) (end_time / TimeUtils.MSEC_PER_DAY)) - day0;
+	if (end <= 0) { return; }
 	if (start < 0) { start = 0; }
-	if (end < 0) { return; }
-	if (end >= dueIns_.size()) {
-	    for (int i=dueIns_.size()-1; i<=end; i++) {
-		dueIns_.add(new Vector());
-	    }
+	while (end > dueIns_.size()) {
+            dueIns_.add(new Vector());
 	}
 	DueIn d = new DueIn(task, filled);
 //   	GLMDebug.DEBUG("addProjection()", "start="+start+"("+TimeUtils.dateString(start_time)+")"+
 //   	", end="+end+" ("+TimeUtils.dateString(end_time)+") Task:"+TaskUtils.taskDesc(task));	
 	
-	// Advance start time by one day to avoid double counting a projection that spans
-	// a single day
-	start += 1;
-	for (int i=start; i<= end; i++) {
+        for (int day = start; day < end; day++) {
 // 	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
-	    Vector v = (Vector)dueIns_.get(i);
+	    Vector v = (Vector) dueIns_.get(day);
 	    v.add(d);
 	}
     }
