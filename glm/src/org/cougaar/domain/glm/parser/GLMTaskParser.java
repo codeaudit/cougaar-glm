@@ -32,7 +32,7 @@ import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.util.UTILRuntimeException;
 import org.cougaar.domain.glm.xml.parser.TaskParser;
 
-import com.ibm.xml.parsers.DOMParser;
+import org.apache.xerces.parsers.DOMParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -61,9 +61,8 @@ public class GLMTaskParser{
 		       ClusterServesPlugIn cluster) {
     try{
       DOMParser parser = new DOMParser();
-      parser.setExpandEntityReferences(true);
-      parser.setNodeExpansion(DOMParser.FULL); 
-      parser.setAllowJavaEncodingName(true);
+      parser.setFeature(
+                 "http://apache.org/xml/features/allow-java-encodings", true);
       parser.setEntityResolver (new UTILEntityResolver ());
 
       InputStream inputStream = ConfigFileFinder.open(pfile);
