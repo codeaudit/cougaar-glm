@@ -200,12 +200,12 @@ public abstract class GLMDecorationPlugin extends DecorationPlugin {
     if (logger.isDebugEnabled()) {
       logger.debug("Updating the Oplans!");
     }
-    Enumeration enum;
+    Enumeration en;
     // Create new ClusterOPlan objects for each added Oplan
     if (oplans_.getAddedList().hasMoreElements()) {
-      enum = oplans_.getAddedList();
-      while (enum.hasMoreElements()) {
-        Oplan oplan = (Oplan) enum.nextElement();
+      en = oplans_.getAddedList();
+      while (en.hasMoreElements()) {
+        Oplan oplan = (Oplan) en.nextElement();
         UID oplanUID = oplan.getUID();
         IncrementalSubscription oplanActivities = (IncrementalSubscription) orgActivitySubscriptionOfOPlanUID.get(oplanUID);
         if (oplanActivities == null) {
@@ -223,9 +223,9 @@ public abstract class GLMDecorationPlugin extends DecorationPlugin {
     }
     // Remove ClusterOPlan objects that are no longer relevant
     if (oplans_.getRemovedList().hasMoreElements()) {
-      enum = oplans_.getRemovedList();
-      while (enum.hasMoreElements()) {
-        Oplan oplan = (Oplan) enum.nextElement();
+      en = oplans_.getRemovedList();
+      while (en.hasMoreElements()) {
+        Oplan oplan = (Oplan) en.nextElement();
         UID oplanUID = oplan.getUID();
         ClusterOPlan coplan = (ClusterOPlan) ClusterOPlans_.get(oplanUID);
         // Remove ClusterOPlan from array
@@ -247,10 +247,10 @@ public abstract class GLMDecorationPlugin extends DecorationPlugin {
 
   // Each ClusterOPlan updates its own OrgActivities if needed
   private boolean updateOrgActivities() {
-    Iterator enum = ClusterOPlans_.values().iterator();
+    Iterator en = ClusterOPlans_.values().iterator();
     boolean update = false;
-    while (enum.hasNext()) {
-      ClusterOPlan coplan = (ClusterOPlan) enum.next();
+    while (en.hasNext()) {
+      ClusterOPlan coplan = (ClusterOPlan) en.next();
       IncrementalSubscription s = (IncrementalSubscription) orgActivitySubscriptionOfOPlanUID.get(coplan.getOplanUID());
       update = update || coplan.updateOrgActivities(s);
     }

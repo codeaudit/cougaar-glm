@@ -422,8 +422,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 	int count = 0;
 	if (getDetermineRequirementsTask().getPlanElement () != null) {
 	  Expansion exp = (Expansion) getDetermineRequirementsTask().getPlanElement ();
-	  for (Enumeration enum = exp.getWorkflow().getTasks(); enum.hasMoreElements();) {
-	    Task subtask = (Task)enum.nextElement();
+	  for (Enumeration en = exp.getWorkflow().getTasks(); en.hasMoreElements();) {
+	    Task subtask = (Task)en.nextElement();
 	    if (subtask.getVerb().equals(Constants.Verb.TRANSPORT)){ // defensive, should always be TRANSPORT
 	      count++;
 	    }
@@ -1135,8 +1135,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     // if more, something is wrong with this plugin
 
     int count = 0;
-    for (Enumeration enum = wf.getTasks(); enum.hasMoreElements();) {
-      Task subtask = (Task)enum.nextElement();
+    for (Enumeration en = wf.getTasks(); en.hasMoreElements();) {
+      Task subtask = (Task)en.nextElement();
       if (subtask.getVerb().equals(Constants.Verb.TRANSPORT)){ // defensive, should always be TRANSPORT
 	count++;
       }
@@ -1144,8 +1144,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
     if (count > 2) {
       logger.warn ("drTask - " + drTask.getUID() + " has too many (" + count + ") subtasks ");
-      for (Enumeration enum = wf.getTasks(); enum.hasMoreElements();) {
-	Task subtask = (Task)enum.nextElement();
+      for (Enumeration en = wf.getTasks(); en.hasMoreElements();) {
+	Task subtask = (Task)en.nextElement();
 	logger.warn (" - subtask - " + subtask.getUID());
       }
     }
@@ -1255,8 +1255,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
       Vector toRemove = new Vector();
 
-      for (Enumeration enum = ((Expansion) drTask.getPlanElement()).getWorkflow().getTasks(); enum.hasMoreElements();) {
-        Task subtask = (Task)enum.nextElement();
+      for (Enumeration en = ((Expansion) drTask.getPlanElement()).getWorkflow().getTasks(); en.hasMoreElements();) {
+        Task subtask = (Task)en.nextElement();
 	printInfo("drTask - subtask - " + subtask.getUID() + " verb " + subtask.getVerb());
 	if (subtask.getVerb().equals(Constants.Verb.TRANSPORT)){
 	  printInfo("drTask - subtask TRANSPORT - " + subtask.getUID());

@@ -194,10 +194,10 @@ public class ClusterOPlan implements Serializable {
     
   public OrgActivity getOrgActivity(long t) {
     long end_time, start_time;
-    Enumeration enum = orgActivities_.elements();
+    Enumeration en = orgActivities_.elements();
     OrgActivity oa;
-    while (enum.hasMoreElements()) {
-      oa = (OrgActivity)enum.nextElement();
+    while (en.hasMoreElements()) {
+      oa = (OrgActivity)en.nextElement();
       start_time = getStartTime(oa);
       end_time = getEndTime(oa);
       if ((t >= start_time) && (t < end_time)) {

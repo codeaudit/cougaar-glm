@@ -161,7 +161,7 @@ public class UTILAggregate {
    *  a failure
    * @param ldmf the PlanningFactory
    * @param realityPlan the plan the plan elements are part of
-   * @param parentTasks an enum of parent tasks
+   * @param parentTasks parent tasks
    * @param whatVerb the verb to give the MPTask
    * @param prepPhrases preps to attach to the MPTask
    * @param directObjects the direct objects of the parent tasks (usually) that will
@@ -296,9 +296,9 @@ public class UTILAggregate {
    * @param ldmf the PlanningFactory
    * @param source the cluster originating the task
    * @param plan the log plan
-   * @param parentTasks an enum of parent tasks
+   * @param parentTasks parent tasks
    * @param verb the verb
-   * @param prepphrases an enum of PrepositionalPhrases
+   * @param prepphrases  PrepositionalPhrases
    * @param obj the direct object
    * @return NewMPTask
    */

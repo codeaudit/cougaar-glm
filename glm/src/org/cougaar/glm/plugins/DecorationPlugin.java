@@ -314,10 +314,10 @@ public abstract class DecorationPlugin extends SimplePlugin {
     if (areSubscriptionsChanged(plugInSubscriptions_)) {
       return true;
     }
-    Enumeration enum = processorSubscriptions_.elements();
+    Enumeration en = processorSubscriptions_.elements();
     Vector subscriptions;
-    while (enum.hasMoreElements()) {
-      subscriptions = (Vector) enum.nextElement();
+    while (en.hasMoreElements()) {
+      subscriptions = (Vector) en.nextElement();
       if (areSubscriptionsChanged(subscriptions)) {
         return true;
       }
@@ -326,9 +326,9 @@ public abstract class DecorationPlugin extends SimplePlugin {
   }
 
   public boolean areSubscriptionsChanged(Vector subscriptions) {
-    Enumeration enum = subscriptions.elements();
-    while (enum.hasMoreElements()) {
-      if (isSubscriptionChanged((IncrementalSubscription) enum.nextElement())) {
+    Enumeration en = subscriptions.elements();
+    while (en.hasMoreElements()) {
+      if (isSubscriptionChanged((IncrementalSubscription) en.nextElement())) {
         return true;
       }
     }
@@ -411,9 +411,9 @@ public abstract class DecorationPlugin extends SimplePlugin {
   }
 
   public boolean areSubscriptionsChangedPrint(Vector subscriptions) {
-    Enumeration enum = subscriptions.elements();
-    while (enum.hasMoreElements()) {
-      IncrementalSubscription is = (IncrementalSubscription) enum.nextElement();
+    Enumeration en = subscriptions.elements();
+    while (en.hasMoreElements()) {
+      IncrementalSubscription is = (IncrementalSubscription) en.nextElement();
       if (isSubscriptionChanged(is)) {
         //System.out.println("####### Subscription changed: "+subscriptionChangedObject(is));
         return true;

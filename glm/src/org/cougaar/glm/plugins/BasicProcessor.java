@@ -280,9 +280,9 @@ public abstract class BasicProcessor {
     Expansion expansion;
     if (pe == null) {
       // In MB5.2 no longer automatically publishes tasks in a workflow.
-      Enumeration enum = tasks.elements();
-      while (enum.hasMoreElements()) {
-        publishAddTask((Task) enum.nextElement());
+      Enumeration en = tasks.elements();
+      while (en.hasMoreElements()) {
+        publishAddTask((Task) en.nextElement());
       }
       // create new expansion
       expansion = buildExpansion(parent, tasks);
@@ -538,8 +538,8 @@ public abstract class BasicProcessor {
       plugin_.publishRemoveFromExpansion(task);
     }
     if (logger.isDebugEnabled()) {
-      for (Enumeration enum = add_tasks.elements(); enum.hasMoreElements();) {
-        Task task = (Task) enum.nextElement();
+      for (Enumeration en = add_tasks.elements(); en.hasMoreElements();) {
+        Task task = (Task) en.nextElement();
         logger.debug(printProjection("add", task));
       }
     }

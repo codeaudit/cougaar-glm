@@ -44,7 +44,7 @@ public class OMVector {
     int tail_ = -1;		// index for reverse iteration
 
     // vector iterator
-    Enumeration enum = null;
+    Enumeration en = null;
 
     public OMVector() {
 	vertices = new Vector();
@@ -104,7 +104,7 @@ public class OMVector {
 
 	while (true) {
 	    try {
-		return enum.nextElement();
+		return en.nextElement();
 	    } catch (NoSuchElementException e) {
 		resetEnumerator();
 		continue;
@@ -117,7 +117,7 @@ public class OMVector {
     public /*synchronized*/ Object nextElement()
 	throws NoSuchElementException
     {
-	return enum.nextElement();
+	return en.nextElement();
     }
 
     /** elementAt() - returns object at the specified index or an
@@ -128,7 +128,7 @@ public class OMVector {
 
     /** hasMoreElements() */
     public /*synchronized*/ boolean hasMoreElements() {
-	return enum.hasMoreElements();
+	return en.hasMoreElements();
     }
 
     /** previousElement() - returns elements starting at the end of
@@ -155,7 +155,7 @@ public class OMVector {
         state. the state of the enumerator is invalid until the first
         call to resetEnumerator(). */
     public /*synchronized*/ void resetEnumerator() {
-	enum = vertices.elements();
+	en = vertices.elements();
 	tail_ = size_ - 1;
     }
 }

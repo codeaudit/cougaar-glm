@@ -180,7 +180,7 @@ public class ExternalAllocator extends InventoryProcessor {
     /** Figure out which organization supplying item is best for us. */
     public Organization findBestSource(Task task) {
 	// PAS FILL THIS IN
-	Enumeration enum = providers_.elements();
+	Enumeration en = providers_.elements();
 	Enumeration support_orgs;
         if (TaskUtils.isProjection(task)) {
             /* For a projection, should be time-phased as support

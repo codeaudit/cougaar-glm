@@ -202,9 +202,9 @@ public class AlternateAllocationAssessorPlugin extends SimplePlugin
     allocationAlerts.remove(alloc);
   }
 
-  private void checkAllocations(Enumeration enum) {
-    while (enum.hasMoreElements()) {
-      Allocation alloc = (Allocation) enum.nextElement();
+  private void checkAllocations(Enumeration en) {
+    while (en.hasMoreElements()) {
+      Allocation alloc = (Allocation) en.nextElement();
       AllocationResult ar = alloc.getEstimatedResult();
       if (ar != null) {
 	if (!allocations.contains(alloc)) {

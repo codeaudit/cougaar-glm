@@ -110,9 +110,9 @@ implements LogicProvider, EnvelopeLogicProvider
           return false;
         }
       };
-    Enumeration enum = rootplan.searchBlackboard(pred);
-    if (enum != null && enum.hasMoreElements()) {
-      org = (Organization)enum.nextElement();
+    Enumeration en = rootplan.searchBlackboard(pred);
+    if (en != null && en.hasMoreElements()) {
+      org = (Organization)en.nextElement();
     } else {
       return;
     }

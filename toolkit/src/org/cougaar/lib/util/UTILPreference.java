@@ -97,9 +97,9 @@ public class UTILPreference {
   public void replacePreference(NewTask t, Preference new_pref) {
     // Remove the preference from the current list of 
     // preferences for this task
-    Enumeration prefs_enum;
-    synchronized (t) { prefs_enum = t.getPreferences(); } // bug #2125
-    Vector this_task_prefs = UTILAllocate.enumToVector(prefs_enum);
+    Enumeration prefs_en;
+    synchronized (t) { prefs_en = t.getPreferences(); } // bug #2125
+    Vector this_task_prefs = UTILAllocate.enumToVector(prefs_en);
 
     t.setPreferences((replacePreference(this_task_prefs,
 					new_pref)
@@ -281,10 +281,10 @@ public class UTILPreference {
     *  specified aspect type, null if none found
     */
   public Preference getPrefWithAspectType(Task taskToExamine, int aspect_type) {
-    Enumeration pref_enum;
-    synchronized(taskToExamine) { pref_enum = taskToExamine.getPreferences(); } // bug #2125
-    while (pref_enum.hasMoreElements()) {
-      Preference return_pref = (Preference)pref_enum.nextElement();
+    Enumeration pref_en;
+    synchronized(taskToExamine) { pref_en = taskToExamine.getPreferences(); } // bug #2125
+    while (pref_en.hasMoreElements()) {
+      Preference return_pref = (Preference)pref_en.nextElement();
       if (return_pref.getAspectType() == aspect_type)
 	return return_pref;
     }

@@ -393,13 +393,13 @@ public class TaskUtils extends PluginHelper {
   }
 
   public static NewTask addPrepositionalPhrase(NewTask task, PrepositionalPhrase pp) {
-    Enumeration enum = task.getPrepositionalPhrases();
-    if (!enum.hasMoreElements())
+    Enumeration en = task.getPrepositionalPhrases();
+    if (!en.hasMoreElements())
       task.setPrepositionalPhrases(pp);
     else {
       Vector phrases = new Vector();
-      while (enum.hasMoreElements()) {
-        phrases.addElement(enum.nextElement());
+      while (en.hasMoreElements()) {
+        phrases.addElement(en.nextElement());
       }
       phrases.addElement(pp);
       task.setPrepositionalPhrases(phrases.elements());
@@ -416,10 +416,10 @@ public class TaskUtils extends PluginHelper {
     }
 
     PrepositionalPhrase phrase;
-    Enumeration enum = task.getPrepositionalPhrases();
+    Enumeration en = task.getPrepositionalPhrases();
     Vector phrases = new Vector();
-    while (enum.hasMoreElements()) {
-      phrase = (PrepositionalPhrase) enum.nextElement();
+    while (en.hasMoreElements()) {
+      phrase = (PrepositionalPhrase) en.nextElement();
       if (!phrase.getPreposition().equals(prep)) {
         phrases.addElement(phrase);
       }

@@ -208,7 +208,7 @@ public class AssetUtil extends UTILAsset {
 
   /**
    * creates a HashMap of organizations with their geolocCodes as keys.
-   * @param organizations the enum of organizations to be put in the hashmap
+   * @param organizations the en of organizations to be put in the hashmap
    * @return HashMap the newly constructed table with geolocCodes as keys,
    *         and the corresponding organization as object.
    */
@@ -250,7 +250,7 @@ public class AssetUtil extends UTILAsset {
 
   /**
    * This call gets oneself as an organization asset.
-   * @param clusterAssets the Enum of assets received from the asset container
+   * @param clusterAssets the En of assets received from the asset container
    * @return Organization which represents current cluster
    */
   public Organization getSelf(Enumeration clusterAssets){
@@ -1094,17 +1094,17 @@ public class AssetUtil extends UTILAsset {
    * Utility method - find the organization corresponding to the port at 
    * the given location
    * @param loc he location
-   * @param ports_enum a list of ports to search: probably obtained by a call to
+   * @param ports_en a list of ports to search: probably obtained by a call to
    * getOrganizationAssets()
    * @param myClusterName used for logger.isDebugEnabled()()ging purposes.
    * @return the port that matches the location.
    */
   public Organization findPortOrg(GeolocLocation loc, 
-                                         Enumeration ports_enum,
+                                         Enumeration ports_en,
                                          String myClusterName) {
     Set ports = new HashSet();
-    while (ports_enum.hasMoreElements()) {
-      Organization org = (Organization)ports_enum.nextElement();
+    while (ports_en.hasMoreElements()) {
+      Organization org = (Organization)ports_en.nextElement();
       RelationshipSchedule sched = org.getRelationshipSchedule();
       
       Collection portRelationships;

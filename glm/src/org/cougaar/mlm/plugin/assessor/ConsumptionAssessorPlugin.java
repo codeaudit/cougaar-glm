@@ -234,9 +234,9 @@ public class ConsumptionAssessorPlugin extends SimplePlugin {
     initializeAlertsMap(alertSubscription.elements());
   }
 
-  public void processSelfOrgs(Enumeration enum) {
-    if (enum.hasMoreElements()) {
-      Organization self = (Organization) enum.nextElement();
+  public void processSelfOrgs(Enumeration en) {
+    if (en.hasMoreElements()) {
+      Organization self = (Organization) en.nextElement();
       selfOrgName = self.getItemIdentificationPG().getItemIdentification();
       projectionTasks = (CollectionSubscription) subscribe(projectionTaskPredicate, false);
       supplyTasks = (CollectionSubscription) subscribe(supplyTaskPredicate, false);
@@ -264,9 +264,9 @@ public class ConsumptionAssessorPlugin extends SimplePlugin {
     }
   }
 
-  private void processAlerts(Enumeration enum) {
-    while (enum.hasMoreElements()) {
-      Alert alert = (Alert) enum.nextElement();
+  private void processAlerts(Enumeration en) {
+    while (en.hasMoreElements()) {
+      Alert alert = (Alert) en.nextElement();
       if (alert.getAcknowledged()) {
         AlertParameter response = (AlertParameter) alert.getOperatorResponse();
         if ("Yes".equals(response.getParameter())) {
@@ -305,12 +305,12 @@ public class ConsumptionAssessorPlugin extends SimplePlugin {
     HashMap buckets = new HashMap();
     windowEnd = currentTimeMillis(); // Window ends now
     windowBegin = windowEnd - windowSize;
-    Enumeration enum = projectionTasks.elements();
-//      if (!enum.hasMoreElements()) {
+    Enumeration en = projectionTasks.elements();
+//      if (!en.hasMoreElements()) {
 //          System.out.println("No projections for " + selfOrgName);
 //      }
-    while (enum.hasMoreElements()) {
-      Task projectionTask = (Task) enum.nextElement();
+    while (en.hasMoreElements()) {
+      Task projectionTask = (Task) en.nextElement();
       long startTime = TaskUtils.getStartTime(projectionTask);
       long endTime = TaskUtils.getEndTime(projectionTask);
       if (startTime > windowBegin || endTime < windowEnd) {

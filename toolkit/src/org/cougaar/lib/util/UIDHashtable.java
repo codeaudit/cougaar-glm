@@ -125,10 +125,10 @@ public class UIDHashtable extends Hashtable{
      * @return the key for the first entry found that matches the given value
      **/
     public synchronized Integer keyForValue(Object value){
-	Enumeration enum = keys();
+	Enumeration en = keys();
 	Integer key;
-	while(enum.hasMoreElements()){
-	    key = (Integer) enum.nextElement();
+	while(en.hasMoreElements()){
+	    key = (Integer) en.nextElement();
 	    if(get(key).equals(value))
 		return key;
 	}

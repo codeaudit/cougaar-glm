@@ -92,7 +92,7 @@ public class UTILExpand {
    * @param plan the log plan
    * @param parent the parent task
    * @param verb the verb
-   * @param prepphrases an enum of PrepositionalPhrases
+   * @param prepphrases PrepositionalPhrases
    * @param obj the direct object
    * @param preferences for sub task
    * @param priority of task
@@ -125,7 +125,7 @@ public class UTILExpand {
    * @param plan the log plan
    * @param parent_uid the parent task UID
    * @param verb the verb
-   * @param prepphrases an enum of PrepositionalPhrases
+   * @param prepphrases the PrepositionalPhrases
    * @param obj the direct object
    * @param preferences for sub task
    * @param priority of task
@@ -299,8 +299,8 @@ public class UTILExpand {
     if (wf == null)
       return;
     int i = 0;
-    for (Enumeration enum = wf.getTasks (); enum.hasMoreElements (); ) {
-      showPlanElement((Task) enum.nextElement (), i++);
+    for (Enumeration en = wf.getTasks (); en.hasMoreElements (); ) {
+      showPlanElement((Task) en.nextElement (), i++);
     }
   }
 

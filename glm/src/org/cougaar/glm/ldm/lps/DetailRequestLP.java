@@ -148,9 +148,9 @@ implements LogicProvider, EnvelopeLogicProvider, RestartLogicProvider, MessageLo
         return false;
       }
     };
-    Enumeration enum = rootplan.searchBlackboard(pred);
-    while (enum.hasMoreElements()) {
-      DetailRequest ir = (DetailRequest) enum.nextElement();
+    Enumeration en = rootplan.searchBlackboard(pred);
+    while (en.hasMoreElements()) {
+      DetailRequest ir = (DetailRequest) en.nextElement();
       processDetailRequestAdded(ir);
     }
 

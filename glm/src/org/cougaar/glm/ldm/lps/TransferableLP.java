@@ -117,9 +117,9 @@ implements LogicProvider, EnvelopeLogicProvider, RestartLogicProvider
         return false;
       }
     };
-    Enumeration enum = rootplan.searchBlackboard(pred);
-    while (enum.hasMoreElements()) {
-      TransferableTransfer tt = (TransferableTransfer) enum.nextElement();
+    Enumeration en = rootplan.searchBlackboard(pred);
+    while (en.hasMoreElements()) {
+      TransferableTransfer tt = (TransferableTransfer) en.nextElement();
       MessageAddress dest = ((Organization)tt.getAsset()).getMessageAddress();
       processTransferableTransferAdded(tt, dest);
     }
@@ -137,8 +137,8 @@ implements LogicProvider, EnvelopeLogicProvider, RestartLogicProvider
         return false;
       }
     };
-    for (enum = rootplan.searchBlackboard(pred); enum.hasMoreElements(); ) {
-      Transferable transferable = (Transferable) enum.nextElement();
+    for (en = rootplan.searchBlackboard(pred); en.hasMoreElements(); ) {
+      Transferable transferable = (Transferable) en.nextElement();
       NewTransferableVerification nav = ldmf.newTransferableVerification(transferable);
       nav.setSource(self);
       nav.setDestination(transferable.getSource());

@@ -93,9 +93,9 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 		  Object obj = pp.getIndirectObject();
 		  if (obj instanceof String) {
 		    String type = (String)obj;
-		    Enumeration enum = resourceTypes_.elements();
-		    while (enum.hasMoreElements()) {
-		      if (type.equals((String)enum.nextElement())) {
+		    Enumeration en = resourceTypes_.elements();
+		    while (en.hasMoreElements()) {
+		      if (type.equals((String)en.nextElement())) {
 			return true;
 		      }
 		    }	

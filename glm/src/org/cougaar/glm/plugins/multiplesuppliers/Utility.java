@@ -136,7 +136,7 @@ public final class Utility {
    * @return A newly created Task patterned from an input task.
    */
   public final static NewTask cloneTask( PlanningFactory factory, Task task, String[] prepositionsToExclude) {
-    Enumeration enum = null;
+    Enumeration en = null;
     NewTask subtask = factory.newTask();
     subtask.setContext( task.getContext());
     subtask.setPlan( task.getPlan());
@@ -145,12 +145,12 @@ public final class Utility {
     subtask.setDirectObject( task.getDirectObject());
     subtask.setWorkflow( task.getWorkflow());
 
-    enum = task.getPrepositionalPhrases();
-    if ( enum != null) {
+    en = task.getPrepositionalPhrases();
+    if ( en != null) {
       Vector pPhrases = new Vector();
       NewPrepositionalPhrase clonePhrase;
-      while ( enum.hasMoreElements()) {
-        PrepositionalPhrase pPhrase = (PrepositionalPhrase)enum.nextElement();
+      while ( en.hasMoreElements()) {
+        PrepositionalPhrase pPhrase = (PrepositionalPhrase)en.nextElement();
 
         // Don't include prepositional phrases in the new task that are listed in prepositionsToExclude.
         if ( prepositionsToExclude != null) {
@@ -180,9 +180,9 @@ public final class Utility {
             System.out.println( "PlanElements.cloneTask: unable to create newVector instance");
             return null;
           }
-          Enumeration tmpEnum = orgVector.elements();
-          while ( tmpEnum.hasMoreElements()) {
-            newVector.add( tmpEnum.nextElement());
+          Enumeration tmpEn = orgVector.elements();
+          while ( tmpEn.hasMoreElements()) {
+            newVector.add( tmpEn.nextElement());
           }
           clonePhrase.setIndirectObject( newVector);
         } else {
@@ -193,12 +193,12 @@ public final class Utility {
       subtask.setPrepositionalPhrases( pPhrases.elements());
     }
 
-    enum = task.getPreferences();
-    if ( enum != null) {
+    en = task.getPreferences();
+    if ( en != null) {
       Vector preferences = new Vector();
       Preference clonePreference;
-      while ( enum.hasMoreElements()) {
-        Preference preference = (Preference)enum.nextElement();
+      while ( en.hasMoreElements()) {
+        Preference preference = (Preference)en.nextElement();
         clonePreference = factory.newPreference( preference.getAspectType(),
                                                   preference.getScoringFunction());
         preferences.addElement( clonePreference);

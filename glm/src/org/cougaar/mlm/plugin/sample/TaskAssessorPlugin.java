@@ -192,9 +192,9 @@ public class TaskAssessorPlugin extends SimplePlugin
   private void updateGUI() {
   }
 
-  private void checkAdd(Enumeration enum) {
-    while (enum.hasMoreElements()) {
-      Object object = enum.nextElement();
+  private void checkAdd(Enumeration en) {
+    while (en.hasMoreElements()) {
+      Object object = en.nextElement();
       if (object instanceof Task) {
 	Task task = (Task) object;
 	tasks.add(task);
@@ -203,13 +203,13 @@ public class TaskAssessorPlugin extends SimplePlugin
     }
   }
 
-  private void checkChange(Enumeration enum) {
-    checkAdd(enum);
+  private void checkChange(Enumeration en) {
+    checkAdd(en);
   }
 
-  private void checkRemove(Enumeration enum) {
-    while (enum.hasMoreElements()) {
-      Object object = enum.nextElement();
+  private void checkRemove(Enumeration en) {
+    while (en.hasMoreElements()) {
+      Object object = en.nextElement();
       if (object instanceof Task) {
 	if (tasks.contains(object)) {
 	  tasks.remove(object);

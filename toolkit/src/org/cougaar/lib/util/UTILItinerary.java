@@ -122,7 +122,7 @@ public class UTILItinerary {
   /**
    * makes the itinerary
    * @param ldmf The factory
-   * @param itineraryElements an enum of all the legs.
+   * @param itineraryElements all the legs.
    * @return Schedule the itinerary
    */
   public Schedule makeItinerary(PlanningFactory ldmf, Enumeration itineraryElements){

@@ -308,10 +308,10 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
     return n;
   }
 
-  protected List enumToList (Enumeration enum) {
+  protected List enumToList (Enumeration en) {
     List result = new ArrayList ();
-    while (enum.hasMoreElements ())
-      result.add (enum.nextElement());
+    while (en.hasMoreElements ())
+      result.add (en.nextElement());
     return result;
   }
 }

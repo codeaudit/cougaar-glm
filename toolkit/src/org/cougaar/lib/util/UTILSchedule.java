@@ -80,10 +80,10 @@ public class UTILSchedule {
   public Schedule timeInverse(Schedule x, PlanningFactory ldmf) {
     Vector newElem = new Vector();
     Date point = new Date(0);
-    Enumeration enum = x.getAllScheduleElements();
-    // As I understand it this is getting a enum from an ordered set and is therefore ordered
-    while (enum.hasMoreElements()) {
-      ScheduleElement se = (ScheduleElement)enum.nextElement();
+    Enumeration en = x.getAllScheduleElements();
+    // As I understand it this is getting a enumeration from an ordered set and is therefore ordered
+    while (en.hasMoreElements()) {
+      ScheduleElement se = (ScheduleElement)en.nextElement();
       if (point.before(se.getStartDate())) {
 	newElem.addElement((ScheduleElement)new ScheduleElementImpl(point,se.getStartDate()));
       }
