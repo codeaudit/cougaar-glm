@@ -340,6 +340,9 @@ public abstract class InventoryManager extends InventoryProcessor {
       Scalar current = (day < switchoverDay) ? invpg.getProjected(day) : null;
 
       if (previous == null) {
+        System.out.println("#####" + clusterId_ + 
+                           " current projection is null on day " + day +
+                           " for " + inventory.getItemIdentificationPG().getItemIdentification());
         break;
       } 
 
@@ -353,7 +356,8 @@ public abstract class InventoryManager extends InventoryProcessor {
 	  Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
 	  projections.add(t);
 	}
-	previous = current;
+
+        previous = current;
 	periodBegin = day;
       }
     }
@@ -1123,3 +1127,6 @@ public abstract class InventoryManager extends InventoryProcessor {
   }
 
 }
+
+
+

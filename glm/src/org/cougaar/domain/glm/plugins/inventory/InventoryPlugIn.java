@@ -312,11 +312,20 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     }
 
     private void removeMILTasks(Enumeration milTasks) {
+        boolean clear = false;
+
         while (milTasks.hasMoreElements()) {
 	    Task task = (Task) milTasks.nextElement();
 	    Inventory inventory = (Inventory) task.getDirectObject();
 	    MILTaskHash_.remove(inventory);
-	}
+            clear = true;
+        }
+
+        // clear the recorded customers if MaintainInventory has been rescinded
+        // ????? Should I wait until all mil tasks have been rescinded?
+        if (clear) {
+            clearRecordedCustomers();
+        }
     }
 
     /**
