@@ -1613,6 +1613,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     }
 
     Node node = doc.getDocumentElement();
-    return LocationParser.getLocation(getCluster().getLDM(), node);
+    return locationParser.getLocation(getCluster().getLDM(), node);
   }
+
+  LocationParser locationParser = new LocationParser();
 }

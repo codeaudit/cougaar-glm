@@ -181,7 +181,7 @@ public class LogPlanModel extends DefaultTreeModel {
             if ( directObject != null) {
               retVal += " " + getDescription( directObject);
             }
-            PrepositionalPhrase pPhrase = UTILPrepPhrase.getPrepNamed( task, Constants.Preposition.FOR);
+            PrepositionalPhrase pPhrase = prepHelper.getPrepNamed( task, Constants.Preposition.FOR);
             if ( pPhrase != null) {
               retVal += " For " + getDescription( pPhrase.getIndirectObject());
             }
@@ -864,5 +864,6 @@ public class LogPlanModel extends DefaultTreeModel {
       handleAddedAllocations( (Allocation)allocations.nextElement());
   }
 
+  protected UTILPrepPhrase prepHelper = new UTILPrepPhrase (null);
 }
 
