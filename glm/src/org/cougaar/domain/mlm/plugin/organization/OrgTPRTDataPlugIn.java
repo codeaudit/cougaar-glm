@@ -434,7 +434,8 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 			if (validDate) {	// startTimeStr has all the components, now check endTimeStr
 				long t1 = DEFAULT_START_TIME;
 				if (!startTimeStr.equals("")) {
-					cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, Integer.parseInt(day));
+					cal.clear();
+					cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, Integer.parseInt(day), 0, 0, 0);
 					//System.out.println("OrgTPRTDataPlugin: parseTimeStrings t1: year=" + year + " month=" + month + " day=" + day);
 					t1 = cal.getTime().getTime();
 				}
@@ -458,7 +459,8 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 				if (validDate) {	// endTimeStr also has all the components, change values of startTime and endTime from their defaults
 					long t2 = DEFAULT_END_TIME;
 					if (!endTimeStr.equals("")) {
-						cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, Integer.parseInt(day));
+						cal.clear();
+						cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, Integer.parseInt(day), 0, 0, 0);
 						t2 = cal.getTime().getTime();
 						//System.out.println("OrgTPRTDataPlugin: parseTimeStrings t2: year=" + year + " month=" + month + " day=" + day);
 					}
