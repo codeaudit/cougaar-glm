@@ -15,27 +15,30 @@ import java.util.StringTokenizer;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.ibm.xml.parser.Parser;
-import com.ibm.xml.parser.TXDocument;
-import com.ibm.xml.parser.TXElement;
+import org.apache.xerces.parsers.DOMParser;
+import org.xml.sax.InputSource;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class XMLTableModel extends AbstractTableModel {
   public String[] headers;
   // paths correspond to headers, except that prepositions are special cased
   public String[] paths;
-  public TXElement[] children;
+  public NodeList children;
 
   public XMLTableModel(byte[] buffer, String logPlanObjectName) {
-    TXDocument doc = null;
+    Document doc = null;
 
     try {
-      Parser p = new Parser("Log Plan");
-      doc = p.readStream(new ByteArrayInputStream(buffer));
+      DOMParser p = new DOMParser();
+      p.parse(new InputSource(new ByteArrayInputStream(buffer)));
+      doc = p.getDocument();
     } catch (Exception e) {
       e.printStackTrace();
     }
-    TXElement root = (TXElement)doc.getDocumentElement();
-    children = root.searchChildrenAll(logPlanObjectName);
+    Element root = doc.getDocumentElement();
+    children = root.getElementsByTagName(logPlanObjectName);
   }
 
   public int getColumnCount() {
@@ -43,17 +46,17 @@ public class XMLTableModel extends AbstractTableModel {
   }
 
   public int getRowCount() {
-    return children.length;
+    return children.getLength();
   }
 
-  public String getValueOfNode(TXElement node, String[] nodeNames, int index) {
-    TXElement[] elements = node.searchChildrenAll(nodeNames[index]);
-    if (elements.length != 0) {
+  public String getValueOfNode(Element node, String[] nodeNames, int index) {
+    NodeList elements = node.getElementsByTagName(nodeNames[index]);
+    if (elements.getLength() != 0) {
       if (index == nodeNames.length-1)
-        return elements[0].getFirstChild().getNodeValue();
+        return elements.item(0).getFirstChild().getNodeValue();
       else
-        for (int i = 0; i < elements.length; i++)
-          return getValueOfNode(elements[i], nodeNames, index+1);
+        for (int i = 0; i < elements.getLength(); i++)
+          return getValueOfNode((Element)elements.item(i), nodeNames, index+1);
     }
     return null;
   }
@@ -67,7 +70,7 @@ public class XMLTableModel extends AbstractTableModel {
   }
 
   public Object getValueAt(int row, int col) {
-    TXElement child = children[row];
+    Element child = (Element)children.item(row);
     String header = headers[col];
     String[] nodeNames = getNodeNamesFromPath(paths[col]);
     String s = getValueOfNode(child, nodeNames, 0);
