@@ -95,6 +95,10 @@ public class UIAllocationResultImpl implements UIAllocationResult {
     return getDateResult(AspectType.POD_DATE);
   }
 
+  public double getReadiness() {
+    return getResult(AspectType.READINESS);
+  }
+
   /** The confidence rating of this result.
       @return double - The confidence rating of this result. 
   */

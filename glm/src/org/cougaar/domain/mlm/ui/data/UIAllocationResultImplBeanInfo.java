@@ -72,6 +72,10 @@ public class UIAllocationResultImplBeanInfo extends SimpleBeanInfo {
                                        beanClass,
                                        "getPODDate",
                                        null);
+      pd[i++] = new PropertyDescriptor("readiness",
+                                       beanClass,
+                                       "getReadiness",
+                                       null);
       pd[i++] = new PropertyDescriptor("confidenceRating",
                                        beanClass,
                                        "getConfidenceRating",

@@ -46,6 +46,8 @@ public interface UIAllocationResult {
 
   Date getPODDate();
 
+  double getReadiness();
+
   /** The confidence rating of this result.
       @return double - The confidence rating of this result. 
   */
