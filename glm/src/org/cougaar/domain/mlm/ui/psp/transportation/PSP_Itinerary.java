@@ -2566,8 +2566,9 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 	    }
 	} else if (asset instanceof AggregateAsset) {
 	    retval = grabUnit(((AggregateAsset)asset).getAsset());
-	} else {
-	    retval = ((ALPAsset)asset).getForUnitPG().getUnit();
+	} else { 
+	    if (((ALPAsset)asset).getForUnitPG() == null) retval = null;
+	    else retval = ((ALPAsset)asset).getForUnitPG().getUnit();
 	}
 	return retval;
     }
