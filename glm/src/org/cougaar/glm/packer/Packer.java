@@ -154,11 +154,11 @@ public abstract class Packer extends GenericPlugin {
 
     if ((tonsPacked > tonsReceived + 0.0001) || (tonsPacked < tonsReceived - 0.0001)) {
       if (getLoggingService().isErrorEnabled()) {
-	getLoggingService().error("Packer - received " + tonsReceived + " tons but packed " + tonsPacked + 
+	getLoggingService().warn("Packer - received " + tonsReceived + " tons but packed " + tonsPacked + 
 				  " tons, (total received " + ADD_TONS + " vs total packed " + Filler.TRANSPORT_TONS +
 				  ") for tasks : ");
 	for (Iterator iter = tasks.iterator(); iter.hasNext();) 
-	  getLoggingService().error ("\t" + ((Task) iter.next()).getUID());
+	  getLoggingService().warn("\t" + ((Task) iter.next()).getUID());
       }
     }
   }
