@@ -24,11 +24,20 @@
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
+       <RangeValue min="41"  max="225">
+	  <RuleParam name="Meals">
+      	    <KeySet value="">
+	      <KeyValue key="Breakfast" value="NONE" />
+    	      <KeyValue key="Lunch" value="NONE" />
+              <KeyValue key="Dinner" value="NONE" />
+	    </KeySet>
+  	  </RuleParam>
+         </RangeValue>
       </RangeSet>
     </RuleParam>
     <RuleParam name="EnhancementsPolicy">
       <RangeSet value ="">
-	<RangeValue min="0" max="180">
+	<RangeValue min="0" max="225">
 	  <RuleParam name="Enhancements">
       	    <KeySet value="">
 	    <KeyValue key="Fresh Fruits" value="0.0" />
@@ -58,7 +67,7 @@
     </RuleParam>
     <RuleParam name="BottledWaterPolicy">
       <RangeSet value="">
-        <RangeValue min="0"  max="180">
+        <RangeValue min="0"  max="225">
   	  <RuleParam name="BottledWater">
       	    <KeySet value="">
 	    <KeyValue key="BottledWater" value="0.0" />
