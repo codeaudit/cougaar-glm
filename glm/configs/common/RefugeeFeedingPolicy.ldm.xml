@@ -1,0 +1,48 @@
+<?xml version="1.0"  encoding="US-ASCII"?>
+
+<!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
+
+<Policies>
+<Policy name="RefugeeFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
+    <RuleParam name="Breakfast">
+      <RangeSet value="">
+       <RangeValue min="0"  max="9"  value="HDR" />
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="Lunch">
+      <RangeSet value="">
+       <RangeValue min="0"  max="9"  value="" />
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="Dinner">
+      <RangeSet value="">
+        <RangeValue min="0"  max="9"  value="" />
+       </RangeSet>
+    </RuleParam>
+ <RuleParam name="BottledWater">
+      <RangeSet value="">
+              </RangeSet>
+    </RuleParam>
+    <RuleParam name="WaterUOI">
+      	<String value ="Liter">
+	</String>
+    </RuleParam>   
+ <RuleParam name="DemandEnhancements">
+  <Boolean value="false"> </Boolean>
+    </RuleParam>   
+ <RuleParam name="Enhancements">
+      <KeySet value="">
+    </KeySet>
+    </RuleParam>
+<RuleParam name="A-RationCapability">
+  <RangeSet value="">
+  </RangeSet>
+    </RuleParam>
+ </Policy>
+</Policies>
+
+
+
+
+
+
