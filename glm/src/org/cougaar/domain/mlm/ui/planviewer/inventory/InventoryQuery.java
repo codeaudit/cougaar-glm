@@ -45,7 +45,7 @@ public class InventoryQuery implements Query {
   }
 
   public String getPSP_id() {
-    return "INVENTORY.PSP";
+    return "GLMINVENTORY.PSP";
   }
 
   public void readReply(InputStream is) {
