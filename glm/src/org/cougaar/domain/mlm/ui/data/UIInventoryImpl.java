@@ -195,8 +195,9 @@ public class UIInventoryImpl {
             inactiveRequestedDueOutSchedule = computeRequestedDueOutVector(true);
             projectedRequestedDueOutSchedule = computeProjectedRequestedDueOutVector(false);
             inactiveProjectedRequestedDueOutSchedule = computeProjectedRequestedDueOutVector(true);
-
-	    setInventoryLevelsSchedules((Inventory) asset);
+	    
+	    if(asset instanceof Inventory) 
+		setInventoryLevelsSchedules((Inventory) asset);
 
 //  	    setRequestedDueOutSchedule(); 
 //  	    setProjectedRequestedDueOutSchedule();
