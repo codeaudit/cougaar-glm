@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.4 2001-02-26 22:19:59 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.5 2001-02-27 20:04:10 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -97,7 +97,7 @@ public class ServerPlanElementProvider extends PlanElementProvider
 	byUnit = new VectorHashtable();
 	itineraryBrothers = new VectorHashtable();
 	unitManifests = new Hashtable();
-	unitTree = new UnitHierarchy(clusterCache.getDemandHost());
+	unitTree = new UnitHierarchy(clusterCache.getHost());
 	seenAssetUnit = new Hashtable();	 
 	itinsMissingUnit = new VectorHashtable();
         count ++;
