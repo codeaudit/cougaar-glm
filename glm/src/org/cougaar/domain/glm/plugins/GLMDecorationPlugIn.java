@@ -92,8 +92,20 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
         for (Iterator i = c.iterator(); i.hasNext(); ) {
             ClusterOPlan coplan = (ClusterOPlan) i.next();
             ClusterOPlans_.put(coplan.getOplanUID(), coplan);
+            //ClusterOPlans_.put(oplanUID, coplan);
+
+            UID oplanUID = coplan.getOplanUID();
+            IncrementalSubscription oplanActivities = (IncrementalSubscription)
+                orgActivitySubscriptionOfOPlanUID.get(oplanUID);
+            if (oplanActivities == null) {
+                oplanActivities = (IncrementalSubscription)
+                    subscribe(new OplanOrgActivitiesPredicate(oplanUID));
+                monitorPlugInSubscription(oplanActivities);
+                orgActivitySubscriptionOfOPlanUID.put(oplanUID, oplanActivities);
+            }
         }
     }
+
 
     protected void setupSubscriptions() {
 	super.setupSubscriptions();
@@ -206,6 +218,7 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
                 if (coplan == null) {
                     coplan = new ClusterOPlan(clusterId_, oplan);
                     ClusterOPlans_.put(oplanUID, coplan);
+                    publishAdd(coplan);
                 }
 	    }
 	}
@@ -222,11 +235,12 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
                 IncrementalSubscription s = (IncrementalSubscription)
                     orgActivitySubscriptionOfOPlanUID.remove(oplanUID);
                 if (s != null) unsubscribe(s);
+                publishRemove(coplan);
                 break;
 	    }
 	}
 	if (ClusterOPlans_.isEmpty()) {
-		GLMDebug.ERROR("GLMDecorationPlugIn", clusterId_, "updateOplans no OPLAN");
+		GLMDebug.ERROR("GLMDecorationPlugIn", clusterId_, " updateOplans no OPLAN");
 	}
     }
 
