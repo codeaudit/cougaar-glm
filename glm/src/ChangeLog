@@ -1,3 +1,15 @@
+2003-12-09  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/ui/data/UISimpleSchedule.java:
+	Fix error in setEndDate caused by mis-capitalizing the parameter
+	name such that the set was effectively a nop setting the endDate
+	to is current value instead of the new value. (Found by eclipse.)
+
+	* org/cougaar/mlm/ui/data/UIQuantityScheduleElement.java:
+	Fix error in setEndTime caused by mis-capitalizing the parameter
+	name such that the set was effectively a nop setting the endTime
+	to is current value instead of the new value.
+
 2003-05-12  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/mlm/plugin/organization/GLSInitServlet.java:
