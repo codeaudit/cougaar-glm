@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.plugin.completion;
 
-import org.cougaar.core.plugin.completion.CompletionNodePlugin;
+import org.cougaar.planning.plugin.completion.CompletionNodePlugin;
 
 /**
  * Specialize CompletionNodePlugin for GLS. Currently, no

@@ -28,7 +28,7 @@
 package org.cougaar.glm.plugin.completion;
 
 import org.cougaar.core.blackboard.CollectionSubscription;
-import org.cougaar.core.plugin.completion.CompletionSocietyPlugin;
+import org.cougaar.planning.plugin.completion.CompletionSocietyPlugin;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.mlm.plugin.organization.GLSInitServlet;
