@@ -1506,12 +1506,12 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
   }
 
 
-
   /**
    * Structure used for search.<br>
    * (HashMap)seenAssets maps Asset to AssetEntry
    */
   protected static class AssetEntry {
+
     /** points to task that first entered cluster.<br>
      * null if this asset didn't enter the cluster itself (e.g.
      * an AssetGroup composed of incoming assets).
@@ -1919,6 +1919,8 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
     UITAssetInfo tai = new UITAssetInfo();
     int quantity = 1;
     double tons = 0.0;
+    UID myUID = transAsset.getUID();
+    String myItemID = transAsset.getItemIdentificationPG().getItemIdentification();
     // Let's be paranoid
     if (transAsset instanceof ALPAsset && 
 	((ALPAsset)transAsset).hasPhysicalPG() &&
@@ -1943,10 +1945,10 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
     TypeIdentificationPG transTypePG = transAsset.getTypeIdentificationPG();
     tai.setTypeID(transTypePG.getTypeIdentification());
     tai.setTypeNomenclature(transTypePG.getNomenclature());
-    UID uid = transAsset.getUID();
+    UID uid = myUID; //transAsset.getUID();
     tai.setUID((uid != null) ? uid.toString() : "");
-    tai.setItemID(
-      transAsset.getItemIdentificationPG().getItemIdentification());
+    tai.setItemID(myItemID);
+    //      transAsset.getItemIdentificationPG().getItemIdentification());
     tai.setAssetClasses(getAssetClasses(transAsset));
     return tai;
   }
@@ -2112,9 +2114,9 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
             // BEGIN "IMPLIED" FIX
             if (pe instanceof Allocation) {
               Asset a = ((Allocation)pe).getAsset();
-              if ((a instanceof PhysicalAsset) ||
-                  ((a instanceof ALPAsset) &&
-                   (((ALPAsset)a).hasPersonPG()))) {
+              if ((a instanceof PhysicalAsset) || (a instanceof Person)) {
+//                   ((a instanceof ALPAss) &&
+//                    (((ALPAsset)a).hasPersonPG()))) {
                 Verb v = task.getVerb();
                 if ((Constants.Verb.Transport).equals(v) ||
                     (Constants.Verb.TransportationMission).equals(v) ||
@@ -2641,16 +2643,25 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 	    for (int i = 0; i < assetList.size(); i++) {
 		tempval = grabUnit((Asset)assetList.elementAt(i));
 		if (tempval == null || (retval != null &&
-					!(tempval.equals(retval))))
+					!(tempval.equals(retval)))) {
+		    System.out.println("WARNING: Mismatched for information in Asset Group: "+tempval+" / "+retval);
 		    return null;
+		}
 		retval = tempval;
 	    }
-	} else if (asset instanceof AggregateAsset) {
-	    retval = grabUnit(((AggregateAsset)asset).getAsset());
-	} else { 
-	    if (!((ALPAsset)asset).hasForUnitPG()) retval = null;
-	    else retval = ((ALPAsset)asset).getForUnitPG().getUnit();
+	} else {
+	    PropertyGroup forunit = asset.searchForPropertyGroup(ForUnitPG.class);
+	    if (forunit == null) retval = null;
+	    else retval = ((ForUnitPG)forunit).getUnit();
 	}
+// 	} else if (asset instanceof AggregateAsset) {
+// 	    PropertyGroup 
+// 	    retval =
+// 	    retval = grabUnit(((AggregateAsset)asset).getAsset());
+// 	} else { 
+// 	    if (!((ALPAsset)asset).hasForUnitPG()) retval = null;
+// 	    else retval = ((ALPAsset)asset).getForUnitPG().getUnit();
+// 	}
 	return retval;
     }
 
