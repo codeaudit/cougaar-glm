@@ -50,9 +50,7 @@ public class FieldParser{
    * set a field given by node in an object obj
    */
   public Object setField(LDMServesPlugin ldm, Node node, Object obj){
-
     if(node.getNodeName().equals("field")){
-
       Class  objClass   = obj.getClass(); 
       String fieldName  = node.getAttributes().getNamedItem("name").getNodeValue();
       String fieldType  = node.getAttributes().getNamedItem("type").getNodeValue();
@@ -270,7 +268,7 @@ public class FieldParser{
    * get a method on an object that is called with a superclass of its
    * argument.  Assumes only one argument per method (good for setters).
    */
-  private static Method oldGetSetterMethod(Class objc, String name, Class argtype){
+  private Method oldGetSetterMethod(Class objc, String name, Class argtype){
     Method[] methods  = null;
     Class[]  argclass = new Class[1];
 
@@ -296,10 +294,10 @@ public class FieldParser{
    * Calls a method inside of an object with the given
    * parameter of the given type.
    */
-  private static Object callMethod(Object object,
-                                   Method fieldSetter,
-                                   Object fieldValue,
-                                   String fieldType)
+  private Object callMethod(Object object,
+			    Method fieldSetter,
+			    Object fieldValue,
+			    String fieldType)
     throws IllegalAccessException, InvocationTargetException
   {
     
@@ -349,7 +347,7 @@ public class FieldParser{
    * This is a "loook ahead" function to get the object type
    * for a field that contains an object.
    */
-  private static String getObjectType(Node node){
+  private String getObjectType(Node node){
     String    retval   = null;
     NodeList  nlist    = node.getChildNodes();      
     int       nlength  = nlist.getLength();
