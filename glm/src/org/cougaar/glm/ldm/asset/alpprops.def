@@ -523,8 +523,6 @@ agency.doc=the agency or other major organization the asset is \
 	  USTC, CENTCOM.
 
 [MilitaryOrgPG]
-
-[MilitaryOrgPG]
 slots=String standard_name, \
       String UIC, \
       String UTC, \
