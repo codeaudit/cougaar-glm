@@ -1,5 +1,5 @@
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 
 
 public class TreeTableCellRendererPlus extends JTree implements TableCellRenderer 

@@ -1,4 +1,4 @@
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import javax.swing.JPanel;
@@ -10,15 +10,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.component.TPFDDColor;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.component.TPFDDColor;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.SwingQueue;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.SwingQueue;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
 
-import org.cougaar.domain.mlm.ui.tpfdd.gui.model.ItemPoolModelListener;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.model.ItemPoolModelListener;
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ClusterCache;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache;
 
 
 public class LogPlanViewPlus extends JPanel implements ItemPoolModelListener
@@ -95,13 +95,13 @@ public class LogPlanViewPlus extends JPanel implements ItemPoolModelListener
     public void fireItemWithIndexDeleted(Object item, int index)
     {
       //Debug.out("LPV:fIWID " + item + " " + index);
-	if ( item == null || !(item instanceof TaskNode) )
+	if ( item == null || !(item instanceof Node) )
 	    return;
 
-	TaskNode node = (TaskNode)item;
+	Node node = (Node)item;
 
 	final TaskModel taskModel = (TaskModel)treeTable.getTreeTableModel();
-	Object parent = node.getParent_();
+	Object parent = node.getParent();
 	final Object path[] = taskModel.getPathToNode(parent);
 
 	final int indices[] = new int[1];
@@ -135,13 +135,13 @@ public class LogPlanViewPlus extends JPanel implements ItemPoolModelListener
     {
 	final Object item = itemVar;
 
-	if ( item == null || !(item instanceof TaskNode) )
+	if ( item == null || !(item instanceof Node) )
 	    return;
 
-	TaskNode node = (TaskNode)item;
+	Node node = (Node)item;
 
 	final TaskModel taskModel = (TaskModel)treeTable.getTreeTableModel();
-	Object parent = node.getParent_();
+	Object parent = node.getParent();
 	final Object path[] = taskModel.getPathToNode(parent);
 
 	final int indices[] = new int[1];

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClusterQuery.java,v 1.2 2001-02-23 01:02:17 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClusterQuery.java,v 1.3 2001-02-23 17:28:43 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -1052,12 +1052,12 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
 	int nodeTypes[];
 	if ( getrollupCheckBox().isSelected() ) {
 	    nodeTypes = new int[1];
-	    nodeTypes[0] = TaskNode.CARGO_TYPE;
+	    nodeTypes[0] = Node.CARGO_TYPE;
 	}
 	else {
 	    nodeTypes = new int[2];
-	    nodeTypes[0] = TaskNode.ITINERARY;
-	    nodeTypes[1] = TaskNode.ITINERARY_LEG;
+	    nodeTypes[0] = Node.ITINERARY;
+	    nodeTypes[1] = Node.ITINERARY_LEG;
 	}
 	query.setNodeTypes(nodeTypes);
 
@@ -1108,7 +1108,7 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
 	try {
 	    ClusterQuery aClusterQuery;
 	    Debug.setHandler(new Debug(new SimpleProducer("Debug Handler"), true));
-	    aClusterQuery = new ClusterQuery(new ClientPlanElementProvider(new ClusterCache(true), false, false), 
+	    aClusterQuery = new ClusterQuery(new ClientPlanElementProvider(new ClusterCache(true), false), 
 										 "localhost");
 	    aClusterQuery.setVisible(true);
 	} catch ( Exception exception ) {

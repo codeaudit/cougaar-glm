@@ -8,7 +8,9 @@ import java.util.HashMap;
 
 import java.text.SimpleDateFormat;
 
-import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
+import org.w3c.dom.Element;
+
+import org.cougaar.domain.mlm.ui.newtpfdd.TPFDDConstants;
 
 import org.cougaar.domain.mlm.ui.newtpfdd.xml.Location;
 import org.cougaar.domain.mlm.ui.newtpfdd.xml.LogPlanObject;
@@ -51,6 +53,12 @@ public class Node extends LogPlanObject implements Serializable, Cloneable {
     // Constructors
     public Node(HashMap idToNode, String nodeDBID) {
 	super(nodeDBID,null);
+	this.nodeDBID = nodeDBID;
+	this.idToNode = idToNode;
+    }
+    // Consturctor for XML
+    public Node(HashMap idToNode, String nodeDBID, Element xml) {
+	super(nodeDBID,xml);
 	this.nodeDBID = nodeDBID;
 	this.idToNode = idToNode;
     }
@@ -160,13 +168,19 @@ public class Node extends LogPlanObject implements Serializable, Cloneable {
     public boolean isTransport() {
 	return (this instanceof ItineraryNode || this instanceof LegNode);
     }
+    public boolean isStructural() {
+	return !isTransport();
+    }
+    public boolean isRoot() {
+	return nodeDBID.equals(TPFDDConstants.ROOTNAME);
+    }
 
     // POTENTIAL ISSUES
     // 1) Tasks may need an update system so that when they change they can
     //    alert someone so they can be redrawn or whatever. This existed as
     //    proxyChangeNotify in a previous incarnation.
 
-    // The following is some crappy stuff leftover from TaskNode kept for compatibility
+    // The following is some crappy stuff leftover from Node kept for compatibility
     // Try to not use this stuff and is possible get rid of it
     public static final int ROLLUP = 1;
     public static final int ROLLUP_FORCED_ROOT = 2;

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/PlanElementProvider.java,v 1.2 2001-02-23 01:02:19 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/producer/Attic/PlanElementProvider.java,v 1.3 2001-02-23 17:28:45 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Date;
 
 import org.cougaar.util.TimeSpan;
+import org.cougaar.domain.mlm.ui.newtpfdd.TPFDDConstants;
 import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 import org.cougaar.domain.mlm.ui.newtpfdd.util.MismatchException;
 import org.cougaar.domain.mlm.ui.newtpfdd.util.PathString;
@@ -59,7 +60,7 @@ public class PlanElementProvider implements ItemPoolModelListener
     private boolean cannedMode; // data source is from file; don't try to query clusters
 
     protected HashMap allNodes = new HashMap();
-    private Node root = new Node(allNodes,"ROOT"); // used to be static
+    private Node root = new Node(allNodes,TPFDDConstants.ROOTNAME); // used to be static
     
     public PlanElementProvider(ClusterCache clusterCache, boolean cannedMode)
     {
@@ -69,6 +70,10 @@ public class PlanElementProvider implements ItemPoolModelListener
 	callbacks = new VectorHashtable();
 	minTaskStart = TimeSpan.MAX_VALUE;
 	maxTaskEnd = TimeSpan.MIN_VALUE;
+    }
+
+    public HashMap getNodeMap() {
+	return allNodes;
     }
 
     public Node getRoot()

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ScheduleCellRenderer.java,v 1.2 2001-02-23 01:02:17 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ScheduleCellRenderer.java,v 1.3 2001-02-23 17:28:44 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -102,7 +102,7 @@ public class ScheduleCellRenderer extends JLabel implements TableCellRenderer
     
     public void paint(Graphics g)
     {
-	// Debug.out("SCR:paint enter " + ((TaskNode)elem).getUUID());
+	// Debug.out("SCR:paint enter " + ((Node)elem).getUUID());
 	long range = latest - earliest;
 	Dimension cellDim = getSize();
 
@@ -152,8 +152,8 @@ public class ScheduleCellRenderer extends JLabel implements TableCellRenderer
 		endDateString = Node.longDate(elem.getActualEnd());
 		//	    }
 		//	    else {
-		//		startDateString = TaskNode.shortDate(elem.getActualStart());
-		//		endDateString = TaskNode.shortDate(elem.getActualEnd());
+		//		startDateString = Node.shortDate(elem.getActualStart());
+		//		endDateString = Node.shortDate(elem.getActualEnd());
 		//	    }
 	    startLoc = (int)((start - earliest) * (cellDim.width - 2*EDGEWIDTH) / range) + EDGEWIDTH;
 	    endLoc = (int)((end - earliest) * (cellDim.width - 2*EDGEWIDTH) / range) + EDGEWIDTH;
@@ -184,7 +184,7 @@ public class ScheduleCellRenderer extends JLabel implements TableCellRenderer
 
 	    g.fillRect(startLoc, 2, endLoc - startLoc, cellDim.height - 5);
 // 	    Following two lines did nothing because isContiguous always returned true
-// 	    if ( elem.getMode() == TaskNode.MODE_ITINERARY && !elem.isContiguous() )
+// 	    if ( elem.getMode() == Node.MODE_ITINERARY && !elem.isContiguous() )
 // 		drawCenteredString(g, "DISCONTIGUOUS", cellDim.width / 2, cellDim.height / 2, Color.yellow);
 	}
 	
@@ -260,8 +260,8 @@ public class ScheduleCellRenderer extends JLabel implements TableCellRenderer
 						   boolean hasFocus,
 						   int row, int column)
     {
-	//	Debug.out("SCR:gTCRC enter " + ((TaskNode)value).getUUID() + "isTransport: "
-	//		  + ((TaskNode)value).isTransport());
+	//	Debug.out("SCR:gTCRC enter " + ((Node)value).getUUID() + "isTransport: "
+	//		  + ((Node)value).isTransport());
 	setForeground(Color.white);
 	if ( isSelected )
 	    setBackground(table.getSelectionBackground());
@@ -293,15 +293,15 @@ public class ScheduleCellRenderer extends JLabel implements TableCellRenderer
 	latest = taskModel.getProvider().getMaxTaskEnd();
 	start = node.getActualStart().getTime();
 	end = node.getActualEnd().getTime();
-	// Debug.out("SCR:gTCRC UUID: " + taskNode.getUUID() + " start: " + start + " end: " + end
+	// Debug.out("SCR:gTCRC UUID: " + Node.getUUID() + " start: " + start + " end: " + end
 	//	     + " earliest " + earliest + " latest " + latest);
 	// Following two values never set - go why get them
-// 	estStart = taskNode.getEstimatedStart();
-// 	estEnd = taskNode.getEstimatedEnd();
+// 	estStart = Node.getEstimatedStart();
+// 	estEnd = Node.getEstimatedEnd();
 	minStart = node.getReadyAt().getTime();
 	minEnd = node.getEarlyEnd().getTime();
 	maxEnd = node.getLateEnd().getTime();
-	// Debug.out("SCR:gTCRC leave " + ((TaskNode)value).getUUID());
+	// Debug.out("SCR:gTCRC leave " + ((Node)value).getUUID());
 	return this;
     }
 }

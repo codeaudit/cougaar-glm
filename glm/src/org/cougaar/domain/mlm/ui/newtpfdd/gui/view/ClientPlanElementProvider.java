@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.2 2001-02-23 01:02:17 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.3 2001-02-23 17:28:43 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -81,8 +81,8 @@ public class ClientPlanElementProvider extends PlanElementProvider
 	super.fireItemAdded(item);
     }
     
-    // A TaskNode finds out internally it's changed; needs us to propagate
-    public void proxyChangeNotify(TaskNode node)
+    // A Node finds out internally it's changed; needs us to propagate
+    public void proxyChangeNotify(Node node)
     {
 	int rootIndex = getIndexOfTopTaskOfTask(node);
 	// Debug.out("PEP:pCN row of " + node + " is " + rootIndex);
@@ -110,7 +110,7 @@ public class ClientPlanElementProvider extends PlanElementProvider
 	    if ( UUIDPool.get(UUID) != null )
 		continue;
 	    doneAnything = true;
-	    handleNewTaskNode(node);
+	    handleNewNode(node);
 	    newNodes.add(node);
 	    if ( i % 250 == 0 )
 		OutputHandler.out(String.valueOf(i), false, false);

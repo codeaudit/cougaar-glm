@@ -1,5 +1,5 @@
 
-package org.cougaar.domain.mlm.ui.tpfdd.gui.view;
+package org.cougaar.domain.mlm.ui.newtpfdd.gui.view;
 
 
 import javax.swing.*;
@@ -26,20 +26,20 @@ import java.awt.event.ActionEvent;
 import java.util.Vector;
 import java.util.Iterator;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
-import org.cougaar.domain.mlm.ui.tpfdd.util.ExceptionTools;
-import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
-import org.cougaar.domain.mlm.ui.tpfdd.util.SwingQueue;
-import org.cougaar.domain.mlm.ui.tpfdd.util.PathString;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.ExceptionTools;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.SwingQueue;
+import org.cougaar.domain.mlm.ui.newtpfdd.util.PathString;
 
 
 
-import org.cougaar.domain.mlm.ui.tpfdd.producer.LogPlanProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ThreadedProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ItineraryProducer;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.ClusterCache;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy;
-import org.cougaar.domain.mlm.ui.tpfdd.producer.PSPClientConfig;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.LogPlanProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ThreadedProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ItineraryProducer;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.ClusterCache;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.UnitHierarchy;
+import org.cougaar.domain.mlm.ui.newtpfdd.producer.PSPClientConfig;
 
 import org.cougaar.domain.mlm.ui.psp.transportation.data.UITaskItinerary;
 
@@ -128,7 +128,7 @@ public class JTreeTablePlus extends JTable implements ActionListener, SwingUpdat
 	
 	// Install the schedule cell renderer
 	scheduleCellRenderer = new ScheduleCellRenderer();
-	setDefaultRenderer(TaskNode.class, scheduleCellRenderer); 
+	setDefaultRenderer(Node.class, scheduleCellRenderer); 
 
 	setShowGrid(false);
 	setIntercellSpacing(new Dimension(0, 0)); 	        
@@ -164,20 +164,20 @@ public class JTreeTablePlus extends JTable implements ActionListener, SwingUpdat
 		    int row = rowAtPoint(e.getPoint());
 		    int column = columnAtPoint(e.getPoint());
 		    Object o = getValueAt(row, 4);
-		    if ( !(o instanceof TaskNode) ) {
+		    if ( !(o instanceof Node) ) {
 			OutputHandler.out("JTT:JTT:MA Warning: table was rearranged. Don't know where to get task.");
 			return;
 		    }
-		    TaskNode node = (TaskNode)o;
+		    Node node = (Node)o;
 		    if ( (e.getModifiers() & TPFDDflags) != 0 && column >= 0 && column < 4 ) {
 			String carrierType, cargoType;
-			if ( node.getSourceType() == TaskNode.CARRIER_TYPE ) {
-			    carrierType = node.getCarrierType();
+			if ( node instanceof TypeNode && ((TypeNode)node).getTypeCargoCarrier() == ByNode.CARRIER_TYPE ) {
+			    carrierType = ((TypeNode)node).getCarrierType();
 			    cargoType = "All cargo";
 			}
 			else {
 			    carrierType = "All carriers";
-			    cargoType = node.getDirectObjectType();
+			    cargoType = ((TypeNode)node).getCargoType();
 			}
 			getTPFDDAndLogPlanItem().setText("New TPFDD and Log Plan: " + node.getUnitName()
 							 + "/" + carrierType + "/" + cargoType);
@@ -287,7 +287,7 @@ public class JTreeTablePlus extends JTable implements ActionListener, SwingUpdat
     {
 	final ActionEvent e = ae;
 	final Object source = e.getSource();
-	final TaskNode node = (TaskNode)(parentProvider.warmRead(getTPFDDItem().getName()));
+	final Node node = (Node)(parentProvider.warmRead(getTPFDDItem().getName()));
 	final String unitName = node.getUnitName();
 
 	System.out.println("JTT+: Action Performed");
@@ -310,19 +310,29 @@ public class JTreeTablePlus extends JTable implements ActionListener, SwingUpdat
 			    query = new QueryData();
 			    String[] unitNames = { node.getUnitName() };
 			    query.setUnitNames(unitNames);
-			    int sourceType = node.getSourceType();
-			    
-			    if ( sourceType == TaskNode.CARRIER_TYPE ) {
-				String[] carrierTypes = { node.getCarrierType() };
+
+			    if (node instanceof TypeNode && ((TypeNode)node).getTypeCargoCarrier() == ByNode.CARRIER_TYPE) {
+				String[] carrierTypes = { ((TypeNode)node).getCarrierType() };
 				query.setCarrierTypes(carrierTypes);
 				query.setCarrierIncluded(true);
 			    }
-			    else if ( sourceType == TaskNode.CARGO_TYPE ) {
-				String[] cargoTypes = { node.getDirectObjectType() };
+			    else if (node instanceof TypeNode && ((TypeNode)node).getTypeCargoCarrier() == ByNode.CARGO_TYPE) {
+				String[] cargoTypes = { ((TypeNode)node).getCargoType() };
 				query.setCargoTypes(cargoTypes);
 				query.setCargoIncluded(true);
 			    }
-			    int nodeTypes[] = { TaskNode.ITINERARY, TaskNode.ITINERARY_LEG };
+			    else if (node instanceof ItineraryNode) {
+				String[] cargoTypes = { ((ItineraryNode)node).getCargoType() };
+				String[] cargoNames = { ((ItineraryNode)node).getCargoName() };
+				query.setCargoNames(cargoNames);
+				query.setCargoTypes(cargoTypes);
+				query.setCargoIncluded(true);
+			    }
+			    else if (node instanceof ByNode) {
+				query.setCargoIncluded(true);
+			    }
+
+			    int nodeTypes[] = { Node.ITINERARY, Node.ITINERARY_LEG };
 			    query.setNodeTypes(nodeTypes);
 			    parentView.newView(true, source == getTPFDDAndLogPlanItem(), query, clusterCache, true);
 			}

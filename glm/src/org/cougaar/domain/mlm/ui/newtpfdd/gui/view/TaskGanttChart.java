@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TaskGanttChart.java,v 1.2 2001-02-23 01:02:18 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/TaskGanttChart.java,v 1.3 2001-02-23 17:28:44 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -118,10 +118,10 @@ public class TaskGanttChart extends GanttChart
 	}
 	
 	Node node = (Node)o;
-	if ( !node.isRoot() ) {
-	    Debug.out("TaskGanttChart:mLR Non root node " + node + " received, ignoring.");
-	    return null;
-	}
+// 	if ( !node.isRoot() ) {
+// 	    Debug.out("TaskGanttChart:mLR Non root node " + node + " received, ignoring.");
+// 	    return null;
+// 	}
 	LozengeRow lozRow;
 	if ( node.isStructural() )
 	    lozRow = makeLozengeRowByTaskFlattening(node, 0);
@@ -185,7 +185,7 @@ public class TaskGanttChart extends GanttChart
 		i--;
 	    }
 	    // Remove tasks that have been marked as non trip
-	    if (t.getTripTag() == Node.NON_TRIP_TAG) {
+	    if (((LegNode)t).getTripTag() == LegNode.NON_TRIP_TAG) {
 		tasks.removeElementAt(i);
 		i--;
 	    }
@@ -232,7 +232,7 @@ public class TaskGanttChart extends GanttChart
 	    String lStr = Node.longDate(getStartValueDate(t));
 	    String rStr = Node.longDate(getEndValueDate(t));
 
-	    loz.setLozengeDescription(t.getCarrierName() + " " + t.getFromName() +"->"+ t.getToName()
+	    loz.setLozengeDescription(((TypeNode)t).getCarrierName() + " " + t.getFromName() +"->"+ t.getToName()
 				      + "[" + lStr + "-" + rStr + "]");
 
 	    if ( t.hasChildren() && (((Node)(t.getChild(0))).isTransport()) ) {
@@ -242,19 +242,19 @@ public class TaskGanttChart extends GanttChart
 		parentLeg = loz;
 	    }
 	    else {
-		if ( t.getBestEnd() != 0 )
-		    loz.addDecorator(DECORATOR_TRIANGLE_ANCHOR_RIGHT, t.getBestEnd());
-		if ( t.getMinEnd() != 0 )
-		    loz.addDecorator(DECORATOR_CIRCLE_ANCHOR_RIGHT, t.getMinEnd(), t.getActualEnd() < t.getMinEnd());
-		if ( t.getMaxEnd() != 0 )
-		    loz.addDecorator(DECORATOR_CIRCLE_ANCHOR_RIGHT, t.getMaxEnd(), t.getActualEnd() > t.getMaxEnd());
-		if ( t.getMinStart() != 0 )
-		    loz.addDecorator(DECORATOR_CIRCLE_ANCHOR_LEFT, t.getMinStart(),
-				     t.getActualStart() < t.getMinStart());
-		String longName = (t.getCarrierType().equals(t.getCarrierName()) ?
-				   t.getCarrierType()
-				   : t.getCarrierType() + ": " + t.getCarrierName());
-		loz.addLozengeLabel(new LozengeLabel(longName, t.getCarrierType(), LozengeLabel.CENTER));
+		if ( t.getBestEnd() != null )
+		    loz.addDecorator(DECORATOR_TRIANGLE_ANCHOR_RIGHT, t.getBestEnd().getTime());
+		if ( t.getEarlyEnd() != null )
+		    loz.addDecorator(DECORATOR_CIRCLE_ANCHOR_RIGHT, t.getEarlyEnd().getTime(), t.getActualEnd().getTime() < t.getEarlyEnd().getTime());
+		if ( t.getLateEnd() != null )
+		    loz.addDecorator(DECORATOR_CIRCLE_ANCHOR_RIGHT, t.getLateEnd().getTime(), t.getActualEnd().getTime() > t.getLateEnd().getTime());
+		if ( t.getReadyAt() != null )
+		    loz.addDecorator(DECORATOR_CIRCLE_ANCHOR_LEFT, t.getReadyAt().getTime(),
+				     t.getActualStart().getTime() < t.getReadyAt().getTime());
+		String longName = (((TypeNode)t).getCarrierType().equals(((TypeNode)t).getCarrierName()) ?
+				   ((TypeNode)t).getCarrierType()
+				   : ((TypeNode)t).getCarrierType() + ": " + ((TypeNode)t).getCarrierName());
+		loz.addLozengeLabel(new LozengeLabel(longName, ((TypeNode)t).getCarrierType(), LozengeLabel.CENTER));
 		switch( t.getMode() ) {
 		case Node.MODE_GROUND:
 		    loz.setForeground(TPFDDColor.TPFDDDullerYellow);

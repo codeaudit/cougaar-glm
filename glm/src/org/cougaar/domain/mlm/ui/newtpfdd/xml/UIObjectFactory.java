@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/UIObjectFactory.java,v 1.2 2001-02-23 01:02:24 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/xml/Attic/UIObjectFactory.java,v 1.3 2001-02-23 17:28:45 wseitz Exp $ */
 
 /*
   Copyright (C) 1998-1999 Ascent Technology Inc. (Program).  All rights
@@ -21,7 +21,7 @@ import org.cougaar.domain.mlm.ui.newtpfdd.util.PathString;
 import org.cougaar.domain.mlm.ui.newtpfdd.util.OutputHandler;
 import org.cougaar.domain.mlm.ui.newtpfdd.util.Debug;
 
-import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.TaskNode;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.Node;
 
 import org.cougaar.domain.mlm.ui.newtpfdd.producer.PlanElementProvider;
 
@@ -118,8 +118,8 @@ public class UIObjectFactory
 	    it = new TaskItinerary(element);
 	else if ( className.equals("UITaskItineraryElement") )
 	    it = new TaskItineraryElement(element);
-	else if ( className.equals("TaskNode") )
-	    it = new TaskNode(provider, UID, element);
+	else if ( className.equals("Node") )
+	    it = new Node(provider.getNodeMap(), UID, element);
 	else if ( className.equals("UITAssetInfo") )
 	    it = new TAssetInfo(element);
 	else if ( className.equals("TransportationNode") )
