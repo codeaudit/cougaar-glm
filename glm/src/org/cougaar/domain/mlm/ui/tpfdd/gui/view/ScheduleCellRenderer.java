@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ScheduleCellRenderer.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ScheduleCellRenderer.java,v 1.2 2001-02-14 21:14:30 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -47,6 +47,8 @@ public class ScheduleCellRenderer extends JLabel implements TableCellRenderer
     int yPoints[] = new int[4];
     boolean isSelected;
     boolean isTransport;
+
+    private static int EDGEWIDTH = 75;
 
     static
     {
@@ -153,8 +155,8 @@ public class ScheduleCellRenderer extends JLabel implements TableCellRenderer
 		//		startDateString = TaskNode.shortDate(elem.getActualStart());
 		//		endDateString = TaskNode.shortDate(elem.getActualEnd());
 		//	    }
-	    startLoc = (int)((start - earliest) * (cellDim.width - 100) / range) + 50;
-	    endLoc = (int)((end - earliest) * (cellDim.width - 100) / range) + 50;
+	    startLoc = (int)((start - earliest) * (cellDim.width - 2*EDGEWIDTH) / range) + EDGEWIDTH;
+	    endLoc = (int)((end - earliest) * (cellDim.width - 2*EDGEWIDTH) / range) + EDGEWIDTH;
 
 	    // draw Actual Schedule Bar
 	    switch( elem.getMode() ) {
