@@ -108,7 +108,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
   /** For debugging, print all schedules.
    */
 
-  private void printSchedules() {
+  protected void printSchedules() {
     System.out.println("RESULTS=========================================");
     System.out.println("Asset name: " + assetName);
     for (int i = 0; i < schedules.size(); i++) {
@@ -188,7 +188,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
     actual due-ins and due-outs).
     */
 
-  private void setInventoryValues() {
+  protected void setInventoryValues() {
     int minDay = -1;
     int maxDay = 0;
 
@@ -302,44 +302,51 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
     //MWD This is NOT currently called in computing capacity (or 
     // labor)  - should it?
     public Vector computeDailyEndTimeBucketSchedule(Vector schedule) {
-	Vector dailyBucketVector = new Vector(schedule.size());
+	return computeGranularEndTimeBucketSchedule(schedule, MILLIS_IN_DAY);
+    }
+
+    //Sums all the schedule elements that fall into one bucket
+    //for the given number of millisecond size buckets.
+    public Vector computeGranularEndTimeBucketSchedule(Vector schedule, long numMillisecsGranularity) {
+	Vector bucketVector = new Vector(schedule.size());
 	long baseTime = (useCDay) ? baseCDayTime : InventoryChartBaseCalendar.getBaseTime();
 	UIQuantityScheduleElement currElement=null;
-	int currEndDay=-1;
+	long currEndPoint=-1;
 
 	for(int i=0; i<schedule.size(); i++) {
 	    UIQuantityScheduleElement s = (UIQuantityScheduleElement)schedule.elementAt(i);
 	    long endTime = s.getEndTime();
-	    int endDay = (int)((endTime - baseTime) / MILLIS_IN_DAY);
+	    long endPoint = (int)((endTime - baseTime) / numMillisecsGranularity);
 	    if(currElement == null) {
 		currElement = (UIQuantityScheduleElement)s.clone();
-	        currEndDay = endDay;
+	        currEndPoint = endPoint;
 	    }
 	    else {
-		if(endDay != currEndDay) {
-		    dailyBucketVector.add(currElement);
+		if(endPoint != currEndPoint) {
+		    bucketVector.add(currElement);
 		    currElement = (UIQuantityScheduleElement)s.clone();
-		    currEndDay=endDay;
+		    currEndPoint=endPoint;
 		}
 		else {
-		    //   System.out.println("InventoryChartDataModel::daily bucket Same Day(" + endDay + ")!!");
+		    //   System.out.println("InventoryChartDataModel::daily bucket Same Day(" + endPoint + ")!!");
 		    currElement.setQuantity((currElement.getQuantity() + s.getQuantity()));
 		}
 	    }
 	}
 
-	dailyBucketVector.add(currElement);
+	bucketVector.add(currElement);
 	
-	// System.out.println("InventoryChartDataModel::daily bucket orig schedule:|" + schedule.size() + "| new one:|" + dailyBucketVector.size());
+	// System.out.println("InventoryChartDataModel::daily bucket orig schedule:|" + schedule.size() + "| new one:|" + bucketVector.size());
 
-	return dailyBucketVector;
+	return bucketVector;
     }
+
 
   /** Set the values for the inventory chart using the inventory and
     schedule types specified in the constructor.
     */
 
-  private void setValues() {
+  protected void setValues() {
     if (valuesSet)
       return;
     valuesSet = true;
@@ -525,7 +532,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
   /** Derive series label from schedule name.
    */
 
-  private String getSeriesLabel(String scheduleName) {
+  protected String getSeriesLabel(String scheduleName) {
     if (scheduleName.equals(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN))
       return UNCONFIRMED_DUE_IN_LABEL;
     else if (scheduleName.equals(UISimpleNamedSchedule.DUE_IN))
@@ -552,6 +559,8 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
       return ACTUAL_PROJECTED_DUE_IN_LABEL;
     else if (scheduleName.equals(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN))
       return REQUESTED_PROJECTED_DUE_IN_LABEL;
+    else if (scheduleName.equals(UISimpleNamedSchedule.ON_HAND_DETAILED))
+      return getSeriesLabel(UISimpleNamedSchedule.ON_HAND);
    
     return scheduleName;
   }
@@ -570,7 +579,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
   }
 
   public void resetInventory(UISimpleInventory inventory) {
-      Vector scheduleNames = InventoryChart.getScheduleTypesForLegend(legendTitle);
+      Vector scheduleNames = InventoryChart.getScheduleTypesForLegend(legendTitle,false);
       
       schedules = 
 	  InventoryChart.extractSchedulesFromInventory(scheduleNames,

@@ -56,8 +56,11 @@ public class InventoryChart extends JPanel
     Hashtable dataViews = new Hashtable(); // temporary, until data view-data model correspondence is working
     InventoryColorTable colorTable;
     static final String INVENTORY_LEGEND = "Inventory";
+    static final String INVENTORY_DETAILS_LEGEND = "Inventory (Detailed)";
     static final String REQUESTED_INVENTORY_LEGEND = "Requested";
     static final String ACTUAL_INVENTORY_LEGEND = "Actual";
+    static final String REQUESTED_INVENTORY_DETAILS_LEGEND = REQUESTED_INVENTORY_LEGEND;
+    static final String ACTUAL_INVENTORY_DETAILS_LEGEND = ACTUAL_INVENTORY_LEGEND;
     static final String REQUESTED_INACTIVE_INVENTORY_LEGEND = "Requested Inactive";
     static final String ACTUAL_INACTIVE_INVENTORY_LEGEND = "Actual Inactive";
     static final String REQUESTED_SUPPLY_LEGEND = REQUESTED_INVENTORY_LEGEND + " ";
@@ -71,6 +74,7 @@ public class InventoryChart extends JPanel
 
     public static final String CDAY_MODE = "Cdays";
     public static final String SHOW_INACTIVE = "Show Inactive";
+    public static final String DISPLAY_DETAILS = "Inv Details";
 
 
     //PER_25,50,75,HORIZ_STRIPE,VERT_STRIPE,DIAG_HATCHED,CROSS_HATCHED,etc
@@ -90,8 +94,13 @@ public class InventoryChart extends JPanel
     JCChartLabel nowLabel=null;
     Date alpNow=new Date();
 
+    JCheckBox cdaysModeCheck; 
+    JCheckBox showInactiveCheck; 
+
     long baseCDayTime;
     boolean displayCDay=false;
+    boolean canDisplayDetails=false;
+    boolean displayDetails=false;
 
     /** For testing, creates a chart with dummy data.
 	Assume random quantities are requisitioned from us.
@@ -551,7 +560,17 @@ public class InventoryChart extends JPanel
 	    initializeActualCapacityChart(myTitle, myInventory);
 	} else if ((scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) ||
 		   (scheduleType.equals(UIInventoryImpl.NO_INVENTORY_SCHEDULE_JUST_CONSUME))) {
-	    initializeTotalInventoryChart(myTitle, myInventory);
+		if(displayDetails) { 
+		    initializeDetailedInventoryChart(myTitle, myInventory);
+		}
+		else {
+		    initializeTotalInventoryChart(myTitle, myInventory);
+		    cdaysModeCheck.setEnabled(true); 
+		    cdaysModeCheck.setVisible(true); 
+		    showInactiveCheck.setEnabled(true);
+		    showInactiveCheck.setVisible(true);
+		}
+
 	} else
 	    System.out.println("Unconfirmed schedule type: " + scheduleType);
 
@@ -688,6 +707,54 @@ public class InventoryChart extends JPanel
 	}    
     }
 
+    private void initializeDetailedInventoryChart(String title, UISimpleInventory inventory) {
+	    if (inventory.getNamedSchedule(ON_HAND_DETAILED) == null) {
+		JOptionPane.showMessageDialog(null, "No data received",
+					      "No data received",
+					      JOptionPane.ERROR_MESSAGE);
+		return;
+	    }
+
+	    System.out.println("InventoryChart::InitializeDetailedInventoryChart");
+
+	    // Title and chart
+	    title = "Inventory of " + inventory.getAssetName() + " at " + title;
+	    
+	    //equalizeInventorySchedule(inventory);
+
+     
+	    // On Hand
+	    // MWD Remove
+	    //scheduleTypes = new Vector(1);
+	    //scheduleTypes.addElement(ON_HAND);
+	    InventoryChartDataModel chartDataModel = createDetailedInventoryDataModel(inventory, INVENTORY_DETAILS_LEGEND);
+
+	    ChartDataView icv = addView(chart, JCChart.AREA, chartDataModel);
+	    //((JCBarChartFormat)icv.getChartFormat()).setClusterWidth(100);
+	    icv.setOutlineColor(colorTable.get(ON_HAND));
+
+	    setChartTitle(title);
+
+	    //Requested
+	    InventoryChartDataModel requested =
+		createDetailedInventoryDataModel(inventory, REQUESTED_INVENTORY_DETAILS_LEGEND);
+	    icv = addView(chart, JCChart.BAR, requested);
+	    ((JCBarChartFormat)icv.getChartFormat()).setClusterWidth(20);
+	    
+	    //Actual
+	    InventoryChartDataModel actual =
+		createDetailedInventoryDataModel(inventory, ACTUAL_INVENTORY_DETAILS_LEGEND);
+	    icv = addView(chart, JCChart.BAR, actual);
+	    ((JCBarChartFormat)icv.getChartFormat()).setClusterWidth(20);
+
+	    cdaysModeCheck.setVisible(false); 
+	    cdaysModeCheck.setEnabled(false); 
+	    showInactiveCheck.setEnabled(false);
+	    showInactiveCheck.setVisible(false);
+
+    }
+
+
     private void initializeTotalInventoryChart(String title, UISimpleInventory inventory) {
 	Vector scheduleTypes;
 
@@ -698,6 +765,10 @@ public class InventoryChart extends JPanel
 					      "No data received",
 					      JOptionPane.ERROR_MESSAGE);
 		return;
+	    }
+
+	    if (inventory.getNamedSchedule(ON_HAND_DETAILED) != null) {
+		canDisplayDetails = true;
 	    }
 
 	    // Title and chart
@@ -887,11 +958,22 @@ public class InventoryChart extends JPanel
 	return (ChartDataModel) dataViews.get(view);
     }
 
-    public static Vector getScheduleTypesForLegend(String legendTitle) {
+    public static Vector getScheduleTypesForLegend(String legendTitle, boolean detailed) {
 	//MWD
 	Vector scheduleTypes = new Vector(3);
 	if(legendTitle.equals(INVENTORY_LEGEND)) {
 	    scheduleTypes.addElement(ON_HAND);
+	}
+	else if(detailed && (legendTitle.equals(INVENTORY_DETAILS_LEGEND))) {
+	    scheduleTypes.addElement(ON_HAND_DETAILED);
+	}
+	else if(detailed && (legendTitle.equals(REQUESTED_INVENTORY_DETAILS_LEGEND))) {
+	    scheduleTypes.addElement(REQUESTED_DUE_IN);
+	    scheduleTypes.addElement(REQUESTED_DUE_OUT);
+	}
+	else if(detailed && (legendTitle.equals(ACTUAL_INVENTORY_DETAILS_LEGEND))) {
+	    scheduleTypes.add(DUE_IN);
+	    scheduleTypes.add(DUE_OUT);
 	}
 	else if(legendTitle.equals(REQUESTED_INVENTORY_LEGEND)) {
 	    scheduleTypes.addElement(REQUESTED_DUE_IN);
@@ -963,6 +1045,18 @@ public class InventoryChart extends JPanel
       return schedulesToPlot;
     }
 
+    public static Vector extractVectorFromInventory(String scheduleName,
+						      UISimpleInventory inventory) {
+      Vector theSchedule=null;
+
+      UISimpleNamedSchedule tmp =
+	  inventory.getNamedSchedule(scheduleName);
+      if (tmp != null)
+	  theSchedule = tmp.getSchedule();
+
+      return theSchedule;
+    }
+
     public static Vector extractOnHandSchedule(UISimpleInventory inventory) {
 
       Vector onHandSchedule=null;
@@ -971,10 +1065,7 @@ public class InventoryChart extends JPanel
 	  inventory.getScheduleType().equals(PlanScheduleType.TOTAL_INVENTORY);
 
       if (inventoryFlag) {
-	  UISimpleNamedSchedule tmp =
-		inventory.getNamedSchedule(ON_HAND);
-	    if (tmp != null)
-		onHandSchedule = tmp.getSchedule();
+	  onHandSchedule = extractVectorFromInventory(ON_HAND,inventory);
       }
 
       return onHandSchedule;
@@ -983,14 +1074,21 @@ public class InventoryChart extends JPanel
 
     private InventoryChartDataModel createInventoryDataModel(UISimpleInventory inventory,
 							     String legendTitle) {
-	Vector scheduleNames = getScheduleTypesForLegend(legendTitle);
-	return createInventoryDataModel(scheduleNames,inventory,legendTitle);
+	Vector scheduleNames = getScheduleTypesForLegend(legendTitle,false);
+	return createInventoryDataModel(scheduleNames,inventory,legendTitle, false);
+    }
+
+    private InventoryChartDataModel createDetailedInventoryDataModel(UISimpleInventory inventory,
+								     String legendTitle) {
+	Vector scheduleNames = getScheduleTypesForLegend(legendTitle,true);
+	return createInventoryDataModel(scheduleNames,inventory,legendTitle,true);
     }
 
     private InventoryChartDataModel 
 	createInventoryDataModel(Vector scheduleNames,
 				 UISimpleInventory inventory,
-				 String legendTitle) {
+				 String legendTitle,
+				 boolean detailed) {
 
 	// create a vector of schedules that are part of this model
 	Vector schedulesToPlot = 
@@ -999,17 +1097,32 @@ public class InventoryChart extends JPanel
 	boolean inventoryFlag = 
 	    (inventory.getScheduleType().equals(PlanScheduleType.TOTAL_INVENTORY) ||
 	     inventory.getScheduleType().equals(UIInventoryImpl.NO_INVENTORY_SCHEDULE_JUST_CONSUME));
-	Vector onHandSchedule = extractOnHandSchedule(inventory);
 
-	return new InventoryChartDataModel(inventoryFlag,
-					   inventory.getAssetName(),
-					   inventory.getUnitType(),
-					   schedulesToPlot,
-					   onHandSchedule,
-					   legendTitle,
-					   inventory.isProvider(),
-					   baseCDayTime,
-					   displayCDay);
+
+	if(detailed) {
+	    Vector onHandSchedule=extractVectorFromInventory(ON_HAND_DETAILED,inventory);
+	    return new InventoryDetailsChartDataModel(inventoryFlag,
+						     inventory.getAssetName(),
+						     inventory.getUnitType(),
+						     schedulesToPlot,
+						     onHandSchedule,
+						     legendTitle,
+						     inventory.isProvider(),
+						     baseCDayTime,
+						     displayCDay);
+	}
+	else {   
+	    Vector onHandSchedule = extractOnHandSchedule(inventory);
+	    return new InventoryChartDataModel(inventoryFlag,
+					       inventory.getAssetName(),
+					       inventory.getUnitType(),
+					       schedulesToPlot,
+					       onHandSchedule,
+					       legendTitle,
+					       inventory.isProvider(),
+					       baseCDayTime,
+					       displayCDay);
+	}
     }
 
     private void setSeriesColor(ChartDataViewSeries series, Color color) {
@@ -1041,23 +1154,43 @@ public class InventoryChart extends JPanel
 	    if(displayCDay) {
 		xaxis.setAnnotationMethod(JCAxis.VALUE);
 		xaxis.setPrecision(0);
+
+		//xaxis.setAnnotationMethod(JCAxis.TIME_LABELS);
+		//xaxis.setTimeUnit(JCAxis.DAYS);
+		//xaxis.setTimeBase(new Date(InventoryChartBaseCalendar.getBaseTime() - baseCDayTime ));
+		//xaxis.setTimeFormat("D");
+
 		xaxis.setTickSpacing(7);
 		xaxis.setGridSpacing(7);
-		xaxis.setTickSpacingIsDefault(true);
-		xaxis.setGridSpacingIsDefault(true);
+		//		xaxis.setTickSpacingIsDefault(true);
+		//              xaxis.setGridSpacingIsDefault(true);
 		//xaxis.setMin(CDAY_MIN);
 		xaxis.setGridVisible(true);
 		xaxis.setAnnotationRotation(JCAxis.ROTATE_NONE);
 	    }
 	    else {
 		xaxis.setAnnotationMethod(JCAxis.TIME_LABELS);
-		xaxis.setTimeUnit(JCAxis.DAYS);
 		xaxis.setTimeBase(new Date(InventoryChartBaseCalendar.getBaseTime()));
+		if(displayDetails) {
+		    /**
+		    xaxis.setTimeUnit(JCAxis.SECONDS);
+		    xaxis.setTickSpacing(7*24*60*60);
+		    xaxis.setGridSpacing(7*24*60*60);
+		    */
+		    xaxis.setTimeUnit(JCAxis.MINUTES);
+		    xaxis.setTickSpacing(7*24*60);
+		    xaxis.setGridSpacing(7*24*60);
+		    xaxis.setTimeFormat("M/d H:m");
+		}
+		else {
+		    xaxis.setTimeUnit(JCAxis.DAYS);
+		    xaxis.setTickSpacing(7);
+		    xaxis.setGridSpacing(7);
+		    xaxis.setTimeFormat("M/d");
+		}
+
 		//System.out.println("Base Date is: " + new Date(InventoryChartBaseCalendar.getBaseTime()));
-		xaxis.setTickSpacing(7);
-		xaxis.setGridSpacing(7);
 		xaxis.setGridVisible(true);
-		xaxis.setTimeFormat("M/d");
 		xaxis.setAnnotationRotation(JCAxis.ROTATE_270);
 	    }
 
@@ -1247,8 +1380,12 @@ public class InventoryChart extends JPanel
 	    cDay = ((int)x[pt]);
 	    dayOfYear = cDay + daysFromBaseToCDay;
 	} else {
-	    // create the label
-	    dayOfYear = ((int)x[pt]);
+	    if(displayDetails) {
+		dayOfYear = (int)(((int)x[pt])/(24*60));
+	    }
+	    else {
+		dayOfYear = ((int)x[pt]);
+	    }
 	    cDay = dayOfYear - daysFromBaseToCDay;
 	}
 	InventoryChartBaseCalendar tmpC = new InventoryChartBaseCalendar();
@@ -1256,10 +1393,17 @@ public class InventoryChart extends JPanel
 	tmpC.set(Calendar.DAY_OF_YEAR, dayOfYear);
 	// add 1 to month as it numbers them from 0
 	int month = tmpC.get(Calendar.MONTH) + 1;
+	
+	String time="";
+	if(displayDetails) {
+	    time = " " + tmpC.get(Calendar.HOUR_OF_DAY) + ":" +
+		tmpC.get(Calendar.MINUTE) + " ";
+	}
+
 	String label = "Date: " + month + "/" +
 	    tmpC.get(Calendar.DAY_OF_MONTH) + "/" +
 	    tmpC.get(Calendar.YEAR) + " " +
-	    "(C" + cDay + ")" +
+	    "(C" + cDay + ")" + time +
 	    " Quantity: " + JCChartUtil.format(y[pt], 1);
 	
 	    
@@ -1360,22 +1504,19 @@ public class InventoryChart extends JPanel
 	    
 	    //reinitializeAndUpdate();
 
-	    /*** MWD Took out and now again have reinitializeAndUpdate() -
-		 below kinda flukey with new JChart software
-	    **/ 
+	    /*** MWD Took out and now again have reinitializeAndUpdate()
+		 reinitialize does same basic thing as this.**/
+	    
 
 	    java.util.List viewList = chart.getDataView();
 	    for (int i = 0; i < viewList.size(); i++) {
 		ChartDataView chartDataView = (ChartDataView)viewList.get(i);
-		//		ChartDataModel dm = (ChartDataModel) dataViews.get(chartDataView);
 		ChartDataModel dm = chartDataView.getDataSource();
 		if(dm != null) {
 		    if (dm instanceof InventoryBaseChartDataModel) {
 			InventoryBaseChartDataModel baseDM = 
 			    (InventoryBaseChartDataModel) dm;
-			//System.out.println("Setting view " + baseDM.getDataSourceName() + " to display c days:" + useCDays);
 			baseDM.setDisplayCDays(useCDays);
-			//chartDataView.setChanged(true,chartDataView.BASIC_CHANGE_MASK,true);
 		    }
 		    else
 			System.out.println("View with data model of type: " + dm.getClass().getName());
@@ -1383,6 +1524,7 @@ public class InventoryChart extends JPanel
 		else
 		    System.out.println("View with Null Data Source");
 	    }
+	    
 
 	    resetChart();
 	}
@@ -1403,7 +1545,7 @@ public class InventoryChart extends JPanel
     protected JPanel createCheckBoxPanel() {
 	JPanel cbPanel = new JPanel(new GridBagLayout());
 
-	JCheckBox cdaysModeCheck = new JCheckBox(CDAY_MODE,false);
+	cdaysModeCheck = new JCheckBox(CDAY_MODE,false);
 	
 	Font newFont = cdaysModeCheck.getFont();
 	newFont = newFont.deriveFont(newFont.getStyle(), (float) 15);
@@ -1418,7 +1560,7 @@ public class InventoryChart extends JPanel
 					   GridBagConstraints.NONE, 
 					   blankInsets, 0, 0));
 
-	JCheckBox showInactiveCheck = new JCheckBox(SHOW_INACTIVE,doShowInactive);
+	showInactiveCheck = new JCheckBox(SHOW_INACTIVE,doShowInactive);
 	showInactiveCheck.setFont(newFont);
 	showInactiveCheck.setActionCommand(SHOW_INACTIVE);
 	showInactiveCheck.setToolTipText("Display the inactive allocations");
@@ -1428,6 +1570,19 @@ public class InventoryChart extends JPanel
 					   GridBagConstraints.WEST, 
 					   GridBagConstraints.NONE, 
 					   blankInsets, 0, 0));
+
+	if(canDisplayDetails) {
+	    JCheckBox displayDetailsCheck = new JCheckBox(DISPLAY_DETAILS,displayDetails);
+	    displayDetailsCheck.setFont(newFont);
+	    displayDetailsCheck.setActionCommand(DISPLAY_DETAILS);
+	    displayDetailsCheck.setToolTipText("Display the inventory graph details");
+	    displayDetailsCheck.addItemListener(this);
+	    cbPanel.add(displayDetailsCheck,
+			new GridBagConstraints(2,0, 1, 1, 1.0, 1.0,
+					       GridBagConstraints.WEST, 
+					       GridBagConstraints.NONE, 
+					       blankInsets, 0, 0));
+	}
 
 	return cbPanel;
 
@@ -1472,6 +1627,20 @@ public class InventoryChart extends JPanel
 	    else if(source.getActionCommand().equals(SHOW_INACTIVE)) {
 		doShowInactive = (e.getStateChange() == e.SELECTED);
 		setInactiveViewsVisible(doShowInactive);
+	    }
+	    else if(source.getActionCommand().equals(DISPLAY_DETAILS)) {
+		displayDetails = (e.getStateChange() == e.SELECTED);
+		System.out.println("InventoryChart::itemStateChanged:Toggled Details - value is :" + displayDetails);
+		if(displayCDay) { 
+		    cdaysModeCheck.setSelected(false);
+		    displayCDay=false;
+		}
+		chart.reset();
+		if(displayDetails) 
+		    resetAxes();
+		reinitializeAndUpdate();
+		if(!displayDetails) 
+		    resetAxes();
 	    }
 	}
     }
@@ -1560,3 +1729,18 @@ public class InventoryChart extends JPanel
     }   
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -601,13 +601,16 @@ public class InventoryLegend extends JPanel {
 	protected void fireItemStateChanged(ItemEvent e) {
 	    super.fireItemStateChanged(e);
 	    if(series != null) {
-		//		System.out.println("InventoryLegend::SeriesToggleButton - " + series.getLabel() + "item selected: " + (e.getStateChange()==e.SELECTED));
+	    		System.out.println("InventoryLegend::SeriesToggleButton - " + series.getLabel() + "item selected: " + (e.getStateChange()==e.SELECTED));
 		//series.setVisible(e.getStateChange()==e.SELECTED);
 		boolean ImSelected = (e.getStateChange()==e.SELECTED);
 
 		dm.setSeriesVisible(seriesIndex,ImSelected);
-		dm.getAssociatedInactiveModel().setSeriesVisible(seriesIndex,
-								 ImSelected);
+		InventoryChartDataModel inactiveModel = dm.getAssociatedInactiveModel();
+		if(inactiveModel != null) {
+		    inactiveModel.setSeriesVisible(seriesIndex,
+						   ImSelected);
+		}
 	    }
 	}
 
