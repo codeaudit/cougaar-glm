@@ -27,6 +27,8 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.Task;
 
+import org.cougaar.util.log.*;
+
 import java.util.Date;
 
 /**
@@ -34,6 +36,10 @@ import java.util.Date;
  * reasonable.
  */
 public class UTILVerify{
+  public UTILVerify (Logger log) {
+    this.logger = log;
+    prefHelper = new UTILPreference (logger);
+  }
 
   /**
    * See if the time between the START_TIME preference and END_TIME
@@ -43,9 +49,9 @@ public class UTILVerify{
    * @return true if task has duration of at least as long as the 
    *         duration d, false otherwise.
    */
-  public static boolean exceedsTaskDuration(Task t, long durInMillis){
-    Date start_time = UTILPreference.getReadyAt(t);
-    Date late_time  = UTILPreference.getLateDate(t);
+  public boolean exceedsTaskDuration(Task t, long durInMillis){
+    Date start_time = prefHelper.getReadyAt(t);
+    Date late_time  = prefHelper.getLateDate(t);
     
     if(late_time.before(start_time)){
       return false;
@@ -63,11 +69,11 @@ public class UTILVerify{
    * START_TIME, verify that the start time comes before the END_TIME
    * earliest time.
    */
-  public static boolean isTaskTimingCorrect(Task t){
-    Date start_time = UTILPreference.getReadyAt(t);
-    Date early_time = UTILPreference.getEarlyDate(t);
-    Date best_time  = UTILPreference.getBestDate(t);
-    Date late_time  = UTILPreference.getLateDate(t);
+  public boolean isTaskTimingCorrect(Task t){
+    Date start_time = prefHelper.getReadyAt(t);
+    Date early_time = prefHelper.getEarlyDate(t);
+    Date best_time  = prefHelper.getBestDate(t);
+    Date late_time  = prefHelper.getLateDate(t);
 
     if(!late_time.before(best_time) &&
        !best_time.before(early_time) &&
@@ -78,31 +84,31 @@ public class UTILVerify{
     return false;
   }
 
-  public static boolean hasRequiredFields (Task t) {
+  public boolean hasRequiredFields (Task t) {
     return 
       (hasDirectObject (t) && 
        hasStartPreference (t) && 
        hasEndPreference (t));
   }
   
-  public static boolean hasDirectObject (Task t) {
+  public boolean hasDirectObject (Task t) {
     return (t.getDirectObject () != null);
   }
 
-  public static boolean hasStartPreference (Task t) {
-    return (UTILPreference.hasPrefWithAspectType (t, AspectType.START_TIME));
+  public boolean hasStartPreference (Task t) {
+    return (prefHelper.hasPrefWithAspectType (t, AspectType.START_TIME));
   }
 
-  public static boolean hasEndPreference (Task t) {
-    return (UTILPreference.hasPrefWithAspectType (t, AspectType.END_TIME));
+  public boolean hasEndPreference (Task t) {
+    return (prefHelper.hasPrefWithAspectType (t, AspectType.END_TIME));
   }
 
   /**
    * @return String explaining what's wrong with task
    */
-  public static String reportDurationError (Task t, long durInMillis) {
-    Date start_time = UTILPreference.getReadyAt(t);
-    Date late_time  = UTILPreference.getLateDate(t);
+  public String reportDurationError (Task t, long durInMillis) {
+    Date start_time = prefHelper.getReadyAt(t);
+    Date late_time  = prefHelper.getLateDate(t);
     
     if(late_time.before(start_time)){
       return "Late arrival (" + late_time + 
@@ -122,11 +128,11 @@ public class UTILVerify{
   /**
    * @return String explaining what's wrong with task
    */
-  public static String reportTimingError (Task t) {
-    Date start_time = UTILPreference.getReadyAt(t);
-    Date early_time = UTILPreference.getEarlyDate(t);
-    Date best_time  = UTILPreference.getBestDate(t);
-    Date late_time  = UTILPreference.getLateDate(t);
+  public String reportTimingError (Task t) {
+    Date start_time = prefHelper.getReadyAt(t);
+    Date early_time = prefHelper.getEarlyDate(t);
+    Date best_time  = prefHelper.getBestDate(t);
+    Date late_time  = prefHelper.getLateDate(t);
 
     if (late_time.before(best_time))
       return "Latest arrival (" + late_time + 
@@ -138,4 +144,7 @@ public class UTILVerify{
     return "Earliest arrival (" + early_time + 
       ") is before start (" + start_time + ").";
   }
+
+  protected Logger logger;
+  protected UTILPreference prefHelper;
 }

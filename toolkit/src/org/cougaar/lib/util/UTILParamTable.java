@@ -33,6 +33,8 @@ import org.cougaar.lib.param.Param;
 import org.cougaar.lib.param.ParamTable;
 import org.cougaar.lib.xml.parser.ParamParser;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * <pre>
  * This is a convenience class for the UTIL plugins.  This class
@@ -76,8 +78,9 @@ public class UTILParamTable extends ParamTable {
    * @param envParams vector of environment parameters
    * @param cluster pointer to the cluster
    */
-  public UTILParamTable(Vector envParams, ClusterIdentifier cluster){
-    super(finalizeStuff(envParams, cluster));
+  public UTILParamTable(Vector envParams, ClusterIdentifier cluster, Logger logger){
+    super(logger);
+    addIniParameters (addEnvFileParam(envParams, cluster));
   }
 
   /**
@@ -86,7 +89,7 @@ public class UTILParamTable extends ParamTable {
    * (and passed in the envParams variable) then it is set
    * to be the name of the cluster plus env.xml.
    */
-  private static Vector finalizeStuff(final Vector envParams, ClusterIdentifier cluster){
+  private Vector addEnvFileParam(final Vector envParams, ClusterIdentifier cluster){
     boolean hasfile = false;
     boolean hasdir = false;
 
@@ -95,7 +98,7 @@ public class UTILParamTable extends ParamTable {
     Iterator runtimeParams = paramCopy.iterator();
     while(runtimeParams.hasNext()){
       String runtimeParam = (String)runtimeParams.next();
-      Param p = ParamParser.getParam(runtimeParam);
+      Param p = paramParser.getParam(runtimeParam);
       if(p != null){
 	String name = p.getName();
 	
@@ -110,7 +113,6 @@ public class UTILParamTable extends ParamTable {
 
     if(!hasfile){
       String newParam = "envFile={String}" + cluster.getAddress() + ".env.xml";
-      //logger.debug ("UTILParamTable.finalizeStuff() - Adding param " + newParam);
       paramCopy.add(newParam);
     }
 

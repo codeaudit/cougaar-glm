@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPrepPhrase.java,v 1.1 2001-12-27 22:42:14 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPrepPhrase.java,v 1.2 2002-04-02 20:54:04 gvidaver Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.cougaar.lib.util.UTILPrepPhrase;
+import org.cougaar.util.log.Logger;
 
 /** 
  * This class contains utility functions for creating
@@ -54,19 +55,19 @@ import org.cougaar.lib.util.UTILPrepPhrase;
  */
 
 public class GLMPrepPhrase extends UTILPrepPhrase {
-  private static String myName = "GLMPrepPhrase";
+  public GLMPrepPhrase (Logger logger) { super (logger); }
 
-  public static GeolocLocation getFromLocation (Task t) {
+  public GeolocLocation getFromLocation (Task t) {
     return (GeolocLocation) getIndirectObject (t, Constants.Preposition.FROM);
   }
 
-  public static GeolocLocation getToLocation (Task t) {
+  public GeolocLocation getToLocation (Task t) {
     return (GeolocLocation) getIndirectObject (t, Constants.Preposition.TO);
   }
 
-  public static PrepositionalPhrase makePrepositionalPhrase(RootFactory ldmf,
-							    String prep,
-							    GeolocLocation geoloc) {
+  public PrepositionalPhrase makePrepositionalPhrase(RootFactory ldmf,
+						     String prep,
+						     GeolocLocation geoloc) {
     NewPrepositionalPhrase npp = ldmf.newPrepositionalPhrase();
     npp.setPreposition(prep);
     npp.setIndirectObject(geoloc);

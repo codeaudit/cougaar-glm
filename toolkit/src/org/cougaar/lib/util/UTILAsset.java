@@ -58,9 +58,13 @@ import org.cougaar.util.log.*;
  */
 
 public class UTILAsset {
-  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILAsset");
   private static String myName = "UTILAsset";
-  
+
+  public UTILAsset (Logger log) { 
+    logger = log; 
+    prefHelper = new UTILPreference (log);
+  }
+
   /**
    * Creates an instance of an LDM object from a prototype.
    * An LDM Prototype is like the "idea" of an object.
@@ -70,7 +74,7 @@ public class UTILAsset {
    * @param bumperno      - the unique identifier assigned to the returned instance.
    * @return an LDM asset, null if no prototype prototypeName is known
    */
-  public static Asset createInstance(LDMServesPlugin ldm, String prototypeName, String bumperno){
+  public Asset createInstance(LDMServesPlugin ldm, String prototypeName, String bumperno){
     Asset instance = ldm.getFactory().createInstance (prototypeName, bumperno);
     return instance;
   }
@@ -78,7 +82,7 @@ public class UTILAsset {
   /** 
    * Create empty asset group
    */
-  public static final AssetGroup makeAssetGroup(RootFactory root, String id){
+  public final AssetGroup makeAssetGroup(RootFactory root, String id){
     AssetGroup ag = makeAssetGroup (root, new Vector ());
     ((NewItemIdentificationPG)
      ag.getItemIdentificationPG()).setItemIdentification(id);
@@ -93,7 +97,7 @@ public class UTILAsset {
    * @param  v a Vector of assets to be grouped
    * @return AssetGroup
    */
-  public static final AssetGroup makeAssetGroup(RootFactory root, Vector v){
+  public final AssetGroup makeAssetGroup(RootFactory root, Vector v){
     AssetGroup ag = null;
     try{
       NewTypeIdentificationPG p1 = null;
@@ -117,7 +121,7 @@ public class UTILAsset {
    * @return String representing the TypeIdentification of the asset
    */
   
-  public static String getTypeName (Asset item) {
+  public String getTypeName (Asset item) {
     TypeIdentificationPG tip = 
       item.getTypeIdentificationPG ();
     
@@ -140,7 +144,7 @@ public class UTILAsset {
    * @return String representing the ItemIdentification of the asset
    */
 
-  public static String getItemName (Asset item) {
+  public String getItemName (Asset item) {
     ItemIdentificationPG iip = 
       item.getItemIdentificationPG ();
     
@@ -158,12 +162,14 @@ public class UTILAsset {
     return itemID;
   }
 
+  /*
   protected static int latestUID = 0;
   protected static int getLatestUID () {
     if (latestUID == Integer.MAX_VALUE)
       latestUID = 0;
     return ++latestUID;
   }
+  */
 
     /**
      * Utility function to determine if an asset is or contains
@@ -171,7 +177,7 @@ public class UTILAsset {
      * @param asset the asset.
      * @return true iff the asset is or contains an AssetGroup
      **/
-    public static boolean containsAssetGroup(Asset asset){
+    public boolean containsAssetGroup(Asset asset){
 	if(asset instanceof AssetGroup)
 	    return true;
 	else if(asset instanceof AggregateAsset){
@@ -193,7 +199,7 @@ public class UTILAsset {
    * @param group AssetGroup to divide
    * @return Vector of sub-objects
    */
-  public static Vector expandAssetGroup(AssetGroup group) {
+  public Vector expandAssetGroup(AssetGroup group) {
     Vector buffer = new Vector();
     expandAssetGroup(group, buffer);
     return buffer;
@@ -210,10 +216,10 @@ public class UTILAsset {
    * @param buffer - the vector to put the assets into
    * @return void
    */
-  private static void expandAssetGroup(AssetGroup group, Vector buffer){
+  private void expandAssetGroup(AssetGroup group, Vector buffer){
     Vector subobjects = group.getAssets();
     if (subobjects.isEmpty ())
-      logger.debug ("WARNING -- asset group is empty!");
+      logger.warn ("WARNING -- asset group is empty!");
     for (int i=0; i<subobjects.size(); i++) {
       Object subobject = subobjects.elementAt(i);
 
@@ -231,7 +237,7 @@ public class UTILAsset {
    * Do we need to check the role in this allocation as well?
    * @return null if no task found
    */
-  public static Task findClosestRoleScheduleTask(RoleSchedule rs, Date time, 
+  public Task findClosestRoleScheduleTask(RoleSchedule rs, Date time, 
 						 boolean check_backwards) {
     // !!FIXIT!! What we really want is the entire role schedule as an
     // OrderedSet by PE start time.
@@ -257,7 +263,7 @@ public class UTILAsset {
 	// Process it!  Check if it's the PE that we want- we want to make
 	// sure that there's a clear space in the schedule either from
 	// (if check_backwards is true) or to (false) the given time
-	if (UTILPreference.getReadyAt(next_pe.getTask()).before(time))
+	if (prefHelper.getReadyAt(next_pe.getTask()).before(time))
 	  pe_to_return = next_pe;
 	// If we're going backwards from the time, get the one immediately previous
 	else if (check_backwards) 
@@ -275,4 +281,7 @@ public class UTILAsset {
     
     return pe_to_return.getTask();
   }
+
+  protected Logger logger;
+  protected UTILPreference prefHelper;
 }

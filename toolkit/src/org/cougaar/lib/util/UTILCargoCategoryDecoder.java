@@ -36,7 +36,7 @@ public final class UTILCargoCategoryDecoder {
    * @param code - 3 letter cargo category code
    * @return boolean
    */
-  public static boolean AirTransportable(String code){
+  public boolean AirTransportable(String code){
     code = code.toUpperCase();
     char c = code.charAt(1);
     return ((c != '0')&&(c != '4')&&(c != 'A')); 
@@ -48,7 +48,7 @@ public final class UTILCargoCategoryDecoder {
    * @return boolean
    */
 
-  public static boolean isOutsized (String code){
+  public boolean isOutsized (String code){
     code = code.toUpperCase();
     char c = code.charAt(1);
     return (( c == '1')||(c == '5')||(c == 'B'));
@@ -60,7 +60,7 @@ public final class UTILCargoCategoryDecoder {
    * @return boolean
    */
 
-  public static boolean isOversized (String code){
+  public boolean isOversized (String code){
     code = code.toUpperCase();
     char c = code.charAt(1);
     return (( c == '2')||(c == '6')||(c == 'C'));
@@ -75,7 +75,7 @@ public final class UTILCargoCategoryDecoder {
      * @return boolean
      */
 
-    public static boolean FitsOnC5orC17(String code){
+    public boolean FitsOnC5orC17(String code){
 	code = code.toUpperCase();
 	char c = code.charAt(1);
 	// only bulk organic and oversized 
@@ -90,7 +90,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean FitsOnC17orC141(String code){
+    public boolean FitsOnC17orC141(String code){
 	code = code.toUpperCase();
 	char c = code.charAt(1);
 	// only bulk organic and oversized equipment
@@ -104,7 +104,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean FitsOnAnyPlane(String code){
+    public boolean FitsOnAnyPlane(String code){
 	code = code.toUpperCase();
 	char c = code.charAt(1);
 	// bulk or organic cargo
@@ -118,7 +118,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean FitsOnShip(String code){
+    public boolean FitsOnShip(String code){
 	return true;
     }
 
@@ -128,7 +128,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean IsRoadable(String code){
+    public boolean IsRoadable(String code){
 	code = code.toUpperCase();
 	char c = code.charAt(0);
 	return (c != 'A');
@@ -139,7 +139,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean IsSelfTransportable(String code){
+    public boolean IsSelfTransportable(String code){
 	code = code.toUpperCase();
 	char c = code.charAt(0);
 	return (c == 'K' || c == 'L' || c == 'R');
@@ -150,7 +150,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean Is20FtContainarizable(String code){
+    public boolean Is20FtContainarizable(String code){
 	code = code.toUpperCase();
 	char c = code.charAt(2);
 	return (c == 'B');
@@ -161,7 +161,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean Is40FtContainarizable(String code){
+    public boolean Is40FtContainarizable(String code){
 	code = code.toUpperCase();
 	char c = code.charAt(2);
 	return (c == 'C');
@@ -174,7 +174,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      */
-    public static boolean IsTrainable(String code){
+    public boolean IsTrainable(String code){
 	return true;
     }
 
@@ -183,7 +183,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      **/
-  public static boolean isRORO(String code){
+  public boolean isRORO(String code){
     code = code.toUpperCase();
     char c = code.charAt(0);
     return c == 'A' || c == 'K' || c== 'L' || c == 'R';
@@ -194,7 +194,7 @@ public final class UTILCargoCategoryDecoder {
      * @param code - 3 letter cargo category code
      * @return boolean
      **/
-  public static boolean isAmmo(String code){
+  public boolean isAmmo(String code){
     code = code.toUpperCase();
     char c = code.charAt(0);
     return c == 'M' || c == 'N' || c== 'P';

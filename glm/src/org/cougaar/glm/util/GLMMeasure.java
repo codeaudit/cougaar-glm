@@ -1,4 +1,3 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMMeasure.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -40,6 +39,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.cougaar.lib.util.UTILPluginException;
+import org.cougaar.util.log.Logger;
 
 /**
  * This class contains utility functions for measurements.
@@ -53,8 +53,10 @@ public class GLMMeasure {
   private static double EARTH_RADIUS = 3437.75d; // nmi
   private static double DEGREES_TO_RADIANS = (3.1415927d/180.0d);
 
-  private static boolean debug = false;
-  public static void setDebug (boolean dbg) { debug = dbg; }
+  public GLMMeasure (Logger logger) { 
+    this.logger = logger; 
+    //    assetHelper = new AssetUtil (logger);
+  }
 
   /**
    * Utility function to calculate the distance between two locations
@@ -62,8 +64,8 @@ public class GLMMeasure {
    * @param end GeolocLocation ending point
    * @return Distance between the two points
    */
-  public static Distance distanceBetween(GeolocLocation start, GeolocLocation end) {
-    return GLMMeasure.distanceBetween(start, end, 1.0);
+  public Distance distanceBetween(GeolocLocation start, GeolocLocation end) {
+    return distanceBetween(start, end, 1.0);
   }  
 
   /**
@@ -73,7 +75,7 @@ public class GLMMeasure {
    * @param multiplier Multiplier for the final dist result
    * @return Distance between the two points
    */
-  public static Distance distanceBetween(GeolocLocation start, GeolocLocation end, double multiplier) {
+  public Distance distanceBetween(GeolocLocation start, GeolocLocation end, double multiplier) {
 
     if (start == null)
       throw new UTILPluginException("start geoloc is null");
@@ -95,9 +97,9 @@ public class GLMMeasure {
     if (endlat == null)
       throw new UTILPluginException("endlat is null in end GeolocLocation");
     if ((startlong.getDegrees () == 0.0d) && (startlat.getDegrees () == 0.0d))
-      System.out.println ("distanceBetween - Geoloc " + start + " has lat = lon = 0.0?");
+      logger.debug ("distanceBetween - Geoloc " + start + " has lat = lon = 0.0?");
     if ((endlong.getDegrees () == 0.0d) && (endlat.getDegrees () == 0.0d))
-      System.out.println ("distanceBetween - Geoloc " + end + " has lat = lon = 0.0?");
+      logger.debug("distanceBetween - Geoloc " + end + " has lat = lon = 0.0?");
 
     // get radian measures
     double startlongrad = (startlong.getDegrees()*DEGREES_TO_RADIANS);
@@ -129,7 +131,7 @@ public class GLMMeasure {
    * @return GeolocLocation initialized to input values
    * @deprecated
    */
-  public static GeolocLocation makeGeoloc(GLMFactory fac,
+  public GeolocLocation makeGeoloc(GLMFactory fac,
 					  String code, 
 					  String name, 
 					  double longd, 
@@ -155,7 +157,7 @@ public class GLMMeasure {
   *        1 indicates shifting forward, -1 indicates shifting backward.
   * @return Date the shifted date.
   */
-  public static Date dateShift(Date d, float factor, int direction){
+  public Date dateShift(Date d, float factor, int direction){
     long x = (long)(factor * 60 * 60 * 1000 * direction);
     Date newDate = new Date();
     if ((direction == 1)||(direction == -1)){
@@ -175,7 +177,7 @@ public class GLMMeasure {
   * @param d Date object representing the reference date
   * @return Date, midnight of d.
   */
-  public static Date decodeDate(Date d){
+  public Date decodeDate(Date d){
     //    long millis = d.getTime();
     //    Date midnight = new Date(millis - (millis % 86400000));
     Calendar cal = Calendar.getInstance ();
@@ -199,7 +201,7 @@ public class GLMMeasure {
    * @param p Organization to be tested
    * @return true if is an ammo port
    */
-  public static boolean isForeignLoc(GeolocLocation org_loc) {
+  public boolean isForeignLoc(GeolocLocation org_loc) {
     boolean foreign_org = true;
     
     // For the sake of this demo, the US is bounded by the following cities:
@@ -227,10 +229,10 @@ public class GLMMeasure {
    *
    * @param t Task representing cargo to be moved
    * @param ports Vector of possible orgs
-   * @param String cluster ident. for debugging purposes
+   * @param String cluster ident. for logger.isDebugEnabled()()ging purposes
    * @return Organization object indicating best org
    */
-  public static Organization bestOrg(GeolocLocation loc, Set orgs, String clusterName) {
+  public Organization bestOrg(GeolocLocation loc, Set orgs, String clusterName) {
 
     if (orgs == null || orgs.size() == 0) {
       throw new UTILPluginException(clusterName+ "GLMMeasure: no orgs available");
@@ -250,7 +252,7 @@ public class GLMMeasure {
       Organization nextorg = (Organization) orgse.next();
 
       double nextdistance = 9999.0d;
-      GeolocLocation orgloc = AssetUtil.getOrgLocation(nextorg);     
+      GeolocLocation orgloc = (GeolocLocation) nextorg.getMilitaryOrgPG().getHomeLocation();
 
       // if string codes match, we don't have to look at distances...
       if (orgloc.getGeolocCode ().equals (loc.getGeolocCode ()))
@@ -261,8 +263,9 @@ public class GLMMeasure {
 	  orgloc.getLatitude() != null && 
 	  loc.getLongitude() != null && 
 	  loc.getLatitude() != null) {
-	nextdistance = GLMMeasure.distanceBetween(loc, orgloc).getMiles();
-	if (debug) System.out.println ("Dist between loc " + loc + " and orglog " + orgloc + " is " + nextdistance);
+	nextdistance = distanceBetween(loc, orgloc).getMiles();
+	if (logger.isDebugEnabled()) 
+	  logger.debug("Dist between loc " + loc + " and orglog " + orgloc + " is " + nextdistance);
       }
 
       if (best == null) {
@@ -273,7 +276,8 @@ public class GLMMeasure {
       else if (nextdistance < distance) {
 	best = nextorg;
 	distance = nextdistance;
-	if (debug) System.out.println ("Best is " + best);
+	if (logger.isDebugEnabled()) 
+	  logger.debug("Best is " + best);
       }
     }
 
@@ -282,5 +286,8 @@ public class GLMMeasure {
     }
     return best;
   }
+
+  protected Logger logger;
+  //  protected AssetUtil assetHelper;
 }
 

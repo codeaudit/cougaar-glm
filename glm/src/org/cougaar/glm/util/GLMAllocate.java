@@ -1,4 +1,3 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMAllocate.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -57,12 +56,15 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.cougaar.lib.util.UTILAllocate;
+import org.cougaar.util.log.Logger;
 
 /** 
  * This class contains utility functions for allocations.
  */
 
 public class GLMAllocate extends UTILAllocate {
+
+  public GLMAllocate (Logger l) { super (l); }
 
   /**
    * Provides backword compatibility for next method.
@@ -77,15 +79,15 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
-  public static PlanElement makeAllocation (UTILPlugin creator,
-					    RootFactory ldmf,
-					    Plan plan,
-					    Task t,
-					    Asset asset,
-					    Date start,
-					    Date end,
-					    double cost,
-					    double confidence) {
+  public PlanElement makeAllocation (UTILPlugin creator,
+				     RootFactory ldmf,
+				     Plan plan,
+				     Task t,
+				     Asset asset,
+				     Date start,
+				     Date end,
+				     double cost,
+				     double confidence) {
     return makeAllocation (creator, ldmf, plan, t, asset, start, end, cost,
 			   confidence, Constants.Role.TRANSPORTER);
   }
@@ -105,14 +107,14 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
-  public static PlanElement makeAllocation (UTILPlugin creator,
-					    RootFactory ldmf,
-					    Plan plan,
-					    Task t,
-					    Asset asset,
-					    Date start,
-					    Date end,
-					    double confidence) {
+  public PlanElement makeAllocation (UTILPlugin creator,
+				     RootFactory ldmf,
+				     Plan plan,
+				     Task t,
+				     Asset asset,
+				     Date start,
+				     Date end,
+				     double confidence) {
     return makeAllocation (creator,
 			   ldmf, plan, t, asset, start, end, 
 			   confidence, Constants.Role.TRANSPORTER);
@@ -131,13 +133,13 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
- public static PlanElement makeAllocation (UTILPlugin creator,
-					   RootFactory ldmf,
-					    Plan plan,
-					    Task t,
-					    Asset asset,
-					    AspectValue [] aspects,
-					    double confidence) {
+  public PlanElement makeAllocation (UTILPlugin creator,
+				     RootFactory ldmf,
+				     Plan plan,
+				     Task t,
+				     Asset asset,
+				     AspectValue [] aspects,
+				     double confidence) {
     return makeAllocation (creator,
 			   ldmf, plan, t, asset, aspects, 
 			   confidence, Constants.Role.TRANSPORTER);
@@ -157,14 +159,14 @@ public class GLMAllocate extends UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.Role
    * @deprecated
    */
-  public static PlanElement makeAllocation(UTILPlugin creator,
-					   RootFactory ldmf,
-					   Plan plan,
-					   Task t,
-					   Asset asset,
-					   int[] aspectarray,
-					   double[] resultsarray,
-					   double confidence) {
+  public PlanElement makeAllocation(UTILPlugin creator,
+				    RootFactory ldmf,
+				    Plan plan,
+				    Task t,
+				    Asset asset,
+				    int[] aspectarray,
+				    double[] resultsarray,
+				    double confidence) {
     return makeAllocation (creator,
 			   ldmf, plan, t, asset, aspectarray, resultsarray,
 			   confidence, Constants.Role.TRANSPORTER);

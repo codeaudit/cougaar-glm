@@ -41,7 +41,7 @@ public class UTILItinerary {
    * @param v the Verb that describes the role of the ItineraryElement
    * @return NewItineraryElement
    */
-  public static NewItineraryElement makeItineraryElement(RootFactory ldmf, Verb v){
+  public NewItineraryElement makeItineraryElement(RootFactory ldmf, Verb v){
     NewItineraryElement ie = ldmf.newItineraryElement();
     ie.setRole(v);
     return ie;
@@ -56,7 +56,7 @@ public class UTILItinerary {
    * @param start starting time of the leg
    * @param end ending time of the leg
    */
-  public static void setItineraryLeg(NewItineraryElement leg, 
+  public void setItineraryLeg(NewItineraryElement leg, 
 				     Location startLoc,
 				     Location endLoc,
 				     Date start,
@@ -76,7 +76,7 @@ public class UTILItinerary {
    *   returned by the Schedule
    * @return null if no element is found
    */
-  public static ItineraryElement getItineraryLeg(Verb role,
+  public ItineraryElement getItineraryLeg(Verb role,
 						 Schedule itin) {
     Enumeration schedule_elts = itin.getAllScheduleElements();
     while (schedule_elts.hasMoreElements()) {
@@ -100,7 +100,7 @@ public class UTILItinerary {
    * @param Schedule itinerary through which to search
    * @param Vector of itinerary elements to return
    */
-  public static void getItineraryLeg(Verb role,
+  public void getItineraryLeg(Verb role,
 				     Schedule itin,
 				     Vector vec_to_return) {
     Enumeration schedule_elts = itin.getAllScheduleElements();
@@ -120,7 +120,7 @@ public class UTILItinerary {
    * @param itineraryElements an enum of all the legs.
    * @return Schedule the itinerary
    */
-  public static Schedule makeItinerary(RootFactory ldmf, Enumeration itineraryElements){
+  public Schedule makeItinerary(RootFactory ldmf, Enumeration itineraryElements){
     return ldmf.newSchedule(itineraryElements);
   }
 }

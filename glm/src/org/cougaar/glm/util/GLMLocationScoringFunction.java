@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.1 2001-12-27 22:42:14 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.2 2002-04-02 20:54:04 gvidaver Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -35,13 +35,10 @@ import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 
 import org.cougaar.core.domain.RootFactory;
 
-//import org.cougaar.util.SingleElementEnumeration;
 import org.cougaar.util.Empty;
+import org.cougaar.util.log.Logger;
 
-//import java.util.Calendar;
-//import java.util.Date;
 import java.util.Enumeration;
-//import java.util.Vector;
 
 /** 
  * Represents a location scoring function - score gets worse (higher or lower?)
@@ -50,12 +47,8 @@ import java.util.Enumeration;
  */
 
 public class GLMLocationScoringFunction extends ScoringFunction.PreferredValueScoringFunction {
-  private static boolean debug = false;
-  public static void setDebug (boolean dbg) { debug = dbg; }
   public static double EPSILON = 1.0d;
 
-  //  protected GeolocLocation my_loc = null;
-  
   /**
    * Makes an AspectLocation, which I assume to have type AspectType.POD.
    * (It's not clear anywhere that it should be anything else...)
@@ -63,9 +56,10 @@ public class GLMLocationScoringFunction extends ScoringFunction.PreferredValueSc
    * @see org.cougaar.planning.ldm.plan.AspectLocation
    * @see org.cougaar.planning.ldm.plan.AspectType
    */
-  public GLMLocationScoringFunction(GeolocLocation loc) {
+  public GLMLocationScoringFunction(GeolocLocation loc, Logger logger) {
     super (new AspectLocation (AspectType.POD, loc), 0);
     //    my_loc = loc;
+    measureHelper = new GLMMeasure (logger);
   }
 
   /** 
@@ -129,7 +123,7 @@ public class GLMLocationScoringFunction extends ScoringFunction.PreferredValueSc
 	  my_loc.getLongitude() != null &&
 	  my_loc.getLatitude() != null) {
 
-	double score_as_distance = GLMMeasure.distanceBetween(loc, my_loc).getFurlongs();
+	double score_as_distance = measureHelper.distanceBetween(loc, my_loc).getFurlongs();
 	return score_as_distance;
       }
     }
@@ -159,19 +153,21 @@ public class GLMLocationScoringFunction extends ScoringFunction.PreferredValueSc
 
 //    AspectLocation a_loc = new AspectLocation (AspectType.POD, 
 //					    (double) beforeearly.getTime ());
-//    System.out.println ("Score for before early " + sf.getScore (a_loc));
+//    logger.isDebugEnabled() ("Score for before early " + sf.getScore (a_loc));
 
 //     a_loc = new AspectLocation (AspectType.POD, (double) early.getTime ());
-//     System.out.println ("Score for early " + sf.getScore (a_loc));
+//     logger.isDebugEnabled() ("Score for early " + sf.getScore (a_loc));
 
 //USE THIS ONE FIRST    a_loc = new AspectLocation (AspectType.POD, new_gl);
-//    System.out.println ("Score for best " + sf.getScore (a_loc));
+//    logger.isDebugEnabled() ("Score for best " + sf.getScore (a_loc));
 
 //     a_loc = new AspectLocation (AspectType.POD, (double) late.getTime ());
-//     System.out.println ("Score for late " + sf.getScore (a_loc));
+//     logger.isDebugEnabled() ("Score for late " + sf.getScore (a_loc));
 
 //     a_loc = new AspectLocation (AspectType.POD, (double) afterlate.getTime ());
-//     System.out.println ("Score for after late " + sf.getScore (a_loc));
+//     logger.isDebugEnabled() ("Score for after late " + sf.getScore (a_loc));
   }
+
+  protected GLMMeasure measureHelper;
 }
 

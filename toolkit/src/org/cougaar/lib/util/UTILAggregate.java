@@ -59,15 +59,19 @@ import org.cougaar.util.log.*;
 
 public class UTILAggregate {
   private static String myName = "UTILAggregate";
-  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILAggregate");
-
-  private static boolean debug = false;
+  protected Logger logger;
 
   /**
-   * Set to true to see debug output -- tie to myExtraExtraOutput?
-   * @param dbg -- debug switch
+   * Set the logger -- may be misleading though
+   *
+   * @param logger to use
    */
-  public static void setDebug (boolean dbg) { debug = dbg; }
+  public UTILAggregate (Logger log) { 
+    logger = log; 
+    alloc = new UTILAllocate (log);
+    expand = new UTILExpand (log);
+    assetHelper = new UTILAsset (log);
+  }
 
   /**
    * Creates an Aggregation for every parent task.
@@ -80,28 +84,28 @@ public class UTILAggregate {
    * @return MPTask representing composition
    */
 
-  public static List makeAggregation(UTILPlugin creator,
-									 RootFactory ldmf,
-									 Plan realityPlan,
-									 Vector parentTasks, 
-									 Verb whatVerb,
-									 Vector prepPhrases,
-									 Vector directObjects,
-									 Vector preferences,
-									 ClusterIdentifier sourceClusterID,
-									 AspectValue [] aspectValues,
-									 double confidence) {
+  public List makeAggregation(UTILPlugin creator,
+				     RootFactory ldmf,
+				     Plan realityPlan,
+				     Vector parentTasks, 
+				     Verb whatVerb,
+				     Vector prepPhrases,
+				     Vector directObjects,
+				     Vector preferences,
+				     ClusterIdentifier sourceClusterID,
+				     AspectValue [] aspectValues,
+				     double confidence) {
     List stuffToPublish = new ArrayList ();
 
-    NewMPTask mptask = UTILAggregate.makeMPSubTask(ldmf,
-												   realityPlan,
-												   parentTasks.elements(),
-												   whatVerb,
-												   prepPhrases.elements(),
-												   UTILAsset.makeAssetGroup(ldmf, directObjects),
-												   preferences.elements(),
-												   Priority.UNDEFINED,
-												   sourceClusterID);
+    NewMPTask mptask = makeMPSubTask(ldmf,
+						   realityPlan,
+						   parentTasks.elements(),
+						   whatVerb,
+						   prepPhrases.elements(),
+						   assetHelper.makeAssetGroup(ldmf, directObjects),
+						   preferences.elements(),
+						   Priority.UNDEFINED,
+						   sourceClusterID);
 
     // create the new composition
     NewComposition comp = ldmf.newComposition ();
@@ -118,26 +122,25 @@ public class UTILAggregate {
     // create aggregations for each parent task
     for (Iterator i = parentTasks.iterator(); i.hasNext();){
       Task parentTask = (Task)i.next();
-      if (debug)
-		UTILAllocate.setDebug (true);
-      boolean isSuccess = !UTILAllocate.exceedsPreferences (parentTask, aspectValues);
+      //      if (logger.isDebugEnabled())
+      //	alloc.setLogger (logger);
+      boolean isSuccess = !alloc.exceedsPreferences (parentTask, aspectValues);
 
       if (!isSuccess) {
-	//creator.showDebugIfFailure ();
 	logger.warn ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
-	UTILExpand.showPlanElement (parentTask);
+	expand.showPlanElement (parentTask);
       }
 	  
-      if (debug)
-		UTILAllocate.setDebug (false);
+      //      if (logger.isDebugEnabled())
+      //	UTILAllocate.setLogger (logger);
       AllocationResult estAR = ldmf.newAVAllocationResult(confidence,
-														  isSuccess,
-														  aspectValues);
+							  isSuccess,
+							  aspectValues);
       Aggregation agg = ldmf.createAggregation(parentTask.getPlan(),
-											   parentTask,
-											   comp,
-											   estAR);
-      if (debug)
+					       parentTask,
+					       comp,
+					       estAR);
+      if (logger.isDebugEnabled())
 	logger.debug ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
 		      " agg " + agg.getUID());
 	
@@ -175,7 +178,7 @@ public class UTILAggregate {
    *   representing composition, all the compositions, and the aggregation plan elements
    */
 
-  public static List makeAggregation(UTILPlugin creator,
+  public List makeAggregation(UTILPlugin creator,
 				     RootFactory ldmf,
 				     Plan realityPlan,
 				     Vector parentTasks, 
@@ -188,12 +191,12 @@ public class UTILAggregate {
 				     double confidence) {
     List stuffToPublish = new ArrayList ();
 
-    NewMPTask mptask = UTILAggregate.makeMPSubTask(ldmf,
+    NewMPTask mptask = makeMPSubTask(ldmf,
 						   realityPlan,
 						   parentTasks.elements(),
 						   whatVerb,
 						   prepPhrases.elements(),
-						   UTILAsset.makeAssetGroup(ldmf, directObjects),
+						   assetHelper.makeAssetGroup(ldmf, directObjects),
 						   preferences.elements(),
 						   Priority.UNDEFINED,
 						   sourceClusterID);
@@ -217,18 +220,17 @@ public class UTILAggregate {
       // get the aspect values specific to this task
       AspectValue [] aspectValues = (AspectValue []) taskToAspectValues.get (parentTask);
 	
-      if (debug)
-	UTILAllocate.setDebug (true); // will show comparison of prefs to aspect value
-      boolean isSuccess = !UTILAllocate.exceedsPreferences (parentTask, aspectValues);
+      //      if (logger.isDebugEnabled())
+      //	UTILAllocate.setLogger (logger); // will show comparison of prefs to aspect value
+      boolean isSuccess = !alloc.exceedsPreferences (parentTask, aspectValues);
 
       if (!isSuccess) {
-	//creator.showDebugIfFailure ();
 	logger.warn ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
-	UTILExpand.showPlanElement (parentTask);
+	expand.showPlanElement (parentTask);
       }
 	  
-      if (debug)
-	UTILAllocate.setDebug (false);
+      //      if (logger.isDebugEnabled())
+      //	UTILAllocate.setLogger (logger);
 
       AllocationResult estAR;
 
@@ -243,9 +245,9 @@ public class UTILAggregate {
 					       parentTask,
 					       comp,
 					       estAR);
-      if (debug)
+      if (logger.isDebugEnabled())
 	logger.debug ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
-			    " agg " + agg.getUID());
+		      " agg " + agg.getUID());
 	
       stuffToPublish.add (agg);
       comp.addAggregation(agg);
@@ -267,7 +269,7 @@ public class UTILAggregate {
    * @param t task
    * @return Aggregation
    */
-  public static Aggregation makeFailedAggregation(UTILPlugin creator,
+  public Aggregation makeFailedAggregation(UTILPlugin creator,
 						  RootFactory ldmf, Task t) {
     AllocationResult failedAR  = 
       ldmf.newAllocationResult(1.0, false, 
@@ -277,9 +279,6 @@ public class UTILAggregate {
 					     t,
 					     ldmf.newComposition (),
 					     failedAR);
-    //    if (creator != null)
-    //      creator.showDebugIfFailure ();
-
     return agg;
   }
 
@@ -295,7 +294,7 @@ public class UTILAggregate {
    * @param penalty the penalty function associated with the new task
    * @return NewMPTask
    */
-  public static NewMPTask makeMPSubTask (RootFactory ldmf,
+  public NewMPTask makeMPSubTask (RootFactory ldmf,
 					 Plan plan,
 					 Enumeration parentTasks,
 					 Verb verb,
@@ -317,14 +316,8 @@ public class UTILAggregate {
     mpt.setSource(source);
     return mpt;
   }
+
+  protected UTILAllocate alloc;
+  protected UTILExpand expand;
+  protected UTILAsset assetHelper;
 }
-
-
-
-
-
-
-
-
-
-

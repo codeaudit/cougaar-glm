@@ -35,11 +35,9 @@ import org.cougaar.util.log.*;
  */
 
 public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction {
-  private static boolean debug = false;
+  /* only used for isolated main ()-style testing */
   private static Logger logger=LoggerFactory.getInstance().createLogger("UTILEndDateScoringFunction");
 
-  public static void setDebug (boolean dbg) { debug = dbg; }
-  
   public UTILEndDateScoringFunction(Date early, Date best, Date late,
 				    double boundaryScore) {
     super (new AspectValue (AspectType.END_TIME, (double) early.getTime ()),
@@ -65,7 +63,7 @@ public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction
 					  ok);
   }
   
-  public static void main (String [] args) {
+  public void main (String [] args) {
     Calendar cal = Calendar.getInstance ();
     cal.set (1999, 6, 1, 11, 59, 59);
     Date beforeearly = cal.getTime ();
@@ -81,7 +79,6 @@ public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction
     ScoringFunction sf = new UTILEndDateScoringFunction (early, 
 							 best,
 							 late, 0.9);
-    setDebug (true);
     AspectValue av = new AspectValue (AspectType.END_TIME, 
 				      (double) beforeearly.getTime ());
     logger.debug ("Score for before early " + sf.getScore (av));

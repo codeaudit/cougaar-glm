@@ -55,25 +55,25 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Vector;
 import org.cougaar.util.log.*;
+
 /** 
  * This class contains utility functions for allocations.
  */
-
 public class UTILAllocate {
   private static final boolean SUCCESS = true;
   private static final boolean RESCINDMEPLEASE = false;
   public static final double MEDIUM_CONFIDENCE  = 0.5d;
   public static final double HIGHEST_CONFIDENCE = 1.0d;
-  private static boolean debug = false;
   private static double ONE_DAY = 1000*60*60*24; // millis
   private static double ONE_OVER_ONE_DAY = 1.0d/ONE_DAY; // millis
-  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILAllocate");
 
   /**
-   * Set to true to see debug output -- tie to myExtraExtraOutput?
-   * @param dbg -- debug switch
+   * Set logger
    */
-  public static void setDebug (boolean dbg) { debug = dbg; }
+  public UTILAllocate (Logger log) { 
+    logger = log; 
+    expand = new UTILExpand(log);
+  }
 
   /**
    * Creates an Allocation or FailedAllocation 
@@ -90,7 +90,7 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation (UTILPlugin creator,
+  public PlanElement makeAllocation (UTILPlugin creator,
 					    RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -109,6 +109,7 @@ public class UTILAllocate {
 					   
 
   /**
+   * <pre>
    * Creates an Allocation or FailedDisposition 
    * with an allocationResult w/ isSuccess=False or True, 
    * depending on whether any of the start and end dates 
@@ -126,6 +127,7 @@ public class UTILAllocate {
    *
    * FailedDispositions will ALWAYS have isSuccess = FALSE.
    *
+   * </pre>
    * @param ldmf the RootFactory
    * @param plan the log plan
    * @param t the task to allocate
@@ -135,15 +137,15 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation (UTILPlugin creator,
-					    RootFactory ldmf,
-					    Plan plan,
-					    Task t,
-					    Asset asset,
-					    Date start,
-					    Date end,
-					    double confidence,
-					    Role assignedRole) {
+  public PlanElement makeAllocation (UTILPlugin creator,
+				     RootFactory ldmf,
+				     Plan plan,
+				     Task t,
+				     Asset asset,
+				     Date start,
+				     Date end,
+				     double confidence,
+				     Role assignedRole) {
     return makeAllocation (creator,
 			   ldmf, plan, t, asset, 
 			   getAspectsFromDates (start, end),
@@ -179,7 +181,7 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation (UTILPlugin creator,
+  public PlanElement makeAllocation (UTILPlugin creator,
 					    RootFactory ldmf,
 					    Plan plan,
 					    Task t,
@@ -235,7 +237,7 @@ public class UTILAllocate {
    * @param confidence in the allocation
    * @return PlanElement = Allocation or a FailedDisposition
    */
-  public static PlanElement makeAllocation(UTILPlugin creator,
+  public PlanElement makeAllocation(UTILPlugin creator,
 					   RootFactory ldmf,
 					   Plan plan,
 					   Task t,
@@ -256,7 +258,7 @@ public class UTILAllocate {
 
       alloc = makeFailedDisposition (creator, ldmf, t, estAR);
 
-      if (debug)
+      if (logger.isDebugEnabled())
 	logger.debug ("\nMaking FailedDisposition : Task " + t +
 		      "\n\tAllocResult " + ARtoString (aspectarray,
 						       resultsarray));
@@ -272,7 +274,7 @@ public class UTILAllocate {
 				     asset, 
 				     estAR,
 				     assignedRole);
-      if (debug) {
+      if (logger.isDebugEnabled()) {
 	logger.debug ("\nMaking Allocation : Task " + t +
 		      "\n\tAsset " + asset + 
 		      "\n\tAllocResult " + ARtoString (aspectarray,
@@ -295,7 +297,7 @@ public class UTILAllocate {
    * @param data the data that answers the query
    */
 
-  public static void addQueryResultToAR(PlanElement pe, int aqType, String data){
+  public void addQueryResultToAR(PlanElement pe, int aqType, String data){
     AllocationResult ar = pe.getEstimatedResult();
     ar.addAuxiliaryQueryInfo(aqType, data);
   }
@@ -311,9 +313,9 @@ public class UTILAllocate {
    * @return true if either the start or end dates or cost lie 
    *         outside the task's preferences.
    */
-  public static boolean exceedsPreferences (Task t, Date start, Date end, 
+  public boolean exceedsPreferences (Task t, Date start, Date end, 
 					    double cost) {
-    if (debug)
+    if (logger.isDebugEnabled())
       logger.debug ("Checking for task " + t.getUID () + 
 		    " against start " + start + 
 		    " end " + end + 
@@ -331,8 +333,8 @@ public class UTILAllocate {
    * @return true if either the start or end dates lie 
    *         outside the task's preferences.
    */
-  public static boolean exceedsPreferences (Task t, Date start, Date end) {
-    if (debug)
+  public boolean exceedsPreferences (Task t, Date start, Date end) {
+    if (logger.isDebugEnabled())
       logger.debug ("Checking for task " + t.getUID () + 
 		    " against start " + start + 
 		    " end " + end);
@@ -348,7 +350,7 @@ public class UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.AspectType
    * @see org.cougaar.planning.ldm.plan.AspectValue
    */
-  public static boolean exceedsPreferences (Task t, AspectValue [] aspectValues) {
+  public boolean exceedsPreferences (Task t, AspectValue [] aspectValues) {
     int[] aspectarray = new int[aspectValues.length];
     double[] resultsarray = new double[aspectValues.length];
     for (int i = 0; i < aspectValues.length; i++) {
@@ -379,7 +381,7 @@ public class UTILAllocate {
    * @return boolean -- true if any preference is exceeded
    * @see org.cougaar.planning.ldm.plan.AspectType
    */
-  public static boolean exceedsPreferences (Task t,
+  public boolean exceedsPreferences (Task t,
 					    int [] aspectTypes,
 					    double [] aspectValues) {
     boolean prefExceeded = false;
@@ -404,7 +406,7 @@ public class UTILAllocate {
 
 	if (score > (ScoringFunction.HIGH_THRESHOLD - 0.000001d)) {
 	  prefExceeded = true;
-	  if (debug) {
+	  if (logger.isDebugEnabled()) {
 	    logger.debug ("UTILAllocate.exceedsPreferences - score " + score + 
 			  " exceeds threshold " + ScoringFunction.HIGH_THRESHOLD + 
 			  " for " + t.getUID ());
@@ -437,7 +439,8 @@ public class UTILAllocate {
 		      " has preference of aspect type " + (Integer) i.next () + 
 		      " but no value of this type found in list of reported values." + 
 		      "\nPerhaps missing an aspect value when calling makeAllocation?");
-	UTILExpand.showPlanElement(t);
+	expand.setAlloc(this);
+	expand.showPlanElement(t);
       }
     }
     return prefExceeded;
@@ -457,14 +460,11 @@ public class UTILAllocate {
    * @return FailedDisposition 
    * @see #makeFailedDisposition (RootFactory, Task)
    */
-  public static Disposition makeFailedDisposition(UTILPlugin creator,
+  public Disposition makeFailedDisposition(UTILPlugin creator,
 						  RootFactory ldmf, Task t,
 						  AllocationResult failedAR) {
     Disposition falloc    = 
       ldmf.createFailedDisposition(ldmf.getRealityPlan(), t, failedAR);
-
-    //    if (creator != null)
-    //      creator.showDebugIfFailure ();
 
     return falloc;
   }
@@ -488,16 +488,13 @@ public class UTILAllocate {
    * @return FailedDisposition 
    * @see #makeFailedDisposition (RootFactory, Task, AllocationResult)
    */
-  public static Disposition makeFailedDisposition(UTILPlugin creator,
+  public Disposition makeFailedDisposition(UTILPlugin creator,
 						  RootFactory ldmf, Task t) {
     AllocationResult failedAR  = 
       ldmf.newAllocationResult(HIGHEST_CONFIDENCE, RESCINDMEPLEASE, 
 			       new int[1], new double[1]);
     Disposition falloc    = 
       ldmf.createFailedDisposition(ldmf.getRealityPlan(), t, failedAR);
-
-    //    if (creator != null)
-    //      creator.showDebugIfFailure ();
 
     return falloc;
   }
@@ -519,11 +516,11 @@ public class UTILAllocate {
    * @param confidence of allocation
    * @return allocation result with aspect results
    */
-  protected static AllocationResult createAllocationResult(boolean isSuccess,
-							   RootFactory ldmf,
-							   int [] aspectarray,
-							   double [] resultsarray,
-							   double confidence) {
+  protected AllocationResult createAllocationResult(boolean isSuccess,
+						    RootFactory ldmf,
+						    int [] aspectarray,
+						    double [] resultsarray,
+						    double confidence) {
     AllocationResult myestimate = null;
 
     //    myestimate = ldmf.newAllocationResult(confidence, 
@@ -534,7 +531,7 @@ public class UTILAllocate {
     return myestimate;
   }
 
-  public static AllocationResult cloneAllocResultAsSuccess(RootFactory ldmf,
+  public AllocationResult cloneAllocResultAsSuccess(RootFactory ldmf,
 							   AllocationResult toClone) {
     return ldmf.newAVAllocationResult(toClone.getConfidenceRating (), 
 				      true,
@@ -548,7 +545,7 @@ public class UTILAllocate {
    * @param end date
    * @return AspectValue array representing dates.
    */
-  public static AspectValue [] getAspectsFromDates (Date start, Date end) {
+  public AspectValue [] getAspectsFromDates (Date start, Date end) {
     AspectValue [] aspects = new AspectValue [2];
     aspects[0] = new AspectValue (AspectType.START_TIME, (double) start.getTime ());
     aspects[1] = new AspectValue (AspectType.END_TIME,   (double) end.getTime ());
@@ -563,7 +560,7 @@ public class UTILAllocate {
    * @param cost
    * @return AspectValue array representing dates and cost.
    */
-  public static AspectValue [] getAspects (Date start, Date end, double cost) {
+  public AspectValue [] getAspects (Date start, Date end, double cost) {
     AspectValue [] aspects = new AspectValue [3];
     aspects[0] = new AspectValue (AspectType.START_TIME, (double) start.getTime ());
     aspects[1] = new AspectValue (AspectType.END_TIME,   (double) end.getTime ());
@@ -580,7 +577,7 @@ public class UTILAllocate {
    * @param quantity 
    * @return AspectValue array representing dates, cost, and quantity.
    */
-  public static AspectValue [] getAspects (Date start, Date end, double cost, long quantity) {
+  public AspectValue [] getAspects (Date start, Date end, double cost, long quantity) {
     AspectValue[] aspects = new AspectValue[4];
     aspects[0] = new AspectValue (AspectType.START_TIME, (double) start.getTime ());
     aspects[1] = new AspectValue (AspectType.END_TIME,   (double) end.getTime ());
@@ -596,7 +593,7 @@ public class UTILAllocate {
    * @param aspect value array
    * @return AspectValue array
    */
-  public static AspectValue [] getAspectsFromArrays (int [] aspectarray,
+  public AspectValue [] getAspectsFromArrays (int [] aspectarray,
 						     double [] resultsarray) {
     AspectValue [] aspects = new AspectValue [aspectarray.length];
 
@@ -614,7 +611,7 @@ public class UTILAllocate {
    * @return the total score of the allocation result 
    *         against the task's preferences
    */
-  protected static double scoreAgainstPreferences (Task t,
+  protected double scoreAgainstPreferences (Task t,
 						   AllocationResult allocResult) {
     return scoreAgainstPreferences (t, allocResult.getAspectValueResults ());
   }
@@ -629,9 +626,9 @@ public class UTILAllocate {
    * @param cost - the monetary cost of a potential allocation
    * @return double score 
    */
-  public static double scoreAgainstPreferences (Task t, Date start, Date end,
+  public double scoreAgainstPreferences (Task t, Date start, Date end,
 						double cost) {
-    if (debug)
+    if (logger.isDebugEnabled())
       logger.debug ("Scoring task " + t.getUID () + 
 		    " against start " + start + 
 		    " end " + end + 
@@ -650,8 +647,8 @@ public class UTILAllocate {
    * @param end date to score against preferences
    * @return double score 
    */
-  public static double scoreAgainstPreferences (Task t, Date start, Date end) {
-    if (debug)
+  public double scoreAgainstPreferences (Task t, Date start, Date end) {
+    if (logger.isDebugEnabled())
       logger.debug ("Scoring task " + t.getUID () + 
 		    " against start " + start + 
 		    " end " + end);
@@ -667,7 +664,7 @@ public class UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.AspectType
    * @see org.cougaar.planning.ldm.plan.AspectValue
    */
-  public static double scoreAgainstPreferences (Task t, AspectValue [] aspectValues) {
+  public double scoreAgainstPreferences (Task t, AspectValue [] aspectValues) {
     int[] aspectarray = new int[aspectValues.length];
     double[] resultsarray = new double[aspectValues.length];
     for (int i = 0; i < aspectValues.length; i++) {
@@ -700,7 +697,7 @@ public class UTILAllocate {
    * @see org.cougaar.planning.ldm.plan.AspectValue
    * @see org.cougaar.planning.ldm.plan.Preference
    */
-  public static double scoreAgainstPreferences (Task t,
+  public double scoreAgainstPreferences (Task t,
 						int [] aspectTypes,
 						double [] aspectValues) {
     
@@ -753,7 +750,7 @@ public class UTILAllocate {
     }
 
     boolean need = !reportedResult.isSuccess ();
-    if (debug && need) {
+    if (logger.isDebugEnabled() && need) {
       logger.debug ("UTILAllocate.isFailedPE - found failed task " +
 		    pe.getTask ().getUID () + "-" +  pe.getTask().getVerb());
     }
@@ -778,7 +775,7 @@ public class UTILAllocate {
   /**
    * Is there a better place for this?
    */
-  public static Vector iterToVector (Iterator i) {
+  public Vector iterToVector (Iterator i) {
     Vector retval = new Vector ();
  
     if (i == null)
@@ -837,7 +834,7 @@ public class UTILAllocate {
     return retval;
   }
 
-  protected static void print (AspectValue av, Preference pref, double score, 
+  protected void print (AspectValue av, Preference pref, double score, 
 			       AspectScoreRange definedRange, Enumeration validRanges) {
     double prefval = pref.getScoringFunction().getBest ().getValue ();
     String prefstr = "" + prefval;
@@ -892,4 +889,7 @@ public class UTILAllocate {
       logger.debug ("");
     }
   }
+  
+  protected Logger logger;
+  protected UTILExpand expand;
 }

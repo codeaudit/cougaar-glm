@@ -47,7 +47,6 @@ import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.core.util.UID;
 
 import org.cougaar.lib.filter.UTILPlugin;
-import org.cougaar.lib.param.ParamTable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,8 +68,17 @@ import org.cougaar.util.log.*;
  */
 
 public class UTILExpand {
-  private static boolean shouldPropagateRescinds = true;
-  public static void setPropagateRescinds (boolean p) {
+  public UTILExpand (Logger logger) {
+    this.logger = logger;
+    pref = new UTILPreference (logger);
+    prepHelper = new UTILPrepPhrase (logger);
+  }
+
+  public void setAlloc (UTILAllocate alloc) { 
+    this.alloc = alloc; 
+  }
+
+  public void setPropagateRescinds (boolean p) {
     shouldPropagateRescinds = p;
   }
 
@@ -94,7 +102,7 @@ public class UTILExpand {
    * @param source the cluster originating the task
    * @return NewTask
    */
-  public static NewTask makeSubTask(RootFactory ldmf,
+  public NewTask makeSubTask(RootFactory ldmf,
 				    Plan plan, 
 				    Task parent, 
 				    Verb verb, 
@@ -127,7 +135,7 @@ public class UTILExpand {
    * @param source the cluster originating the task
    * @return NewTask
    */
-  public static NewTask makeSubTask(RootFactory ldmf,
+  public NewTask makeSubTask(RootFactory ldmf,
 				    Plan plan, 
 				    UID parent_uid, 
 				    Verb verb, 
@@ -160,7 +168,7 @@ public class UTILExpand {
    * @param subTask 
    */
 
-  public static void addAuxiliaryQuery (Task parentTask, NewTask subTask) {
+  public void addAuxiliaryQuery (Task parentTask, NewTask subTask) {
     if (parentTask.getAuxiliaryQueryTypes()[0] != -1) {
       subTask.setAuxiliaryQueryTypes(parentTask.getAuxiliaryQueryTypes());
     }
@@ -176,7 +184,7 @@ public class UTILExpand {
    * @return cloned copy of the original task
    * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter
    */
-  public static NewTask cloneTask(RootFactory ldmf,
+  public NewTask cloneTask(RootFactory ldmf,
 				  Task taskToClone) {
     // Warning, this assumes that the task is part of a workflow!
 
@@ -206,7 +214,7 @@ public class UTILExpand {
    * @param source the cluster originating the task
    * @return NewTask
    */
-  public static NewTask makeSubTask(RootFactory ldmf,
+  public NewTask makeSubTask(RootFactory ldmf,
 				    Task parent, 
 				    Asset obj, 
 				    ClusterIdentifier source) {
@@ -232,7 +240,7 @@ public class UTILExpand {
    * @param subtasks a vector of subtasks
    * @return Workflow a workflow containing the subtasks
    */
-  /*  public static Workflow makeWorkflow(LdmFactory ldmf, List subtasks) {
+  /*  public Workflow makeWorkflow(LdmFactory ldmf, List subtasks) {
       return makeWorkflow (ldmf, subtasks, myARA);//AllocationResultAggregator.DEFAULT);
       }*/
 
@@ -243,7 +251,7 @@ public class UTILExpand {
    * @param parent task of this workflow expansion
    * @return Workflow a workflow containing the subtasks
    */
-  public static Workflow makeWorkflow(RootFactory ldmf, List subtasks,
+  public Workflow makeWorkflow(RootFactory ldmf, List subtasks,
 				      Task parent) {
     return makeWorkflow (ldmf, subtasks, myARA,//AllocationResultAggregator.DEFAULT,
 			 parent);
@@ -260,7 +268,7 @@ public class UTILExpand {
    * @return Workflow a workflow containing the subtasks
    * @see org.cougaar.planning.ldm.plan.AllocationResultAggregator
    */
-  public static Workflow makeWorkflow(RootFactory ldmf, List subtasks, 
+  public Workflow makeWorkflow(RootFactory ldmf, List subtasks, 
 				      AllocationResultAggregator ara,
 				      Task parent) {	
     NewWorkflow wf = ldmf.newWorkflow();
@@ -280,7 +288,7 @@ public class UTILExpand {
     return wf;
   }
 
-  public static void showExpansion(Expansion exp) {
+  public void showExpansion(Expansion exp) {
     logger.info("--------------- exp " + exp.getUID () + " ----------------");
     Workflow wf = exp.getWorkflow ();
     int i = 0;
@@ -289,19 +297,19 @@ public class UTILExpand {
     }
   }
 
-  public static void showPlanElement (Task subTask) {
+  public void showPlanElement (Task subTask) {
     showPlanElement (subTask, -1);
   }
 
-  protected static void showPlanElement (Task subTask, int taskNum) {
+  protected void showPlanElement (Task subTask, int taskNum) {
     PlanElement pe = subTask.getPlanElement ();
     String extra = "";
-    if (UTILPrepPhrase.hasPrepNamed (subTask, "TASKEDTO")) 
-      extra = " TASKEDTO " + UTILPrepPhrase.getIndirectObject (subTask, "TASKEDTO"); 
+    if (prepHelper.hasPrepNamed (subTask, "TASKEDTO")) 
+      extra = " TASKEDTO " + prepHelper.getIndirectObject (subTask, "TASKEDTO"); 
 
     // 	logger.debug ("\t" + ((taskNum != -1) ? "#" + taskNum : "") + 
-    // 			    " FROM " + UTILPrepPhrase.getFromLocation (subTask) + 
-    // 			    " TO "    + UTILPrepPhrase.getToLocation   (subTask) + extra);
+    // 			    " FROM " + prepHelper.getFromLocation (subTask) + 
+    // 			    " TO "    + prepHelper.getToLocation   (subTask) + extra);
     if (pe == null) {
       logger.info ("\t no PE yet.");
       showPreferences (subTask);
@@ -316,7 +324,7 @@ public class UTILExpand {
     }
   }
 
-  public static void showPreferences (Task t,
+  public void showPreferences (Task t,
 				      int [] aspectTypes,
 				      double [] aspectValues) {
     boolean prefExceeded = false;
@@ -347,7 +355,7 @@ public class UTILExpand {
     //    logger.debug (prefString);
   }
 
-  public static void showPreferences (Task t) {
+  public void showPreferences (Task t) {
     boolean prefExceeded = false;
     Enumeration prefs = t.getPreferences ();
     Map map = new HashMap ();
@@ -366,7 +374,7 @@ public class UTILExpand {
     //    logger.debug (prefString);
   }
 
-  protected static String print (AspectValue av, Preference pref) {
+  protected String print (AspectValue av, Preference pref) {
     String type = null;
     String value = null;
     String prefstr = null;
@@ -400,7 +408,7 @@ public class UTILExpand {
     return (type + ":p " + prefstr + intermediate + " -a " + value);
   }
 
-  protected static String print (Preference pref) {
+  protected String print (Preference pref) {
     String type = null;
     String value = null;
     String prefstr = null;
@@ -427,7 +435,7 @@ public class UTILExpand {
     return (type + ":p " + prefstr);
   }
 
-  protected static String printEndTime (Task t, AspectValue av) {
+  protected String printEndTime (Task t, AspectValue av) {
     String type = null;
     String value = null;
     //    String prefstr = null;
@@ -437,9 +445,9 @@ public class UTILExpand {
     Date avDate = new Date ((long) av.getValue ());
     value   = "" + avDate;
     //    prefstr = "" + new Date ((long) prefval);
-    Date early = UTILPreference.getEarlyDate(t);
-    Date best  = UTILPreference.getBestDate(t);
-    Date late  = UTILPreference.getLateDate(t);
+    Date early = pref.getEarlyDate(t);
+    Date best  = pref.getBestDate(t);
+    Date late  = pref.getLateDate(t);
     String earlyMark = (avDate.before (early)) ? " <" : "";
     String lateMark  = (avDate.after  (late )) ? " >" : "";
 
@@ -449,7 +457,7 @@ public class UTILExpand {
       (type + ":p-l " + late  + lateMark + " a " + value);
   }
 
-  protected static String printEndTime (Task t) {
+  protected String printEndTime (Task t) {
     String type = null;
     String value = null;
     //    String prefstr = null;
@@ -458,9 +466,9 @@ public class UTILExpand {
     type = "END  ";
 
     //    prefstr = "" + new Date ((long) prefval);
-    Date early = UTILPreference.getEarlyDate(t);
-    Date best  = UTILPreference.getBestDate(t);
-    Date late  = UTILPreference.getLateDate(t);
+    Date early = pref.getEarlyDate(t);
+    Date best  = pref.getBestDate(t);
+    Date late  = pref.getLateDate(t);
 
     return 
       (type + ":p-e " + early + "\n") + 
@@ -477,7 +485,7 @@ public class UTILExpand {
    * @param wf a workflow
    * @return Expansion 
    */
-  public static Expansion makeExpansion(RootFactory ldmf, Workflow wf) {
+  public Expansion makeExpansion(RootFactory ldmf, Workflow wf) {
     Task t = wf.getParentTask();
     Expansion exp = ldmf.createExpansion(t.getPlan(), t, wf, null);
     return exp;
@@ -494,14 +502,14 @@ public class UTILExpand {
    * @return Expansion 
    * @see UTILAllocate#MEDIUM_CONFIDENCE
    */
-  public static Expansion makeExpansionWithConfidence(RootFactory ldmf, Workflow wf) {
+  public Expansion makeExpansionWithConfidence(RootFactory ldmf, Workflow wf) {
     Task t = wf.getParentTask();
     Enumeration prefs = t.getPreferences();
     List aspect_values = new ArrayList();
 
     while(prefs.hasMoreElements()){
       Preference p = (Preference)prefs.nextElement();
-      aspect_values.add(new AspectValue(p.getAspectType(), UTILPreference.getPreferenceBestValue(p)));
+      aspect_values.add(new AspectValue(p.getAspectType(), pref.getPreferenceBestValue(p)));
     }
 
     AllocationResult ar = 
@@ -522,16 +530,13 @@ public class UTILExpand {
    * @param t task to make a failed expansion for
    * @return Expansion 
    */
-  public static Expansion makeFailedExpansion(UTILPlugin creator,
+  public Expansion makeFailedExpansion(UTILPlugin creator,
 					      RootFactory ldmf, Task t) {
     AllocationResult failedAR = 
       ldmf.newAllocationResult(1.0, false,
 			       new int[1], new double[1]);
 
     Expansion exp = ldmf.createExpansion(t.getPlan(), t, ldmf.newWorkflow(), failedAR);
-
-    //    if (creator != null)
-    //      creator.showDebugIfFailure ();
 
     return exp;
   }
@@ -541,21 +546,17 @@ public class UTILExpand {
    * @param ldmf the LDMFactory
    * @param plugin the PluginDelegate
    * @param pluginName string representation of the plugin's name
-   * @param paramTable used for myExtraOutput
-   * @param myExtraOutput used to turn on extra outputs
    * @param t the task to be expanded.
    * @param subtasks the expanded subtasks
    */
 
-  public static void handleTask(RootFactory ldmf, PluginDelegate plugin, String pluginName,
-				boolean wantConfidence, boolean myExtraOutput,
-				Task t, List subtasks) {
-    handleTask (ldmf, plugin.getBlackboardService (), pluginName, wantConfidence, myExtraOutput, t, subtasks);
+  public void handleTask(RootFactory ldmf, PluginDelegate plugin, String pluginName,
+				boolean wantConfidence, Task t, List subtasks) {
+    handleTask (ldmf, plugin.getBlackboardService (), pluginName, wantConfidence, t, subtasks);
   }
   
-  public static void handleTask(RootFactory ldmf, BlackboardService blackboard, String pluginName,
-				boolean wantConfidence, boolean myExtraOutput,
-				Task t, List subtasks) {
+  public void handleTask(RootFactory ldmf, BlackboardService blackboard, String pluginName,
+				boolean wantConfidence, Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
       throw new UTILPluginException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
     }
@@ -563,7 +564,7 @@ public class UTILExpand {
     // WARNING: The following MPTask code is somewhat GlobalSea specific.
     // However, in general if we try to create expansions containing
     // MPTasks, we crash, so this is a slightly better solution for now.
-    if (myExtraOutput){
+    if (logger.isDebugEnabled()){
       logger.debug(pluginName + 
 		   ".handleTask: Subtask(s) created for " +
 		   ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
@@ -593,24 +594,18 @@ public class UTILExpand {
     // If we haven't created a workflow yet, we want the "normal" case
 
     if (wf == null) {
-      wf = UTILExpand.makeWorkflow (ldmf, subtasks, t);
+      wf = makeWorkflow (ldmf, subtasks, t);
     } 
-
-    /*
-      if (myExtraOutput){
-      logger.debug(pluginName + ".handleTask: Workflow created.");
-      }
-    */
 
     Expansion exp = null;
     if(wantConfidence){
-      exp = UTILExpand.makeExpansionWithConfidence (ldmf, wf);
+      exp = makeExpansionWithConfidence (ldmf, wf);
     }
     else{
-      exp = UTILExpand.makeExpansion (ldmf, wf);
+      exp = makeExpansion (ldmf, wf);
     }
 
-    if (myExtraOutput){
+    if (logger.isDebugEnabled()){
       logger.debug(pluginName + ".handleTask: Expansion created. (" +
 		   exp.getUID() + ")");
     }
@@ -621,9 +616,9 @@ public class UTILExpand {
     //	plugin.publishAdd(wf); // Mike Thome says never publish the workflow
     blackboard.publishAdd(exp);
 
-    if (myExtraOutput){
+    if (logger.isDebugEnabled()){
       logger.debug(pluginName + ".handleTask: Expansion published. Workflow has " + 
-		   UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
+		   alloc.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
     }
 
   }
@@ -631,7 +626,7 @@ public class UTILExpand {
   /** 
    * who uses this anymore anyway?  TOPS?
    */
-  public static Expansion handleTaskPrime(RootFactory ldmf, PluginDelegate plugin, String pluginName,
+  public Expansion handleTaskPrime(RootFactory ldmf, PluginDelegate plugin, String pluginName,
 					  boolean wantConfidence, boolean myExtraOutput,
 					  Task t, List subtasks) {
     return handleTaskPrime (ldmf, plugin.getBlackboardService(), pluginName, wantConfidence, myExtraOutput, t, subtasks);
@@ -640,7 +635,7 @@ public class UTILExpand {
   /** 
    * who uses this anymore anyway?   TOPS?
    */
-  public static Expansion handleTaskPrime(RootFactory ldmf, BlackboardService blackboard, String pluginName,
+  public Expansion handleTaskPrime(RootFactory ldmf, BlackboardService blackboard, String pluginName,
 					  boolean wantConfidence, boolean myExtraOutput,
 					  Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
@@ -650,7 +645,7 @@ public class UTILExpand {
     // WARNING: The following MPTask code is somewhat GlobalSea specific.
     // However, in general if we try to create expansions containing
     // MPTasks, we crash, so this is a slightly better solution for now.
-    if (myExtraOutput){
+    if (logger.isDebugEnabled()){
       logger.debug(pluginName + 
 		   ".handleTask: Subtask(s) created for " +
 		   ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
@@ -680,7 +675,7 @@ public class UTILExpand {
     // If we haven't created a workflow yet, we want the "normal" case
 
     if (wf == null) {
-      wf = UTILExpand.makeWorkflow (ldmf, subtasks, t);
+      wf = makeWorkflow (ldmf, subtasks, t);
     } 
 
     /*
@@ -691,13 +686,13 @@ public class UTILExpand {
 
     Expansion exp = null;
     if(wantConfidence){
-      exp = UTILExpand.makeExpansionWithConfidence (ldmf, wf);
+      exp = makeExpansionWithConfidence (ldmf, wf);
     }
     else{
-      exp = UTILExpand.makeExpansion (ldmf, wf);
+      exp = makeExpansion (ldmf, wf);
     }
 
-    if (myExtraOutput){
+    if (logger.isDebugEnabled()){
       logger.debug(pluginName + ".handleTask: Expansion created. (" +
 		   exp.getUID() + ")");
     }
@@ -707,16 +702,15 @@ public class UTILExpand {
     }
     blackboard.publishAdd(exp);
 
-    if (myExtraOutput){
+    if (logger.isDebugEnabled()){
       logger.debug(pluginName + ".handleTask: Expansion published. Workflow has " + 
-		   UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
+		   alloc.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
     }
 
     return exp;
-
   }
 
-  public static Enumeration createDividedPreferences(RootFactory ldmf, Task t, Date begin, Date end, Logger logger) {
+  public Enumeration createDividedPreferences(RootFactory ldmf, Task t, Date begin, Date end, Logger logger) {
     Enumeration taskPrefs = t.getPreferences();
     Vector newPrefs = new Vector();
     Date start = null;
@@ -726,11 +720,11 @@ public class UTILExpand {
     while (taskPrefs.hasMoreElements()) {
       Preference thisPref = (Preference) taskPrefs.nextElement();
       if (thisPref.getAspectType() == AspectType.START_TIME) {
-	start = UTILPreference.getReadyAt(t);
+	start = pref.getReadyAt(t);
       } else if (thisPref.getAspectType() == AspectType.END_TIME) {
-	early = UTILPreference.getEarlyDate(t);
-	best = UTILPreference.getBestDate(t);
-	late = UTILPreference.getLateDate(t);
+	early = pref.getEarlyDate(t);
+	best = pref.getBestDate(t);
+	late = pref.getLateDate(t);
       } else {
 	newPrefs.addElement(thisPref);
       }
@@ -763,18 +757,20 @@ public class UTILExpand {
 		   " l " + late);
     }
 
-    newPrefs.addElement(UTILPreference.makeStartDatePreference(ldmf, begin));
-    newPrefs.addElement(UTILPreference.makeEndDatePreference(ldmf, 
+    newPrefs.addElement(pref.makeStartDatePreference(ldmf, begin));
+    newPrefs.addElement(pref.makeEndDatePreference(ldmf, 
 							     newEarly,
 							     newBest,
 							     end));
     return newPrefs.elements();
-
   }
 
   //  private static AllocationResultAggregator myARA = new UTILAllocationResultAggregator ();
-  private static AllocationResultAggregator myARA = AllocationResultAggregator.DEFAULT;
-  private static boolean debugAlot = false;
+  private AllocationResultAggregator myARA = AllocationResultAggregator.DEFAULT;
 
-  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILExpand");
+  private boolean shouldPropagateRescinds = true;
+  protected Logger logger;
+  protected UTILPreference pref;
+  protected UTILPrepPhrase prepHelper;
+  protected UTILAllocate alloc;
 }

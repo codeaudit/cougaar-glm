@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMVerify.java,v 1.1 2001-12-27 22:42:14 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMVerify.java,v 1.2 2002-04-02 20:54:05 gvidaver Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -34,21 +34,23 @@ import org.cougaar.glm.ldm.plan.GeolocLocation;
 import java.util.Date;
 
 import org.cougaar.lib.util.UTILVerify;
+import org.cougaar.util.log.*;
 
 /**
  * Helper classes to see if a task is consistent and 
  * reasonable.
  */
 public class GLMVerify extends UTILVerify {
+  public GLMVerify (Logger logger) { super (logger); glmPrepHelper = new GLMPrepPhrase(logger);}
 
-  public static boolean hasFromPrep (Task t) {
-    boolean retval = GLMPrepPhrase.hasPrepNamed (t, Constants.Preposition.FROM);
+  public boolean hasFromPrep (Task t) {
+    boolean retval = glmPrepHelper.hasPrepNamed (t, Constants.Preposition.FROM);
     if (!retval) return retval;
     
-    return checkGeoloc (GLMPrepPhrase.getFromLocation(t));
+    return checkGeoloc (glmPrepHelper.getFromLocation(t));
   }
 
-  protected static boolean checkGeoloc (GeolocLocation geoloc) {
+  protected boolean checkGeoloc (GeolocLocation geoloc) {
     Longitude startlong = geoloc.getLongitude();
     Latitude  startlat  = geoloc.getLatitude();
 
@@ -59,11 +61,12 @@ public class GLMVerify extends UTILVerify {
     return true;
   }
 
-  public static boolean hasToPrep (Task t) {
-    boolean retval = GLMPrepPhrase.hasPrepNamed (t, Constants.Preposition.TO);
+  public boolean hasToPrep (Task t) {
+    boolean retval = glmPrepHelper.hasPrepNamed (t, Constants.Preposition.TO);
     if (!retval) return retval;
 
-    return checkGeoloc (GLMPrepPhrase.getToLocation(t));
+    return checkGeoloc (glmPrepHelper.getToLocation(t));
   }
 
+  protected GLMPrepPhrase glmPrepHelper;
 }

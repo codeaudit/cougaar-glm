@@ -34,7 +34,7 @@ import java.util.Vector;
 
 public class UTILSchedule {
 
-  public static boolean scheduleAvailable(Schedule sched, Date start, Date end) {
+  public boolean scheduleAvailable(Schedule sched, Date start, Date end) {
     Enumeration x = sched.getAllScheduleElements();
     Date target = start;
     ScheduleElement se;
@@ -48,7 +48,7 @@ public class UTILSchedule {
     else return false;
   }
 
-  public static Schedule andAvail(Schedule x, Schedule y, RootFactory ldmf) {
+  public Schedule andAvail(Schedule x, Schedule y, RootFactory ldmf) {
     //    logger.debug("X: "+x);
     //    logger.debug("Y: "+y);
     Vector newElem = new Vector();
@@ -72,7 +72,7 @@ public class UTILSchedule {
     return ldmf.newSchedule(newElem.elements());
   }
 
-  public static Schedule timeInverse(Schedule x, RootFactory ldmf) {
+  public Schedule timeInverse(Schedule x, RootFactory ldmf) {
     Vector newElem = new Vector();
     Date point = new Date(0);
     Enumeration enum = x.getAllScheduleElements();
@@ -93,7 +93,7 @@ public class UTILSchedule {
       return ldmf.newSchedule(newElem.elements());
   }
 
-  public static void fill(Schedule x) {
+  public void fill(Schedule x) {
     ScheduleElement y = (ScheduleElement)new ScheduleElementImpl(new Date(0), new Date(TimeSpan.MAX_VALUE));
     ((ScheduleImpl)x).setScheduleElement(y);
 

@@ -26,6 +26,7 @@ import org.cougaar.planning.ldm.measure.Distance;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.glm.ldm.plan.*;
+import org.cougaar.util.log.*;
 
 /**
  * A class containing static methods for geographic computations, 
@@ -115,21 +116,23 @@ public class GeoUtils {
     return distance;
   } 
 
+  /* only used for isolated main ()-style testing */
+  private static Logger logger=LoggerFactory.getInstance().createLogger("GeoUtils");
   // Test procedure on great-circle calculations
   public static void main(String []args) 
   {
-    System.out.println("GeoUtils...");
+    logger.debug("GeoUtils...");
 
     // One degree longitude at equator should be ~111 KM.
     double one_degree_longitude_at_equator = 
       DistanceBetweenPositions(0.0, 0.0, 0.0, 1.0);
-    System.out.println("One degree longitude at equator = " +
+    logger.debug("One degree longitude at equator = " +
 		       one_degree_longitude_at_equator);
 
     // One degree latitude at equator should be ~111 KM.
     double one_degree_latitude_at_equator = 
       DistanceBetweenPositions(0.0, 0.0, 1.0, 0.0);
-    System.out.println("One degree latitude at equator = " +
+    logger.debug("One degree latitude at equator = " +
 		       one_degree_latitude_at_equator);
 
     // Distance between Boston and New York should be 183.9 mi (296 km)
@@ -144,13 +147,13 @@ public class GeoUtils {
     double NY_LON = -(73.0 + (58.0/60.0));
     double LA_LAT = 34.0 + (3.0/60.0);
     double LA_LON = -(118.0 + (14.0/60.0));
-    System.out.println("Distance between NYC and LA (km) = " + 
+    logger.debug("Distance between NYC and LA (km) = " + 
 		       DistanceBetweenPositions(NY_LAT, NY_LON,
 						LA_LAT, LA_LON));
-    System.out.println("Distance between LA and NEW YORK (km) = " + 
+    logger.debug("Distance between LA and NEW YORK (km) = " + 
 		       DistanceBetweenPositions(LA_LAT, LA_LON, 
 						NY_LAT, NY_LON));
-    System.out.println("Distance between BOSTON and NEW YORK (km) = " + 
+    logger.debug("Distance between BOSTON and NEW YORK (km) = " + 
 		       DistanceBetweenPositions(BOS_LAT, BOS_LON, 
 						NY_LAT, NY_LON));
     Position BOSTON = 
@@ -161,10 +164,7 @@ public class GeoUtils {
       (Latitude.newLatitude(NY_LAT), Longitude.newLongitude(NY_LON));
     Distance distance_between_BOS_and_NY = 
       DistanceBetweenPositions(BOSTON, NEW_YORK);
-    System.out.println("Distance between BOSTON and NEW YORK (miles) = " + 
-		       distance_between_BOS_and_NY.getMiles());
-
-    
-			       
+    logger.debug("Distance between BOSTON and NEW YORK (miles) = " + 
+		 distance_between_BOS_and_NY.getMiles());
   }
 }

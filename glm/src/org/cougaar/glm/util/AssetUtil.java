@@ -80,6 +80,7 @@ import org.cougaar.glm.util.GLMPreference;
 import org.cougaar.lib.util.UTILAsset;
 import org.cougaar.lib.util.UTILPluginException;
 import org.cougaar.lib.util.UTILRuntimeException;
+import org.cougaar.util.log.Logger;
 
 import java.util.*;
 
@@ -97,8 +98,15 @@ public class AssetUtil extends UTILAsset {
   public static final Role CARGO_PORT_ROLE = GLMConst.GENERIC_SEA_PORT;
   public static final Role AMMO_PORT_ROLE = GLMConst.AMMUNITION_SEA_PORT;
   public static final Role AMMO_PORT_ROLE_ALT = GLMConst.AMMO_SEA_PORT;
-  
-  public static final Convoy makeConvoy(RootFactory root, String uniqueID){
+
+  public AssetUtil (Logger logger) { 
+    super (logger); 
+    glmPrepHelper = new GLMPrepPhrase (logger);
+    glmPrefHelper = new GLMPreference (logger);
+    measureHelper = new GLMMeasure    (logger);
+  }
+
+  public final Convoy makeConvoy(RootFactory root, String uniqueID){
     Convoy convoy = null;
     try{
       NewTypeIdentificationPG p1 = null;
@@ -121,8 +129,8 @@ public class AssetUtil extends UTILAsset {
    * distinct assets instead of remaining within an aggregate asset.
    */
 
-  public static void setMaxCubicFt (double max) { MAX_CUBIC_FT = max; }
-  public static void setMaxSqFt    (double max) { MAX_SQ_FT = max; }
+  public void setMaxCubicFt (double max) { MAX_CUBIC_FT = max; }
+  public void setMaxSqFt    (double max) { MAX_SQ_FT = max; }
 
   /** 
    * Utility method for finding organization/cluster assets. 
@@ -132,7 +140,7 @@ public class AssetUtil extends UTILAsset {
    *        the topsconfig directory.
    * @return Organization that has the role described in desiredRole 
    */
-  public static Organization getOrgAsst(Iterator assets, String desiredRole){
+  public Organization getOrgAsst(Iterator assets, String desiredRole){
     while (assets.hasNext()){
       Asset resource = (Asset)assets.next();
       if (resource instanceof Organization) {
@@ -161,7 +169,7 @@ public class AssetUtil extends UTILAsset {
    *        the topsconfig directory.
    * @return Organization that has the role described in desiredRole 
    */
-  public static List getOrgAssts(Iterator assets, String desiredRole){
+  public List getOrgAssts(Iterator assets, String desiredRole){
     ArrayList orgs = new ArrayList();
     while (assets.hasNext()){
       Asset resource = (Asset)assets.next();
@@ -192,7 +200,7 @@ public class AssetUtil extends UTILAsset {
    * get the GeolocoLocation of an organization
    * @param o the organization
    */
-  public static GeolocLocation getOrgLocation(Organization o) {
+  public GeolocLocation getOrgLocation(Organization o) {
     GeolocLocation geoloc;
 
     try {
@@ -212,7 +220,7 @@ public class AssetUtil extends UTILAsset {
    *         and the corresponding organization as object.
    */
 
-  public static HashMap orgAssetLocation (List organizations) {
+  public HashMap orgAssetLocation (List organizations) {
     HashMap orgAssetTable = new HashMap();
     //    while (organizations.hasMoreElements()){
     for (Iterator iterator = organizations.iterator(); iterator.hasNext();){
@@ -235,15 +243,15 @@ public class AssetUtil extends UTILAsset {
    * @return Organization the organization with the geolocCode.
    */
 
-  public static Organization getOrg (HashMap table, String geolocCode) {
+  public Organization getOrg (HashMap table, String geolocCode) {
     return ((Organization)((List)table.get(geolocCode)).get(0));
   }
 
-  public static List getOrgList (HashMap table, String geolocCode) {
+  public List getOrgList (HashMap table, String geolocCode) {
     return ((List)table.get(geolocCode));
   }
 
-  public static boolean hasOrg (HashMap table, String geolocCode) {
+  public boolean hasOrg (HashMap table, String geolocCode) {
     return (getOrgList (table, geolocCode) != null);
   }
 
@@ -252,7 +260,7 @@ public class AssetUtil extends UTILAsset {
    * @param clusterAssets the Enum of assets received from the asset container
    * @return Organization which represents current cluster
    */
-  public static Organization getSelf(Enumeration clusterAssets){
+  public Organization getSelf(Enumeration clusterAssets){
     Organization myself = null;
     while(clusterAssets.hasMoreElements()){
       Asset a = (Asset)clusterAssets.nextElement();
@@ -274,7 +282,7 @@ public class AssetUtil extends UTILAsset {
    * @param asset the asset to check
    * @return boolean
    */
-  public static boolean isConsumable(Asset asset){
+  public boolean isConsumable(Asset asset){
     if(asset instanceof AggregateAsset){
       return isConsumable(((AggregateAsset)asset).getAsset());
     }
@@ -286,7 +294,7 @@ public class AssetUtil extends UTILAsset {
    * @param asset the asset to check
    * @return boolean
    */
-  public static boolean isRepairable(Asset asset){
+  public boolean isRepairable(Asset asset){
     if(asset instanceof AggregateAsset){
       return isRepairable(((AggregateAsset)asset).getAsset());
     }
@@ -298,7 +306,7 @@ public class AssetUtil extends UTILAsset {
    * @param asset the asset to check
    * @return boolean
    */ 
- public static boolean isPassenger(Asset asset) {
+  public boolean isPassenger(Asset asset) {
     if (asset instanceof AggregateAsset) {
       return isPassenger(((AggregateAsset)asset).getAsset());
     }
@@ -309,13 +317,13 @@ public class AssetUtil extends UTILAsset {
     TypeIdentificationPG typeofasset = null;
     typeofasset = asset.getTypeIdentificationPG();
     if (typeofasset == null) {
-       throw new UTILPluginException("bad type identification property: \"" +
-				     asset + "\"");
+      throw new UTILPluginException("bad type identification property: \"" +
+				    asset + "\"");
     }
     String nom = typeofasset.getTypeIdentification();
     if (nom == null) {
       throw new UTILPluginException("bad type identification: \"" +
-				     asset + "\"");
+				    asset + "\"");
     }
     return(nom.equals("OTHER/Passenger") ||
 	   nom.equals("OTHER/People")||
@@ -327,9 +335,9 @@ public class AssetUtil extends UTILAsset {
    * @param asset the asset to check
    * @return boolean
    */ 
-public static boolean isPallet(Asset asset) {
+  public boolean isPallet(Asset asset) {
     if (asset instanceof AggregateAsset) {
-	return isPallet(((AggregateAsset)asset).getAsset());
+      return isPallet(((AggregateAsset)asset).getAsset());
     } 
     
     if ((asset instanceof Container) || (asset instanceof org.cougaar.glm.ldm.asset.Package)){
@@ -345,17 +353,17 @@ public static boolean isPallet(Asset asset) {
 				      asset + "\"");
       }
       if (nom.equals ("TOPS_PALLET"))
-	  throw new UTILPluginException("AssetUtil.isPallet - found TOPS_PALLET.  " + 
-					"Please use PALLET from Container protos instead!");
+	throw new UTILPluginException("AssetUtil.isPallet - found TOPS_PALLET.  " + 
+				      "Please use PALLET from Container protos instead!");
       //!!!Hack for AEF...until we figure out the TypeIdentification/Nomenclature problem on AEF's end.
       if ( (nom.indexOf("463L") != -1))
-	  return true;
+	return true;
       return(nom.equals("OTHER/Air_Pallet") ||
 	     nom.equals("PALLET") ||
 	     nom.equals("463L PLT") );
     }
     return false;
- }
+  }
   /**
    * check to see if an asset represents ammo
    *
@@ -368,7 +376,7 @@ public static boolean isPallet(Asset asset) {
    * @param asset the asset to check
    * @return boolean
    */
-  public static boolean isAmmo(Asset asset) {
+  public boolean isAmmo(Asset asset) {
 
     if (asset instanceof AssetGroup) {
       Vector assetVector = ((AssetGroup)asset).getAssets();
@@ -391,32 +399,33 @@ public static boolean isPallet(Asset asset) {
       return true;
 
     if (asset instanceof AssetGroup) {
-	Vector vector = (Vector)((AssetGroup)asset).getAssets();
-	return isAmmo((Asset)vector.elementAt(0));
+      Vector vector = (Vector)((AssetGroup)asset).getAssets();
+      return isAmmo((Asset)vector.elementAt(0));
     }
 
     MovabilityPG mpg = 
       (MovabilityPG) ((GLMAsset)asset).getMovabilityPG();
     if(mpg != null){
-	String code = mpg.getCargoCategoryCode();
-	if(code != null && CargoCategoryDecoder.isAmmo(code))
-	    return true;
+      String code = mpg.getCargoCategoryCode();
+      if(code != null && CargoCategoryDecoder.isAmmo(code))
+	return true;
     }
 
     TypeIdentificationPG typeofasset = null;
     typeofasset = asset.getTypeIdentificationPG();
     if (typeofasset == null) {
-	throw new UTILPluginException("bad type identification property: \"" +
-				      asset + "\"");
+      throw new UTILPluginException("bad type identification property: \"" +
+				    asset + "\"");
     }
     String nom = typeofasset.getTypeIdentification();
     if (nom == null) {
-	throw new UTILPluginException("bad type identification: \"" + asset + "\"");
+      throw new UTILPluginException("bad type identification: \"" + asset + "\"");
     }
     return (nom.equals("Ammunition"));
   }
 
   /**
+   * <pre>
    * See if a task is a prepo task (i.e. 
    * already packed in a ship hanging arround
    * in the middle of the ocean somewhere).
@@ -426,18 +435,20 @@ public static boolean isPallet(Asset asset) {
    * We look up the ship referred to by the String (Ship ID) 
    * in GlobalSea, where the ships are owned.
    *
+   * </pre>
    * @param t task to check
    * @return boolean
    */
-  public static boolean isPrepoTask(Task t){
-    if(GLMPrepPhrase.hasPrepNamed(t, Constants.Preposition.WITH)){
-      Object o = GLMPrepPhrase.getIndirectObject(t, Constants.Preposition.WITH);
+  public boolean isPrepoTask(Task t){
+    if(glmPrepHelper.hasPrepNamed(t, Constants.Preposition.WITH)){
+      Object o = glmPrepHelper.getIndirectObject(t, Constants.Preposition.WITH);
       return o instanceof CargoShip || o instanceof String;
     }
     return false;
   }
 
   /**
+   * <pre>
    * convert an AssetGroup/AggregateAsset into it's component assets,
    * recursing through any contained AssetGroup/AggregateAssets as
    * needed.
@@ -463,10 +474,11 @@ public static boolean isPallet(Asset asset) {
    * Will not break up aggregate
    * assets where the items are smaller than one cubic foot.
    *
+   * </pre>
    * @param asset AssetGroup/AggreateAsset to divide
    * @return Vector of sub-objects
    */
-  public static Vector ExpandAsset(RootFactory theFactory, Asset asset) {
+  public Vector ExpandAsset(RootFactory theFactory, Asset asset) {
     Vector retval = new Vector();
 
     if (asset instanceof AssetGroup) {
@@ -513,39 +525,42 @@ public static boolean isPallet(Asset asset) {
 		(area.getSquareFeet () > MAX_SQ_FT))
 	      tooBig = true;
 	  } catch (Exception e) {
-	    System.out.println ("AssetUtil.ExpandAsset - ERROR : " +
-				"aggregate asset\n\t" + aggregate + 
-				"\n\thas asset\n\t" +
-				subobject + 
-				"\n\tthat has no physicalPG.");
+	    logger.warn ("AssetUtil.ExpandAsset - ERROR : " +
+			 "aggregate asset\n\t" + aggregate + 
+			 "\n\thas asset\n\t" +
+			 subobject + 
+			 "\n\tthat has no physicalPG.");
 	  }
 	}
-	if (tooBig)
-	  for (long i=0; i<count; i++) {
-	    String name = getTypeName (subobject);
-	    if (name.length () > 10)
+	if (tooBig) {
+	  synchronized (this) {
+	    for (long i=0; i<count; i++) {
+	      String name = getTypeName (subobject);
+	      if (name.length () > 10)
 		name = name.substring (0, 9) + "...";
 
-	    name = name + "-" + 
-	      (i+1) + "_of_" + 
-	      count + "(" + 
-	      getLatestUID () + ")";
-	    Asset particle = theFactory.createInstance (subobject, name);
-	    Enumeration otherProps = asset.getOtherProperties();
-	    while (otherProps.hasMoreElements()) {
+	      name = name + "-" + 
+		(i+1) + "_of_" + 
+		count + "(" + 
+		getLatestUID () + ")";
+	      Asset particle = theFactory.createInstance (subobject, name);
+	      Enumeration otherProps = asset.getOtherProperties();
+	      while (otherProps.hasMoreElements()) {
 		particle.addOtherPropertyGroup((PropertyGroup)otherProps.nextElement());
+	      }
+	      retval.addElement(particle);
 	    }
-	    retval.addElement(particle);
 	  }
+	}
 	else
 	  retval.addElement (asset);
       }
       else {
-	System.out.println ("AssetUtil.ExpandAsset - ERROR : " +
-			    "aggregate asset\n\t" + aggregate + 
-			    "\n\thas asset\n\t" +
-			    subobject + 
-			    "\n\tthat is not an Asset.");
+	logger.error ("AssetUtil.ExpandAsset - ERROR : " +
+		      "aggregate asset\n\t" + aggregate + 
+		      "\n\thas asset\n\t" +
+		      subobject + 
+		      "\n\tthat is not an Asset.");
 	retval.addElement (asset);
       }
     } 
@@ -556,8 +571,8 @@ public static boolean isPallet(Asset asset) {
     return retval;
   }
 
-  protected static int latestUID = 0;
-  protected static int getLatestUID () {
+  protected int latestUID = 0;
+  protected synchronized int getLatestUID () {
     if (latestUID == Integer.MAX_VALUE)
       latestUID = 0;
     return ++latestUID;
@@ -569,8 +584,8 @@ public static boolean isPallet(Asset asset) {
    * @param asset the asset
    * @return Area the total area of the asset
    */
-  public static Area totalArea(Asset asset) {
-      return totalArea (asset, false);
+  public Area totalArea(Asset asset) {
+    return totalArea (asset, false);
   }
 
   /**
@@ -583,73 +598,62 @@ public static boolean isPallet(Asset asset) {
    * @param asset the asset
    * @return Area the total area of the asset
    */
-    public static Area totalAdjustedArea(Asset asset) {
-      return totalArea (asset, true);
-    }
+  public Area totalAdjustedArea(Asset asset) {
+    return totalArea (asset, true);
+  }
 
-  public static Area totalArea(Asset asset, boolean ignoreContainers) {
+  public Area totalArea(Asset asset, boolean ignoreContainers) {
     if (asset instanceof AggregateAsset) {
-	AggregateAsset aggAsset = (AggregateAsset)asset;
-	double qty = aggAsset.getQuantity();
+      AggregateAsset aggAsset = (AggregateAsset)asset;
+      double qty = aggAsset.getQuantity();
 
-	if (qty <= 0)
-	    throw new UTILPluginException("got bad qty for Aggregate Asset: \"" + 
-					  asset + "\"");
+      if (qty <= 0)
+	throw new UTILPluginException("got bad qty for Aggregate Asset: \"" + 
+				      asset + "\"");
 
-	asset = aggAsset.getAsset();
+      asset = aggAsset.getAsset();
 
-	if(asset == null)
-	    throw new UTILPluginException("Got null asset in Aggregate Asset");
+      if(asset == null)
+	throw new UTILPluginException("Got null asset in Aggregate Asset");
 
-	double area = getArea(asset).getSquareFeet();
-	return Area.newSquareFeet(qty * area);
+      double area = getArea(asset).getSquareFeet();
+      return Area.newSquareFeet(qty * area);
     }
     else if (asset instanceof AssetGroup) {
       double d = 0.0d;
       Vector subassets = ((AssetGroup)asset).getAssets();
       for (int i = 0; i < subassets.size (); i++)
-	  d += totalArea((Asset)subassets.elementAt(i)).getSquareFeet();
+	d += totalArea((Asset)subassets.elementAt(i)).getSquareFeet();
 
       return Area.newSquareFeet(d);
     }
 
     if (ignoreContainers)
-	return isVehicleOrAircraft(asset) ? getArea (asset) : Area.newSquareFeet(0.0d);
+      return isVehicleOrAircraft(asset) ? getArea (asset) : Area.newSquareFeet(0.0d);
 
     return getArea (asset);
   }
 
-    private static Area getArea (Asset asset) {
-	PhysicalPG prop = null;
-	try{
-	  prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG();
-	}
-	catch(Exception e){
-	    throw new UTILPluginException("error getting physical property for asset :\"" +
-					  asset + "\"");
-	}
-	Area area;
-	try { area = prop.getFootprintArea(); }
-	catch (Exception e) {
-	    throw new UTILPluginException("No Physical property set for asset: \"" +
-					  asset + "\"");
-	}
-	if (area == null) {
-	    throw new UTILPluginException("Got null footprint area in asset: \"" +
-					  asset + "\"");
-	}
-	return area;
+  private Area getArea (Asset asset) {
+    PhysicalPG prop = null;
+    try{
+      prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG();
     }
-
-  /**
-   * get the total Volume of an asset
-   * ( regardless of whether it's
-   * an Asset, AssetGroup, AggregateAsset, or whatever)
-   * @param asset the asset
-   * @return Volume the total volume of the asset
-   */
-  public static Volume totalVolume(Asset asset) {
-      return totalVolume(asset, false);
+    catch(Exception e){
+      throw new UTILPluginException("error getting physical property for asset :\"" +
+				    asset + "\"");
+    }
+    Area area;
+    try { area = prop.getFootprintArea(); }
+    catch (Exception e) {
+      throw new UTILPluginException("No Physical property set for asset: \"" +
+				    asset + "\"");
+    }
+    if (area == null) {
+      throw new UTILPluginException("Got null footprint area in asset: \"" +
+				    asset + "\"");
+    }
+    return area;
   }
 
   /**
@@ -659,13 +663,24 @@ public static boolean isPallet(Asset asset) {
    * @param asset the asset
    * @return Volume the total volume of the asset
    */
-  public static Volume totalAdjustedVolume(Asset asset) {
-      return totalVolume(asset, true);
+  public Volume totalVolume(Asset asset) {
+    return totalVolume(asset, false);
   }
 
-  public static Volume totalVolume(Asset asset, boolean ignoreVehiclesAndContainers) {
+  /**
+   * get the total Volume of an asset
+   * ( regardless of whether it's
+   * an Asset, AssetGroup, AggregateAsset, or whatever)
+   * @param asset the asset
+   * @return Volume the total volume of the asset
+   */
+  public Volume totalAdjustedVolume(Asset asset) {
+    return totalVolume(asset, true);
+  }
+
+  public Volume totalVolume(Asset asset, boolean ignoreVehiclesAndContainers) {
     if (asset instanceof AggregateAsset) {
-	AggregateAsset aggAsset = (AggregateAsset)asset;
+      AggregateAsset aggAsset = (AggregateAsset)asset;
       double qty = aggAsset.getQuantity();
 
       if (qty <= 0)
@@ -684,38 +699,38 @@ public static boolean isPallet(Asset asset) {
       double d = 0.0d;
       Vector subassets = ((AssetGroup)asset).getAssets();
       for (int i = 0; i < subassets.size (); i++)
-	  d += totalVolume((Asset)subassets.elementAt(i),ignoreVehiclesAndContainers).getCubicMeters();
+	d += totalVolume((Asset)subassets.elementAt(i),ignoreVehiclesAndContainers).getCubicMeters();
 
       return Volume.newCubicMeters(d);
     }
 
     if (ignoreVehiclesAndContainers)
-	return (!isVehicleOrAircraft(asset) && !isStandardContainer(asset)) 
-          ? getVolume (asset) : Volume.newCubicMeters(0.0d);
+      return (!isVehicleOrAircraft(asset) && !isStandardContainer(asset)) 
+	? getVolume (asset) : Volume.newCubicMeters(0.0d);
 
     return getVolume (asset);
   }
 
-    private static Volume getVolume (Asset asset) {
-	PhysicalPG prop = null;
-	try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
-	catch(Exception e){
-	    throw new UTILPluginException("error getting physical property for asset :\"" +
-					  asset + "\"");
-	}
-
-	Volume vol;
-	try { vol = prop.getVolume(); }
-	catch (Exception e) {
-	    throw new UTILPluginException("No Physical property set for asset: \"" +
-					  asset + "\"");
-	}
-	if (vol == null) {
-	    throw new UTILPluginException("Got null volume in asset: \"" +
-					  asset + "\"");
-	}
-	return vol;
+  private Volume getVolume (Asset asset) {
+    PhysicalPG prop = null;
+    try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
+    catch(Exception e){
+      throw new UTILPluginException("error getting physical property for asset :\"" +
+				    asset + "\"");
     }
+
+    Volume vol;
+    try { vol = prop.getVolume(); }
+    catch (Exception e) {
+      throw new UTILPluginException("No Physical property set for asset: \"" +
+				    asset + "\"");
+    }
+    if (vol == null) {
+      throw new UTILPluginException("Got null volume in asset: \"" +
+				    asset + "\"");
+    }
+    return vol;
+  }
 
   /**
    * get the total Mass of an asset
@@ -725,9 +740,9 @@ public static boolean isPallet(Asset asset) {
    * @return Mass the total mass of the asset
    */
 
-  public static Mass totalMass(Asset asset) {
+  public Mass totalMass(Asset asset) {
     if (asset instanceof AggregateAsset) {
-	AggregateAsset aggAsset = (AggregateAsset)asset;
+      AggregateAsset aggAsset = (AggregateAsset)asset;
       double qty = aggAsset.getQuantity();
 
       if (qty <= 0)
@@ -746,7 +761,7 @@ public static boolean isPallet(Asset asset) {
       double d = 0.0d;
       Vector subassets = ((AssetGroup)asset).getAssets();
       for (int i = 0; i < subassets.size (); i++)
-	  d += totalMass((Asset)subassets.elementAt(i)).getTons();
+	d += totalMass((Asset)subassets.elementAt(i)).getTons();
 
       return Mass.newTons(d);
     }
@@ -754,30 +769,30 @@ public static boolean isPallet(Asset asset) {
     return getMass (asset);
   }
 
-    private static Mass getMass (Asset asset) {
-	PhysicalPG prop = null;
-	try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
-	catch(Exception e){
-	    throw new UTILPluginException("error getting physical property for asset :\"" +
-					  asset + "\"");
-	}
-
-	Mass mass;
-	try { mass = prop.getMass(); }
-	catch (Exception e) {
-	    throw new UTILPluginException("No Physical property set for asset: \"" +
-					  asset + "\"");
-	}
-	if (mass == null) {
-	    throw new UTILPluginException("Got null mass in asset: \"" +
-					  asset + "\"");
-	}
-	return mass;
+  private Mass getMass (Asset asset) {
+    PhysicalPG prop = null;
+    try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
+    catch(Exception e){
+      throw new UTILPluginException("error getting physical property for asset :\"" +
+				    asset + "\"");
     }
 
-  public static long totalContainers(Asset asset) {
+    Mass mass;
+    try { mass = prop.getMass(); }
+    catch (Exception e) {
+      throw new UTILPluginException("No Physical property set for asset: \"" +
+				    asset + "\"");
+    }
+    if (mass == null) {
+      throw new UTILPluginException("Got null mass in asset: \"" +
+				    asset + "\"");
+    }
+    return mass;
+  }
+
+  public long totalContainers(Asset asset) {
     if (asset instanceof AggregateAsset) {
-	AggregateAsset aggAsset = (AggregateAsset)asset;
+      AggregateAsset aggAsset = (AggregateAsset)asset;
       double qty = aggAsset.getQuantity();
 
       if (qty <= 0)
@@ -795,7 +810,7 @@ public static boolean isPallet(Asset asset) {
       long d = 0l;
       Vector subassets = ((AssetGroup)asset).getAssets();
       for (int i = 0; i < subassets.size (); i++)
-	  if (isStandardContainer((Asset)subassets.elementAt(i))) d++;
+	if (isStandardContainer((Asset)subassets.elementAt(i))) d++;
       return d;
     }
     return isStandardContainer(asset) ? 1 : 0;
@@ -808,7 +823,7 @@ public static boolean isPallet(Asset asset) {
    * @param a the asset
    * @return double the area of the asset in sqr. ft.
    */
-  public static double totalSquareFeet(Asset asset) {
+  public double totalSquareFeet(Asset asset) {
     double area = totalArea(asset).getSquareFeet();
     if(area < 0){
       throw new UTILPluginException("Got bad area in asset: \"" +
@@ -824,11 +839,11 @@ public static boolean isPallet(Asset asset) {
    * @param a the asset
    * @return double the volume of the asset in cubic meters
    */
-  public static double totalCubicMeters(Asset asset) {
+  public double totalCubicMeters(Asset asset) {
     double vol = totalVolume(asset).getCubicMeters();
     if(vol < 0){
-       throw new UTILPluginException("Got bad volume in asset: \"" +
-				     asset + "\"");
+      throw new UTILPluginException("Got bad volume in asset: \"" +
+				    asset + "\"");
     }
     return vol;
   }
@@ -840,11 +855,11 @@ public static boolean isPallet(Asset asset) {
    * @param a the asset
    * @return double the mass of the asset in cubic meters
    */
-  public static double totalTons(Asset asset) {
+  public double totalTons(Asset asset) {
     double mass = totalMass(asset).getTons();
     if(mass < 0){
-       throw new UTILPluginException("Got bad weight in asset: \"" +
-				     asset + "\"");
+      throw new UTILPluginException("Got bad weight in asset: \"" +
+				    asset + "\"");
     }
     return mass;
   }
@@ -860,7 +875,7 @@ public static boolean isPallet(Asset asset) {
    * @return GeolocLocation representing the current position of the asset
    *    at the time specified.  returns null if none found
    */
-  public static GeolocLocation getMostRecentKnownPosition(Asset a, Date time) {
+  public GeolocLocation getMostRecentKnownPosition(Asset a, Date time) {
     RoleSchedule rs = a.getRoleSchedule();
 
     // The task immediately previous (possibly including) now
@@ -869,43 +884,43 @@ public static boolean isPallet(Asset asset) {
 
     if (most_recent_task == null) {
 
-//        System.err.println("AssetUtil.getCurrentPosition for asset " + 
-//  			 a.getUID() + " at time " + time + 
-//  			 " found no previous tasks");
+      //        System.err.println("AssetUtil.getCurrentPosition for asset " + 
+      //  			 a.getUID() + " at time " + time + 
+      //  			 " found no previous tasks");
       return null;
     }
         
-    if (GLMPreference.getLateDate(most_recent_task).after(time)) 
-      return GLMPrepPhrase.getFromLocation(most_recent_task);
+    if (prefHelper.getLateDate(most_recent_task).after(time)) 
+      return glmPrepHelper.getFromLocation(most_recent_task);
     /*
-    {
-    // If the last one overlaps the time, we need to interpolate
-      GeolocLocation start = GLMPrepPhrase.getFromLocation(most_recent_task);
-      GeolocLocation end = GLMPrepPhrase.getToLocation(most_recent_task);      
-    }
+      {
+      // If the last one overlaps the time, we need to interpolate
+      GeolocLocation start = glmPrepHelper.getFromLocation(most_recent_task);
+      GeolocLocation end = glmPrepHelper.getToLocation(most_recent_task);      
+      }
     */
 
-    return GLMPrepPhrase.getToLocation(most_recent_task);
+    return glmPrepHelper.getToLocation(most_recent_task);
   }
 
   /**
-    * Check to see if the task fits in the role schedule of the asset.
-    * DON'T perform any allocation, assignment, etc. just check for 
-    * enough space.
-    * FOR NOW, (!!FIXIT!!) we're assuming the ship is EMPTY unless 
-    * fully allocated, i.e. you have to manage the loading yourself 
-    * without actually adding something on the ship until you add 
-    * everything in one big block.  You can actually get into the guts
-    * of the asset and check the role schedule for yourself if you really
-    * want to, but it's kind of ugly.
-    * 
-    * There are two possible legal cases (i.e. no nulls or other errors) in
-    * which this method will return false:  the role schedule doesn't have
-    * availability for a task, or the role schedule already has plan elements
-    * in the time window where we want the task to fit that make the schedule
-    * unfeasible.
-    */
-  public static boolean checkTaskAgainstRoleSchedule(Asset a, Task t) {
+   * Check to see if the task fits in the role schedule of the asset.
+   * DON'T perform any allocation, assignment, etc. just check for 
+   * enough space.
+   * FOR NOW, (!!FIXIT!!) we're assuming the ship is EMPTY unless 
+   * fully allocated, i.e. you have to manage the loading yourself 
+   * without actually adding something on the ship until you add 
+   * everything in one big block.  You can actually get into the guts
+   * of the asset and check the role schedule for yourself if you really
+   * want to, but it's kind of ugly.
+   * 
+   * There are two possible legal cases (i.e. no nulls or other errors) in
+   * which this method will return false:  the role schedule doesn't have
+   * availability for a task, or the role schedule already has plan elements
+   * in the time window where we want the task to fit that make the schedule
+   * unfeasible.
+   */
+  public boolean checkTaskAgainstRoleSchedule(Asset a, Task t) {
     boolean taskOK = false;
 
     GeolocLocation t_start_loc = (GeolocLocation)
@@ -914,8 +929,8 @@ public static boolean isPallet(Asset asset) {
     GeolocLocation t_end_loc = (GeolocLocation)
       t.getPrepositionalPhrase(Constants.Preposition.TO).getIndirectObject();
     
-    Date t_start_time = GLMPreference.getReadyAt(t);
-    Date t_end_time = GLMPreference.getLateDate(t);
+    Date t_start_time = prefHelper.getReadyAt(t);
+    Date t_end_time = prefHelper.getLateDate(t);
     
     // We need to make sure a) the asset is available in this time window
     // b) the asset can get to the start location by the start time and
@@ -934,29 +949,31 @@ public static boolean isPallet(Asset asset) {
     // get where it needs to be on time (NOTE - this prefers the status quo,
     // i.e. tasks already allocated get preference.  is that ok?)
     // Should we be robust for nulls here?
-    Distance start_d = GLMMeasure.distanceBetween((GeolocLocation)t_start_trvl_task.getPrepositionalPhrase(Constants.Preposition.TO).getIndirectObject(),
-						   t_start_loc);
-//     Date t_start_trvl = new Date(t_start_time.getTime() -
-// 				 travelTimeUsingAsset(start_d,a));
+    Distance start_d = 
+      measureHelper.distanceBetween((GeolocLocation)
+				    t_start_trvl_task.getPrepositionalPhrase(Constants.Preposition.TO).getIndirectObject(),
+				    t_start_loc);
+    //     Date t_start_trvl = new Date(t_start_time.getTime() -
+    // 				 travelTimeUsingAsset(start_d,a));
 
     long t_start_trvl = (t_start_time.getTime() - travelTimeUsingAsset(start_d,a));
 
-    //    if (t_start_trvl.before(GLMPreference.getLateDate(t_start_trvl_task))) {
-    if (t_start_trvl < (GLMPreference.getLateDate(t_start_trvl_task).getTime())) {
-     //System.err.println("Could not get to start in time using this mission");
+    //    if (t_start_trvl.before(prefHelper.getLateDate(t_start_trvl_task))) {
+    if (t_start_trvl < (prefHelper.getLateDate(t_start_trvl_task).getTime())) {
+      //System.err.println("Could not get to start in time using this mission");
       taskOK = false;
       return taskOK;
     }
 
-    Distance end_d = GLMMeasure.distanceBetween(t_end_loc,
-						 (GeolocLocation)t_end_trvl_task.getPrepositionalPhrase(Constants.Preposition.FROM).getIndirectObject());
-//     Date t_end_trvl = new Date(t_end_time.getTime() +
-// 			       travelTimeUsingAsset(end_d,a));
+    Distance end_d = measureHelper.distanceBetween(t_end_loc,
+						   (GeolocLocation)t_end_trvl_task.getPrepositionalPhrase(Constants.Preposition.FROM).getIndirectObject());
+    //     Date t_end_trvl = new Date(t_end_time.getTime() +
+    // 			       travelTimeUsingAsset(end_d,a));
     long t_end_trvl = (t_end_time.getTime() + travelTimeUsingAsset(end_d,a));
 
-    //    if (GLMPreference.getReadyAt(t_end_trvl_task).before(t_end_trvl)) {
-    if (GLMPreference.getReadyAt(t_end_trvl_task).getTime() < (t_end_trvl)) {
-     //System.err.println("Could not get to next task in time using this mission");
+    //    if (prefHelper.getReadyAt(t_end_trvl_task).before(t_end_trvl)) {
+    if (prefHelper.getReadyAt(t_end_trvl_task).getTime() < (t_end_trvl)) {
+      //System.err.println("Could not get to next task in time using this mission");
       taskOK = false;
       return taskOK;
     }
@@ -994,8 +1011,8 @@ public static boolean isPallet(Asset asset) {
 	taskOK = true;
 	return taskOK;
       } else {
-// 	last_date_checked = new Date(next_se.getEndDate().getTime() + 
-// 				     BTWN_AVAIL_TOLERANCE);
+	// 	last_date_checked = new Date(next_se.getEndDate().getTime() + 
+	// 				     BTWN_AVAIL_TOLERANCE);
 	last_date_checked = next_se.getEndDate().getTime() + BTWN_AVAIL_TOLERANCE;
       }
     }
@@ -1008,7 +1025,7 @@ public static boolean isPallet(Asset asset) {
    * Utility method to return the approximate time the given asset requires
    * to go Distance d
    */
-  private static long travelTimeUsingAsset(Distance d, Asset a) {
+  private long travelTimeUsingAsset(Distance d, Asset a) {
     // 100 thousand seconds, or a little over a day (27.77... hours)
     return 100000000l;
   }
@@ -1024,7 +1041,7 @@ public static boolean isPallet(Asset asset) {
    * Inefficient...
    * @return string that lists the nodes in the route 
    */
-  public static String getNodeNames (TransportationRoute route) {
+  public String getNodeNames (TransportationRoute route) {
     String nodes = "";
     for (Iterator i = route.getNodes().iterator(); i.hasNext ();) {
       nodes = nodes + " " + ((TransportationNode) i.next()).getDescription();
@@ -1032,53 +1049,53 @@ public static boolean isPallet(Asset asset) {
     return nodes;
   }
 
-    /**
-     * Determines if the asset passed in is a standard container or not
-     */
-    public static boolean isStandardContainer(Asset a)
-    {
-	return (a instanceof Container);
-    }
+  /**
+   * Determines if the asset passed in is a standard container or not
+   */
+  public boolean isStandardContainer(Asset a)
+  {
+    return (a instanceof Container);
+  }
 
-    /**
-     * Determines if the asset passed in is a vehicle (for purposes of ship 
-     * loading) or not.
-     **/
-    public static boolean isVehicle(Asset a){
-      MovabilityPG mpg = 
-        (MovabilityPG) ((GLMAsset)a).getMovabilityPG();
-      if(mpg == null)
-	return false;
-      String code = mpg.getCargoCategoryCode();
+  /**
+   * Determines if the asset passed in is a vehicle (for purposes of ship 
+   * loading) or not.
+   **/
+  public boolean isVehicle(Asset a){
+    MovabilityPG mpg = 
+      (MovabilityPG) ((GLMAsset)a).getMovabilityPG();
+    if(mpg == null)
+      return false;
+    String code = mpg.getCargoCategoryCode();
 
-	  boolean retval = false;
+    boolean retval = false;
 	  
-	  try {
-		retval = CargoCategoryDecoder.isRORO(code);
-	  } catch (NullPointerException npe) {
-		throw new UTILRuntimeException("GMLAsset.isVehicle - asset has movability PG but " + 
-									   "cargo category code is NOT set.\nMovability PG was :" + mpg + 
-									   "\nAsset was " + a);
-	  }
+    try {
+      retval = CargoCategoryDecoder.isRORO(code);
+    } catch (NullPointerException npe) {
+      throw new UTILRuntimeException("GMLAsset.isVehicle - asset has movability PG but " + 
+				     "cargo category code is NOT set.\nMovability PG was :" + mpg + 
+				     "\nAsset was " + a);
+    }
 	  
-      return retval;
-    }
+    return retval;
+  }
 
-    /**
-     * Determines if the asset passed in is a vehicle (for purposes of ship 
-     * loading) or not OR is a crated aircraft.
-     * 
-     * These items are packed on ship by area.
-     **/
-    public static boolean isVehicleOrAircraft(Asset a){
-      MovabilityPG mpg = 
-        (MovabilityPG) ((GLMAsset)a).getMovabilityPG();
-      if(mpg == null)
-	return false;
-      String code = mpg.getCargoCategoryCode();
-      boolean isAircraft = (code.toUpperCase().charAt(0) == 'B');
-      return (isAircraft || CargoCategoryDecoder.isRORO(code));
-    }
+  /**
+   * Determines if the asset passed in is a vehicle (for purposes of ship 
+   * loading) or not OR is a crated aircraft.
+   * 
+   * These items are packed on ship by area.
+   **/
+  public boolean isVehicleOrAircraft(Asset a){
+    MovabilityPG mpg = 
+      (MovabilityPG) ((GLMAsset)a).getMovabilityPG();
+    if(mpg == null)
+      return false;
+    String code = mpg.getCargoCategoryCode();
+    boolean isAircraft = (code.toUpperCase().charAt(0) == 'B');
+    return (isAircraft || CargoCategoryDecoder.isRORO(code));
+  }
 
   /**
    * Utility method - find the organization corresponding to the port at 
@@ -1086,10 +1103,10 @@ public static boolean isPallet(Asset asset) {
    * @param loc he location
    * @param ports_enum a list of ports to search: probably obtained by a call to
    * getOrganizationAssets()
-   * @param myClusterName used for debugging purposes.
+   * @param myClusterName used for logger.isDebugEnabled()()ging purposes.
    * @return the port that matches the location.
    */
-  public static Organization findPortOrg(GeolocLocation loc, 
+  public Organization findPortOrg(GeolocLocation loc, 
                                          Enumeration ports_enum,
                                          String myClusterName) {
     Set ports = new HashSet();
@@ -1102,17 +1119,17 @@ public static boolean isPallet(Asset asset) {
       //BOZO - Should be looking at self org for providers. Don't have self org so 
       //will look to see if org has any port customers.
       if (!((portRelationships = 
-            sched.getMatchingRelationships(GLMConst.THEATER_SEA_PROVIDER.getConverse(),
-                                           TimeSpan.MIN_VALUE,
-                                           TimeSpan.MAX_VALUE)).isEmpty()) ||
+	     sched.getMatchingRelationships(GLMConst.THEATER_SEA_PROVIDER.getConverse(),
+					    TimeSpan.MIN_VALUE,
+					    TimeSpan.MAX_VALUE)).isEmpty()) ||
           !((portRelationships = 
-            sched.getMatchingRelationships(GLMConst.GENERIC_SEA_PORT.getConverse(),
-                                           TimeSpan.MIN_VALUE,
-                                           TimeSpan.MAX_VALUE)).isEmpty()) ||
+	     sched.getMatchingRelationships(GLMConst.GENERIC_SEA_PORT.getConverse(),
+					    TimeSpan.MIN_VALUE,
+					    TimeSpan.MAX_VALUE)).isEmpty()) ||
           !((portRelationships = 
-            sched.getMatchingRelationships(GLMConst.AMMUNITION_SEA_PORT.getConverse(),
-                                           TimeSpan.MIN_VALUE,
-                                           TimeSpan.MAX_VALUE)).isEmpty())) {
+	     sched.getMatchingRelationships(GLMConst.AMMUNITION_SEA_PORT.getConverse(),
+					    TimeSpan.MIN_VALUE,
+					    TimeSpan.MAX_VALUE)).isEmpty())) {
         for (Iterator iterator = portRelationships.iterator();
              iterator.hasNext();) {
           Relationship relationship = (Relationship) iterator.next();
@@ -1121,7 +1138,7 @@ public static boolean isPallet(Asset asset) {
       }
     }
     
-    Organization foundOrg = GLMMeasure.bestOrg(loc, ports, myClusterName);
+    Organization foundOrg = measureHelper.bestOrg(loc, ports, myClusterName);
     return foundOrg;
   }
   
@@ -1130,14 +1147,14 @@ public static boolean isPallet(Asset asset) {
    * @param p Organization to be tested
    * @return true if is an ammo port
    */
-  public static boolean isAmmoPort(Asset p) {
+  public boolean isAmmoPort(Asset p) {
     if (p instanceof Organization) {
       RelationshipSchedule schedule = 
         ((Organization)p).getRelationshipSchedule();
       //      return (!(schedule.getMatchingRelationships(AMMO_PORT_ROLE).isEmpty())) ||
       //     (!(schedule.getMatchingRelationships(AMMO_PORT_ROLE_ALT).isEmpty()));	
       return (!(schedule.getMatchingRelationships(AMMO_PORT_ROLE.getConverse()).isEmpty()) ||
-	     (!(schedule.getMatchingRelationships(AMMO_PORT_ROLE_ALT.getConverse()).isEmpty())));
+	      (!(schedule.getMatchingRelationships(AMMO_PORT_ROLE_ALT.getConverse()).isEmpty())));
     } else {
       return false;
     }
@@ -1148,19 +1165,22 @@ public static boolean isPallet(Asset asset) {
    * @param p Organization to be tested
    * @return true if it is a generic port
    */
-  public static boolean isCargoPort(Asset p) {
+  public boolean isCargoPort(Asset p) {
     if (p instanceof Organization) {
       RelationshipSchedule schedule = ((Organization)p).getRelationshipSchedule(); 
-	    //return (schedule.getMatchingRelationships(CARGO_PORT_ROLE).size() > 0);
+      //return (schedule.getMatchingRelationships(CARGO_PORT_ROLE).size() > 0);
       return (!schedule.getMatchingRelationships(CARGO_PORT_ROLE.getConverse()).isEmpty());
     }         
     return false;
   }
 
-    public static String getUniqueTag(Asset a) {
-	return new String(a.getTypeIdentificationPG().getTypeIdentification()+
-			  a.getItemIdentificationPG().getItemIdentification());
-    }
+  public String getUniqueTag(Asset a) {
+    return new String(a.getTypeIdentificationPG().getTypeIdentification()+
+		      a.getItemIdentificationPG().getItemIdentification());
+  }
 
+  GLMPrepPhrase glmPrepHelper;
+  GLMPreference glmPrefHelper;
+  GLMMeasure measureHelper;
 }
 

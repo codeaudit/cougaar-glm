@@ -58,15 +58,17 @@ public class UTILPreference {
   private static double fiftyYears = ONE_DAY*365*50; // millis
   private static double boundaryDefaultScore = 0.75;
 
-  public static double NO_ASPECT_VALUE = -1.0d;
+  public double NO_ASPECT_VALUE = -1.0d;
 
-  public static Logger logger;
-  public static void setLogger (Logger l) { logger = l; }
+  public UTILPreference (Logger l) { 
+    logger = l; 
+    //    alloc = new UTILAllocate (l);
+  }
 
   /** 
    * Utility methods
    */
-  public static void replacePreference(NewTask t, Preference new_pref) {
+  public void replacePreference(NewTask t, Preference new_pref) {
     // Remove the preference from the current list of 
     // preferences for this task
     Enumeration prefs_enum = t.getPreferences();
@@ -77,7 +79,7 @@ public class UTILPreference {
 		      ).elements());
   }
 
-  public static Vector replacePreference(Vector old_prefs, 
+  public Vector replacePreference(Vector old_prefs, 
 					 Preference new_pref) {
     Vector new_prefs = new Vector(old_prefs.size());
 
@@ -103,7 +105,7 @@ public class UTILPreference {
    * @return Preference
    */
 
-  public static Preference makeCostPreference(RootFactory ldmf, double cost) {
+  public Preference makeCostPreference(RootFactory ldmf, double cost) {
     AspectValue lowAV      = new AspectValue(AspectType.COST, -0.01d);
     AspectValue bestAV     = new AspectValue(AspectType.COST, 0.0d);
     AspectValue costAV     = new AspectValue(AspectType.COST, cost);
@@ -121,7 +123,7 @@ public class UTILPreference {
    * @param quantity desired
    * @return Preference
    */
-  public static Preference makeQuantityPreference(RootFactory ldmf, long quantity) {
+  public Preference makeQuantityPreference(RootFactory ldmf, long quantity) {
     AspectValue quantityAV = 
       new AspectValue(AspectType.QUANTITY, quantity);
     ScoringFunction quantitySF = 
@@ -139,7 +141,7 @@ public class UTILPreference {
    * @param readyAtDate - the date item is ready to move
    * @return Preference
    */
-  public static Preference makeStartDatePreference(RootFactory ldmf,
+  public Preference makeStartDatePreference(RootFactory ldmf,
 						   Date readyAtDate) {
     AspectValue readyAtAV = 
       new AspectValue(AspectType.START_TIME, readyAtDate.getTime());
@@ -162,7 +164,7 @@ public class UTILPreference {
    * @param lateDate - the latest possible date
    * @return Preference
    */
-  public static Preference makeEndDatePreference(RootFactory ldmf,
+  public Preference makeEndDatePreference(RootFactory ldmf,
 						 Date earlyDate,  
 						 Date bestDate,
 						 Date lateDate){  
@@ -186,7 +188,7 @@ public class UTILPreference {
    * @param bestDate - the best date
    * @return Preference
    */
-  public static Preference makeEndDatePreference(RootFactory ldmf,
+  public Preference makeEndDatePreference(RootFactory ldmf,
 						 Date bestDate) {
     AspectValue endAV = new AspectValue(AspectType.END_TIME, bestDate.getTime());
     ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, ONE_OVER_ONE_DAY);
@@ -194,7 +196,7 @@ public class UTILPreference {
     return endPref;
   }
 
-  public static Preference makeEndDateBelowPreference(RootFactory ldmf, Date bestDate) {
+  public Preference makeEndDateBelowPreference(RootFactory ldmf, Date bestDate) {
     AspectValue endAV = new AspectValue(AspectType.END_TIME, bestDate.getTime());
     ScoringFunction endSF = ScoringFunction.createNearOrBelow(endAV, 0.0);
     Preference endPref = ldmf.newPreference(AspectType.END_TIME, endSF, 1.0);
@@ -208,7 +210,7 @@ public class UTILPreference {
    * Note that it uses one day as the slope -- i.e.
    * a day after the POD date, the pref is exceeded.
    */
-  public static Preference makePODDatePreference(RootFactory ldmf,
+  public Preference makePODDatePreference(RootFactory ldmf,
 						 Date bestDate) {
     if (bestDate == null || bestDate.before(new Date(1000))) {
       logger.error("UTILPreference creating bad POD_Date preference: the date is " + bestDate);
@@ -223,7 +225,7 @@ public class UTILPreference {
   /**
     * @return true if task has specified aspect type
     */
-  public static boolean hasPrefWithAspectType (Task taskToExamine, int aspectType) {
+  public boolean hasPrefWithAspectType (Task taskToExamine, int aspectType) {
     return (getPrefWithAspectType(taskToExamine, aspectType) != null);
   }
 
@@ -235,7 +237,7 @@ public class UTILPreference {
     * @return Preference first preference found (earliest in pref enum) with the
     *  specified aspect type, null if none found
     */
-  public static Preference getPrefWithAspectType(Task taskToExamine, int aspect_type) {
+  public Preference getPrefWithAspectType(Task taskToExamine, int aspect_type) {
     Enumeration pref_enum = taskToExamine.getPreferences();
     while (pref_enum.hasMoreElements()) {
       Preference return_pref = (Preference)pref_enum.nextElement();
@@ -257,7 +259,7 @@ public class UTILPreference {
     * NOTE that if more than one pref with this aspect type is found, ALL 
     * are removed but only the latest is returned.
     */
-  public static Preference removePrefWithAspectType(Task taskToChange,
+  public Preference removePrefWithAspectType(Task taskToChange,
 						    int aspect_type) {
     Vector old_prefs =
       UTILAllocate.enumToVector(taskToChange.getPreferences());
@@ -283,7 +285,7 @@ public class UTILPreference {
    * @param pref the preference to examine
    * @return double best aspect value for the preference
    */
-  public static double getPreferenceBestValue(Preference pref){
+  public double getPreferenceBestValue(Preference pref){
     ScoringFunction sfunc = pref.getScoringFunction();
     return sfunc.getBest().getAspectValue().getValue();
   }
@@ -293,7 +295,7 @@ public class UTILPreference {
    *
    * Many times easier to use type specific variants -- like getReportedReadyAt
    */
-  public static double getReportedAspectValue (PlanElement pe, int aspectType) {
+  public double getReportedAspectValue (PlanElement pe, int aspectType) {
     AllocationResult result = pe.getReportedResult();
     if (result == null)
       return NO_ASPECT_VALUE;
@@ -307,7 +309,7 @@ public class UTILPreference {
    * @return Date date at which task is ready
    */
 
-  public static double getCost(Task t) {
+  public double getCost(Task t) {
     try {
       Preference pref = getPrefWithAspectType (t, AspectType.COST);
       ScoringFunction sfunc = pref.getScoringFunction ();
@@ -322,7 +324,7 @@ public class UTILPreference {
   /**
    * Get reported cost from plan element
    */
-  public static double getReportedCost (PlanElement pe) {
+  public double getReportedCost (PlanElement pe) {
     return getReportedAspectValue (pe, AspectType.COST);
   }
 
@@ -333,7 +335,7 @@ public class UTILPreference {
    * @return Date date at which task is ready
    */
 
-  public static long getQuantity(Task t) {
+  public long getQuantity(Task t) {
     try {
       Preference pref = getPrefWithAspectType (t, AspectType.QUANTITY);
       ScoringFunction sfunc = pref.getScoringFunction ();
@@ -348,7 +350,7 @@ public class UTILPreference {
   /**
    * Get reported quantity from plan element
    */
-  public static long getReportedQuantity (PlanElement pe) {
+  public long getReportedQuantity (PlanElement pe) {
     return (long) getReportedAspectValue (pe, AspectType.QUANTITY);
   }
 
@@ -360,7 +362,7 @@ public class UTILPreference {
    * @return Date date at which task is ready
    */
 
-  public static Date getReadyAt(Task t) {
+  public Date getReadyAt(Task t) {
     try {
       Preference pref = getPrefWithAspectType (t, AspectType.START_TIME);
       ScoringFunction sfunc = pref.getScoringFunction ();
@@ -375,7 +377,7 @@ public class UTILPreference {
   /**
    * Get reported ready at date from plan element
    */
-  public static Date getReportedReadyAt (PlanElement pe) {
+  public Date getReportedReadyAt (PlanElement pe) {
     double value = getReportedAspectValue (pe, AspectType.START_TIME);
     if (value != NO_ASPECT_VALUE)
       return new Date ((long) value);
@@ -389,7 +391,7 @@ public class UTILPreference {
    * @return Date point of departure date for task, null if no POD date pref
    */
 
-  public static Date getPODDate(Task t) {
+  public Date getPODDate(Task t) {
     Preference pod_pref = getPrefWithAspectType(t, AspectType.POD_DATE);
     if (pod_pref == null)
       return null;
@@ -403,14 +405,14 @@ public class UTILPreference {
   /**
    * Get reported POD date from plan element
    */
-  public static Date getReportedPODDate (PlanElement pe) {
+  public Date getReportedPODDate (PlanElement pe) {
     return getReportedPODDate (pe.getReportedResult());
   }
 
   /**
    * Get reported POD date from allocation result
    */
-  public static Date getReportedPODDate (AllocationResult result) {
+  public Date getReportedPODDate (AllocationResult result) {
     double value = result.getValue (AspectType.POD_DATE);
     if (value != NO_ASPECT_VALUE)
       return new Date ((long) value);
@@ -429,7 +431,7 @@ public class UTILPreference {
    * @param t - the Task object
    * @return Date
    */
-  public static Date getEarlyDate(Task t) {
+  public Date getEarlyDate(Task t) {
     UTILEndDateScoringFunction edsf = getEndDateSF (t);
     if (edsf == null) {
       Enumeration validRanges = getValidEndDateRanges (t);
@@ -444,14 +446,14 @@ public class UTILPreference {
   /**
    * Get reported End date from plan element
    */
-  public static Date getReportedEndDate (PlanElement pe) {
+  public Date getReportedEndDate (PlanElement pe) {
     return getReportedEndDate(pe.getReportedResult());
   }
 
   /**
    * Get reported End date from allocation result
    */
-  public static Date getReportedEndDate (AllocationResult ar) {
+  public Date getReportedEndDate (AllocationResult ar) {
     double value = ar.getValue (AspectType.END_TIME);
     if (value != NO_ASPECT_VALUE)
       return new Date ((long) value);
@@ -467,7 +469,7 @@ public class UTILPreference {
    * @param t - the Task object
    * @return Date
    */
-  public static Date getBestDate(Task t) {
+  public Date getBestDate(Task t) {
     UTILEndDateScoringFunction edsf = getEndDateSF (t);
     if (edsf == null) {
       Preference endDatePref = getPrefWithAspectType(t, AspectType.END_TIME);
@@ -488,7 +490,7 @@ public class UTILPreference {
    * @param t - the Task object
    * @return Date
    */
-  public static Date getLateDate(Task t) {
+  public Date getLateDate(Task t) {
     UTILEndDateScoringFunction edsf = getEndDateSF (t);
     if (edsf == null) {
       Enumeration validRanges = getValidEndDateRanges (t);
@@ -502,12 +504,12 @@ public class UTILPreference {
     return edsf.getLateDate ();
   }
 
-  protected static Enumeration getValidEndDateRanges (Task t) {
+  protected Enumeration getValidEndDateRanges (Task t) {
     Preference endDatePref = getPrefWithAspectType(t, AspectType.END_TIME);
     return getValidEndDateRanges (endDatePref);
   }
 
-  protected static Enumeration getValidEndDateRanges (Preference endDatePref) {
+  protected Enumeration getValidEndDateRanges (Preference endDatePref) {
     Calendar cal = java.util.Calendar.getInstance();
     cal.set(2200, 0, 0, 0, 0, 0);
     cal.set(Calendar.MILLISECOND, 0);
@@ -521,7 +523,7 @@ public class UTILPreference {
     return validRanges;
   }
 
-  protected static UTILEndDateScoringFunction getEndDateSF (Task t) {
+  protected UTILEndDateScoringFunction getEndDateSF (Task t) {
     try {
       Preference endDatePref = getPrefWithAspectType(t, AspectType.END_TIME);
       ScoringFunction func = endDatePref.getScoringFunction ();
@@ -535,4 +537,6 @@ public class UTILPreference {
   }
 
   private static final String classname = UTILPreference.class.getName ();
+  protected Logger logger;
+  //  protected UTILAllocate alloc;
 }

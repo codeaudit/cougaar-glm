@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.2 2002-02-12 17:48:07 jwinston Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.3 2002-04-02 20:54:04 gvidaver Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.cougaar.util.log.Logger;
 import org.cougaar.lib.util.UTILPreference;
 import org.cougaar.lib.util.UTILPluginException;
 
@@ -62,6 +63,8 @@ public class GLMPreference extends UTILPreference {
   private static double fiftyYears = ONE_DAY*365*50; // millis
   private static double boundaryDefaultScore = 0.75;
 
+  public GLMPreference (Logger l) { super (l); }
+
   /**
    * Make a POD preference.
    *
@@ -72,9 +75,9 @@ public class GLMPreference extends UTILPreference {
    * What should we do with the weight of the preference?
    * Should this be set by a policy object?
    */
-  public static Preference makePODPreference(RootFactory ldmf,
-					     GeolocLocation loc) {
-    GLMLocationScoringFunction podSF = new GLMLocationScoringFunction(loc);
+  public Preference makePODPreference(RootFactory ldmf,
+				      GeolocLocation loc) {
+    GLMLocationScoringFunction podSF = new GLMLocationScoringFunction(loc, logger);
     Preference podPref = ldmf.newPreference(AspectType.POD, podSF, 1.0);
     return podPref;
   }
@@ -86,7 +89,7 @@ public class GLMPreference extends UTILPreference {
    * Note that it uses one day as the slope -- i.e.
    * a day after the POD date, the pref is exceeded.
    */
-  public static Preference makePODDatePreference(RootFactory ldmf,
+  public Preference makePODDatePreference(RootFactory ldmf,
 						 Date bestDate) {
     if (bestDate == null || bestDate.before(new Date(1000))) {
       System.err.println("GLMPreference creating bad POD_Date preference: the date is " + bestDate);
@@ -106,7 +109,7 @@ public class GLMPreference extends UTILPreference {
    * @return Date point of departure date for task, null if no POD date pref
    */
 
-  public static Date getPODDate(Task t) {
+  public Date getPODDate(Task t) {
     Preference pod_pref = getPrefWithAspectType(t, AspectType.POD_DATE);
     if (pod_pref == null)
       return null;
@@ -120,14 +123,14 @@ public class GLMPreference extends UTILPreference {
   /**
    * Get reported POD date from plan element
    */
-  public static Date getReportedPODDate (PlanElement pe) {
+  public Date getReportedPODDate (PlanElement pe) {
     return getReportedPODDate (pe.getReportedResult());
   }
 
   /**
    * Get reported POD date from allocation result
    */
-  public static Date getReportedPODDate (AllocationResult result) {
+  public Date getReportedPODDate (AllocationResult result) {
     double value = result.getValue (AspectType.POD_DATE);
     if (value != NO_ASPECT_VALUE)
       return new Date ((long) value);
@@ -141,7 +144,7 @@ public class GLMPreference extends UTILPreference {
    * @return Date point of departure for task, null if no POD pref
    */
 
-  public static GeolocLocation getPODLocation (Task t) {
+  public GeolocLocation getPODLocation (Task t) {
     Preference pod_pref = getPrefWithAspectType(t, AspectType.POD);
     if (pod_pref == null)
       return null;
@@ -155,14 +158,14 @@ public class GLMPreference extends UTILPreference {
   /**
    * Get reported POD location from plan element
    */
-  public static GeolocLocation getReportedPODLocation (PlanElement pe) {
+  public GeolocLocation getReportedPODLocation (PlanElement pe) {
     return getReportedPODLocation (pe.getReportedResult ());
   }
 
   /**
    * Get reported POD location from allocation result
    */
-  public static GeolocLocation getReportedPODLocation (AllocationResult result) {
+  public GeolocLocation getReportedPODLocation (AllocationResult result) {
     if (result == null)
       return null;
 
