@@ -182,6 +182,8 @@ public class Constants implements org.cougaar.planning.Constants {
       org.cougaar.planning.ldm.plan.Role.create("Self", "Self");
       org.cougaar.planning.ldm.plan.Role.create("", RelationshipType.SUPERIOR);
       org.cougaar.planning.ldm.plan.Role.create("Administrative", RelationshipType.SUPERIOR);
+      org.cougaar.planning.ldm.plan.Role.create("Operational", RelationshipType.SUPERIOR);
+      org.cougaar.planning.ldm.plan.Role.create("Support", RelationshipType.SUPERIOR);
 
 
       org.cougaar.planning.ldm.plan.Role.create("Ammunition", RelationshipType.PROVIDER);
@@ -238,6 +240,18 @@ public class Constants implements org.cougaar.planning.Constants {
                                 RelationshipType.SUPERIOR_SUFFIX);
     public static final org.cougaar.planning.ldm.plan.Role ADMINISTRATIVESUBORDINATE =
       org.cougaar.planning.ldm.plan.Role.getRole("Administrative" +
+                                RelationshipType.SUBORDINATE_SUFFIX);
+    public static final org.cougaar.planning.ldm.plan.Role OPERATIONALSUPERIOR = 
+      org.cougaar.planning.ldm.plan.Role.getRole("Operational" + 
+                                RelationshipType.SUPERIOR_SUFFIX);
+    public static final org.cougaar.planning.ldm.plan.Role OPERATIONALSUBORDINATE =
+      org.cougaar.planning.ldm.plan.Role.getRole("Operational" +
+                                RelationshipType.SUBORDINATE_SUFFIX);
+    public static final org.cougaar.planning.ldm.plan.Role SUPPORTSUPERIOR = 
+      org.cougaar.planning.ldm.plan.Role.getRole("Support" + 
+                                RelationshipType.SUPERIOR_SUFFIX);
+    public static final org.cougaar.planning.ldm.plan.Role SUPPORTSUBORDINATE =
+      org.cougaar.planning.ldm.plan.Role.getRole("Support" +
                                 RelationshipType.SUBORDINATE_SUFFIX);
 
     public static final org.cougaar.planning.ldm.plan.Role COMBAT = org.cougaar.planning.ldm.plan.Role.getRole("Combat");
