@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.2 2001-02-19 20:56:39 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -32,6 +32,8 @@ import org.cougaar.domain.mlm.ui.tpfdd.producer.ClusterCache;
 import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
 import org.cougaar.domain.mlm.ui.tpfdd.producer.ThreadedProducer;
 import org.cougaar.domain.mlm.ui.tpfdd.producer.PSPClientConfig;
+
+import org.cougaar.domain.mlm.ui.tpfdd.aggregation.ServerCommands;
 
 
 public class ClientPlanElementProvider extends PlanElementProvider
@@ -191,7 +193,7 @@ public class ClientPlanElementProvider extends PlanElementProvider
     {
 	if ( unitManifests == null ) {
 	    QueryData queryManifest = new QueryData();
-	    queryManifest.setOtherCommand("SEND unitManifests");
+	    queryManifest.setOtherCommand(ServerCommands.SEND_UNIT_MANIFESTS);
 	    request("Aggregation", PSPClientConfig.UIDataPSP_id, queryManifest);
 	}
 	try {
