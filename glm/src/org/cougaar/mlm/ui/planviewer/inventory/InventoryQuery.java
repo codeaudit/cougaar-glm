@@ -82,10 +82,10 @@ public class InventoryQuery implements Query {
     }
   }
 
-  public JPanel createChart(String title, InventoryExecutionTimeStatusHandler timeHandler) {
+  public JPanel createChart(String title) {
 
     if (inventory != null) {
-      inventoryChart = new InventoryChart(title, inventory, timeHandler);
+      inventoryChart = new InventoryChart(title, inventory);
       return inventoryChart;
     }
     return null;

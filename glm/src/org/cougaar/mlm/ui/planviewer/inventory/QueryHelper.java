@@ -45,8 +45,7 @@ import org.cougaar.util.ThemeFactory;
 
 
 public class QueryHelper implements ActionListener,
-				    ItemListener,
-                                    InventoryDayRolloverListener {
+				    ItemListener {
   static final String UPDATE = "Update";
   static final String RESET = "Reset";
   static final String CLEAR = "Clear";
@@ -65,7 +64,6 @@ public class QueryHelper implements ActionListener,
   boolean isApplet;
   public JFrame frame;
 
-  InventoryExecutionTimeStatusHandler timeStatusHandler;
   long submit_begin;
   private FileWriter logFile;
 
@@ -75,8 +73,7 @@ public class QueryHelper implements ActionListener,
 
   public QueryHelper(Query query, String clusterURL, 
                      boolean isApplet, Container container,
-                     boolean doDisplayTable,
-		     InventoryExecutionTimeStatusHandler aTimeStatusHandler) {
+                     boolean doDisplayTable) {
     
     this.query = query;
     this.clusterURL = clusterURL;
@@ -89,7 +86,6 @@ public class QueryHelper implements ActionListener,
     if (indx > -1) assetName = assetName.substring(indx+1);
     createFrame(assetName+" at "+clusterName);
     PSP_package = XMLClientConfiguration.PSP_package;
-    timeStatusHandler = aTimeStatusHandler;
     doQuery();
   }
 
@@ -112,7 +108,6 @@ public class QueryHelper implements ActionListener,
   public QueryHelper(Query query, String clusterURL, 
                      boolean isApplet, Container container,
                      boolean doDisplayTable,
-		     InventoryExecutionTimeStatusHandler aTimeStatusHandler, 
 		     long submit_time, 
 		     FileWriter thelogFile) {
     
@@ -129,7 +124,6 @@ public class QueryHelper implements ActionListener,
     if (indx > -1) assetName = assetName.substring(indx+1);
     createFrame(assetName+" at "+clusterName);
     PSP_package = XMLClientConfiguration.PSP_package;
-    timeStatusHandler = aTimeStatusHandler;
     
     doQuery();
     
@@ -164,17 +158,19 @@ public class QueryHelper implements ActionListener,
     frame.setVisible(true);
     container = frame.getContentPane();
 
+    /***
+     ** No More Movie Mode.  MWD.  Removed when event generator PSP was 
+     ** going away.
     frame.addWindowListener(new WindowAdapter() {
 	public void windowClosed(WindowEvent e) {
 	    removeAsDayRolloverListener();
 	}});
+
+	**
+	**/
   }
 
-  private void removeAsDayRolloverListener() {
-      if(timeStatusHandler != null) {
-	  timeStatusHandler.removeDayRolloverListener(this) ;
-      }
-  }
+
 
 
   private void doQuery() {
@@ -237,8 +233,7 @@ public class QueryHelper implements ActionListener,
   }
 
   private void displayChart() {
-    JPanel chart = query.createChart(clusterName,
-				     timeStatusHandler);
+    JPanel chart = query.createChart(clusterName);
 
     // for scrolling chart, doesn't work
     //    if (chart != null) {
@@ -351,12 +346,16 @@ public class QueryHelper implements ActionListener,
 //     clearButton.setToolTipText("Clears shortfall snakes from graph");
 //     panel.add(clearButton);
 
-    if(timeStatusHandler != null) {
-	JCheckBox movieModeCheck = new JCheckBox(MOVIE_MODE,false);
-	movieModeCheck.setActionCommand(MOVIE_MODE);
-	movieModeCheck.addItemListener(this);
-	panel.add(movieModeCheck);
-    }
+    /***
+     ** No More Movie Mode.  MWD.  Removed when event generator PSP was 
+     ** going away.
+     **if(timeStatusHandler != null) {
+     **	JCheckBox movieModeCheck = new JCheckBox(MOVIE_MODE,false);
+     **	movieModeCheck.setActionCommand(MOVIE_MODE);
+     ** movieModeCheck.addItemListener(this);
+     **	panel.add(movieModeCheck);
+     **    }
+     **/
 
     /*** MWD CDay toggling not ready for prime time **/
     JCheckBox cdaysModeCheck = new JCheckBox(CDAY_MODE,false);
@@ -371,19 +370,23 @@ public class QueryHelper implements ActionListener,
   public void itemStateChanged(ItemEvent e) {
       if(e.getSource() instanceof JCheckBox) {
 	  JCheckBox source = (JCheckBox) e.getSource();
-	  if(source.getActionCommand().equals(MOVIE_MODE)) {
-	      if(timeStatusHandler != null) {
-		  if(e.getStateChange() == e.SELECTED){ 
-		      System.out.println("Query Helper::Turning on Movies");
-		      timeStatusHandler.addDayRolloverListener(this);
-		  }
-		  else {
-		      System.out.println("Query Helper::Turning off Movies");	
-		      timeStatusHandler.removeDayRolloverListener(this);
-		  }
-	      }
-	  }
-	  else if(source.getActionCommand().equals(CDAY_MODE)) {
+    /***
+     ** No More Movie Mode.  MWD.  Removed when event generator PSP was 
+     ** going away.
+     ** if(source.getActionCommand().equals(MOVIE_MODE)) {
+     **      if(timeStatusHandler != null) {
+     **	  if(e.getStateChange() == e.SELECTED){ 
+     **		      System.out.println("Query Helper::Turning on Movies");
+     **		      timeStatusHandler.addDayRolloverListener(this);
+     **		  }
+     **		  else {
+     **		      System.out.println("Query Helper::Turning off Movies");	
+     **		      timeStatusHandler.removeDayRolloverListener(this);
+     **		  }
+     **	      }
+     **	  }
+     **/
+     if(source.getActionCommand().equals(CDAY_MODE)) {
 	      query.setToCDays(e.getStateChange() == e.SELECTED);
 	  }
       }
@@ -411,6 +414,9 @@ public class QueryHelper implements ActionListener,
     //  Invoked when a day rolls over from the universal time status
     //  handler.  Basically does the same as doUpdate(), except
     //  screen update is done through the event queue.
+    /***
+     ** No More Movie Mode.  MWD.  Removed when event generator PSP was 
+     ** going away.
     public void dayRolloverUpdate(long date, double rate) {
 	executeQuery();
 	SwingUtilities.invokeLater(new ChartUpdatePost());
@@ -422,6 +428,8 @@ public class QueryHelper implements ActionListener,
 	    updateChart();
 	}
     }
+    ***/
+
 
     public static void windowOnInventory(UISimpleInventory inventory) {
 	ThemeFactory.establishMetalTheme();

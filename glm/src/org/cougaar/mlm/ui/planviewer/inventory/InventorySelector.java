@@ -71,8 +71,6 @@ public class InventorySelector implements ActionListener {
   boolean doDisplayTable = false;
   Color bgColor = Color.white;
     
-  InventoryExecutionTimeStatusHandler timeStatusHandler=null;
-  InventoryExecutionListener executionListener=null;
 
   /** Called by an application.
    * Queries the user for the cluster to contact.
@@ -115,33 +113,6 @@ public class InventorySelector implements ActionListener {
     new QueryHelper(new InventoryQuery(inventory));
   }
 
-  private boolean setupTimeStatusHandler() {
-
-    System.out.print("***********SETTING UP TIME STATUS HANDLER***********");
-      System.out.println("InventorySelector::Setting up Time status Handler");
-      
-      if(executionListener == null) {
-	  timeStatusHandler = new InventoryExecutionTimeStatusHandler();
-	  Object[] handlers = {timeStatusHandler};
-	  ClusterInfo ci = new ClusterInfo(clusterName,hostAndPort);
-
-	  System.out.println("InventorySelector::Trying to create InventoryExecutionListener");
-
-	  try {
-	      executionListener = new InventoryExecutionListener(ci,handlers);
-	      if(executionListener!=null) {
-		  executionListener.start();
-	      }
-	  }
-	  catch(Exception e) {
-	      timeStatusHandler=null;
-	      System.out.println("WARNING::Inventory Selector:  Could not connect to PSP_ExecutionWatcher - movie mode will not be available. - Exeception was: " + e.toString());
-	      //	      throw new RuntimeException(e.toString());
-	      return false;
-	  }
-      }
-      return true;
-  }
 
   private void doLayout(boolean queryForClusters) {
       // this is the base panel with list of clusters 
@@ -313,8 +284,6 @@ public class InventorySelector implements ActionListener {
       if (assetName == null)
         return;
 
-      setupTimeStatusHandler();
-      
       // capture the clock time here in variable
       // setup logfile
       long submit_time = java.lang.System.currentTimeMillis();
@@ -324,7 +293,6 @@ public class InventorySelector implements ActionListener {
       new QueryHelper(new InventoryQuery(assetName),
                       hostAndPort + "$" + clusterName + "/",
                       isApplet, container, doDisplayTable,
-		      timeStatusHandler,
 		      submit_time, 
 		      logFile);
     }

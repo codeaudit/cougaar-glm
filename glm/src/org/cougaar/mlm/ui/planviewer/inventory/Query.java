@@ -58,8 +58,7 @@ public interface Query {
   /* Create chart.  
      */
 
-  JPanel createChart(String title,
-		     InventoryExecutionTimeStatusHandler timeHandler);
+  JPanel createChart(String title);
 
   /* Create table.
    */

@@ -101,7 +101,6 @@ public class InventoryChart extends JPanel
     String myTitle;
     String myYAxisTitle;
 
-    InventoryExecutionTimeStatusHandler timeStatusHandler;
     JCChartLabel nowLabel=null;
     Date alpNow=new Date();
 
@@ -132,7 +131,7 @@ public class InventoryChart extends JPanel
     */
 
     public InventoryChart() {
-	this("Mock 3-FSB", getMockInventory() , null);
+	this("Mock 3-FSB", getMockInventory());
     }
 
 
@@ -412,8 +411,7 @@ public class InventoryChart extends JPanel
     */
 
     // This is the constructor used for real alp generated data
-    public InventoryChart(String title, UISimpleInventory inventory, 
-			  InventoryExecutionTimeStatusHandler aTimeHandler) {
+    public InventoryChart(String title, UISimpleInventory inventory) {
 	super();
 
 	myInventory = inventory;
@@ -502,12 +500,7 @@ public class InventoryChart extends JPanel
 	add(legend, legendLocale);
 
 	initializeNowLabel();
-
-	timeStatusHandler = aTimeHandler;
-	if(timeStatusHandler != null) {
-	    setAlpNow(timeStatusHandler.getLastDayRollover());
-	}
-
+	setAlpNow(new Date(inventory.getAlpNowTime()));
     }
 
     private void initializeNowLabel() {
@@ -617,9 +610,7 @@ public class InventoryChart extends JPanel
 	legend = new InventoryLegend(this,chart);
 	add(legend, legendLocale);
 	
-	if(timeStatusHandler != null) {
-	    setAlpNow(timeStatusHandler.getLastDayRollover());
-	}
+	setAlpNow(new Date(myInventory.getAlpNowTime()));
 
 	chart.update();
 	legend.revalidate();
@@ -1481,9 +1472,7 @@ public class InventoryChart extends JPanel
     }
 
     public void resetAlpNow() { 
-	if(timeStatusHandler != null) {
-	    setAlpNow(alpNow);
-	}
+	setAlpNow(alpNow);
     }
 
     public void resetChart() {

@@ -32,6 +32,7 @@ public class UISimpleInventory implements Serializable {
   Vector schedules = new Vector();
   boolean provider;
   long baseCDayTime;
+  long alpNowTime;
 
   public void setAssetName(String assetName) {
     this.assetName = assetName;
@@ -59,7 +60,7 @@ public class UISimpleInventory implements Serializable {
 
   public void addNamedSchedule(String name, Vector schedule) {
     if (schedule != null) {
-       System.out.println("Schedule " + name + " has " + schedule.size() + " elements");
+	//System.out.println("Schedule " + name + " has " + schedule.size() + " elements");
       schedules.addElement(new UISimpleNamedSchedule(name, schedule));
     } else {
         System.out.println("Schedule " + name + " is null");
@@ -97,6 +98,18 @@ public class UISimpleInventory implements Serializable {
 
   public long getBaseCDayTime() {
       return baseCDayTime;
+  }
+
+  public void setAlpNow(long theAlpNowTime) {
+      alpNowTime = theAlpNowTime;
+  }
+
+  public void setAlpNow(Date AlpNow) {
+      setAlpNow(AlpNow.getTime());
+  }
+
+  public long getAlpNowTime() {
+      return alpNowTime;
   }
 
   public String toString() {
