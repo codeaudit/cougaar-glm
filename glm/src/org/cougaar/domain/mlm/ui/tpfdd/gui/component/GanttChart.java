@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/component/Attic/GanttChart.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/component/Attic/GanttChart.java,v 1.2 2001-02-23 01:06:13 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -760,10 +760,7 @@ public class GanttChart extends Container
 
     public void setVisibleAmount(int v)
     {
-	if ( v < 0 ) {
-	    OutputHandler.out("GC:sVA Error: Illegal value " + v + " received.");
-	    return;
-	}
+	if ( v < 1 ) v = 1;
 	
 	if ( v == getVisibleAmount() ) {
 	    // Debug.out("GC:sVA Filtering secondary call: " + v);
