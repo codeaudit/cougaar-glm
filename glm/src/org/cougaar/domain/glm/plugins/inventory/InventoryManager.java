@@ -156,11 +156,6 @@ public abstract class InventoryManager extends InventoryProcessor {
     // RJB keep track of inventories that need to be run, until you actually run them
     changedSet_ = needUpdate(changedSet_);
     Iterator changedInventories = changedSet_.iterator();
-    //  	Set consumers = inventoryPlugIn_.getConsumers();
-    //  	Iterator consumerIterator = consumers.iterator();
-    //  	while (consumerIterator.hasNext()){
-    //  	    System.out.println("#####"+consumerIterator.next()+" is a medical supply customer for "+clusterId_);
-    //  	}
 
     if (!changedSet_.isEmpty()) {
       printDebug(2,"\n\n\nBEGIN CYCLE___________________________________________\n");
@@ -183,9 +178,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	resetInventories();
 	accountForWithdraws();
 	generateHandleDueIns();
-	//              generateProjections();
 	adjustWithdraws();
-	//  		checkForOverflow();
 	updateWithdrawAllocations();
 	refreshInventorySchedule();
 	// RJB now we have handled all inventories
@@ -313,129 +306,6 @@ public abstract class InventoryManager extends InventoryProcessor {
 				   getMinReorderLevel(inventory),
 				   getMaxReorderLevel(inventory),
 				   goalLevelMultiplier_);
-  }
-
-  /**
-   * Generate resupply projections. Get the projected demand for
-   * every planning day and for each constant rate segment generate
-   * one or two projected resupply tasks. The rates of the projected
-   * resupply tasks are adjusted to gradually build up the inventory
-   * to the highest reorder level in the interval and then back down
-   * to the final reorder level of the interval. When the day of the
-   * highest reorder level coincides with the first or last day of
-   * the interval, the corresponding projected resupply task is not
-   * generated.
-   **/
-  protected void generateProjections() {
-    Iterator inventories = changedSet_.iterator();
-    while (inventories.hasNext()) {
-      Inventory inventory = (Inventory)inventories.next();
-      generateProjections(inventory);
-    }
-  }
-
-  protected void generateProjections(Inventory inventory) {
-    printDebug("STEP 2:  GenerateProjections() for "+AssetUtils.getAssetIdentifier(inventory));
-    Vector projections = new Vector();
-    InventoryPG invpg = (InventoryPG) inventory.getInventoryPG();
-    int days = invpg.getPlanningDays();
-    int today = invpg.getFirstPlanningDay();
-    int periodBegin = today;
-    int switchoverDay;
-    {
-      Task testTask = buildNewTask(null, Constants.Verb.PROJECTSUPPLY, null);
-      int imputedDay0 = invpg.getImputedDay(0);
-      for (switchoverDay = today; switchoverDay < days; switchoverDay++) {
-	double weight =
-	  invpg.getProjectionWeight()
-	  .getProjectionWeight(testTask, imputedDay0 + switchoverDay);
-	if (weight > 0.0) break; // found switchoverDay
-      }
-    }
-    double makeup = 0.0;
-    Scalar previous = invpg.getProjected(periodBegin);
-    double previousReorder = invpg.getReorderLevel(periodBegin);
-    double previousReorderDelta = 0.0;
-    /* Loop from tomorrow to the day after the inventory planning
-     * window ends. The extra step at the end insures that the
-     * final segment is processed. */
-    for (int day = today + 1; previous != null; day++) {
-      Scalar current = (day < days) ? invpg.getProjected(day) : null;
-      double currentReorder = (day < days) ? invpg.getReorderLevel(day) : 0.0;
-      double currentReorderDelta = currentReorder - previousReorder;
-      boolean delta = day >= switchoverDay && previousReorderDelta != currentReorderDelta;
-      if (delta) printConcise("delta=" + (previousReorderDelta - currentReorderDelta));
-      if (day == switchoverDay || !previous.equals(current) || delta) {
-	double value = convertScalarToDouble(previous);
-	if (!Double.isNaN(value) && (true || value > 0.0)) {
-	  long start = invpg.getStartOfDay(periodBegin);
-	  if (isPrintConcise()) {
-	    printConcise("genProj "
-			 + TimeUtils.dateString(start)
-			 + " .. "
-			 + TimeUtils.dateString(invpg.getStartOfDay(day)));
-	  }
-	  // reorder accounts for the reorder level which the inventory attempts to maintain.
-	  // add the reorder 'demand' to projected demand.
-	  if (true) {
-	    SegmentInfo[] info = determineReorderProfile(periodBegin, day, inventory);
-	    int startDay = periodBegin;
-	    for (int i = 0; i < info.length; i++) {
-	      int nDays = info[i].getDays();
-	      long end = start + nDays * TimeUtils.MSEC_PER_DAY;
-	      double reorder = info[i].getSlope();
-	      double increment = makeup / nDays;
-	      if (false && value + reorder + increment <= 0.0) {
-		increment = -(value + reorder);
-		makeup -= increment * nDays;
-		if (isPrintConcise()) {
-		  printConcise("No refill projection."
-			       + " makeup=" + makeup
-			       + " reorder=" + reorder
-			       + " increment=" + increment
-			       + " value=" + value);
-		}
-	      } else {
-		makeup = 0.0;
-		reorder += increment;
-		if (isPrintConcise()) {
-		  printConcise("Slope[" + i + "]="
-			       + reorder
-			       + " startLevel=" + info[i].startLevel
-			       + " endLevel=" + info[i].endLevel
-			       + " "
-			       + periodBegin
-			       + " .. "
-			       + day
-			       + " "
-			       + TimeUtils.dateString(start)
-			       + " to "
-			       + TimeUtils.dateString(end)
-			       );
-		}
-		Rate dailyRate = createIncrementedDailyRate(previous, reorder);
-		if (dailyRate != null) {
-		  Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
-		  projections.add(t);
-		  /* Remove existing projections */
-		  for (int d = startDay, e = startDay + nDays; d < e; d++) {
-		    if (d >= switchoverDay) invpg.removeRefillProjection(d);
-		  }
-		  invpg.addDueIn(t);
-		}
-	      }
-	      startDay += nDays;
-	      start = end;
-	    }
-	  }
-	}
-	previous = current;
-	periodBegin = day;
-	previousReorderDelta = currentReorderDelta;
-      }
-    }
-    publishChangeProjection(inventory, projections.elements());
-    invpg.determineInventoryLevels();
   }
 
   protected Vector generateInactiveProjections(Inventory inventory, int switchoverDay) {
@@ -970,46 +840,6 @@ public abstract class InventoryManager extends InventoryProcessor {
   //                            capacity inventories        *
   //                                                        *
   // ********************************************************
-
-  // Check for overflow
-  protected void checkForOverflow() {
-    printDebug(1, "      :checkForOverflow(), START");
-    Iterator inventories = changedSet_.iterator();
-    while (inventories.hasNext()) {
-      Inventory inventory = (Inventory)inventories.next();
-      checkInventoryForOverFlow(inventory);
-    }
-    printDebug(1, "checkForOverflow(), END");
-  }
-
-  protected void checkInventoryForOverFlow(Inventory inventory) {
-    InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
-    if (!invpg.getFillToCapacity()) {
-      // If no capacity restriction, done.
-      return;
-    }
-    double capacity = convertScalarToDouble(invpg.getCapacity());
-    Task refill_task = null;
-    // looking at the inventory level for each planning day
-    int i = invpg.getFirstPlanningDay();
-    Integer day  = invpg.getFirstOverflow(i, clusterId_);
-    while (day != null) {
-      i = day.intValue();
-      // There had better be a refill on this day, else why would we overflow
-      printDebug(1,inventoryDesc(inventory)+" fillToCapacity()="+invpg.getFillToCapacity()+
-		 " ABOUT TO overflow "+convertScalarToDouble(invpg.getLevel(i))+
-		 " max on hand:"+convertScalarToDouble(invpg.getCapacity())+" on day "+i);
-      refill_task = invpg.getRefillOnDay(i);
-      if (refill_task != null) {
-	plugin_.publishRemoveFromExpansion(refill_task);
-	invpg.removeDueIn(refill_task);
-	invpg.determineInventoryLevels();
-	printDebug(1000,"checkForOverflow remove refill "+TaskUtils.taskDesc(refill_task));
-      }
-      day = invpg.getFirstOverflow(i, clusterId_);
-    }
-  }
-
 
   // ********************************************************
   //                                                        *
