@@ -257,8 +257,14 @@ public abstract class InventoryBG implements PGDelegate {
 	    Task dueOut = pe.getTask();
 // 	    GLMDebug.DEBUG("InventoryBG", "withdrawFromInventory() "+TaskUtils.taskDesc(dueOut));
 //  	    GLMDebug.DEBUG("InventoryBG", clusterID, "withdrawFromInventory(), "+TaskUtils.taskDesc(dueOut));
-	    addDueOut(dueOut);
-	    requests++;
+	    if (dueOut.getVerb().equals(Constants.Verb.WITHDRAW)) {
+		addDueOut(dueOut);
+		requests++;
+	    } else if (dueOut.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
+		addDueOutProjection(dueOut);
+	    } else {
+		System.out.println("What the .... Task added to role schedule "+TaskUtils.taskDesc(dueOut));
+	    }
 	}
 // 	GLMDebug.DEBUG("InventoryBG", "withdrawFromInventory(), "+requests+" requests from "+AssetUtils.assetDesc(inventory));
 	return 0;
@@ -493,6 +499,8 @@ public abstract class InventoryBG implements PGDelegate {
 	return 0;
     }
 
+    // By the way, this is really addDueInProjection
+    // AHF -- REFACTOR addDueInProjection and addDueOutProjection to use same piece of code
     private void addProjection(Task task, boolean filled) {
 	long start_time = TaskUtils.getStartTime(task);
 	long end_time = TaskUtils.getEndTime(task);
@@ -511,6 +519,44 @@ public abstract class InventoryBG implements PGDelegate {
         for (int day = start; day < end; day++) {
 // 	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
 	    Vector v = (Vector) dueIns_.get(day);
+	    v.add(d);
+	}
+    }
+
+    // DRAT!!! Golden opportunity for refactoring.  Emergency demo solution
+    // AHF -- Need to merge common code from addDueOut() and addDueOutProjeciton()
+    // demos SUCK!
+    private void addDueOutProjection(Task task) {
+	PlanElement pe = task.getPlanElement();
+	// If the task has just been rescinded, the plan element will be null.
+	// This task should not affect planning
+	if (pe == null) 
+	    return;
+	boolean filled = false;
+	AllocationResult ar = pe.getEstimatedResult();
+	if(ar==null){
+	    GLMDebug.ERROR("addDueOut()", TaskUtils.taskDesc(task)+
+			   " allocation without estimated result: "+pe.getUID());
+	} else if (ar.isSuccess()) {
+	    filled = true;
+	}
+	long start_time = TaskUtils.getStartTime(task);
+	long end_time = TaskUtils.getEndTime(task);
+        int day0 = (int) (getStartTime() / TimeUtils.MSEC_PER_DAY);
+ 	int start = ((int) (start_time / TimeUtils.MSEC_PER_DAY)) - day0;
+ 	int end = ((int) (end_time / TimeUtils.MSEC_PER_DAY)) - day0;
+	if (end <= 0) { return; }
+	if (start < 0) { start = 0; }
+	while (end > dueOut_.size()) {
+            dueOut_.add(new Vector());
+	}
+	
+	DueOut d = new DueOut(task, filled);
+   	GLMDebug.DEBUG("addDueOutProjection()", "start="+start+"("+TimeUtils.dateString(start_time)+")"+
+   	", end="+end+" ("+TimeUtils.dateString(end_time)+") Task:"+TaskUtils.taskDesc(task));	
+        for (int day = start; day < end; day++) {
+ 	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
+	    Vector v = (Vector) dueOut_.get(day);
 	    v.add(d);
 	}
     }
@@ -601,7 +647,15 @@ public abstract class InventoryBG implements PGDelegate {
                 if (task.getVerb().equals(Constants.Verb.WITHDRAW)){
 		    actualTotal += TaskUtils.getWithdrawQuantity(task) * getWeightingFactor(task,imputedDay);
 		} else if (task.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
-		    projectedTotal += TaskUtils.getWithdrawQuantity(task) * getWeightingFactor(task,imputedDay);
+//  		    projectedTotal += TaskUtils.getWithdrawQuantity(task) * getWeightingFactor(task,imputedDay);
+		    Rate r = TaskUtils.getRate(task);
+		    if (r instanceof FlowRate) {
+			projectedTotal += ((FlowRate)r).getGallonsPerDay() * getWeightingFactor(task, imputedDay);
+		    } else if (r instanceof CountRate) {
+			projectedTotal += ((CountRate)r).getEachesPerDay() * getWeightingFactor(task, imputedDay);
+//   			GLMDebug.DEBUG("InventoryBG", null, "getDueInTotal() with factor :"+d+
+//    				       " is "+(((CountRate)r).getEachesPerDay() * d));
+		    }		
 		}		
 	    }
 	}
@@ -663,7 +717,13 @@ public abstract class InventoryBG implements PGDelegate {
 	while (e.hasMoreElements()) {
 	    t = ((InventoryTask)e.nextElement()).getTask();
 	    if (t.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
-		total += TaskUtils.getWithdrawQuantity(t);
+		Rate r = TaskUtils.getRate(t);
+		if (r instanceof FlowRate) {
+		    total += ((FlowRate)r).getGallonsPerDay();
+		} else if (r instanceof CountRate) {
+		    total += ((CountRate)r).getEachesPerDay();
+		}
+//  		total += TaskUtils.getWithdrawQuantity(t);
 	    }
 	} 
 	return getScalar(total);
