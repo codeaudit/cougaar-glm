@@ -31,11 +31,22 @@ import java.util.*;
  * Represents the returned data from a stimulator request 
  *
  * Sample output is :
+ *
+ * <results totalTime="0:06:069">
+ *  <task id="1" time="0:00:090"/>
+ *  <task id="2" time="0:02:994"/>
+ *  <task id="3" time="0:02:985"/>
+ * </results>
+ *
  * </pre>
  */
 public class GLMStimulatorResponseData implements XMLable, Serializable {
   public String totalTime;
-  public Vector batchTimes = new Vector();
+  public Map taskTimes = new HashMap();
+
+  public void addTaskAndTime (String uid, String time) {
+    taskTimes.put (uid, time);
+  }
 
   /**
    * Write this class out to the Writer in XML format
@@ -43,10 +54,26 @@ public class GLMStimulatorResponseData implements XMLable, Serializable {
    **/
   public void toXML(XMLWriter w) throws IOException{
     w.optagln("results", "totalTime", totalTime);
-    for (int i=0;i<batchTimes.size();i++)
-      w.sitagln("batch", 
-		"id", ""+(i+1), 
-		"time", (String)batchTimes.elementAt(i)); 
+    for (Iterator iter = new TreeSet(taskTimes.keySet()).iterator(); iter.hasNext();) {
+      Object key = iter.next ();
+      w.sitagln("task", 
+		"id",   (String) key, 
+		"time", (String) taskTimes.get(key));
+    }
     w.cltagln("results");
+  }
+
+  public String toString () {
+    StringBuffer buf = new StringBuffer ();
+    buf.append ("\n************************* Testing Summary *************************\n");
+    buf.append ("         Task UID             Time \n");
+    for (Iterator iter = taskTimes.keySet().iterator(); iter.hasNext();) {
+      Object key = iter.next ();
+      buf.append("          " + key + "                       " + (String) taskTimes.get(key) + "\n");
+    }
+    buf.append("\n         Total Time: " + totalTime);
+    buf.append("\n*******************************************************************\n");
+
+    return buf.toString();
   }
 }

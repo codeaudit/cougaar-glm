@@ -110,18 +110,19 @@ public class GLMStimulatorServlet extends ServletBase {
   }
 
   protected ServletWorker createWorker () {
-    return new GLMStimulatorWorker (this);
+    return new GLMStimulatorWorker ();
   }
 
+  /** initial page presented when the servlet is called with no arguments */
   public void getUsage (PrintWriter out, SimpleServletSupport support) {
-    out.print("<HTML><HEAD><TITLE>GLMStimulatorServlet Usage</TITLE></HEAD><BODY>\n"+
-	      "<H2><CENTER>GLMStimulatorServlet Usage</CENTER></H2><P>\n" +
+    out.print("<HTML><HEAD><TITLE>GLMStimulatorServlet</TITLE></HEAD><BODY>\n"+
+	      "<H2><CENTER>GLMStimulatorServlet</CENTER></H2><P>\n" +
 	      "<FORM METHOD=\"GET\" ACTION=\"/$");
     out.print(support.getEncodedAgentName());
     out.print(support.getPath());
     // ask what task file 
     out.print("\">\n"+
-	      "Inject tasks into agent<p>\n"+
+	      "<font size=+1>Inject tasks into agent <b>" + support.getAgentIdentifier() + "</b></font><p>\n"+
 	      "&nbsp;&nbsp;Input Task File <INPUT TYPE=\"text\" NAME=\"" + INPUT_FILE + "\" "+
 	      "SIZE=40>");
     // get number of tasks to send 
@@ -130,14 +131,15 @@ public class GLMStimulatorServlet extends ServletBase {
 	      "VALUE=\"1\">");
     // get periodicity 
     out.print("<P>\n"+
-	      "&nbsp;&nbsp;Wait interval in millis<INPUT TYPE=\"text\" NAME=\"" + INTERVAL + "\" "+
-	      "VALUE=\"1000\">");
+	      "&nbsp;&nbsp;Wait interval between batches<INPUT TYPE=\"text\" NAME=\"" + INTERVAL + "\" "+
+	      "VALUE=\"1000\">&nbsp;millis");
     // choose whether to wait for being done, or not
     out.print("<P>\n"+
-	      "&nbsp;&nbsp;Wait for task to complete" + 
-	      "<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT + "\" VALUE=\"true\">");
+	      "&nbsp;&nbsp;Wait for tasks to complete" + 
+	      "<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT + "\" VALUE=\"true\">&nbsp;" +
+	      "<br>&nbsp;&nbsp;(A complete task has a plan element with a 100% confidence reported allocation result.)");
     // choose data format - html, xml, or java objects 
-    out.print("<P>\nShow results as "+
+    out.print("<P>\n&nbsp;&nbsp;Show results as "+
 	      "&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"format\" "+
 	      "VALUE=\"html\" CHECKED>"+
 	      "&nbsp;html ");

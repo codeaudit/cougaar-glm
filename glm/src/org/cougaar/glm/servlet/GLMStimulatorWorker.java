@@ -22,13 +22,7 @@
 package org.cougaar.glm.servlet;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.Enumeration;
-import javax.swing.*;
 import java.util.*;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.blackboard.Subscription;
@@ -38,7 +32,7 @@ import org.cougaar.core.blackboard.SubscriptionWatcher;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.servlet.data.Failure;
+//import org.cougaar.planning.servlet.data.Failure;
 import org.cougaar.planning.servlet.data.xml.*;
 import org.cougaar.planning.servlet.ServletBase;
 import org.cougaar.planning.servlet.ServletWorker;
@@ -61,20 +55,28 @@ import org.cougaar.glm.parser.GLMTaskParser;
 import org.cougaar.core.service.SchedulerService;
 
 /**
+ * <pre>
+ * One created for every URL access.
  *
+ * Uses a blackboard service, a watcher, and a trigger to monitor published
+ * tasks to see when they are complete, if the wait parameter is true.
+ * </pre>
  */
 public class GLMStimulatorWorker
   extends ServletWorker {
 
+  /** no batch interval can be less than this number */
   private static long MIN_INTERVAL = 20l; // millis
-
-  public GLMStimulatorWorker (ServletBase servlet) {
-    this.servlet = servlet;
-  }
 
   /**
    * Here is our inner class that will handle all HTTP and
-   * HTTPS service requests for our <tt>myPath</tt>.
+   * HTTPS service requests.
+   *
+   * If we should wait until the batch is complete, we make a watcher to watch
+   * the blackboard, a trigger that will call blackboardChanged (), and a trigger model
+   * to connect them.
+   *
+   * @see #blackboardChanged
    */
   public void execute(HttpServletRequest request, 
 		      HttpServletResponse response,
@@ -135,10 +137,15 @@ public class GLMStimulatorWorker
       writeResponse (result, response.getOutputStream(), request, support, format);
   }
 
+  // unused
   protected String getPrefix () { return "GLMStimulator at "; }
 
   /** 
-   * use a query parameter to set a field 
+   * <pre>
+   * Use a query parameter to set a field 
+   *
+   * Sets the recognized parameters : inputFile, debug, totalBatches, interval, and wait
+   * </pre>
    */
   public void getSettings(String name, String value) {
     super.getSettings (name, value);
@@ -195,6 +202,16 @@ public class GLMStimulatorWorker
   */
 
   /**
+   * Main work done here. <p>
+   *
+   * Sends the first batch of tasks, and keeps sending until totalBatches have been
+   * sent.  If should wait for completion, waits until notified by handleSuccessfulPlanElement (). <p>
+   *
+   * Will wait <b>interval</b> milliseconds between batches if there are 
+   * more than one batches to send.
+   *
+   * @see #getSettings
+   * @see #handleSuccessfulPlanElement
    * @return an "XMLable" result.
    */
   protected XMLable getResult() {
@@ -208,6 +225,10 @@ public class GLMStimulatorWorker
     testStart = new Date();
 
     sendTasks(true);
+
+    if (debug)
+      System.out.println ("GLMStimulatorWorker.getResult - batches sent " + batchesSent + " vs " +
+			  " total " + totalBatches);
 
     while (batchesSent < totalBatches || 
 	   (wait && !tasksSent.isEmpty ())) {
@@ -243,6 +264,7 @@ public class GLMStimulatorWorker
     return responseData;
   }
 
+  /** tiny little class for sending back a message when it can't find the file */
   private static class Message implements XMLable, Serializable {
     String file;
     public Message (String file) { this.file = file; }
@@ -252,6 +274,16 @@ public class GLMStimulatorWorker
     }
   }
 
+  /** 
+   * Publishes the tasks created by readXmlTasks. <p>
+   *
+   * If we wait, makes a subscription for each published task.
+   *
+   * @see #readXmlTasks
+   * @see #handleSuccessfulPlanElement
+   * @param withinTransaction - true when called from handleSuccessfulPlanElement
+   *                            this avoids having nested transactions
+   */
   protected void sendTasks (boolean withinTransaction) {
     batchStart = new Date();
 
@@ -288,6 +320,33 @@ public class GLMStimulatorWorker
     }
   }
 
+  /**
+   * Parse the xml file and return the COUGAAR tasks.
+   *
+   * @param  xmlTaskFile file defining tasks to stimulate cluster with
+   * @return Collection of tasks defined in xml file
+   */
+  protected Collection readXmlTasks(String xmlTaskFile) {
+    Collection tasks = null;
+    try {
+      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, 
+					   support.getLDMF(), 
+					   support.getAgentIdentifier(),
+					   support.getConfigFinder(),
+					   support.getLDM());
+      tasks = UTILAllocate.enumToList (tp.getTasks());
+    } 
+    catch( Exception ex ) {
+      System.err.println(ex.getMessage());
+      ex.printStackTrace();
+    }
+    return tasks;
+  }
+
+  /** 
+   * Called when one of the tasks that was added to the blackboard 
+   * has it's plan element change.
+   */
   protected void blackboardChanged () {
     try {
       support.getBlackboardService().openTransaction();
@@ -302,9 +361,9 @@ public class GLMStimulatorWorker
 	      System.out.println ("GLMStimulatorWorker.blackboard changed - found changed plan elements.");
 	    wasEmpty = false;
 	    PlanElement pe = (PlanElement) iter2.next();
-	    handleSuccessfulPlanElement (pe);
 	    Task task = pe.getTask ();
 	    tasksSent.remove (task);
+	    handleSuccessfulPlanElement (pe);
 	  }
 
 	  if (!wasEmpty) {
@@ -330,12 +389,14 @@ public class GLMStimulatorWorker
   }
 
   /**
+   * <pre>
    * Everytime a successful allocation returns, we want to send a new batch of
    * the same tasks until the desired total has been sent.  
    *
    * Also keep track of the time spent on each batch.
    *
    * Cache the already handled allocations by their UID's
+   * </pre>
    */
   public void handleSuccessfulPlanElement(PlanElement planElement) {
     // we were rehydrated -- no guarantees across rehydration
@@ -346,23 +407,26 @@ public class GLMStimulatorWorker
       // Cache the allocation UID
       handledPlanElements.add(planElement.getUID());
 	
-      recordTime ();
-      sendNextTask (false);
+      recordTime (planElement.getTask().getUID().toString());
+      if (tasksSent.isEmpty ()) // all in the batch have returned
+	sendNextTask (false);
     }
   }
 
-  protected void recordTime () {
+  /** records the time taken for the task */
+  protected void recordTime (String taskUID) {
     // Print timing information for the completed batch
     String t = getElapsedTime(batchStart);
     String total = getElapsedTime(testStart);
     if (debug)
-      System.out.println("\n*** Testing batch #" + (responseData.batchTimes.size() + 1) + 
+      System.out.println("\n*** Testing batch #" + (responseData.taskTimes.size() + 1) + 
 			 " completed in " + t + " total " + total);
 
     // Cache the timing information
-    responseData.batchTimes.add(t);
+    responseData.addTaskAndTime(taskUID, t);
   }
 
+  /** sent another task if any left to send or record the total time taken */
   protected void sendNextTask (boolean withinTransaction) {
     // Send another batch if needed
     if (batchesSent < totalBatches) {
@@ -372,6 +436,10 @@ public class GLMStimulatorWorker
     }
   }
 
+  /** 
+   * Matches tasks that are complete, i.e. have plan elements and 
+   * 100% confident reported allocation results.  Both Failure and Success are accepted.  
+   */
   private static final class PlanElementPredicate implements UnaryPredicate {
     Task forTask;
     public PlanElementPredicate (Task forTask) { this.forTask = forTask; }
@@ -394,6 +462,7 @@ public class GLMStimulatorWorker
     }
   };
 
+  /** encodes the date in a min:sec:millis format */
   protected String getElapsedTime (Date start) {
     Date end = new Date ();
     long diff = end.getTime () - start.getTime ();
@@ -405,41 +474,13 @@ public class GLMStimulatorWorker
       ((millis < 10) ? "00": ((millis < 100) ? "0":"")) + millis;
   }
 
+  /** record the elapsed time */
   protected void printTestingSummary() {
     String totalTime = getElapsedTime (testStart);
     responseData.totalTime = totalTime;
 
-    if (debug) {
-      System.out.println("\n************************* Testing Summary *************************\n");
-      System.out.println("         Batch Number             Batch Time ");
-      for (int i=0;i<responseData.batchTimes.size();i++)
-	System.out.println("            " + (i+1) + "                       " + responseData.batchTimes.elementAt(i)); 
-      System.out.println("\n         Total Time: " + totalTime);
-      System.out.println("\n*******************************************************************\n");
-    }
-  }
-
-  /**
-   * Parse the xml file and return the COUGAAR tasks.
-   *
-   * @param  xmlTaskFile file defining tasks to stimulate cluster with
-   * @return Collection of tasks defined in xml file
-   */
-  protected Collection readXmlTasks(String xmlTaskFile) {
-    Collection tasks = null;
-    try {
-      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, 
-					   support.getLDMF(), 
-					   support.getAgentIdentifier(),
-					   support.getConfigFinder(),
-					   support.getLDM());
-      tasks = UTILAllocate.enumToList (tp.getTasks());
-    } 
-    catch( Exception ex ) {
-      System.err.println(ex.getMessage());
-      ex.printStackTrace();
-    }
-    return tasks;
+    if (debug)
+      System.out.println(responseData);
   }
 
   // rely upon load-time introspection to set these services - 
@@ -451,23 +492,38 @@ public class GLMStimulatorWorker
   /** Collection of tasks that have been sent.  Needed for later rescinds */
   protected Collection tasksSent = new HashSet();
 
+  /** for waiting for a subscription on the blackboard */
   protected SubscriptionWatcher watcher;
+  /** for waiting for a subscription on the blackboard */
   protected TriggerModel tm;
+  /** for waiting for a subscription on the blackboard */
   private SchedulerService scheduler;
 
+  /** start of the whole test */
   protected Date testStart = null;
+  /** start of each batch */
   protected Date batchStart = null;
+  /** plan elements we've seen */
   protected Collection handledPlanElements = new HashSet();
+
+  /** returned response */
   protected GLMStimulatorResponseData responseData=new GLMStimulatorResponseData();
 
+  /** batches sent so far */
   protected int batchesSent = 0;
+  /** total batches requested */
   protected int totalBatches = 0;
+  /** millis between batches */
   protected long interval;
+  /** dump debug output if true */
+  protected boolean debug = false;
+
+  /** wait for completion before publishing next batch */
+  protected boolean wait = false;
+  /** when was the last batch sent */
   protected long sentTime;
   protected String inputFile = "                     ";
-  protected ServletBase servlet;
+
   protected GLMStimulatorSupport support;
-  protected boolean debug = false;
-  protected boolean wait = false;
   protected Set subscriptions = new HashSet();
 }
