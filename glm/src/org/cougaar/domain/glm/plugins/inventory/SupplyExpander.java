@@ -310,56 +310,20 @@ public class SupplyExpander extends InventoryProcessor {
     protected void expandSupplyTask(Task parentTask) {
 	if (parentTask.getVerb().equals(Constants.Verb.SUPPLY)) {
             expandRealSupplyTask(parentTask);
-        } else {
+        } else if (parentTask.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
             expandProjectionTask(parentTask);
         }
     }
 
     /**
-     * Expand a ProjectSupply task into a series of ProjectWithdraw
-     * tasks. ProjectSupply tasks are expected to extend from midnight
-     * to midnight. That is, their start and end times are of the form
-     * MM/DD/YY 00:00:00.000. The start and end times of every
-     * generated ProjectWithdraw task has a time of 12:00:00.000 and
-     * occurs for every day having any projected demand. The quantity
-     * for the ProjectWithdraw task is adjusted to account for the
-     * fraction of the day that the ProjectSupply covers. For example,
-     * a ProjectSupply ending at noon would cause a ProjectWithdraw
-     * having half the quantity. Similarly, a ProjectSupply task
-     * starting at noon would generate a ProjectWithdraw having half
-     * the quantity for the first day. This is mathematically
-     * consistent. In fact, ProjectSupply tasks could be arbitrarily
-     * subdivided with no net effect on the total withdraw demand.
+     * Expand a ProjectSupply into a ProjectWithdraw
+     * InventoryBG will sort out the details of dates and quantities
+     * later.
      **/
     private void expandProjectionTask(Task parent_task) {
-	double quantity = 0;
-	 if (parent_task.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
-	     Rate r = TaskUtils.getRate(parent_task);
-	     if (r instanceof FlowRate) {
-		 quantity = ((FlowRate)r).getGallonsPerDay();
-	     } else if (r instanceof CountRate) {
-		 quantity = ((CountRate)r).getEachesPerDay();
-	     }
-	 }
-	 if (quantity <= 0) {
-	     printError("expandProjectionTask(), Quantity cannot be obtained from task: "+
-			TaskUtils.taskDesc(parent_task));
-	     return;
-	 }
-	long start_time = TaskUtils.getStartTime(parent_task);
-	long end_time = TaskUtils.getEndTime(parent_task);
-	Vector expand_tasks = new Vector();
-	NewTask withdrawTask = null;
-        while (start_time < end_time) {
-            long next_day = TimeUtils.pushToEndOfDay(start_time) + 1;
-            long task_end = Math.min(next_day, end_time);
-            long duration = task_end - start_time;
-            double this_quantity = (quantity  * duration) / TimeUtils.MSEC_PER_DAY;
-            long task_time = next_day - 12 * TimeUtils.MSEC_PER_HOUR;
-            withdrawTask = createProjectSupplyWithdrawTask(parent_task, task_time, task_time, this_quantity);
-            expand_tasks.addElement(withdrawTask);
-            start_time = next_day;
-	}
+  	Vector expand_tasks = new Vector();
+	NewTask withdrawTask = createProjectSupplyWithdrawTask(parent_task);
+	expand_tasks.addElement(withdrawTask);
         publishExpansion(parent_task, expand_tasks);
     }
 
@@ -524,16 +488,9 @@ public class SupplyExpander extends InventoryProcessor {
 	return subtask;
     }
 
-     protected NewTask createProjectSupplyWithdrawTask(Task parent_task, long start, long end, double quantity) {
+     protected NewTask createProjectSupplyWithdrawTask(Task parent_task) {
 	 NewTask subtask = createWithdrawTask(parent_task);
-	 Preference p_qty = createQuantityPreference(AspectType.QUANTITY, quantity);
-	 subtask.setPreference(p_qty);
-	 // Overwrite the default start preference 
-	 Preference pref = createDateAfterPreference(AspectType.START_TIME, start);
-	 subtask.setPreference(pref);
-	 // Overwrite the default end preference 
-	 pref = createDateBeforePreference(AspectType.END_TIME, end);
-	 subtask.setPreference(pref);
+	 subtask.addPreference(parent_task.getPreference(AlpineAspectType.DEMANDRATE));
 //    	 printDebug(1, "CreateProjectSupplyWithdrawTask() with start date:"+
 //    		    TimeUtils.dateString(TaskUtils.getStartTime(subtask))+", with end dat:"+
 //  		    TimeUtils.dateString(TaskUtils.getEndTime(subtask))+", quantity is "+quantity);
