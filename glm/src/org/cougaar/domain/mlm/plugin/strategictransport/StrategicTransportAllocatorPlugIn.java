@@ -34,6 +34,7 @@ import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.AspectScorePoint;
 import org.cougaar.domain.planning.ldm.plan.Role;
+import org.cougaar.domain.planning.ldm.plan.Relationship;
 import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
 
 import org.cougaar.core.util.*;
@@ -131,7 +132,9 @@ public class StrategicTransportAllocatorPlugIn extends SimplePlugIn {
           org.getRelationshipSchedule().getMatchingRelationships(role);
 
         if (transportCollection.size() != 0){
-          return (Organization)transportCollection.iterator().next();
+          Relationship relationship = 
+            (Relationship) transportCollection.iterator().next();
+          return (Organization) org.getRelationshipSchedule().getOther(relationship);
         } 
       }
     }
