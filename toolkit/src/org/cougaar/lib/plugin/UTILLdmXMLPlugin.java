@@ -165,7 +165,7 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
   protected void setupSubscriptions() {
     // if we just rehydrated, all the assets created before persisting should already be
     // in the logplan
-    if (!didRehydrate () && !didSpawn())
+    //    if (!didRehydrate () && !didSpawn())
       createAssets();
   }
 
@@ -350,12 +350,12 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
             //logger.debug("Parsing Prototype");
 	    prototypeParser.cachePrototype(getLDM(), child);
 	  }
-	  else if(childname.equals("instance")) {
+	  else if(childname.equals("instance") && !didRehydrate()) {
             //logger.debug("Parsing Instance");
 	    List newassets = instanceParser.getInstance(getLDM(), child);
 	    assets.addAll(newassets);
 	  }
-	  else if(childname.equals("AggregateAsset")) {
+	  else if(childname.equals("AggregateAsset") && !didRehydrate()) {
 	    // logger.debug("Parsing AggregateAsset.");
 	    AggregateAsset newasset = aggregateAssetParser.getAggregate(getLDM(), child);
 	    assets.addElement(newasset);
