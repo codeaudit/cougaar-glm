@@ -105,7 +105,7 @@ public class PSP_Inventory
     }
     //MWD new code if there are no GLMAsset Inventories it's likely
     //the Asset has not been set on this UIInventoryImpl.
-    //There are just allocations in this InventoryPredicate returned
+    //There are just allocations in this PSPInventoryPredicate returned
     //collection and hence if (o instanceof Asset) has been used.
     if((lastAllocation != null) &&
        (inventory.getAsset() == null)) {
@@ -293,17 +293,14 @@ public class PSP_Inventory
     if (desiredAssetName.equals(ASSET)||
 	desiredAssetName.startsWith(ASSET_AND_CLASSTYPE)) {
 
-	DemandObjectPredicate assetNamePredicate;
-	//AssetPredicate assetNamePredicate;
+	PSPDemandObjectPredicate assetNamePredicate;
 
 	if(desiredAssetName.startsWith(ASSET_AND_CLASSTYPE)) {
 	    String desiredClassType = desiredAssetName.substring(ASSET_AND_CLASSTYPE.length());
-	    assetNamePredicate = new DemandObjectPredicate(desiredClassType);
-	    //assetNamePredicate = new AssetPredicate(desiredClassType);
+	    assetNamePredicate = new PSPDemandObjectPredicate(desiredClassType);
 	}
 	else {
-	    assetNamePredicate = new DemandObjectPredicate();
-	    //assetNamePredicate = new AssetPredicate();
+	    assetNamePredicate = new PSPDemandObjectPredicate();
 	}
 
 	// Asset no demand type handling
@@ -368,7 +365,7 @@ public class PSP_Inventory
     if (desiredAssetName.startsWith("UID:")) {
       String desiredAssetUID = desiredAssetName.substring(4);
       Subscription subscription = 
-	psc.getServerPlugInSupport().subscribe(this, new AssetUIDPredicate(desiredAssetUID));
+	psc.getServerPlugInSupport().subscribe(this, new PSPAssetUIDPredicate(desiredAssetUID));
       Collection collection = 
 	((CollectionSubscription)subscription).getCollection();
       for (Iterator i = collection.iterator(); i.hasNext(); ) {
@@ -390,7 +387,7 @@ public class PSP_Inventory
     // get roles and determine if this cluster is a provider (or consumer)
     Subscription roleSubscription =
       psc.getServerPlugInSupport().subscribe(this, 
-       new RolePredicate(psc.getServerPlugInSupport().getClusterIDAsString()));
+       new PSPRolePredicate(psc.getServerPlugInSupport().getClusterIDAsString()));
     Collection roleCollection =
       ((CollectionSubscription)roleSubscription).getCollection();
     boolean provider = false;
@@ -409,8 +406,8 @@ public class PSP_Inventory
     psc.getServerPlugInSupport().unsubscribeForSubscriber(roleSubscription);
 
     // get asset and tasks we need to create the inventory
-    InventoryPredicate inventoryPredicate = 
-      new InventoryPredicate(desiredAssetName, 
+    PSPInventoryPredicate inventoryPredicate = 
+      new PSPInventoryPredicate(desiredAssetName, 
 		     psc.getServerPlugInSupport().getClusterIDAsString());
     Subscription subscription = 
       psc.getServerPlugInSupport().subscribe(this, inventoryPredicate);
@@ -487,10 +484,10 @@ public class PSP_Inventory
   /** Get asset which represents this cluster.
     */
 
-class RolePredicate implements UnaryPredicate {
+class PSPRolePredicate implements UnaryPredicate {
   String myCluster;
 
-  public RolePredicate(String myCluster) {
+  public PSPRolePredicate(String myCluster) {
     this.myCluster = myCluster;
   }
 
@@ -529,11 +526,11 @@ class RolePredicate implements UnaryPredicate {
     the task in the allocation.)
     */
 
-class InventoryPredicate implements UnaryPredicate {
+class PSPInventoryPredicate implements UnaryPredicate {
   String desiredAssetName; // nomenclature:type id
   ClusterIdentifier myClusterId;
 
-  public InventoryPredicate(String desiredAssetName, String myCluster) {
+  public PSPInventoryPredicate(String desiredAssetName, String myCluster) {
     this.desiredAssetName = desiredAssetName;
     myClusterId = new ClusterIdentifier(myCluster);
   }
@@ -592,7 +589,7 @@ class InventoryPredicate implements UnaryPredicate {
       boolean aMatch = assetMatch((Asset)directObject);
       /** MWD Debug
       if(aMatch) {
-	  System.out.println("PSP_Inventory::InventoryPredicate:Matching allocations task is with Verb: " + task.getVerb());
+	  System.out.println("PSP_Inventory::PSPInventoryPredicate:Matching allocations task is with Verb: " + task.getVerb());
       }
       */
       return aMatch;
@@ -601,70 +598,16 @@ class InventoryPredicate implements UnaryPredicate {
   }
 }
 
-class AssetPredicate implements UnaryPredicate {
+class PSPDemandObjectPredicate implements UnaryPredicate {
 
   private String supplyType;
 
-  public AssetPredicate() {
+  public PSPDemandObjectPredicate() {
       super();
       supplyType = null;
   }
 
-  public AssetPredicate(String theSupplyType) {
-      super();
-      supplyType = theSupplyType;
-  }
-
-  public boolean execute(Object o) {
-    if (!(o instanceof GLMAsset))
-      return false;
-    GLMAsset asset = (GLMAsset)o;
-    ScheduledContentPG scheduledContentPG = asset.getScheduledContentPG();
-    if (scheduledContentPG == null)
-      return false;
-    Asset a1 = scheduledContentPG.getAsset();
-    if (a1 == null) {
-      System.out.println("WARNING: no asset in scheduledContentPG");
-      return false;
-    }
-    TypeIdentificationPG typeIdPG = a1.getTypeIdentificationPG();
-    if (typeIdPG == null) {
-      System.out.println("WARNING: No typeIdentificationPG for asset");
-      return false;
-    }
-    //If we care about supply type make sure direct object matches supply type
-    if (supplyType != null) {
-	SupplyClassPG pg = (SupplyClassPG)a1.searchForPropertyGroup(SupplyClassPG.class);
-	if ((pg == null) ||
-	    (!(supplyType.equals(pg.getSupplyType())))){
-	    return false;
-	}
-	/***
-	if (pg == null) {
-	    System.out.println("WARNING: Null Supply type");
-	    return false;
-	}
-	else if (!(supplyType.equals(pg.getSupplyType()))){
-	    System.out.println("WARNING: The Supply type is: " + pg.getSupplyType());
-	    return false;
-	}
-	System.out.println("NO WARNING: SUCCESS got Asset of right type");
-	***/
-    }
-    return true;
-  }
-}
-
-class DemandObjectPredicate implements UnaryPredicate {
-
-  private String supplyType;
-
-  public DemandObjectPredicate() {
-      super();
-      supplyType = null;
-  }
-
-  public DemandObjectPredicate(String theSupplyType) {
+  public PSPDemandObjectPredicate(String theSupplyType) {
       super();
       supplyType = theSupplyType;
   }
@@ -696,10 +639,10 @@ class DemandObjectPredicate implements UnaryPredicate {
   }
 }
 
-class AssetUIDPredicate implements UnaryPredicate {
+class PSPAssetUIDPredicate implements UnaryPredicate {
   String desiredAssetUID;
 
-  public AssetUIDPredicate(String desiredAssetUID) {
+  public PSPAssetUIDPredicate(String desiredAssetUID) {
     this.desiredAssetUID = desiredAssetUID;
   }
 
