@@ -1520,7 +1520,7 @@ public class InventoryBG implements PGDelegate {
       // create a double[] containing inventory levels indexed by day
       int reportDay = convertTimeToDay(latest);
       int len = reportDay + 1;
-      if (len < 0) {
+      if (len <= 0) {
 	len = 1;
       }
       ordered_list = new double[len];
