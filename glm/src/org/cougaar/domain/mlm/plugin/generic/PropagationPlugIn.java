@@ -12,11 +12,13 @@ package org.cougaar.domain.mlm.plugin.generic;
 
 import java.util.*;
 
+import org.cougaar.core.cluster.ChangeReport;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.plan.Transferable;
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.oplan.OplanContributor;
 import org.cougaar.domain.planning.ldm.plan.TransferableTransfer;
+import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.core.plugin.SimplePlugIn;
@@ -38,7 +40,7 @@ import org.w3c.dom.NodeList;
  * PropagationPlugIn propagates Transferables based on xml files in parameter list
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.4 2001-02-07 19:00:25 ngivler Exp $
+ * @version $Id: PropagationPlugIn.java,v 1.5 2001-02-13 16:50:47 tomlinso Exp $
  */
 
 public class PropagationPlugIn extends SimplePlugIn
@@ -130,13 +132,26 @@ public class PropagationPlugIn extends SimplePlugIn
                  Filters.filter(changes, destPred).iterator(); 
                iterator.hasNext();) {
             Organization org = (Organization)iterator.next();
-            
-            for (Iterator transferables = 
-                   currentSubscriptions.getTransferableSubscription().getCollection().iterator(); 
-                 transferables.hasNext();) {
-              transfer((Transferable)transferables.next(), org);
+            boolean isRelationshipChange = false;
+            Set changeReports = organizations.getChangeReports(org);
+            if (changeReports != null) {
+              for (Iterator i = changeReports.iterator(); i.hasNext(); ) {
+                ChangeReport changeReport = (ChangeReport) i.next();
+                if (changeReport instanceof RelationshipSchedule.RelationshipScheduleChangeReport) {
+                  isRelationshipChange = true;
+                  break;
+                }
+              }
             }
-            alreadySent.add(org);
+            if (isRelationshipChange) {
+              System.out.println("Propagating from " + getClusterIdentifier() + " to " + org);
+              for (Iterator transferables = 
+                     currentSubscriptions.getTransferableSubscription().getCollection().iterator(); 
+                   transferables.hasNext();) {
+                transfer((Transferable)transferables.next(), org);
+              }
+              alreadySent.add(org);
+            }
           }
         }
 

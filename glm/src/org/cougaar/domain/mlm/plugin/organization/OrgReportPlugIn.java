@@ -271,7 +271,27 @@ public class OrgReportPlugIn extends SimplePlugIn
     for (Iterator iterator = changes.iterator();
          iterator.hasNext();) {
       Organization selfOrg = (Organization) iterator.next();
-      if (resendRequired(selfOrg)) {
+      // Determine whether or not asset transfers for the self org should be 
+      // resent.  At this point, do not resend just because the relationship 
+      // schedule changed. Warning - legtimate change will get lost if batched
+      // with relationship schedule changes unless a separate change report is 
+      // generated.
+      Collection changeReports = mySelfOrgs.getChangeReports(selfOrg);
+      boolean resendRequired = false;
+
+      if ((changeReports != null) && !changeReports.isEmpty()) {
+        for (Iterator reportIterator = changeReports.iterator();
+             reportIterator.hasNext();) {
+          ChangeReport report = (ChangeReport) reportIterator.next();
+          if (!(report instanceof RelationshipSchedule.RelationshipScheduleChangeReport)) {
+            resendRequired = true;
+            break;
+          }
+        }
+      } else {
+        resendRequired = true;
+      }
+      if (resendRequired) {
 
         Collection rfsAssetTransfers = myRFSAssetTransfers.getCollection();
         Collection rfdAssetTransfers = myRFDAssetTransfers.getCollection();
@@ -282,7 +302,7 @@ public class OrgReportPlugIn extends SimplePlugIn
           
           if (assetTransfer.getAsset().equals(selfOrg)) {
             assetTransfer.indicateAssetChange();
-            publishChange(assetTransfer);
+            publishChange(assetTransfer, changeReports);
           }
         }
         
@@ -292,37 +312,14 @@ public class OrgReportPlugIn extends SimplePlugIn
           
           if (assetTransfer.getAsset().equals(selfOrg)) {
             assetTransfer.indicateAssetChange();
-            publishChange(assetTransfer);
+            publishChange(assetTransfer, changeReports);
           }
         }
       } 
     }
   }
 
-  private boolean resendRequired(Organization selfOrg) {
-    // Determine whether or not asset transfers for the self org should be 
-    // resent.  At this point, do not resend just because the relationship 
-    // schedule changed. Warning - legtimate change will get lost if batched
-    // with relationship schedule changes unless a separate change report is 
-    // generated.
-    Collection changeReports = mySelfOrgs.getChangeReports(selfOrg);      
-
-    if ((changeReports != null) &&
-        (!changeReports.isEmpty())) {
-      for (Iterator reportIterator = changeReports.iterator();
-           reportIterator.hasNext();) {
-        ChangeReport report = (ChangeReport) reportIterator.next();
-        if (!(report instanceof RelationshipSchedule.RelationshipScheduleChangeReport)) {
-          return true;
-        }
-      }
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-    // #######################################################################
+  // #######################################################################
   // BEGIN predicates
   // #######################################################################
   

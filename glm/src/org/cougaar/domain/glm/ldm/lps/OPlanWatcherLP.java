@@ -163,9 +163,16 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
     // The *right* thing to do is to publish with details, and change all the
     // other LPs to pay attention to what changed, only reacting when/as 
     // appropriate.  Yet another pre-demo hack.
-    /*
+
+    // RAY - Turned this back on since some plugins need to see
+    // updated location schedules. The offending plugin
+    // (PropagationPlugIn) checks explicitly for
+    // RelationshipSchedule.RelationshipScheduleChangeReport
+    // ChangeReports and re-propagates IFF the changes include such a
+    // ChangeReport
+
     // mark the object as having changed...maybe we should forward the changes?
     logplan.change(org, null);  
-    */
+
   }
 }
