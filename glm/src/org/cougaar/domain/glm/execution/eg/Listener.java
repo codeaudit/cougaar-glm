@@ -94,6 +94,7 @@ public class Listener extends Thread {
         OutputStreamLineWriter writer = new OutputStreamLineWriter(os);
         writer.writeEGObject(parameters);
         writer.flush();
+        writer.close();
         LineReader reader = new InputStreamLineReader(connection.getInputStream());
         egReceiver.setReader(reader);
         egReceiver.run();
