@@ -628,10 +628,11 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
         printDebug("Failed Allocation: "+failedAlloc.toString()+
                    " of Task: "+tFailed.toString());
       }
-      if (!(updateFailedTaskPreferences(tFailed,
-              adjustDurationDays, earliestDate))) {
-        printError("Unable to fix a failed allocation: "+failedAlloc);
-      }
+      /* this is a really bad idea, and we won't do it anymore */
+      //      if (!(updateFailedTaskPreferences(tFailed,
+      //              adjustDurationDays, earliestDate))) {
+      //        printError("Unable to fix a failed allocation: "+failedAlloc);
+      //      }
     } while (eFailedAllocs.hasMoreElements());
   }
   
@@ -1220,6 +1221,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   }
 
   /**
+   * NO NO NO -- Don't use this function!
+   * 
    * If we get a FailedDisposition (AllocationResult.isSuccess() == false),
    * then we want to change our Preferences a bit and try again...
    * <p>
@@ -1236,6 +1239,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    */
   protected boolean updateFailedTaskPreferences(
       NewTask t, int adjustDurationDays, Date earliestDate) {
+    System.err.println ("Don't use this function! Gordon Vidaver 07/17/02. gvidaver@bbn.com");
+    Thread.dumpStack ();
     if (DEBUG) {
       printDebug("Adjust task begin/end dates");
     }
