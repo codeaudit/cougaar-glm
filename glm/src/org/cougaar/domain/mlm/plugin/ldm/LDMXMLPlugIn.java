@@ -79,7 +79,6 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
 
     protected void setupSubscriptions() {
 	if (didRehydrate()) return; // Assets already added after rehydration
-	subscriber = getSubscriber();
 	ldmf = getFactory();
 	try {
 	    getParams();

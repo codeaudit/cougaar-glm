@@ -55,7 +55,6 @@ public class OPlanPlugIn extends SimplePlugIn
 
   /** for feedback to user on whether root GLS was successful **/
   JLabel oplanLabel;
-  private Subscriber subscriber;
 
   protected JButton oplanButton;
 
@@ -89,8 +88,7 @@ public class OPlanPlugIn extends SimplePlugIn
    */
   protected void setupSubscriptions() 
   {	
-    subscriber = getSubscriber();
-    subscriber.setShouldBePersisted(false);
+    getBlackboardService().setShouldBePersisted(false);
     oplanSubscription = (IncrementalSubscription) subscribe(oplanPredicate);
     stateSubscription = (IncrementalSubscription) subscribe(statePredicate);
 
@@ -204,7 +202,7 @@ public class OPlanPlugIn extends SimplePlugIn
       for (int i = 0, n = params.size(); i < n; i++) {
         String fileName = (String)(params.elementAt(i));
         OplanFileReader ofr =
-          new OplanFileReader(fileName, subscriber, getFactory(), getCluster());
+          new OplanFileReader(fileName, getFactory(), getCluster());
         Oplan oplan = ofr.readOplan();
         oplans.add(oplan);
         oplanComponents.addAll(ofr.getForcePackages(oplan));

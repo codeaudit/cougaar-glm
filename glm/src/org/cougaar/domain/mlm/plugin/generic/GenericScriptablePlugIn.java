@@ -11,7 +11,7 @@
 package org.cougaar.domain.mlm.plugin.generic;
 
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.cluster.Subscriber;
+import org.cougaar.core.blackboard.BlackboardService;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.RootFactory;
@@ -115,8 +115,8 @@ public class GenericScriptablePlugIn
 
 
   //Work around for a possible ( have to investigate more ) bug in ECMAScript. Just calls the getSubscriber();
-  public Subscriber getPlugInSubscriber() {
-    return getSubscriber();
+  public BlackboardService getPlugInSubscriber() {
+    return getBlackboardService();
   }
 }
 

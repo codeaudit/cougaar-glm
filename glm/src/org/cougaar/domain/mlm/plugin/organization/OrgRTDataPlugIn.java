@@ -457,7 +457,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
 
     try {
       fileStream = 
-        new InputStreamReader(getCluster().getConfigFinder().open(filename));
+        new InputStreamReader(getConfigFinder().open(filename));
       input = new BufferedReader(fileStream);
       StreamTokenizer tokens = new StreamTokenizer(input);
       tokens.commentChar('#');

@@ -31,7 +31,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
-import org.cougaar.core.cluster.Subscriber;
 import org.cougaar.core.cluster.UIDServer;
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.ClusterServesPlugIn;
@@ -149,7 +148,6 @@ public class OplanFileReader {
   private String oplanID;
   private UID oplanUID;
   private String orgID;
-  private Subscriber sub;
   private RootFactory ldmF;
   private UIDServer uids;
   private ClusterIdentifier cid;
@@ -157,11 +155,10 @@ public class OplanFileReader {
 				
   private OplanFileReader() {} //OplanFileReader
 
-  public OplanFileReader(String xmlfilename, Subscriber sub, RootFactory ldmF,
+  public OplanFileReader(String xmlfilename, RootFactory ldmF,
                          ClusterServesPlugIn theCluster)
   {
     this.xmlfilename = xmlfilename;
-    this.sub = sub;	   
     this.ldmF = ldmF;
     this.theCluster = theCluster;
     this.uids = theCluster.getUIDServer();

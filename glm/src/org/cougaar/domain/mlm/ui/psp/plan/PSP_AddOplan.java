@@ -1,5 +1,4 @@
 /*
- *
  * <copyright>
  * Copyright 1997-2001 Defense Advanced Research Projects
  * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
@@ -169,7 +168,6 @@ public class PSP_AddOplan
       OplanFileReader ofr =
         new OplanFileReader(
             filename,
-            pi.getSubscriber(),
             pi.getFactory(),
             pi.getCluster());
 

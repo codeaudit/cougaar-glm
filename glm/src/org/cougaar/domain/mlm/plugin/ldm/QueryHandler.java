@@ -11,7 +11,7 @@
 package org.cougaar.domain.mlm.plugin.ldm;
 
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.cluster.Subscriber;
+import org.cougaar.core.blackboard.BlackboardService;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
 import org.cougaar.domain.planning.ldm.RootFactory;
@@ -34,7 +34,7 @@ public abstract class QueryHandler {
   protected ClusterServesPlugIn myComponent;
   protected RootFactory ldmf;
   protected Properties myParameters;
-  protected Subscriber subscriber;
+  protected BlackboardService subscriber;
   protected LDMServesPlugIn ldm;
 	
   protected void initialize( LDMSQLPlugIn ldmplugin,
@@ -42,7 +42,7 @@ public abstract class QueryHandler {
                              ClusterServesPlugIn comp,
                              RootFactory aldmf,
                              Properties params,
-                             Subscriber sub) {
+                             BlackboardService sub) {
     myLDMPlugIn = ldmplugin;
     ldm = comp.getLDM();
     myClusterIdentifier = cid;
@@ -57,7 +57,7 @@ public abstract class QueryHandler {
                                ClusterServesPlugIn comp,
                                RootFactory aldmf,
                                Properties params,
-                               Subscriber sub) {
+                               BlackboardService sub) {
     myQueryLDMPlugIn = ldmplugin;
     ldm = comp.getLDM();
     myClusterIdentifier = cid;

@@ -54,7 +54,6 @@ package org.cougaar.domain.mlm.plugin.ldm;
    ********************************************************************************/
 import org.cougaar.core.plugin.LDMPlugInServesLDM;
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.cluster.Subscriber;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.cluster.SubscriberException;
 import org.cougaar.domain.planning.ldm.asset.Asset;
@@ -298,7 +297,6 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
     // LDMObjects for future updating.
 	
 	
-    subscriber = getSubscriber();
     if (!didRehydrate()) 
       {	// Objects should already exist after rehydration
         try 
@@ -831,7 +829,7 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
                                          getCluster(),
                                          getFactory(),
                                          pt = (Properties)globalParameters.clone(),
-                                         subscriber);
+                                         getBlackboardService());
 			
                         queries.addElement(cqh);
                       } // try statement

@@ -14,7 +14,7 @@ package org.cougaar.domain.mlm.plugin.ldm;
 import org.cougaar.core.plugin.LDMPlugInServesLDM;
 import org.cougaar.util.StateModelException;
 import org.cougaar.util.DBConnectionPool;
-import org.cougaar.core.cluster.Subscriber;
+import org.cougaar.core.blackboard.BlackboardService;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.cluster.SubscriberException;
 import org.cougaar.domain.planning.ldm.asset.Asset;
@@ -117,10 +117,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     // set up the subscription
     // This could be a future site for maintaining a Container of created
     // LDMObjects for future updating.
-    subscriber = getSubscriber();
     if (!didRehydrate()) {	// Objects should already exist after rehydration
       try {
-	//subscriber.openTransaction();
 	// set up initial properties
 	initProperties();
 	// deal with the arguments.
@@ -129,7 +127,6 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	parseQueryFile();
 	// sort the queryhandlers into categories.
 	grokQueries();
-	//subscriber.closeTransaction();
       } catch (SubscriberException se) {
 	System.err.println(this.toString()+": Initialization failed: "+se);
       }
@@ -217,7 +214,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 			     getCluster(),
 			     getFactory(),
 			     pt = (Properties)globalParameters.clone(),
-			     subscriber);
+			     getBlackboardService());
 	      queries.addElement(cqh);
 	    } catch (Exception bogon) {
 	      System.err.println("Exception creating "+s+": "+bogon);

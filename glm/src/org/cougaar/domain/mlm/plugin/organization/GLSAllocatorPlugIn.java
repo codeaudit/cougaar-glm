@@ -101,7 +101,7 @@ public class GLSAllocatorPlugIn extends SimplePlugIn {
 	
   public synchronized void execute() {
     if (me == null) {
-      me = getCluster().getClusterIdentifier().getAddress();
+      me = getClusterIdentifier().getAddress();
     }
 
     // check your asset container for new Subordinates
