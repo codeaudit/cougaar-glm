@@ -192,16 +192,19 @@ public class UTILExpand {
     
     logger.debug ("ldmf is " + ldmf + " taskToClone " + taskToClone);
 
-    NewTask t = makeSubTask (ldmf,
-			      taskToClone.getPlan(),
+    NewTask t;
+    synchronized (taskToClone) {  // bug #2125
+      t = makeSubTask (ldmf,
+		       taskToClone.getPlan(),
 
-			      (flow != null) ? flow.getParentTask () : null,
-			      taskToClone.getVerb(),
-			      taskToClone.getPrepositionalPhrases(),
-			      taskToClone.getDirectObject (),
-			      taskToClone.getPreferences(),
-			      taskToClone.getPriority(),
-			      taskToClone.getSource ());
+		       (flow != null) ? flow.getParentTask () : null,
+		       taskToClone.getVerb(),
+		       taskToClone.getPrepositionalPhrases(),
+		       taskToClone.getDirectObject (),
+		       taskToClone.getPreferences(),
+		       taskToClone.getPriority(),
+		       taskToClone.getSource ());
+    }
     addAuxiliaryQuery(taskToClone, t);
     return t;
   }
@@ -229,7 +232,7 @@ public class UTILExpand {
     task.setPrepositionalPhrases(parent.getPrepositionalPhrases());
     task.setVerb(parent.getVerb ());
     task.setPlan(parent.getPlan ());
-    task.setPreferences(parent.getPreferences ());
+    synchronized(parent) { task.setPreferences(parent.getPreferences ()); } // bug #2125
     task.setPriority(parent.getPriority ());
     task.setSource(source);
     return task;
@@ -331,7 +334,8 @@ public class UTILExpand {
 			       int [] aspectTypes,
 			       double [] aspectValues) {
     boolean prefExceeded = false;
-    Enumeration prefs = t.getPreferences ();
+    Enumeration prefs;
+    synchronized (t) { prefs = t.getPreferences ();} // bug #2125
     Map map = new HashMap ();
     int aspectType = -1;
 
@@ -356,7 +360,8 @@ public class UTILExpand {
 
   public void showPreferences (Task t) {
     boolean prefExceeded = false;
-    Enumeration prefs = t.getPreferences ();
+    Enumeration prefs;
+    synchronized (t) { prefs = t.getPreferences ();} // bug #2125
     Map map = new HashMap ();
     int aspectType = -1;
 
@@ -500,7 +505,8 @@ public class UTILExpand {
    */
   public Expansion makeExpansionWithConfidence(RootFactory ldmf, Workflow wf) {
     Task t = wf.getParentTask();
-    Enumeration prefs = t.getPreferences();
+    Enumeration prefs;
+    synchronized (t) { prefs = t.getPreferences(); } // bug #2125
     List aspect_values = new ArrayList();
 
     while(prefs.hasMoreElements()){
@@ -707,7 +713,8 @@ public class UTILExpand {
   }
 
   public Enumeration createDividedPreferences(RootFactory ldmf, Task t, Date begin, Date end, Logger logger) {
-    Enumeration taskPrefs = t.getPreferences();
+    Enumeration taskPrefs;
+    synchronized (t) { taskPrefs = t.getPreferences(); } // bug #2125
     Vector newPrefs = new Vector();
     Date start = null;
     Date early = null;

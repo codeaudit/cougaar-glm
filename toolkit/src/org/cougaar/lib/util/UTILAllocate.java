@@ -385,7 +385,9 @@ public class UTILAllocate {
 					    int [] aspectTypes,
 					    double [] aspectValues) {
     boolean prefExceeded = false;
-    Enumeration prefs = t.getPreferences ();
+    
+    Enumeration prefs;
+    synchronized(t) { prefs = t.getPreferences (); } // bug #2125
     Map map = new HashMap ();
     int aspectType = -1;
 
@@ -705,9 +707,11 @@ public class UTILAllocate {
     Map hash = new HashMap ();
     double total = 0.0d;
 
-    for (Enumeration prefs = t.getPreferences (); prefs.hasMoreElements (); ) {
-      Preference pref = (Preference) prefs.nextElement ();
-      hash.put (new Integer (pref.getAspectType ()), pref);
+    synchronized (t) {  // bug #2125
+      for (Enumeration prefs = t.getPreferences (); prefs.hasMoreElements (); ) {
+	Preference pref = (Preference) prefs.nextElement ();
+	hash.put (new Integer (pref.getAspectType ()), pref);
+      }
     }
 
     try {
