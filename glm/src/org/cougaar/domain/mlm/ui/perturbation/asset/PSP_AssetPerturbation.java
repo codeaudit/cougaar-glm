@@ -142,9 +142,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       if (command.equals(AssetPerturbationMessage.QUERY_COMMAND)) {
         listAssets(out, psc, psu);
       } else if (command.equals(AssetPerturbationMessage.MODIFY_COMMAND)) {
-        psc.getServerPlugInSupport().openLogPlanTransaction();
         modifyAsset(postData, parsePosition, out, psc, psu);
-        psc.getServerPlugInSupport().closeLogPlanTransaction();
       } else {
         throw new RuntimePSPException("Unrecognized command - " + postData);
       }
@@ -303,6 +301,10 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     Collection overlapSchedule = 
       roleSchedule.getOverlappingRoleSchedule(startDate.getTime(), 
                                               endDate.getTime());
+
+    // Open transaction - open/close boundaries must not include subscribe call
+
+    psc.getServerPlugInSupport().openLogPlanTransaction();
     if (!overlapSchedule.isEmpty()) {
       Enumeration planElements = new Enumerator(overlapSchedule);
       if (debug) {
@@ -312,6 +314,8 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       Vector originalTasks = new Vector ();
       publishRemoveUntilBoundary(psc, planElements, stuffToRemove, 
                                  originalTasks);
+
+
       for (int i = 0; i < stuffToRemove.size (); i++) {
           serverPluginSupport.publishRemoveForSubscriber(stuffToRemove.elementAt(i));
       }
@@ -323,6 +327,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
           oTask.setWorkflow (null);
           serverPluginSupport.publishChangeForSubscriber(oTask);
       }
+
     }
 
     RootFactory ldmFactory = 
@@ -345,6 +350,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
                                   allocationResult,
                                   Constants.Role.OUTOFSERVICE);
     serverPluginSupport.publishAddForSubscriber(allocation);
+    psc.getServerPlugInSupport().closeLogPlanTransaction();
 
     if (debug) {
       System.out.println("\nSchedule immediately after publish.\n" + 
