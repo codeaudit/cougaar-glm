@@ -27,6 +27,8 @@ import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.core.plugin.Assessor;
+import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.util.ExpanderHelper;
 import org.cougaar.core.society.UID;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
@@ -274,9 +276,11 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       throw new RuntimePSPException("Unable to parse end date = " + endStr);
     }
 
-    ServerPlugInSupport serverPluginSupport = psc.getServerPlugInSupport();
-    Subscription subscription = 
-      serverPluginSupport.subscribe(this, assetByUIDPred);
+    ServerPlugInSupport serverPlugInSupport = psc.getServerPlugInSupport();
+    PlugInDelegate delegate = serverPlugInSupport.getDirectDelegate();
+
+    delegate.openTransaction();
+    Subscription subscription = delegate.subscribe(assetByUIDPred);
     Collection container = 
       ((CollectionSubscription)subscription).getCollection();
     
@@ -309,47 +313,43 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       }
       Vector stuffToRemove = new Vector ();
       Vector originalTasks = new Vector ();
-      publishRemoveUntilBoundary(psc, planElements, stuffToRemove, 
-                                 originalTasks);
-
+      publishRemoveUntilBoundary(planElements, stuffToRemove, originalTasks);
 
       for (int i = 0; i < stuffToRemove.size (); i++) {
-          serverPluginSupport.publishRemoveForSubscriber(stuffToRemove.elementAt(i));
+        delegate.publishRemove(stuffToRemove.elementAt(i));
       }
+      
       for (int i = 0; i < originalTasks.size (); i++) {
-          NewTask oTask = (NewTask)originalTasks.elementAt(i);
-          if (debug && (oTask.getWorkflow () != null)) {
-            System.out.println ("original task " + oTask + " had non-null workflow");
-          }
-          oTask.setWorkflow (null);
-          serverPluginSupport.publishChangeForSubscriber(oTask);
+        NewTask oTask = (NewTask)originalTasks.elementAt(i);
+        if (debug && (oTask.getWorkflow () != null)) {
+          System.out.println ("original task " + oTask + " had non-null workflow");
+        }
+        oTask.setWorkflow (null);
+        delegate.publishChange(oTask);
       }
-
     }
-
-    RootFactory ldmFactory = 
-      serverPluginSupport.getFactoryForPSP();
     
-    psc.getServerPlugInSupport().openLogPlanTransaction();
+    RootFactory ldmFactory = 
+      serverPlugInSupport.getFactoryForPSP();
+    
     NewTask newTask = createUnavailableTask(asset, startDate, endDate, 
                                             ldmFactory);
-    psc.getServerPlugInSupport().closeLogPlanTransaction();
 
     ClusterIdentifier clusterID = 
-      ClusterIdentifier.getClusterIdentifier(serverPluginSupport.getClusterIDAsString());
+      ClusterIdentifier.getClusterIdentifier(serverPlugInSupport.getClusterIDAsString());
     newTask.setSource(clusterID);
     newTask.setDestination(clusterID);
-    serverPluginSupport.publishAddForSubscriber(newTask);
+    delegate.publishAdd(newTask);
 
     AllocationResult allocationResult = 
-      createEstimatedAllocationResult(newTask, ldmFactory);
+      ExpanderHelper.createEstimatedAllocationResult(newTask, ldmFactory, 100.0);
     Allocation allocation = 
       ldmFactory.createAllocation(ldmFactory.getRealityPlan(),
                                   newTask,
                                   asset,
                                   allocationResult,
                                   Constants.Role.OUTOFSERVICE);
-    serverPluginSupport.publishAddForSubscriber(allocation);
+    delegate.publishAdd(allocation);
 
     if (debug) {
       System.out.println("\nSchedule immediately after publish.\n" + 
@@ -364,7 +364,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
 
     myCalendar.set(1999, 11, 31, 23, 59, 0);
     long endTime = myCalendar.getTime().getTime();
-
+    
     roleSchedule = asset.getRoleSchedule();
     Collection encapSchedule = 
       roleSchedule.getEncapsulatedRoleSchedule(startTime, endTime);
@@ -382,25 +382,24 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
               new Date((long)result.getValue(AspectType.START_TIME));
             Date eEnd = new Date((long)result.getValue(AspectType.END_TIME));
             if (debug) {
-                System.out.println(planElement + " start: " + eStart + 
-                                   " end: " + eEnd);
+              System.out.println(planElement + " start: " + eStart + 
+                                 " end: " + eEnd);
             }
           }
         }
       } 
     }
-
-    serverPluginSupport.unsubscribeForSubscriber(subscription);    
-  }
     
+    delegate.unsubscribe(subscription);
+    delegate.closeTransaction();
+  }
+  
   /**
    *
    */
-  protected void publishRemoveUntilBoundary (PlanServiceContext psc,
-                                             Enumeration planElements, 
+  protected void publishRemoveUntilBoundary (Enumeration planElements, 
                                              Vector stuffToRemove,
                                              Vector originalTasks) {
-    ServerPlugInSupport serverPluginSupport = psc.getServerPlugInSupport();
     Vector parentPEs = new Vector ();
     if (debug) {
       System.out.println("PSP_AssetPerturbation - Level --->");
@@ -451,53 +450,11 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     }
 
     if (!parentPEs.isEmpty()) {
-      publishRemoveUntilBoundary(psc, parentPEs.elements (), 
+      publishRemoveUntilBoundary(parentPEs.elements (), 
                                  stuffToRemove, originalTasks);
     }
   }
   
-  private AllocationResult createEstimatedAllocationResult(Task task,
-                                                           RootFactory ldmFactory) {
-    Enumeration preferences = task.getPreferences();
-    if (preferences != null) {
-      // Walk pref enum to find out count. Otherwise we end up having to 
-      // convert aspect and result vectors to arrays as post processing.
-      // Safe because no one else could modify the task.
-      int numPreferences;
-      for (numPreferences = 0; preferences.hasMoreElements(); 
-           numPreferences++, preferences.nextElement()) {
-      }
-
-      // No way to reset the enum so we need to get again.
-      // I hate Enumerations
-      preferences = task.getPreferences();
-      // do something really simple for now.
-      int[] aspectArray = new int[numPreferences];
-      double[] resultArray = new double[numPreferences];
-      for (int index = 0; index < numPreferences; index++) {
-        Preference pref = (Preference)preferences.nextElement();
-        aspectArray[index] = pref.getAspectType();
-
-        ScoringFunction sf = pref.getScoringFunction();
-        // allocate as if you can do it at the "Best" point
-        resultArray[index] = ((AspectScorePoint)sf.getBest()).getValue();
-
-        if (debug)
-            if (aspectArray[index] < 2)
-                System.out.println ("Aspect " + aspectArray[index] + 
-                                    " - " + new Date((long)resultArray[index]));
-      }
-      AllocationResult estimate = ldmFactory.newAllocationResult(100.0, 
-                                                                 true, 
-                                                                 aspectArray, 
-                                                                 resultArray);
-      return estimate;
-    }
-    // if there were no preferences...return a null estimate for the allocation result
-    // (for now)
-    return null;
-  }
-
 
   private NewTask createUnavailableTask(Asset asset, Date startDate, Date endDate, 
                                         RootFactory ldmFactory) {
