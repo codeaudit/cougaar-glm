@@ -143,61 +143,59 @@ implements LogicProvider, EnvelopeLogicProvider
     }
     
     // get the schedule
-    Schedule ls = lspg.getSchedule();
-    if (ls == null) {
-      ls = ldmf.newLocationSchedule(EmptyEnumeration.getEnumeration());
-      ((NewLocationSchedulePG)lspg).setSchedule(ls);
+    Schedule oldls = lspg.getSchedule();
+    Schedule newls;
+    if (oldls == null) {
+      newls = ldmf.newLocationSchedule(EmptyEnumeration.getEnumeration());
+    } else {
+      newls = ldmf.newLocationSchedule(oldls.getAllScheduleElements());
     }
 
 
-    // now that we have it, lock it so nobody bashes it
-    synchronized (ls) {
-      final UID oaUID = oa.getUID();  // the uuid of the org activity.
-      
-      // find old element(s) in ls with matching oaUIDs
-      Collection found = ls.filter(new UnaryPredicate() {
-        public boolean execute(Object o) {
-          if (o instanceof OrgActivity.OAScheduleElement) {
-            return oaUID.equals(((OrgActivity.OAScheduleElement)o).getOrgActivityUID());
-          } else {
-            return false;
-          }
-        }
-      });
-
-
-      switch (action) {
-      case Envelope.ADD:        // 
-        {
-          if (found.size()>0) {
-	    logger.warn("OPlanWatcher() saw redundant OrgActivity add for "+
-			oa);
-          }
-          ScheduleElement se = oa.getNormalizedScheduleElement();
-          if (se != null) {
-            ls.add(se);
-          }
-        }
-        break;
-      case Envelope.CHANGE:
-        {
-          ls.removeAll(found);
-          ScheduleElement se = oa.getNormalizedScheduleElement();
-          if (se != null) {
-            ls.add(se);
-          }
-        }
-        break;
-      case Envelope.REMOVE:
-        ls.removeAll(found);
-        break;
-      default:
-	logger.warn("OPlanWatcher() somehow caught random envelope type "+
-		    action);
-        return;
-      }
-    }
+    final UID oaUID = oa.getUID();  // the uuid of the org activity.
     
+    // find old element(s) in ls with matching oaUIDs
+    Collection found = newls.filter(new UnaryPredicate() {
+      public boolean execute(Object o) {
+	if (o instanceof OrgActivity.OAScheduleElement) {
+	  return oaUID.equals(((OrgActivity.OAScheduleElement)o).getOrgActivityUID());
+	} else {
+	  return false;
+	}
+      }
+    });
+
+    switch (action) {
+    case Envelope.ADD:    
+      {
+	if (found.size()>0) {
+	  logger.warn("OPlanWatcher() saw redundant OrgActivity add for "+
+		      oa);
+	}
+	ScheduleElement se = oa.getNormalizedScheduleElement();
+	if (se != null) {
+	  newls.add(se);
+	}
+      }
+    break;
+    case Envelope.CHANGE:
+      {
+	newls.removeAll(found);
+	ScheduleElement se = oa.getNormalizedScheduleElement();
+	if (se != null) {
+	  newls.add(se);
+	}
+      }
+    break;
+    case Envelope.REMOVE:
+      newls.removeAll(found);
+      break;
+    default:
+      logger.warn("OPlanWatcher() somehow caught random envelope type "+
+		  action);
+      return;
+    }
+  
     // MIK - deactive change marking.  Various other LPs misunderstand changed
     // orgs as relationship changes, leading to oplan repropagation, leading to
     // reactivation of this LP leading to a spiraling recursion of death.
@@ -223,8 +221,7 @@ implements LogicProvider, EnvelopeLogicProvider
     // the change if it was only such LocalPG changes
     Collection changes = new ArrayList();
     changes.add(new LocalPG.LocalPGChangeReport());
+    ((NewLocationSchedulePG)lspg).setSchedule(newls);
     rootplan.change(org, changes);
-
-
   }
 }
