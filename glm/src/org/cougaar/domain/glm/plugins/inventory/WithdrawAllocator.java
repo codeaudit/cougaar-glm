@@ -18,8 +18,8 @@
 package org.cougaar.domain.glm.plugins.inventory;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
-
 import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.domain.planning.ldm.*;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.*;
@@ -34,8 +34,8 @@ import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.debug.*;
 import org.cougaar.domain.glm.plugins.TaskUtils;
+import org.cougaar.domain.glm.plugins.TimeUtils;
 import org.cougaar.domain.glm.plugins.AssetUtils;
-
 
 public class WithdrawAllocator extends InventoryProcessor {
 
@@ -65,6 +65,7 @@ public class WithdrawAllocator extends InventoryProcessor {
 	super.update(); // set up dates
 	if (inventoryPlugIn_.getDetermineRequirementsTask() != null) {
 	    allocateWithdrawTasks(withdrawTasks_.getAddedList());
+	    allocateWithdrawTasks(withdrawTasks_.getChangedList());
 	}
     }
 
@@ -85,23 +86,31 @@ public class WithdrawAllocator extends InventoryProcessor {
 		GLMDebug.ERROR("WithdrawAllocator", clusterId_, "Inventory NOT found for "+typeID);
 		continue;
 	    }
-	    ar =  createEstimatedAllocationResult(wdrawTask);
-	    if (ar != null) {
-		if(publishAllocation(wdrawTask, inventory, role_, ar)) {
+            boolean isNew = wdrawTask.getPlanElement() == null;
+            if (isPrintConcise()) {
+                printConcise("allocateWithdrawTasks() "
+                             + (isNew ? "new " : "change ")
+                             + wdrawTask.getUID()
+                             + " "
+                             + TaskUtils.getDailyQuantity(wdrawTask)
+                             + (TaskUtils.isProjection(wdrawTask)
+                                ? (" from "
+                                   + TimeUtils.dateString(TaskUtils.getStartTime(wdrawTask))
+                                   + " to "
+                                   + TimeUtils.dateString(TaskUtils.getEndTime(wdrawTask)))
+                                : (" on "
+                                   + TimeUtils.dateString(TaskUtils.getEndTime(wdrawTask)))));
+            }
+            if (isNew) {
+                ar = new AllocationResultHelper(wdrawTask, null).getAllocationResult(1.0);
+                if (publishAllocation(wdrawTask, inventory, role_, ar)) {
 // 		    GLMDebug.DEBUG("WithdrawAllocator", clusterId_, 
 // 				      "Allocating "+TaskUtils.taskDesc(wdrawTask)+" to inventory, with PlanElement:"+
 // 				      wdrawTask.getPlanElement().getUID()+ ", DESCRIPTION: "+inventoryDesc(inventory));
 		    num_tasks++;
 		}
-	    } else {
-		printError("createEstimatedAllocResults failed to return ar task:"+wdrawTask+" inventory:"+inventory);
-		if (publishAllocation(wdrawTask, inventory, role_)){
-		    printDebug("Allocating "+TaskUtils.taskDesc(wdrawTask)+
-			       " to inventory, with PlanElement:"+
-			       wdrawTask.getPlanElement().getUID());
-		    num_tasks++;
-		}
 	    }
+            delegate_.publishChange(inventory);
 	}
 	if (num_tasks > 0) {
 	    printDebug("allocateWithdrawTasks()  allocated "+num_tasks+

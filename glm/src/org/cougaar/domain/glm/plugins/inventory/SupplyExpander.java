@@ -19,11 +19,15 @@ package org.cougaar.domain.glm.plugins.inventory;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.CountRate;
 import org.cougaar.domain.planning.ldm.measure.FlowRate;
 import org.cougaar.domain.planning.ldm.measure.Rate;
 import org.cougaar.domain.planning.ldm.plan.AllocationResult;
+import org.cougaar.domain.planning.ldm.plan.AllocationResultAggregator;
+import org.cougaar.domain.planning.ldm.plan.TaskScoreTable;
+import org.cougaar.domain.planning.ldm.plan.AspectRate;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.AspectValue;
 import org.cougaar.domain.planning.ldm.plan.Constraint;
@@ -44,6 +48,8 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.Inventory;
 import org.cougaar.domain.glm.ldm.asset.Organization;
@@ -63,18 +69,128 @@ import org.cougaar.domain.glm.plugins.TimeUtils;
  **/
 
 public class SupplyExpander extends InventoryProcessor {
+    /**
+     * Define an ARA that can deal with the expansion of a
+     * ProjectSupply task. Mostly, we just clone the result of the
+     * ProjectWithdraw task.
+     **/
+    private static class ProjectionARA implements AllocationResultAggregator {
+        public AllocationResult calculate(Workflow wf, TaskScoreTable tst, AllocationResult currentar) {
+            if (tst.size() != 1)
+                throw new IllegalArgumentException("projectionARA: multiple subtasks");
+            AllocationResult ar = (AllocationResult) tst.getAllocationResult(0);
+            if (ar == null) return null;
+            if (ar.isEqual(currentar)) return currentar;
+            return (AllocationResult) ar.clone();
+        }
+    }
 
-    // subPlanElements_ is a subscription that looks for ANTS output task
-    // This allows allocation results on the sub-task to be propagated
-    protected IncrementalSubscription        supplyExpansionElements_;
-    protected IncrementalSubscription        projectExpansionElements_;
+    private static class SupplyARA implements AllocationResultAggregator {
+        public AllocationResult calculate(Workflow wf, TaskScoreTable tst, AllocationResult currentar) {
+            AspectValue[] merged = new AspectValue[AlpineAspectType.LAST_ALPINE_ASPECT + 1];
+            long startTime = Long.MAX_VALUE;
+            long endTime = Long.MIN_VALUE;
+            boolean success = true;
+            float rating = 0.0f;
+            int tstSize = tst.size();
+            AllocationResult withdrawAR = null; // Remember this when we see it
+            long time;
+            Task parentTask = wf.getParentTask();
+            PlanElement pe = parentTask.getPlanElement();
+            AllocationResultHelper helper = new AllocationResultHelper(parentTask, null);
+            AllocationResult bestAR = helper.getAllocationResult();
+            AspectValue[] curr = bestAR.getAspectValueResults();
+
+            for (int i = 0; i < curr.length; i++) {
+                AspectValue av = curr[i];
+                int type = av.getAspectType();
+                merged[type] = av;
+                switch (type) {
+                case START_TIME:
+                    startTime = (long) av.getValue();
+                    break;
+                case END_TIME:
+                    endTime = (long) av.getValue();
+                    break;
+                }
+            }
+            for (int i = 0; i < tstSize; i++) {
+                AllocationResult ar = tst.getAllocationResult(i);
+                if (ar == null) return null; // bail if undefined
+                Task t = tst.getTask(i);
+                Verb verb = t.getVerb();
+                boolean isWithdraw =
+                    verb.equals(Constants.Verb.Withdraw)
+                    || verb.equals(Constants.Verb.ProjectWithdraw);
+                if (isWithdraw) {
+                    if (ar == null) return null;
+                    withdrawAR = ar;
+                }
+                AspectValue[] avs = ar.getAspectValueResults();
+                success = success && ar.isSuccess();
+                rating += ar.getConfidenceRating();
+                for (int j = 0; j < avs.length; j++) {
+                    int type = avs[j].getAspectType();
+                    switch (type) {
+                    case AspectType.START_TIME:
+                        break;
+                    case AspectType.END_TIME:
+                        break;
+                    case AspectType.QUANTITY:
+                        if (isWithdraw) merged[AspectType.QUANTITY] = avs[j];
+                        break;
+                    default:
+                        if (!isWithdraw) merged[type] = avs[j];
+                    }
+                }
+            }
+            List mergedPhasedResults = new ArrayList();
+            List withdrawPhasedResults = withdrawAR.getPhasedAspectValueResults();
+            for (int i = 0, n = withdrawPhasedResults.size(); i < n; i++) {
+                AspectValue[] oneResult = (AspectValue[]) withdrawPhasedResults.get(i);
+                mergedPhasedResults.add(merge(merged, oneResult));
+            }
+            return new AllocationResult(rating / tstSize, success,
+                                        merge(merged, null), mergedPhasedResults);
+        }
+
+        /**
+         * Merges an array of AspectValue indexed by AspectType and an
+         * unindexed array of AspectValues into an unindexed array of
+         * AspectValues.
+         **/
+        private AspectValue[] merge(AspectValue[] rollup, AspectValue[] phased) {
+            if (phased != null) {
+                rollup = (AspectValue[]) rollup.clone(); // Don't clobber the original
+                for (int i = 0; i < phased.length; i++) {
+                    AspectValue av = phased[i];
+                    if (av != null) rollup[av.getAspectType()] = av;
+                }
+            }
+            int nAspects = 0;
+            for (int i = 0; i < rollup.length; i++) {
+                if (rollup[i] != null) nAspects++;
+            }
+            AspectValue[] result = new AspectValue[nAspects];
+            int aspect = 0;
+            for (int i = 0; i < rollup.length; i++) {
+                if (rollup[i] != null) result[aspect++] = rollup[i];
+            }
+            return result;
+        }
+    }
+
+    private IncrementalSubscription projectExpansions_;
+    private IncrementalSubscription supplyExpansions_;
     
     public static final long                 TRANSPORT_TIME = 24 * MSEC_PER_HOUR; // second day
     public static final long                 LOAD_TIME      = 4 * MSEC_PER_HOUR; // 4 hours
     public static final Verb                 WITHDRAWVERB = new Verb(Constants.Verb.WITHDRAW);
-    public static final Verb                 PROJECTWITHDRAWVERB = new Verb(Constants.Verb.PROJECTWITHDRAW);
+    public static final Verb                 PROJECTWITHDRAWVERB = Constants.Verb.ProjectWithdraw;
     public static final Verb                 TRANSPORTVERB = new Verb(Constants.Verb.TRANSPORT);
     public static final Verb                 LOADVERB = new Verb(Constants.Verb.LOAD);
+    private static AllocationResultAggregator projectionARA = new ProjectionARA();
+    private static AllocationResultAggregator supplyARA = new SupplyARA();
     protected boolean addTransport; // Add load tasks when expanding supply tasks
     protected boolean addLoad;      // Add transport tasks when expanding supply tasks
 
@@ -85,8 +201,10 @@ public class SupplyExpander extends InventoryProcessor {
     {
 	super(plugin, org, type);
 	supplyType_ = type;
-	supplyExpansionElements_ = subscribe(new SupplyExpansionTaskPredicate(supplyType_));
-	projectExpansionElements_ = subscribe(new ProjectionExpansionTaskPredicate(supplyType_));
+//  	supplyExpansionElements_ = subscribe(new SupplyExpansionTaskPredicate(supplyType_));
+//  	projectExpansionElements_ = subscribe(new ProjectionExpansionTaskPredicate(supplyType_));
+        projectExpansions_ = subscribe(new ProjectionExpansionPredicate(supplyType_, myOrgName_));
+        supplyExpansions_ = subscribe(new SupplyExpansionPredicate(supplyType_, myOrgName_));
         addTransport = getBooleanParam(supplyType_ + "Transport");
         addLoad = getBooleanParam(supplyType_ + "Load");
 
@@ -107,8 +225,8 @@ public class SupplyExpander extends InventoryProcessor {
 	}
 
 	public boolean execute(Object o) {
-	    if (o instanceof PlanElement ) {
-		Task task = ((PlanElement)o).getTask();
+	    if (o instanceof Expansion) {
+		Task task = ((Expansion)o).getTask();
 		Verb task_verb = task.getVerb();
 		if (task_verb.equals(Constants.Verb.TRANSPORT) ||
 		    task_verb.equals(Constants.Verb.LOAD) ||
@@ -140,6 +258,44 @@ public class SupplyExpander extends InventoryProcessor {
 	}
     };
     
+    static class ProjectionExpansionPredicate implements UnaryPredicate
+    {
+	String supplyType_;
+        UnaryPredicate taskPredicate;
+
+	public ProjectionExpansionPredicate(String type, String orgname) {
+	    supplyType_ = type;
+            taskPredicate = new InventoryProcessor.ProjectionTaskPredicate(type, orgname);
+	}
+
+	public boolean execute(Object o) {
+	    if (o instanceof PlanElement ) {
+		Task task = ((PlanElement) o).getTask();
+                return taskPredicate.execute(task);
+	    }
+	    return false;
+	}
+    };
+    
+    static class SupplyExpansionPredicate implements UnaryPredicate
+    {
+	String supplyType_;
+        UnaryPredicate taskPredicate;
+
+	public SupplyExpansionPredicate(String type, String orgname) {
+	    supplyType_ = type;
+            taskPredicate = new InventoryProcessor.SupplyTaskPredicate(type, orgname);
+	}
+
+	public boolean execute(Object o) {
+	    if (o instanceof Expansion) {
+		Task task = ((Expansion) o).getTask();
+                return taskPredicate.execute(task);
+	    }
+	    return false;
+	}
+    };
+    
 
     /** This method is called everytime a subscription has changed. */
     public void update() {
@@ -149,55 +305,20 @@ public class SupplyExpander extends InventoryProcessor {
 	}
 	super.update(); // set up dates
 	handleExpandableTasks(supplyTasks_.getAddedList());
-//  	handleExpandableTasks(supplyTasks_.getChangedList());
+  	updateExpansion(supplyTasks_.getChangedList());
 	handleExpandableTasks(projectionTasks_.getAddedList());
-	updateProjectSupplyExpansion(projectionTasks_.getChangedList());
- 	updateSupplyResults(supplyExpansionElements_.getAddedList());
-	updateSupplyResults(supplyExpansionElements_.getChangedList());
-	//
- 	updateProjectionResults(projectExpansionElements_.getAddedList());
-	updateProjectionResults(projectExpansionElements_.getChangedList());
-    }
-
-    /** This is not the right way to do this. We need to update the
-        estimated AllocationResult of our expansions, but we have no
-        subscription to such expansions. Indeed, we can't construct a
-        UnaryPredicate to select them because that logic is hidden
-        from us. Instead, we take advantage of the crock that the
-        ProjectWithdraw task is "changed" when its Allocation's
-        AllocationResult is changed. Those changed tasks come here and
-        we update the expansion.
-    **/
-    public void updateProjectionResults(Enumeration pes){
-	while (pes.hasMoreElements()) {
-            PlanElement pe = (PlanElement) pes.nextElement(); // The disposition of the subtask
-            Task subtask = pe.getTask();
-            if (subtask != null) {
-                Workflow wf = subtask.getWorkflow();
-                if (wf != null) {
-                    Task parent = wf.getParentTask();
-                    PlanElement expansion = parent.getPlanElement();
-                    PlugInHelper.updatePlanElement(expansion);
-                }
-            }
-        }
+	updateExpansion(projectionTasks_.getChangedList());
+        PlugInHelper.updateAllocationResult(projectExpansions_);
+        handleExpansionChanges(supplyExpansions_.getChangedList());
+        PlugInHelper.updateAllocationResult(supplyExpansions_);
     }
 
     private boolean needUpdate() {
-	boolean update = false;
-	if (supplyTasks_.elements().hasMoreElements()) {
-	    update = true;
-	}
-	else if (supplyExpansionElements_.getChangedList().hasMoreElements()) {
-	    update = true;
-	} 
-	else if (projectExpansionElements_.getChangedList().hasMoreElements()) {
-	    update = true;
-	} 
-	else if (projectionTasks_.elements().hasMoreElements()) {
-	    update = true;
-	}
-	return update;
+	if (supplyTasks_.hasChanged()) return true;
+        if (projectionTasks_.hasChanged()) return true;
+        if (supplyExpansions_.hasChanged()) return true;
+        if (projectExpansions_.hasChanged()) return true;
+        return false;
     }
 
     /** Expands an enumeration of Supply tasks **/
@@ -227,7 +348,7 @@ public class SupplyExpander extends InventoryProcessor {
 //  		   tasksExpanded+" tasks.");
     }
 
-    protected void updateProjectSupplyExpansion(Enumeration tasks) {
+    protected void updateExpansion(Enumeration tasks) {
 	Task supplyTask;
 	Inventory inv = null;
 	Asset proto;
@@ -238,7 +359,7 @@ public class SupplyExpander extends InventoryProcessor {
 	    if (inv != null) {
 		PlanElement pe = supplyTask.getPlanElement();
 		if (pe instanceof Expansion) {
-		    printDebug("updateExpandableTasks(), ProjectWithdraw REPLAN, ProjectSupply task changed "+
+		    printDebug("updateExpansion(), Withdraw REPLAN, Supply task changed "+
 			       TaskUtils.taskDesc(supplyTask));
 		    publishRemoveExpansion((Expansion)pe);
 		    expandSupplyTask(supplyTask);
@@ -246,86 +367,6 @@ public class SupplyExpander extends InventoryProcessor {
 	    }
 	}
     }
-
-    // updates allocation results on the expansion of supply
-    // to supply (by inventory) and transport
-    private void updateSupplyResults(Enumeration sub_elements) {
-	PlanElement pe;
-	Task task;
-	long time = delegate_.currentTimeMillis();
-//  	printDebug("updateSupplyResults() <"+supplyType_+"> Updating allocation Results");
-	while (sub_elements.hasMoreElements()) {
-	    pe = (PlanElement)sub_elements.nextElement();
-	    // SupplyDebug.DEBUG("SupplyExpander", clusterId_, "for task:"+pe.getTask());
-	    task = pe.getTask();
-	    // if we are past the commit date on the task, no changes are allowed.
-	    Date date = task.getCommitmentDate();
-	    if (!task.beforeCommitment(new Date(getAlpTime()))) {
-		continue;
-	    }
-	    Workflow wf = task.getWorkflow();
-	    if (wf != null) {
-		Task parent= wf.getParentTask();
-		pe = parent.getPlanElement();
-		if (pe == null) {
-		    // expansion removed - not an error, 
-		    // the infrastructure should be removing the sub_elements soon
-		    continue;
-		}
-		// check if done before
-		// false -> use unlike tasks allocation result aggregator (doesn't add quantities)
-		AllocationResult new_result = buildExpansionResult((Expansion)pe, false);
-		if (new_result != null)  {
-		    AllocationResult est_result = pe.getEstimatedResult();
-		    if (est_result == null ) {
-			pe.setEstimatedResult(new_result);
-			supplyExpansionElements_.getSubscriber().publishChange(pe);
-		    } else if (!est_result.isEqual(new_result)) {
-    			if (new_result.isSuccess()) {
-			    pe.setEstimatedResult(new_result);
-			    supplyExpansionElements_.getSubscriber().publishChange(pe);
-			} else {
-			    printDebug("updateSupplyResults() <"+
-				       supplyType_+"> failed expansion pe "+
-				       pe+" task:"+TaskUtils.taskDesc(parent));
-			    // Replace expansion with an expansion with only the failed sub-tasks
-			    Enumeration sub_tasks = ((Expansion)pe).getWorkflow().getTasks();
-			    Task subtask;
-			    PlanElement subpe;
-			    Vector newtasks = new Vector();
-			    while (sub_tasks.hasMoreElements()) {
-				subtask = (Task)sub_tasks.nextElement();
-				subpe = subtask.getPlanElement();
-				if (subpe != null) {
-				    if (subpe.getReportedResult() != null) {
-					if (!subpe.getReportedResult().isSuccess()) {
-					    printDebug(" <"+supplyType_+
-						       "> failed expansion due to :"+
-						       TaskUtils.taskDesc(subtask));
-					    newtasks.add(subtask);
-					}
-				    } else if ((subpe.getEstimatedResult() != null) 
-					       &&  (!subpe.getEstimatedResult().isSuccess())) {
-					printDebug("updateSupplyResults() <"+
-						   supplyType_+"> failed expansion due to :"+
-						   TaskUtils.taskDesc(subtask));
-					newtasks.add(subtask);
-				    }
-				}
-			    }
-			    publishExpansion(pe.getTask(), newtasks);
-			}
-		    }
-		}
-	    } else if (pe instanceof Disposition){
-		// what to do here?? RJB
-		// this must have come from GSM which does failed allocs - no need to propagate.
-	    } else {
-		printError("Task without a Workflow  \ntriggered by: "+TaskUtils.taskDesc(task));
-	    }
-	}
-    }
-
 
     /** Expands a Supply task into a withdraw task **/
     protected void expandSupplyTask(Task parentTask) {
@@ -346,6 +387,11 @@ public class SupplyExpander extends InventoryProcessor {
 	NewTask withdrawTask = createProjectSupplyWithdrawTask(parent_task);
 	expand_tasks.addElement(withdrawTask);
         publishExpansion(parent_task, expand_tasks);
+        Expansion expansion = (Expansion) parent_task.getPlanElement();
+        NewWorkflow wf = (NewWorkflow) expansion.getWorkflow();
+        wf.setAllocationResultAggregator(projectionARA);
+        AllocationResult ar = new AllocationResultHelper(parent_task, null).getAllocationResult(1.0);
+        expansion.setEstimatedResult(ar);
     }
 
     private void expandRealSupplyTask(Task parentTask) {
@@ -372,7 +418,11 @@ public class SupplyExpander extends InventoryProcessor {
         }
         ((NewTask) parentTask).addObservableAspect(AspectType.END_TIME);
         publishExpansion(parentTask, expand_tasks);
-        NewWorkflow wf = (NewWorkflow) ((Expansion) parentTask.getPlanElement()).getWorkflow();
+        Expansion expansion = (Expansion) parentTask.getPlanElement();
+        AllocationResult ar = new AllocationResultHelper(parentTask, null).getAllocationResult(1.0);
+        expansion.setEstimatedResult(ar);
+        NewWorkflow wf = (NewWorkflow) expansion.getWorkflow();
+        wf.setAllocationResultAggregator(supplyARA);
         NewConstraint constraint;
         if (transportTask != null) {
           // Constraint start of transport
@@ -454,6 +504,32 @@ public class SupplyExpander extends InventoryProcessor {
         wf.addConstraint(constraint);
     }
 
+    /**
+     * Handle changes to our expansions of Supply tasks. Basically, a
+     * failure causes all unfailed subtasks to be rescinded. The will
+     * get recreated if the incoming supply task ever gets revived.
+     **/
+    protected void handleExpansionChanges(Enumeration expansions) {
+        AllocationResult ar;
+        while (expansions.hasMoreElements()) {
+            Expansion exp = (Expansion) expansions.nextElement();
+            ar = exp.getReportedResult();
+            if (ar != null && !ar.isSuccess()) {
+                NewWorkflow wf = (NewWorkflow) exp.getWorkflow();
+                for (Enumeration tasks = wf.getTasks(); tasks.hasMoreElements(); ) {
+                    Task subtask = (Task) tasks.nextElement();
+                    PlanElement pe = subtask.getPlanElement();
+                    if (pe != null) { // Null if being rescinded by customer
+                        ar = pe.getEstimatedResult();
+                        if (!ar.isSuccess()) continue;
+                    }
+                    wf.removeTask(subtask);
+                    delegate_.publishRemove(subtask);
+                }
+            }
+        }
+    }
+
     /** creates a Withdraw task from a Supply task **/
     protected NewTask createWithdrawTask(Task parent_task) {
 
@@ -511,7 +587,12 @@ public class SupplyExpander extends InventoryProcessor {
 
      protected NewTask createProjectSupplyWithdrawTask(Task parent_task) {
 	 NewTask subtask = createWithdrawTask(parent_task);
-	 subtask.addPreference(parent_task.getPreference(AlpineAspectType.DEMANDRATE));
+         Preference pref = parent_task.getPreference(AlpineAspectType.DEMANDRATE);
+         if (pref.getScoringFunction().getBest().getAspectValue() instanceof AspectRate) {
+         } else {
+             printError("SupplyExpander DEMANDRATE preference not AspectRate:" + pref);
+         }
+	 subtask.addPreference(pref);
 //    	 printDebug(1, "CreateProjectSupplyWithdrawTask() with start date:"+
 //    		    TimeUtils.dateString(TaskUtils.getStartTime(subtask))+", with end dat:"+
 //  		    TimeUtils.dateString(TaskUtils.getEndTime(subtask))+", quantity is "+quantity);
@@ -537,9 +618,6 @@ public class SupplyExpander extends InventoryProcessor {
 
 	// START TIME & END TIME
         long parent_end =  TaskUtils.getEndTime(parent_task);
-//  	long start = parent_end - MSEC_PER_DAY +  (MSEC_PER_MIN*5);
-//  	long end  = parent_end - (MSEC_PER_MIN*5);
-
   	long start = parent_end - TRANSPORT_TIME;
  	long end  = parent_end;
 
@@ -632,9 +710,6 @@ public class SupplyExpander extends InventoryProcessor {
 	subtask.setVerb(TRANSPORTVERB);
 	subtask.setPlan( parent_task.getPlan() );
 	
-	// 	PenaltyFunction trans_pf = 
-	// 	    ldmFactory_.newDesiredSchedule(allocated_date, sourced_date, late_date);
-
 	// Quantity Preference 
 	Preference quantity_pf = createQuantityPreference(AspectType.QUANTITY, quantity);
 	subtask.addPreference(quantity_pf);
