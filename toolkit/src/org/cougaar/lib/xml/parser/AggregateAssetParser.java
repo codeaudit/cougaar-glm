@@ -48,15 +48,24 @@ public class AggregateAssetParser{
 
     if (node.getNodeName().toLowerCase().equals("aggregateasset")){
       NamedNodeMap map = node.getAttributes ();
-      mergeAttrsAndNodes (map, node.getChildNodes ());
 
       Node prototypeNode = map.getNamedItem("prototype");
+	  if (prototypeNode == null) {
+		prototypeNode = getNodeNamed (node.getChildNodes(), "prototype");
+		prototypeNode = prototypeNode.getChildNodes().item(0);
+	  }
+	  
       Node quantityNode  = map.getNamedItem("quantity");
+	  if (quantityNode == null) {
+		quantityNode = getNodeNamed (node.getChildNodes(), "quantity");
+		quantityNode = quantityNode.getChildNodes().item(0);
+	  }
 
       String prototype;
       int quantity;
       try {
-	quantity = (new Integer(quantityNode.getNodeValue())).intValue();
+		String quantityNodeValue = quantityNode.getNodeValue();
+		quantity = (new Integer(quantityNodeValue)).intValue();
       } catch (NullPointerException npe) {
 	System.out.println (classname + 
 			    ".getAggregate - XML syntax error : expecting *quantity* attribute on tag <" + 
@@ -102,6 +111,17 @@ public class AggregateAssetParser{
     return newAsset;
   }
 
+  protected static Node getNodeNamed (NodeList nlist, String name) {
+	for(int i = 0; i < nlist.getLength(); i++) {
+	  Node    child       = nlist.item(i);
+	  String  childname   = child.getNodeName();
+	  if (childname.equals (name)) {
+		return child;
+	  }
+	}
+	return null;
+  }
+  
   protected static Schedule getSchedule (LDMServesPlugIn ldm, NodeList nlist) {
     // Only expect one schedule per instance
       for(int i = 0; i < nlist.getLength(); i++) {
@@ -114,30 +134,6 @@ public class AggregateAssetParser{
 	}
       }
     return null;
-  }
-  
-  /**
-   * Merges attribute node name map with child node list.
-   * If same name appears both as attribute and child node, child node is ignored.
-   *
-   * Alters the input map.
-   *
-   * @param map  - attribute map (not actually a java map)
-   * @param list - list of child nodes (not a java list)
-   */
-  protected static void mergeAttrsAndNodes (NamedNodeMap map, NodeList list) {
-    for (int i = 0; i < list.getLength (); i++) {
-      Node node = list.item (i);
-      if(node.getNodeType() == Node.ELEMENT_NODE) {
-	if (map.getNamedItem (node.getNodeName ()) == null)
-	  map.setNamedItem (node);
-	else 
-	  System.out.println (classname + 
-			      ".getAggregate - XML syntax warning : same name <" +
-			      node.getNodeName () +
-			      "> appears both as an attribute and a child node.  Ignoring child node.");
-      }
-    }
   }
   
   /**
