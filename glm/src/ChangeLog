@@ -1,3 +1,33 @@
+2003-03-28  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/sample/RootWatcherServletComponent.java:
+	Debugging servlet that shows a graph of the confidence rating of
+	the root GLS task as a function of time. It also displays a table
+	showing the historical changes in confidence. This servlet also
+	illustrates how to create images (charts etc.) for displaying
+	information from a servlet.
+
+	* org/cougaar/mlm/plugin/sample/DetermineRequirementsAbsorberPlugin.java: 
+	Debugging plugin that absorbs extraneous DetermineRequirements
+	tasks by noting their appearance on the blackboard and setting a
+	timer for each one. When the timer expires, if the task has not
+	been disposed of by some plugin, a Disposition is created for it
+	giving it a high confidence. It does a similar thing for
+	MaintainInventory tasks that have empty expansions and low
+	confidence by changing their allocation result to high confidence.
+
+	* org/cougaar/mlm/plugin/sample/StrategicTransportProjectorPlugin.java: 
+	Bug #2702 -- StrategicTransportProjectorPlugin fails after switching OrgActivities
+	Simplify DetermineRequirements handling using the standard
+	rendezvous pattern. There is no need to remember tasks in private
+	variables, the subscriptions do this just fine.
+
+2003-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/plugin/deletion/TestDeletionPlugin.java:
+	Bug #1096 -- Received tasks are deleted without deleting the remote Allocation
+	Improvements to facilitate testing of new Deletion changes.
+
 2003-03-12  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/glm/ldm/plan/LaborScheduleImpl.java:
