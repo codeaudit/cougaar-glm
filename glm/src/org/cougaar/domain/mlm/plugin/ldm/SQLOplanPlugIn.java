@@ -282,11 +282,10 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
   protected void setupSubscriptions() 
   {	
     super.setupSubscriptions();
-
-		// get the UIDService   	
-						 uidService = (UIDService) getBindingSite().getServiceBroker().getService(
-																										this, UIDService.class, null);
-	  
+    
+    // get the UIDService   	
+    //    uidService = (UIDService) getBindingSite().getServiceBroker().getService(this, UIDService.class, null);
+    
 		
     getBlackboardService().getSubscriber().setShouldBePersisted(false);
     oplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(oplanPredicate);
@@ -318,9 +317,9 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       } else {
         oplan =  new Oplan();
         //getCluster().getUID...
-				//getUIDServer().registerUniqueObject(oplan);
-        uidService.registerUniqueObject(oplan);
-				oplan.setOwner(getClusterIdentifier());
+	getUIDServer().registerUniqueObject(oplan);
+        //uidService.registerUniqueObject(oplan);
+        oplan.setOwner(getClusterIdentifier());
         oplan.setOplanId(oplanID);
         
         oplans.add(oplan);
@@ -424,7 +423,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       if (object instanceof Oplan) {
         OplanCoupon ow = new OplanCoupon(((Oplan) object).getUID(), 
                                          getClusterIdentifier());
-        uidService.registerUniqueObject(ow);
+        getUIDService().registerUniqueObject(ow);
         getBlackboardService().publishAdd(ow);
 
         myPrivateState.oplanExists = true;
