@@ -736,6 +736,8 @@ supplyClass.doc=Description of the Class to which this item belongs. \
 supplyType.doc=Specific type of item within the greater class. \
 	e.g. BulkWater
 
+[ForUnitPG]
+slots=String unit
 
 ;;
 ;; examples
