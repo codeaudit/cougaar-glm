@@ -145,7 +145,16 @@ public class GeolocLocationImpl extends NamedPositionImpl
   private transient int _hc = 0;
   public int hashCode()
   {
-    if (_hc == 0) _hc = getName().hashCode();
+    if (_hc == 0) {
+      String n = getGeolocCode();
+      if (n == null) n = getName();
+      if (n != null) {
+        _hc = n.hashCode();
+      } else {
+        _hc = 1;
+      }
+    }
+      
     return _hc;
   }
 
