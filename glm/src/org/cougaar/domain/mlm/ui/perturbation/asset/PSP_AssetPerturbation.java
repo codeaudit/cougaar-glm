@@ -51,10 +51,13 @@ import org.cougaar.domain.glm.ldm.policy.*;
 public class PSP_AssetPerturbation extends PSP_BaseAdapter 
   implements PlanServiceProvider, UISubscriber, Assessor {
 
-  private static boolean debug = false;
+  private static boolean debug = true;
 
   private Calendar myCalendar = Calendar.getInstance();
   private UID myModifyUID;
+  private UID myParentUID;
+
+
 
   /** 
    * Constructor -  A zero-argument constructor is required for dynamically 
@@ -76,14 +79,26 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     setResourceLocation(pkg, id);
   }
   
+    /**
+     * allAssetPred - subscribes for all Assets
+     */
+    private static UnaryPredicate allAssetPred = new UnaryPredicate() {
+	    public boolean execute(Object o) {
+		return (o instanceof CargoVehicle);
+	    }
+	};            
+
   /**
-   * allAssetPred - subscribes for all Assets
+   * parentTaskPred - subscribes for Tasks using UID
    */
-  private static UnaryPredicate allAssetPred = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return (o instanceof CargoVehicle);
-    }
-  };            
+    private UnaryPredicate parentTaskPred = new UnaryPredicate() {
+	    public boolean execute(Object o) {
+		if (o instanceof Task) 
+		    if(((Task)o).getUID().equals(myParentUID))
+			return true;
+		return false;
+	    }
+	};
 
     /**
      * assetByUIDPred - subscribes for to a specific Asset
@@ -313,7 +328,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       }
       Vector stuffToRemove = new Vector ();
       Vector originalTasks = new Vector ();
-      publishRemoveUntilBoundary(planElements, stuffToRemove, originalTasks);
+      publishRemoveUntilBoundary(delegate, planElements, stuffToRemove,originalTasks);
 
       for (int i = 0; i < stuffToRemove.size (); i++) {
         delegate.publishRemove(stuffToRemove.elementAt(i));
@@ -393,67 +408,115 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     delegate.unsubscribe(subscription);
     delegate.closeTransaction();
   }
-  
+ 
+    private Task queryForMyParentTask ( PlugInDelegate delegate, UID parentsUID) {
+
+	myParentUID = parentsUID;
+	if (debug)
+	    System.out.println ("Query for task " + myParentUID);
+	Subscription subscription = delegate.subscribe(parentTaskPred);
+	Collection container = 
+	    ((CollectionSubscription)subscription).getCollection();
+	//	Collection container = psc.getServerPlugInSupport().queryForSubscriber(parentTaskPred );
+	Enumeration parentTaskByUID  = new Enumerator(container);
+	return (Task)parentTaskByUID.nextElement();
+    }
+ 
   /**
    *
    */
-  protected void publishRemoveUntilBoundary (Enumeration planElements, 
+  protected void publishRemoveUntilBoundary (PlugInDelegate delegate,
+                                             Enumeration planElements, 
                                              Vector stuffToRemove,
                                              Vector originalTasks) {
     Vector parentPEs = new Vector ();
     if (debug) {
       System.out.println("PSP_AssetPerturbation - Level --->");
+      System.out.println("PSP_AssetPerturbation:publishRemoveUntilBoundary --- starting>");
     }
+      while (planElements.hasMoreElements()) {
+	  PlanElement planElement = (PlanElement)planElements.nextElement();
+	  Task task = planElement.getTask();
+	      while (!(task instanceof MPTask)) {
+		  // If I'm not a MPtask then I traverse up to Parent task.
+		  task = queryForMyParentTask(delegate, task.getParentTaskUID());
+		  //		  task = queryForMyParentTask(psc, task.getParentTaskUID());
+		  if (debug) 
+		      System.out.println("getMyParentTask returned "+ task.getUID());
+	      }
+	  System.out.println("found the MPTask" + task.getUID());
 
-    while (planElements.hasMoreElements()) {
-      PlanElement planElement = (PlanElement)planElements.nextElement();
-      Task task = planElement.getTask();
-      Verb taskVerb = task.getVerb();
-      if (!taskVerb.equals(Constants.Verb.IDLE) &&
-          !taskVerb.equals(Constants.Verb.MAINTAIN)) { 
-        if (debug) {
-          System.out.println("PSP_AssetPerturbation - removing " + planElement.getUID () + 
-                             "-" + planElement);
-        }
-        if (!stuffToRemove.contains(planElement))
-          stuffToRemove.add(planElement);
+	  Enumeration mpTaskParents = ((MPTask)task).getParentTasks();
+	  // GET MPTASKS PARENTS
+	  while (mpTaskParents.hasMoreElements()) {
+	      Task original = (Task)mpTaskParents.nextElement();
+	      PlanElement originalPE = original.getPlanElement();
+	      // The MPTasks Parents are the original tasks 
+	      originalTasks.add(original);
+	      // add the plan elements of the original task to list to be removed
+	      stuffToRemove.add(originalPE);
+	      if (debug) {
+		  System.out.println("PSP_AssetPerturbation - removing " +
+			   originalPE.getUID());
+	      }
+	  }
       }
-      
-      if (task.getSource().equals(task.getDestination())) {
-        if (task instanceof MPTask) {
-          Enumeration mpParents = ((MPTask)task).getParentTasks();
-          while (mpParents.hasMoreElements()) {
-            parentPEs.add(((Task)mpParents.nextElement()).getPlanElement());
-          }
-        } 
-        else {
-          System.err.println("PSP_AssetPerturbation plugin is broken - tried to get planelement of parenttask");
-          //Try getting parent task from workflow instead.
-          //parentPEs.add(task.getParentTask().getPlanElement());
-        }
-        
-        if (!stuffToRemove.contains(task)) {
-          stuffToRemove.add (task);
-        }
 
-        if (debug) {
-          System.out.println("PSP_AssetPerturbation - removing task " + task);
-        }
-      } else {
-        if (debug) {
-          System.out.println("PSP_AssetPerturbation - FOUND initial task " + task);
-        }
-        if (!originalTasks.contains(task)) {
-          originalTasks.add (task);
-        }
+      if (debug) {
+	  System.out.println("PSP_AssetPerturbation:publishRemoveUntilBoundary --> leaving>");
       }
-    }
-
-    if (!parentPEs.isEmpty()) {
-      publishRemoveUntilBoundary(parentPEs.elements (), 
-                                 stuffToRemove, originalTasks);
-    }
   }
+
+
+//      while (planElements.hasMoreElements()) {
+//        PlanElement planElement = (PlanElement)planElements.nextElement();
+//        Task task = planElement.getTask();
+//        Verb taskVerb = task.getVerb();
+//        if (!taskVerb.equals(Constants.Verb.IDLE) &&
+//            !taskVerb.equals(Constants.Verb.MAINTAIN)) { 
+//          if (debug) {
+//            System.out.println("PSP_AssetPerturbation - removing " + planElement.getUID () + 
+//                               "-" + planElement);
+//          }
+//          if (!stuffToRemove.contains(planElement))
+//            stuffToRemove.add(planElement);
+//        }
+      
+//        if (task.getSource().equals(task.getDestination())) {
+//          if (task instanceof MPTask) {
+//            Enumeration mpParents = ((MPTask)task).getParentTasks();
+//            while (mpParents.hasMoreElements()) {
+//              parentPEs.add(((Task)mpParents.nextElement()).getPlanElement());
+//            }
+//          } 
+//          else {
+//            System.err.println("PSP_AssetPerturbation plugin is broken - tried to get planelement of parenttask");
+//            //Try getting parent task from workflow instead.
+//            //parentPEs.add(task.getParentTask().getPlanElement());
+//          }
+        
+//          if (!stuffToRemove.contains(task)) {
+//            stuffToRemove.add (task);
+//          }
+
+//          if (debug) {
+//            System.out.println("PSP_AssetPerturbation - removing task " + task);
+//          }
+//        } else {
+//          if (debug) {
+//            System.out.println("PSP_AssetPerturbation - FOUND initial task " + task);
+//          }
+//          if (!originalTasks.contains(task)) {
+//            originalTasks.add (task);
+//          }
+//        }
+//      }
+
+//      if (!parentPEs.isEmpty()) {
+//        publishRemoveUntilBoundary(parentPEs.elements (), 
+//                                   stuffToRemove, originalTasks);
+//      }
+    //  }
   
 
   private NewTask createUnavailableTask(Asset asset, Date startDate, Date endDate, 
