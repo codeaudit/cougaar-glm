@@ -92,8 +92,8 @@ public class ClusterOPlan implements Serializable {
 	    // only deal w/ org activities for this cluster
 	    orgact = (OrgActivity)activities.nextElement();
 	    if (orgact.getOrgID().equals(cluster_name)) {
-		System.out.println("--- Adding OrgActivity for "+clusterId_+", activity "+orgact.getActivityName()+
-				   ", "+orgact.getOpTempo()+", "+orgact);
+//  		System.out.println("--- Adding OrgActivity for "+clusterId_+", activity "+orgact.getActivityName()+
+//  				   ", "+orgact.getOpTempo()+", "+orgact);
 		orgActivities_.add(orgact);
 	    }
 	}
