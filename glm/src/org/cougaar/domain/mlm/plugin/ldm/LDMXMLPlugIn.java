@@ -167,6 +167,7 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
 	Element node = findPrototype( typeid, nlist );
         String assetClass = getAssetClass( node );
         proto = ldmf.createPrototype(assetClass, typeid );
+        getLDM().fillProperties(proto);
         //getOtherProperties( proto, node );
         getLDM().cachePrototype( typeid, proto );
       }
