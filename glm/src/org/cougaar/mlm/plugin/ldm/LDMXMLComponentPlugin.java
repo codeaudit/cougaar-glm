@@ -151,7 +151,7 @@ public class LDMXMLComponentPlugin
 
     private void parseXMLFile() {
 	try {
-          doc = getBindingSite().getConfigFinder().parseXMLConfigFile(xmlfilename);
+          doc = getConfigFinder().parseXMLConfigFile(xmlfilename);
           assets = getAssets( doc );
           while(assets.hasMoreElements()){
             Asset asset = (Asset)assets.nextElement();
