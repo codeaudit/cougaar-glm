@@ -423,7 +423,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       if (object instanceof Oplan) {
         OplanCoupon ow = new OplanCoupon(((Oplan) object).getUID(), 
                                          getClusterIdentifier());
-        getUIDService().registerUniqueObject(ow);
+        getUIDServer().registerUniqueObject(ow);
         getBlackboardService().publishAdd(ow);
 
         myPrivateState.oplanExists = true;
