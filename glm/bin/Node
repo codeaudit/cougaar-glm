@@ -31,7 +31,7 @@ endif
 # But you may still use properties if you wish.
 #set MYDOMAINS="-Dorg.cougaar.domain.alp=org.cougaar.domain.glm.ALPDomain"
 set MYDOMAINS=""
-set MYPROPERTIES="$MYDOMAINS -Dorg.cougaar.system.path=$ALP3RDPARTY -Dorg.cougaar.install.path=$ALP_INSTALL_PATH -Duser.timezone=GMT"
+set MYPROPERTIES="$MYDOMAINS -Dorg.cougaar.system.path=$ALP3RDPARTY -Dorg.cougaar.install.path=$ALP_INSTALL_PATH -Duser.timezone=GMT -Dorg.cougaar.core.cluster.startTime=08/10/2005 -Dorg.cougaar.domain.planning.ldm.lps.ComplainingLP.level=0 -Dorg.cougaar.core.cluster.SharedPlugInManager.watching=false"
 set MYMEMORY=""
 
 set node = $argv[1]
