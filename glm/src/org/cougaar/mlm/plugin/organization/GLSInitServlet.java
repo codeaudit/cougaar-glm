@@ -91,7 +91,10 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
   public static final String UPDATEOPLAN = "updateoplan";
   public static final String PUBLISHGLS = "publishgls";
   public static final String RESCINDGLS = "rescindgls";
-    
+
+  private static final String PUBLISH_ON_SELF_ORG = "PublishOnSelfOrg";
+
+
   /**
    * For making direct request on this plugin (not via servlet).
    **/
@@ -230,6 +233,11 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 
     if (myorgassets.hasChanged()) {
       handleMyOrgAssets(myorgassets.getAddedList());
+
+      if ((selfOrgAsset != null) &&
+          (Boolean.valueOf((String) globalParameters.get(PUBLISH_ON_SELF_ORG)).booleanValue())) {
+        publishOplanAndGLS();
+      }
     }
 
     if (oplanSubscription.hasChanged()) {
@@ -370,6 +378,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
   public void updateOrgActivities(Oplan update,
                                   String orgId,
                                   Collection orgActivities) {
+
     synchronized (oplans) {
       String oplanID = update.getOplanId();
       Oplan oplan = getOplan(oplanID);
@@ -405,7 +414,6 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       }
     }
   }
-
 
   // Used by query handlers to get location info
   public NamedPosition getLocation(String locCode) {
@@ -451,6 +459,9 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    System.out.println("GLSInitServlet: " + PUBLISH_ON_SELF_ORG + " = " + 
+                       globalParameters.get(PUBLISH_ON_SELF_ORG));
   }	   		 
 
   protected void initProperties() {
@@ -734,6 +745,23 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     
     publishAdd(task);
     System.out.println("\n" + formatDate(System.currentTimeMillis()) + " Send Task: " + task);
+  }
+
+  private void publishOplanAndGLS() {
+    publishOplanObjects();
+    
+    for (Iterator iterator = newObjects.iterator();
+         iterator.hasNext();) {
+      Object object = iterator.next();
+
+      if (object instanceof Oplan) {
+        doPublishRootGLS((Oplan) object);
+      }
+    }
+
+    publishOplanPostProcessing();
+
+    System.out.println("Published from oplan and gls from updateOrgActivies");
   }
   
   protected static DateFormat logTimeFormat =
