@@ -14,7 +14,8 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.ibm.xml.parser.TXElement;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 public class XMLAllocationTableModel extends XMLTableModel {
   private String[] allocationHeaders = {"Asset Type ID", "Asset Item ID", "ID", "Task ID", "Confidence Rating", "Success", "Start Time", "End Time" };
@@ -40,25 +41,25 @@ public class XMLAllocationTableModel extends XMLTableModel {
      This strips the leading DDD (day of the week).
      */
 
-  private Object getTime(TXElement node, String s) {
-    TXElement[] elements = node.searchChildrenAll("estimatedResult");
-    if (elements.length == 0)
+  private Object getTime(Element node, String s) {
+    NodeList elements = node.getElementsByTagName("estimatedResult");
+    if (elements.getLength() == 0)
       return null;
-    node = elements[0];
-    TXElement[] aspectTypes = node.searchChildrenAll("aspectTypes");
-    TXElement[] results = node.searchChildrenAll("results");
+    node = (Element)elements.item(0);
+    NodeList aspectTypes = node.getElementsByTagName("aspectTypes");
+    NodeList results = node.getElementsByTagName("results");
     SimpleDateFormat formatter = 
       new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
     ParsePosition pos = new ParsePosition(0);
-    for (int i = 0; i < aspectTypes.length; i++) {
-      if (s.equals(aspectTypes[i].getFirstChild().getNodeValue()))
-        return formatter.parse(results[i].getFirstChild().getNodeValue(), pos);
+    for (int i = 0; i < aspectTypes.getLength(); i++) {
+      if (s.equals(aspectTypes.item(i).getFirstChild().getNodeValue()))
+        return formatter.parse(results.item(i).getFirstChild().getNodeValue(), pos);
     }
     return null;
   }
 
   public Object getValueAt(int row, int col) {
-    TXElement child = children[row];
+    Element child = (Element)children.item(row);
     String header = headers[col];
     if (header.equals("Start Time"))
       return getTime(child, "START_TIME");
