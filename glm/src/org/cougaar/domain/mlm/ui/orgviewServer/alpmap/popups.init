@@ -1,0 +1,480 @@
+
+
+% Create popup menus
+
+% format for each button is ['label' interface ] or ['label' button_list]
+  % where
+  %  label is any sting
+  %  interface is
+
+    % xcmd {lo|hi} 'shell_string'  {'window name' {x y}}         xcmd window
+    % xcmdc {lo|hi} 'shell_string'  {'window name' {x y}}         with confirm
+    % cmd {lo|hi}   'shell_string'                       plain shell command
+    % mcmd {lo|hi}   'shell_string'          shell command to message windon
+
+    % ln <one of above without lo or hi option>    submenus for hi and low ends
+
+    % apply function arg1 ..         apply an internal function
+    % scroll 'filename'              help
+    % sep                            create menu separator
+    % vwencen                        view enlarge and center
+
+  % button_list        is a list of buttons
+  % shell_string       any string to be executed as a shell command
+
+
+% variables that may be used within shell string:
+
+  % Nodes
+      %  $NAME          symbol; for hosts: hostname (fully qualified domain name)
+      %  $LABEL         node label
+      %  $DBNM          NU database nicname with group prefix
+      %  $NM            NU database nicname 
+      %  $NODE          psn node number
+      %  $MGR		manager
+      %  $IP            first IP address
+  % additional variables for node/line
+      %  $PORT          modem or host number
+      %  $IP            IP address
+
+  % additional variables for psns
+      %  $SNODE         primary selected psn number  or 0
+      %  $SNODE1        first secondary selected psn number  or 0
+      %  $SNODELIST     list of all selected psn numbers
+
+  % Trunk Lines
+      %  $DBNM          NU database nicname with group prefix
+      %  $NM            NU database nicname 
+      %  $NODE1, $NODE2      psn node number at each end
+      %  $PORT1, $PORT2      psn modem or host number at each end
+      %  $MGR		manager
+
+  %  Prompt dialog
+      %   $TEXT
+
+
+
+%  prompt[ prompt_string  function arglist]
+%    displays prompt dialog;  
+%    if user selects OK then  apply[function arglist]
+
+
+%  showroute[ list_ip_addrs  displayWindowPredicate ]
+%     list may be embeded in string (as returned by tracer)
+
+
+
+**
+
+% Following group is NU stuff
+
+setpopup [trunk [
+  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ['show mgr'  mcmd  'echo $MGR']
+  ['Enlarge and Center' vwencen '']
+  ['List database info'   xcmd 'dbprint $DBNM' 'dbPrint']
+  ['Configuration Editor' cmd 'xterm -n DBEDIT -g +200+200 -e dbedit $DBNM']
+  ['Status at' ln xcmd 'psnstatus $DBNM -trunk=$PORT -e' 'Trunk Status' 16 80]
+  ['Reports'
+    ['Throughput' cmd 'nmthrpt $DBNM']
+    ['Network Event' xcmd 'nmreport $DBNM' 'Event Report']
+    ]
+  ['Troubleshooting hints' scroll 'trdebug.hlp']
+  ['' sep]
+  ['Non-Passive commands'
+    ['Loop at'   ln xcmdc 'loop   $DBNM -mi=$PORT -batch' 'Trunk Loop']
+    ['UnLoop at' ln xcmdc 'unloop $DBNM -mi=$PORT -batch' 'Trunk Unloop']
+    ]
+  ]] **
+
+setpopup [nuhost [
+  ['show name'  mcmd  'echo $NAME']
+  ['Enlarge and Center' vwencen]
+  ['penv' apply xdpopup penv]
+  ['show mgr'  mcmd  'echo $MGR']
+  ['show route'  apply ashowroute 'tracer $NAME' nil]
+  ['ping'  mcmd 'pingf $NAME']
+  ['List database info'   xcmd 'dbprint $DBNM' 'dbPrint']
+  ['Configuration Editor' cmd 'xterm -n DBEDIT -g +200+200 -e dbedit $DBNM']
+  ['Reports'
+    ['Throughput' cmd 'nmthrpt $DBNM']
+    ['Network Event' xcmd 'nmreport $DBNM' 'Event Report']
+    ]
+  ['traceroute'  xcmd 'traceroute $NAME' 'traceroute' 12 75]
+  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ]] **
+
+setpopup [nupad [
+  ['Status' xcmd 'padstatus $DBNM' 'PAD Status' 26 80]
+  ['Enlarge and Center' vwencen]
+  ['show name'  mcmd  'echo $NAME']
+  ['List database info'   xcmd 'dbprint $DBNM' 'dbPrin']
+  ['Reports'
+    ['Throughput' cmd 'nmthrpt $DBNM']
+    ['Network Event' xcmd 'nmreport $DBNM' 'Event Report for PAD']
+    ]
+
+  ['Non-Passive Commands'
+    ['Start PAD' xcmdc 'padstart $DBNM' 'Start PAD']
+    ['Stop PAD' xcmdc 'padstop -b $DBNM' 'Stop PAD']
+    ['Load PAD' xcmdc 'padload $DBNM' 'Load PAD']
+    ['Boot PAD' xcmdc 'padboot $DBNM' 'Boot PAD']
+  ]
+  ]] **
+
+
+setpopup [psn [
+/*
+  ['create a node view'  apply do [
+     eval [ (print (eval nodesym)) ]
+        eval [ (createview '$NAME.vw' (cons (eval nodesym) nil)) ]
+        window ['$NAME.vw' '$NAME' 800 7 nil]  % show it
+    ]]
+*/
+  ['show label'  mcmd  'echo $LABEL']
+  ['New Reports'
+    ['Throughput' apply xdpopup throughput '$DBNM']
+    ['Network Event' apply xdpopup report '$DBNM']
+    }
+  ['penv' apply xdpopup penv '$NM'  '$DBNM' '$NODE' ]
+  ['show node number'  mcmd  'echo $NODE']
+  ['show mgr'  mcmd  'echo $MGR']
+  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ['Enlarge and Center' vwencen ]
+  ['List database entry' xcmd 'dbprint $DBNM' 'Database Print']
+  ['Status' xcmd 'psnstatus $DBNM' 'PSN Status' 26 80]
+  ['List Logical Addresses'
+    ['Enabled' xcmd 'laenable $DBNM -showenable' 'Enabled Logical Addresses']
+    ['All' xcmd 'laprint $DBNM' 'Logical Address Print']
+    ]
+  ['Show MC list' xcmd 'vermclist $DBNM' 'Monitoring Center List']
+  ['Old Reports'
+    ['Throughput' cmd 'nmthrpt $DBNM']
+    ['Network Event' xcmd 'nmreport $DBNM' 'Event Report']
+    ]
+  ['Configuration Editor' cmd 'xterm -n DBEDIT -g +200+200 -e dbedit $DBNM']
+  ['' sep]
+  ['Non-Passive commands'
+    ['Send MC list' xcmdc 'sendmclist $NM' 'Send MC list']
+    ['Start PSN'
+      ['Cold ' xcmdc 'psnreboot -b -p $DBNM' 'PSN Cold Boot']
+      ['Warm ' xcmdc 'restart -batch -p $DBNM' 'PSN Warm Boot']
+      ]
+    ['Clean Up PSN'  xcmdc 'nmclear $DBNM' 'Clear PSN']
+    ['Write C/3 disk' xcmdc 'nmwritedisk $DBNM' 'Write PSN Disk']
+    ]
+  ]] **
+
+setpopup [psnport [
+  ['Status'   xcmd  'psnstatus $DBNM -host=$PORT -e' 'Hostline Status']
+  ['Troubleshooting Hints' scroll 'hldebug.hlp']
+  ['printenv'  xcmd 'printenv' 'printenv' 20 35]
+  ['' sep]
+  ['Non-Passive commands'
+    ['Loop'     
+      ['modem interface'    xcmdc 
+         'loop $DBNM -hmi=$PORT -batch' 'Hostline Loop']
+      ['software interface' xcmdc 
+         'loop $DBNM -hs=$PORT -batch' 'Host Software Loop']
+      ]
+    ['UnLoop'    
+      ['modem interafce'   xcmdc  'unloop $DBNM -hmi=$PORT -batch' 'Hostline Unloop']
+      ['software interface' xcmd  'unloop $DBNM -hs=$PORT -batch']
+      ]
+    ]
+  ]] **
+
+setpopup [nugateway [
+  ['show route'  apply ashowroute 'tracer $NAME' nil]
+  ['Enlarge and Center' vwencen '']
+  ['List database info'   xcmd 'dbprint $DBNM' 'dbPrint']
+  ['Configuration Editor' cmd 'xterm -n DBEDIT -g +200+200 -e dbedit $DBNM']
+  ['Reports'
+    ['Throughput' cmd 'nmthrpt $DBNM']
+    ['Network Event' xcmd 'nmreport $DBNM' 'Event Report']
+    ]
+  ['show name'  mcmd  'echo $NAME']
+  ['ping'  mcmd 'pingf $NAME']
+  ['traceroute'  xcmd 'traceroute $NAME' 'traceroute' 12 75]
+  ]] **
+
+
+
+
+setpopup [host [
+1  ['show name'  mcmd  'echo $NAME']
+  ['show ip'  mcmd  'echo $IP']
+  ['show mgr'  mcmd  'echo $MGR']
+  ['show route'  apply ashowroute 'tracer $NAME' nil]
+  ['Enlarge and Center' vwencen]
+  ['ping'  mcmd 'pingf $NAME']
+  ['traceroute'  xcmd 'traceroute $NAME' 'traceroute' 12 75]
+  ['Edit Host in Database' apply eval (editnodeok (eval nodesym) nil) ]
+  ['editequip' apply eval (editnodeok (eval nodesym) "editequip) ]
+  ['tests' 
+    ['show nodesym' apply eval (mess nodesym)]
+    ['show cluster node' apply eval (mess (cluster (eval nodesym)))]
+    ['show eval nodesym' apply eval (mess (eval nodesym))]
+    ['show lines' apply eval (mess (lines (eval nodesym)))]
+    ['show properties' apply eval (mess (getpl (eval nodesym)))]
+    ['create a node view'  apply do [
+%       eval [ (print (eval nodesym)) ]
+       eval [ (createview '$NAME.ndvw' (cons (eval nodesym) nil)) ]
+       window ['$NAME.ndvw' '$NAME' 800 198 nil]  % show it
+      ]]
+    ['sleep 2' xcmd 'sleep 2' 'sleep 2' 8 40]
+    ['sleep 20' xcmd 'sleep 20' 'sleep 20' 8 40]
+    ['sleep 200' xcmd 'sleep 200' 'sleep 200' 8 40]
+    ['tracer'  mcmd 'tracer $NAME']
+    ['show route old '  apply eval [showroute [shell 'tracer $NAME'] nil]]
+%   ['printenv'  ln  xcmd 'printenv' 'printenv' 20 35]
+    ['printenv'    xcmdsd 'printenv' 'printenv' 20 35]
+    ['penv' apply xdpopup penv]
+    ]
+  ]] **
+
+
+setpopup [t10 [
+  ['show name'  mcmd  'echo $NAME']
+  ['show route'  apply ashowroute 'tracer $NAME' nil]
+  ['getsys'    xcmd 'getsys $NAME' 'getsys' 12 75]
+  ['status'    xcmd 'snmpstatus $NAME' 'status' 10 95]
+  ['walk ipif'   xcmd 'walkipif $NAME' 'ip if mapping' 30 70]
+  ['walk if stat'   xcmd 'walkifstat $NAME' 'Interface status' 30 70]
+  ['ping'  mcmd 'pingf $NAME']
+  ['traceroute'  xcmd 'traceroute $NAME' 'traceroute' 12 75]
+  ['Copy Config' xcmd 't10copy $NAME']
+  ['Load Config' xcmd 't10update $NAME -listfiles config.new']
+  ['telnet'  cmd 't10connect $NAME -db']
+  ]] **
+
+
+setpopup [ntdr [
+  ['show name'  mcmd  'echo $NAME']
+  ['show route'  apply ashowroute 'tracer $NAME' nil]
+  ['getsys'    xcmd 'getsys $NAME' 'getsys' 12 75]
+  ['status'    xcmd 'snmpstatus $NAME' 'status' 10 95]
+  ['walk ipif'   xcmd 'walkipif $NAME' 'ip if mapping' 30 70]
+  ['walk if stat'   xcmd 'walkifstat $NAME' 'Interface status' 30 70]
+  ['walk if Descr'   xcmd 
+    'snmpwalk $NAME public interfaces.ifTable.ifEntry.ifDescr'
+    'Interface description' 20 120]
+  ['gethost'    xcmd 'gethost $NAME' 'getsys' 12 75]
+  ['ping'  mcmd 'pingf $NAME']
+  ['penv' apply xdpopup penv]
+  ['show mgr'  mcmd  'echo $MGR']
+  ['traceroute'  xcmd 'traceroute $NAME' 'traceroute' 12 75]
+%  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ]] **
+
+
+setpopup [snmp [
+  ['show name'  mcmd  'echo $NAME']
+  ['show ip'  mcmd  'echo $IP']
+  ['snmp plot' cmd 
+    'xterm -title SNMPplot -g 60x10+30+30  -e snplot $NAME $COMMSTR']
+%  ['show viewname'  mcmd  'echo $VIEWNAME']
+  ['show route'  apply ashowroute 'tracer $NAME' nil]
+  ['getsys'    xcmd 'getsys $NAME' 'getsys' 12 75]
+  ['status'    xcmd 'snmpstatus $NAME' 'status' 10 95]
+  ['snmpstats'  xcmd 'snmpstats -once $NAME' 'snmpstats' 14 50]
+  ['walk mib'
+    ['ip if mapping'   xcmd 'walkipif $NAME' 'ip if mapping' 30 70]
+    ['if stat'   xcmd 'walkifstat $NAME' 'Interface status' 30 70]
+    ['if Descr'   xcmd 
+      'snmpwalk $NAME public interfaces.ifTable.ifEntry.ifDescr'
+      'Interface description' 20 120]
+    ]
+  ['gethost'    xcmd 'gethost $NAME' 'getsys' 12 75]
+  ['ping'  mcmd 'pingf $NAME']
+  ['traceroute'  xcmd 'traceroute $NAME' 'traceroute' 12 75]
+%  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ['show lines' apply eval (mess (lines (eval nodesym)))]
+  ['show cluster node' apply eval (mess (cluster (eval nodesym)))]
+  ]] **
+
+
+setpopup [snmpport [
+  ['penv' apply xdpopup penv]
+  ['show mgr'  mcmd  'echo $MGR']
+  ['show route'  apply ashowroute 'tracer $IP' nil]
+  ['getsys'    xcmd 'getsys $IP' 'getsys' 12 75]
+  ['status'    xcmd 'snmpstatus $IP' 'status' 10 95]
+  ['walk ipif'   xcmd 'walkipif $IP' 'ip if mapping' 30 70]
+  ['walk if stat'   xcmd 'walkifstat $IP' 'Interface status' 30 70]
+  ['show ip'  mcmd  'echo $IP']
+  ['ping'  mcmd 'pingf $IP']
+  ['traceroute'  xcmd 'traceroute $IP' 'traceroute' 12 75]
+  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ]] **
+
+
+setpopup [gtyport [
+  ['show route'  apply ashowroute 'tracer $IP' nil]
+  ['show ip'  mcmd  'echo $IP']
+  ['ping'  mcmd 'pingf $IP']
+  ['traceroute'  xcmd 'traceroute $IP' 'traceroute' 12 75]
+  ]] **
+
+
+setpopup [hostline [
+  ['show ip'  mcmd lo 'echo $IP']
+  ['show mgr'  mcmd  'echo $MGR']
+  ['ping'  mcmd lo 'pingf $IP']
+  ['printenv'  xcmd 'printenv' 'printenv' 20 35]
+  ['noexec printenv'  xcmd 'noexec printenv' 'noexec printenv' 20 35]
+  ['local printenv'  xcmd 'local printenv' 'local printenv' 20 35]
+%  ['printenv'  ln  xcmd 'printenv' 'printenv' 20 35]
+  ['traceroute'  xcmd lo 'traceroute $IP' 'traceroute' 12 75]
+  ]] **
+
+setpopup [lan [
+  ['show name'  mcmd  'echo $NAME']
+  ]] **
+
+setpopup [line [
+  ['show ip'  ln mcmd  'echo $IP']
+  ['show name'  mcmd  'echo $NM']
+  ['show mgr'  mcmd  'echo $MGR']
+  ['printenv'  xcmd 'printenv' 'printenv' 20 35]
+  ]] **
+
+setpopup [serline [
+  ['show ip lo'  mcmd  lo 'echo $IP']
+  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ['getsys'   ln xcmd 'getsys $IP' 'getsys' 12 75]
+  ['status'   ln xcmd 'snmpstatus $IP' 'status' 10 95]
+  ['walk ipif'  ln xcmd 'walkipif $IP' 'ip if mapping' 30 70]
+  ['walk if stat'   ln xcmd 'walkifstat $IP' 'Interface status' 30 70]
+  ['show ip' ln mcmd  'echo $IP']
+  ['ping' ln mcmd 'pingf $IP']
+  ['traceroute'  ln xcmd 'traceroute $IP' 'traceroute' 12 75]
+  ['show mgr'  mcmd  'echo $MGR']
+  ]] **
+
+
+
+setpopup [cluster [
+  ['show cluster nodes'  apply do [
+     eval [ (createview '$NAME.clvw' (get NODESYM "cluster)) ]
+     window ['$NAME.clvw' '$NAME' 800 199 nil]  % show it
+     ]]
+  ['show name'  mcmd  'echo $NAME']
+  ['show cluster members' apply eval (mess (get NODESYM "cluster))]
+  ]] **
+
+
+setpopup [clusterline [
+  ['show cluster lines'  apply do [
+     createview [ '' 1 ]   % create clusterline view file
+     window ['$NAME' '$NAME' 800 199 nil]  % show it
+     ]]
+  ]] **
+
+setpopup [cloud [
+/*  ['multitest' ['show name'  mcmd  'echo $NAME']] */
+  ['show name'  mcmd  'echo $NAME']
+  ]] **
+
+setpopup [cloud3 [
+  ['Load view'  apply loadview '$LABEL.vw']
+  ['show name'  mcmd  'echo $NAME']
+  ]] **
+
+
+setpopup [view [
+/*
+  ['Load view'  apply loadview '$LABEL.vw']
+  ['New Window'
+    ['minuscule' apply window '$LABEL.vw' 128 nil]
+    ['tiny' apply window '$LABEL.vw' 256 pulldowns]
+    ['small' apply window '$LABEL.vw' 512 pulldowns]
+    ['medium' apply window '$LABEL.vw' 750 pulldowns]
+    ['regular' apply window '$LABEL.vw' 1024 pulldowns]
+    ['large' apply window '$LABEL.vw' 1300 pulldowns]
+    ]
+*/
+  ['Show' apply window '$LABEL.vw' 1024 pulldowns]
+  ]] **
+
+setpopup [snmpsdlc [
+  ['status' apply]
+  ['change state'
+    ['enable' apply]
+    ['disable' apply]
+    ]
+  ]] **
+
+setpopup [snmpsdlcline [
+  ['status' apply]
+  ]] **
+
+/*  These won't be visible
+setpopup [refpoint [
+%  ['Set Reference point data to node position' apply latlon 5]
+  ['Show lat lon at node position' apply latlon 0]
+  ['Show database lat lon' apply latlon 1]
+  ]] **
+*/
+
+setpopup [peak [
+  ['Show height' apply eval (mess (get nodesym "height))]
+  ['Print height' apply eval (print (get nodesym "height))]
+  ['Print nodesym' apply eval (print nodesym)]
+  ['Show lat lon at node position' apply latlon 0]
+  ['show properties' apply eval (mess (getpl nodesym))]
+  ['show name'  mcmd  'echo $NAME']
+  ]] **
+
+
+setpopup [none [
+  ['Show lat lon at mouse position' apply latlon 4]
+  ['printenv'    xcmd 'printenv' 'printenv' 20 35]
+  ]] **
+
+
+% Generic node and line menus for editing:
+setpopup [nodeedit [
+  ['Add All connected nodes' apply addallcon 1]
+  ['Add selected connected nodes' apply addexnode NIL]
+  ['Enlarge and Center' vwencen ]
+  ['Change Type'
+    ['Regular' apply chtype 0]
+    ['tring' apply chtype tring]
+    ['Alternate' apply chtype -1]
+    ]
+  ['lat lon'
+%    ['Show lat lon at mouse position' apply latlon 4]
+    ['Show lat lon at node position' apply latlon 0]
+    ['Show database lat lon' apply latlon 1]
+    ['Set database lat lon to node position' apply latlon 2]
+    ['Clear database lat lon' apply latlon 3]
+    ]
+  ]] **
+
+
+setpopup [noneedit [    % nothing selected
+  ['Add All connected nodes' apply addallcon nil]
+  ['Add selected nodes' apply addexnode all]
+  ['Add selected clusters' apply addexnode cluster]
+  ['Add label' apply  addnode 10]
+  ['Add local node' apply  xdpopup addlocalnode]
+%  ['Add smiley' apply  addnode smiley]
+  ['Add smiley' apply  addnode smiley '']
+  ['Show lat lon at mouse position' apply latlon 4]
+  ['Change Type'
+    ['Regular' apply chtype 0]
+    ['tring' apply chtype tring]
+    ['Alternate' apply chtype -1]
+    ]
+  ]] **
+
+setpopup [lineedit [
+  ['Enlarge and Center' vwencen ]
+  ]] **
+
+setpopup [alpcluster [
+  ['show name'  mcmd  'echo $NAME']
+  ['Edit Host in Database' apply eval (editnodeok (eval nodesym) nil) ]
+  ]] **
+

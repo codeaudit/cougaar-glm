@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<ration_policy>
+
+	<unit name="3-69-INFBN">
+		<phase>
+			<start>
+				<year>2001</year>
+				<month>06</month>
+				<day>10</day>
+			</start>
+			<end>
+				<year>2001</year>
+				<month>07</month>
+				<day>13</day>
+			</end>
+			<type>
+				<breakfast>M</breakfast>
+				<lunch>T</lunch>
+				<dinner>A</dinner>
+			</type>
+		</phase>
+
+		<phase>
+			<start>
+				<year>2001</year>
+				<month>07</month>
+				<day>13</day>
+			</start>
+			<end>
+				<year>2001</year>
+				<month>09</month>
+				<day>27</day>
+			</end>
+			<type>
+				<breakfast>M</breakfast>
+				<lunch>M</lunch>
+				<dinner>T</dinner>
+			</type>
+		</phase>
+
+		<phase>
+			<start>
+				<year>2001</year>
+				<month>09</month>
+				<day>27</day>
+			</start>
+			<end>
+				<year>2001</year>
+				<month>11</month>
+				<day>15</day>
+			</end>
+			<type>
+				<breakfast>T</breakfast>
+				<lunch>M</lunch>
+				<dinner>A</dinner>
+			</type>
+		</phase>
+	</unit>
+
+</ration_policy>
+<!--
+
+-->

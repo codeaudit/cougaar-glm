@@ -1,0 +1,23 @@
+[Prototype]     SupplyOrganization
+        
+[UniqueId]      "UTC/SupplyOrg"
+
+[UIC]		"UIC/CSI"
+
+[Relationship]
+Superior	"DLAHQ"		""
+Supporting	"Vendor"	"SparePartsProvider"
+        
+[TypeIdentificationPG]                      
+TypeIdentification		String	"UTC/RTOrg"
+Nomenclature			String	"HHC  HVY DIV	ARMOR"
+AlternateTypeIdentification	String	"SRC/87004L100100"
+
+[OrganizationPG]
+Roles     Collection<Role>  "SparePartsProvider"
+
+[MilitaryOrgPG]
+UIC                   String   ""
+Echelon               String   ""
+UTC                   String   ""
+SRC                   String   "87004L100100"

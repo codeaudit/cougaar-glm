@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/96-TCCO-HET"
+
+[Relationship]
+Superior "180-TCBN-HHD" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "96 TC Co (Het)"
+AlternateTypeIdentification String "SRC/55739L100100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "96-TCCO-HET"
+
+[OrganizationPG]
+Roles Collection<Role> "HETTransportationProvider"
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WCMAAA"
+Echelon String ""
+UTC String "UYN66"
+SRC String "55739L100100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HFTZ, InstallationTypeCode=AIN, CountryStateCode=48, CountryStateName=TEXAS, Name=FT_HOOD, Latitude=Latitude 31.13333degrees, Longitude=Longitude -97.7667degrees"

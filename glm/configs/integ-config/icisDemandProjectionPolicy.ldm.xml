@@ -1,0 +1,21 @@
+<?xml version="1.0"  encoding="US-ASCII"?>
+
+<!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
+
+<Policies>
+
+ <Policy name="SupplyDemandProjectionPolicy" type="com.bbn.supply.data.DemandProjectionPolicy">
+    <RuleParam name="MaxConsumedParts">
+	<Integer value="10" min="0" max="10000"> 
+	</Integer>
+    </RuleParam>
+    <RuleParam name="DaysBetweenConsumableSupply">
+      	<Integer value="7" min="0" max="30"> 
+	</Integer>
+    </RuleParam>
+    <RuleParam name="DaysBetweenFuelSupply">
+      	<Integer value="7" min="0" max="30"> 
+	</Integer>
+    </RuleParam>
+  </Policy>
+</Policies>

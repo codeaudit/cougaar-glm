@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/24-ODCO"
+
+[Relationship]
+Superior "553-CSB-HHD" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "24 OD Co, Ammo DS PLS"
+AlternateTypeIdentification String "SRC/09484L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "24-ODCO"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WDHJAA"
+Echelon String ""
+UTC String "JD4ZZ"
+SRC String "09484L000100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"

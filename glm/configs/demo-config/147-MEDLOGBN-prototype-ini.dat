@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/147-MEDLOGBN"
+
+[Relationship]
+Superior "21-MED-CSHOSP" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "B Co, 147 Med Log Bn"
+AlternateTypeIdentification String "SRC/08695L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "147-MEDLOGBN"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WG43AA"
+Echelon String ""
+UTC String "FCXVV"
+SRC String "08695L000100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HKHN, InstallationTypeCode=AIN, CountryStateCode=48, CountryStateName=TEXAS, Name=FT_SAM_HOUSTON, Latitude=Latitude 29.45degrees, Longitude=Longitude -98.45degrees"

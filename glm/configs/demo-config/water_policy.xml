@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet
+	href="water_policy.xsl"
+	type="text/xsl"?>
+
+<!--
+	The dates used are based on Java's GregorianCalendar.
+	Months indexed with January being 0, so 6/30 is July 30,
+	not June 30.
+-->
+
+<water_policy>
+
+	<unit name="3-69-INFBN">
+		<phase>
+			<start>
+				<cday>1</cday>
+			</start>
+			<end>
+				<cday>33</cday>
+			</end>
+			<quantity>
+				<minimum>5.7</minimum>
+				<sustaining>8.7</sustaining>
+				<actual>8.7</actual>
+			</quantity>
+		</phase>
+
+		<phase>
+			<start>
+				<cday>33</cday>
+			</start>
+			<end>
+				<cday>77</cday>
+			</end>
+			<quantity>
+				<minimum>5.7</minimum>
+				<sustaining>8.7</sustaining>
+				<actual>5.7</actual>
+			</quantity>
+		</phase>
+
+		<phase>
+			<start>
+				<cday>77</cday>
+			</start>
+			<end>
+				<cday>127</cday>
+			</end>
+			<quantity>
+				<minimum>5.7</minimum>
+				<sustaining>8.7</sustaining>
+				<actual>8.7</actual>
+			</quantity>
+		</phase>
+	</unit>
+
+</water_policy>

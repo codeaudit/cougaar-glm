@@ -1,0 +1,506 @@
+Full thread dump Classic VM (Linux_JDK_1.2.2_RC4, green threads):
+    "RMI RenewClean-[192.168.1.101:3249]" (TID:0x490baa08, sys_thread_t:0x8cc5f10, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:112)
+        at sun.rmi.transport.DGCClient$EndpointEntry$RenewCleanThread.run(DGCClient.java:419)
+        at java.lang.Thread.run(Thread.java:479)
+    "nullConnectionHandler:973643538615" (TID:0x493984d8, sys_thread_t:0x8e2b568, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.lib.planserver.server.ConnectionPool$PooledThread.run(ConnectionPool.java:240)
+    "RMI RenewClean-[192.168.1.103:1692]" (TID:0x494d9e50, sys_thread_t:0x8c3b828, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:112)
+        at sun.rmi.transport.DGCClient$EndpointEntry$RenewCleanThread.run(DGCClient.java:419)
+        at java.lang.Thread.run(Thread.java:479)
+    "26-FSB/RQ" (TID:0x4920e848, sys_thread_t:0x8bc0b70, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/26-FSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@7fa2cfe2" (TID:0x494c0e38, sys_thread_t:0x8d71d98, state:R) prio=5
+        at java.lang.Thread.yield(Native Method)
+        at org.cougaar.core.cluster.Timer.addAlarm(Timer.java:108)
+        at org.cougaar.core.cluster.ClusterImpl.addRealTimeAlarm(ClusterImpl.java:1278)
+        at org.cougaar.core.plugin.PlugInAdapter.wakeAfterRealTime(PlugInAdapter.java:323)
+        at org.cougaar.domain.planning.ldm.trigger.TriggerManagerPlugIn.execute(TriggerManagerPlugIn.java:105)
+        at org.cougaar.core.plugin.SimplifiedFatPlugIn.cycle(SimplifiedFatPlugIn.java:81)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:902)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-27" (TID:0x494addc0, sys_thread_t:0x8d733a0, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-26" (TID:0x49480518, sys_thread_t:0x8d63cf0, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/26-FSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@45c6cfe7" (TID:0x49467a88, sys_thread_t:0x8bbf638, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-25" (TID:0x49412d40, sys_thread_t:0x8d40488, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "Thread-24" (TID:0x49412418, sys_thread_t:0x8d3eef8, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/26-FSB" (TID:0x494113c8, sys_thread_t:0x8d3d968, state:R) prio=5
+        at org.cougaar.util.TimeSpanSet.search(TimeSpanSet.java:206)
+        at org.cougaar.util.TimeSpanSet.search(TimeSpanSet.java:192)
+        at org.cougaar.util.TimeSpanSet.add(TimeSpanSet.java:58)
+        at org.cougaar.domain.planning.ldm.plan.RoleScheduleImpl.addToRoleSchedule(RoleScheduleImpl.java:65)
+        at org.cougaar.domain.planning.ldm.plan.PlanElementImpl.addToRoleSchedule(PlanElementImpl.java:232)
+        at org.cougaar.domain.planning.ldm.plan.AllocationImpl.addingToLogPlan(AllocationImpl.java:171)
+        at org.cougaar.core.cluster.Subscriber.publishAdd(Subscriber.java:389)
+        at org.cougaar.core.plugin.PlugInAdapter.publishAdd(PlugInAdapter.java:465)
+        at org.cougaar.domain.glm.plugins.DecorationPlugIn.publishAddObject(DecorationPlugIn.java:220)
+        at org.cougaar.domain.glm.plugins.BasicProcessor.publishAllocation(BasicProcessor.java:454)
+        at org.cougaar.domain.glm.plugins.BasicProcessor.publishAllocation(BasicProcessor.java:427)
+        at org.cougaar.domain.glm.plugins.inventory.ExternalAllocator.allocateTask(ExternalAllocator.java:161)
+        at org.cougaar.domain.glm.plugins.inventory.ExternalAllocator.allocateSupplyTasks(ExternalAllocator.java:119)
+        at org.cougaar.domain.glm.plugins.inventory.ExternalAllocator.update(ExternalAllocator.java:84)
+        at org.cougaar.domain.glm.plugins.DecorationPlugIn.runProcessors(DecorationPlugIn.java:212)
+        at org.cougaar.domain.glm.plugins.GLMDecorationPlugIn.execute(GLMDecorationPlugIn.java:74)
+        at org.cougaar.domain.glm.plugins.inventory.InventoryPlugIn.execute(InventoryPlugIn.java:72)
+        at org.cougaar.core.plugin.SimplePlugIn.cycle(SimplePlugIn.java:84)
+        at org.cougaar.core.plugin.PlugInAdapter$SharedThreading.externalCycle(PlugInAdapter.java:802)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:137)
+        at java.lang.Thread.run(Thread.java:479)
+    "11-ENGBN/RQ" (TID:0x4920e7b0, sys_thread_t:0x8d3c3d8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Thread-23" (TID:0x493fef50, sys_thread_t:0x8d3ae48, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-22" (TID:0x493f8ad0, sys_thread_t:0x8d398b8, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/11-ENGBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@ba7acfdb" (TID:0x493f85d0, sys_thread_t:0x8d38328, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-21" (TID:0x493aefc0, sys_thread_t:0x8d36d98, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-20" (TID:0x493a8b40, sys_thread_t:0x8d35808, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-19" (TID:0x493a49a0, sys_thread_t:0x8d34278, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "Thread-18" (TID:0x493a4080, sys_thread_t:0x8d32ce8, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/11-ENGBN" (TID:0x493a3110, sys_thread_t:0x8d31758, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-9-FABN/RQ" (TID:0x49292ee0, sys_thread_t:0x8d301c8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/1-9-FABN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@b4decfd8" (TID:0x49399898, sys_thread_t:0x8d2ec38, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-17" (TID:0x493495c0, sys_thread_t:0x8d2d6a8, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-16" (TID:0x49343140, sys_thread_t:0x8d2c118, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-15" (TID:0x4933edb8, sys_thread_t:0x8d2ab88, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "Thread-14" (TID:0x4933e1d0, sys_thread_t:0x8d295f8, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/1-9-FABN" (TID:0x4933d458, sys_thread_t:0x8d28068, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-64-ARBN/RQ" (TID:0x49292e60, sys_thread_t:0x8d26ad8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/1-64-ARBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@e30acfdd" (TID:0x493336f0, sys_thread_t:0x8d25548, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-13" (TID:0x492e5b78, sys_thread_t:0x8d23fb8, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-12" (TID:0x492df6f8, sys_thread_t:0x8d22a28, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-11" (TID:0x492db220, sys_thread_t:0x8d21498, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "Thread-10" (TID:0x492da640, sys_thread_t:0x8d1ff08, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/1-64-ARBN" (TID:0x492d9750, sys_thread_t:0x8d1e978, state:R) prio=5
+        at org.cougaar.domain.planning.ldm.plan.AllocationResultAggregator$DefaultARA.calculate(AllocationResultAggregator.java:151)
+        at org.cougaar.domain.planning.ldm.plan.WorkflowImpl.aggregateAllocationResults(WorkflowImpl.java:175)
+        at org.cougaar.domain.planning.ldm.lps.ReceiveNotificationLP.propagateNotification(ReceiveNotificationLP.java:104)
+        at org.cougaar.domain.planning.ldm.lps.NotificationLP.createNotification(NotificationLP.java:126)
+        at org.cougaar.domain.planning.ldm.lps.NotificationLP.checkValues(NotificationLP.java:115)
+        at org.cougaar.domain.planning.ldm.lps.NotificationLP.execute(NotificationLP.java:71)
+        at org.cougaar.core.cluster.ALPPlan.callLogicProviders(ALPPlan.java:370)
+        at org.cougaar.core.cluster.ALPPlan.receiveEnvelope(ALPPlan.java:250)
+        at org.cougaar.core.cluster.Distributor.distribute(Distributor.java:366)
+        at org.cougaar.core.cluster.Distributor.finishTransaction(Distributor.java:501)
+        at org.cougaar.core.cluster.Subscriber.closeTransaction(Subscriber.java:650)
+        at org.cougaar.core.cluster.Subscriber.closeTransaction(Subscriber.java:693)
+        at org.cougaar.core.plugin.PlugInAdapter.closeTransaction(PlugInAdapter.java:222)
+        at org.cougaar.core.plugin.SimplePlugIn.cycle(SimplePlugIn.java:92)
+        at org.cougaar.core.plugin.PlugInAdapter$SharedThreading.externalCycle(PlugInAdapter.java:802)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:137)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-7-INFBN/RQ" (TID:0x4920e738, sys_thread_t:0x8d1d3e8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/3-7-INFBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@53acfd2" (TID:0x492cfb50, sys_thread_t:0x8d19768, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-9" (TID:0x4927ef88, sys_thread_t:0x8ccb700, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-8" (TID:0x4926b778, sys_thread_t:0x8caeac0, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-7" (TID:0x49268038, sys_thread_t:0x8c6ea48, state:R) prio=5        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "Thread-6" (TID:0x49267560, sys_thread_t:0x8c9bc40, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/3-7-INFBN" (TID:0x492666b8, sys_thread_t:0x8c90cd0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-15-INFBN/RQ" (TID:0x49265be0, sys_thread_t:0x8c32068, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/3-15-INFBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@c84ecfd6" (TID:0x49256178, sys_thread_t:0x83f5418, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-5" (TID:0x491c3c80, sys_thread_t:0x8c30178, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-4" (TID:0x491a4470, sys_thread_t:0x8b26d58, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-3" (TID:0x4919e4b0, sys_thread_t:0x8b1f628, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "Thread-2" (TID:0x4919dbe0, sys_thread_t:0x8b1b500, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/3-15-INFBN" (TID:0x4919cb40, sys_thread_t:0x8b18798, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-BDE-3ID-HHC/RQ" (TID:0x4919c320, sys_thread_t:0x8b0e5a8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/1-BDE-3ID-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@c60acfc8" (TID:0x49197cf0, sys_thread_t:0x8affc20, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-1" (TID:0x4911aa68, sys_thread_t:0x886e090, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "Thread-0" (TID:0x49119d28, sys_thread_t:0x88808c0, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/1-BDE-3ID-HHC" (TID:0x49115f38, sys_thread_t:0x8857600, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "Keep Alive Sender/26-FSB" (TID:0x490e0e00, sys_thread_t:0x87303d0, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:722)
+    "Keep Alive Sender/11-ENGBN" (TID:0x490dd1a0, sys_thread_t:0x872d9b8, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:722)
+    "Keep Alive Sender/1-9-FABN" (TID:0x490d96d0, sys_thread_t:0x872c428, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:722)
+    "Keep Alive Sender/1-64-ARBN" (TID:0x490d5bf8, sys_thread_t:0x872ae98, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:722)
+    "Keep Alive Sender/3-7-INFBN" (TID:0x490d2120, sys_thread_t:0x8729908, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:722)
+    "Keep Alive Sender/3-15-INFBN" (TID:0x490ce7a0, sys_thread_t:0x8728378, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:722)
+    "Heartbeat" (TID:0x490cd9b0, sys_thread_t:0x87264b0, state:R) prio=1
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.ClusterImpl$Heartbeat.run(ClusterImpl.java:1008)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI LeaseChecker" (TID:0x490cd638, sys_thread_t:0x8403440, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at sun.rmi.transport.DGCImpl$LeaseChecker.run(DGCImpl.java:303)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI RenewClean-[192.168.1.101:3241]" (TID:0x490ca2b8, sys_thread_t:0x83fab90, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:112)
+        at sun.rmi.transport.DGCClient$EndpointEntry$RenewCleanThread.run(DGCClient.java:419)
+        at java.lang.Thread.run(Thread.java:479)
+    "GC Daemon" (TID:0x490c7a60, sys_thread_t:0x86cdc70, state:R) prio=2
+        at java.lang.Object.wait(Native Method)
+        at sun.misc.GC$Daemon.run(GC.java:107)
+    "RMI Reaper" (TID:0x490c7878, sys_thread_t:0x86c2558, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:112)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:127)
+        at sun.rmi.transport.ObjectTable$Reaper.run(ObjectTable.java:288)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Accept-1" (TID:0x490c75a8, sys_thread_t:0x86b36d0, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.run(TCPTransport.java:295)
+        at java.lang.Thread.run(Thread.java:479)
+    "Keep Alive Sender/1-BDE-3ID-HHC" (TID:0x49091ba0, sys_thread_t:0x8535d48, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:722)
+    "RealTimer" (TID:0x48fa8030, sys_thread_t:0x8420190, state:R) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.Timer.run(Timer.java:144)
+        at java.lang.Thread.run(Thread.java:479)
+    "ExecutionTimer" (TID:0x48fa8090, sys_thread_t:0x84157a0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.Timer.run(Timer.java:144)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-BDE-NODE/OutQ" (TID:0x48fa1630, sys_thread_t:0x83c0758, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.society.MessageTransport.dispatchOutgoingMessages(MessageTransport.java:197)
+        at org.cougaar.core.society.MessageTransport.access$1(MessageTransport.java:189)
+        at org.cougaar.core.society.MessageTransport$2.run(MessageTransport.java:344)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-BDE-NODE/InQ" (TID:0x48fa1360, sys_thread_t:0x83eb328, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.society.MessageTransport.dispatchIncomingMessages(MessageTransport.java:254)
+        at org.cougaar.core.society.MessageTransport.access$0(MessageTransport.java:246)
+        at org.cougaar.core.society.MessageTransport$1.run(MessageTransport.java:337)
+        at java.lang.Thread.run(Thread.java:479)
+    "Finalizer" (TID:0x48ede320, sys_thread_t:0x8108608, state:CW) prio=8
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:112)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:127)
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:174)
+    "Reference Handler" (TID:0x48ede3b0, sys_thread_t:0x81038b8, state:CW) prio=10
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:114)
+    "Signal dispatcher" (TID:0x48ede3e0, sys_thread_t:0x8101a00, state:R) prio=5
+    "Thread-28" (TID:0x494c0d00, sys_thread_t:0x804c970, state:CW) prio=5
+Monitor Cache Dump:
+    java.lang.Object@48FA7DA0/49CD34E8: <unowned>
+        Waiting to be notified:
+            "ExecutionTimer" (0x84157a0)
+    java.util.ArrayList@49292E90/4A166320: <unowned>
+        Waiting to be notified:
+            "1-9-FABN/RQ" (0x8d301c8)
+    java.util.HashMap@492D9630/4A040568: owner "PlugInScheduler/1-64-ARBN" (0x8d1e978) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@492CFB58/4A02FF88: <unowned>
+        Waiting to be notified:
+            "Plugin/3-7-INFBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@53acfd2" (0x8d19768)
+    java.lang.Object@4933D440/4A07C6D0: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/1-9-FABN" (0x8d28068)
+    java.util.ArrayList@4920E760/49FD2B50: <unowned>
+        Waiting to be notified:
+            "11-ENGBN/RQ" (0x8d3c3d8)
+   java.lang.ref.ReferenceQueue$Lock@490CA3D8/49E66628: <unowned>
+        Waiting to be notified:
+            "RMI RenewClean-[192.168.1.101:3241]" (0x83fab90)
+    java.util.ArrayList@49292E10/4A166428: <unowned>
+        Waiting to be notified:
+            "1-64-ARBN/RQ" (0x8d26ad8)
+    java.util.ArrayList@4920E7F8/49FD2A48: <unowned>
+        Waiting to be notified:
+            "26-FSB/RQ" (0x8bc0b70)
+    java.util.ArrayList@4919C2D8/49FB05E8: <unowned>
+        Waiting to be notified:
+            "1-BDE-3ID-HHC/RQ" (0x8b0e5a8)
+    java.net.PlainSocketImpl@491C4740/49FCA6E0: owner "Thread-5" (0x8c30178) 1 entry
+    java.net.PlainSocketImpl@493B6590/4A0CAB10: owner "Thread-21" (0x8d36d98) 1 entry
+    java.lang.ref.ReferenceQueue$Lock@48EDE338/49BAD698: <unowned>
+        Waiting to be notified:
+            "Finalizer" (0x8108608)
+    com.bbn.supply.plugins.AntsInventoryPlugIn@494BE928/4A150F58: owner "PlugInScheduler/26-FSB" (0x8d3d968) 2 entries
+    java.lang.Object@48FA8038/49CD37A0: owner "RealTimer" (0x8420190) 1 entry
+    java.lang.Object@4919CB48/49FB0928: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/3-15-INFBN" (0x8b18798)
+    java.util.ArrayList@490D5B20/49E76758: owner "PlugInScheduler/1-64-ARBN" (0x8d1e978) 1 entry
+    java.lang.Object@493A3040/4A0B3C58: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/11-ENGBN" (0x8d31758)
+    java.net.PlainSocketImpl@493FF990/4A0DEFE0: owner "Thread-23" (0x8d3ae48) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@493F85D8/4A0DB548: <unowned>
+        Waiting to be notified:
+            "Plugin/11-ENGBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@ba7acfdb" (0x8d38328)
+    java.util.ArrayList@49292F10/4A166218: <unowned>
+        Waiting to be notified:
+            "3-7-INFBN/RQ" (0x8d1d3e8)
+    java.lang.ref.Reference$Lock@48EDE3C0/49BAD1C8: <unowned>
+        Waiting to be notified:
+            "Reference Handler" (0x81038b8)
+    java.lang.Object@49115F40/49F18ED0: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/1-BDE-3ID-HHC" (0x8857600)
+    java.lang.ref.ReferenceQueue$Lock@490BADB8/4CB66988: <unowned>
+        Waiting to be notified:
+            "RMI RenewClean-[192.168.1.101:3249]" (0x8cc5f10)
+    java.lang.ref.ReferenceQueue$Lock@494DA048/4A1693F0: <unowned>
+        Waiting to be notified:
+            "RMI RenewClean-[192.168.1.103:1692]" (0x8c3b828)
+    org.cougaar.core.cluster.SubscriptionWatcher@493336F8/4A06BE90: <unowned>
+        Waiting to be notified:
+            "Plugin/1-64-ARBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@e30acfdd" (0x8d25548)    org.cougaar.core.cluster.Distributor@490D5890/49E75E48: owner "PlugInScheduler/1-64-ARBN" (0x8d1e978) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@49197CF8/49FAC220: <unowned>
+        Waiting to be notified:
+            "Plugin/1-BDE-3ID-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@c60acfc8" (0x8affc20)
+    java.net.PlainSocketImpl@494AE390/4A147028: owner "Thread-27" (0x8d733a0) 1 entry
+    org.cougaar.lib.planserver.server.ConnectionPool$PooledThread@493984D8/4A31C940: <unowned>
+        Waiting to be notified:
+            "nullConnectionHandler:973643538615" (0x8e2b568)
+    java.lang.ref.ReferenceQueue$Lock@490C7128/49E60298: <unowned>
+        Waiting to be notified:
+            "RMI Reaper" (0x86c2558)
+    java.net.PlainSocketImpl@49349DD0/4A08B948: owner "Thread-17" (0x8d2d6a8) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@493998A0/4A0A3C00: <unowned>
+        Waiting to be notified:
+            "Plugin/1-9-FABN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@b4decfd8" (0x8d2ec38)
+    java.net.PlainSocketImpl@4927F2C0/4A0098D0: owner "Thread-9" (0x8ccb700) 1 entry
+    org.cougaar.domain.planning.ldm.plan.WorkflowImpl@479B0A20/504F5B08: owner "PlugInScheduler/1-64-ARBN" (0x8d1e978) 1 entry
+    java.util.HashMap@49411400/4A0FA720: owner "PlugInScheduler/26-FSB" (0x8d3d968) 1 entry
+    org.cougaar.domain.planning.ldm.plan.RoleScheduleImpl@494D5458/4A163598: owner "PlugInScheduler/26-FSB" (0x8d3d968) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@49467A90/4A126398: <unowned>
+        Waiting to be notified:
+            "Plugin/26-FSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@45c6cfe7" (0x8bbf638)
+    org.cougaar.util.CircularQueue@48FA0AE0/49CCF3B8: <unowned>
+        Waiting to be notified:
+            "1-BDE-NODE/OutQ" (0x83c0758)
+    java.net.PlainSocketImpl@492E6288/4A04F778: owner "Thread-13" (0x8d23fb8) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@49256180/49FE5F50: <unowned>
+        Waiting to be notified:
+            "Plugin/3-15-INFBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@c84ecfd6" (0x83f5418)
+    org.cougaar.util.CircularQueue@48FA0AD0/49CCF3F0: <unowned>
+        Waiting to be notified:
+            "1-BDE-NODE/InQ" (0x83eb328)
+    java.net.PlainSocketImpl@490C74D8/49E60728: owner "RMI TCP Accept-1" (0x86b36d0) 1 entry
+    java.lang.Object@492666C0/49FFC1B8: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/3-7-INFBN" (0x8c90cd0)
+    sun.misc.GC$LatencyLock@490C7830/49E61428: owner "GC Daemon" (0x86cdc70) 1 entry
+    java.util.ArrayList@49265E58/49FFBE78: <unowned>
+        Waiting to be notified:
+            "3-15-INFBN/RQ" (0x8c32068)
+Registered Monitor Dump:
+    utf8 hash table: <unowned>
+    JNI pinning lock: <unowned>
+    JNI global reference lock: <unowned>
+    BinClass lock: <unowned>
+    Class linking lock: <unowned>
+    System class loader lock: <unowned>
+    Code rewrite lock: <unowned>
+    Heap lock: <unowned>
+    Monitor cache lock: owner "Signal dispatcher" (0x8101a00) 1 entry
+    Dynamic loading lock: <unowned>
+    Monitor IO lock: <unowned>
+    User signal monitor: <unowned>
+    Child death monitor: <unowned>
+    I/O monitor: <unowned>
+    Alarm monitor: <unowned>
+        Waiting to be notified:
+            <unknown thread> (0x8057dd8)
+    Thread queue lock: owner "Signal dispatcher" (0x8101a00) 1 entry
+        Waiting to be notified:
+            "Thread-28" (0x804c970)
+    Monitor registry: owner "Signal dispatcher" (0x8101a00) 1 entry
+

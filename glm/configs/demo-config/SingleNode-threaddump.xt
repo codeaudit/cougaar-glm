@@ -1,0 +1,1502 @@
+Full thread dump Classic VM (Linux_JDK_1.2.2_RC4, green threads):
+    "RMI TCP Connection(358)-192.168.1.101" (TID:0x49756538, sys_thread_t:0x928b258, state:CW) prio=5
+        at java.net.SocketInputStream.socketRead(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:90)
+        at java.io.BufferedInputStream.fill(BufferedInputStream.java:190)
+        at java.io.BufferedInputStream.read(BufferedInputStream.java:208)
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(357)-192.168.1.101" (TID:0x49756788, sys_thread_t:0x92cfe00, state:CW) prio=5
+        at java.net.SocketInputStream.socketRead(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:90)
+        at java.io.BufferedInputStream.fill(BufferedInputStream.java:190)
+        at java.io.BufferedInputStream.read(BufferedInputStream.java:208)
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(356)-192.168.1.101" (TID:0x49756840, sys_thread_t:0x925a618, state:CW) prio=5
+        at java.net.SocketInputStream.socketRead(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:90)
+        at java.io.BufferedInputStream.fill(BufferedInputStream.java:190)
+        at java.io.BufferedInputStream.read(BufferedInputStream.java:208)
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(355)-192.168.1.101" (TID:0x497fb440, sys_thread_t:0x9254eb8, state:MW) prio=5
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(349)-192.168.1.101" (TID:0x49866248, sys_thread_t:0x926a618, state:CW) prio=5
+        at java.net.SocketInputStream.socketRead(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:90)
+        at java.io.BufferedInputStream.fill(BufferedInputStream.java:190)
+        at java.io.BufferedInputStream.read(BufferedInputStream.java:208)
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(345)-192.168.1.101" (TID:0x4987cae8, sys_thread_t:0x927edc0, state:MW) prio=5
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(344)-192.168.1.101" (TID:0x4987edc8, sys_thread_t:0x927c210, state:MW) prio=5
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(343)-192.168.1.101" (TID:0x49877b90, sys_thread_t:0x9268088, state:MW) prio=5
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Connection(342)-192.168.1.101" (TID:0x4984af68, sys_thread_t:0x9282f48, state:MW) prio=5
+        at java.io.DataInputStream.readByte(DataInputStream.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:411)
+        at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:634)
+        at java.lang.Thread.run(Thread.java:479)
+    "nullConnectionHandler:973711479399" (TID:0x498a8990, sys_thread_t:0x9388010, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.lib.planserver.server.ConnectionPool$PooledThread.run(ConnectionPool.java:240)
+    "nullConnectionHandler:973711473480" (TID:0x498ce5c0, sys_thread_t:0x928f3e0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.lib.planserver.server.ConnectionPool$PooledThread.run(ConnectionPool.java:240)
+    "HNS/RQ" (TID:0x494635e0, sys_thread_t:0x92d79d0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Thread-46" (TID:0x4947a670, sys_thread_t:0x92d2f40, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-45" (TID:0x49482fd0, sys_thread_t:0x92d3af0, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/HNS/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@36efd9ef" (TID:0x49491678, sys_thread_t:0x92d3518, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "DLAHQ/DestinationQueue" (TID:0x494876f0, sys_thread_t:0x92d44d0, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "process reaper" (TID:0x49488db0, sys_thread_t:0x92c7ba0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.UNIXProcess.run(Native Method)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-44" (TID:0x4948fed8, sys_thread_t:0x92c5c90, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-43" (TID:0x49490320, sys_thread_t:0x92b85c0, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-42" (TID:0x49493470, sys_thread_t:0x92c4700, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-41" (TID:0x4949dc00, sys_thread_t:0x92c3170, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-40" (TID:0x494a0570, sys_thread_t:0x92b8dc8, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-39" (TID:0x494ab0a0, sys_thread_t:0x92bc7d8, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-38" (TID:0x494b3d98, sys_thread_t:0x8bc7790, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/HNS" (TID:0x494b4788, sys_thread_t:0x8bc71b8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "FUTURE/RQ" (TID:0x494b5330, sys_thread_t:0x8e36ce0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/FUTURE/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@fd9ee" (TID:0x494b7bc0, sys_thread_t:0x8bc2d20, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-37" (TID:0x494bb740, sys_thread_t:0x8e25908, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/FUTURE" (TID:0x494bbe68, sys_thread_t:0x8bc6be0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "IOC/RQ" (TID:0x494bc650, sys_thread_t:0x8bc4850, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/IOC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@4023d9ee" (TID:0x494bfbe0, sys_thread_t:0x8bc11c8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "PlugInScheduler/IOC" (TID:0x494c34f8, sys_thread_t:0x8bbfbd8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "DFSP/RQ" (TID:0x494c41e8, sys_thread_t:0x8bbe648, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Thread-36" (TID:0x494d20b0, sys_thread_t:0x8bbd088, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-35" (TID:0x494dd8a8, sys_thread_t:0x8bbbaf8, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-34" (TID:0x494e40e0, sys_thread_t:0x8bba568, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-33" (TID:0x494ef1e0, sys_thread_t:0x8bb8fd8, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/DFSP/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@2f8bd9ec" (TID:0x494f24a0, sys_thread_t:0x8bb7a48, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-32" (TID:0x494f5cf8, sys_thread_t:0x8bb64a8, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/DFSP" (TID:0x494f6668, sys_thread_t:0x8bb4f18, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "DIVARTY-3ID-HHB/RQ" (TID:0x491efc18, sys_thread_t:0x8bb3988, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/DIVARTY-3ID-HHB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@79a3d9ec" (TID:0x494f88d0, sys_thread_t:0x8bb23f8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "296-FSB/DestinationQueue" (TID:0x493f3d38, sys_thread_t:0x92b11e0, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-31" (TID:0x494bfb10, sys_thread_t:0x92abba0, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-30" (TID:0x494b9690, sys_thread_t:0x92aa610, state:R) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-29" (TID:0x494b5508, sys_thread_t:0x92a9080, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-28" (TID:0x494b4920, sys_thread_t:0x92a7af0, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/DIVARTY-3ID-HHB" (TID:0x494b3a18, sys_thread_t:0x92a6560, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "703-MSB/RQ" (TID:0x491efb88, sys_thread_t:0x92a4fd0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/703-MSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@316fd9ee" (TID:0x494b1948, sys_thread_t:0x92a3a40, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "603-DASB/DestinationQueue" (TID:0x493f3db0, sys_thread_t:0x92450a8, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-27" (TID:0x49434c30, sys_thread_t:0x9243b18, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-26" (TID:0x4942e7b0, sys_thread_t:0x9242588, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-25" (TID:0x494261d0, sys_thread_t:0x9240ff8, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-24" (TID:0x494258b8, sys_thread_t:0x923fa68, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/703-MSB" (TID:0x49424868, sys_thread_t:0x923e4d8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-DISCOM-HHC/RQ" (TID:0x494241e8, sys_thread_t:0x923cf48, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/3-DISCOM-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@a227d9ea" (TID:0x49423fb8, sys_thread_t:0x923b9b8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/3-DISCOM-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@af03d9ea" (TID:0x49422570, sys_thread_t:0x923a428, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "2-3-INFBN/DestinationQueue" (TID:0x493f3088, sys_thread_t:0x9238e98, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-FSB/DestinationQueue" (TID:0x493f3100, sys_thread_t:0x9237908, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "334-SIGCO/DestinationQueue" (TID:0x493f3178, sys_thread_t:0x9236378, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-23-INFBN/DestinationQueue" (TID:0x493f2580, sys_thread_t:0x9234de8, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-BDE-3ID-HHC/DestinationQueue" (TID:0x493f25f8, sys_thread_t:0x9233858, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "418-TKCO-POL/DestinationQueue" (TID:0x493f2670, sys_thread_t:0x92322c8, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "24-SPTGP-HHC/DestinationQueue" (TID:0x493f14f8, sys_thread_t:0x9230d38, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "61-ASMEDBN-MEDCO/DestinationQueue" (TID:0x493f1570, sys_thread_t:0x922f7a8, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "36-MEDEVACBN-GAMBCO/DestinationQueue" (TID:0x493f15e8, sys_thread_t:0x922e218, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-7-CAVSQDN/DestinationQueue" (TID:0x493f0b38, sys_thread_t:0x922cc88, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-3-ADABN/DestinationQueue" (TID:0x493f0bb0, sys_thread_t:0x922b6f8, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "52-INF-CCO/DestinationQueue" (TID:0x493efe70, sys_thread_t:0x922a168, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "2-7-INFBN/DestinationQueue" (TID:0x493f06a8, sys_thread_t:0x9228bd8, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "39-FABTRY/DestinationQueue" (TID:0x493eff60, sys_thread_t:0x9227648, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "2-69-ARBN/DestinationQueue" (TID:0x493ef788, sys_thread_t:0x92260b8, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "602-MAINTCO/DestinationQueue" (TID:0x493ef800, sys_thread_t:0x9224b28, state:MW) prio=5
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:53)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "202-WTRPURDET/DestinationQueue" (TID:0x493ef878, sys_thread_t:0x9223598, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "209-MICO/DestinationQueue" (TID:0x493eec88, sys_thread_t:0x9222008, state:MW) prio=5
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:53)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "24-CSB-HHD/DestinationQueue" (TID:0x493eed00, sys_thread_t:0x9220a78, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-10-FABN/DestinationQueue" (TID:0x493eeda0, sys_thread_t:0x921f4e8, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "110-QMCO-POLSPLY/DestinationQueue" (TID:0x493ee040, sys_thread_t:0x921df58, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-30-INFBN/DestinationQueue" (TID:0x493ee0b8, sys_thread_t:0x921c9c8, state:MW) prio=5
+        at java.rmi.server.UID.<init>(UID.java:71)
+        at sun.rmi.transport.ConnectionOutputStream.<init>(ConnectionOutputStream.java:35)
+        at sun.rmi.transport.StreamRemoteCall.getOutputStream(StreamRemoteCall.java:87)
+        at sun.rmi.transport.StreamRemoteCall.getOutputStream(StreamRemoteCall.java:76)
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:54)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "24-ODCO/DestinationQueue" (TID:0x493ee130, sys_thread_t:0x921b438, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "10-TCBN-HHC/DestinationQueue" (TID:0x493ed118, sys_thread_t:0x9219ea8, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "12-FABTRY/DestinationQueue" (TID:0x493ed190, sys_thread_t:0x9218918, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "180-TCBN-HHD/DestinationQueue" (TID:0x493ec440, sys_thread_t:0x9217388, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "18-QMPLT/DestinationQueue" (TID:0x493ec4b8, sys_thread_t:0x9215df8, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "103-MIBN/DestinationQueue" (TID:0x493ec530, sys_thread_t:0x9214868, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "317-ENGBN/DestinationQueue" (TID:0x493eae80, sys_thread_t:0x92132d8, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "406-TCDET-TPT/DestinationQueue" (TID:0x493eaef8, sys_thread_t:0x920f220, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "203-FSB/DestinationQueue" (TID:0x493eaf70, sys_thread_t:0x920ec48, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-69-ARBN/DestinationQueue" (TID:0x493e71e0, sys_thread_t:0x920d620, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "571-MEDDET-AMBL/DestinationQueue" (TID:0x493e7258, sys_thread_t:0x920c090, state:MW) prio=5
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:53)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "147-MEDLOGBN/DestinationQueue" (TID:0x493e72d0, sys_thread_t:0x920ab00, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "226-QMCO-SPLY/DestinationQueue" (TID:0x493e66e8, sys_thread_t:0x9209570, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-14-CAVSQDN/DestinationQueue" (TID:0x493e6760, sys_thread_t:0x9207fe0, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "553-CSB-HHD/DestinationQueue" (TID:0x493e67d8, sys_thread_t:0x9206a50, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-41-FABN/DestinationQueue" (TID:0x493e5be0, sys_thread_t:0x92054c0, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "186-WTRPURDET/DestinationQueue" (TID:0x493e5c58, sys_thread_t:0x9203f30, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "416-TKCO-POL/DestinationQueue" (TID:0x493e5060, sys_thread_t:0x92029a0, state:R) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)    
+     "512-QMCO-WTRSPLY/DestinationQueue" (TID:0x493e50d8, sys_thread_t:0x9201410, state:MW) prio=5
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:53)        
+	at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-15-INFBN/DestinationQueue" (TID:0x493e5150, sys_thread_t:0x91ffe80, state:MW) prio=5
+        at java.rmi.server.UID.<init>(UID.java:71)
+        at sun.rmi.transport.ConnectionOutputStream.<init>(ConnectionOutputStream.java:35)
+        at sun.rmi.transport.StreamRemoteCall.getOutputStream(StreamRemoteCall.java:87)
+        at sun.rmi.transport.StreamRemoteCall.getOutputStream(StreamRemoteCall.java:76)
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:54) 
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-MPCO/DestinationQueue" (TID:0x493e4980, sys_thread_t:0x91fe8f0, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "123-SIGBN/DestinationQueue" (TID:0x493e49f8, sys_thread_t:0x91fd360, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283) 
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "ENGBDE-3ID-HHD/DestinationQueue" (TID:0x493e4a70, sys_thread_t:0x91fbdd0, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "259-QMCO-FSVC/DestinationQueue" (TID:0x493e3e78, sys_thread_t:0x91fa840, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "632-MAINTCO/DestinationQueue" (TID:0x493e3ef0, sys_thread_t:0x91f92b0, state:MW) prio=5
+        at java.rmi.server.UID.<init>(UID.java:71)
+        at sun.rmi.transport.ConnectionOutputStream.<init>(ConnectionOutputStream.java:35)
+        at sun.rmi.transport.StreamRemoteCall.getOutputStream(StreamRemoteCall.java:87)
+        at sun.rmi.transport.StreamRemoteCall.getOutputStream(StreamRemoteCall.java:76)
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:54)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "5-20-INFBN/DestinationQueue" (TID:0x493e3f68, sys_thread_t:0x91f7d20, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "157-QMCO-FSVC/DestinationQueue" (TID:0x493e2060, sys_thread_t:0x91f6790, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "DISCOM-3ID-HHC/DestinationQueue" (TID:0x493e20d8, sys_thread_t:0x91eeef0, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "343-QMCO-SPLY/DestinationQueue" (TID:0x493e2160, sys_thread_t:0x91ed960, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "10-ENGBN/DestinationQueue" (TID:0x493e1568, sys_thread_t:0x91ec3d0, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-37-FABN/DestinationQueue" (TID:0x493e15e0, sys_thread_t:0x91eae40, state:MW) prio=5
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:53)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-BDE-2ID-HHC/DestinationQueue" (TID:0x493e09f0, sys_thread_t:0x91e98b0, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "21-MED-CSHOSP/DestinationQueue" (TID:0x493e0a68, sys_thread_t:0x91e8320, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "296-SPTBN/DestinationQueue" (TID:0x493e0ae0, sys_thread_t:0x91e6d90, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "96-TCCO-HET/DestinationQueue" (TID:0x493e01c0, sys_thread_t:0x91e5800, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "396-TCCO-PLS/DestinationQueue" (TID:0x493e0238, sys_thread_t:0x91e4270, state:MW) prio=5
+        at java.lang.StringBuffer.<init>(StringBuffer.java:135)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "89-TKCO-CGO/DestinationQueue" (TID:0x493e02b0, sys_thread_t:0x91e2ce0, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "18-ENGCO/DestinationQueue" (TID:0x493df510, sys_thread_t:0x91e1750, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "2-BDE-3ID-HHC/DestinationQueue" (TID:0x493df588, sys_thread_t:0x91e01c0, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "119-TCCO-CGO/DestinationQueue" (TID:0x493df600, sys_thread_t:0x91dec30, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "4-64-ARBN/DestinationQueue" (TID:0x4934f0c0, sys_thread_t:0x91dd6a0, state:MW) prio=5
+        at sun.rmi.transport.StreamRemoteCall.<init>(StreamRemoteCall.java:53)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:102)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-23" (TID:0x493c6660, sys_thread_t:0x91dc110, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-22" (TID:0x493bbfa8, sys_thread_t:0x91dab80, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-21" (TID:0x493b7248, sys_thread_t:0x91d95f0, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-20" (TID:0x493b6760, sys_thread_t:0x91d8060, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/3-DISCOM-HHC" (TID:0x493b58c8, sys_thread_t:0x91d6ad0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "3ID-HHC/RQ" (TID:0x491efcb0, sys_thread_t:0x91d5540, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/3ID-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@242fd9d6" (TID:0x493b33c8, sys_thread_t:0x91d3fb0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-64-ARBN/DestinationQueue" (TID:0x4934f138, sys_thread_t:0x91d1a70, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "11-ENGBN/DestinationQueue" (TID:0x4934f1b0, sys_thread_t:0x91d04e0, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-15-INFBN/DestinationQueue" (TID:0x4916f470, sys_thread_t:0x91cef50, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:178)
+        at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:87)
+        at org.cougaar.core.society.rmi.NSImpl_Stub.get(NSImpl_Stub.java:183)
+        at org.cougaar.core.society.rmi.RMINameServer.get(RMINameServer.java:168)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.lookupRMIObject(RMIMessageTransport.java:290)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.access$6(RMIMessageTransport.java:283)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:556)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-9-FABN/DestinationQueue" (TID:0x4916f4e8, sys_thread_t:0x91cd9c0, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+       at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-19" (TID:0x49345240, sys_thread_t:0x91cc430, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-18" (TID:0x4933edb8, sys_thread_t:0x91caea0, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-17" (TID:0x4932c258, sys_thread_t:0x91c9910, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-16" (TID:0x4932b938, sys_thread_t:0x91c8380, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/3ID-HHC" (TID:0x4932a8f0, sys_thread_t:0x91c6df0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "26-FSB/RQ" (TID:0x4932a270, sys_thread_t:0x91c2b28, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/26-FSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@edebd9d2" (TID:0x4932a040, sys_thread_t:0x91c2550, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/26-FSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@83ffd9d2" (TID:0x49327c68, sys_thread_t:0x91c0e00, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-15" (TID:0x492d3f88, sys_thread_t:0x91bf870, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-14" (TID:0x492d33a0, sys_thread_t:0x91be2e0, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "PlugInScheduler/26-FSB" (TID:0x492d2610, sys_thread_t:0x91b8d10, state:MW) prio=5
+        at java.lang.Class.forName0(Native Method)
+        at java.lang.Class.forName(Class.java:124)
+        at org.cougaar.domain.glm.plugins.AssetUtils.isAssetOfType(AssetUtils.java:45)
+        at org.cougaar.domain.glm.plugins.inventory.InventoryProcessor$SupplyTaskPredicate.execute(InventoryProcessor.java:107)
+        at org.cougaar.core.cluster.Subscription.conditionalAdd(Subscription.java:74)
+        at org.cougaar.core.cluster.AddEnvelopeTuple.applyToSubscription(AddEnvelopeTuple.java:26)
+        at org.cougaar.core.cluster.Envelope.applyToSubscription(Envelope.java:152)
+        at org.cougaar.core.cluster.Subscriber.privateUpdateSubscriptions(Subscriber.java:103)
+        at org.cougaar.core.cluster.Subscriber.finishOpenTransaction(Subscriber.java:572)
+        at org.cougaar.core.cluster.Subscriber.openTransaction(Subscriber.java:552)
+        at org.cougaar.core.plugin.SimplePlugIn.cycle(SimplePlugIn.java:82)
+        at org.cougaar.core.plugin.PlugInAdapter$SharedThreading.externalCycle(PlugInAdapter.java:802)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:137)
+        at java.lang.Thread.run(Thread.java:479)
+    "3-7-INFBN/RQ" (TID:0x492d1a18, sys_thread_t:0x91b8738, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Thread-13" (TID:0x492c0548, sys_thread_t:0x9165390, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-12" (TID:0x492b8260, sys_thread_t:0x914cf78, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/3-7-INFBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@fb7d9de" (TID:0x492b64d8, sys_thread_t:0x9149168, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-11" (TID:0x49277ad8, sys_thread_t:0x9147bd8, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-10" (TID:0x49271500, sys_thread_t:0x9146648, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-9" (TID:0x4926f518, sys_thread_t:0x91450b8, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-8" (TID:0x4926e930, sys_thread_t:0x9143b28, state:CW) prio=5
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:269)
+    "PlugInScheduler/3-7-INFBN" (TID:0x4926dbc0, sys_thread_t:0x913a5b0, state:R) prio=5
+        at java.util.Vector$1.nextElement(Vector.java:293)
+        at org.cougaar.domain.mlm.plugin.organization.GLSAllocatorPlugIn$4.execute(GLSAllocatorPlugIn.java:518)
+        at org.cougaar.core.cluster.Subscription.conditionalChange(Subscription.java:112)
+        at org.cougaar.core.cluster.CollectionSubscription.conditionalChange(CollectionSubscription.java:92)
+        at org.cougaar.core.cluster.ChangeEnvelopeTuple.applyToSubscription(ChangeEnvelopeTuple.java:34)
+        at org.cougaar.core.cluster.Envelope.applyToSubscription(Envelope.java:152)
+        at org.cougaar.core.cluster.Subscriber.privateUpdateSubscriptions(Subscriber.java:103)
+        at org.cougaar.core.cluster.Subscriber.finishOpenTransaction(Subscriber.java:572)
+        at org.cougaar.core.cluster.Subscriber.openTransaction(Subscriber.java:552)
+        at org.cougaar.core.plugin.PlugInAdapter.openTransaction(PlugInAdapter.java:212)
+        at org.cougaar.core.plugin.SimplePlugIn.cycle(SimplePlugIn.java:82)
+        at org.cougaar.core.plugin.PlugInAdapter$SharedThreading.externalCycle(PlugInAdapter.java:802)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:137)
+        at java.lang.Thread.run(Thread.java:479)
+    "1-BDE-3ID-HHC/RQ" (TID:0x4926d130, sys_thread_t:0x9139fd8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/1-BDE-3ID-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@e733d9d8" (TID:0x4926b5d0, sys_thread_t:0x9138358, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-7" (TID:0x492187e8, sys_thread_t:0x8401d88, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-6" (TID:0x49216b78, sys_thread_t:0x86ef8c0, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-5" (TID:0x49215408, sys_thread_t:0x906d930, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at org.cougaar.lib.planserver.server.NetworkServer.listen(NetworkServer.java:132)
+        at org.cougaar.lib.planserver.server.PlanServer.listen(PlanServer.java:202)
+        at org.cougaar.lib.planserver.server.PlanServerLauncher.run(PlanServerLauncher.java:135)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-4" (TID:0x491f7730, sys_thread_t:0x8fbcc00, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-3" (TID:0x491f4ce8, sys_thread_t:0x8fa6e20, state:MW) prio=5
+        at org.cougaar.domain.mlm.plugin.ldm.LDMConnectionReaper.run(LDMConnectionPool.java:274)
+    "Thread-2" (TID:0x491eeb68, sys_thread_t:0x8f8d0a0, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Thread-1" (TID:0x491ee080, sys_thread_t:0x8f8bb10, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "PlugInScheduler/1-BDE-3ID-HHC" (TID:0x491eb970, sys_thread_t:0x8e52370, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "XVIIICORPS-HHC/RQ" (TID:0x491ead60, sys_thread_t:0x8f79b78, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/XVIIICORPS-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@f79fd9c4" (TID:0x491e94a8, sys_thread_t:0x8f2e0a8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "PlugInScheduler/XVIIICORPS-HHC" (TID:0x491e6e80, sys_thread_t:0x8f2dad0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "JTF-HHC/RQ" (TID:0x491e6980, sys_thread_t:0x8f6c5a0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Plugin/JTF-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@9acfd9c4" (TID:0x491e4e08, sys_thread_t:0x8f2b588, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "PlugInScheduler/JTF-HHC" (TID:0x491e2718, sys_thread_t:0x8f6bfc8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "CENTCOM-HHC/RQ" (TID:0x491e1f68, sys_thread_t:0x8f51fa0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.ClusterImpl$QueueHandler.run(ClusterImpl.java:968)
+    "Thread-0" (TID:0x491cbab8, sys_thread_t:0x8e73ce8, state:MW) prio=5
+        at org.cougaar.lib.planserver.server.PlanServiceProviderHarness.run(PlanServiceProviderHarness.java:87)
+        at java.lang.Thread.run(Thread.java:479)
+    "Plugin/CENTCOM-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@9effd9c5" (TID:0x491c4668, sys_thread_t:0x8e28c58, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SubscriptionWatcher.waitForSignal(SubscriptionWatcher.java:42)
+        at org.cougaar.core.plugin.PlugInAdapter$SingleThreading.run(PlugInAdapter.java:886)
+        at java.lang.Thread.run(Thread.java:479)
+    "Screen Updater" (TID:0x4919b658, sys_thread_t:0x8c5c568, state:CW) prio=4
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at sun.awt.ScreenUpdater.nextEntry(ScreenUpdater.java:79)
+        at sun.awt.ScreenUpdater.run(ScreenUpdater.java:99)
+    "AWT-Motif" (TID:0x4918bca8, sys_thread_t:0x8a77b38, state:MW) prio=5
+        at java.lang.ref.Finalizer.add(Finalizer.java:42)
+        at java.lang.ref.Finalizer.<init>(Finalizer.java:74)
+        at java.lang.ref.Finalizer.register(Finalizer.java:79)
+        at sun.awt.motif.MToolkit.run(Native Method)
+        at java.lang.Thread.run(Thread.java:479)
+    "SunToolkit.PostEventQueue-0" (TID:0x4918b860, sys_thread_t:0x8a623b8, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at sun.awt.PostEventQueue.run(SunToolkit.java:413)
+    "AWT-EventQueue-0" (TID:0x4918b890, sys_thread_t:0x8a5ce38, state:CW) prio=6
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at java.awt.EventQueue.getNextEvent(EventQueue.java:208)
+        at java.awt.EventDispatchThread.pumpOneEvent(EventDispatchThread.java:100)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:92)
+        at java.awt.EventDispatchThread.run(EventDispatchThread.java:83)
+    "/DestinationQueue" (TID:0x4916f2a0, sys_thread_t:0x89fcf00, state:MW) prio=5
+        at org.cougaar.core.society.MessageTransport.findLocalClient(MessageTransport.java:108)
+        at org.cougaar.core.society.rmi.RMIMessageTransport.findLocalClient(RMIMessageTransport.java:654)
+        at org.cougaar.core.society.rmi.RMIMessageTransport$DestinationQueue.run(RMIMessageTransport.java:549)
+        at java.lang.Thread.run(Thread.java:479)
+    "PlugInScheduler/CENTCOM-HHC" (TID:0x491493f0, sys_thread_t:0x88870d0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.SharedPlugInManager.waitForActivity(SharedPlugInManager.java:87)
+        at org.cougaar.core.cluster.SharedPlugInManager$ThinScheduler.run(SharedPlugInManager.java:122)
+        at java.lang.Thread.run(Thread.java:479)
+    "Keep Alive Sender/HNS" (TID:0x49104228, sys_thread_t:0x87437c0, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/FUTURE" (TID:0x491002b0, sys_thread_t:0x8742230, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/IOC" (TID:0x490fc490, sys_thread_t:0x8740ca0, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/DFSP" (TID:0x490f8738, sys_thread_t:0x873f710, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/DIVARTY-3ID-HHB" (TID:0x490f4670, sys_thread_t:0x873e180, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/703-MSB" (TID:0x490f0688, sys_thread_t:0x873cbf0, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/3-DISCOM-HHC" (TID:0x490ec3e8, sys_thread_t:0x873b660, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/3ID-HHC" (TID:0x490e8148, sys_thread_t:0x873a0d0, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/26-FSB" (TID:0x490e42a8, sys_thread_t:0x8738b40, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/3-7-INFBN" (TID:0x490dffb0, sys_thread_t:0x87375b0, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/1-BDE-3ID-HHC" (TID:0x490dbd78, sys_thread_t:0x8736020, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/XVIIICORPS-HHC" (TID:0x490d7ae0, sys_thread_t:0x8734a90, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Keep Alive Sender/JTF-HHC" (TID:0x490d3c70, sys_thread_t:0x8732140, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "Heartbeat" (TID:0x490d31f8, sys_thread_t:0x8730278, state:R) prio=1
+        at java.lang.Thread.sleep(Native Method)
+        at org.cougaar.core.cluster.ClusterImpl$Heartbeat.run(ClusterImpl.java:1008)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI ConnectionExpiration-[192.168.1.101:1213]" (TID:0x490d0a80, sys_thread_t:0x83f3de0, state:MW) prio=5
+        at sun.rmi.transport.tcp.TCPChannel.freeCachedConnections(TCPChannel.java:513)
+        at sun.rmi.transport.tcp.TCPChannel.access$1(TCPChannel.java:485)
+        at sun.rmi.transport.tcp.TCPChannel$Reaper.run(TCPChannel.java:538)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI LeaseChecker" (TID:0x490d0690, sys_thread_t:0x871c830, state:MW) prio=5
+        at sun.rmi.transport.DGCImpl.checkLeases(DGCImpl.java:228)
+        at sun.rmi.transport.DGCImpl.access$1(DGCImpl.java:221)
+        at sun.rmi.transport.DGCImpl$LeaseChecker.run(DGCImpl.java:306)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI RenewClean-[192.168.1.101:1213]" (TID:0x490ced50, sys_thread_t:0x83f7318, state:MW) prio=5
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:113)
+        at sun.rmi.transport.DGCClient$EndpointEntry$RenewCleanThread.run(DGCClient.java:419)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Accept-2" (TID:0x490c89b8, sys_thread_t:0x86ddc88, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.run(TCPTransport.java:295)
+        at java.lang.Thread.run(Thread.java:479)
+    "GC Daemon" (TID:0x490c7d80, sys_thread_t:0x86cdcd8, state:R) prio=2
+        at java.lang.Object.wait(Native Method)
+        at sun.misc.GC$Daemon.run(GC.java:107)
+    "RMI Reaper" (TID:0x490c7e48, sys_thread_t:0x86c25c0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:112)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:127)
+        at sun.rmi.transport.ObjectTable$Reaper.run(ObjectTable.java:288)
+        at java.lang.Thread.run(Thread.java:479)
+    "RMI TCP Accept-1" (TID:0x490c7b78, sys_thread_t:0x86b3738, state:CW) prio=5
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:406)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:240)
+        at java.net.ServerSocket.accept(ServerSocket.java:224)
+        at sun.rmi.transport.tcp.TCPTransport.run(TCPTransport.java:295)
+        at java.lang.Thread.run(Thread.java:479)
+    "Keep Alive Sender/CENTCOM-HHC" (TID:0x49091ec0, sys_thread_t:0x8535db0, state:MW) prio=5
+        at org.cougaar.core.cluster.MessageManagerImpl.access$7(MessageManagerImpl.java:390)
+        at org.cougaar.core.cluster.MessageManagerImpl$KeepAliveSender.run(MessageManagerImpl.java:720)
+    "RealTimer" (TID:0x48fa8660, sys_thread_t:0x841fe58, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.Timer.run(Timer.java:144)
+        at java.lang.Thread.run(Thread.java:479)
+    "ExecutionTimer" (TID:0x48fa83b0, sys_thread_t:0x8414fb0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.cluster.Timer.run(Timer.java:144)
+        at java.lang.Thread.run(Thread.java:479)
+    "SingleNode/OutQ" (TID:0x48fa1b28, sys_thread_t:0x83d02e0, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.society.MessageTransport.dispatchOutgoingMessages(MessageTransport.java:197)
+        at org.cougaar.core.society.MessageTransport.access$1(MessageTransport.java:189)
+        at org.cougaar.core.society.MessageTransport$2.run(MessageTransport.java:344)
+        at java.lang.Thread.run(Thread.java:479)
+    "SingleNode/InQ" (TID:0x48fa1850, sys_thread_t:0x83bfe60, state:CW) prio=5
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at org.cougaar.core.society.MessageTransport.dispatchIncomingMessages(MessageTransport.java:254)
+        at org.cougaar.core.society.MessageTransport.access$0(MessageTransport.java:246)
+        at org.cougaar.core.society.MessageTransport$1.run(MessageTransport.java:337)
+        at java.lang.Thread.run(Thread.java:479)
+    "Finalizer" (TID:0x48ede320, sys_thread_t:0x8108608, state:CW) prio=8
+        at java.lang.Object.wait(Native Method)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:112)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:127)
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:174)
+    "Reference Handler" (TID:0x48ede3b0, sys_thread_t:0x81038b8, state:CW) prio=10
+        at java.lang.Object.wait(Native Method)
+        at java.lang.Object.wait(Object.java:424)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:114)
+    "Signal dispatcher" (TID:0x48ede3e0, sys_thread_t:0x8101a00, state:R) prio=5
+    "Thread-47" (TID:0x49463670, sys_thread_t:0x804c970, state:CW) prio=5
+Monitor Cache Dump:
+    java.util.HashMap@4926D920/4A0DA860: owner "PlugInScheduler/3-7-INFBN" (0x913a5b0) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@49491670/4A3187B8: <unowned>
+        Waiting to be notified:
+            "Plugin/HNS/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@36efd9ef" (0x92d3518)
+    org.cougaar.core.cluster.SubscriptionWatcher@49423FC0/4A214590: <unowned>
+        Waiting to be notified:
+            "Plugin/3-DISCOM-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@a227d9ea" (0x923b9b8)
+    java.util.Vector@490BF718/4A6D5110: owner "PlugInScheduler/3-7-INFBN" (0x913a5b0) 1 entry
+    java.net.PlainSocketImpl@494D11C8/4A2F4008: owner "Thread-34" (0x8bba568) 1 entry
+    java.lang.Object@48FA8610/49CD7188: <unowned>
+        Waiting to be notified:
+            "RealTimer" (0x841fe58)
+    java.net.PlainSocketImpl@490C77F8/49E63FD8: owner "RMI TCP Accept-1" (0x86b3738) 1 entry
+    java.lang.ref.ReferenceQueue$Lock@490C76F0/49E63B48: <unowned>
+        Waiting to be notified:
+            "RMI Reaper" (0x86c25c0)
+    java.lang.Object@491E2470/4A072648: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/JTF-HHC" (0x8f6bfc8)
+    java.lang.Object@4932A8F8/4A1428A0: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/3ID-HHC" (0x91c6df0)
+    org.cougaar.core.cluster.SubscriptionWatcher@491C4670/4A037B28: <unowned>
+        Waiting to be notified:
+            "Plugin/CENTCOM-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@9effd9c5" (0x8e28c58)
+    java.net.PlainSocketImpl@49277D50/4A0E4718: owner "Thread-11" (0x9147bd8) 1 entry
+    java.lang.Object@48FA8380/49CD6ED0: <unowned>
+        Waiting to be notified:
+            "ExecutionTimer" (0x8414fb0)
+    java.util.ArrayList@494B53A8/4A307268: <unowned>
+        Waiting to be notified:
+            "FUTURE/RQ" (0x8e36ce0)
+    java.lang.Object@494C34F0/4A2F72D8: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/IOC" (0x8bbfbd8)
+    java.util.ArrayList@493F27B8/4A1F8670: <unowned>
+        Waiting to be notified:
+            "703-MSB/RQ" (0x92a4fd0)
+    java.util.ArrayList@491E6948/4A077BE8: <unowned>
+        Waiting to be notified:
+            "JTF-HHC/RQ" (0x8f6c5a0)
+    java.util.ArrayList@4926D0F8/4A0DA570: <unowned>
+        Waiting to be notified:
+            "1-BDE-3ID-HHC/RQ" (0x9139fd8)
+    java.net.PlainSocketImpl@49487E58/4A31CF00: owner "Thread-42" (0x92c4700) 1 entry
+    java.io.BufferedInputStream@497540B0/4C5FE308: owner "RMI TCP Connection(356)-192.168.1.101" (0x925a618) 1 entry
+    java.lang.Object@494BBE60/4A2FE560: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/FUTURE" (0x8bc6be0)
+    org.cougaar.util.CircularQueue@48FA0FD8/49CD2F20: <unowned>
+        Waiting to be notified:
+            "SingleNode/OutQ" (0x83d02e0)
+    org.cougaar.util.CircularQueue@48FA0FC8/49CD2F58: <unowned>
+        Waiting to be notified:
+            "SingleNode/InQ" (0x83bfe60)
+    java.util.ArrayList@492D19E0/4A112420: <unowned>
+        Waiting to be notified:
+            "3-7-INFBN/RQ" (0x91b8738)
+    java.lang.Object@494B38E0/4A27EF08: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/DIVARTY-3ID-HHB" (0x92a6560)
+    java.util.ArrayList@491EAD28/4A07D200: <unowned>
+        Waiting to be notified:
+            "XVIIICORPS-HHC/RQ" (0x8f79b78)
+    org.cougaar.core.cluster.SubscriptionWatcher@4926B5D8/4A0D8DF8: <unowned>
+        Waiting to be notified:
+            "Plugin/1-BDE-3ID-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@e733d9d8" (0x9138358)
+    org.cougaar.core.cluster.SubscriptionWatcher@4932A048/4A142370: <unowned>
+        Waiting to be notified:
+            "Plugin/26-FSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@edebd9d2" (0x91c2550)
+    sun.misc.GC$LatencyLock@490C7E00/49E64CD8: owner "GC Daemon" (0x86cdcd8) 1 entry
+    java.io.BufferedInputStream@49803240/4BA81EA8: owner "RMI TCP Connection(349)-192.168.1.101" (0x926a618) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@494B1950/4A27D688: <unowned>
+        Waiting to be notified:
+            "Plugin/703-MSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@316fd9ee" (0x92a3a40)
+    java.net.PlainSocketImpl@49217018/4A09A488: owner "Thread-5" (0x906d930) 1 entry
+    java.net.PlainSocketImpl@493C6D50/4A1BF3D8: owner "Thread-23" (0x91dc110) 1 entry
+    java.lang.Object@491E6E88/4A078008: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/XVIIICORPS-HHC" (0x8f2dad0)
+    org.cougaar.core.cluster.SubscriptionWatcher@494B7BB8/4A303F58: <unowned>
+        Waiting to be notified:
+            "Plugin/FUTURE/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@fd9ee" (0x8bc2d20)
+    java.util.ArrayList@4932A238/4A1424E0: <unowned>
+        Waiting to be notified:
+            "26-FSB/RQ" (0x91c2b28)
+    org.cougaar.core.cluster.SubscriptionWatcher@491E4E10/4A0764A0: <unowned>
+        Waiting to be notified:
+            "Plugin/JTF-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@9acfd9c4" (0x8f2b588)
+    java.util.ArrayList@49463618/4A33B8B0: <unowned>
+        Waiting to be notified:
+            "HNS/RQ" (0x92d79d0)
+    org.cougaar.core.cluster.SubscriptionWatcher@494BFBD8/4A2FAC60: <unowned>
+        Waiting to be notified:
+            "Plugin/IOC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@4023d9ee" (0x8bc11c8)
+    sun.awt.ScreenUpdater@4919B658/49FF7248: <unowned>
+        Waiting to be notified:
+            "Screen Updater" (0x8c5c568)
+    java.net.PlainSocketImpl@494CC310/4A2F4838: owner "Thread-36" (0x8bbd088) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@492B64E0/4A0F8018: <unowned>
+        Waiting to be notified:
+            "Plugin/3-7-INFBN/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@fb7d9de" (0x9149168)
+    java.util.ArrayList@49327D00/4A13F438: owner "PlugInScheduler/26-FSB" (0x91b8d10) 1 entry
+    java.lang.ref.ReferenceQueue$Lock@48EDE338/49BAD608: <unowned>
+        Waiting to be notified:
+            "Finalizer" (0x8108608)
+    java.util.HashMap@492D2398/4A112710: owner "PlugInScheduler/26-FSB" (0x91b8d10) 1 entry
+    java.util.ArrayList@494C4238/4A2F6EB8: <unowned>
+        Waiting to be notified:
+            "DFSP/RQ" (0x8bbe648)
+    java.lang.ref.Reference$Lock@48EDE3C0/49BAD1C8: <unowned>
+        Waiting to be notified:
+            "Reference Handler" (0x81038b8)
+    org.cougaar.core.cluster.SubscriptionWatcher@49327C70/4A13ECB8: <unowned>
+        Waiting to be notified:
+            "Plugin/26-FSB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@83ffd9d2" (0x91c0e00)
+    java.util.ArrayList@494BC688/4A2FDB00: <unowned>
+        Waiting to be notified:
+            "IOC/RQ" (0x8bc4850)
+    java.net.PlainSocketImpl@49218D58/4A09AC40: owner "Thread-7" (0x8401d88) 1 entry
+    java.lang.Object@494B4780/4A307CC8: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/HNS" (0x8bc71b8)
+    java.util.ArrayList@492B47C0/4A0F45F0: owner "PlugInScheduler/3-7-INFBN" (0x913a5b0) 1 entry
+    java.net.PlainSocketImpl@494884C8/4A31CDD8: owner "Thread-40" (0x92b8dc8) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@494F2498/4A2E85F0: <unowned>
+        Waiting to be notified:
+            "Plugin/DFSP/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@2f8bd9ec" (0x8bb7a48)
+    java.net.PlainSocketImpl@492C0778/4A0FD540: owner "Thread-13" (0x9165390) 1 entry
+    java.net.PlainSocketImpl@49218AF0/4A09AB18: owner "Thread-6" (0x86ef8c0) 1 entry
+    java.io.BufferedInputStream@49753E50/4C5FF120: owner "RMI TCP Connection(357)-192.168.1.101" (0x92cfe00) 1 entry
+    java.lang.Class@4916BDF0/49FA3498: owner "AWT-Motif" (0x8a77b38) 1 entry
+    java.lang.Object@49424870/4A214AD8: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/703-MSB" (0x923e4d8)
+    org.cougaar.core.cluster.SubscriptionWatcher@491E94B0/4A07BC38: <unowned>
+        Waiting to be notified:
+            "Plugin/XVIIICORPS-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@f79fd9c4" (0x8f2e0a8)
+    java.net.PlainSocketImpl@494C05C0/4A28BC60: owner "Thread-31" (0x92abba0) 1 entry
+    java.io.BufferedInputStream@49753CB8/4C5FFF38: owner "RMI TCP Connection(358)-192.168.1.101" (0x928b258) 1 entry
+    org.cougaar.lib.planserver.server.ConnectionPool$PooledThread@498CE5C0/4AB31830: <unowned>
+        Waiting to be notified:
+            "nullConnectionHandler:973711473480" (0x928f3e0)
+    java.lang.Object@494F6660/4A2E1F50: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/DFSP" (0x8bb4f18)
+    org.cougaar.core.cluster.SubscriptionWatcher@493B33D0/4A1AABB0: <unowned>
+        Waiting to be notified:
+            "Plugin/3ID-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@242fd9d6" (0x91d3fb0)
+    java.lang.Object@491EB6C8/4A07D818: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/1-BDE-3ID-HHC" (0x8e52370)
+    java.net.PlainSocketImpl@49474080/4A32AC48: owner "Thread-46" (0x92d2f40) 1 entry
+    java.lang.Object@491493F8/49F7B8F8: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/CENTCOM-HHC" (0x88870d0)
+    org.cougaar.core.cluster.SubscriptionWatcher@49422578/4A212DD0: <unowned>
+        Waiting to be notified:
+            "Plugin/3-DISCOM-HHC/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@af03d9ea" (0x923a428)
+    java.lang.ref.ReferenceQueue$Lock@490CEBB8/49E6D6B0: owner "RMI RenewClean-[192.168.1.101:1213]" (0x83f7318) 1 entry
+    org.cougaar.core.cluster.SubscriptionWatcher@494F88C8/4A2DFE60: <unowned>
+        Waiting to be notified:
+            "Plugin/DIVARTY-3ID-HHB/org.cougaar.core.plugin.PlugInAdapter$SingleThreading@79a3d9ec" (0x8bb23f8)
+    java.util.ArrayList@491EFBC8/4A084748: <unowned>
+        Waiting to be notified:
+            "DIVARTY-3ID-HHB/RQ" (0x8bb3988)
+    java.net.PlainSocketImpl@490C8990/49E668F0: owner "RMI TCP Accept-2" (0x86ddc88) 1 entry
+    java.lang.Object@49488D98/4A31C648: <unowned>
+        Waiting to be notified:
+            "process reaper" (0x92c7ba0)
+    java.net.PlainSocketImpl@49347000/4A166D40: owner "Thread-19" (0x91cc430) 1 entry
+    java.util.ArrayList@494241B0/4A214718: <unowned>
+        Waiting to be notified:
+            "3-DISCOM-HHC/RQ" (0x923cf48)
+    java.lang.Object@493B58D0/4A1AC3F8: <unowned>
+        Waiting to be notified:
+            "PlugInScheduler/3-DISCOM-HHC" (0x91d6ad0)
+    org.cougaar.lib.planserver.server.ConnectionPool$PooledThread@498A8990/4AB9DF50: <unowned>
+        Waiting to be notified:
+            "nullConnectionHandler:973711479399" (0x9388010)
+    java.util.ArrayList@491EFC60/4A084638: <unowned>
+        Waiting to be notified:
+            "3ID-HHC/RQ" (0x91d5540)
+    java.awt.EventQueue@4918B928/49FD0640: <unowned>
+        Waiting to be notified:
+            "AWT-EventQueue-0" (0x8a5ce38)
+    java.util.ArrayList@491E1F20/4A072228: <unowned>
+        Waiting to be notified:
+            "CENTCOM-HHC/RQ" (0x8f51fa0)
+    sun.awt.PostEventQueue@4918B860/49FD0978: <unowned>
+        Waiting to be notified:
+            "SunToolkit.PostEventQueue-0" (0x8a623b8)
+    java.net.PlainSocketImpl@49436330/4A229C40: owner "Thread-27" (0x9243b18) 1 entry
+Registered Monitor Dump:
+    utf8 hash table: <unowned>
+    JNI pinning lock: <unowned>
+    JNI global reference lock: <unowned>
+    BinClass lock: <unowned>
+    Class linking lock: <unowned>
+    System class loader lock: <unowned>
+    Code rewrite lock: <unowned>
+    Heap lock: <unowned>
+    Monitor cache lock: owner "Signal dispatcher" (0x8101a00) 1 entry
+        Waiting to enter:
+            "3-MPCO/DestinationQueue" (0x91fe8f0)
+            "RMI TCP Connection(355)-192.168.1.101" (0x9254eb8)
+            "571-MEDDET-AMBL/DestinationQueue" (0x920c090)
+            "RMI TCP Connection(342)-192.168.1.101" (0x9282f48)
+            "209-MICO/DestinationQueue" (0x9222008)
+            "Thread-9" (0x91450b8)
+            "RMI TCP Connection(345)-192.168.1.101" (0x927edc0)
+            "602-MAINTCO/DestinationQueue" (0x9224b28)
+            "180-TCBN-HHD/DestinationQueue" (0x9217388)
+            "RMI TCP Connection(343)-192.168.1.101" (0x9268088)
+            "4-64-ARBN/DestinationQueue" (0x91dd6a0)
+            "RMI TCP Connection(344)-192.168.1.101" (0x927c210)
+            "512-QMCO-WTRSPLY/DestinationQueue" (0x9201410)
+            "39-FABTRY/DestinationQueue" (0x9227648)
+            "PlugInScheduler/26-FSB" (0x91b8d10)
+            "1-37-FABN/DestinationQueue" (0x91eae40)
+            "10-ENGBN/DestinationQueue" (0x91ec3d0)
+            "RMI ConnectionExpiration-[192.168.1.101:1213]" (0x83f3de0)
+            "1-3-ADABN/DestinationQueue" (0x922b6f8)
+            "1-14-CAVSQDN/DestinationQueue" (0x9207fe0)
+            "18-ENGCO/DestinationQueue" (0x91e1750)
+            "52-INF-CCO/DestinationQueue" (0x922a168)
+            "157-QMCO-FSVC/DestinationQueue" (0x91f6790)
+            "Thread-16" (0x91c8380)
+            "Thread-17" (0x91c9910)
+            "Thread-20" (0x91d8060)
+            "Thread-21" (0x91d95f0)
+            "Thread-3" (0x8fa6e20)
+            "Thread-4" (0x8fbcc00)
+            "96-TCCO-HET/DestinationQueue" (0x91e5800)
+            "Thread-10" (0x9146648)
+            "2-69-ARBN/DestinationQueue" (0x92260b8)
+            "3-15-INFBN/DestinationQueue" (0x91cef50)
+            "1-41-FABN/DestinationQueue" (0x92054c0)
+            "2-BDE-3ID-HHC/DestinationQueue" (0x91e01c0)
+            "89-TKCO-CGO/DestinationQueue" (0x91e2ce0)
+            "10-TCBN-HHC/DestinationQueue" (0x9219ea8)
+            "3-BDE-2ID-HHC/DestinationQueue" (0x91e98b0)
+            "553-CSB-HHD/DestinationQueue" (0x9206a50)
+            "Thread-32" (0x8bb64a8)
+            "DISCOM-3ID-HHC/DestinationQueue" (0x91eeef0)
+            "296-SPTBN/DestinationQueue" (0x91e6d90)
+            "2-7-INFBN/DestinationQueue" (0x9228bd8)
+            "61-ASMEDBN-MEDCO/DestinationQueue" (0x922f7a8)
+            "3-BDE-3ID-HHC/DestinationQueue" (0x9233858)
+            "418-TKCO-POL/DestinationQueue" (0x92322c8)
+            "334-SIGCO/DestinationQueue" (0x9236378)
+            "24-SPTGP-HHC/DestinationQueue" (0x9230d38)
+            "1-23-INFBN/DestinationQueue" (0x9234de8)
+            "24-CSB-HHD/DestinationQueue" (0x9220a78)
+            "202-WTRPURDET/DestinationQueue" (0x9223598)
+            "2-3-INFBN/DestinationQueue" (0x9238e98)
+            "Thread-37" (0x8e25908)
+            "Thread-38" (0x8bc7790)
+            "Thread-43" (0x92b85c0)
+            "5-20-INFBN/DestinationQueue" (0x91f7d20)
+            "Thread-44" (0x92c5c90)
+            "Thread-14" (0x91be2e0)
+            "Thread-15" (0x91bf870)
+            "Thread-28" (0x92a7af0)
+            "Thread-29" (0x92a9080)
+            "18-QMPLT/DestinationQueue" (0x9215df8)
+            "Thread-12" (0x914cf78)
+            "406-TCDET-TPT/DestinationQueue" (0x920f220)
+            "1-10-FABN/DestinationQueue" (0x921f4e8)
+            "Thread-39" (0x92bc7d8)
+            "Thread-41" (0x92c3170)
+            "Thread-45" (0x92d3af0)
+            "Thread-33" (0x8bb8fd8)
+            "Thread-35" (0x8bbbaf8)
+            "123-SIGBN/DestinationQueue" (0x91fd360)
+            "Thread-24" (0x923fa68)
+            "Thread-25" (0x9240ff8)
+            "317-ENGBN/DestinationQueue" (0x92132d8)
+            "RMI LeaseChecker" (0x871c830)
+            "110-QMCO-POLSPLY/DestinationQueue" (0x921df58)
+            "AWT-Motif" (0x8a77b38)
+            "RMI RenewClean-[192.168.1.101:1213]" (0x83f7318)
+            "3-69-ARBN/DestinationQueue" (0x920d620)
+            "Thread-18" (0x91caea0)
+            "24-ODCO/DestinationQueue" (0x921b438)
+            "296-FSB/DestinationQueue" (0x92b11e0)
+            "259-QMCO-FSVC/DestinationQueue" (0x91fa840)
+            "Keep Alive Sender/CENTCOM-HHC" (0x8535db0)
+            "36-MEDEVACBN-GAMBCO/DestinationQueue" (0x922e218)
+            "Thread-22" (0x91dab80)
+            "203-FSB/DestinationQueue" (0x920ec48)
+            "3-FSB/DestinationQueue" (0x9237908)
+            "Keep Alive Sender/XVIIICORPS-HHC" (0x8734a90)
+            "Keep Alive Sender/1-BDE-3ID-HHC" (0x8736020)
+            "Keep Alive Sender/3-7-INFBN" (0x87375b0)
+            "Keep Alive Sender/26-FSB" (0x8738b40)
+            "Keep Alive Sender/3ID-HHC" (0x873a0d0)
+            "Keep Alive Sender/3-DISCOM-HHC" (0x873b660)
+            "Keep Alive Sender/703-MSB" (0x873cbf0)
+            "Keep Alive Sender/DIVARTY-3ID-HHB" (0x873e180)
+            "Keep Alive Sender/DFSP" (0x873f710)
+            "Keep Alive Sender/IOC" (0x8740ca0)
+            "Keep Alive Sender/FUTURE" (0x8742230)
+            "Keep Alive Sender/HNS" (0x87437c0)
+            "Keep Alive Sender/JTF-HHC" (0x8732140)
+            "632-MAINTCO/DestinationQueue" (0x91f92b0)
+            "DLAHQ/DestinationQueue" (0x92d44d0)
+            "Thread-26" (0x9242588)
+            "603-DASB/DestinationQueue" (0x92450a8)
+            "1-15-INFBN/DestinationQueue" (0x91ffe80)
+            "/DestinationQueue" (0x89fcf00)
+            "1-9-FABN/DestinationQueue" (0x91cd9c0)
+            "1-64-ARBN/DestinationQueue" (0x91d1a70)
+            "Thread-0" (0x8e73ce8)
+            "11-ENGBN/DestinationQueue" (0x91d04e0)
+            "Thread-1" (0x8f8bb10)
+            "Thread-2" (0x8f8d0a0)
+            "1-30-INFBN/DestinationQueue" (0x921c9c8)
+            "186-WTRPURDET/DestinationQueue" (0x9203f30)
+            "103-MIBN/DestinationQueue" (0x9214868)
+            "3-7-CAVSQDN/DestinationQueue" (0x922cc88)
+            "12-FABTRY/DestinationQueue" (0x9218918)
+            "226-QMCO-SPLY/DestinationQueue" (0x9209570)
+            "147-MEDLOGBN/DestinationQueue" (0x920ab00)
+            "ENGBDE-3ID-HHD/DestinationQueue" (0x91fbdd0)
+            "343-QMCO-SPLY/DestinationQueue" (0x91ed960)
+            "21-MED-CSHOSP/DestinationQueue" (0x91e8320)
+            "119-TCCO-CGO/DestinationQueue" (0x91dec30)
+            "396-TCCO-PLS/DestinationQueue" (0x91e4270)
+    Dynamic loading lock: <unowned>
+    Monitor IO lock: <unowned>
+    User signal monitor: <unowned>
+    Child death monitor: <unowned>
+    I/O monitor: <unowned>
+    Alarm monitor: <unowned>
+        Waiting to be notified:
+            <unknown thread> (0x8057dd8)
+    Thread queue lock: owner "Signal dispatcher" (0x8101a00) 1 entry
+        Waiting to be notified:
+            "Thread-47" (0x804c970)
+    Monitor registry: owner "Signal dispatcher" (0x8101a00) 1 entry
+

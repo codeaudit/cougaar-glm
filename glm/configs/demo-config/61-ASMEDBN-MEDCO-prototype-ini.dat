@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/61-ASMEDBN-MEDCO"
+
+[Relationship]
+Superior "21-MED-CSHOSP" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "Med Co, 61 Area Spt Med Bn"
+AlternateTypeIdentification String "SRC/08455L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "61-ASMEDBN-MEDCO"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WBHNAA"
+Echelon String ""
+UTC String "FRWVV"
+SRC String "08455L000100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HFTZ, InstallationTypeCode=AIN, CountryStateCode=48, CountryStateName=TEXAS, Name=FT_HOOD, Latitude=Latitude 31.13333degrees, Longitude=Longitude -97.7667degrees"

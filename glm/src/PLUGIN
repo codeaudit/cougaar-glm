@@ -1,0 +1,23 @@
+# PLUGIN entry for alpine.jar
+# format is "plugin name" = "fully qualified class name"
+DMPIClusterStartup = mil.darpa.log.alpine.plugin.DMPIClusterStartup
+OrgRTDataPlugIn = mil.darpa.log.alpine.plugin.organization.OrgRTDataPlugIn
+OrgReportPlugIn = mil.darpa.log.alpine.plugin.organization.OrgReportPlugIn
+GLSGUIInitPlugIn = mil.darpa.log.alpine.plugin.organization.GLSGUIInitPlugIn
+GLSRescindPlugIn = mil.darpa.log.alpine.plugin.organization.GLSRescindPlugIn
+GLSAllocatorPlugIn = mil.darpa.log.alpine.plugin.organization.GLSAllocatorPlugIn
+GLSExpanderPlugIn = mil.darpa.log.alpine.plugin.organization.GLSExpanderPlugIn
+StrategicTransportExpanderPlugIn = mil.darpa.log.alpine.plugin.strategictransport.StrategicTransportExpanderPlugIn
+StrategicTransportAllocatorPlugIn = mil.darpa.log.alpine.plugin.strategictransport.StrategicTransportAllocatorPlugIn
+PlanServerPlugIn = ui.xmlservice.PlanServerPlugIn
+UIPlugIn = mil.darpa.log.alpine.debug.ui.UIPlugIn
+DMPIClusterStartup = mil.darpa.log.alpine.plugin.DMPIClusterStartup
+OrgRTDataPlugIn = mil.darpa.log.alpine.plugin.organization.OrgRTDataPlugIn
+OrgReportPlugIn = mil.darpa.log.alpine.plugin.organization.OrgReportPlugIn
+GLSAllocatorPlugIn = mil.darpa.log.alpine.plugin.organization.GLSAllocatorPlugIn
+GLSExpanderPlugIn = mil.darpa.log.alpine.plugin.organization.GLSExpanderPlugIn
+StrategicTransportProjectionExpanderPlugIn = mil.darpa.log.alpine.plugin.sample.StrategicTransportProjectionExpanderPlugIn
+StrategicTransportAllocatorPlugIn = mil.darpa.log.alpine.plugin.strategictransport.StrategicTransportAllocatorPlugIn
+PlanServerPlugIn = ui.xmlservice.PlanServerPlugIn
+UIPlugIn = mil.darpa.log.alpine.debug.ui.UIPlugIn
+LDMXMLPlugIn = mil.darpa.log.alpine.plugin.ldm.LDMXMLPlugIn

@@ -1,0 +1,30 @@
+#
+# ALP default settings:  Override at your own risk.
+# This script is the ALP standard, it is not recommended.
+# On the other hand, the ALP_INSTALL_PATH changes all the time,
+# so use your best judgment :-)
+#
+
+echo "-- Setting ALP Default Environment settings"
+
+setenv PATH /usr/local/bin:/bin:/usr/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/bin/X11:/usr/X11R6/bin
+
+setenv JDK_HOME /usr/local/jdk1.2.2
+setenv PATH ${JDK_HOME}/bin:$PATH
+
+setenv ALP_INSTALL_PATH /opt/alp
+setenv PATH ${PATH}:${ALP_INSTALL_PATH}/bin
+setenv CLASSPATH ${ALP_INSTALL_PATH}/lib/alp-core.jar:${ALP_INSTALL_PATH}/lib/alpine.jar:${ALP_INSTALL_PATH}/lib/contrib.jar:${ALP_INSTALL_PATH}/lib/jcchart400K.jar:${ALP_INSTALL_PATH}/lib/jgl.jar:${ALP_INSTALL_PATH}/lib/xml4j_2_0_11.jar:${ALP_INSTALL_PATH}/lib/xygraf.jar
+
+if( ${LOGNAME} != "root" ) then
+	source /mnt/shared/DEMO/etc/setup_default_nodes.csh
+	if( $?DEFAULT_NODE ) then
+		echo "-- Default Node: $DEFAULT_NODE"
+	else
+		echo "-- Default Node not assigned for $HOSTNAME"
+	endif
+endif
+
+
+
+

@@ -1,0 +1,30 @@
+[Prototype]     MilitaryOrganization
+        
+[UniqueId]      "UTC/MilitaryOrganization"
+
+[UIC]		    "UIC/FORSCOM"
+
+[Relationship]
+#Superior        "XVIIICorps"         ""
+Superior        "CENTCOM"         ""
+Supporting      "COSCOM"             "SupportForceProvider"
+
+        
+[TypeIdentificationPG]                      
+TypeIdentification          String   "UTC/FORSCOMUTC"
+Nomenclature                String   "FORSCOM"
+AlternateTypeIdentification String   ""
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier	"FORSCOM"
+
+[OrganizationPG]
+Roles                 Collection<Role>  "StrategicTransportationProvider, SupportForceProvider"
+#Service              String            "ARMY"
+#Agency		          String	        "FORSCOM"
+
+[MilitaryOrgPG]
+UIC                         String   ""
+Echelon                     String   ""
+UTC                         String   ""
+SRC                         String   ""

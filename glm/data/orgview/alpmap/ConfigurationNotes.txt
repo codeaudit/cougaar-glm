@@ -1,0 +1,37 @@
+
+Notes on AlpMap Configuration:
+
+AlpMap configuration is mostly controlled by a bunch of ASCII 
+files in the alpmap directory.  
+
+
+jmap.views 
+  lists the views and background images available from the main 
+control window. The view lines name view (.vw) files in the alpmap 
+directory and background images in the images directory (under 
+Jmap).
+
+*.vw
+  The view files controlling what nodes go where.
+  These are created and edited using NetMap.
+
+i.nmdb
+  database file from NetMap
+
+alpmap.mbx
+  a raw file of commands to be sent to the AlpMap client;
+  You configure menus here.
+
+nms.init
+  Initialization file for starting plugins, setting attributes, or whatever.
+  The mbin command specifies the port to listen on - normally 5550.
+
+
+
+
+
+Notes on web browsers:
+
+Netscape 4.5, 4.6, and 4.61 seem to work great on Win32 systems. 
+Internet Explorer 5.0 on Win98 has problems with web 
+pages when using show.

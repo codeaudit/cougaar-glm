@@ -1,0 +1,9 @@
+"GLSInitPlugIn"                              0   0 380 120
+"GLSRescindPlugIn"                           0 120 380 120
+"OplanPlugIn"                                0 240 380  80
+"SourcingPolicy PlugIn"                      0 320 380  80
+"LimitResourcesPolicy PlugIn"                0 400 380 120
+"MCCTriggerCreatorPlugIn"                  380   0 380  80
+"PolicyPlugIn"                             380  80 380 110
+"AllocationAssessorPlugIn for <3-69-ARBN>" 380 240 380 400
+"AllocationAssessorPlugIn for <3ID>"         0 320 380 400

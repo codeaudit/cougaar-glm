@@ -1,0 +1,25 @@
+#!/bin/csh -f
+
+source $ALP_INSTALL_PATH/bin/setlibpath.csh
+set MYDOMAINS="-Dalp.domain.alp=org.cougaar.domain.glm.ALPDomain"
+set MYPROPERTIES="$MYDOMAINS -Dalp.install.path=$ALP_INSTALL_PATH -Duser.timezone=GMT"
+set MYMEMORY=""
+
+set node = $argv[1]
+set rest="$argv[2-]"
+if ( "$node" == "" ) then
+  set node="Clusters"
+endif
+
+if ( "$node" == "admin" ) then
+  set args=" -n Administrator -c -r TRNS -n $COMPUTERNAME -p $rest" 
+else 
+  set args="-n $node -c $rest"
+endif
+
+if ($?ALP_DEV_PATH) then
+    echo java $MYPROPERTIES -classpath $LIBPATHS $MYCLASSES $args
+endif
+
+java -green $MYPROPERTIES -classpath $LIBPATHS $MYCLASSES
+

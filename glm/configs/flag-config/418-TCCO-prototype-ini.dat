@@ -1,0 +1,32 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/418-TCCO"
+
+[Relationship]
+Superior "FORSCOM" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "418 Transportation Corps Company"
+AlternateTypeIdentification String "SRC/55728L200"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "418-TCCO"
+
+[OrganizationPG]
+Roles Collection<Role> "FuelTransportProvider"
+
+[MilitaryOrgPG]
+UIC String "WEZ5AA"
+Echelon String "05"
+UTC String "UBBNN"
+SRC String "55728L200"
+Hierarchy2525 String "1.x.3.1.3.4"
+HomeLocation		    GeolocLocation "GeolocCode=HKUZ,InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"
+
+
+
+[CSSCapabilityPG]
+Capabilities Collection<CSSCapability> "FuelTransportation Volume=275000gallons Duration=1days"

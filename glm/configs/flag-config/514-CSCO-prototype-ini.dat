@@ -1,0 +1,34 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/514-CSCO"
+
+[Relationship]
+Superior "FORSCOM" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "94 Combat Support Company"
+AlternateTypeIdentification String "SRC/43649L000"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "514-CSCO"
+
+[OrganizationPG]
+Roles Collection<Role> "GSMaintenanceProvider"
+
+[MilitaryOrgPG]
+UIC String "WB23AA"
+Echelon String "05"
+UTC String "HDM77"
+SRC String "43649L000"
+Hierarchy2525 String "1.x.3.1.3.5"
+HomeLocation		    GeolocLocation "GeolocCode=HKUZ,InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"
+
+
+[MaintenancePG]
+Level                       String  "GSMaintenance"
+
+[CSSCapabilityPG]
+Capabilities Collection<CSSCapability> "MOS/35E Count=50units Duration=1days, MOS/35F Count=30units Duration=1days, MOS/35H Count=20units Duration=1days, MOS/39B Count=30units Duration=1days, MOS/44E Count=60units Duration=1days"

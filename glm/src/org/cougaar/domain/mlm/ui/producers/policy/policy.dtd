@@ -1,0 +1,6 @@
+<!ELEMENT LogPlan (UIPolicy)+>
+<!ELEMENT UIPolicy (policyName, names+, values+, UUID)>
+<!ELEMENT policyName (#PCDATA)>
+<!ELEMENT UUID (#PCDATA)>
+<!ELEMENT names (#PCDATA)>
+<!ELEMENT values (#PCDATA)>

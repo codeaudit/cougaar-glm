@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/110-QMCO-POLSPLY"
+
+[Relationship]
+Superior "24-CSB-HHD" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "110 QM POL Supply Co"
+AlternateTypeIdentification String "SRC/10427L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "110-QMCO-POLSPLY"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WELKAA"
+Echelon String ""
+UTC String "J5TNN"
+SRC String "10427L000100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"

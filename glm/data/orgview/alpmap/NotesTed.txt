@@ -1,0 +1,51 @@
+
+To create and edit views for OrgView, we use the NetMap program on
+stout.bbn.com in the directory /home/haines/alp.  The database,
+i.nmdb, and view files, *.vw, are prepared here then copied to an
+alpmap directory on an Alp development machine, and eventually
+checked into alpine/data/orgview/alpmap.
+
+Before a node can appear in a view, it must first be added to the
+database, i.nmdb.  This file can be edited with a text editor such as
+emacs or xedit.  Note that the database name, i.e., the first name on
+a line in the database file, must start with a letter.  I use the
+letter N to prefix cluster names that start with a digit.  The exact
+cluster name appears within the single quotes;  case is important
+here.
+
+Once the database is ready, you can edit views:
+
+Start NetMap with
+
+td  -noautoscale  
+
+Bring up the view you want to edit by middle clicking on the
+appropriate community button.  To load the SupportForce.vw or any
+other view not mentioned in the main view, use the View/Load Any View
+pulldown menu.  
+
+Click the Edit View button to enable edit mode.
+
+To move one or more nodes in a view, select them, move the cursor to
+the new location, then press the middle mouse button.  A group of
+node can be selected by dragging over an area;  to move the group,
+middle click on the new location for the lower left corner of
+the drag box.
+
+To create a new view, use the New View Name dialog from EditView.  
+
+To add cluster nodes to a view, make sure nothing is selected and use
+the Add Selected Nodes dialog obtained by right clicking in the
+window.  To add a title, use the Add Label dialog.
+
+To delete nodes, select them, then use Delete Selected from
+EditView.
+
+You may resize a window using the regular X controls for that
+purpose.
+
+When you are finished editing, save the view by using Save View in
+the EditView pulldown menu.
+
+
+

@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/3E766"
+
+[UIC] "UIC/AVNBDE-3ID"
+
+[Relationship]
+Superior "3ID" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/3E766"
+Nomenclature String "Aviation BDE"
+AlternateTypeIdentification String "SRC/01302A000"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "AVNBDE-3ID"
+
+[OrganizationPG]
+Roles             Collection<Role>   "Headquarters"
+Service			Service	"Army"
+Agency			Agency 	"CENTCOM"
+
+[MilitaryOrgPG]
+UIC String "WEPQAA"
+Echelon String "08"
+UTC String "3E766"
+SRC String "01302A000"
+IsReserve       boolean     false
+Hierarchy2525               String   "1.x.3.1.1.4"
+HomeLocation     GeolocLocation   "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=Georgia, IcaoCode=, Name=FtStewart_GA, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"

@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/126-MEDTM-FSURG"
+
+[Relationship]
+Superior "21-MED-CSHOSP" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "126 MD Tm Fwd Surgical"
+AlternateTypeIdentification String "SRC/08518LA00100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "126-MEDTM-FSURG"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WBQDAA"
+Echelon String ""
+UTC String "F4R77"
+SRC String "08518LA00100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HFTZ, InstallationTypeCode=AIN, CountryStateCode=48, CountryStateName=TEXAS, Name=FT_HOOD, Latitude=Latitude 31.13333degrees, Longitude=Longitude -97.7667degrees"

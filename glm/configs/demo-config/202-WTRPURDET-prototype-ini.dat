@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/202-WTRPURDET"
+
+[Relationship]
+Superior "553-CSB-HHD" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "202 Water Purification Det"
+AlternateTypeIdentification String "SRC/10469L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "202-WTRPURDET"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WFB6AA"
+Echelon String ""
+UTC String "JJB33"
+SRC String "10469L000100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"

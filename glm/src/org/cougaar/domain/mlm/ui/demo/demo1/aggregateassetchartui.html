@@ -1,0 +1,54 @@
+<html>
+<head><title>Aggregate Assets</title></head>
+
+
+<body>
+<center>
+
+<table border=0 cellpadding=8 cellspacing=0 width=550>
+<tr><td align=center colspan=2>
+<hr noshade>
+<font color="#cc6600" face="Arial,Helvetica" size=4><b>Transportation Schedule</b></font>
+<hr noshade>
+</td></tr>
+<tr>
+
+<td width=450>
+<font face="Arial,Helvetica" size=2>
+<p>
+This illustrates the use of a java applet and a 3rd party charting package (JClass from the KL Group) to obtain information from a Plan Service Provider (PSP) and display that information.  This applet is communicating with the ALP mini-test configuration in order to obtain the aggregate assets owned by the 3ID cluster.  The information is sent from the cluster to the applet as an XML stream.  Currently, the only aggregate asset in the 3ID cluster in the mini-test configuration society is passengers; we expect that the data will be much more complete in the final society.
+</P>
+</font>
+</td>
+</tr>
+<tr><td align=center colspan=2>
+<hr noshade size=1>
+<font face="Arial,Helvetica" size=2></font>
+</td></tr>
+</table>
+
+<!--"CONVERTED_APPLET"-->
+<!-- CONVERTER VERSION 1.0 -->
+<OBJECT classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+WIDTH = 700 HEIGHT = 500  codebase="http://java.sun.com/products/plugin/1.2/jinstall-12-win32.cab#Version=1,2,0,0">
+<PARAM NAME = CODE VALUE = "org.cougaar.domain.mlm.ui.planviewer.AggregateAssetChartUI" >
+<PARAM NAME = ARCHIVE VALUE = "total.jar" >
+
+<PARAM NAME="type" VALUE="application/x-java-applet;version=1.2">
+<COMMENT>
+<EMBED type="application/x-java-applet;version=1.2" java_CODE = "org.cougaar.domain.mlm.ui.planviewer.AggregateAssetChartUI" java_ARCHIVE = "total.jar" WIDTH = 700 HEIGHT = 500   pluginspage="http://java.sun.com/products/plugin/1.2/plugin-install.html"><NOEMBED></COMMENT>
+
+</NOEMBED></EMBED>
+</OBJECT>
+
+<!--
+<APPLET  CODE = "AggregateAssetChartUI" ARCHIVE = "total.jar" WIDTH = 700 HEIGHT = 500 >
+
+
+</APPLET>
+-->
+<!--"END_CONVERTED_APPLET"-->
+
+</center>
+</body>
+</html>

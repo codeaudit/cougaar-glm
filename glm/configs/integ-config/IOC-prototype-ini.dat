@@ -1,0 +1,29 @@
+[Prototype]     SupportOrganization
+        
+[UniqueId]      "UTC/SupportOrg"
+
+[UIC]           "UIC/IOC"
+
+[Relationship]
+Supporting      "COSCOM"                 "AmmunitionProvider"
+Supporting      "3-FSB"                  "AmmunitionProvider"
+Supporting      "203-FSB"                "AmmunitionProvider"
+Supporting      "26-FSB"                 "AmmunitionProvider"
+Supporting      "603-DASB"               "AmmunitionProvider"
+
+[TypeIdentificationPG]                      
+TypeIdentification              String               "UTC/RTOrg"
+Nomenclature                    String               "IOC Cluster"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "IOC"
+
+[OrganizationPG]
+Roles                    Collection<Role>       "AmmunitionProvider"
+Agency               Agency    ""
+
+[MilitaryOrgPG]
+UIC                   String   ""
+Echelon               String   ""
+UTC                   String   ""
+SRC                   String   ""

@@ -1,0 +1,429 @@
+/*
+ * Copyright 1998 BBN Systems and Technologies, A Division of BBN Corporation
+ * 10 Moulton Street, Cambridge, MA 02138 (617) 873-3000
+ */
+
+
+package org.cougaar.domain.mlm.plugin.sql;
+
+import org.cougaar.core.plugin.EssentialPlugIn;
+import org.cougaar.util.StateModelException;
+import org.cougaar.core.cluster.Subscriber;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.cluster.SubscriberException;
+import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.core.cluster.ClusterServesPlugIn;
+import com.objectspace.jgl.UnaryPredicate;
+
+import java.util.Vector;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Hashtable;
+
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.File;
+
+import java.sql.*;
+
+/** Provide a JDBC binding to an ALP cluster.
+ * On one side, we present a normal plugin API.  On the other side,
+ * we parse a "Query file" and talk to JDBC and a set of QueryHandler 
+ * objects.
+ *
+ * The plugin expects at least one PlugIn parameter
+ * (via EssentialPlugIn.getParameters). The first parameter is
+ * interpreted as the name of a "query file".  We look for this file
+ * first in the current directory and then in $alphome/demo/queries/.
+ * Any other parameters are interpreted as query parameter settings,
+ * as though they were parsed from a global section of the query file.
+ * plugin=org.cougaar.domain.mlm.plugin.sql.JDBCPlugIn(foo.q, NSN=12345669)
+ *
+ * The query file is a description of one or more queries to execute
+ * on behalf of the plugin.  Comment lines (lines starting with '#') and
+ * empty lines are ignored.  Lines starting with '%' indicate the start 
+ * of a "query section" and the rest of the line names the QueryHandler 
+ * class to use.  All other lines are of the form "parameter=value" where
+ * the parameter values are made available to the current query.  Initial
+ * parameter settings (before a '%' line) are considered global and are 
+ * inherited by all following queries.  In addition, a special case 
+ * pseudo-query of "%Global" allows additional entries into the global table.
+ *
+ * A QueryHandler (for now) names a java class to instantiate for the 
+ * constructing an SQL expression and then parsing the rows of the results.
+ * If the QueryHandler name does not include a '.' character, the parser
+ * will prepend the value of the "Package" parameter (which defaults to
+ * "org.cougaar.domain.mlm.plugin.sql") in order to resolve the class.
+ * 
+ * See QueryHandler for more information.
+ *
+ * Reserved QueryFile Parameters:
+ *  Package	Default package for QueryHandler classnames
+ *  QueryFile	the QueryFile of the current Query
+ *  Driver	JDBC driver to use (oracle is already loaded)
+ *  Database	JDBC database descriptor (used in getConnection)
+ *  Username	JDBC Username (also "user")
+ *  Password	JDBC Password (also "password")
+ *  
+ * Also support parameter substitutions in the sql query string.
+ * If the QueryHandler returns 
+ *   "select nsn, quantity from nsns where nsn = ':NSN'"
+ * the JDBC plugin will substitute the value of parameter NSN
+ * for the string :NSN.  A colon character may be escaped with 
+ * a backslash.
+ **/
+public class JDBCPlugIn extends EssentialPlugIn
+  implements SQLService, LDMService {
+
+  public JDBCPlugIn(){}
+
+  // the global parameters table (String -> object/String
+  private Properties globalParameters = new Properties();
+  
+  // list of query objects
+  private Vector queries = new Vector();
+
+  // the name of the file to look for.
+  private String queryFile;
+
+  private Subscriber subscriber;
+
+  public void start() throws StateModelException {
+    // let the super run to deal with the uninteresting stuff
+    super.start();
+
+    try {
+      //load an initial driver
+      registerDriver ("oracle.jdbc.driver.OracleDriver");
+    } catch (Exception er) {
+      throw new RuntimeException("Couldn't register the Oracle JDBC driver: "+er);
+    }
+
+    // set up the subscription
+    subscriber = getSubscriber();
+    try {
+      subscriber.openTransaction();
+
+      // set up initial properties
+      initProperties();
+
+      // deal with the arguments.
+      grokArguments();
+
+      // parse the query file into our query vectors and parameters
+      parseQueryFile();
+
+      // sort the queryhandlers into categories.
+      grokQueries();
+
+      subscriber.closeTransaction();
+    } catch (SubscriberException se) {
+      System.err.println("Caught: "+se);
+    }
+  }
+  
+  // empty execute
+  public void execute() {
+    /*
+    for (Enumeration e = myAssets.elements(); e.hasMoreElements();){
+      System.err.println("\t"+e.nextElement());
+    }
+    */
+  }
+  
+  // keep track of all registered JDBC drivers.
+  private static Hashtable drivers = new Hashtable();
+
+  private void registerDriver(String driverName) throws Exception {
+    if (drivers.get(driverName) != null) 
+      return;
+
+    Driver driver = (Driver)(Class.forName(driverName).newInstance());
+    DriverManager.registerDriver(driver);
+    drivers.put(driverName,driver);
+  }
+
+  private void initProperties() {
+    // default package for QueryHandler
+    globalParameters.put("Package", "org.cougaar.domain.mlm.plugin.sql");
+  }
+
+  // retrieve and parse the arguments
+  private void grokArguments() {
+    // first, initialize the global table with some basics
+    Vector pv = getParameters();
+    if (pv == null) {
+      throw new RuntimeException("GenericSQL plugin requires at least one parameter");
+    } else {
+      boolean isFirst = true;
+      for (Enumeration ps = pv.elements(); ps.hasMoreElements(); ) {
+        String p = (String) ps.nextElement();
+        if (isFirst) {
+          isFirst = false;
+          globalParameters.put("QueryFile", p);
+          queryFile = p;
+        } else {
+          parseQueryParameter(globalParameters, p);
+        }
+      }
+      if (isFirst) {
+        // no args
+        throw new RuntimeException("GenericSQL plugin requires at least one parameter");
+      }
+    }
+  }
+
+  private String searchPath(String base) {
+    String path;
+    File f;
+    String sep = File.separator;
+    String aipath = System.getProperties().getProperty("org.cougaar.install.path");
+
+    // current directory
+    if ((new File(path = base)).canRead()) return path;
+
+    // other paths
+    if (aipath != null) {
+      // $ALP_INSTALL/demo/queries/$base
+      path = aipath+sep+"demo"+sep+"queries"+sep+base;
+      if ((new File(path)).canRead()) return path;
+    }
+    throw new RuntimeException("Could not find QueryFile "+base+".");
+  }
+
+  // parse the query file
+  private void parseQueryFile() {
+    String path = searchPath(queryFile);
+
+    try {
+      BufferedReader in = new BufferedReader(new FileReader(path));
+      Properties pt = null;
+      for (String line = in.readLine(); line != null; line=in.readLine()) {
+        
+        line = line.trim();     // ugly
+
+        // skip empty lines
+        if (line.length() == 0)
+          continue;
+        
+        int len;
+        // handle continuation lines
+        while ((len = line.length()) > 0 && '\\' == line.charAt(len-1)) {
+          line = (line.substring(0,len-1))+(in.readLine().trim());
+        }
+
+        char c = line.charAt(0);
+
+        // skip comments
+        if (c == '#') 
+          continue;
+
+        // queryhandler section
+        if (c == '%') {
+          String s = line.substring(1).trim(); // skip the %
+          if (s == null || s.length() == 0 || s.equals("Global")) {
+            // global handler parameters
+            pt = null;
+          } else {
+            // s names a queryhandler class (for now)
+            try {
+              if (s.indexOf('.') < 0) { // if the class has no package..
+                // try the default package (which is the same as ours)
+                String pkg = globalParameters.getProperty("Package");
+                if (pkg != null) {
+                  s = pkg+"."+s;
+                }
+              }
+              QueryHandler cqh= (QueryHandler)(Class.forName(s).newInstance());
+              cqh.initialize(this, // sqlservice
+                             this, // ldmservice
+                             getClusterIdentifier(),
+                             getCluster(),
+                             getClusterObjectFactory(),
+                             pt = (Properties)globalParameters.clone(),
+                             subscriber);
+              queries.addElement(cqh);
+            } catch (Exception bogon) {
+              System.err.println("Exception creating "+s+": "+bogon);
+              bogon.printStackTrace();
+            }
+          }
+        } else {
+          // should be a param=value line
+          parseQueryParameter(((pt==null)?globalParameters:pt),
+                              line);
+        }
+      }
+    } catch (Exception e) {
+      System.err.println("Error reading '"+path+"': "+e);
+      e.printStackTrace();
+      throw new RuntimeException("No QueryFile: "+e);
+    }
+  }
+
+  private void parseQueryParameter(Properties table, String s) {
+    int i = s.indexOf('=');
+    String p = s.substring(0,i).trim();
+    String v = s.substring(i+1).trim();
+    table.put(p,v);
+  }
+
+  /** sort queryhandlers into categories.
+   * PeriodicQueries will get executed synchronously for the first
+   * time here.
+   **/
+  private void grokQueries() {
+    for (Enumeration e = queries.elements(); e.hasMoreElements();) {
+      QueryHandler qh = (QueryHandler) e.nextElement();
+      qh.start();
+      if (qh instanceof PrototypeProvider) {
+        //System.err.println("Registered "+qh+" as PrototypeProvider");
+        prototypeProviders.addElement(qh);
+      } else if (qh instanceof PropertyProvider) {
+        //System.err.println("Registered "+qh+" as PropertyProvider");
+        propertyProviders.addElement(qh);
+      } 
+      // else it was just a PeriodicQuery.
+    }
+  }
+
+  private String produceQuery(QueryHandler qh, String s) {
+    if (s.indexOf(':') < 0) {   // no params to handle
+      return s;
+    }
+
+    char[] scs = s.toCharArray();
+    int l = s.length();
+    StringBuffer sb = new StringBuffer();
+
+    int i = 0;
+    while (i < l) {
+      char c = scs[i];
+
+      if (c == '\\') {          // quoted?
+        i++;
+        sb.append(scs[i]);
+        i++;
+      } else if (c == ':') {    // param subst?
+        i++;
+        // find the end of the var
+        int j;
+        for (j = i; j<l && Character.isLetterOrDigit(scs[j]); j++)
+          ;
+        // j is now the index of the first non symbol char past the colon
+        String param = s.substring(i,j);
+        String value = qh.getParameter(param);
+        if (value == null) {
+          throw new RuntimeException("Parameter Substitution problem in '"+s+
+                                     "' at "+(i-1));
+        }
+        sb.append(value);
+        i = j;
+      } else {
+        sb.append(c);
+        i++;
+      }
+    }
+
+    // sb contains the substituted string
+    return sb.toString();
+  }
+
+  //
+  // SQLService interface
+  //
+
+  public void executeSQL(String rawSql, QueryHandler qh) {
+    try {
+      String driver = qh.getParameter("Driver");
+      if (driver != null) {
+        //registerDriver ("driver");
+        registerDriver(driver);
+      }
+
+      String dbname = qh.getParameter("Database");
+      if (dbname == null) {
+        throw new RuntimeException("No Connection parameter.");
+      }
+      
+      Properties props = new Properties();
+      String user = qh.getParameter("Username");
+      if (user == null) user = qh.getParameter("user");
+      String pass = qh.getParameter("Password");
+      if (pass == null) pass = qh.getParameter("password");
+      if (user == null || pass == null)
+        throw new RuntimeException("Incomplete user/password parameters");
+      props.put("user", user);
+      props.put("password", pass);
+
+      // do Param substitution
+      String sql;
+      sql = produceQuery(qh, rawSql);
+      System.err.println("Query = '"+sql+"'");
+
+      //System.err.println("Opening Connection to " + dbname);
+      Connection conn = DriverManager.getConnection(dbname, props);
+      //System.err.println("JDBC successfully connected... creating a statement");
+      Statement statement = conn.createStatement();
+      //System.err.println("created statement");
+
+      ResultSet rset = statement.executeQuery(sql);
+      //System.err.println("executedQuery");
+      
+      ResultSetMetaData md = rset.getMetaData();
+      int ncols = md.getColumnCount();
+
+      Object row[] = new Object[ncols];
+
+      //System.err.println("Getting rows");
+      while (rset.next()) {
+        for (int i = 0; i < ncols; i++)
+          row[i] = rset.getObject(i+1);
+
+        qh.processRow(row);
+      }
+      System.err.println("done");
+      statement.close();
+
+      conn.close();
+
+    } catch (Exception e) {
+      System.err.println("Caught exception while executing a query: "+e);
+      e.printStackTrace();
+    }
+  }
+
+  private Vector prototypeProviders = new Vector();
+  private Vector propertyProviders = new Vector();
+  
+  //
+  // LDMService
+  //
+
+  public Asset getPrototype(String typeid) {
+    //System.err.print("getPrototype for '"+typeid+"' = ");
+    for (Enumeration e = prototypeProviders.elements(); e.hasMoreElements();){
+      PrototypeProvider pp = (PrototypeProvider) e.nextElement();
+      if (pp.canHandle(typeid)) {
+        Asset a = pp.getAssetPrototype(typeid);
+        //System.err.println(a.toString());
+        return a;
+      }
+    }
+    return null;
+  }
+
+  public void provideProperties(Asset asset) {
+    //System.err.println("Providing properties to "+asset);
+    for (Enumeration e = propertyProviders.elements(); e.hasMoreElements();){
+      PropertyProvider pp = (PropertyProvider) e.nextElement();
+      pp.provideProperties(asset);
+    }
+  }
+}
+
+

@@ -1,0 +1,42 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/NHTTT"
+
+[UIC] "UIC/203-FSB"
+
+[Relationship]
+Superior "DISCOM-3ID" ""
+Supporting "2-69-ARBN"  "DSMaintenanceProvider, GSMaintenanceProvider, SparePartsProvider, AmmunitionProvider, FuelSupplyProvider"
+Supporting "1-30-INFBN" "DSMaintenanceProvider, GSMaintenanceProvider, SparePartsProvider, AmmunitionProvider, FuelSupplyProvider"
+Supporting "1-15-INFBN" "DSMaintenanceProvider, GSMaintenanceProvider, SparePartsProvider, AmmunitionProvider, FuelSupplyProvider"
+Supporting "1-10-FABN"  "DSMaintenanceProvider, GSMaintenanceProvider, SparePartsProvider, AmmunitionProvider, FuelSupplyProvider"
+Supporting "317-ENGBN"  "DSMaintenanceProvider, GSMaintenanceProvider, SparePartsProvider, AmmunitionProvider, FuelSupplyProvider"
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/NHTTT"
+Nomenclature String "203 FSB"
+AlternateTypeIdentification String "SRC/63005L300"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "203-FSB"
+
+[OrganizationPG]
+Roles          Collection<Role>   "DSMaintenanceProvider, GSMaintenanceProvider, SparePartsProvider, AmmunitionProvider, FuelSupplyProvider"
+Service			Service	"Army"
+Agency			Agency 	"FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WJD2AA"
+Echelon String "06"
+UTC String "NHTTT"
+SRC String "63005L300"
+Hierarchy2525               String   "1.x.3.1.3"
+IsReserve       boolean     false
+HomeLocation     GeolocLocation   "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=Georgia, IcaoCode=, Name=FtStewart_GA, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"
+
+[CSSCapabilityPG]
+Capabilities Collection<CSSCapability> "MOS/27E Count=10units Duration=1days, MOS/35D Count=10units Duration=1days, MOS/35E Count=30units Duration=1days, MOS/44B Count=10units Duration=1days, MOS/45B Count=10units Duration=1days, MOS/45G Count=70units Duration=1days, MOS/45K Count=200units Duration=1days, MOS/52C Count=10units Duration=1days, MOS/52D Count=20units Duration=1days, MOS/63H Count=420units Duration=1days, MOS/63J Count=20units Duration=1days, MOS/63W Count=20units Duration=1days,AmmunitionHandling Mass=20tons Duration=1days, FuelHandling Volume=100000gallons Duration=1days"
+#Capabilities Collection<CSSCapability> "MOS/29E Count=44units Duration=1days, MOS/29J Count=37units Duration=1days, MOS/29N Count=15units Duration=1days, MOS/29S Count=7units Duration=1days, MOS/35E Count=9units Duration=1days, MOS/39C Count=15units Duration=1days, MOS/39E Count=15units Duration=1days, MOS/43M Count=33units Duration=1days, MOS/44B Count=132units Duration=1days, MOS/44E Count=89units Duration=1days, MOS/45B Count=62units Duration=1days, MOS/45G Count=53units Duration=1days, MOS/45K Count=62units Duration=1days, MOS/52C Count=151units Duration=1days, MOS/52D Count=310units Duration=1days, MOS/62B Count=36units Duration=1days, MOS/63G Count=192units Duration=1days, MOS/63H Count=239units Duration=1days, MOS/63J Count=131units Duration=1days, MOS/63W Count=734units Duration=1days"
+
+[MaintenancePG]
+Level			String   "DSMaintenance"

@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/5-20-INFBN"
+
+[Relationship]
+Superior "3-BDE-2ID-HHC" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "5/20 Inf Bn"
+AlternateTypeIdentification String "SRC/"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "5-20-INFBN"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WAJKAA"
+Echelon String ""
+UTC String "06222"
+SRC String ""
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HGUH, InstallationTypeCode=AIN, CountryStateCode=53, CountryStateName=WASHINGTON, Name=FT_LEWIS, Latitude=Latitude 47.0833degrees, Longitude=Longitude -122.6degrees"

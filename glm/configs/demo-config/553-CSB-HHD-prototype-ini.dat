@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/553-CSB-HHD"
+
+[Relationship]
+Superior "24-SPTGP-HHC" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "HHD 553 Corps Spt Bn"
+AlternateTypeIdentification String "SRC/63426L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "553-CSB-HHD"
+
+[OrganizationPG]
+Roles Collection<Role> "Superior"
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WEU5AA"
+Echelon String ""
+UTC String "N21VV"
+SRC String "63426L000100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HFTZ, InstallationTypeCode=AIN, CountryStateCode=48, CountryStateName=TEXAS, Name=FT_HOOD, Latitude=Latitude 31.13333degrees, Longitude=Longitude -97.7667degrees"

@@ -1,0 +1,23 @@
+[Prototype]     SupportOrganization
+
+[UniqueId]      "UTC/SupportOrg"
+
+[UIC]           "UIC/C5WingDover"
+
+[Relationship]
+Superior        "OrganicAir"         "C-5TransportProvider"
+
+[TypeIdentificationPG]
+TypeIdentification                 String               "UTC/RTOrg"
+Nomenclature                       String               "C5WingDover Cluster"
+AlternateTypeIdentification        String               "SRC/87004L100100"
+
+[ClusterPG]
+ClusterIdentifier                  ClusterIdentifier               "C5WingDover"
+
+[OrganizationPG]
+Roles                              Collection<Role>     "C-5TransportProvider"
+
+[MilitaryOrgPG]
+HomeLocation	GeolocLocation "GeolocCode=FJXT, Name=String Dover AFB DE, Latitude=Latitude 39.12 DEGREES, Longitude=Longitude -75.46 DEGREES"
+

@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/512-QMCO-WTRSPLY"
+
+[Relationship]
+Superior "553-CSB-HHD" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "512 QM Water Supply Co"
+AlternateTypeIdentification String "SRC/10468L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "512-QMCO-WTRSPLY"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WFS4AA"
+Echelon String ""
+UTC String "JHB33"
+SRC String "10468L000100"
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"

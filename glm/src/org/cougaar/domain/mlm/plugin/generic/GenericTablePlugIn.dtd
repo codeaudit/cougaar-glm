@@ -1,0 +1,16 @@
+<!ELEMENT commands (command)*>
+<!ELEMENT command (task, (expand|allocate))>
+<!ELEMENT expand (task)*>
+<!ELEMENT allocate ((cluster)|((relation)?,(role)*)) >
+<!ELEMENT cluster EMPTY>
+<!ATTLIST cluster name CDATA #REQUIRED>
+<!ELEMENT relation EMPTY>
+<!ATTLIST relation type CDATA #REQUIRED>
+<!ELEMENT role EMPTY>
+<!ATTLIST role name CDATA #REQUIRED>
+<!ELEMENT task (phrase)?>
+<!ATTLIST task verb CDATA #REQUIRED>
+<!ELEMENT phrase EMPTY>
+<!ATTLIST phrase 
+  for CDATA #REQUIRED
+  oftype CDATA #REQUIRED>

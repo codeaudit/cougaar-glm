@@ -1,0 +1,212 @@
+2000-11-21  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* Several
+	Use alp.util.OptionPane instead of javax.swing.JOptionPane to cure
+	dialog size problems in demo mode. Not every instance has been
+	converted. The remainder can be converted as needed.
+
+2000-11-10  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* Everywhere
+	All uses of DEMANDRATE prepositional phrase (and DEMANDMULTIPLIER)
+	have been converted to use preferences and allocation results
+	instead. This enables changing these values without rescinding and
+	allows failback to be implemented.
+
+	* AlpineAspectType
+	Contains aspect type definitions and utilities for aspect types
+	that are not part of the core. Specifically, DEMANDRATE and
+	DEMANDMULTIPLIER aspects.
+
+2000-11-03  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* TimedTaskEventReport
+	Fixed Bug #73
+
+2000-09-15  Michael Thome  <mthome@bbn.com>
+
+	* Various
+	Update references to old Rate measure to AbstractRate.
+
+2000-09-11  Michael Thome  <mthome@bbn.com>
+
+	* alpprops.def
+	Add some AirLiftPG slots for TOPS.
+
+2000-08-25 Jim Winston    <jwinston@bbn.com>
+	* DetailRequestLP, QueryRequest, OplanCoupon, GetOplanPlugIn
+	Added directive messages and support in logic provider for querying
+	remote logplans. The first use is for Oplan propagation. Instead
+	of sending the entire Oplan to all clusters, they get an OplanCoupon
+	instead. The GetOplanPlugIn uses the new query method to retrieve
+	only the pertinent pieces of the Oplan from its home cluster.
+
+2000-08-11 Jim Winston    <jwinston@bbn.com>
+
+	* LightweightManifest
+	Added LightweightManifest capability. Consists of new logic provider,
+	asset, property group, and directives
+	
+2000-08-11  Michael Thome  <mthome@bbn.com>
+
+	* OPlan
+	Fix some gross inefficiencies in OPlan data structure.  Share as
+	much immutable structure as possible.  This cuts the serialized
+	size in half.
+
+2000-07-21  Jim Winston    <jwinston@bbn.com>
+	* mil.darpa.log.alp.domain.oplan
+	oplanID is a String again
+	There is a UID as well as an oplanID
+	OplanContributors get/set OplanUID
+	
+2000-07-17  Michael Thome  <mthome@bbn.com>
+
+	* AssignedPG (alpprops.def)
+	Deprecate all accessors of AssignedPG because RelationshipSchedule 
+	is the new new thing.
+
+2000-06-21  Michael Thome  <mthome@bbn.com>
+
+	* OrgRTDataPlugIn
+	Fix reflection to be able to construct Roles and other
+	interning-like plan objects.
+
+2000-06-02  Beth DePass  <bdepass@bbn.com>
+  
+  * GLS PlugIns
+  Update wrt propagation changes
+  
+2000-05-23  Michael Thome  <mthome@bbn.com>
+
+	* FoodPG
+	Removed refrigeration attributes, added type attribute (SRA).
+
+2000-05-17  Michael Thome  <mthome@bbn.com>
+
+	* DirectiveMessage, etc.
+	Propagate all ChangeReports through LPs and through message sends.
+	
+2000-05-09  Michael Thome  <mthome@bbn.com>
+
+	* ChangeReporter
+	A trivial plugin which watches and reports on detailed change
+	information going through the logplan.
+
+2000-04-14  Michael Thome  <mthome@bbn.com>
+
+	* StrategicTransportProjectorPlugIn
+	Update so that it really works under 6.x.
+
+2000-04-04  Jim Winston    <jwinston@bbn.com>
+	* mil.darpa.log.alp.domain.oplan
+	oplanID is now a UID instead of a String
+	
+2000-03-21  Michael Thome  <mthome@bbn.com>
+
+	* All
+	Finish removal of JGL
+
+2000-03-06  Michael Thome  <mthome@bbn.com>
+
+	* OrgRTDataPlugIn
+	Update using real object for ClusterIdentifiers
+
+2000-03-03  Michael Thome  <mthome@bbn.com>
+
+	* mil.darpa.log.alp.domain
+	ALP (logistics) domain moved from core.
+
+2000-02-16  Ray Tomlinson  <rtomlinson@bbn.com>
+
+	* OPlanPlugIn
+	Remember if Oplan has been published in a private state variable
+	so the GUI can be correct after rehydration.
+
+	* GLSGUIInitPlugIn
+	Use Oplan from OplanPlugIn instead of create our own.
+
+	* GLSGUIInitPlugIn
+	Add private state variable to count root tasks sent. Include the
+	count in the feedback in the GUI. Disable the button until all the
+	ducks are lined up and it is legitimate to send a root
+	task. Include the task number in the task using "Sequence"
+	preposition.
+
+1999-12-17  Michael Thome  <mthome@bbn.com>
+
+	* Various
+	Fix ambiguous method references: these are cases where a method is 
+	accessible via both inheritance and enclosing (outer) instances.
+	Fix overgeneralization of try-catch(Exception) where
+	try-catch(RuntimeException) is more appropriate.
+
+	* ConnectionPool, Connection, ThreadedPlanServer
+	Reimplement ConnectionPool - Less expensive, configurable options, 
+	support for multiple instances, cleaner handshaking, more
+	documentation and diagnostics.  Also moved Connection to a
+	separate file.
+
+1999-11-22  Michael Thome  <mthome@bbn.com>
+
+	* StrategicTransportProjectorPlugIn
+	Prevent silly traversal of parent tasks across cluster boundaries.
+
+1999-11-19  Michael Thome  <mthome@bbn.com>
+
+	* PropagationPlugIn
+	Only propagate top-level transferrables, not
+	OplanContributors. Warn about and then ignore OplanContributor
+	directives in forwarding files (e.g. forward.xml).
+
+	* OplanPlugIn, OplanFileReader
+	Load Oplan objects to match new Oplan layout with
+	OplanContributors as attatched Oplan parts which also get entered
+	into the logplan.
+	
+	* OrgReportPlugIn
+	Attempt to solve the problem where a rescind of an ReportForDuty
+	directive cannot figure out how to reconnect the org to it's old
+	superior.  The hacked solution is to assume that the org which
+	directed the reassignment in the first place should be the new
+	superior. 
+
+1999-10-14  Michael Thome  <mthome@bbn.com>
+
+	* OrgRTDataPlugIn
+	Make primitive types really work.  example:
+		[MilitaryOrgPG]
+		IsReserve	boolean	"true"
+
+	Make complex objects as values work in the case of LDMF-created
+	objects.  The syntax is an extension of the current one.  A PG
+	value line may look like: 
+		Property	TypeToCreate	parameters
+	where Property is an interface, e.g. in alp.ldm.plan that the LDMF 
+	can create with no arguments, and paramters is a comma-separated
+	string like:
+		"Slot1=value, Slot2=type value"
+	Note that there are two allowed slot/value syntaxes.  If no value
+	type is specified, it assumes String.  The first form looks for a
+	method on the LDMF-created object "obj" of the signature
+	"setSlot1(String)".  The second form will create an object of the
+	spec "type value", which may be any sort of object, including
+	other LDMF objects or even Collection types, and then looks for a
+	"setSlot2" method which will accept the result type.  Example:
+		[MilitaryOrgPG]
+		HomeLocation	GeolocLocation "GeolocCode=BBNV, IcaoCode=String KBOS"	
+	A better implementation of the first form (implicit type) and look 
+	for a setter which takes a type that is known to be constructable
+	with a string.
+	
+1999-10-04  Michael Thome  <mthome@bbn.com>
+
+	* OrgRTDataPlugIn
+	Lowercase type specifiers in cluster ini files are now interpreted 
+	as builtin types rather than wrapper classes.
+
+1999-09-23  Michael Thome  <mthome@bbn.com>
+
+	* ChangeLog
+	Added a ChangeLog for alpine plugins.
+

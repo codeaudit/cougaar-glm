@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/571-MEDDET-AMBL"
+
+[Relationship]
+Superior "21-MED-CSHOSP" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "571 Med Det (Ambl)(UH-1)"
+AlternateTypeIdentification String "SRC/"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "571-MEDDET-AMBL"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WEAEAA"
+Echelon String ""
+UTC String "FX733"
+SRC String ""
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HDDL, InstallationTypeCode=AIN, CountryStateCode=08, CountryStateName=COLORADO, Name=FT_CARSON, Latitude=Latitude 38.6833degrees, Longitude=Longitude -104.7667degrees"

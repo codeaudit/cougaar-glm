@@ -1,0 +1,3 @@
+//load org.cougaar.domain.mlm.ui.orgviewServer.WebClusters whitney "http://whitney.alpine:5555"
+plugin org.cougaar.domain.mlm.ui.orgviewServer.PipeClusters "http://localhost:5555"
+mbin 5550

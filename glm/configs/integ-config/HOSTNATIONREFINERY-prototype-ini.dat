@@ -1,0 +1,26 @@
+[Prototype]     SupportOrganization
+        
+[UniqueId]      "UTC/SupportOrg"
+
+[UIC]           "UIC/HOSTNATIONREFINERY"
+
+[Relationship]
+Superior        "XVIIICorps"      ""
+Supporting      "HNS"                  "FuelSupplyProvider"
+
+[TypeIdentificationPG]                      
+TypeIdentification              String               "UTC/RTOrg"
+Nomenclature                    String               "Host Nation Refinery Cluster"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "HOSTNATIONREFINERY"
+
+[OrganizationPG]
+Roles                    Collection<Role>       "FuelSupplyProvider"
+Agency               Agency    ""
+
+[MilitaryOrgPG]
+UIC                   String   ""
+Echelon               String   ""
+UTC                   String   ""
+SRC                   String   ""

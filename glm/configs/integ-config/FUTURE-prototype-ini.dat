@@ -1,0 +1,47 @@
+[Prototype]     SupplyOrganization
+        
+[UniqueId]      "UTC/SupplyOrg"
+
+[UIC]           "UIC/FUTURE"  
+
+[Relationship]
+#These relationships are for the no-DELTA configuration
+Supporting      "3-FSB"                  "SparePartsProvider"
+#Supporting      "203-FSB"                "SparePartsProvider"
+#Supporting      "26-FSB"                 "SparePartsProvider"
+#Supporting      "603-DASB"               "SparePartsProvider"
+#Supporting      "LRC"                    "SparePartsProvider"
+#Superior        "DLAHQ"              ""
+#The following two relationships should be what is needed for the demo
+Superior        "CENTCOM"              ""
+#Supporting      "DLAHQ"                  "NonS9CSparePartsProvider"
+        
+[TypeIdentificationPG]                      
+TypeIdentification          String  "UTC/RTOrg"
+Nomenclature                String  "DLASupply Cluster"
+
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "FUTURE"
+
+[OrganizationPG]
+# NonS9CSparePartsProvider should be the only role for the demo
+Roles                Collection<Role>   "NonS9CSparePartsProvider"
+#Roles                Collection<Role>   "SparePartsProvider"
+Agency	             Agency    "DLA"
+
+[AssignmentPG]
+Name			String 		"Test Position 1"
+Latitude        	Latitude 	40.1 DEGREES
+Longitude        	Longitude 	32.1 DEGREES
+GeolocCode		String		"ABC1"
+
+[MilitaryOrgPG]
+UIC			String		"FUTURE"
+Echelon		String		"10"
+UTC			String		"RTOrg"
+SRC			String		""
+Hierarchy2525		String		"1.x.3.1.3.3.11"
+IsReserve		boolean		false
+HomeLocation		GeolocLocation
+"GeolocCode=HCHM, InstallationTypeCode=STG, CountryStateCode=51, CountryStateName=VIR,  Name=FTBELVOIR, Latitude=Latitude 38.70degrees, Longitude=Longitude -77.17degrees"

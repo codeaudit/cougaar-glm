@@ -1,0 +1,298 @@
+;!generate: org.cougaar.tools.build.AssetWriter alpassets.def
+
+;
+; <copyright>
+;  Copyright 1997-2000 Defense Advanced Research Projects
+;  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+;  Raytheon Systems Company (RSC) Consortium).
+;  This software to be used only in accordance with the
+;  COUGAAR licence agreement.
+; </copyright>
+;
+
+package=org.cougaar.domain.glm.asset
+
+propertydefs = alpprops.def, \
+        org/cougaar/domain/planning/ldm/asset/properties.def
+
+
+;; Basis for generating class definitions for Subclasses of Assets
+;;
+
+[Inventory ALPAsset]
+slots=ScheduledContentPG, ReportSchedulePG
+
+
+[VolumetricInventory Inventory]
+slots = VolumetricStockagePG
+
+[Capacity ALPAsset]
+slots=ScheduledContentPG
+
+[Ammunition ClassVAmmunition]
+
+[Barge CargoVehicle]
+slots=WaterVehiclePG, \
+	TowPG
+
+[BulkPOL ClassIIIPOL]
+slots=FuelPG, LiquidPG
+
+[BulkWater ClassISubsistence]
+slots=WaterPG, \
+	LiquidPG
+
+[CargoFixedWingAircraft CargoVehicle]
+slots=AirLiftPG, \
+	AirVehiclePG, \
+	AirSelfPropulsionPG
+
+[CargoLoad AssetGroup]
+
+[CargoRotaryWingAircraft CargoVehicle]
+slots= LiftPG, \
+	AirVehiclePG, \
+	AirSelfPropulsionPG
+
+[CargoShip CargoVehicle]
+slots= TowPG, \
+	ShipConfigurationPG, \
+	WaterSelfPropulsionPG, \
+	WaterVehiclePG 
+
+[CargoVehicle ClassVIIMajorEndItem]
+slots = ContainPG
+
+[ClassIIClothingAndEquipment PhysicalAsset]
+slots=PackagePG
+
+[ClassIIIPOL PhysicalAsset]
+
+[ClassISubsistence PhysicalAsset]
+
+[ClassIVConstructionMaterial PhysicalAsset]
+
+[ClassIXRepairPart PhysicalAsset]
+slots=PackagePG
+
+[ClassVAmmunition PhysicalAsset]
+slots=AmmunitionPG, \
+	PackagePG
+
+[ClassVIIIMedical PhysicalAsset]
+slots=PackagePG
+
+[ClassVIIMajorEndItem PhysicalAsset]
+slots= MaintenancePG, \
+	MovabilityPG, \
+	AssetConsumptionRatePG, \
+	MEIPG
+
+[ClassVIPersonalDemandItem PhysicalAsset]
+slots= PackagePG
+
+[ClassXNonMilitaryItem PhysicalAsset]
+slots= PackagePG
+
+[Clothing ClassIIClothingAndEquipment]
+
+[Consumable ClassIXRepairPart]
+slots=ConsumablePG
+
+[Container ClassVIIMajorEndItem]
+doc=A standard-sized box that can be placed on flatbed trailer, train \
+	or ship.  This refers to a very specific class of object, not the \
+	generic "container".  See "Package" instead.
+slots=ScheduledContentPG, ContainPG
+
+[Package PhysicalAsset]
+doc=A usually temporary object which contains other objects, e.g. for\
+shipping.  Examples are pallets, boxes, etc.
+slots=ScheduledContentPG, ContainPG
+
+[Convoy AssetGroup]
+
+[Deck ALPAsset]
+slots=DeckPG
+
+[Explosive ClassVAmmunition]
+
+[Facility ALPAsset]
+slots=FacilityPG
+
+[FightingShip Weapon]
+slots=ContainPG, \
+	TowPG, \
+	WaterVehiclePG, \
+	WaterSelfPropulsionPG
+
+[FixedWingAircraftWeapon Weapon]
+slots=AirVehiclePG, \
+	AirSelfPropulsionPG
+
+[Food ClassISubsistence]
+slots=FoodPG, \
+	PackagePG
+
+[LoadPlan AssetGroup]
+
+[Manifest AssetGroup]
+
+[LightweightManifest ALPAsset]
+slots=DetailKeyPG
+
+[MilitaryPerson Person]
+slots=MilitaryPersonPG, \
+      AssignmentPG
+
+[Missile Weapon]
+
+[MissileLauncher Weapon]
+
+[ClientOrganization OrganizationAdapter]
+slots=ClusterPG
+
+[Organization OrganizationAdapter]
+;; OrganizationAdapter extends Asset
+slots=ManagedAssetPG, \
+	AssignmentPG, \
+	ClusterPG, \
+	OrganizationPG
+
+[MilitaryOrganization Organization]
+slots=MilitaryOrgPG
+
+[OtherIndividualEquipment ClassIIClothingAndEquipment]
+slots=RepairabilityPG
+
+[OtherMajorEndItem ClassVIIMajorEndItem]
+
+[OtherWeapon Weapon]
+
+[PackagedPOL ClassIIIPOL]
+slots=PackagePG
+
+[Person ALPAsset]
+slots=PersonPG
+;	PersonSustainmentPG
+
+[PhysicalAsset ALPAsset]
+slots = PhysicalPG
+
+[RailCar CargoVehicle]
+slots= RailVehiclePG
+
+[Repairable ClassIXRepairPart]
+slots=RepairabilityPG, \
+	RepairablePG
+
+[RotaryWingAircraftWeapon Weapon]
+slots=AirVehiclePG, \
+	AirSelfPropulsionPG, \
+	ContainPG, \
+	LiftPG
+
+[SelfPropelledGroundWeapon Weapon]
+slots= GroundVehiclePG, \
+	GroundSelfPropulsionPG
+
+[SmallArms ClassIIClothingAndEquipment]
+slots=RepairabilityPG
+
+[TowedGroundWeapon Weapon]
+slots=GroundVehiclePG
+
+[Trailer CargoVehicle]
+slots= GroundVehiclePG,\
+	TowPG
+
+[Train AssetGroup]
+
+[TrainEngine CargoVehicle]
+slots=RailVehiclePG, \
+	RailSelfPropulsionPG, \
+	TowPG
+
+[TransportationAirLink TransportationLink]
+slots=AirLinkPG
+
+;; Maybe should be by hand
+;[TransportationLink Facility]
+;slots= TransportationNode Origin, \
+;	TransportationNode Destination, \
+;	org.cougaar.domain.planning.ldm.measure.Distance Distance, \
+;	TransportationNetwork
+;Origin.init=null
+;Origin.exact=true
+;Destination.init=null
+;Destination.exact=true
+;Distance.init=null
+;Distance.exact=true
+;TransportationNetwork.init=null
+;TransportationNetwork.exact=true
+
+[TransportationLinkPoint ALPAsset]
+slots=PositionPG
+
+;; by hand. Something like this would be nice:
+;[TransportationNetwork Facility]
+;slots= Vector Links,\
+;	Vector Nodes
+;Links.exact=true
+;Nodes.exact=true
+
+;; Maybe should be by hand
+;[TransportationNode Facility]
+;slots=AirportPG, \
+;	PositionPG, \
+;	RailTerminalPG, \
+;	RepairDepotPG, \
+;	SeaportPG, \
+;	SupplyDepotPG, \
+;	TransportationLink
+;TransportationLink.init=null
+;TransportationLink.exact=true
+
+[TransportationRoadLink TransportationLink]
+slots=RoadLinkPG
+
+[TransportationRailLink TransportationLink]
+slots=RailLinkPG
+
+;; Maybe should be by hand
+;[TransportationRoute TransportationNetwork]
+;slots=Vector TransportationLinks
+;TransportationLinks.init=new Vector()
+;TransportationLinks.exact=true
+
+[TransportationSeaLink TransportationLink]
+slots=SeaLinkPG
+
+[Truck CargoVehicle]
+slots= GroundSelfPropulsionPG, \
+	GroundVehiclePG, \
+	TowPG
+
+[Warhead ClassVAmmunition]
+
+[Weapon ClassVIIMajorEndItem]
+slots=WeaponPG
+
+
+[RadarSystem ClassVIIMajorEndItem]
+
+[NavyRadarSystem  RadarSystem]
+
+[VerticalLaunchSystem ClassVIIMajorEndItem]
+
+[DigitalNetworkSystem ClassVIIMajorEndItem]
+
+[CommSystem ClassVIIMajorEndItem]
+
+[FuelSystem ClassVIIMajorEndItem]
+
+[ElectronicBoard ClassVIIMajorEndItem]
+
+[HumanitarianDailyRation ClassISubsistence]
+
+[BottledWater ClassISubsistence]

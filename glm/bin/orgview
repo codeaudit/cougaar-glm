@@ -1,0 +1,4 @@
+#!/bin/csh -f
+source $ALP_INSTALL_PATH/bin/setlibpath.csh
+cd $ALP_INSTALL_PATH/alpine/data/orgview
+java -green  -cp $LIBPATHS   ui.orgviewServer.NetMapServer

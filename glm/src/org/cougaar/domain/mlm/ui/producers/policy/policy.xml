@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE LogPlan SYSTEM "policy.dtd">
+<LogPlan>
+  <UIPolicy>
+    <policyName>ShipPolicy</policyName>
+    <names>ShipMode</names>
+    <names>ShipDays</names>
+    <values>Ground</values>
+    <values>2</values>
+    <UUID>1</UUID>
+  </UIPolicy>
+</LogPlan>

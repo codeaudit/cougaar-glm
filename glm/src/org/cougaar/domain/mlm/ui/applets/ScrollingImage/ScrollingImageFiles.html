@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0062)http://www.serve.com/wizjd/java/JDScrollingImagemap/index.html -->
+<HTML><HEAD><TITLE>Scrolling Image Map Java Applet</TITLE>
+<META content="text/html; charset=windows-1252" http-equiv=Content-Type>
+<META content="MSHTML 5.00.2614.3401" name=GENERATOR></HEAD>
+<BODY bgColor=#ffffff>
+<CENTER>
+<H1>JDScrollingImagemap Java Applet</H1></CENTER>
+<CENTER>
+<H3>Now with support for frames</H3></CENTER><BR>&nbsp;&nbsp; The "Scrolling 
+Image Map Applet" allows you to use very large image maps that are viewed 
+through a narrow window in the HTML page. The large image map is scrolled by 
+dragging a zooming rectangle across a minature version of the full image. You 
+can defined rectangular areas inside the large image, that when clicked on will 
+cause a particular hyper-text link to load. Look at my <A 
+href="http://www.serve.com/wizjd/parks/parks.html">National Park Photo Page</A> 
+to see the applet in action. The applet can now also be used to control what 
+other frames on the page are displaying. Look at this <A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/frame.html">example</A> 
+to see this in action. <BR>&nbsp;&nbsp; In order to use this Applet on your own 
+page you need to copy the 3 class files <A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDScollingImagemap.class">JDScrollingImagemap.class</A>,&nbsp; 
+<A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDImagemapRect.class">JDImagemapRect.class</A>,&nbsp; 
+<A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDScrollBox.class">JDScrollBox.class</A>,&nbsp; 
+to a directory on your Web server (as binary files). You can also get them 
+zipped up as one <A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDScrollingImagemap.zip">zip</A> 
+file. If your not worried about compatability with older browsers you can use 
+the <A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDScrollingImagemap.jar">JDScrollingImagemap.jar</A> 
+file. You then need to prepare your large image map and a minature version of 
+it. There are many popular image editing programs that will shrink down images. 
+<BR><BR>Then put this HTML code in your page. <PRE>&lt;APPLET CODE="JDScrollingImagemap.class" ARCHIVE="JDScrollingImagemap.jar" WIDTH=522 HEIGHT=266&gt;
+&lt;param name="scrollBoxColor" value="FFFF00"&gt;
+&lt;param name="borderColor" value="000000"&gt;
+&lt;param name="imagemap_file_name" value="image_map.gif"&gt;
+&lt;param name="index_file_name" value="shrunken_image_map.gif"&gt;
+&lt;param name="scale" value="4"&gt;
+&lt;<PARAM value="center" name="defaultIndexPos">&gt;
+&lt;param name="imagemap_data" value="
+  10, 100, 20, 110, abc.html;
+  20, 100, 30, 110, http://www.somplace.com/xyz.html;
+  30, 100, 40, 120, def.html, frame1;
+   1, 1, 2048, 1024, miss.html;
+"&gt;
+&lt;/APPLET&gt;
+</PRE>The "&lt;param&nbsp;name=" tags pass parameters to the applet that control 
+its behavior. 
+<H2>
+<CENTER>Explanation of each Applet parameter</H2></CENTER>
+<CENTER>
+<TABLE border=1 cols=8>
+  <TBODY>
+  <TR>
+    <TH>parameter</TH>
+    <TH colSpan=7>Explanation</TH>
+  <TR>
+    <TD><B>scrollBoxColor</B></TD>
+    <TD colSpan=7>&nbsp;&nbsp; The "scrollBoxColor" parameter defines what 
+      color the border around the imagemap should be . The colors are specifed 
+      using the same notation as the HTML BODY tag. </TD></TR>
+  <TR>
+    <TD><B>borderColor</B></TD>
+    <TD colSpan=7>&nbsp;&nbsp; The "borderColor" parameter defines what color 
+      the zooming rectangle should be. The colors are specifed using the same 
+      notation as the HTML BODY tag. 
+    <TD></TD></TR>
+  <TR>
+  <TR>
+    <TD><B>imagemap_file_name</B></TD>
+    <TD colSpan=7>&nbsp;&nbsp; The "imagemap_file_name" is the name of large 
+      your gif or jpeg- that will be a imagemap with links for the user to click 
+      on. </TD></TR>
+  <TR>
+    <TD><B>index_file_name</B></TD>
+    <TD colSpan=7>&nbsp;&nbsp; The "index_file_name" parameter is the name of 
+      the minature version of the image map picture. </TD></TR>
+  <TR>
+    <TD><B>scale</B></TD>
+    <TD colSpan=7>&nbsp;&nbsp; The "scale" is how much of the full image map 
+      we want to appear in the window on our HTML page at once. For instance on 
+      my National Parks page I have a 2048x1024 gif as my image map. The scale 
+      is set to 4- meaning that the window dimensions will be 1/4 of the image 
+      map dimensions, or 512x256. </TD></TR>
+  <TR>
+    <TD><B>defaultIndexPos</B></TD>
+    <TD colSpan=7>&nbsp;&nbsp; The "defaultIndexPos" is where the zooming 
+      rectangle starts in the index image. Leave this parameter off and it 
+      defaults to the upper left hand corner. Or you can specify "center" and 
+      the zooming rectangle will be centered over the small index image. You can 
+      also provide an X, and Y starting position by giving two numbers separated 
+      by a comma- as follows: "10,10" </TD></TR>
+  <TR>
+    <TD vAlign=top><B>image_map_data</B></TD>
+    <TD colSpan=7>&nbsp;&nbsp; The "image_map_data" parameter defines the 
+      rectangle on the imagemap that link to URL's. Only rectangles are 
+      supported- no circles. <BR>&nbsp;&nbsp; The format is one rectangle per 
+      line, with each field seprated by commas and each line ended with a ";". 
+      The first two numbers are the X, and Y of upper left hand corner of the 
+      rectangle, followed by the X, and Y of the lower right corner of the 
+      rectangle. The last required field is the URL to jump to if a click is 
+      made inside that rectangle. The URL is relative to the directory where the 
+      Applet is, not to the directory of the HTML page with the applet on it. 
+      You can also give full URLS' that start with "http://" to link to 
+      anywhere. <BR>&nbsp;&nbsp; An optional sixth paramer on each line can give 
+      the name of the Frame on the page that will change to display the link. If 
+      this paramter is left off the current frame/window will change to display 
+      the link. You can also specify "_blank" here, which will cause a new 
+      browser window instance to start up and display the URL. <BR><BR><B>Line 
+      by line explanation of the example:</B> <PRE>&lt;param name="imagemap_data" value="
+  10, 100, 20, 110, abc.html;
+  20, 100, 30, 110, http://www.somplace.com/xyz.html;
+  30, 100, 40, 120, def.html, frame1;
+   1, 1, 2048, 1024, miss.html;
+</PRE><BR>&nbsp;&nbsp; This first line 
+      <B>&nbsp;10,&nbsp;100,&nbsp;20,&nbsp;120,&nbsp;abc.html;</B> specifies 
+      that we want the current browser window to change to the html file 
+      "abc.html", when the user clicks falls with a rectangle that starts at X 
+      20, Y 100, and ends at x 30, and Y 110. The URL is expected to be in the 
+      same directory as the applet, it can also be a sub directory if you 
+      specify a path. For Instance; "/subdir/abc.html". <BR><BR>&nbsp;&nbsp; 
+      This next line 
+      <B>&nbsp;20,&nbsp;100,&nbsp;30,&nbsp;120,&nbsp;abc.html;</B> gives a full 
+      URL including "http://". This can be on any valid URL anywhere. 
+      <BR><BR>&nbsp;&nbsp; The next line 
+      <B>&nbsp;30,&nbsp;100,&nbsp;40,&nbsp;120,&nbsp;def.html,&nbsp;frame1;</B> 
+      is the same as the above except that it specifies that the named frame 
+      "frame1" will be jumped to the URL given. In this way the applet can cause 
+      other frames on the page to change what they display. Instead of giving 
+      the frame name you can also specify "_parent", "_top", and "_blank". 
+      "_blank" will cause a second browser instance to open up and display that 
+      html file. Look at this <A 
+      href="http://www.serve.com/wizjd/java/JDScrollingImagemap/frame.html">example</A> 
+      to see this in action. <BR><BR>&nbsp;&nbsp; The final line 
+      <B>&nbsp;1,&nbsp;1,&nbsp;2048,&nbsp;1024,&nbsp;miss.html;</B> is the 
+      default URL for missed clicks. This last imagemap rectangle will only be 
+      reached if the click was not inside any of the above rectangles. It covers 
+      the entire image and gives a default URL for bad clicks. 
+</TD></TR></TBODY></TABLE></CENTER><BR><BR>Heres is the Source Code for this 
+applet: <BR><BR><A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDScrollingImagemap.java">JDScrollingImagemap.java</A>, 
+<BR><A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDImagemapRect.java">JDImagemapRect.java</A>, 
+<BR><A 
+href="http://www.serve.com/wizjd/java/JDScrollingImagemap/JDScrollBox.java">JDScrollBox.java</A>, 
+
+<UL></UL><BR>
+<HR>
+
+<H2>Sites using this applet</H2><BR><A 
+href="http://www.aao.gov.au/hdfs/Redshifts/hdfmap.html">AAO HDF-South Redshift 
+Survey</A> <BR><A href="http://shipyard.shipnet.org/">Shipyard International</A> 
+<BR><A href="http://www.studio-net.com.pl/pl/mapa_java.html">Polska w Pajeczynie 
+- Interaktywna mapka Polski - wersja java</A> <BR><A 
+href="http://sts.gsc.nrcan.gc.ca/baffin/fhires.htm">Projet de partenariat du 
+nord de l'île de Baffin et de la péninsule de Melville</A> <BR><A 
+href="http://www.etv.co.za/ads/network_map_level2.htm">Terrestrial Network 
+Coverage</A> <BR><A 
+href="http://www.bankstownairport.com.au/visitors/b-map.html">Bankstown 
+Airport</A> <BR><A 
+href="http://sts.gsc.emr.ca/page1/envir/flin/fig9.htm">Terrain Sciences 
+Division</A> <BR><A 
+href="http://sts.gsc.nrcan.gc.ca/page1/urban/geoscape/fraser2.htm">The Fraser 
+River Delta</A> <BR><A href="http://www.paradata.com/maps.html">Paradata Systems 
+Online Map Demo</A> <BR><A 
+href="http://www.airsho.com/navmap_semichigan1.htm">AirSho Navmap SE 
+Michigan</A> <BR><A 
+href="http://sts.gsc.nrcan.gc.ca/page1/urban/geoscape/living5.htm">Living in the 
+shadow of volcanoes</A> <BR><A 
+href="http://www.jacksonville.net/~tomspeer">Fortress of Solitude</A> <BR><A 
+href="http://www.gundlach-bau.de/angebote/7/index.html">Rethen Zuckerstraße</A> 
+<BR><A href="http://www.catholic-church.org/odilia/layout.htm">Layout of St. 
+Odilia Catholic Church Building</A> 
+<P align=right>This applet is featured on Scriptsearch <A 
+href="http://www.scriptsearch.com/"><IMG 
+alt="www.ScriptSearch.com - CGI-JAVA-PERL and Much More." border=0 height=75 
+src="Scrolling Image Map Java Applet_files/scriptsearch_link_ani.gif" 
+width=85></A> </P><BR>
+<HR>
+<A href="http://www.serve.com/wizjd/java/index.html">Back to Java Page</A> 
+<BR><BR><A href="http://www.serve.com/wizjd/index.html">Back to John Donohues's 
+Homepage</A> <BR>Questions or Comments: <A 
+href="mailto:wizjd@panix3.panix.com"><I>wizjd@panix.com</I></A> <BR><I>Last 
+Updated 1/15/99</I> 
+<P></P></BODY></HTML>

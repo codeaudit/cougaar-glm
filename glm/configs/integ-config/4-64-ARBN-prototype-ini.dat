@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/2JTTT"
+
+[UIC] "UIC/4-64-ARBN"
+
+[Relationship]
+Superior "2BDE-3ID" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/2JTTT"
+Nomenclature String "4/64 Armored BN"
+AlternateTypeIdentification String "SRC/17375L000"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "4-64-ARBN"
+
+[OrganizationPG]
+Roles                Collection<Role>   "Combat"
+Service			Service	"Army"
+Agency			Agency 	"CENTCOM"
+
+[MilitaryOrgPG]
+UIC String "WFL9AA"
+Echelon String "06"
+UTC String "2JTTT"
+SRC String "17375L000"
+Hierarchy2525               String   "1.x.3.1.1.2"
+IsReserve       boolean     false
+HomeLocation     GeolocLocation   "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=Georgia, IcaoCode=, Name=FtStewart_GA, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"

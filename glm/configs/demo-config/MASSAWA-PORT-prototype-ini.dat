@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/MASSAWA-PORT"
+
+[Relationship]
+Superior "TRANSCOM" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "Port of Massawa"
+AlternateTypeIdentification String "SRC/"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "MASSAWA-PORT"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service ""
+Agency Agency "TRANSCOM"
+
+[MilitaryOrgPG]
+UIC String ""
+Echelon String ""
+UTC String ""
+SRC String ""
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=PLDR, InstallationTypeCode=PRT, CountryStateCode=ER, CountryStateName=ERITREA, Name=MASSAUA, Latitude=Latitude 15.6167degrees, Longitude=Longitude 39.4667degrees"

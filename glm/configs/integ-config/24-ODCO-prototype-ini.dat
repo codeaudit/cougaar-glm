@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/24-ODCO"
+
+[Relationship]
+Superior "FORSCOM" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "24 Ordnance Company"
+AlternateTypeIdentification String "SRC/09484L000"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "24-ODCO"
+
+[OrganizationPG]
+Roles Collection<Role> "AmmunitionProvider"
+
+[MilitaryOrgPG]
+UIC String "WDHJAA"
+Echelon String "05"
+UTC String "HAC77"
+SRC String "09484L000"
+Hierarchy2525 String "1.x.3.1.3.3.7"
+HomeLocation		    GeolocLocation "GeolocCode=HKUZ,InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"
+
+[CSSCapabilityPG]
+Capabilities Collection<CSSCapability> "AmmunitionHandling Mass=970tons Duration=1days"

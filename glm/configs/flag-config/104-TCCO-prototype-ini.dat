@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/104-TCCO"
+
+[Relationship]
+Superior "FORSCOM" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "104 Transportation Corps Company"
+AlternateTypeIdentification String "SRC/55728L100"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "104-TCCO"
+
+[OrganizationPG]
+Roles Collection<Role> "AmmunitionTransportProvider, FuelTransportProvider"
+
+[MilitaryOrgPG]
+UIC String "WCN7AA"
+Echelon String "05"
+UTC String "UWUTT"
+SRC String "55728L100"
+Hierarchy2525 String "1.x.3.1.3.4"
+HomeLocation		    GeolocLocation "GeolocCode=HKUZ,InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"
+
+[CSSCapabilityPG]
+Capabilities Collection<CSSCapability> "PassengerTransportation Count=350units Duration=1days, FuelHandling Volume=300000gallons Duration=1days"

@@ -1,0 +1,33 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/126-TRKCO-MED"
+
+[Relationship]
+Superior "FORSCOM" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "126 Medium Truck Company"
+AlternateTypeIdentification String "SRC/"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "126-TRKCO-MED"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[CSSCapabilityPG]
+Capabilities Collection<CSSCapability> "MOS/31U Count=1units Duration=1days, MOS/54B Count=1units Duration=1days, MOS/63B Count=3units Duration=1days, MOS/63S Count=5units Duration=1days, MOS/75B Count=1units Duration=1days, MOS/77F Count=2units Duration=1days, MOS/88D Count=4units Duration=1days, MOS/88M Count=113units Duration=1days, MOS/88Z Count=1units Duration=1days, MOS/915 Count=1units Duration=1days, MOS/92A Count=2units Duration=1days, MOS/92G Count=5units Duration=1days, MOS/92Y Count=3units Duration=1days"
+
+[MilitaryOrgPG]
+UIC String "WCN8AA"
+Echelon String ""
+UTC String ""
+SRC String ""
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"

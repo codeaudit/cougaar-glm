@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/2YC77"
+
+[UIC] "UIC/3BDE-3ID"
+
+[Relationship]
+Superior "3ID" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/2YC77"
+Nomenclature String "3rd BDE-3ID"
+AlternateTypeIdentification String "SRC/87042L200"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier "3BDE-3ID"
+
+[OrganizationPG]
+Roles             Collection<Role>   "Headquarters"
+Service			  Service	"Army"
+Agency			  Agency 	"CENTCOM"
+
+[MilitaryOrgPG]
+UIC String "WAR4AA"
+Echelon String "08"
+UTC String "2YC77"
+SRC String "87042L200"
+Hierarchy2525               String      "1.x.3.1.1.5.6"
+IsReserve       boolean     false
+HomeLocation     GeolocLocation   "GeolocCode=HCML, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=Georgia, IcaoCode=, Name=FtBenning_GA, Latitude=Latitude 32.38333degrees, Longitude=Longitude -84.8833degrees"

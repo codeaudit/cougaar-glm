@@ -1,0 +1,50 @@
+set[  pulldowns [
+  ['View'
+    ['<-' apply loadview -1]
+%    ['-'  apply loadview  0]
+    ['->' apply loadview  1]
+    ['Restore' apply viewrestore]
+    ['Show Viewname'  mcmd  'echo $VIEWNAME']
+    ['Show New Nodes' apply newnodevwcr window ['newnodes.vw' 750 194 nil]]
+    ['Load Any View' apply loadanyview]
+    ['Load View'
+      ['main view' apply loadview 'main.vw']
+      ]
+    ['New Window'
+ 2    ['ShowRoute window' apply window 'showroute.vw' 'ShowRoute' 768 194 nil]
+ 1    ['main view '
+        ['miniscule'  apply window 'main.vw' 'mini' 128 0 nil]
+        ['tiny'  apply window 'main.vw'  256 2 nil]
+        ['small'  apply window 'main.vw' 'Small' 512 2 pulldowns]
+        ['medium'  apply window 'main.vw' 750 3 pulldowns]
+        ['regular'  apply window 'main.vw' 'Regular' 1024 pulldowns]
+%        ['large'  apply window 'main.vw' 1300 pulldowns]
+        ]
+      ]
+    ['Enlarge & Center' apply viewenlarge]
+    ['' sep]
+    ['Fit view to window' apply fitwindow]
+    ]
+
+  ['Edit Database'
+    ['Add Host to database' apply xdpopup addhost]
+    ['Edit Host in database' apply editnode]
+    ['' sep] 
+    ['Add Cluster' apply xdpopup cluster]
+    ['Edit Cluster' apply editnode cluster]
+    ['' sep] 
+    ['Add Line between selected objects' apply dbaddline 2]
+    ['Delete selected Line from Database'  apply dbdelline ]
+    ['' sep] 
+    ['Save Database' apply writedb 'i.nmdb' 9]
+%    ['' sep] 
+%    ['wdebug' apply xdpopup wdebug]
+    ]
+  ]]  **
+
+
+
+set[ buttons2 [ % Additions to lower button panel; keep these small
+  ['<-' apply loadview -1]
+  ['->' apply loadview  1]
+  ]] **

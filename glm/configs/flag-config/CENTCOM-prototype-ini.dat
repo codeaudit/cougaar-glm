@@ -1,0 +1,27 @@
+[Prototype]     MilitaryOrganization
+
+[UniqueId]      "UTC/MilitaryOrganization"
+
+[UIC]           "UIC/CENTCOM"
+
+[Relationship] 
+
+[TypeIdentificationPG]                      
+TypeIdentification          String  "UTC/"
+Nomenclature                String  "CENTCOM"
+AlternateTypeIdentification String  "SRC/"
+
+[ClusterPG]
+ClusterIdentifier	ClusterIdentifier  "CENTCOM"
+
+[OrganizationPG]
+Roles		Collection<Role>    "Headquarters"
+#Service		    String  "Joint"
+#Agency			    String  "CENTCOM"
+
+[MilitaryOrgPG]
+UIC                         String   ""
+Echelon                     String   ""
+UTC                         String   ""
+SRC                         String   ""
+
