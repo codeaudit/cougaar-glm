@@ -22,11 +22,11 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 //import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.PropertyProvider;
-import org.cougaar.core.plugin.PrototypeProvider;
-//import org.cougaar.core.plugin.LDMPluginServesLDM;
+import org.cougaar.planning.ldm.PropertyProvider;
+import org.cougaar.planning.ldm.PrototypeProvider;
+//import org.cougaar.planning.ldm.LDMPluginServesLDM;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.blackboard.Subscriber;
 import org.cougaar.core.blackboard.SubscriberException;

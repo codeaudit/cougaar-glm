@@ -25,8 +25,8 @@ import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.core.util.AsciiPrinter; 
-import org.cougaar.core.util.SelfPrinter; 
+import org.cougaar.mlm.ui.util.AsciiPrinter; 
+import org.cougaar.mlm.ui.util.SelfPrinter; 
  
 public class GeolocLocationImpl extends NamedPositionImpl
   implements GeolocLocation, NewGeolocLocation, SelfPrinter {

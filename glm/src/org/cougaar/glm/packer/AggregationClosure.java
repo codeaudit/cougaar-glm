@@ -6,7 +6,7 @@ package org.cougaar.glm.packer;
 
 import org.cougaar.planning.ldm.plan.NewMPTask;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
   * This class is used to wrap up an aggregation's state into an
@@ -25,14 +25,14 @@ import org.cougaar.core.domain.RootFactory;
   */
 public abstract class AggregationClosure {
   protected GenericPlugin _gp = null;
-  protected RootFactory _factory = null;
+  protected PlanningFactory _factory = null;
 
   /**
     * This method will be called by aggregation and packing scripts of
     * the scripting Plugin.  It is guaranteed to be called before the
     * newTask method is called, so that writers of newTask methods may
     * feel free to use the variables _gp and _factory, that point to the
-    * GenericPlugin and its RootFactory, respectively.
+    * GenericPlugin and its PlanningFactory, respectively.
     * @see #newTask
     */
   public void setGenericPlugin (GenericPlugin gp) {

@@ -32,7 +32,7 @@ import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
-import org.cougaar.core.util.AbstractPrinter;
+import org.cougaar.mlm.ui.util.AbstractPrinter;
 import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.UnaryPredicate;
 

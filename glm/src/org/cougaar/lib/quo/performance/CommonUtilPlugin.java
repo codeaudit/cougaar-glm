@@ -24,7 +24,7 @@
 package org.cougaar.lib.quo.performance;
 
 import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import java.util.*;
 import java.io.*;
 

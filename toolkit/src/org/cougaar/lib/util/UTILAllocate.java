@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
@@ -80,7 +80,7 @@ public class UTILAllocate {
    * depending on whether start and end dates or cost
    * exceed preference thresholds.
    *
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param plan the log plan
    * @param t the task to allocate
    * @param asset the asset assigned to handle the task
@@ -91,7 +91,7 @@ public class UTILAllocate {
    * @return PlanElement = Allocation or a FailedDisposition
    */
   public PlanElement makeAllocation (UTILPlugin creator,
-					    RootFactory ldmf,
+					    PlanningFactory ldmf,
 					    Plan plan,
 					    Task t,
 					    Asset asset,
@@ -128,7 +128,7 @@ public class UTILAllocate {
    * FailedDispositions will ALWAYS have isSuccess = FALSE.
    *
    * </pre>
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param plan the log plan
    * @param t the task to allocate
    * @param asset the asset assigned to handle the task
@@ -138,7 +138,7 @@ public class UTILAllocate {
    * @return PlanElement = Allocation or a FailedDisposition
    */
   public PlanElement makeAllocation (UTILPlugin creator,
-				     RootFactory ldmf,
+				     PlanningFactory ldmf,
 				     Plan plan,
 				     Task t,
 				     Asset asset,
@@ -172,7 +172,7 @@ public class UTILAllocate {
    *
    * FailedDispositions will ALWAYS have isSuccess = FALSE.
    *
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param plan the log plan
    * @param t the task to allocate
    * @param asset the asset assigned to handle the task
@@ -182,7 +182,7 @@ public class UTILAllocate {
    * @return PlanElement = Allocation or a FailedDisposition
    */
   public PlanElement makeAllocation (UTILPlugin creator,
-					    RootFactory ldmf,
+					    PlanningFactory ldmf,
 					    Plan plan,
 					    Task t,
 					    Asset asset,
@@ -226,7 +226,7 @@ public class UTILAllocate {
    * FailedDispositions will ALWAYS have isSuccess = FALSE.
    *
    * </pre>
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param plan the log plan
    * @param t the task to allocate
    * @param asset the asset assigned to handle the task 
@@ -238,7 +238,7 @@ public class UTILAllocate {
    * @return PlanElement = Allocation or a FailedDisposition
    */
   public PlanElement makeAllocation(UTILPlugin creator,
-					   RootFactory ldmf,
+					   PlanningFactory ldmf,
 					   Plan plan,
 					   Task t,
 					   Asset asset,
@@ -455,15 +455,15 @@ public class UTILAllocate {
    *
    * This form lets the tasked cluster say how the preferences were exceeded.
    *
-   * @param ldmf RootFactory for making the plan elements
+   * @param ldmf PlanningFactory for making the plan elements
    * @param t Task that failed to be allocated
    * @param failedAR AllocationResult stating how the preferences would have been
    *        exceeded.
    * @return FailedDisposition 
-   * @see #makeFailedDisposition (RootFactory, Task)
+   * @see #makeFailedDisposition (PlanningFactory, Task)
    */
   public Disposition makeFailedDisposition(UTILPlugin creator,
-						  RootFactory ldmf, Task t,
+						  PlanningFactory ldmf, Task t,
 						  AllocationResult failedAR) {
     Disposition falloc    = 
       ldmf.createFailedDisposition(ldmf.getRealityPlan(), t, failedAR);
@@ -485,13 +485,13 @@ public class UTILAllocate {
    * the aspect results.
    *
    * </pre>
-   * @param ldmf RootFactory for making the plan elements
+   * @param ldmf PlanningFactory for making the plan elements
    * @param t Task that failed to be allocated
    * @return FailedDisposition 
-   * @see #makeFailedDisposition (RootFactory, Task, AllocationResult)
+   * @see #makeFailedDisposition (PlanningFactory, Task, AllocationResult)
    */
   public Disposition makeFailedDisposition(UTILPlugin creator,
-						  RootFactory ldmf, Task t) {
+						  PlanningFactory ldmf, Task t) {
     AllocationResult failedAR  = 
       ldmf.newAllocationResult(HIGHEST_CONFIDENCE, RESCINDMEPLEASE, 
 			       new int[1], new double[1]);
@@ -512,14 +512,14 @@ public class UTILAllocate {
    *
    * </pre>
    * @param isSuccess sets whether allocation obeyed preferences or not
-   * @param ldmf RootFactory for making the plan elements
+   * @param ldmf PlanningFactory for making the plan elements
    * @param aspectarray  - array of aspect type IDs (ints from AspectType)
    * @param resultsarray - results for those aspects, in same order as aspect types
    * @param confidence of allocation
    * @return allocation result with aspect results
    */
   protected AllocationResult createAllocationResult(boolean isSuccess,
-						    RootFactory ldmf,
+						    PlanningFactory ldmf,
 						    int [] aspectarray,
 						    double [] resultsarray,
 						    double confidence) {
@@ -533,7 +533,7 @@ public class UTILAllocate {
     return myestimate;
   }
 
-  public AllocationResult cloneAllocResultAsSuccess(RootFactory ldmf,
+  public AllocationResult cloneAllocResultAsSuccess(PlanningFactory ldmf,
 							   AllocationResult toClone) {
     return ldmf.newAVAllocationResult(toClone.getConfidenceRating (), 
 				      true,

@@ -21,8 +21,8 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -106,7 +106,7 @@ public class AssetUtil extends UTILAsset {
     measureHelper = new GLMMeasure    (logger);
   }
 
-  public final Convoy makeConvoy(RootFactory root, String uniqueID){
+  public final Convoy makeConvoy(PlanningFactory root, String uniqueID){
     Convoy convoy = null;
     try{
       NewTypeIdentificationPG p1 = null;
@@ -478,7 +478,7 @@ public class AssetUtil extends UTILAsset {
    * @param asset AssetGroup/AggreateAsset to divide
    * @return Vector of sub-objects
    */
-  public Vector ExpandAsset(RootFactory theFactory, Asset asset) {
+  public Vector ExpandAsset(PlanningFactory theFactory, Asset asset) {
     Vector retval = new Vector();
 
     if (asset instanceof AssetGroup) {

@@ -31,7 +31,7 @@ import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.core.util.UID;
 import org.cougaar.lib.planserver.PlanServiceProvider;
 import org.cougaar.lib.planserver.RuntimePSPException;

@@ -33,13 +33,13 @@ package org.cougaar.mlm.plugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import java.util.Enumeration;
-import org.cougaar.core.agent.ClusterServesPlugin;
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PrototypeProvider;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.ldm.PrototypeProvider;
 import org.cougaar.util.StateModelException;
-import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.LDMPluginServesLDM;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.LDMPluginServesLDM;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -72,7 +72,7 @@ public final class DMPIClusterStartup extends SimplePlugin
   implements LDMPluginServesLDM {
 
   private LDMServesPlugin ldm = null;
-  private RootFactory ldmf = null;
+  private PlanningFactory ldmf = null;
 
   /** The file name for the assets **/
   private String theFileName;
@@ -104,7 +104,7 @@ public final class DMPIClusterStartup extends SimplePlugin
    * @param aSpec The string object with the format (Type, NSN, qty, VIN).
    * @exception NumberFormatException If the qunatitiy can not be converted to a number.
    * @exception DMPluginException If unable to create the requested Asset.
-   * @exception RootFactoryExceptionm I fRootFactory throws exception during creation.
+   * @exception PlanningFactoryExceptionm I fPlanningFactory throws exception during creation.
    **/
   private Asset buildAsset( String aSpec ) throws NumberFormatException
   {

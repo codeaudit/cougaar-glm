@@ -21,7 +21,7 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.planning.plugin.AssetReportPlugin;
+import org.cougaar.planning.plugin.asset.AssetReportPlugin;
 
 import org.cougaar.planning.ldm.plan.AssetTransfer;
 import org.cougaar.planning.ldm.plan.PlanElement;
@@ -38,8 +38,8 @@ import org.cougaar.glm.ldm.asset.Organization;
 /**
  * OrgReportPlugin manages REPORTFORDUTY and REPORTFORSERVICE relationships
  * Handles both expansion and allocation of these tasks.
- * @see org.cougaar.core.plugin.SimplifiedPlugin
- * @see org.cougaar.core.plugin.SimplifiedPluginTest
+ * @see org.cougaar.planning.plugin.legacy.SimplifiedPlugin
+ * @see org.cougaar.planning.plugin.legacy.SimplifiedPluginTest
  */
 public class OrgReportPlugin extends AssetReportPlugin
 {
@@ -71,6 +71,7 @@ public class OrgReportPlugin extends AssetReportPlugin
           Task task = (Task) o;
 	  if (((task.getVerb().equals(Constants.Verb.REPORTFORDUTY)) ||
                (task.getVerb().equals(Constants.Verb.REPORTFORSERVICE))) &&
+              (task.getWorkflow() == null) &&
               (task.getPlanElement() == null)) {
 	    return true;
           }

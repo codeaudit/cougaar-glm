@@ -32,7 +32,7 @@ import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.glm.ldm.plan.Capability;
 import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.NewScheduleElement;
 import org.cougaar.planning.ldm.plan.Workflow;
@@ -58,7 +58,7 @@ import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -72,7 +72,7 @@ public class StrategicTransportAllocatorPlugin extends SimplePlugin {
   private Subscription allocatableWorkflows;
   private IncrementalSubscription orgAssets;
   private Subscription myAllocations;
-  private RootFactory ldmf;
+  private PlanningFactory ldmf;
   private Vector waitingTasks = new Vector();
     
   protected void setupSubscriptions() {

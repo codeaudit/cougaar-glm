@@ -13,7 +13,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.agent.MetricsSnapshot;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.AssetGroup;
@@ -40,14 +40,14 @@ import org.cougaar.glm.ldm.asset.OrganizationAdapter;
 
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.glm.ldm.Constants;
 
 
 //import org.cougaar.glm.plugins.TaskUtils;
 
 import org.cougaar.planning.ldm.trigger.*;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -98,7 +98,7 @@ import java.awt.FlowLayout;
 @version 1.0
 ***********************************************************************************************************************/
 
-public class IPCollectorPlugin extends org.cougaar.core.plugin.SimplePlugin
+public class IPCollectorPlugin extends org.cougaar.planning.plugin.legacy.SimplePlugin
 {
 	private ActionListener dumpProfileListener = null;
 	public static Hashtable organizationLocations = new Hashtable();
@@ -348,7 +348,7 @@ public class IPCollectorPlugin extends org.cougaar.core.plugin.SimplePlugin
 
 	*********************************************************************************************************************/
   
-  public void createStringAndNotify(RootFactory theLDMF, String org, String action, IPStatistics ms)
+  public void createStringAndNotify(PlanningFactory theLDMF, String org, String action, IPStatistics ms)
   {
   	Vector preps = new Vector();
   	long time = currentTimeMillis();

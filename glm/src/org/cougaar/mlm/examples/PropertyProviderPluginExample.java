@@ -21,11 +21,11 @@
 
 package org.cougaar.mlm.examples;
 
-import org.cougaar.core.plugin.PluginAdapter;
-import org.cougaar.core.plugin.PropertyProvider;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
+import org.cougaar.planning.ldm.PropertyProvider;
 
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.*;
 

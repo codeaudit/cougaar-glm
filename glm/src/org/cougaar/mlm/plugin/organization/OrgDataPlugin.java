@@ -23,7 +23,7 @@ package org.cougaar.mlm.plugin.organization;
 import java.util.Collection;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.plugin.AssetDataPluginBase;
+import org.cougaar.planning.plugin.asset.AssetDataPluginBase;
 
 public class OrgDataPlugin extends AssetDataPluginBase  {
 

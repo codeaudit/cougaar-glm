@@ -27,7 +27,7 @@ import org.cougaar.glm.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.glm.ldm.oplan.*;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
@@ -56,8 +56,8 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.ExpanderHelper;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.ExpanderHelper;
 
 import org.cougaar.util.UnaryPredicate;
 

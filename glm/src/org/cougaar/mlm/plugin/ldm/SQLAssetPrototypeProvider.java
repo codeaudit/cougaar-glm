@@ -21,7 +21,7 @@
 
 package org.cougaar.mlm.plugin.ldm;
 
-import org.cougaar.core.plugin.PrototypeProvider;
+import org.cougaar.planning.ldm.PrototypeProvider;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.asset.AssetFactory;
@@ -34,7 +34,7 @@ import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPGImpl;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -71,7 +71,7 @@ public class SQLAssetPrototypeProvider
    **/
   public Asset getAssetPrototype(String typeid) {
     //public Asset getPrototype( String typeid ) {
-    RootFactory ldmfactory = getLDM().getFactory();
+    PlanningFactory ldmfactory = getLDM().getFactory();
         
     String protoname = typeid;
         

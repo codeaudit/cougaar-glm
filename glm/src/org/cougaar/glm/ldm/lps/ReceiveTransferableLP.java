@@ -21,7 +21,6 @@
 
 package org.cougaar.glm.ldm.lps;
 
-import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -30,7 +29,8 @@ import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.planning.ldm.plan.Directive;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.core.blackboard.Directive;
 import org.cougaar.planning.ldm.plan.TransferableAssignment;
 import org.cougaar.planning.ldm.plan.TransferableRescind;
 import org.cougaar.planning.ldm.plan.TransferableTransfer;
@@ -46,16 +46,26 @@ import org.cougaar.core.util.UID;
 
 
 /**
-  * ReceiveTransferableLP Adds or modifies transferables to cluster
+  * ReceiveTransferableLP Adds or modifies transferables to agents.
   * @author  ALPINE <alpine-software@bbn.com>
   *
   **/
 
-public class ReceiveTransferableLP extends LogPlanLogicProvider implements MessageLogicProvider
+public class ReceiveTransferableLP 
+implements LogicProvider, MessageLogicProvider
 {
-  public ReceiveTransferableLP(LogPlanServesLogicProvider logplan,
-			       ClusterServesLogicProvider cluster) {
-    super(logplan,cluster);
+
+  private final RootPlan rootplan;
+  private final PlanningFactory ldmf;
+
+  public ReceiveTransferableLP(
+      RootPlan rootplan,
+      PlanningFactory ldmf) {
+    this.rootplan = rootplan;
+    this.ldmf = ldmf;
+  }
+
+  public void init() {
   }
 
   private static UnaryPredicate makeTp(final Transferable t) {
@@ -81,34 +91,34 @@ public class ReceiveTransferableLP extends LogPlanLogicProvider implements Messa
 
   private void processTransferableRescind(TransferableRescind tr, Collection changes) {
     final UID uid = tr.getTransferableUID();
-    Transferable t = (Transferable) logplan.findUniqueObject(uid);
-    if (t != null) logplan.remove(t);
+    Transferable t = (Transferable) rootplan.findUniqueObject(uid);
+    if (t != null) rootplan.remove(t);
   }
 
   private void processTransferableVerification(TransferableVerification tv, Collection changes) {
     final UID uid = tv.getTransferableUID();
-    if (logplan.findUniqueObject(uid) == null) {
+    if (rootplan.findUniqueObject(uid) == null) {
       // create and send a TransferableRescind task
       NewTransferableRescind ntr = ldmf.newTransferableRescind();
       ntr.setTransferableUID(uid);
       ntr.setDestination(tv.getSource());
-      logplan.sendDirective(ntr);
+      rootplan.sendDirective(ntr);
     }
   }
 
   private void processTransferableAssignment(TransferableAssignment ta, Collection changes) {
     Transferable tat = (Transferable) ta.getTransferable();
-    Transferable t = (Transferable) logplan.findUniqueObject(tat.getUID());
+    Transferable t = (Transferable) rootplan.findUniqueObject(tat.getUID());
     try {
       if (t != null) {
         // shouldn't really need the clone...
         Transferable tatc = (Transferable) tat.clone();
         t.setAll(tatc);         // local slots
         reconcile(t, tatc);     // may do fancy things with various objects
-        logplan.change(t, changes);
+        rootplan.change(t, changes);
       } else {
         Transferable tatc = (Transferable) tat.clone();
-        logplan.add(tatc);
+        rootplan.add(tatc);
         reconcile(null, tatc);
       }
     }
@@ -119,8 +129,8 @@ public class ReceiveTransferableLP extends LogPlanLogicProvider implements Messa
 
   // we should really break this out into an abstract api, but it
   // scares me to put logprovider code into object like Oplan.
-  /** Reconcile any component state of the logplan with regard to 
-   * @param t Old version of transferrable from logplan.  May be null.
+  /** Reconcile any component state of the blackboard with regard to 
+   * @param t Old version of transferrable from blackboard.  May be null.
    * @param pt Putative new version of the transferrable.
    **/
   private void reconcile(Transferable t, Transferable pt) {

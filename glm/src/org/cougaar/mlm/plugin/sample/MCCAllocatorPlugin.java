@@ -28,7 +28,7 @@ import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.glm.ldm.oplan.*;
 import org.cougaar.glm.ldm.policy.*;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AbstractAsset;

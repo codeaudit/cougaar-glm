@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
@@ -80,7 +80,7 @@ public class GLMAllocate extends UTILAllocate {
    * @deprecated
    */
   public PlanElement makeAllocation (UTILPlugin creator,
-				     RootFactory ldmf,
+				     PlanningFactory ldmf,
 				     Plan plan,
 				     Task t,
 				     Asset asset,
@@ -108,7 +108,7 @@ public class GLMAllocate extends UTILAllocate {
    * @deprecated
    */
   public PlanElement makeAllocation (UTILPlugin creator,
-				     RootFactory ldmf,
+				     PlanningFactory ldmf,
 				     Plan plan,
 				     Task t,
 				     Asset asset,
@@ -134,7 +134,7 @@ public class GLMAllocate extends UTILAllocate {
    * @deprecated
    */
   public PlanElement makeAllocation (UTILPlugin creator,
-				     RootFactory ldmf,
+				     PlanningFactory ldmf,
 				     Plan plan,
 				     Task t,
 				     Asset asset,
@@ -160,7 +160,7 @@ public class GLMAllocate extends UTILAllocate {
    * @deprecated
    */
   public PlanElement makeAllocation(UTILPlugin creator,
-				    RootFactory ldmf,
+				    PlanningFactory ldmf,
 				    Plan plan,
 				    Task t,
 				    Asset asset,

@@ -40,11 +40,11 @@ import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.*;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.*;
 
 import org.cougaar.core.mts.MessageAddress;
 
@@ -335,7 +335,7 @@ public class GenericTablePlugin extends SimplePlugin {
   }
 
   protected void doExpansion (TaskInfo toTask, Task parentTask) {
-    RootFactory f = getFactory();
+    PlanningFactory f = getFactory();
     NewWorkflow wf = f.newWorkflow();
     wf.setParentTask(parentTask);
                     

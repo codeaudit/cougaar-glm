@@ -44,10 +44,10 @@ import org.w3c.dom.NamedNodeMap;
 
 import org.cougaar.core.service.UIDServer;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.core.util.UID;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.policy.Policy;
@@ -159,14 +159,14 @@ public class OplanFileReader {
   private String oplanID;
   private UID oplanUID;
   private String orgID;
-  private RootFactory ldmF;
+  private PlanningFactory ldmF;
   private UIDServer uids;
   private MessageAddress cid;
   private ClusterServesPlugin theCluster;
 				
   private OplanFileReader() {} //OplanFileReader
 
-  public OplanFileReader(String xmlfilename, RootFactory ldmF,
+  public OplanFileReader(String xmlfilename, PlanningFactory ldmF,
                          ClusterServesPlugin theCluster)
   {
     this.xmlfilename = xmlfilename;

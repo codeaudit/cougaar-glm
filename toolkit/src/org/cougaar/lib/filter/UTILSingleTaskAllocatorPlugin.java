@@ -60,10 +60,6 @@ public abstract class UTILSingleTaskAllocatorPlugin
     }
 
     publishAdd (allocOrFailedAlloc);
-    /*
-      error (getName() + " publish add of allocation " + allocOrFailedAlloc.getUID() + " failed?\n" +
-	     "Probably already a plan element for task " + allocOrFailedAlloc.getTask().getUID());
-    */
   }
 
   /**

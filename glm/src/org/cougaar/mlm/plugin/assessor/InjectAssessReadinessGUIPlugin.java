@@ -37,14 +37,14 @@ import org.cougaar.core.blackboard.Subscriber;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.LDMService;
+import org.cougaar.planning.service.LDMService;
 import org.cougaar.core.util.UID;
 
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.NewTask;
@@ -72,7 +72,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   protected JButton arButton;
   protected JButton rescindButton;
 
-  protected RootFactory rootFactory;
+  protected PlanningFactory rootFactory;
   private long rollupSpan = 10;
 
   private IncrementalSubscription assessReadinessSubscription;

@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import org.cougaar.planning.Constants;
 

@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/LocationParser.java,v 1.3 2002-04-02 21:34:45 gvidaver Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/LocationParser.java,v 1.4 2002-11-19 17:21:46 twright Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -24,7 +24,7 @@ package org.cougaar.glm.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.domain.LDMServesPlugin;
+import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.glm.ldm.GLMFactory;

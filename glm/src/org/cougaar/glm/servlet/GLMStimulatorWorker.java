@@ -37,7 +37,7 @@ import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.SchedulerService;
 
 import org.cougaar.core.servlet.SimpleServletSupport;
-import org.cougaar.core.servlet.BlackboardServletSupport;
+import org.cougaar.planning.servlet.BlackboardServletSupport;
 
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.parser.GLMTaskParser;

@@ -27,7 +27,7 @@ import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPlanElement;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -48,9 +48,9 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectScorePoint;
 
 
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.util.UnaryPredicate;
@@ -59,7 +59,7 @@ import java.util.Enumeration;
 
 public class TopsStubExpanderPlugin extends SimplePlugin
 {
-    RootFactory ldmf;
+    PlanningFactory ldmf;
     private IncrementalSubscription expandableTasks;
     private IncrementalSubscription myExpansions;
 

@@ -44,7 +44,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.core.mts.MessageAddress;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.AbstractAsset;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -63,7 +63,7 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.ldm.plan.Verb;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -102,7 +102,7 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
   private IncrementalSubscription oplansSub;
 
   /** Need this for creating new instances of certain objects **/
-  RootFactory ldmf;
+  PlanningFactory ldmf;
 
   /**
    * Self Organization predicate.
@@ -290,7 +290,7 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
     pp.setPreposition(Constants.Preposition.OFTYPE);
     AbstractAsset strans = null;
     try {
-      RootFactory ldmfactory = getFactory();
+      PlanningFactory ldmfactory = getFactory();
       Asset strans_proto = ldmfactory.createPrototype(
          Class.forName( "org.cougaar.planning.ldm.asset.AbstractAsset" ),
          "StrategicTransportation" );

@@ -23,7 +23,7 @@ package org.cougaar.mlm.plugin.sample;
 
 
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 

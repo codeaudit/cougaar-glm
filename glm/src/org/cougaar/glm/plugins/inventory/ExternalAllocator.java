@@ -18,8 +18,8 @@
 package org.cougaar.glm.plugins.inventory;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.util.PluginHelper;
-import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;

@@ -25,11 +25,11 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.component.ServiceRevokedEvent;
 import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
 import org.cougaar.glm.ldm.asset.NewSupplyClassPG;
 import org.cougaar.core.service.DomainService;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.*;
 
@@ -55,7 +55,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugin.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: UniversalExpanderPlugin.java,v 1.2 2002-10-17 19:48:43 mthome Exp $
+  * @version $Id: UniversalExpanderPlugin.java,v 1.3 2002-11-19 17:21:49 twright Exp $
   **/
 
 public class UniversalExpanderPlugin extends ComponentPlugin {
@@ -63,7 +63,7 @@ public class UniversalExpanderPlugin extends ComponentPlugin {
   private IncrementalSubscription interestingTasks;
   private IncrementalSubscription myExpansions;
   private DomainService domainService;
-  private RootFactory theFactory;
+  private PlanningFactory theFactory;
   private ArrayList expansionVerbs = new ArrayList();
   private boolean flat = false;
 
@@ -121,7 +121,7 @@ public class UniversalExpanderPlugin extends ComponentPlugin {
       getBlackboardService().subscribe(
                                        VerbExpansionsPredicate(expansionVerbs));
 
-    theFactory = domainService.getFactory();
+    theFactory = ((PlanningFactory)domainService.getFactory("planning"));
   }
 
   public void execute() {

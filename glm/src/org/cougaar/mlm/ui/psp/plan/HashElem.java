@@ -23,7 +23,7 @@ package org.cougaar.mlm.ui.psp.plan;
 
 import java.util.Vector;
 
-public class HashElem implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
+public class HashElem implements org.cougaar.mlm.ui.util.SelfPrinter, java.io.Serializable {
 
   private String key;
   private Vector values;
@@ -40,13 +40,13 @@ public class HashElem implements org.cougaar.core.util.SelfPrinter, java.io.Seri
     values = v;
   }
 
-  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.mlm.ui.util.AsciiPrinter pr) {
     pr.print(key, "Key");
     pr.print(values, "Values");
   }
 
   public String toString() {
-    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.mlm.ui.util.PrettyStringPrinter.toString(this);
   }
 
 }

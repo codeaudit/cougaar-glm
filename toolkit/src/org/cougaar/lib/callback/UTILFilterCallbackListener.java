@@ -32,7 +32,7 @@ import java.util.Collection;
  * Root callback listener.  The only thing the callback needs from
  * all listeners is that they be able to create a subscription.
  * 
- * Note that this could extend org.cougaar.core.plugin.PluginDelegate, and
+ * Note that this could extend org.cougaar.planning.plugin.legacy.PluginDelegate, and
  * then we could get the subscribe method, but we would also get 
  * all the other delegate methods, cluttering the interface.
  * 

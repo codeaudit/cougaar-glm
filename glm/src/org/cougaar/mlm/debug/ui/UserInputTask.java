@@ -33,7 +33,7 @@ import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 
 import java.text.DateFormat;
@@ -42,7 +42,7 @@ import java.util.Enumeration;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 /** Supports user input of tasks.
  */

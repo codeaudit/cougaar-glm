@@ -2,6 +2,7 @@ package org.cougaar.glm.servlet;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.domain.*;
+import org.cougaar.planning.ldm.*;
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.BlackboardQueryService;
@@ -10,7 +11,7 @@ import org.cougaar.core.service.NamingService;
 import org.cougaar.core.service.SchedulerService;
 import org.cougaar.core.servlet.SimpleServletSupportImpl;
 import org.cougaar.util.ConfigFinder;
-import org.cougaar.core.servlet.BlackboardServletSupport;
+import org.cougaar.planning.servlet.BlackboardServletSupport;
 
 /** 
  * <pre>
@@ -28,7 +29,7 @@ public class CompletionWatcherSupport extends BlackboardServletSupport {
       LoggingService logger,
       BlackboardService blackboard,
       ConfigFinder configFinder,
-      RootFactory ldmf,
+      PlanningFactory ldmf,
       LDMServesPlugin ldm,
       SchedulerService scheduler,
       AlarmService alarm) {

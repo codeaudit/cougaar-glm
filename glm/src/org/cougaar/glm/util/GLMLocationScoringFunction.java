@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.3 2002-10-17 19:48:42 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.4 2002-11-19 17:21:46 twright Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -33,7 +33,7 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.ldm.plan.NewGeolocLocation;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.util.Empty;
 import org.cougaar.util.log.Logger;
@@ -140,7 +140,7 @@ public class GLMLocationScoringFunction extends ScoringFunction.PreferredValueSc
   }
   
   public static void main (String [] args) {
-//    RootFactory ldmf = getLDM().getFactory();
+//    PlanningFactory ldmf = getLDM().getFactory();
 
 //    NewGeolocLocation new_gl = ldmf.newGeolocLocation();
 //    new_gl.setName("Ad Dammam, SA");

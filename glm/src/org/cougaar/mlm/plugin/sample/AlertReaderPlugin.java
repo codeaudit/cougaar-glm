@@ -28,8 +28,8 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Alert;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**

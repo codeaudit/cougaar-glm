@@ -21,7 +21,7 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AbstractAsset;
@@ -56,8 +56,8 @@ import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
 
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import org.cougaar.util.Enumerator;
 import org.cougaar.util.Filters;

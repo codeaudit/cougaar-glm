@@ -24,7 +24,6 @@ package org.cougaar.glm.ldm.lps;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logging;
 
-import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -32,7 +31,7 @@ import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.UID;
-import org.cougaar.planning.ldm.plan.Directive;
+import org.cougaar.core.blackboard.Directive;
 import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.glm.ldm.GLMFactory;
 import org.cougaar.glm.ldm.plan.DetailRequest;
@@ -51,35 +50,34 @@ import java.util.Iterator;
 /**
  *  Logic Provider for handling Detail and Query Requests and Replys.
  *  It is both an EnvelopeLogicProvider and a MessageLogicProvider,
- *  so it both reads from the logplan and accepts directive messages.
+ *  so it both reads from the blackboard and accepts directive messages.
  *  
  */
 
 public class DetailRequestLP
-  extends LogPlanLogicProvider
-  implements EnvelopeLogicProvider, RestartLogicProvider, MessageLogicProvider
+implements LogicProvider, EnvelopeLogicProvider, RestartLogicProvider, MessageLogicProvider
 {
+  private final RootPlan rootplan;
   private final MessageAddress self;
-  private transient GLMFactory _alpFactory=null;
-  
-  private transient HashMap outstandingRequests = new HashMap(7);
+  private final GLMFactory glmFactory;
+  private final HashMap outstandingRequests = new HashMap(7);
 
-  public DetailRequestLP(LogPlanServesLogicProvider logplan,
-			 ClusterServesLogicProvider cluster) {
-    super(logplan,cluster);
-    self = cluster.getMessageAddress();
+  public DetailRequestLP(
+      RootPlan rootplan,
+      MessageAddress self,
+      GLMFactory glmFactory) {
+    this.rootplan = rootplan;
+    this.self = self;
+    this.glmFactory = glmFactory;
   }
 
-  private GLMFactory getGLMFactory() {
-    if (_alpFactory==null) {
-      _alpFactory = (GLMFactory)cluster.getFactory("glm");
-    }
-    return _alpFactory;
+  public void init() {
   }
 
   /**  
    * implements execute from EnvelopePlanLogicProvider
-   * processes DetailRequests and QueryRequests published in the logplan
+   * processes DetailRequests and QueryRequests published in
+   * the blackboard
    */
   public void execute(EnvelopeTuple o, Collection changes) {
     Object obj = o.getObject();
@@ -104,8 +102,8 @@ public class DetailRequestLP
 
   /**
    * implements execute() from MessageLogicProvider 
-   * Processes DetailRequest/ReplyAssignment directives from other clusters. 
-   * Processes QueryRequest/ReplyAssignment directives from other clusters. 
+   * Processes DetailRequest/ReplyAssignment directives from other agents. 
+   * Processes QueryRequest/ReplyAssignment directives from other agents. 
    **/
   public void execute(Directive dir, Collection changes) {
     if (dir instanceof DetailReplyAssignment) {
@@ -127,7 +125,7 @@ public class DetailRequestLP
 
   /**
    * Cluster restart handler. Resend all our DetailRequest
-   * and QueryRequests to the restarted cluster. 
+   * and QueryRequests to the restarted agent. 
    **/
   public void restart(final MessageAddress cid) {
     UnaryPredicate pred = new UnaryPredicate() {
@@ -142,7 +140,7 @@ public class DetailRequestLP
         return false;
       }
     };
-    Enumeration enum = logplan.searchBlackboard(pred);
+    Enumeration enum = rootplan.searchBlackboard(pred);
     while (enum.hasMoreElements()) {
       DetailRequest ir = (DetailRequest) enum.nextElement();
       processDetailRequestAdded(ir);
@@ -160,7 +158,8 @@ public class DetailRequestLP
         return false;
       }
     };
-    Enumeration queryEnum = logplan.searchBlackboard(queryPred);
+    Enumeration queryEnum = 
+      rootplan.searchBlackboard(queryPred);
     while (queryEnum.hasMoreElements()) {
       QueryRequest ir = (QueryRequest) queryEnum.nextElement();
       processQueryRequestAdded(ir);
@@ -169,8 +168,8 @@ public class DetailRequestLP
 
   /**
    * Turn request into assignment.
-   * First step in the process. A request read from the logplan is
-   * turned into an assignment, and sent to the cluster where
+   * First step in the process. A request read from the blackboard
+   * is turned into an assignment, and sent to the agent where
    * the object lives.
    */
   private void processDetailRequestAdded(DetailRequest dr)
@@ -184,41 +183,43 @@ public class DetailRequestLP
     outstandingRequests.put(uid,uid);
 
     // create an DetailRequestAssignment directive
-    DetailRequestAssignment dra = getGLMFactory().newDetailRequestAssignment(dr);
+    DetailRequestAssignment dra = glmFactory.newDetailRequestAssignment(dr);
     Logging.defaultLogger().debug("Sending DetailRequestAssignment to " + dra.getDestination());
-    // Give the directive to the logplan for tranmission
-    logplan.sendDirective(dra);
+    // Give the directive to the blackboard for tranmission
+    rootplan.sendDirective(dra);
   }
   
 
   /**
    * Turn request assignment into reply assignment.
    * The second and third steps in the process.
-   * A request for an object is received on the cluster where the object resides.
-   * The object is found, packaged, and sent back to  cluster where the request originated.
+   * A request for an object is received on the agent where the object resides.
+   * The object is found, packaged, and sent back to  agent where the request originated.
    */
   private void processDetailRequestAssignment(DetailRequestAssignment ta, Collection changes) {
     DetailRequest request = (DetailRequest) ta.getDetailRequest();
     UID uid = request.getDetailUID();
     Logging.defaultLogger().debug("UID: " + uid);
     try {
-      UniqueObject uo = (UniqueObject)logplan.findUniqueObject(uid) ;
+      UniqueObject uo = (UniqueObject)
+        rootplan.findUniqueObject(uid) ;
       if (uo instanceof Transferable) {
-        // Clone so we don't have cross cluster references to the same object
+        // Clone so we don't have cross agent references to the same object
         uo = (UniqueObject) ((Transferable)uo).clone();
       } else {
           Logging.defaultLogger().warn(uo + " does not implement Transferable." +
                                      " Fullfillment of the DetailRequest may result \n" +
                                      " in cross agent references to the same object.");
       }
-      DetailReplyAssignment dra = getGLMFactory().newDetailReplyAssignment(uo,
-                                                                           uid,
-                                                                           cluster.getMessageAddress(),
-                                                                           request.getRequestingCluster());
+      DetailReplyAssignment dra = glmFactory.newDetailReplyAssignment(
+          uo,
+          uid,
+          self,
+          request.getRequestingCluster());
 
       Logging.defaultLogger().debug("DetailReplyAssignment " + dra);
       Logging.defaultLogger().debug("DetailReplyAssignment UID: " + dra.getRequestUID());
-      logplan.sendDirective(dra);
+      rootplan.sendDirective(dra);
     } catch (RuntimeException excep) {
       excep.printStackTrace();
     }
@@ -226,22 +227,23 @@ public class DetailRequestLP
 
 
   /**
-   * Publish the result of the request to the logplan.
+   * Publish the result of the request to the blackboard.
    * The last step in the process. An answer has returned to the
-   * originating cluster, and is published here.
+   * originating agent, and is published here.
    */
   private void processDetailReplyAssignment(DetailReplyAssignment reply, Collection changes) {
     UniqueObject obj = reply.getDetailObject();
     final UID replyUID = reply.getRequestUID();
     if (obj == null) {
-      Logging.defaultLogger().warn("Object not found on remote cluster " +
+      Logging.defaultLogger().warn("Object not found on remote agent " +
                                    replyUID);
       cleanup(replyUID);
       return;
     }
 
     final UID objUID = obj.getUID();
-    UniqueObject existingObj = logplan.findUniqueObject(obj.getUID());
+    UniqueObject existingObj = 
+      rootplan.findUniqueObject(obj.getUID());
     if (existingObj != null) {
 
       // Copy fields so the changes actually appear
@@ -253,14 +255,14 @@ public class DetailRequestLP
       }
 
       try {
-	logplan.change(obj, changes);
+	rootplan.change(obj, changes);
       } catch (RuntimeException re) {
 	re.printStackTrace();	
       }
     } else {
       try {
 	Logging.defaultLogger().debug("Publishing DetailReply " + reply + obj.getUID());
-	logplan.add(obj);
+	rootplan.add(obj);
       } catch (RuntimeException excep) {
 	excep.printStackTrace();
       }
@@ -270,45 +272,48 @@ public class DetailRequestLP
    
 
   /**
-   * Removes DetailRequests from the logplan. Also removes uids from
+   * Removes DetailRequests from the blackboard. Also removes uids from
    * the outstanding requests hash.
    */
   private void cleanup (final UID cleanupUID) {
     // clear out Requests for this object
     outstandingRequests.remove(cleanupUID);
 
-    Enumeration requests = logplan.searchLogPlan( new UnaryPredicate() {
-      public boolean execute(Object o) {
-	if (o instanceof DetailRequest) {
-	  DetailRequest dr = (DetailRequest) o;
-	  UID uid = dr.getDetailUID();
-	  if (uid == null) {
-            Logging.defaultLogger().error("Null UID for " + dr);
-	    return false;
-	  }
-	  if (cleanupUID == null) {
-	    Logging.defaultLogger().error("Null cleanup UID");
-	    return false;
-	  }
-	  if (uid.equals(cleanupUID))
-	    return true;
-	}
-	return false;
-      }
-    });
+    UnaryPredicate pred = 
+      new UnaryPredicate() {
+        public boolean execute(Object o) {
+          if (o instanceof DetailRequest) {
+            DetailRequest dr = (DetailRequest) o;
+            UID uid = dr.getDetailUID();
+            if (uid == null) {
+              Logging.defaultLogger().error("Null UID for " + dr);
+              return false;
+            }
+            if (cleanupUID == null) {
+              Logging.defaultLogger().error("Null cleanup UID");
+              return false;
+            }
+            if (uid.equals(cleanupUID))
+              return true;
+          }
+          return false;
+        }
+      };
+    Enumeration requests = rootplan.searchBlackboard(pred);
 
     while ( requests.hasMoreElements()) {
       DetailRequest dr = (DetailRequest) requests.nextElement();
-      Logging.defaultLogger().debug("Removing DetailRequest from logplan: " + dr);
-      logplan.remove(dr);
+      Logging.defaultLogger().debug(
+          "Removing DetailRequest from blackboard: " + dr);
+      rootplan.remove(dr);
     }
   }
 
 
   /**
    * Turn request into assignment.
-   * First step in the process. A request read from the logplan is
-   * turned into an assignment, and sent to the cluster where
+   * First step in the process. A request read from the blackboard
+   * is turned into an assignment, and sent to the agent where
    * the object lives.
    */
   private void processQueryRequestAdded(QueryRequest qr)
@@ -324,19 +329,19 @@ public class DetailRequestLP
     outstandingRequests.put(pred, pred);
 
     // create an QueryRequestAssignment directive
-    QueryRequestAssignment qra = getGLMFactory().newQueryRequestAssignment(qr);
+    QueryRequestAssignment qra = glmFactory.newQueryRequestAssignment(qr);
     Logging.defaultLogger().debug("Sending QueryRequestAssignment to " + qra.getDestination());
-    // Give the directive to the logplan for tranmission
-    logplan.sendDirective(qra);
+    // Give the directive to the blackboard for tranmission
+    rootplan.sendDirective(qra);
   }
 
 
   /**
    * Turn request assignment into reply assignment.
    * The second and third steps in the process.
-   * A request for a query is received on the cluster.
+   * A request for a query is received on the agent.
    * The query is executed and the results are packaged, 
-   * and sent back to  cluster where the request originated.
+   * and sent back to  agent where the request originated.
    */
   private void processQueryRequestAssignment(QueryRequestAssignment ta, Collection changes) {
     QueryRequest request = (QueryRequest) ta.getQueryRequest();
@@ -344,13 +349,13 @@ public class DetailRequestLP
     ArrayList collection;
     Logging.defaultLogger().debug("QueryPredicate: " + pred);
     try {
-      Enumeration e = logplan.searchLogPlan(pred);
+      Enumeration e = rootplan.searchBlackboard(pred);
       collection = new ArrayList(7);
       while(e.hasMoreElements()) {
         Object next = e.nextElement();
 
         if (next instanceof Transferable) {
-          // Clone so we don't end up with cross cluster refs to the same object
+          // Clone so we don't end up with cross agent refs to the same object
           next = ((Transferable) next).clone();
         } else {
           Logging.defaultLogger().warn(next + " does not implement Transferable." +
@@ -361,31 +366,32 @@ public class DetailRequestLP
 	collection.add(next);
       }
       
-      QueryReplyAssignment dra = getGLMFactory().newQueryReplyAssignment(collection,
-                                                                         pred,
-                                                                         request.getLocalQueryPredicate(),
-                                                                         cluster.getMessageAddress(),
-                                                                         request.getRequestingCluster());
+      QueryReplyAssignment dra = glmFactory.newQueryReplyAssignment(
+          collection,
+          pred,
+          request.getLocalQueryPredicate(),
+          self,
+          request.getRequestingCluster());
 
       Logging.defaultLogger().debug("QueryReplyAssignment " + dra);
       Logging.defaultLogger().debug("QueryReplyAssignment Pred: " + dra.getRequestPredicate());
       Logging.defaultLogger().debug("QueryReplyAssignment requestor: " + request.getRequestingCluster());
-      logplan.sendDirective(dra);
+      rootplan.sendDirective(dra);
     } catch (RuntimeException excep) {
       excep.printStackTrace();
     }
   }
 
   /**
-   * Publish the result of the query request to the logplan.
+   * Publish the result of the query request to the blackboard.
    * The last step in the process. An answer has returned to the
-   * originating cluster, and is published here.
+   * originating agent, and is published here.
    */
   private void processQueryReplyAssignment(QueryReplyAssignment reply, Collection changes) {
     Collection replyCollection = reply.getQueryResponse();
     final UnaryPredicate replyPredicate = reply.getRequestPredicate();
     if ((replyCollection == null) || replyCollection.isEmpty()) {
-      Logging.defaultLogger().debug("Query on remote cluster returned no values " +
+      Logging.defaultLogger().debug("Query on remote agent returned no values " +
       			 replyPredicate);
       cleanup(replyPredicate);
       return;
@@ -395,7 +401,7 @@ public class DetailRequestLP
     ArrayList localCollection = new ArrayList();
     if (reply.getLocalPredicate() != null) {
       Enumeration localEnum = 
-        logplan.searchLogPlan(reply.getLocalPredicate());
+        rootplan.searchBlackboard(reply.getLocalPredicate());
       while (localEnum.hasMoreElements()) {
         localCollection.add(localEnum.nextElement());
       }
@@ -405,7 +411,7 @@ public class DetailRequestLP
       Object obj = it.next();
       if (obj instanceof UniqueObject) {
         Object localObj = 
-          logplan.findUniqueObject(((UniqueObject) obj).getUID());
+          rootplan.findUniqueObject(((UniqueObject) obj).getUID());
         
         if (localObj != null) {
           // Only publish change if object is really different
@@ -416,19 +422,19 @@ public class DetailRequestLP
               Logging.defaultLogger().warn(localObj + " does not implement Transferable." +     
                                          " Changes will not be visible.");
             }
-            logplan.change(obj, changes);
+            rootplan.change(obj, changes);
           } else {
             Logging.defaultLogger().debug(" not publish changing existing obj " + obj);
           }
         } else {
           Logging.defaultLogger().debug("Publishing QueryReply " + reply + obj);
-          logplan.add(obj);
+          rootplan.add(obj);
         }
       } else {
         // Not unique
         // Look for object match in local collection
         if (findMatch(obj, localCollection) == null) {        
-          logplan.add(obj);
+          rootplan.add(obj);
         }
       }
     }
@@ -438,7 +444,7 @@ public class DetailRequestLP
          iterator.hasNext();) {
       Object localObj = iterator.next();
       if (findMatch(localObj, replyCollection) == null) {
-        logplan.remove(localObj);
+        rootplan.remove(localObj);
       }
     }
         
@@ -447,14 +453,14 @@ public class DetailRequestLP
   }
 
   /**
-   * Removes QueryRequests from the logplan. Also removes uids from
+   * Removes QueryRequests from the blackboard. Also removes uids from
    * the outstanding requests hash.
    */
   private void cleanup (final UnaryPredicate cleanupPred) {
     // clear out Requests for this object
     outstandingRequests.remove(cleanupPred);
 
-    Enumeration requests = logplan.searchLogPlan( new UnaryPredicate() {
+    Enumeration requests = rootplan.searchBlackboard( new UnaryPredicate() {
       public boolean execute(Object o) {
 	if (o instanceof QueryRequest) {
 	  QueryRequest dr = (QueryRequest) o;
@@ -476,8 +482,8 @@ public class DetailRequestLP
 
     while ( requests.hasMoreElements()) {
       QueryRequest qr = (QueryRequest) requests.nextElement();
-      Logging.defaultLogger().debug("Removing QueryRequest from logplan: " + qr);
-      logplan.remove(qr);
+      Logging.defaultLogger().debug("Removing QueryRequest from blackboard: " + qr);
+      rootplan.remove(qr);
     }
   }
 

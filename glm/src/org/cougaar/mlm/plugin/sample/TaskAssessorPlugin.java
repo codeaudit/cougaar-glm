@@ -43,8 +43,8 @@ import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.AssetTransfer;
 import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**

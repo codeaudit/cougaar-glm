@@ -21,8 +21,8 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.cougaar.core.agent.ClusterServesPlugin;
-import org.cougaar.core.domain.LDMServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
+import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Schedule;
 

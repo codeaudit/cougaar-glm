@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPrepPhrase.java,v 1.2 2002-04-02 20:54:04 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPrepPhrase.java,v 1.3 2002-11-19 17:21:46 twright Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -22,7 +22,7 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
@@ -65,7 +65,7 @@ public class GLMPrepPhrase extends UTILPrepPhrase {
     return (GeolocLocation) getIndirectObject (t, Constants.Preposition.TO);
   }
 
-  public PrepositionalPhrase makePrepositionalPhrase(RootFactory ldmf,
+  public PrepositionalPhrase makePrepositionalPhrase(PlanningFactory ldmf,
 						     String prep,
 						     GeolocLocation geoloc) {
     NewPrepositionalPhrase npp = ldmf.newPrepositionalPhrase();

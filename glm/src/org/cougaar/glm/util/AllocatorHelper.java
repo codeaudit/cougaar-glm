@@ -22,7 +22,7 @@
 package org.cougaar.glm.util;
 
 import org.cougaar.core.domain.Factory;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Preposition;
@@ -52,7 +52,7 @@ import java.util.Vector;
 /**
  * Helper class for building Allocator Plugins.
  */
-public class AllocatorHelper extends org.cougaar.core.plugin.util.AllocatorHelper 
+public class AllocatorHelper extends org.cougaar.planning.plugin.util.AllocatorHelper 
 {
 
     /**
@@ -120,7 +120,7 @@ public class AllocatorHelper extends org.cougaar.core.plugin.util.AllocatorHelpe
 	return false;
     }
 
-    public static AllocationResult createEstimatedAllocationResult(Task t, RootFactory ldmf) {
+    public static AllocationResult createEstimatedAllocationResult(Task t, PlanningFactory ldmf) {
 	Enumeration preferences = t.getPreferences();
 	if ( preferences != null && preferences.hasMoreElements() ) {
 	    // do something really simple for now.
@@ -150,7 +150,7 @@ public class AllocatorHelper extends org.cougaar.core.plugin.util.AllocatorHelpe
     }
 
   /*
-    public static void allocateToIndirectObjects ( Workflow wf, RootFactory ldmf, Subscriber mySubscriber ) {
+    public static void allocateToIndirectObjects ( Workflow wf, PlanningFactory ldmf, Subscriber mySubscriber ) {
 	Asset a = null;
 	Enumeration tasks = wf.getTasks();
 	while ( tasks.hasMoreElements()) {

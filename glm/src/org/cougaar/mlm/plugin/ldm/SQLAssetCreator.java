@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin.ldm;
 
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.NewSchedule;
 import org.cougaar.planning.ldm.plan.NewRoleSchedule;
 
@@ -67,7 +67,7 @@ public class SQLAssetCreator extends PeriodicQuery {
   protected Asset createAsset(String prototype, 
 			      String uniqueid, String nomenclature) 
   {
-    RootFactory ldmfactory = getLDM().getFactory();
+    PlanningFactory ldmfactory = getLDM().getFactory();
         
     //    System.out.println("Creating asset : " + prototype + " " + 
     //		       uniqueid + " " + nomenclature);
@@ -77,7 +77,7 @@ public class SQLAssetCreator extends PeriodicQuery {
   }
   
   private void setupAvailableSchedule(Asset asset) {
-    RootFactory ldmfactory = getLDM().getFactory();
+    PlanningFactory ldmfactory = getLDM().getFactory();
     Calendar mycalendar = Calendar.getInstance();
     // set the start date of the available schedule to 01/01/1990
     mycalendar.set(1990, 0, 1, 0, 0, 0);

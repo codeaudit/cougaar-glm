@@ -18,7 +18,7 @@
 package org.cougaar.glm.plugins;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectScorePoint;
@@ -33,7 +33,7 @@ import org.cougaar.planning.ldm.plan.ScheduleUtilities;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import java.util.*;
 

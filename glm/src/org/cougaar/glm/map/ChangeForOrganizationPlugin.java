@@ -38,7 +38,7 @@ import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 
 import org.cougaar.planning.ldm.trigger.*;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -82,7 +82,7 @@ import java.util.Date;
 @version 1.0
 ***********************************************************************************************************************/
 
-public class ChangeForOrganizationPlugin extends org.cougaar.core.plugin.SimplePlugin
+public class ChangeForOrganizationPlugin extends org.cougaar.planning.plugin.legacy.SimplePlugin
 {
 	private Hashtable oldLocations = new Hashtable(1);
 	private Organization LocationInfoOrg = null;

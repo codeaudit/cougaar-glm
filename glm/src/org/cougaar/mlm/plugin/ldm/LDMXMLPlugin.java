@@ -29,12 +29,12 @@ import org.cougaar.planning.ldm.asset.NewPropertyGroup;
 
 import org.cougaar.planning.ldm.plan.Schedule;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.domain.FactoryException;
 
 import org.cougaar.core.service.DomainService;
-import org.cougaar.core.service.PrototypeRegistryService;
-import org.cougaar.core.plugin.LDMService;
+import org.cougaar.planning.service.PrototypeRegistryService;
+import org.cougaar.planning.service.LDMService;
 import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.component.ServiceRevokedEvent;
 
@@ -89,7 +89,7 @@ public class LDMXMLPlugin extends LDMEssentialPlugin
   private File XMLFile;
   private Enumeration assets;
   private Document doc;
-  private RootFactory theFactory = null;
+  private PlanningFactory theFactory = null;
   DomainService domainService = null;
   PrototypeRegistryService protregService = null;    
   
@@ -119,7 +119,7 @@ public class LDMXMLPlugin extends LDMEssentialPlugin
     
     if (getBlackboardService().didRehydrate()) return; // Assets already added after rehydration
     
-    theFactory = domainService.getFactory();
+    theFactory = ((PlanningFactory)domainService.getFactory("planning"));
     try {
       getParams();
       parseXMLFile();
@@ -320,7 +320,7 @@ public class LDMXMLPlugin extends LDMEssentialPlugin
   
   
   private Enumeration getLDMAssets( Document doc ) {
-    RootFactory theFactory = domainService.getFactory();
+    PlanningFactory theFactory = ((PlanningFactory)domainService.getFactory("planning"));
     Vector assets = new Vector();
     
     NodeList prototypes = doc.getElementsByTagName( "prototype" );

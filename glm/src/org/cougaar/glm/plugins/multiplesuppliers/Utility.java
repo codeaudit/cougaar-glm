@@ -29,6 +29,7 @@ import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.*;
 import org.cougaar.core.domain.*;
+import org.cougaar.planning.ldm.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.*;
 import org.cougaar.planning.ldm.plan.*;
@@ -70,12 +71,12 @@ public final class Utility {
    * Create a new subtask using the grammatical elements of the input task,
    * further establishing the input task as the parent of the new subtask.
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param task the task whose grammatical elements will be used
    *             to create a new Task object.
    * @return A newly created Task patterned from an input task.
    */
-  public final static NewTask createSubtaskFromTask( RootFactory factory, Task task) {
+  public final static NewTask createSubtaskFromTask( PlanningFactory factory, Task task) {
     return createSubtaskFromTask( factory, task, null);
   }
 
@@ -83,14 +84,14 @@ public final class Utility {
    * Create a new subtask using the grammatical elements of the input task,
    * further establishing the input task as the parent of the new subtask.
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param task the task whose grammatical elements will be used
    *             to create a new Task object.
    * @param prepositionsToExclude a list of prepositional phrases that should not be copied from
    *        the original task to the new task.
    * @return A newly created Task patterned from an input task.
    */
-  public final static NewTask createSubtaskFromTask( RootFactory factory, Task task, String[] prepositionsToExclude) {
+  public final static NewTask createSubtaskFromTask( PlanningFactory factory, Task task, String[] prepositionsToExclude) {
     NewTask subtask = cloneTask( factory, task, prepositionsToExclude);
     subtask.setParentTaskUID( task.getUID());
     subtask.setWorkflow( null);
@@ -104,12 +105,12 @@ public final class Utility {
    * copied by reference to the new Vector. This way, the new Vector's content can
    * be changed without effecting the original Vector.
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param task the task whose grammatical elements will be used
    *             to create a new Task object.
    * @return A newly created Task patterned from an input task.
    */
-  public final static NewTask cloneTask( RootFactory factory, Task task) {
+  public final static NewTask cloneTask( PlanningFactory factory, Task task) {
     return cloneTask( factory, task, null);
   }
 
@@ -120,14 +121,14 @@ public final class Utility {
    * copied by reference to the new Vector. This way, the new Vector's content can
    * be changed without effecting the original Vector.
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param task the task whose grammatical elements will be used
    *             to create a new Task object.
    * @param prepositionsToExclude a list of prepositional phrases that should not be copied from
    *        the original task to the new task.
    * @return A newly created Task patterned from an input task.
    */
-  public final static NewTask cloneTask( RootFactory factory, Task task, String[] prepositionsToExclude) {
+  public final static NewTask cloneTask( PlanningFactory factory, Task task, String[] prepositionsToExclude) {
     Enumeration enum = null;
     NewTask subtask = factory.newTask();
     subtask.setContext( task.getContext());
@@ -204,11 +205,11 @@ public final class Utility {
   /**
    * Create an Failed Disposition object associated with a task.
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param task the task to be associated with the Disposition.
    * @return a Failed Disposition object associated with the task
    */
-  public final static Disposition makeFailedDisposition( RootFactory factory, Task task) {
+  public final static Disposition makeFailedDisposition( PlanningFactory factory, Task task) {
     AllocationResult failedAR = createAllocationResult( factory, false,
       task.getPreferredValue( AspectType.START_TIME),
       task.getPreferredValue( AspectType.END_TIME), 0, 0);
@@ -219,7 +220,7 @@ public final class Utility {
   /**
    * Create an Allocation object (incorporating COST, QUANTITY and SCHEDULE).
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param task the task being disposed of by this Allocation.
    * @param asset used to perform the task
    * @param cost the value to set the COST aspect value to
@@ -227,7 +228,7 @@ public final class Utility {
    *
    * @return an Allocation object which is the disposition of the input task
    */
-  public final static Allocation createAllocation( RootFactory factory,
+  public final static Allocation createAllocation( PlanningFactory factory,
                                         Task task, Asset asset, double cost, double quantity) {
     return createAllocation( factory, task, asset, cost, quantity, null);
   }
@@ -235,7 +236,7 @@ public final class Utility {
   /**
    * Create an Allocation object (incorporating COST, QUANTITY, SCHEDULE, and associated Role).
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param task the task being disposed of by this Allocation.
    * @param asset used to perform the task
    * @param cost the value to set the COST aspect value to
@@ -244,7 +245,7 @@ public final class Utility {
    *        Role.BOGUS will be used.
    * @return an Allocation object which is the disposition of the input task
    */
-  public final static Allocation createAllocation( RootFactory factory,
+  public final static Allocation createAllocation( PlanningFactory factory,
                                         Task task, Asset asset, double cost, double quantity, Role roleOfAsset) {
     AllocationResult estAllocResult = null;
     if ( !(asset instanceof Organization) || task.getVerb().toString().equals( Constants.Verb.INFORM)) {
@@ -266,7 +267,7 @@ public final class Utility {
    * Create an AllocationResult object (incorporating START_TIME, END_TIME, COST and QUANTITY).
    * This method sets confidence rating to 1.0.
    *
-   * @param factory reference to cluster's RootFactory
+   * @param factory reference to cluster's PlanningFactory
    * @param successFlag success value to associate with this allocation result.
    * @param startTime of this allocation
    * @param endTime of this allocation
@@ -274,7 +275,7 @@ public final class Utility {
    * @param quantity the value to set the QUANTITY aspect value to
    * @return an AllocationResult object with aspect set to input values
    */
-  public final static AllocationResult createAllocationResult( RootFactory factory, boolean successFlag,
+  public final static AllocationResult createAllocationResult( PlanningFactory factory, boolean successFlag,
                                 double startTime, double endTime, double cost, double quantity) {
     double[] resultsarray = new double[4];
 

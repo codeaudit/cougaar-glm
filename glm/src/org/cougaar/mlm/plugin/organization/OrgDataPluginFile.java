@@ -24,7 +24,7 @@ import java.util.*;
 
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.plugin.AssetDataPluginFile;
+import org.cougaar.planning.plugin.asset.AssetDataPluginFile;
 
 import org.cougaar.glm.ldm.Constants;
 

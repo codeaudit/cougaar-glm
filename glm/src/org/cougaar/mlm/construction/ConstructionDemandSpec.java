@@ -31,7 +31,7 @@ import org.cougaar.planning.ldm.measure.FlowRate;
 import org.cougaar.planning.ldm.measure.Rate;
 
 import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -74,13 +74,13 @@ public class ConstructionDemandSpec extends ConsumerSpec {
         private Schedule consumer_sched;
         private Schedule materiel_sched;
 
-        private transient RootFactory theLDMFactory;
+        private transient PlanningFactory theLDMFactory;
 
 	// 86400000 msec/day = 1000msec/sec * 60sec/min *60min/hr * 24 hr/day
 	protected static final long              MSEC_PER_DAY =  86400000;
 
     public ConstructionDemandSpec (Asset c, Schedule consumer_sched, 
-        Schedule materiel_sched, RootFactory theLDMF) {
+        Schedule materiel_sched, PlanningFactory theLDMF) {
 
 
 		super (c, "ClassIVConstructionMaterial");

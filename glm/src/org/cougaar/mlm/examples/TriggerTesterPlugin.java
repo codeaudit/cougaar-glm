@@ -47,9 +47,9 @@ import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.trigger.*;
-import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -212,7 +212,7 @@ public class TriggerTesterPlugin extends SimplePlugin
   
   
   public PlanElement createAPlanElement(String theverb) {
-    RootFactory factory = getFactory();
+    PlanningFactory factory = getFactory();
     NewTask ntask = factory.newTask();
     // only fill in a few things on the task since it is only for testing.
     // if this was a real task we would need to fill in more.

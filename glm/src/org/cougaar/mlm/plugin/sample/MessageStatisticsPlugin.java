@@ -28,7 +28,7 @@ import java.util.Vector;
  * Scalability plugin at leaf : allocate tasks to assets based on value 
  * in task and value associated with plugin
  **/
-public class MessageStatisticsPlugin extends org.cougaar.core.plugin.SimplePlugin
+public class MessageStatisticsPlugin extends org.cougaar.planning.plugin.legacy.SimplePlugin
 {
   private long interval;
   public void setupSubscriptions()

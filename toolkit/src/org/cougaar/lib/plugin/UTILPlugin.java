@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.plugin;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 /** Plugin Base class to supply convenient access to various
  * UTIL functions for UTIL plugins.

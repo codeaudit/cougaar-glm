@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.util.MinMaxPanel;
 import org.cougaar.util.UnaryPredicate;
 import java.awt.Component;

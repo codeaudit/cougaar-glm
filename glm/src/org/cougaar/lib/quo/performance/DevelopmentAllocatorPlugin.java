@@ -21,14 +21,14 @@ import java.util.Collections;
 import java.util.Date;
 import org.cougaar.lib.quo.performance.assets.*;
 import org.cougaar.core.blackboard.ChangeReport;
-import org.cougaar.core.plugin.Annotation;
+import org.cougaar.planning.ldm.plan.Annotation;
 import java.io.*;
 
 /**
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.1 2002-02-12 17:48:10 jwinston Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.2 2002-11-19 17:21:46 twright Exp $
  **/
 public class DevelopmentAllocatorPlugin extends CommonUtilPlugin
 {

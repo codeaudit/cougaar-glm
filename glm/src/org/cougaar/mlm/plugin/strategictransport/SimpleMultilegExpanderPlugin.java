@@ -37,7 +37,7 @@ import org.cougaar.planning.ldm.measure.*;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
 
-public class SimpleMultilegExpanderPlugin extends org.cougaar.core.plugin.SimplePlugin
+public class SimpleMultilegExpanderPlugin extends org.cougaar.planning.plugin.legacy.SimplePlugin
 {
 
   // Subscription for all 'Transport' tasks

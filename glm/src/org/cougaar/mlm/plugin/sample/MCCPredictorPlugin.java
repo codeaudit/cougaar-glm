@@ -28,7 +28,7 @@ import org.cougaar.planning.ldm.asset.NewClusterPG;
 import org.cougaar.planning.ldm.plan.AssetTransfer;
 import org.cougaar.planning.ldm.plan.Predictor;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.util.Enumerator;
 import org.cougaar.util.TimeSpan;

@@ -21,7 +21,6 @@
 
 package org.cougaar.glm.ldm.lps;
 
-import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -30,7 +29,8 @@ import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.planning.ldm.plan.Directive;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.core.blackboard.Directive;
 import org.cougaar.planning.ldm.plan.TransferableAssignment;
 import org.cougaar.planning.ldm.plan.TransferableRescind;
 import org.cougaar.planning.ldm.plan.TransferableTransfer;
@@ -58,14 +58,21 @@ import org.cougaar.core.util.UID;
  * OPlanWatcherLP tracks OPlan changes, reconciling other objects to the OPlan(s)
  **/
 
-public class OPlanWatcherLP extends LogPlanLogicProvider
-  implements EnvelopeLogicProvider
+public class OPlanWatcherLP
+implements LogicProvider, EnvelopeLogicProvider
 {
-  public OPlanWatcherLP(LogPlanServesLogicProvider logplan,
-                        ClusterServesLogicProvider cluster) {
-    super(logplan,cluster);
+  private final RootPlan rootplan;
+  private final PlanningFactory ldmf;
+
+  public OPlanWatcherLP(
+      RootPlan rootplan,
+      PlanningFactory ldmf) {
+    this.rootplan = rootplan;
+    this.ldmf = ldmf;
   }
 
+  public void init() {
+  }
 
   /**  
    * Catch interesting Oplan and Oplan component activity.
@@ -84,13 +91,16 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
     final String orgID = oa.getOrgID();
 
     Organization org = null;
-    Enumeration enum = logplan.searchLogPlan(new UnaryPredicate() {
+    UnaryPredicate pred = 
+      new UnaryPredicate() {
         public boolean execute(Object o) {
           if (o instanceof Organization) {
             return orgID.equals(((Organization)o).getMessageAddress().toString());
           } 
           return false;
-        }});
+        }
+      };
+    Enumeration enum = rootplan.searchBlackboard(pred);
     if (enum != null && enum.hasMoreElements()) {
       org = (Organization)enum.nextElement();
     } else {
@@ -106,8 +116,8 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
     Asset a = logplan.findAsset(orgID);
 
     if (! (a instanceof Organization)) {
-      System.err.println("OPlanWatcher("+cluster.getMessageAddress()+
-                         ") found non org asset "+a+" in logplan by name: "+orgID);
+      System.err.println("OPlanWatcher"
+                         " found non org asset "+a+" in logplan by name: "+orgID);
       return;
     }
     Organization org = (Organization) a;
@@ -188,7 +198,7 @@ public class OPlanWatcherLP extends LogPlanLogicProvider
     // ChangeReport
 
     // mark the object as having changed...maybe we should forward the changes?
-    logplan.change(org, null);  
+    rootplan.change(org, null);  
 
   }
 }

@@ -25,7 +25,7 @@ import org.cougaar.util.StateModelException;
 import org.cougaar.core.blackboard.Subscriber;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.core.blackboard.IncrementalSubscription;
@@ -51,7 +51,7 @@ public class GenericAssessorPlugin
   JSGlobalObject global = null; 
 
   protected void setupSubscriptions() {
-    RootFactory ldmf = theLDMF;
+    PlanningFactory ldmf = theLDMF;
 
     try { 
       Vector all_parameters = getParameters();

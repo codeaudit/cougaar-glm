@@ -91,15 +91,15 @@ import javax.swing.event.ChangeEvent;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.plan.Schedule;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.util.ShortDateFormat;
 
@@ -142,7 +142,7 @@ public final class AddAssetsGUIPlugin extends SimplePlugin {
 
   private ShortDateFormat dateFormatter;
 
-  private RootFactory ldmf_ = null;
+  private PlanningFactory ldmf_ = null;
 
   private IncrementalSubscription removableAssetsSub;
 

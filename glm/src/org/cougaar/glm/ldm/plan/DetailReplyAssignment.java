@@ -22,8 +22,8 @@
 package org.cougaar.glm.ldm.plan;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.plan.Directive;
-import org.cougaar.planning.ldm.plan.DirectiveImpl;
+import org.cougaar.core.blackboard.Directive;
+import org.cougaar.core.blackboard.DirectiveImpl;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.UID;
 

@@ -33,7 +33,7 @@ import org.cougaar.glm.ldm.asset.Organization;
 //import org.cougaar.glm.plugins.TaskUtils;
 
 import org.cougaar.planning.ldm.trigger.*;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -78,7 +78,7 @@ import java.awt.FlowLayout;
 @version 1.0
 ***********************************************************************************************************************/
 
-public class LocationCollectorPlugin extends org.cougaar.core.plugin.SimplePlugin
+public class LocationCollectorPlugin extends org.cougaar.planning.plugin.legacy.SimplePlugin
 {
 	private ActionListener dumpProfileListener = null;
 	public static Hashtable organizationLocations = new Hashtable();

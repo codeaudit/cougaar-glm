@@ -20,12 +20,12 @@
 package org.cougaar.glm.plugins;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.MoreMath;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.measure.*;
 
@@ -417,14 +417,14 @@ public class TaskUtils extends PluginHelper {
     return !isProjection(t);
   }
 
-  public static Preference createDemandRatePreference(RootFactory rf, Rate rate) {
+  public static Preference createDemandRatePreference(PlanningFactory rf, Rate rate) {
     ScoringFunction sf = ScoringFunction
       .createStrictlyAtValue(AspectValue.newAspectValue(AlpineAspectType.DEMANDRATE,
                                                         rate));
     return rf.newPreference(AlpineAspectType.DEMANDRATE, sf);
   }
 
-  public static Preference createDemandMultiplierPreference(RootFactory rf, double mult) {
+  public static Preference createDemandMultiplierPreference(PlanningFactory rf, double mult) {
     ScoringFunction sf = ScoringFunction
       .createStrictlyAtValue(AspectValue.newAspectValue(AlpineAspectType.DEMANDMULTIPLIER,
 					     mult));

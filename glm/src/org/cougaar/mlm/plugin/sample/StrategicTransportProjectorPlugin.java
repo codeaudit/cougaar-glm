@@ -37,7 +37,7 @@ import org.cougaar.glm.ldm.asset.*;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
@@ -47,9 +47,9 @@ import org.cougaar.glm.ldm.oplan.TimeSpan;
 import org.cougaar.glm.xml.parser.LocationParser;
 import org.cougaar.planning.ldm.plan.*;
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.ExpanderHelper;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.ExpanderHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import org.cougaar.util.SingleElementEnumeration;
 import org.cougaar.util.ShortDateFormat;
@@ -960,7 +960,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     pp.setPreposition(Constants.Preposition.OFTYPE);
     if (strans == null) {
       try {
-        RootFactory ldmfactory = getFactory();
+        PlanningFactory ldmfactory = getFactory();
         Asset strans_proto = ldmfactory.createPrototype(
            Class.forName( "org.cougaar.planning.ldm.asset.AbstractAsset" ),
            "StrategicTransportation" );

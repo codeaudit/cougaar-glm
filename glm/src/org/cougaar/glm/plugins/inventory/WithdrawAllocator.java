@@ -19,7 +19,7 @@ package org.cougaar.glm.plugins.inventory;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
 import org.cougaar.core.domain.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.*;

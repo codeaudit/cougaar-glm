@@ -24,9 +24,9 @@ package org.cougaar.lib.xml.parser;
 import java.util.Date;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.domain.LDMServesPlugin;
+import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.lib.util.UTILPreference;
 import org.cougaar.util.log.Logger;
 
@@ -49,7 +49,7 @@ public class PreferencesParser{
   /**
    * Get the cost preference
    */
-  public Preference getCost(RootFactory ldmf, Node node){
+  public Preference getCost(PlanningFactory ldmf, Node node){
     NodeList  nlist    = node.getChildNodes();      
     int       nlength  = nlist.getLength();
     double    cost     = 0.0;
@@ -66,7 +66,7 @@ public class PreferencesParser{
   /**
    * Get the quantity preference
    */
-  public Preference getQuantity(RootFactory ldmf, Node node){
+  public Preference getQuantity(PlanningFactory ldmf, Node node){
     NodeList  nlist    = node.getChildNodes();      
     int       nlength  = nlist.getLength();
     long      quantity = 0l;
@@ -84,7 +84,7 @@ public class PreferencesParser{
   /**
    * Get the start date preference
    */
-  public Preference getStartDate(RootFactory ldmf, Node node){
+  public Preference getStartDate(PlanningFactory ldmf, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
     Date      readyatdate = null;
@@ -105,7 +105,7 @@ public class PreferencesParser{
   /**
    * Get the end date preference
    */
-  public Preference getEndDate(RootFactory ldmf, Node node){
+  public Preference getEndDate(PlanningFactory ldmf, Node node){
     NodeList  nlist     = node.getChildNodes();      
     int       nlength   = nlist.getLength();
     Date      earldate  = null;

@@ -63,7 +63,7 @@ import org.cougaar.planning.ldm.plan.LocationScheduleElementImpl;
 import org.cougaar.planning.ldm.plan.TaggedLocationScheduleElement;
 import org.cougaar.planning.ldm.plan.Location;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.util.Reflect;
 import org.cougaar.util.TimeSpan;

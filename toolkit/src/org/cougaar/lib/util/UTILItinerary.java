@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.ItineraryElement;
 import org.cougaar.planning.ldm.plan.Location;
 import org.cougaar.planning.ldm.plan.NewItineraryElement;
@@ -37,11 +37,11 @@ public class UTILItinerary {
   /**
    * Utility methods for creating a ItineraryElements, which will be
    * indirectObjects to the PrepPhrase ItineraryOf.
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param v the Verb that describes the role of the ItineraryElement
    * @return NewItineraryElement
    */
-  public NewItineraryElement makeItineraryElement(RootFactory ldmf, Verb v){
+  public NewItineraryElement makeItineraryElement(PlanningFactory ldmf, Verb v){
     NewItineraryElement ie = ldmf.newItineraryElement();
     ie.setRole(v);
     return ie;
@@ -120,7 +120,7 @@ public class UTILItinerary {
    * @param itineraryElements an enum of all the legs.
    * @return Schedule the itinerary
    */
-  public Schedule makeItinerary(RootFactory ldmf, Enumeration itineraryElements){
+  public Schedule makeItinerary(PlanningFactory ldmf, Enumeration itineraryElements){
     return ldmf.newSchedule(itineraryElements);
   }
 }

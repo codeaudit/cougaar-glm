@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
@@ -57,9 +57,9 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.ldm.plan.Verb;
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginAdapter;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.core.util.UID;
 

@@ -45,7 +45,7 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.agent.service.uid.UIDServiceProvider;
 import org.cougaar.core.agent.service.uid.UIDServiceImpl;
 import org.cougaar.core.service.UIDService;
-import org.cougaar.core.servlet.ServletService;
+import org.cougaar.core.service.ServletService;
 
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;

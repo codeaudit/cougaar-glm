@@ -27,11 +27,11 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.NamingService;
-import org.cougaar.core.plugin.LDMService;
+import org.cougaar.planning.service.LDMService;
 import org.cougaar.util.ConfigFinder;
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.SchedulerService;
-import org.cougaar.core.servlet.BlackboardServletComponent;
+import org.cougaar.planning.servlet.BlackboardServletComponent;
 import org.cougaar.core.servlet.SimpleServletSupport;
 
 public class CompletionWatcherServletComponent extends BlackboardServletComponent {

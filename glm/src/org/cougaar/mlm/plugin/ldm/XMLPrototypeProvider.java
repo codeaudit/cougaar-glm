@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AssetFactory;
@@ -32,7 +32,7 @@ import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.planning.ldm.asset.PropertyGroup;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import java.lang.reflect.Method;
 
@@ -59,7 +59,7 @@ public class XMLPrototypeProvider
 {
 
     private AssetFactory theAssetFactory = null;
-	 private RootFactory ldmfactory = null;
+	 private PlanningFactory ldmfactory = null;
 	 // CHANGE THESE!
 	 //  use this can handle for now, since we will be using real bumper #s
 	 //  for typeid's that aren't generically definable bd 1/19/00	

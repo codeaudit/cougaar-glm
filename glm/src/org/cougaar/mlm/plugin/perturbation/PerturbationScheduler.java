@@ -24,7 +24,7 @@ package org.cougaar.mlm.plugin.perturbation;
   import java.util.Date;
   import java.util.Vector ;
 
-  import org.cougaar.core.agent.ClusterServesPlugin;
+  import org.cougaar.planning.ldm.ClusterServesPlugin;
   
   import org.cougaar.util.ReusableThread ;
   import org.cougaar.util.ReusableThreadPool ;

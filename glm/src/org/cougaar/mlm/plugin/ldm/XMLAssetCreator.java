@@ -22,16 +22,16 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.Schedule;
 
-import org.cougaar.core.domain.LDMServesPlugin;
+import org.cougaar.planning.ldm.LDMServesPlugin;
 
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 
 import org.cougaar.planning.ldm.plan.NewRoleSchedule;
 
@@ -70,8 +70,8 @@ public class XMLAssetCreator //extends QueryHandler
   }
 
 
-  public Enumeration getLDMAssets( Node node, RootFactory ldmf ) {
-    RootFactory ldmfactory = myCluster.getLDM().getFactory();
+  public Enumeration getLDMAssets( Node node, PlanningFactory ldmf ) {
+    PlanningFactory ldmfactory = myCluster.getLDM().getFactory();
     Vector assets = new Vector();
     NodeList nlist = node.getChildNodes();
     int nlength = nlist.getLength();

@@ -24,7 +24,7 @@ package org.cougaar.glm.plugin.completion;
 import java.util.HashSet;
 import java.util.Set;
 import org.cougaar.core.plugin.completion.CompletionCalculator;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;

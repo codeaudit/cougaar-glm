@@ -20,15 +20,15 @@
  */
 package org.cougaar.glm.execution.cluster;
 
-import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.lib.planserver.HttpInput;
 import org.cougaar.lib.planserver.PSP_BaseAdapter;
 import org.cougaar.lib.planserver.PlanServiceContext;
 import org.cougaar.lib.planserver.PlanServiceUtilities;
 import org.cougaar.lib.planserver.RuntimePSPException;
 import org.cougaar.lib.planserver.ServerPluginSupport;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import java.io.PrintStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,7 +50,7 @@ public abstract class PSP_Base extends PSP_BaseAdapter
     protected PlanServiceUtilities psu;
     protected PluginDelegate delegate;
     protected ClusterServesPlugin cluster;
-    protected RootFactory factory;
+    protected PlanningFactory factory;
     protected abstract void execute() throws InterruptedException, IOException;
   }
 

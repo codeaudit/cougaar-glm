@@ -13,7 +13,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.SubscriberException;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import com.objectspace.jgl.UnaryPredicate;
 
 import java.util.Vector;

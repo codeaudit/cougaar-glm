@@ -25,10 +25,10 @@ import java.io.*;
 import java.util.*;
 
 import org.cougaar.core.domain.Factory;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.util.ShortDateFormat;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.util.XMLObjectFactory;
+import org.cougaar.mlm.ui.util.XMLObjectFactory;
 
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
@@ -36,7 +36,7 @@ import org.cougaar.glm.ldm.oplan.TimeSpan;
 
 import org.w3c.dom.Element;
 
-public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrinter {
+public class UIModifyOrgActivityState implements org.cougaar.mlm.ui.util.SelfPrinter {
 
   public static void main(String[] args) {
     UIModifyOrgActivityState moa = new UIModifyOrgActivityState();
@@ -74,7 +74,7 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
     try {
       Element root = XMLObjectFactory.readXMLRoot(in);
       if (root != null) {
-        RootFactory rf = (RootFactory) ldmf; // must be a root factory
+        PlanningFactory rf = (PlanningFactory) ldmf; // must be a root factory
         Object obj = XMLObjectFactory.parseObject(rf, root);
         if (obj instanceof UIModifyOrgActivityState)
           return (UIModifyOrgActivityState)obj;
@@ -88,11 +88,11 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
    * Write instance to XML String
    */
   public String toXMLString() {
-    //FIXME return org.cougaar.core.util.XMLPrinter.toString(this);
+    //FIXME return org.cougaar.mlm.ui.util.XMLPrinter.toString(this);
     java.io.ByteArrayOutputStream baout =
       new java.io.ByteArrayOutputStream();
-    org.cougaar.core.util.XMLPrinter pr = new org.cougaar.core.util.XMLPrinter(baout);
-    pr.printObject((org.cougaar.core.util.SelfPrinter)this);
+    org.cougaar.mlm.ui.util.XMLPrinter pr = new org.cougaar.mlm.ui.util.XMLPrinter(baout);
+    pr.printObject((org.cougaar.mlm.ui.util.SelfPrinter)this);
     return baout.toString();
   }
 
@@ -154,7 +154,7 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
     return ((s != null) ? s.trim() : "");
   }
 
-  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.mlm.ui.util.AsciiPrinter pr) {
     pr.print(pressedButton, "PressedButton");
     pr.print(orgIdLabel, "OrgIdLabel");
     pr.print(typeText, "TypeText");
@@ -167,7 +167,7 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
   }
 
   public String toString() {
-    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.mlm.ui.util.PrettyStringPrinter.toString(this);
   }
 
   public void drawOrgActivity(OrgActivity orgAct, Oplan oplan) 

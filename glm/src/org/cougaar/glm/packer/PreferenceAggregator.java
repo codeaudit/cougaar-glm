@@ -7,7 +7,7 @@ package org.cougaar.glm.packer;
 import java.util.*;
 
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
   * Typically, when building an aggregator, one wants to be able to
@@ -22,7 +22,7 @@ public interface PreferenceAggregator {
     * setPreferences method.
     * @see org.cougaar.planning.ldm.plan.NewTask#setPreferences
     */ 
-  ArrayList aggregatePreferences(Iterator tasks, RootFactory rootFactory);
+  ArrayList aggregatePreferences(Iterator tasks, PlanningFactory rootFactory);
 }
 
 

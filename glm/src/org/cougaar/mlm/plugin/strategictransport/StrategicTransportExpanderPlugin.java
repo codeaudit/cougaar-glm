@@ -28,7 +28,7 @@ import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPlanElement;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -49,7 +49,7 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectScorePoint;
 
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
@@ -71,7 +71,7 @@ import org.cougaar.util.UnaryPredicate;
 
 public class StrategicTransportExpanderPlugin extends SimplePlugin
 {
-  private RootFactory ldmf;
+  private PlanningFactory ldmf;
   
   /** IncrementalSubscription to hold collection of input tasks **/
   private IncrementalSubscription expandableTasks;

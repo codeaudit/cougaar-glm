@@ -23,8 +23,8 @@ package org.cougaar.mlm.ui.producers.policy;
 
 import org.cougaar.planning.ldm.policy.KeyRuleParameterEntry;
 
-import org.cougaar.core.util.AsciiPrinter;
-import org.cougaar.core.util.SelfPrinter;
+import org.cougaar.mlm.ui.util.AsciiPrinter;
+import org.cougaar.mlm.ui.util.SelfPrinter;
 
 public class UIKeyEntryInfo implements SelfPrinter, java.io.Serializable {
 

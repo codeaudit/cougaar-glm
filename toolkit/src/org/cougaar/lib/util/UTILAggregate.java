@@ -26,7 +26,7 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
@@ -76,7 +76,7 @@ public class UTILAggregate {
   /**
    * Creates an Aggregation for every parent task.
    *
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param pts an enum of parent tasks
    * @param subtasks a vector of subtasks created from the parent tasks
    * @param estimated AllocationResult
@@ -85,7 +85,7 @@ public class UTILAggregate {
    */
 
   public List makeAggregation(UTILPlugin creator,
-				     RootFactory ldmf,
+				     PlanningFactory ldmf,
 				     Plan realityPlan,
 				     Vector parentTasks, 
 				     Verb whatVerb,
@@ -169,7 +169,7 @@ public class UTILAggregate {
    *                                                                               <p>
    * @param creator the plugin that created the aggregations, told when there is 
    *  a failure
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param realityPlan the plan the plan elements are part of
    * @param parentTasks an enum of parent tasks
    * @param whatVerb the verb to give the MPTask
@@ -185,7 +185,7 @@ public class UTILAggregate {
    */
 
   public List makeAggregation(UTILPlugin creator,
-				     RootFactory ldmf,
+				     PlanningFactory ldmf,
 				     Plan realityPlan,
 				     Vector parentTasks, 
 				     Verb whatVerb,
@@ -271,12 +271,12 @@ public class UTILAggregate {
    * Sets the estimated allocation result of the plan element to an 
    * empty failed alloc result.
    *
-   * @param ldmf RootFactory
+   * @param ldmf PlanningFactory
    * @param t task
    * @return Aggregation
    */
   public Aggregation makeFailedAggregation(UTILPlugin creator,
-						  RootFactory ldmf, Task t) {
+						  PlanningFactory ldmf, Task t) {
     AllocationResult failedAR  = 
       ldmf.newAllocationResult(1.0, false, 
 			       new int[1], new double[1]);
@@ -290,7 +290,7 @@ public class UTILAggregate {
 
   /**
    * Create an MPTask with an enumeration of parent tasks.
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param source the cluster originating the task
    * @param plan the log plan
    * @param parents an enum of parent tasks
@@ -300,7 +300,7 @@ public class UTILAggregate {
    * @param penalty the penalty function associated with the new task
    * @return NewMPTask
    */
-  public NewMPTask makeMPSubTask (RootFactory ldmf,
+  public NewMPTask makeMPSubTask (PlanningFactory ldmf,
 					 Plan plan,
 					 Enumeration parentTasks,
 					 Verb verb,

@@ -34,12 +34,12 @@ import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.component.ServiceRevokedEvent;
 import org.cougaar.core.component.ServiceRevokedListener;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.LDMService;
+import org.cougaar.planning.service.LDMService;
 
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import org.cougaar.core.service.LoggingService;
 
@@ -99,7 +99,7 @@ public class GLSExpanderPlugin extends ComponentPlugin {
    * Parameters are the types of determinerequirements to generate.
    **/
   String[] myParams = null;
-  RootFactory theLDMF = null;
+  PlanningFactory theLDMF = null;
   
   /**
    * Override the setupSubscriptions() in ComponentPlugin

@@ -33,7 +33,7 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AbstractAsset;
@@ -62,8 +62,8 @@ import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.planning.ldm.plan.WorkflowImpl;
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
@@ -79,7 +79,7 @@ public class GLSAllocatorPlugin extends SimplePlugin {
   private IncrementalSubscription orgAssets;
   private IncrementalSubscription myAllocations;
   private IncrementalSubscription myExpansions;
-  private RootFactory ldmf;
+  private PlanningFactory ldmf;
   private Workflow origGlsWf;
   private Task waitingForSub;
   private Vector waitingForSelf = new Vector();
@@ -389,7 +389,7 @@ public class GLSAllocatorPlugin extends SimplePlugin {
 	
     AbstractAsset manageasset = null;
     try {
-      RootFactory ldmfactory = getFactory();
+      PlanningFactory ldmfactory = getFactory();
       manageasset = (AbstractAsset)ldmfactory.createAsset( AbstractAsset.class );
     } catch (Exception e) {
       System.err.println("GLSDRAllocator - problem creating the abstract manage asset");

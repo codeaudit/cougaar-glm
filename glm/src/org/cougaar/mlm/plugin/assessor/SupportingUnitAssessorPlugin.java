@@ -41,8 +41,8 @@ import org.cougaar.planning.ldm.plan.Relationship;
 import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.plan.Role;
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 
 import org.cougaar.glm.ldm.Constants;
 

@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.cougaar.planning.ldm.policy.RuleParameter;
-import org.cougaar.core.util.AsciiPrinter;
-import org.cougaar.core.util.SelfPrinter;
+import org.cougaar.mlm.ui.util.AsciiPrinter;
+import org.cougaar.mlm.ui.util.SelfPrinter;
 
 public class UIEnumerationParameterInfo extends UIPolicyParameterInfo 
   implements SelfPrinter, java.io.Serializable {

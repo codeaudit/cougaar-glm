@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
@@ -51,7 +51,7 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
     * QUANTITY should be set at the sum of the quantities of the
     * input tasks.
     */
-  public ArrayList aggregatePreferences(Iterator tasks, RootFactory rootFactory) {
+  public ArrayList aggregatePreferences(Iterator tasks, PlanningFactory rootFactory) {
 
     ArrayList prefs = new ArrayList();
     double endTime = java.lang.Double.POSITIVE_INFINITY;
@@ -91,14 +91,14 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
   }
 
   // Added the rootFactory argument.  Seemed to need it to make the pref. CGW
-  private Preference makeQuantityPreference(double amount, RootFactory rootFactory) {
+  private Preference makeQuantityPreference(double amount, PlanningFactory rootFactory) {
     AspectValue av = AspectValue.newAspectValue(AspectType.QUANTITY, amount );
     ScoringFunction sf = ScoringFunction.createNearOrBelow(av, 0.1);
     Preference pref = rootFactory.newPreference(AspectType.QUANTITY, sf );
     return pref;
   }
 
-  private Preference makeStartPreference(double startDate, RootFactory rootFactory) {
+  private Preference makeStartPreference(double startDate, PlanningFactory rootFactory) {
     AspectValue startTime = AspectValue.newAspectValue(AspectType.START_TIME, startDate);
     ScoringFunction sf = ScoringFunction.createNearOrAbove(startTime, 0.0);
     Preference pref = rootFactory.newPreference(AspectType.START_TIME, sf);
@@ -110,7 +110,7 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
    * separate earliest, best, and latest for TOPS. Picked 1 day out
    * of the blue (with help from Gordon
    */
-  private Preference makeEndPreference(double endDate, RootFactory rootFactory) {
+  private Preference makeEndPreference(double endDate, PlanningFactory rootFactory) {
 
     AspectValue earliest = 
       AspectValue.newAspectValue(AspectType.END_TIME, endDate + EARLIEST_INCREMENT);

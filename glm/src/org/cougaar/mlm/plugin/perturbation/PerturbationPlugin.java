@@ -26,11 +26,11 @@ package org.cougaar.mlm.plugin.perturbation;
 
   import org.cougaar.planning.ldm.asset.AggregateAsset; 
   import org.cougaar.planning.ldm.asset.Asset;
-  import org.cougaar.core.domain.RootFactory;
+  import org.cougaar.planning.ldm.PlanningFactory;
   
   import org.cougaar.glm.ldm.oplan.Oplan;
   
-  import org.cougaar.core.plugin.SimplePlugin;
+  import org.cougaar.planning.plugin.legacy.SimplePlugin;
   
   import org.cougaar.util.UnaryPredicate;
   
@@ -61,7 +61,7 @@ public class PerturbationPlugin extends SimplePlugin
   private Subscription myObjects_;
   private Enumeration assetList_;
   private Vector perturbations_;
-  private RootFactory myRootFactory_;
+  private PlanningFactory myPlanningFactory_;
 	private Properties globalParameters = new Properties();
 
   private static UnaryPredicate assetOrOplanPredicate() {
@@ -75,9 +75,9 @@ public class PerturbationPlugin extends SimplePlugin
 
 	/* LDM Access
 	*/
-	protected RootFactory getMyRootFactory()
+	protected PlanningFactory getMyPlanningFactory()
 	{
-		return myRootFactory_;
+		return myPlanningFactory_;
 	}
 	
   /*
@@ -162,7 +162,7 @@ public void printAssets()
 	*/
   protected void execute()
   {
-     myRootFactory_ = getFactory();
+     myPlanningFactory_ = getFactory();
   }
  
 }

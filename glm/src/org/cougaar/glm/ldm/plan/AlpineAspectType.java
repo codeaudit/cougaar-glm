@@ -32,6 +32,10 @@ public class AlpineAspectType implements AspectType {
 
   private static String[] alpineAspectTypes = null;
 
+  public static void init() {
+    // for use by the PlanningDomain to force type registration
+  }
+
   public static String[] getAspectTypes() {
     if (alpineAspectTypes == null) {
       alpineAspectTypes = new String[LAST_ALPINE_ASPECT + 1];

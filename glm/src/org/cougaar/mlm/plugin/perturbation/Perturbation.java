@@ -34,9 +34,9 @@ import java.text.DateFormat;
 
 import org.cougaar.core.blackboard.Subscriber;
 
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.AggregateAssetAdapter;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -726,7 +726,7 @@ public class Perturbation implements Runnable
             if ( !endString.equals( "" ) )
                new_end_date = df.parse(endString);				
 
-            RootFactory ldmf = pertPlugin_.getMyRootFactory();
+            PlanningFactory ldmf = pertPlugin_.getMyPlanningFactory();
             Schedule sched = ldmf.newSimpleSchedule( new_start_date,
                                                      new_end_date);
             ( (RoleScheduleImpl) rs).setAvailableSchedule( sched );

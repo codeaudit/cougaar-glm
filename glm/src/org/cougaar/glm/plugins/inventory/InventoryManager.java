@@ -19,7 +19,7 @@ package org.cougaar.glm.plugins.inventory;
 
 import java.util.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
 import org.cougaar.glm.debug.*;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.*;
@@ -34,7 +34,7 @@ import org.cougaar.glm.ldm.asset.VolumetricInventory;
 import org.cougaar.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.plugins.*;
-import org.cougaar.planning.plugin.DeletionPlugin;
+import org.cougaar.planning.plugin.legacy.DeletionPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.measure.*;

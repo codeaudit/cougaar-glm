@@ -22,8 +22,8 @@
 package org.cougaar.mlm.plugin.ldm;
 
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.PropertyProvider;
-import org.cougaar.core.plugin.PrototypeProvider;
+import org.cougaar.planning.ldm.PropertyProvider;
+import org.cougaar.planning.ldm.PrototypeProvider;
 
 import org.cougaar.util.StateModelException;
 
@@ -40,8 +40,8 @@ import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.component.ServiceRevokedEvent;
 
 import org.cougaar.core.service.DomainService;
-import org.cougaar.core.service.PrototypeRegistryService;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.service.PrototypeRegistryService;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.domain.FactoryException;
 
 // This is only for interim use!
@@ -94,7 +94,7 @@ public class LDMXMLComponentPlugin
     private Enumeration assets;
     //private XmlDocument doc;
     private Document doc;
-    private RootFactory ldmf;
+    private PlanningFactory ldmf;
     private DomainService domainService = null;
     private PrototypeRegistryService protoRegistryService = null;
   //private AssetFactory theAssetFactory = new AssetFactory();
@@ -114,7 +114,7 @@ public class LDMXMLComponentPlugin
                                                   }
                                               });        
 
-	ldmf = domainService.getFactory();
+	ldmf = ((PlanningFactory)domainService.getFactory("planning"));
 	try {
 	    getParams();
 	    parseXMLFile();
@@ -324,7 +324,7 @@ public class LDMXMLComponentPlugin
 
     
     private Enumeration getLDMAssets( Document doc ) {
-	RootFactory ldmf = domainService.getFactory();
+	PlanningFactory ldmf = ((PlanningFactory)domainService.getFactory("planning"));
 	Vector assets = new Vector();
 	
 	NodeList prototypes = doc.getElementsByTagName( "prototype" );

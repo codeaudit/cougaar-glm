@@ -21,8 +21,8 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -82,7 +82,7 @@ public class UTILAsset {
   /** 
    * Create empty asset group
    */
-  public final AssetGroup makeAssetGroup(RootFactory root, String id){
+  public final AssetGroup makeAssetGroup(PlanningFactory root, String id){
     AssetGroup ag = makeAssetGroup (root, new Vector ());
     ((NewItemIdentificationPG)
      ag.getItemIdentificationPG()).setItemIdentification(id);
@@ -97,7 +97,7 @@ public class UTILAsset {
    * @param  v a Vector of assets to be grouped
    * @return AssetGroup
    */
-  public final AssetGroup makeAssetGroup(RootFactory root, Vector v){
+  public final AssetGroup makeAssetGroup(PlanningFactory root, Vector v){
     AssetGroup ag = null;
     try{
       NewTypeIdentificationPG p1 = null;

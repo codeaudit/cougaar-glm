@@ -21,7 +21,7 @@
 
 package org.cougaar.glm.plugins;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.glm.ldm.oplan.*;
 import org.cougaar.util.UnaryPredicate;

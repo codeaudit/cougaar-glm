@@ -33,9 +33,9 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.PluginHelper;
-import org.cougaar.core.plugin.util.ExpanderHelper;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.ExpanderHelper;
 import org.cougaar.core.util.UID;
 import org.cougaar.util.UnaryPredicate;
 

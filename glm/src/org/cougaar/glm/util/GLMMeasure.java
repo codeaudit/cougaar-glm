@@ -23,7 +23,7 @@ package org.cougaar.glm.util;
 
 
 import org.cougaar.core.domain.Factory;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Distance;

@@ -31,7 +31,7 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;

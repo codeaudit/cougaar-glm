@@ -42,9 +42,9 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.BulkEstimate;
-import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -132,7 +132,7 @@ public class BulkEstimateTester extends SimplePlugin
   }
   
   private void createBulkEstimates() {
-    RootFactory factory = getFactory();
+    PlanningFactory factory = getFactory();
     NewTask ntask = factory.newTask();
     // fill in some of the task since we are only using it for testing
     // if it were a real task we would need to fill in more.

@@ -24,10 +24,10 @@ package org.cougaar.mlm.plugin.ldm;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.util.Parameters;
 
 import java.util.Vector;
@@ -41,7 +41,7 @@ public abstract class QueryHandler {
   protected LDMSQLPlugin myLDMPlugin;
   protected MessageAddress myMessageAddress;
   protected ClusterServesPlugin myComponent;
-  protected RootFactory ldmf;
+  protected PlanningFactory ldmf;
   protected Properties myParameters;
   protected BlackboardService subscriber;
   protected LDMServesPlugin ldm;
@@ -49,7 +49,7 @@ public abstract class QueryHandler {
   protected void initialize( LDMSQLPlugin ldmplugin,
                              MessageAddress cid,
                              ClusterServesPlugin comp,
-                             RootFactory aldmf,
+                             PlanningFactory aldmf,
                              Properties params,
                              BlackboardService sub) {
     myLDMPlugin = ldmplugin;

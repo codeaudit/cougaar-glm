@@ -21,13 +21,13 @@ package org.cougaar.glm.plugins;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.measure.Rate;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.plugin.PluginDelegate;
-import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 
@@ -58,7 +58,7 @@ import org.cougaar.glm.debug.GLMDebug;
  */
 public abstract class BasicProcessor {
 
-    protected RootFactory ldmFactory_;
+    protected PlanningFactory ldmFactory_;
     /** 'hook' to plugin's methods */
     protected PluginDelegate delegate_;
     /** organization cluster identifier */

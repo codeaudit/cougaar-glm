@@ -33,7 +33,7 @@ import org.cougaar.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
 
 import java.io.*;

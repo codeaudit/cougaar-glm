@@ -27,6 +27,7 @@ import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
 import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.planning.plugin.legacy.*;
 import org.cougaar.core.plugin.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.service.LoggingService;

@@ -23,8 +23,8 @@ package org.cougaar.glm.ldm.plan;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.util.UID;
-import org.cougaar.planning.ldm.plan.Directive;
-import org.cougaar.planning.ldm.plan.DirectiveImpl;
+import org.cougaar.core.blackboard.Directive;
+import org.cougaar.core.blackboard.DirectiveImpl;
 
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;

@@ -23,11 +23,11 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.glm.ldm.Constants.Role;
-import org.cougaar.core.plugin.PluginDelegate;
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.glm.debug.GLMDebug;
@@ -419,7 +419,7 @@ public abstract class DecorationPlugin extends SimplePlugin {
         ((NewTask) subtask).setParentTask(parent);
 	// Task has not been expanded, create an expansion
 	if (pe == null) {
-	    RootFactory factory = getMyDelegate().getFactory();
+	    PlanningFactory factory = getMyDelegate().getFactory();
 	    // Create workflow
 	    wf = (NewWorkflow)factory.newWorkflow();
 	    wf.setParentTask(parent);

@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin.ldm;
 
 import org.cougaar.planning.ldm.policy.*;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
@@ -55,7 +55,7 @@ public class XMLPolicyCreator {
 	
   private String xmlfilename;
   private Document doc;
-  private RootFactory ldmf = null;
+  private PlanningFactory ldmf = null;
   private ConfigFinder configFinder;
 
   public XMLPolicyCreator(String xmlfilename, ConfigFinder configFinder) {
@@ -64,18 +64,18 @@ public class XMLPolicyCreator {
   }
 
   public XMLPolicyCreator(String xmlfilename, ConfigFinder configFinder, 
-                          RootFactory ldmf ) {
+                          PlanningFactory ldmf ) {
     this(xmlfilename, configFinder);
     this.ldmf = ldmf;
   }
 
   /*
-  public XMLPolicyCreator(RootFactory ldmf) {
+  public XMLPolicyCreator(PlanningFactory ldmf) {
     this.ldmf = ldmf;
   }
   */
 
-  public void setRootFactory(RootFactory ldmf) {
+  public void setPlanningFactory(PlanningFactory ldmf) {
     this.ldmf = ldmf;
   }
 

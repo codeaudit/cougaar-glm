@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin.ldm;
 
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /** GlobalAirProtoCreator is a subclass of ComAirCreator which creates sql queries
  * (through its superclass) and processes the query results by creating prototype assets
@@ -48,7 +48,7 @@ public class SQLGlobalAirProtoCreator extends SQLAggregateAssetCreator {
   
   
   private Asset createAsset(String protoname) {
-    RootFactory ldmfactory = getLDM().getFactory();
+    PlanningFactory ldmfactory = getLDM().getFactory();
            
     try {
       	  Asset pr;

@@ -25,7 +25,7 @@ import org.cougaar.glm.ldm.Constants;
 import org.cougaar.core.blackboard.Subscriber;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Expansion;
@@ -36,7 +36,7 @@ import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.BulkEstimate;
 import org.cougaar.planning.ldm.plan.NewBulkEstimate;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.util.UID;
 
 import org.cougaar.util.Enumerator;
@@ -107,7 +107,7 @@ public class ProvideEstimatesPlugin extends SimplePlugin {
   // have ConcurrentModificationException problems with the list.
   private IncrementalSubscription provideEstimates(BulkEstimate be, int prefsetnumber) {
     //System.err.println("provideEstimates being called for preference set: " + prefsetnumber);
-    RootFactory factory = getFactory();
+    PlanningFactory factory = getFactory();
     // unpack the BulkEstimate
     Task thetask = be.getTask();
     List preferencesets = be.getPreferenceSets();
@@ -135,7 +135,7 @@ public class ProvideEstimatesPlugin extends SimplePlugin {
   }
   
   private Expansion createExpansion(Task sub) {
-    RootFactory factory = getFactory();
+    PlanningFactory factory = getFactory();
     
     //make a bogus bulk estimate parent task
     NewTask betask = factory.newTask();

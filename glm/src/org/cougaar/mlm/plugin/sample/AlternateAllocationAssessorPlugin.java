@@ -43,8 +43,8 @@ import org.cougaar.planning.ldm.plan.Alert;
 import org.cougaar.planning.ldm.plan.NewAlert;
 import org.cougaar.planning.ldm.plan.NewAlertParameter;
 import org.cougaar.planning.ldm.plan.AlertParameter;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginAdapter;
 import org.cougaar.util.UnaryPredicate;
 
 /**

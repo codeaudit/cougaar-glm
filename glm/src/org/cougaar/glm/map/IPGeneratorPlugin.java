@@ -13,7 +13,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.agent.MetricsSnapshot;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
@@ -22,7 +22,7 @@ import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 
 //import org.cougaar.glm.ldm.asset.LocationSchedulePG;
 
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -72,7 +72,7 @@ import java.awt.FlowLayout;
 @version 1.0
 ***********************************************************************************************************************/
 
-public class IPGeneratorPlugin extends org.cougaar.core.plugin.SimplePlugin
+public class IPGeneratorPlugin extends org.cougaar.planning.plugin.legacy.SimplePlugin
 {
 	
 	public static String heartBeatVerb = "HeartBeat";
@@ -224,7 +224,7 @@ public class IPGeneratorPlugin extends org.cougaar.core.plugin.SimplePlugin
 
 	*********************************************************************************************************************/
   
-  public void createHeartBeatTask(RootFactory theLDMF, String verb)
+  public void createHeartBeatTask(PlanningFactory theLDMF, String verb)
   {
   	Vector preps = new Vector();
   	System.out.println("%%%% psp - entered task function");

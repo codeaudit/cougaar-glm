@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cougaar.lib.planserver.*;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.mlm.plugin.ldm.OplanFileReader;
 import org.cougaar.glm.ldm.oplan.*;

@@ -23,24 +23,30 @@ package org.cougaar.glm.ldm;
 
 import java.util.*;
 
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.agent.ClusterServesLogicProvider;
 
-import org.cougaar.core.blackboard.LogPlan;
-import org.cougaar.core.blackboard.XPlanServesBlackboard;
-
+import org.cougaar.core.domain.*;
 import org.cougaar.core.component.BindingSite;
 
 import org.cougaar.core.domain.DomainAdapter;
 import org.cougaar.core.domain.DomainBindingSite;
 
 import org.cougaar.glm.ldm.lps.*;
+import org.cougaar.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.glm.ldm.asset.AssetFactory;
+import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
+
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
+
 
 /**
  * COUGAAR Domain package definition.
  **/
 
 public class GLMDomain extends DomainAdapter {
-  public static final String GLM_NAME = "glm".intern();
+  public static final String GLM_NAME = "glm";
 
   public String getDomainName() {
     return GLM_NAME;
@@ -48,7 +54,6 @@ public class GLMDomain extends DomainAdapter {
 
   public GLMDomain() {
     super();
-
   }
 
   public void initialize() {
@@ -70,66 +75,58 @@ public class GLMDomain extends DomainAdapter {
 
   protected void loadFactory() {
     DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
-
     if (bindingSite == null) {
-      throw new RuntimeException("Binding site for the domain has not be set.\n" +
-                             "Unable to initialize domain Factory without a binding site.");
+      throw new RuntimeException(
+          "Binding site for the domain has not be set.\n" +
+          "Unable to initialize domain Factory without a binding site.");
     } 
 
-    setFactory(new GLMFactory(bindingSite.getClusterServesLogicProvider().getLDM()));
+    LDMServesPlugin ldm = 
+      bindingSite.getClusterServesLogicProvider().getLDM();
+    PlanningFactory ldmf = (PlanningFactory) ldm.getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException("Missing \"planning\" factory!");
+    }
+
+    // ensure GLM aspect types are reserved in the AspectValue registry
+    AlpineAspectType.init();
+
+    Factory f = new GLMFactory();
+    ldmf.addAssetFactory(new AssetFactory());
+    ldmf.addPropertyGroupFactory(new PropertyGroupFactory());
+    setFactory(f);
   }
 
   protected void loadXPlan() {
-    DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
-
-    if (bindingSite == null) {
-      throw new RuntimeException("Binding site for the domain has not be set.\n" +
-                             "Unable to initialize domain XPlan without a binding site.");
-    } 
-
-    Collection xPlans = bindingSite.getXPlans();
-    LogPlan logPlan = null;
-    
-    for (Iterator iterator = xPlans.iterator(); iterator.hasNext();) {
-      XPlanServesBlackboard  xPlan = (XPlanServesBlackboard) iterator.next();
-      if (xPlan instanceof LogPlan) {
-        // Note that this means there are 2 paths to the plan.
-        // Is this okay?
-        logPlan = (LogPlan) logPlan;
-        break;
-      }
-    }
-    
-    if (logPlan == null) {
-      logPlan = new LogPlan();
-    }
-    
-    setXPlan(logPlan);
+    // no glm-specific plan
   }
 
   protected void loadLPs() {
     DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
-
     if (bindingSite == null) {
-      throw new RuntimeException("Binding site for the domain has not be set.\n" +
-                             "Unable to initialize domain LPs without a binding site.");
+      throw new RuntimeException(
+          "Binding site for the domain has not be set.\n" +
+          "Unable to initialize domain LPs without a binding site.");
     } 
 
-    ClusterServesLogicProvider cluster = bindingSite.getClusterServesLogicProvider();
-    LogPlan logPlan = (LogPlan) getXPlan();
+    ClusterServesLogicProvider cluster = 
+      bindingSite.getClusterServesLogicProvider();
+    RootPlan rootplan = (RootPlan) 
+      bindingSite.getXPlanForDomain("root");
+    if (rootplan == null) {
+      throw new RuntimeException("Missing \"root\" domain plan!");
+    }
+    MessageAddress self = cluster.getMessageAddress();
+    PlanningFactory ldmf = (PlanningFactory) cluster.getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException("Missing \"planning\" factory!");
+    }
+    GLMFactory glmFactory = (GLMFactory) cluster.getFactory("glm");
 
-    addLogicProvider(new ReceiveTransferableLP(logPlan, cluster));
-    addLogicProvider(new TransferableLP(logPlan, cluster));
-    addLogicProvider(new DetailRequestLP(logPlan, cluster));
-    addLogicProvider(new OPlanWatcherLP(logPlan, cluster));
+    addLogicProvider(new ReceiveTransferableLP(rootplan, ldmf));
+    addLogicProvider(new TransferableLP(rootplan, self, ldmf));
+    addLogicProvider(new DetailRequestLP(rootplan, self, glmFactory));
+    addLogicProvider(new OPlanWatcherLP(rootplan, ldmf));
   }
 
 }
-
-
-
-
-
-
-
-

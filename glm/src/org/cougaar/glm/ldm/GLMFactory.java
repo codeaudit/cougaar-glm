@@ -24,10 +24,6 @@ package org.cougaar.glm.ldm;
 import java.util.*;
 
 import org.cougaar.core.domain.Factory;
-import org.cougaar.core.domain.RootFactory;
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.blackboard.LogPlan;
-import org.cougaar.core.agent.ClusterServesLogicProvider;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.UID;
@@ -45,12 +41,7 @@ import org.cougaar.glm.ldm.asset.*;
  * FGI Domain package definition.
  **/
 
-public class GLMFactory implements org.cougaar.core.domain.Factory {
-  public GLMFactory(LDMServesPlugin ldm) {
-    RootFactory rf = ldm.getFactory();
-    rf.addAssetFactory(new org.cougaar.glm.ldm.asset.AssetFactory());
-    rf.addPropertyGroupFactory(new org.cougaar.glm.ldm.asset.PropertyGroupFactory());
-  }
+public class GLMFactory implements Factory {
 
   //
   // factory methods for  COUGAAR LDM objects

@@ -22,12 +22,12 @@
 
 package org.cougaar.mlm.debug.ui;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.asset.AggregateAsset;
@@ -41,7 +41,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import java.lang.Thread;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.util.UnaryPredicate;
 

@@ -65,14 +65,14 @@ import javax.swing.JTextField;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.oplan.Oplan;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.util.ShortDateFormat;
 
@@ -104,7 +104,7 @@ public class ModifyOrgActivityGUIPlugin extends SimplePlugin {
   private ShortDateFormat dateFormatter = new ShortDateFormat();
 
   /** Need this for creating new instances of certain objects **/
-  private RootFactory ldmf;
+  private PlanningFactory ldmf;
 
   private static final String defaultOrgActivityType = "Deployment";
 

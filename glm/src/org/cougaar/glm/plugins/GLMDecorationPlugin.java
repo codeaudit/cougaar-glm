@@ -24,7 +24,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.core.util.UID;
 
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
 
 import java.util.Enumeration;

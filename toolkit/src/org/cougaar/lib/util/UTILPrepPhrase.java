@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.util.log.Logger;
 
 import org.cougaar.planning.ldm.asset.Asset;
@@ -217,12 +217,12 @@ public class UTILPrepPhrase {
   
   /**
    * Utility methods for creating a PrepositionalPhrases 
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param prep the Preposition
    * @param object the indirect object - any generic Object
    * @return PrepositionalPhrase
    */
-  public PrepositionalPhrase makePrepositionalPhrase(RootFactory ldmf,
+  public PrepositionalPhrase makePrepositionalPhrase(PlanningFactory ldmf,
 							    String prep,
 							    Object o) {
     NewPrepositionalPhrase npp = ldmf.newPrepositionalPhrase();

@@ -40,13 +40,13 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.LDMService;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.service.LDMService;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
@@ -149,7 +149,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       };
   
 
-  protected RootFactory rootFactory;
+  protected PlanningFactory rootFactory;
 
   // called by introspection
   public void setLDMService(LDMService service) {

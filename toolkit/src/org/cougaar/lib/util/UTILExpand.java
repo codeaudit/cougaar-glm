@@ -23,7 +23,7 @@ package org.cougaar.lib.util;
 
 import org.cougaar.core.mts.MessageAddress;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
@@ -42,7 +42,7 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
 
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 import org.cougaar.core.util.UID;
 
@@ -91,7 +91,7 @@ public class UTILExpand {
    * If you just want to set a new direct object for the task,
    * see the other makeSubTask.
    *
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param plan the log plan
    * @param parent the parent task
    * @param verb the verb
@@ -102,7 +102,7 @@ public class UTILExpand {
    * @param source the cluster originating the task
    * @return NewTask
    */
-  public NewTask makeSubTask(RootFactory ldmf,
+  public NewTask makeSubTask(PlanningFactory ldmf,
 				    Plan plan, 
 				    Task parent, 
 				    Verb verb, 
@@ -135,7 +135,7 @@ public class UTILExpand {
    * @param source the cluster originating the task
    * @return NewTask
    */
-  public NewTask makeSubTask(RootFactory ldmf,
+  public NewTask makeSubTask(PlanningFactory ldmf,
 				    Plan plan, 
 				    UID parent_uid, 
 				    Verb verb, 
@@ -179,12 +179,12 @@ public class UTILExpand {
    *
    * Used in handling rescinds.
    *
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param taskToClone the task to be cloned
    * @return cloned copy of the original task
    * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter
    */
-  public NewTask cloneTask(RootFactory ldmf,
+  public NewTask cloneTask(PlanningFactory ldmf,
 			   Task taskToClone) {
     // Warning, this assumes that the task is part of a workflow!
 
@@ -214,13 +214,13 @@ public class UTILExpand {
    * For when you just want a copy of the parent task with
    * a different direct object.
    *
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param parent the parent task
    * @param obj the direct object
    * @param source the cluster originating the task
    * @return NewTask
    */
-  public NewTask makeSubTask(RootFactory ldmf,
+  public NewTask makeSubTask(PlanningFactory ldmf,
 				    Task parent, 
 				    Asset obj, 
 				    MessageAddress source) {
@@ -242,7 +242,7 @@ public class UTILExpand {
   /**
    * Create a new Workflow from the subtask(s)
 
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param subtasks a vector of subtasks
    * @return Workflow a workflow containing the subtasks
    */
@@ -257,7 +257,7 @@ public class UTILExpand {
    * @param parent task of this workflow expansion
    * @return Workflow a workflow containing the subtasks
    */
-  public Workflow makeWorkflow(RootFactory ldmf, List subtasks,
+  public Workflow makeWorkflow(PlanningFactory ldmf, List subtasks,
 				      Task parent) {
     return makeWorkflow (ldmf, subtasks, myARA,//AllocationResultAggregator.DEFAULT,
 			 parent);
@@ -265,7 +265,7 @@ public class UTILExpand {
 
   /**
    * Create a new Workflow from the subtask(s)
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param subtasks a vector of subtasks
    * @param ara subclass of AllocationResultAggregator, which allows clients to
    *        redefine how the allocation results of subtasks are rolled up
@@ -274,7 +274,7 @@ public class UTILExpand {
    * @return Workflow a workflow containing the subtasks
    * @see org.cougaar.planning.ldm.plan.AllocationResultAggregator
    */
-  public Workflow makeWorkflow(RootFactory ldmf, List subtasks, 
+  public Workflow makeWorkflow(PlanningFactory ldmf, List subtasks, 
 				      AllocationResultAggregator ara,
 				      Task parent) {	
     NewWorkflow wf = ldmf.newWorkflow();
@@ -482,11 +482,11 @@ public class UTILExpand {
    *
    * Sets the estimated allocation result of the plan element to NULL.
    *
-   * @param ldmf RootFactory
+   * @param ldmf PlanningFactory
    * @param wf a workflow
    * @return Expansion 
    */
-  public Expansion makeExpansion(RootFactory ldmf, Workflow wf) {
+  public Expansion makeExpansion(PlanningFactory ldmf, Workflow wf) {
     Task t = wf.getParentTask();
     Expansion exp = ldmf.createExpansion(t.getPlan(), t, wf, null);
     return exp;
@@ -498,12 +498,12 @@ public class UTILExpand {
    * Estimated allocation result of the expansion is set to the values of the
    * best values of the task, with a confidence of MEDIUM_CONFIDENCE (0.5).
    *
-   * @param ldmf RootFactory
+   * @param ldmf PlanningFactory
    * @param wf a workflow
    * @return Expansion 
    * @see UTILAllocate#MEDIUM_CONFIDENCE
    */
-  public Expansion makeExpansionWithConfidence(RootFactory ldmf, Workflow wf) {
+  public Expansion makeExpansionWithConfidence(PlanningFactory ldmf, Workflow wf) {
     Task t = wf.getParentTask();
     Enumeration prefs;
     synchronized (t) { prefs = t.getPreferences(); } // bug #2125
@@ -528,12 +528,12 @@ public class UTILExpand {
    * Sets the estimated allocation result of the plan element to an 
    * empty failed alloc result.
    *
-   * @param ldmf RootFactory
+   * @param ldmf PlanningFactory
    * @param t task to make a failed expansion for
    * @return Expansion 
    */
   public Expansion makeFailedExpansion(UTILPlugin creator,
-					      RootFactory ldmf, Task t) {
+					      PlanningFactory ldmf, Task t) {
     AllocationResult failedAR = 
       ldmf.newAllocationResult(1.0, false,
 			       new int[1], new double[1]);
@@ -552,12 +552,12 @@ public class UTILExpand {
    * @param subtasks the expanded subtasks
    */
 
-  public void handleTask(RootFactory ldmf, PluginDelegate plugin, String pluginName,
+  public void handleTask(PlanningFactory ldmf, PluginDelegate plugin, String pluginName,
 				boolean wantConfidence, Task t, List subtasks) {
     handleTask (ldmf, plugin.getBlackboardService (), pluginName, wantConfidence, t, subtasks);
   }
   
-  public void handleTask(RootFactory ldmf, BlackboardService blackboard, String pluginName,
+  public void handleTask(PlanningFactory ldmf, BlackboardService blackboard, String pluginName,
 				boolean wantConfidence, Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
       throw new UTILPluginException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
@@ -628,7 +628,7 @@ public class UTILExpand {
   /** 
    * who uses this anymore anyway?  TOPS?
    */
-  public Expansion handleTaskPrime(RootFactory ldmf, PluginDelegate plugin, String pluginName,
+  public Expansion handleTaskPrime(PlanningFactory ldmf, PluginDelegate plugin, String pluginName,
 					  boolean wantConfidence, boolean myExtraOutput,
 					  Task t, List subtasks) {
     return handleTaskPrime (ldmf, plugin.getBlackboardService(), pluginName, wantConfidence, myExtraOutput, t, subtasks);
@@ -637,7 +637,7 @@ public class UTILExpand {
   /** 
    * who uses this anymore anyway?   TOPS?
    */
-  public Expansion handleTaskPrime(RootFactory ldmf, BlackboardService blackboard, String pluginName,
+  public Expansion handleTaskPrime(PlanningFactory ldmf, BlackboardService blackboard, String pluginName,
 					  boolean wantConfidence, boolean myExtraOutput,
 					  Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
@@ -712,7 +712,7 @@ public class UTILExpand {
     return exp;
   }
 
-  public Enumeration createDividedPreferences(RootFactory ldmf, Task t, Date begin, Date end, Logger logger) {
+  public Enumeration createDividedPreferences(PlanningFactory ldmf, Task t, Date begin, Date end, Logger logger) {
     Enumeration taskPrefs;
     synchronized (t) { taskPrefs = t.getPreferences(); } // bug #2125
     Vector newPrefs = new Vector();

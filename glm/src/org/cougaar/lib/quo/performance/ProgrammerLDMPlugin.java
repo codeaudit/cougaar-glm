@@ -23,6 +23,7 @@
 package org.cougaar.lib.quo.performance;
 
 import org.cougaar.core.plugin.*;
+import org.cougaar.planning.plugin.legacy.*;
 import org.cougaar.lib.quo.performance.assets.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;

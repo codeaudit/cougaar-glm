@@ -40,7 +40,7 @@ import java.text.DateFormat;
 import java.util.*;
 
 import org.cougaar.core.util.*;
-import org.cougaar.core.plugin.util.*;
+import org.cougaar.planning.plugin.util.*;
 import org.cougaar.util.*;
 
 import org.cougaar.planning.ldm.asset.Asset;

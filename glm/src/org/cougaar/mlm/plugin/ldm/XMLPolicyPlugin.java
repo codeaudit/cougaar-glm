@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin.ldm;
 
 import org.cougaar.core.blackboard.SubscriberException;
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.planning.ldm.policy.Policy;
 

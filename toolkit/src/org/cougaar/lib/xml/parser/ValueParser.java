@@ -23,8 +23,8 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.agent.ClusterServesPlugin;
-import org.cougaar.core.domain.LDMServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
+import org.cougaar.planning.ldm.LDMServesPlugin;
 
 import org.cougaar.util.log.Logger;
 

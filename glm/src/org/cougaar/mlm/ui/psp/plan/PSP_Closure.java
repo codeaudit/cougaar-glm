@@ -27,7 +27,7 @@ import java.util.*;
 
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;

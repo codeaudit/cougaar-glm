@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectLocation;
@@ -101,12 +101,12 @@ public class UTILPreference {
    * This call generates a cost preference.  Only using a single value.
    * Should probably be more complex than this.
    *
-   * @param ldmf the RootFactory
+   * @param ldmf the PlanningFactory
    * @param cost the single cost value
    * @return Preference
    */
 
-  public Preference makeCostPreference(RootFactory ldmf, double cost) {
+  public Preference makeCostPreference(PlanningFactory ldmf, double cost) {
     AspectValue lowAV      = AspectValue.newAspectValue(AspectType.COST, -0.01d);
     AspectValue bestAV     = AspectValue.newAspectValue(AspectType.COST, 0.0d);
     AspectValue costAV     = AspectValue.newAspectValue(AspectType.COST, cost);
@@ -124,7 +124,7 @@ public class UTILPreference {
    * @param quantity desired
    * @return Preference
    */
-  public Preference makeQuantityPreference(RootFactory ldmf, long quantity) {
+  public Preference makeQuantityPreference(PlanningFactory ldmf, long quantity) {
     AspectValue quantityAV = 
       AspectValue.newAspectValue(AspectType.QUANTITY, quantity);
     ScoringFunction quantitySF = 
@@ -142,7 +142,7 @@ public class UTILPreference {
    * @param readyAtDate - the date item is ready to move
    * @return Preference
    */
-  public Preference makeStartDatePreference(RootFactory ldmf,
+  public Preference makeStartDatePreference(PlanningFactory ldmf,
 						   Date readyAtDate) {
     AspectValue readyAtAV = 
       AspectValue.newAspectValue(AspectType.START_TIME, readyAtDate.getTime());
@@ -165,7 +165,7 @@ public class UTILPreference {
    * @param lateDate - the latest possible date
    * @return Preference
    */
-  public Preference makeEndDatePreference(RootFactory ldmf,
+  public Preference makeEndDatePreference(PlanningFactory ldmf,
 						 Date earlyDate,  
 						 Date bestDate,
 						 Date lateDate){  
@@ -189,7 +189,7 @@ public class UTILPreference {
    * @param bestDate - the best date
    * @return Preference
    */
-  public Preference makeEndDatePreference(RootFactory ldmf,
+  public Preference makeEndDatePreference(PlanningFactory ldmf,
 						 Date bestDate) {
     AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, bestDate.getTime());
     ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, ONE_OVER_ONE_DAY);
@@ -197,7 +197,7 @@ public class UTILPreference {
     return endPref;
   }
 
-  public Preference makeEndDateBelowPreference(RootFactory ldmf, Date bestDate) {
+  public Preference makeEndDateBelowPreference(PlanningFactory ldmf, Date bestDate) {
     AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, bestDate.getTime());
     ScoringFunction endSF = ScoringFunction.createNearOrBelow(endAV, 0.0);
     Preference endPref = ldmf.newPreference(AspectType.END_TIME, endSF, 1.0);
@@ -211,7 +211,7 @@ public class UTILPreference {
    * Note that it uses one day as the slope -- i.e.
    * a day after the POD date, the pref is exceeded.
    */
-  public Preference makePODDatePreference(RootFactory ldmf,
+  public Preference makePODDatePreference(PlanningFactory ldmf,
 						 Date bestDate) {
     if (bestDate == null || bestDate.before(new Date(1000))) {
       logger.error("UTILPreference creating bad POD_Date preference: the date is " + bestDate);

@@ -34,9 +34,9 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.core.component.StateObject;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.LDMService;
+import org.cougaar.planning.service.LDMService;
 import org.cougaar.core.service.LoggingService;
 
 import org.cougaar.planning.ldm.asset.Asset;
@@ -574,7 +574,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   protected final void publishRemove(Object o) {
     getBlackboardService().publishRemove(o);
   }
-  protected final void  publishChange(Object o) {
+  protected final void publishChange(Object o) {
     getBlackboardService().publishChange(o, null);
   }
 
@@ -674,7 +674,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   
   protected Vector mySubscriptions;
 
-  protected RootFactory ldmf;
+  protected PlanningFactory ldmf;
   protected String myClusterName; 
   protected Plan realityPlan;
 

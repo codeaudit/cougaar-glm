@@ -32,6 +32,7 @@ import java.util.Vector;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.domain.*;
+import org.cougaar.planning.ldm.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.measure.*;
@@ -68,7 +69,7 @@ public class GLMTaskParser{
    * @param pfile the name of the parameter file.
    */
   public GLMTaskParser(String pfile, 
-		       RootFactory ldmf, 
+		       PlanningFactory ldmf, 
 		       MessageAddress clusterIdentifier, 
 		       ConfigFinder configFinder,
 		       LDMServesPlugin ldmServesPlugin,
@@ -138,7 +139,7 @@ public class GLMTaskParser{
   }
 
   private MessageAddress   clusterIdentifier  = null;
-  private RootFactory           myLdmf     = null;
+  private PlanningFactory           myLdmf     = null;
   private Vector                myTasks    = null;
   private LDMServesPlugin       myLdm      = null;
   protected Logger logger;

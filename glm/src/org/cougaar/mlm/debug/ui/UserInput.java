@@ -61,7 +61,7 @@ import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.Verb;
 
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 /** Supports task creation by users.
  */

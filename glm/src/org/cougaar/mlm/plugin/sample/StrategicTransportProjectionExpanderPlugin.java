@@ -27,7 +27,7 @@ import org.cougaar.glm.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.glm.ldm.oplan.*;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.glm.ldm.plan.Capability;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.glm.ldm.plan.NewGeolocLocation;
@@ -40,9 +40,9 @@ import org.cougaar.planning.ldm.asset.AbstractAsset;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.ExpanderHelper;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.ExpanderHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -153,7 +153,7 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
       pp.setPreposition(Constants.Preposition.OFTYPE);
       AbstractAsset strans = null;
       try {
-          RootFactory ldmfactory = getFactory();
+          PlanningFactory ldmfactory = getFactory();
           Asset strans_proto = ldmfactory.createPrototype( Class.forName( "org.cougaar.planning.ldm.asset.AbstractAsset" ), "StrategicTransportation" );
           strans = (AbstractAsset)ldmfactory.createInstance( strans_proto );
       } catch (Exception exc) {

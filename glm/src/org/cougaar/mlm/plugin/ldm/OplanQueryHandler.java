@@ -25,10 +25,10 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.core.blackboard.Subscriber;
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.util.Parameters;
 

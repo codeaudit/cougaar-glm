@@ -23,9 +23,9 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.agent.ClusterServesPlugin;
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.domain.Factory;
 import org.cougaar.planning.ldm.asset.Asset;
 
@@ -63,7 +63,7 @@ public class ObjectParser{
    * @param ldm used to create assets, property groups, etc.
    */
   public Object getObject(LDMServesPlugin ldm, Node node){
-    RootFactory ldmFactory = ldm.getFactory();
+    PlanningFactory ldmFactory = ldm.getFactory();
     Object obj = null;
 
     if(node.getNodeName().equals("object")){

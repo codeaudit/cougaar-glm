@@ -23,8 +23,8 @@ package org.cougaar.mlm.plugin.sample;
 
 import java.util.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.util.AllocationResultHelper;
 import org.cougaar.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.asset.Asset;

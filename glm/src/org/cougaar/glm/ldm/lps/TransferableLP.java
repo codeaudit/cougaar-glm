@@ -22,7 +22,6 @@
 
 package org.cougaar.glm.ldm.lps;
 
-import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -30,6 +29,7 @@ import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.planning.ldm.plan.TransferableAssignment;
 import org.cougaar.planning.ldm.plan.TransferableRescind;
@@ -37,7 +37,6 @@ import org.cougaar.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.planning.ldm.plan.NewTransferableAssignment;
 import org.cougaar.planning.ldm.plan.NewTransferableRescind;
 import org.cougaar.planning.ldm.plan.NewTransferableVerification;
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Collection;
@@ -46,23 +45,28 @@ import java.util.Collection;
   *
   * it provides the logic to capture
   * PlanElements that are Transferable and send TransferableAssignment 
-  * directives to the proper remote cluster.
+  * directives to the proper remote agent.
   *
   **/
 
 public class TransferableLP
-  extends LogPlanLogicProvider
-  implements EnvelopeLogicProvider, RestartLogicProvider
+implements LogicProvider, EnvelopeLogicProvider, RestartLogicProvider
 {
-
+  private final RootPlan rootplan;
   private final MessageAddress self;
+  private final PlanningFactory ldmf;
 
-  public TransferableLP(LogPlanServesLogicProvider logplan,
-			ClusterServesLogicProvider cluster) {
-    super(logplan,cluster);
-    self = cluster.getMessageAddress();
+  public TransferableLP(
+      RootPlan rootplan,
+      MessageAddress self,
+      PlanningFactory ldmf) {
+    this.rootplan = rootplan;
+    this.self = self;
+    this.ldmf = ldmf;
   }
 
+  public void init() {
+  }
 
   /**
    * @param Object Envelopetuple,
@@ -89,9 +93,9 @@ public class TransferableLP
 
   /**
    * Cluster restart handler. Resend all our Transferables to the
-   * restarted cluster. Also send TransferableVerification messages
+   * restarted agent. Also send TransferableVerification messages
    * for all the Transferables we have received from the restarted
-   * cluster. The restarted cluster will rescind them if they are no
+   * agent. The restarted agent will rescind them if they are no
    * longer valid.
    **/
   public void restart(final MessageAddress cid) {
@@ -108,7 +112,7 @@ public class TransferableLP
         return false;
       }
     };
-    Enumeration enum = logplan.searchBlackboard(pred);
+    Enumeration enum = rootplan.searchBlackboard(pred);
     while (enum.hasMoreElements()) {
       TransferableTransfer tt = (TransferableTransfer) enum.nextElement();
       MessageAddress dest = ((Organization)tt.getAsset()).getMessageAddress();
@@ -128,12 +132,12 @@ public class TransferableLP
         return false;
       }
     };
-    for (enum = logplan.searchBlackboard(pred); enum.hasMoreElements(); ) {
+    for (enum = rootplan.searchBlackboard(pred); enum.hasMoreElements(); ) {
       Transferable transferable = (Transferable) enum.nextElement();
       NewTransferableVerification nav = ldmf.newTransferableVerification(transferable);
-      nav.setSource(cluster.getMessageAddress());
+      nav.setSource(self);
       nav.setDestination(transferable.getSource());
-      logplan.sendDirective(nav);
+      rootplan.sendDirective(nav);
     }
   }
 
@@ -145,8 +149,8 @@ public class TransferableLP
     nta.setTransferable(tt.getTransferable());
     nta.setDestination(dest);
 
-    // Give the directive to the logplan for tranmission
-    logplan.sendDirective(nta);
+    // Give the directive to the blackboard for tranmission
+    rootplan.sendDirective(nta);
   }
   
   private void processTransferableTransferRemoved(TransferableTransfer tt,
@@ -157,7 +161,7 @@ public class TransferableLP
     ntr.setTransferableUID(tt.getTransferable().getUID());
     ntr.setDestination(dest);
 
-    // Give the directive to the logplan for tranmission
-    logplan.sendDirective(ntr);
+    // Give the directive to the blackboard for tranmission
+    rootplan.sendDirective(ntr);
   }
 }

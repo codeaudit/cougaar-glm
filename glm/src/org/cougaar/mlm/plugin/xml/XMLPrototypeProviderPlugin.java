@@ -12,6 +12,8 @@ package org.cougaar.mlm.plugin.xml;
 
 import java.io.*;
 import org.cougaar.core.plugin.*;
+import org.cougaar.planning.ldm.*;
+import org.cougaar.planning.plugin.legacy.*;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.util.*;
 import org.cougaar.lib.xml.parser.*;

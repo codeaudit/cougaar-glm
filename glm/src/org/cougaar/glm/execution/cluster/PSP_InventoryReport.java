@@ -34,7 +34,7 @@ import org.cougaar.lib.planserver.ServerPluginSupport;
 import org.cougaar.lib.planserver.UseDirectSocketOutputStream;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.ldm.asset.Inventory;
 import org.cougaar.glm.ldm.asset.ReportSchedulePG;

@@ -22,7 +22,7 @@
 package org.cougaar.mlm.plugin.ldm;
 
 
-import org.cougaar.core.plugin.LDMPluginServesLDM;
+import org.cougaar.planning.ldm.LDMPluginServesLDM;
 import org.cougaar.util.StateModelException;
 import org.cougaar.util.DBConnectionPool;
 import org.cougaar.core.service.BlackboardService;
@@ -30,10 +30,10 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.SubscriberException;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.domain.FactoryException;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.plugin.ComponentPlugin;
@@ -118,7 +118,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
   private static final String DEFAULT_DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
 
   DomainService domainService = null;
-  private RootFactory theFactory = null;
+  private PlanningFactory theFactory = null;
 
   public LDMSQLPlugin() {}
 
@@ -146,7 +146,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 					   }
 					 });
     }
-    theFactory = domainService.getFactory();
+    theFactory = ((PlanningFactory) domainService.getFactory("planning"));
     
     // set up the subscription
     // This could be a future site for maintaining a Container of created
@@ -254,7 +254,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 			     // this, // ldmservice
 			     getMessageAddress(),
 			     getCluster(),
-			     domainService.getFactory(),
+			     ((PlanningFactory) domainService.getFactory("planning")),
 			     pt,
 			     getBlackboardService());
 	      queries.addElement(cqh);

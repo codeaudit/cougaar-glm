@@ -24,7 +24,7 @@ package org.cougaar.mlm.plugin.strategictransport;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
@@ -53,8 +53,8 @@ import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.core.util.*;
 //import org.cougaar.util.*;
 
-import org.cougaar.core.plugin.PluginDelegate;
-import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 import org.cougaar.util.UnaryPredicate;
 

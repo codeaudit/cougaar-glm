@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.4 2002-10-17 19:48:42 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.5 2002-11-19 17:21:46 twright Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -22,7 +22,7 @@
 
 package org.cougaar.glm.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectLocation;
@@ -75,7 +75,7 @@ public class GLMPreference extends UTILPreference {
    * What should we do with the weight of the preference?
    * Should this be set by a policy object?
    */
-  public Preference makePODPreference(RootFactory ldmf,
+  public Preference makePODPreference(PlanningFactory ldmf,
 				      GeolocLocation loc) {
     GLMLocationScoringFunction podSF = new GLMLocationScoringFunction(loc, logger);
     Preference podPref = ldmf.newPreference(AspectType.POD, podSF, 1.0);
@@ -89,7 +89,7 @@ public class GLMPreference extends UTILPreference {
    * Note that it uses one day as the slope -- i.e.
    * a day after the POD date, the pref is exceeded.
    */
-  public Preference makePODDatePreference(RootFactory ldmf,
+  public Preference makePODDatePreference(PlanningFactory ldmf,
 						 Date bestDate) {
     if (bestDate == null || bestDate.before(new Date(1000))) {
       System.err.println("GLMPreference creating bad POD_Date preference: the date is " + bestDate);

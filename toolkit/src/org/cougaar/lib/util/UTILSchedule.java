@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.ScheduleImpl;
@@ -48,7 +48,7 @@ public class UTILSchedule {
     else return false;
   }
 
-  public Schedule andAvail(Schedule x, Schedule y, RootFactory ldmf) {
+  public Schedule andAvail(Schedule x, Schedule y, PlanningFactory ldmf) {
     //    logger.debug("X: "+x);
     //    logger.debug("Y: "+y);
     Vector newElem = new Vector();
@@ -72,7 +72,7 @@ public class UTILSchedule {
     return ldmf.newSchedule(newElem.elements());
   }
 
-  public Schedule timeInverse(Schedule x, RootFactory ldmf) {
+  public Schedule timeInverse(Schedule x, PlanningFactory ldmf) {
     Vector newElem = new Vector();
     Date point = new Date(0);
     Enumeration enum = x.getAllScheduleElements();

@@ -10,7 +10,7 @@ import java.util.*;
 import org.cougaar.core.mts.MessageAddress;
 
 // factories
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 // tasks
 import org.cougaar.planning.ldm.plan.Task;

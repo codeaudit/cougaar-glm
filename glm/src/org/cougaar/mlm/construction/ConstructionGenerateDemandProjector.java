@@ -40,7 +40,7 @@ import org.cougaar.glm.ldm.asset.ClassIVConstructionMaterial;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewSchedule;
 
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.planning.ldm.measure.*;
 
 import org.cougaar.glm.ldm.plan.ObjectScheduleElement;
@@ -66,7 +66,7 @@ import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.glm.plugins.ScheduleUtils;
 import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.glm.plugins.projection.ConsumerSpec;
-//import org.cougaar.core.domain.RootFactory;
+//import org.cougaar.planning.ldm.PlanningFactory;
 
 // glm
 import org.cougaar.glm.plugins.BasicProcessor;

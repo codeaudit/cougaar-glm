@@ -24,10 +24,10 @@ package org.cougaar.mlm.plugin.sample;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.PlanElement;
@@ -94,7 +94,7 @@ public class MCCTriggerCreatorPlugin extends SimplePlugin
 
         public void Perform( Object[] objects, PluginDelegate pid ) 
         {
-            RootFactory ldmf = pid.getFactory();
+            PlanningFactory ldmf = pid.getFactory();
             List al = Arrays.asList( objects );
             ListIterator li = al.listIterator();
             while ( li.hasNext() ) {
@@ -153,7 +153,7 @@ public class MCCTriggerCreatorPlugin extends SimplePlugin
         closeTransaction();
     }
 
-    RootFactory getLDMF() { return theLDMF; }
+    PlanningFactory getLDMF() { return theLDMF; }
 
     private static UnaryPredicate triggPred() {
       return new UnaryPredicate() {

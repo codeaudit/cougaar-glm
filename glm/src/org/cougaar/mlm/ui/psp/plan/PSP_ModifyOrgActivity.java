@@ -32,15 +32,15 @@ import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
 import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.measure.Latitude;
 import org.cougaar.planning.ldm.measure.Longitude;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
-import org.cougaar.core.util.AbstractPrinter;
+import org.cougaar.mlm.ui.util.AbstractPrinter;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.util.XMLObjectFactory;
+import org.cougaar.mlm.ui.util.XMLObjectFactory;
 
 import org.cougaar.glm.ldm.*;import org.cougaar.glm.ldm.*;import org.cougaar.glm.*;
 import org.cougaar.glm.ldm.asset.*;

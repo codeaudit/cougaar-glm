@@ -46,7 +46,7 @@ import java.io.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 
-import org.cougaar.core.plugin.util.*;
+import org.cougaar.planning.plugin.util.*;
 
 /**
  * Allocate to sink until user presses button (like UniversalAllocator),

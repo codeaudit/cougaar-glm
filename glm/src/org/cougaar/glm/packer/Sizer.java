@@ -22,7 +22,7 @@ import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 
 import org.cougaar.glm.ldm.asset.GLMAsset;
@@ -158,7 +158,7 @@ class Sizer {
     * This task will <em>not</em> be published yet.
     */
   private Task sizedTask (Task t, double size) {
-    RootFactory factory = _gp.getGPFactory();
+    PlanningFactory factory = _gp.getGPFactory();
     NewTask nt = factory.newTask();
 
     sizedMade++;

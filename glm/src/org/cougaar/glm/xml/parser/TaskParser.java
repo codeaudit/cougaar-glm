@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.9 2002-11-08 16:46:17 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.10 2002-11-19 17:21:46 twright Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -28,8 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Task;
@@ -72,7 +72,7 @@ public class TaskParser{
 
   public Task getTask(LDMServesPlugin ldm,
 		      MessageAddress clusterIdentifier, 
-		      RootFactory ldmf, 
+		      PlanningFactory ldmf, 
 		      Node node){
     NewTask task = null;
     

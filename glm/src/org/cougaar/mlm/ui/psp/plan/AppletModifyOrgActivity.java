@@ -28,7 +28,7 @@ import java.util.*;
 import javax.swing.*;
 
 import org.cougaar.util.ShortDateFormat;
-import org.cougaar.core.util.XMLObjectFactory;
+import org.cougaar.mlm.ui.util.XMLObjectFactory;
 
 import org.w3c.dom.Element;
 

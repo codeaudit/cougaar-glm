@@ -55,7 +55,7 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.core.plugin.PluginDelegate;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
 
 /** The sample User Interface Plugin display.
   This is created and run from the UIPlugin.start method.  It's run

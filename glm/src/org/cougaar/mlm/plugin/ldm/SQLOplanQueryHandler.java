@@ -31,10 +31,10 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.agent.ClusterServesPlugin;
+import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.core.service.BlackboardService;
-import org.cougaar.core.domain.LDMServesPlugin;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import org.cougaar.util.Parameters;
 import org.cougaar.util.TimeSpanSet;
@@ -68,7 +68,7 @@ public abstract class SQLOplanQueryHandler extends QueryHandler {
   protected void initialize(LDMSQLPlugin ldmplugin,
                             MessageAddress cid,
                             ClusterServesPlugin comp,
-                            RootFactory aldmf,
+                            PlanningFactory aldmf,
                             Properties params,
                             BlackboardService sub) {
     if (!(ldmplugin instanceof SQLOplanBase)) {
