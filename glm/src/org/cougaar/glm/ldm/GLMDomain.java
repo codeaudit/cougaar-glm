@@ -31,6 +31,7 @@ import org.cougaar.core.blackboard.XPlanServesBlackboard;
 import org.cougaar.core.domain.Domain;
 import org.cougaar.core.domain.Factory;
 import org.cougaar.core.domain.LDMServesPlugin;
+import org.cougaar.core.relay.RelayLP;
 import org.cougaar.glm.ldm.lps.*;
 
 /**
@@ -66,6 +67,7 @@ public class GLMDomain implements Domain {
     l.add(new TransferableLP(logplan, cluster));
     l.add(new DetailRequestLP(logplan, cluster));
     l.add(new OPlanWatcherLP(logplan, cluster));
+    l.add(new RelayLP(logplan, cluster));
     return l;
   }
 
