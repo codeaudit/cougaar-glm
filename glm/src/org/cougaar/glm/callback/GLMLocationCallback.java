@@ -30,6 +30,8 @@ import java.util.Enumeration;
 import org.cougaar.lib.callback.UTILFilterCallbackAdapter;
 import org.cougaar.lib.callback.UTILFilterCallbackListener;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * Used to filter for new or changed generic assets.
  * 
@@ -38,8 +40,8 @@ import org.cougaar.lib.callback.UTILFilterCallbackListener;
  */
 
 public class GLMLocationCallback extends UTILFilterCallbackAdapter {
-  public GLMLocationCallback (UTILFilterCallbackListener listener) {
-    super (listener);
+  public GLMLocationCallback (UTILFilterCallbackListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   protected UnaryPredicate getPredicate () {

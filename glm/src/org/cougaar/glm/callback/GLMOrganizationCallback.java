@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/callback/GLMOrganizationCallback.java,v 1.1 2001-12-27 22:41:22 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/callback/GLMOrganizationCallback.java,v 1.2 2002-03-29 20:28:43 gvidaver Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -30,13 +30,15 @@ import java.util.Enumeration;
 
 import org.cougaar.lib.callback.UTILFilterCallbackAdapter;
 
+import org.cougaar.util.log.Logger;
+
 /**
  *  Filters for organizations, telling listeners of new and changed ones.
  */
 
 public class GLMOrganizationCallback extends UTILFilterCallbackAdapter {
-  public GLMOrganizationCallback (GLMOrganizationListener listener) {
-    super (listener);
+  public GLMOrganizationCallback (GLMOrganizationListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   /**

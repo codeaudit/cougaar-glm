@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/callback/GLMNotOrganizationCallback.java,v 1.1 2001-12-27 22:41:22 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/callback/GLMNotOrganizationCallback.java,v 1.2 2002-03-29 20:28:43 gvidaver Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -29,14 +29,16 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.lib.callback.UTILAssetCallback;
 import org.cougaar.lib.callback.UTILFilterCallbackListener;
+import org.cougaar.util.log.Logger;
+
 /**
  * Simple extension of Asset callback that filters for 
  * everything but organizations.
  */
 
 public class GLMNotOrganizationCallback extends UTILAssetCallback {
-  public GLMNotOrganizationCallback (UTILFilterCallbackListener listener) {
-    super (listener);
+  public GLMNotOrganizationCallback (UTILFilterCallbackListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   protected UnaryPredicate getPredicate () {
