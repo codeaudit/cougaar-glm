@@ -46,7 +46,7 @@ public abstract class ConsumerSpec implements Serializable {
   protected String resourceType_;
   protected Schedule mergedSchedule_ = null;
   private Map multipliers_ = null;
-  private Logger logger = Logging.getLogger(ConsumerSpec.class);
+  private static Logger logger = Logging.getLogger(ConsumerSpec.class);
 
   public ConsumerSpec(Object consumer, String type, Map multipliers) {
     consumer_ = consumer;
