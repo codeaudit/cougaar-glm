@@ -10,6 +10,8 @@
 ; </copyright>
 ;
 
+
+
 package=org.cougaar.domain.glm.ldm.asset
 import= org.cougaar.domain.glm.ldm.plan.*,\
 	org.cougaar.domain.glm.ldm.oplan.*,\
@@ -92,6 +94,23 @@ slots=Asset asset, \
 asset.doc=The prototypical Asset represented.
 schedule.doc=a quantity-schedule showing how many/much of asset is \
 	       contained by this asset over time.
+
+[InventoryLevelsPG]
+doc=Represent the schedules of thresholds taken into account when \
+making ordering decisions at the inventory manager.   How great is the \
+demand of the next x days, when do we reorder, how much do we reorder.
+;import=org.cougaar.domain.planning.ldm.plan.Schedule
+slots=Schedule average_demand_schedule, \
+	Schedule reorder_level_schedule,\
+	Schedule goal_level_schedule
+nDays_of_demand_schedule.doc=The quantity-schedule showing the amount of 
+requisite stock to satisfy a pre-configured number of days of demand.  All \
+other schedules here are based on this number.
+reorder_level_schedule.doc=The quantity-schedule showing the level which when \
+stock levels fall below a replenish order will be placed.
+goal_level_schedule.doc=The quantity-schedule showing the level to which \
+one ultimately wants to bring the inventory level to when reordering.
+
 
 [ReportSchedulePG]
 doc=Specifies the schedule for periodically or other scheduled generation of reports. \
@@ -655,27 +674,35 @@ slots=org.cougaar.core.society.UID detailObject, \
 
 ; For SRA
 [PersonnelReadinessPG]
-slots=int personnel_readiness
-personnel_readiness.doc=integer value that corresponds to the \
-	readiness rating
+slots=Map readiness
+readiness.doc=Map of Integer values that correspond to the \
+   personnel rating.  Key for the first is the unit's permanent \
+   mission is String("2MTW") and subsequent ones are specific crises, \
+   String ("CAP1"), String ("CAP2"), etc.
 
 ; For SRA
 [TrainingReadinessPG]
-slots=int training_readiness
-training_readiness.doc=integer value that corresponds to the readiness \
-	rating 
+slots=Map readiness
+readiness.doc=Map of Integer values that correspond to the \
+   training rating.  Key for the first is the unit's permanent \
+   mission is String("2MTW") and subsequent ones are specific crises, \
+   String ("CAP1"), String ("CAP2"), etc.
 
 ; For SRA
 [EquipmentOHReadinessPG]
-slots=int equipment_oh_readiness
-equipment_oh_readiness.doc=integer value that corresponds to the \
-	readiness rating
+slots=Map readiness
+readiness.doc=Map of Integer values that correspond to the \
+   equipment on-hand rating.  Key for the first is the unit's permanent \
+   mission is String("2MTW") and subsequent ones are specific crises, \
+   String ("CAP1"), String ("CAP2"), etc.
 
 ; For SRA
 [EquipmentStatusReadinessPG]
-slots=int equipment_status_readiness
-equipment_status_readiness.doc=integer value that corresponds to the \
-readiness rating
+slots=Map readiness
+readiness.doc=Map of Integer values that correspond to the \
+   equipment condition rating.  Key for the first is the unit's permanent \
+   mission is String("2MTW") and subsequent ones are specific crises, \
+   String ("CAP1"), String ("CAP2"), etc.
 
 ; for ANTS/GLM
 [InventoryPG]
@@ -685,30 +712,37 @@ slots=Scalar capacity, \
       Scalar minReorder, \
       Scalar unobtainable, \
       boolean fillToCapacity, \
+      boolean maintainAtCapacity, \
       Asset resource
 delegates=InventoryBG invBG
 invBG.delegate= int resetInventory(Inventory inventory, long today);\
-	long getStartTime();\
 	int getToday();\
 	int getFirstPlanningDay();\
 	Scalar getLevel(long day);\
 	Scalar getLevel(int day);\
 	int withdrawFromInventory(Inventory inventory, ClusterIdentifier cluster);\
-	Scalar getNDaysDemand(int day, int daysOnHand, int daysForward, int daysBackward);\
+	double getNDaysDemand(int day);\
+	double getReorderLevel(int day);\
+	double getGoalLevel(int day);\
 	int addPreviousRefillsToInventory(Task maintainInv);\
 	int addDueIn(Task refillTask);\
 	int removeDueIn(Task refillTask);\
 	int getPlanningDays();\
+	void computeThresholdSchedule(int daysOfDemand,int daysForward, int daysBackward,double minReorderLevel,double maxReorderLevel,double goalLevelMultiplier);\
 	int determineInventoryLevels();\
 	Task refillAlreadyFailedOnDay(int day);\
 	Task getRefillOnDay(int day);\
+        void removeRefillProjection(int day);\
 	Scalar getProjected(int day);\
+	Scalar getProjectedRefill(int day);\
 	Date lastDemandTaskEnd(Inventory inventory);\
-	Vector getPreviouslyFailedDueOuts();\	
 	Integer getFirstOverflow(int day, ClusterIdentifier cluster); \
 	DueOut getLowestPriorityDueOutBeforeDay(int end);\
+        List updateDueOutAllocations();\
 	int updateContentSchedule(Inventory inventory);\
 	int clearContentSchedule(Inventory inventory);\
+	int updateInventoryLevelsSchedule(Inventory inventory);\
+	int clearInventoryLevelsSchedule(Inventory inventory);\
 	int printQuantityScheduleTimes(Schedule sched);\
 	int printInventoryLevels(Inventory inventory, ClusterIdentifier clusterID);\
 	PGDelegate copy(PropertyGroup pg);\
@@ -718,7 +752,12 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	void addInventoryReport(InventoryReport anInventoryReport);\
         InventoryReport getLatestInventoryReport();\
         InventoryReport getOldestInventoryReport();\
-        void pruneOldInventoryReports(long pruneTime);
+        void pruneOldInventoryReports(long pruneTime);\
+        long convertDayToTime(int day);\
+        long getStartOfDay(int day);\
+        int convertTimeToDay(long time);\
+        int getImputedDayOfTime(long time);\
+        int getImputedDay(int day);
 reorder_level.doc=volume level at which you are allowed to reorder. 
 in_reorder.doc=minimum volume you can order. Should be \ 
         less than or equal to reorder level. 
@@ -742,6 +781,7 @@ slots=String unit
 
 [FromBasePG]
 slots=GeolocLocation base
+
 
 ;;
 ;; examples

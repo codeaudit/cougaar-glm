@@ -20,8 +20,7 @@ propertydefs = alpprops.def, \
 ;;
 
 [Inventory GLMAsset]
-slots=ScheduledContentPG, ReportSchedulePG
-
+slots=ScheduledContentPG, InventoryLevelsPG, ReportSchedulePG, InventoryPG
 
 [VolumetricInventory Inventory]
 slots = VolumetricStockagePG

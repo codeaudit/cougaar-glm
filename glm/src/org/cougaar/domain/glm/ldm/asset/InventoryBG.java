@@ -30,12 +30,16 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
 import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.domain.glm.debug.*;
 import org.cougaar.domain.glm.execution.common.InventoryReport;
 import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
 import org.cougaar.domain.glm.ldm.plan.PlanScheduleType;
 import org.cougaar.domain.glm.ldm.plan.ObjectScheduleElement;
@@ -49,6 +53,8 @@ import org.cougaar.domain.planning.ldm.plan.*;
 public abstract class InventoryBG implements PGDelegate {
 
     public static final int PRIORITY_LEVELS = 10;
+    public static final long CANONICAL_TIME_OFFSET = TimeUtils.MSEC_PER_DAY - 1;
+    public static final double GOAL_LEVEL_BOOST_CAPACITY_FACTOR= 1.1;
 
     protected InventoryPG myPG_;
     // Each element in these Vectors represents a day.
@@ -60,24 +66,40 @@ public abstract class InventoryBG implements PGDelegate {
     protected transient Vector dueOut_;
     // ProjectSupply Tasks
     protected transient double[] level_;
+    protected transient int dirtyDay_;
+    protected transient boolean needInitializeInventoryLevels;
+    protected transient Vector dueInsByRequestDay_;
     // Was the BG properly initialized, if not, it is unusable
     protected boolean initialized_ = false;
     // today is the alp day right now
-    protected long today_;
-    private long startTime_;
-    private boolean startTimeNeverSet = true;
-    protected long firstDayOfDemand_;
+    private boolean isStartTimeSet = false;
+    private int startDay_;
+    protected int today_;
+    protected int firstDayOfDemand_;
     private ProjectionWeight weight_;
     // Stuff for execution below
     protected ArrayList report_history;
     protected InventoryReport latest_report;
     protected InventoryReport oldest_report;
     protected Calendar calendar_ = Calendar.getInstance();
+
+    // target level stuff
+    protected double[] demandSchedule_=null;
+    protected double goalLevelMultiplier_;
+    protected double minReorderLevel_;
+    protected double maxReorderLevel_;
+    protected int    daysOfDemand_;
+    protected int    daysForward_;
+    protected int    daysBackward_;
     
+    protected int    goalExceededCap=0;
+    final static protected int GOAL_EXCEEDED_CAPACITY_DEBUG_THRESHOLD = 2;
+
     public InventoryBG(InventoryPG  pg) {
 	myPG_ = pg;
 	dueIns_ = new Vector();
 	dueOut_ = new Vector();
+        dueInsByRequestDay_ = new Vector();
 	level_ = null;
 	report_history = new ArrayList();
 	latest_report = null;
@@ -102,20 +124,25 @@ public abstract class InventoryBG implements PGDelegate {
 	
 	dueIns_ = new Vector();
 	dueOut_ = new Vector();
+        dueInsByRequestDay_ = new Vector();
 	level_ = null;
     }
 
     // GLK temp changed void to int
     public int resetInventory(Inventory inventory, long today) {
-	dueOut_.clear();
-	dueIns_.clear();
-	level_ = null;
+        needInitializeInventoryLevels = true;
+        if (!isStartTimeSet) {// Only do this check once
+            Scalar ignore = getScalar(0.0);// Insure we know how to manage this type
+        }
+        for (int i = 0, n = dueOut_.size(); i < n; i++) {
+            ((DueOutList) dueOut_.elementAt(i)).clear();
+        }
+        for (int i = 0, n = dueIns_.size(); i < n; i++) {
+            ((DueInList) dueIns_.elementAt(i)).clear();
+        }
+	dueInsByRequestDay_.clear();
 
-	initializeTime(inventory, today);
-//      	GLMDebug.DEBUG("InventoryBG", null, " resetInventory():"+inventory+
-//    		       " Start Time: "+TimeUtils.dateString(getStartTime())+", Today: "+
-//      		       TimeUtils.dateString(today_)+"("+getToday()+")"+", 1st day of demand "+
-//      		       TimeUtils.dateString(firstDayOfDemand_), 1000);
+        initializeTime(inventory, today);
 	if (!inventory.hasScheduledContentPG()) {
 	    Asset proto = inventory.getPrototype();
 	    String id = proto.getTypeIdentificationPG().getNomenclature();
@@ -132,7 +159,7 @@ public abstract class InventoryBG implements PGDelegate {
     }
 
     /**
-       Try to do a reasonable job setting the startTime_ and
+       Try to do a reasonable job setting the startDay_ and
        firstDayOfDemand_ variables. If there is demand, then the start
        time is set 14 days before the earliest demand. If there is no
        demand, but there are inventory reports, the start time is set
@@ -147,7 +174,6 @@ public abstract class InventoryBG implements PGDelegate {
     private void initializeTime(Inventory inventory, long today) {
 	try {
 	    // Today is AlpTime, i.e. now
-            today_ = TimeUtils.pushToEndOfDay(calendar_, today);
             Enumeration role_sched = inventory.getRoleSchedule().getRoleScheduleElements();
             long earliest_demand = Long.MAX_VALUE;
             // StartTime_ is day 0 for this inventory. It is set to the
@@ -158,78 +184,76 @@ public abstract class InventoryBG implements PGDelegate {
                 PlanElement pe = (PlanElement)role_sched.nextElement();
                 Task dueOut = pe.getTask();
                 try {
-                    long time = TaskUtils.getStartTime(dueOut);
+                    long time;
+                    if (TaskUtils.isProjection(dueOut)) {
+                        time = TaskUtils.getStartTime(dueOut);
+                    } else {
+                        time = TaskUtils.getEndTime(dueOut);
+                    }
                     earliest_demand = Math.min(time, earliest_demand);
                 } catch (RuntimeException re) {
                     continue;   // No start time, probably
                 }
             }
-            InventoryReport oldest = getOldestInventoryReport();
-            long start_time = Long.MAX_VALUE;
-            if (earliest_demand != Long.MAX_VALUE) {
-                start_time = earliest_demand - 14 * TimeUtils.MSEC_PER_DAY;
-            }
-            if (oldest != null) {
-                start_time = Math.min(start_time, oldest.theReportDate);
-            }
-            if (start_time != Long.MAX_VALUE) {
-                setStartTime(TimeUtils.pushToEndOfDay(calendar_, start_time));
+            if (!isStartTimeSet) { // Need to set start time
+                long start_time = today;
+                InventoryReport oldest = getOldestInventoryReport();
+                start_time = Math.min(start_time, earliest_demand - 14 * TimeUtils.MSEC_PER_DAY);
+                if (oldest != null) {
+                    start_time = Math.min(start_time, oldest.theReportDate);
+                }
+                startDay_ = (int) (start_time / TimeUtils.MSEC_PER_DAY);
+                isStartTimeSet = true;
             }
             if (earliest_demand == Long.MAX_VALUE) {
-                earliest_demand = getStartTime() + 14 * TimeUtils.MSEC_PER_DAY;
+                firstDayOfDemand_ = 0;
+            } else {
+                firstDayOfDemand_ = convertTimeToDay(earliest_demand);
             }
-            firstDayOfDemand_ = TimeUtils.pushToEndOfDay(calendar_, earliest_demand);
+            today_ = convertTimeToDay(today);
         } catch (RuntimeException re) {
           System.err.print(re + ": today=" + today + ", today_ = " + today_);
           throw re;
         }
     }
 
-    private void setStartTime(long newStartTime) {
-      //System.out.println("setStartTime " + TimeUtils.dateString(newStartTime));
-        if (newStartTime <= 0L) {
-            throw new IllegalArgumentException("Bogus newStartTime: " + newStartTime);
-        }
-        startTime_ = newStartTime;
-        startTimeNeverSet = false;
+    public long getStartTime() {
+        return convertDayToTime(0);
     }
 
-    public long getStartTime() {
-        if (startTimeNeverSet){
-	    //throw new RuntimeException("startTime_ never set");
-	    return today_;
-	} else {	
-	    return startTime_;
-	}
+    private int getStartDay() {
+//          if (!isStartTimeSet) throw new RuntimeException("startDay_ never set");
+        return startDay_;
     }
-    public int getToday() {
-	// Be careful with this one.  Obviously, if the inventory startime is after today
-	// then a negative number is returned.  This method should only be used to determine
-	// if the current day is before or after inventory start time.
-	return TimeUtils.getDaysBetween(getStartTime(), today_);
+
+    public int getImputedDayOfTime(long time) {
+        return getImputedDay(convertTimeToDay(time));
+    }
+
+    public int getImputedDay(int day) {
+        return day - getToday();
     }
 
     public int getFirstPlanningDay() {
-	// The first planning day is the first day of demand unless that day falls in the past,
-	// in which case the first planning day is today.
-	int day;
-	if (firstDayOfDemand_ > today_) {
-	    // Activity starts in the future, 1st planning day is the first day of demand
-	    day = TimeUtils.getDaysBetween(getStartTime(), firstDayOfDemand_);
-	}
-	else {
-	    // Activity started in the past, 1st planning day is now
-	    day = TimeUtils.getDaysBetween(getStartTime(), today_);
-	}
-	return day;
+	// The first planning day is the first day of demand unless
+ 	// that day falls in the past, in which case the first
+ 	// planning day is today.
+        return Math.max(today_ + 1, firstDayOfDemand_);
+    }
+
+
+    /**
+     * @return the day number of the current execution time.
+     **/
+    public int getToday() {
+	return today_;
     }
 
     /**
      * Get the inventory level at a particular execution time
      **/
-    public Scalar getLevel(long day) {
-	int d = TimeUtils.getDaysBetween(day, getStartTime());
-	return getLevel(d);
+    public Scalar getLevel(long time) {
+        return getLevel(convertTimeToDay(time));
     }
 
     /**
@@ -239,289 +263,211 @@ public abstract class InventoryBG implements PGDelegate {
      * the maximum day, the level on that maximum day is returned.
      **/
     public Scalar getLevel(int day) {
-	Scalar initial = myPG_.getInitialLevel();
 	if ((day < 0) || (level_ == null)) {
-	    return initial;
+            return myPG_.getInitialLevel();
 	}
 	if  (day >= level_.length) {
 	    day = level_.length-1;
 	}
+        if (day >= dirtyDay_) updateLevels(day);
 	return getScalar(level_[day]);
     }
 
+    private void updateDirtyDay(int day) {
+        if (day > 0 && day < dirtyDay_) {
+            dirtyDay_ = day;
+        }
+    }
+
     public int withdrawFromInventory(Inventory inventory, ClusterIdentifier clusterID) {
-	int requests=0;
 	Enumeration role_sched = inventory.getRoleSchedule().getRoleScheduleElements();
 	while (role_sched.hasMoreElements()) {
 	    PlanElement pe = (PlanElement)role_sched.nextElement();
-	    Task dueOut = pe.getTask();
-// 	    GLMDebug.DEBUG("InventoryBG", "withdrawFromInventory() "+TaskUtils.taskDesc(dueOut));
-//  	    GLMDebug.DEBUG("InventoryBG", clusterID, "withdrawFromInventory(), "+TaskUtils.taskDesc(dueOut));
-	    if (dueOut.getVerb().equals(Constants.Verb.WITHDRAW)) {
-		addDueOut(dueOut);
-		requests++;
-	    } else if (dueOut.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
-		addDueOutProjection(dueOut);
+	    Task task = pe.getTask();
+	    if (task.getVerb().equals(Constants.Verb.WITHDRAW)) {
+		addDueOut(task);
+	    } else if (task.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
+		addDueOutProjection(task);
 	    } else {
-		System.out.println("What the .... Task added to role schedule "+TaskUtils.taskDesc(dueOut));
+		System.err.println("What the .... Task added to role schedule "+TaskUtils.taskDesc(task));
 	    }
 	}
-// 	GLMDebug.DEBUG("InventoryBG", "withdrawFromInventory(), "+requests+" requests from "+AssetUtils.assetDesc(inventory));
 	return 0;
+    }
+
+    /**
+     * Convert a time (long) into a day of this inventory that can be
+     * used to index duein/out vectors, levels, etc.
+     **/
+    public int convertTimeToDay(long time) {
+        int thisDay = (int) (time / TimeUtils.MSEC_PER_DAY);
+        int startDay = getStartDay();
+        return thisDay - startDay;
+    }
+
+    public long convertDayToTime(int day) {
+        int startDay = getStartDay();
+        return TimeUtils.MSEC_PER_DAY * (day + startDay) + CANONICAL_TIME_OFFSET;
+    }
+
+    public long getStartOfDay(int day) {
+        int startDay = getStartDay();
+        return TimeUtils.MSEC_PER_DAY * (day + startDay);
+    }
+
+    private long canonicalTime(long time) {
+        return convertDayToTime(convertTimeToDay(time));
+    }
+
+    private abstract class DueIOList {
+        List list = null; // Create on demand
+        protected double actualTotal;
+        protected double projectedTotal;
+        protected int day;
+        protected int imputedDay;
+
+        protected DueIOList(int day) {
+            this.day = day;
+            setImputedDay();
+        }
+
+        private void setImputedDay() {
+            imputedDay = day - today_;
+        }
+
+        public double getTotal() {
+            return actualTotal + projectedTotal;
+        }
+
+        public double getActualTotal() {
+            return actualTotal;
+        }
+
+        public double getProjectedTotal() {
+            return projectedTotal;
+        }
+
+        public int size() {
+            if (list == null) return 0;
+            return list.size();
+        }
+
+        public void clear() {
+            if (list != null) list.clear();
+            if (actualTotal != 0.0 || projectedTotal != 0.0) {
+                actualTotal = 0.0;
+                projectedTotal = 0.0;
+                updateDirtyDay(day);
+            }
+            setImputedDay();
+        }
+
+        public void add(DueIO d) {
+            Task t = d.getTask();
+            if (d.getFilled()) {
+                adjustTotals(t, 1.0);
+                updateDirtyDay(day);
+            }
+            if (list == null) list = new ArrayList(1);
+            list.add(d);
+        }
+
+        public void remove(Task t) {
+            for (int i = 0, n = list.size(); i < n; i++) {
+                DueIO d = (DueIO) list.get(i);
+                if (d.getTask() == t) {
+                    if (d.getFilled()) {
+                        adjustTotals(t, -1.0);
+                        updateDirtyDay(day);
+                    }
+                    list.remove(d);
+                    return;
+                }
+            }
+        }
+
+        protected abstract void adjustTotals(Task t, double w);
+    }
+
+    private class DueOutList extends DueIOList {
+        public DueOutList(int day) {
+            super(day);
+        }
+
+        public DueOut get(int ix) {
+            return (DueOut) list.get(ix);
+        }
+
+        protected void adjustTotals(Task t, double w) {
+            double wf = getWeightingFactor(t, imputedDay) * w;
+            if (t.getVerb().equals(Constants.Verb.WITHDRAW)) {
+                actualTotal += TaskUtils.getWithdrawQuantity(t) * wf;
+            } else {
+                projectedTotal += TaskUtils.getDailyQuantity(t) * wf;
+            }
+        }
+    }
+
+    private class DueInList extends DueIOList {
+        public DueInList(int day) {
+            super(day);
+        }
+
+        public DueIn get(int ix) {
+            return (DueIn) list.get(ix);
+        }
+
+        protected void adjustTotals(Task t, double w) {
+            double wf = getWeightingFactor(t, imputedDay);
+            if (TaskUtils.isProjection(t)) {
+                double q = TaskUtils.getDailyQuantity(t);
+                if (q == 0.0 && w > 0.0) {
+                    GLMDebug.ERROR("InventoryBG", null, "Added refill projection having 0.0 quantity " + TaskUtils.taskDesc(t));
+                }
+                projectedTotal += q * w * wf;
+            } else {
+                if (wf < 1.0){
+                    GLMDebug.ERROR("InventoryBG", null,
+                                   "Inv Day: " + day
+                                   + " imputedDay: " + imputedDay
+                                   + " Zero weighted supply task: "+TaskUtils.taskDesc(t));
+                }
+                actualTotal += TaskUtils.getRefillQuantity(t) * w * wf;
+            }
+//              System.out.println("adjustTotals " + TimeUtils.dateString(convertDayToTime(day)) + ": " + getTotal());
+        }
+    }
+
+    private void addDueOut(DueOut dueOut) {
+        int day = dueOut.getDay();
+        while (day >= dueOut_.size()) {
+	    dueOut_.add(new DueOutList(dueOut_.size()));
+	}
+        DueOutList v = (DueOutList) dueOut_.get(day);
+        v.add(dueOut);
     }
 
     private void addDueOut(Task request) {
-// 	long time = TaskUtils.getEndTime(request);
- 	long time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getStartTime(request));
-	int day = TimeUtils.getDaysBetween(getStartTime(), time);
+        int day = convertTimeToDay(TaskUtils.getEndTime(request));
 	if (day <  0) {
 	    day = 0;
-	    GLMDebug.ERROR("InventoryBG", "addDueOut(), Request Starts in the past.(Start Time "+
-			   TimeUtils.dateString(getStartTime())+")" +"Task pteod start:"+
-			   TimeUtils.dateString(time)+", start"+
-			   TimeUtils.dateString(TaskUtils.getStartTime(request))+
-			   ", Task: "+TaskUtils.taskDesc(request));
+	    GLMDebug.ERROR("InventoryBG",
+                           "addDueOut(), Request happens in the past.(Start Time "
+                           + TimeUtils.dateString(getStartTime())
+                           + ")"
+                           + "Task time:"
+                           + TimeUtils.dateString(TaskUtils.getEndTime(request))
+                           + ", Task: "
+                           + TaskUtils.taskDesc(request));
 	}
-	while (day >= dueOut_.size()) {
-	    dueOut_.add(new Vector());
-	}
-//  	if (day >= dueOut_.size()) {
-//  	    // Increase size of dueOut_ vector to accommodate days
-//  	    for (int i=dueOut_.size()-1; i<=day; i++) {
-//  		dueOut_.add(new Vector());
-//  	    }
-//  	}
-//     	GLMDebug.DEBUG("InventoryBG", "addDueOut(), Adding dueout on day "+day+"("+TimeUtils.dateString(time)+")"+TaskUtils.taskDesc(request));
-	Vector v = (Vector)dueOut_.get(day);
 	PlanElement pe = request.getPlanElement();
 	// If the request has just been rescinded, the plan element will be null.
 	// This task should not affect planning
-	if (pe == null) 
-	    return;
-	AllocationResult ar = pe.getEstimatedResult();
-	if(ar==null){
-	    GLMDebug.ERROR("addDueOut()", TaskUtils.taskDesc(request)+
-			   " allocation without estimated result: "+pe.getUID());
-	} else if (!ar.isSuccess()) {
-	    v.add(new DueOut(request, false));
-// 	    GLMDebug.DEBUG("InventoryBG", "addDueOut, TaskUtils.taskDesc(t)+" failed prev run");
-	}
-	else {
-	    v.add(new DueOut(request, true));
-// 	    GLMDebug.DEBUG("InventoryBG", "addDueOut, TaskUtils.taskDesc(t)+" Succeeded previous run or new task");
-	}
-    }
-
-    // Looking for an priority ordered list of dueouts from today to the given day.
-    public DueOut getLowestPriorityDueOutBeforeDay(int end) {
-	// Also includes this day
-	int today = TimeUtils.getDaysBetween(getStartTime(), today_);
-	if (today < 0) {
-	    today = 0;
-	}
-	int size = dueOut_.size();
-	size--;
-	if (end > size) {
-	    end = size;
-	}
-	int priority;
-	Enumeration demand;
-	DueOut d;
-	Vector orderedDueOuts =  new Vector();
-	// Create priority buckets
-	Vector bucket;
-	Vector priority_buckets_ = new Vector(PRIORITY_LEVELS);
-	for (int i=0; i< PRIORITY_LEVELS; i++)
-	    priority_buckets_.add(new Vector());
-	// Put tasks into buckets
-	for (int i=end; i >= today; i--) {
-	    demand = ((Vector)dueOut_.get(i)).elements();
-	    while (demand.hasMoreElements()) {
-		d = (DueOut)demand.nextElement();
-		if (d.getFilled()) {
-		    priority = TaskUtils.getNumericPriority(d.getTask());
-		    bucket = (Vector)priority_buckets_.get(priority);
-		    bucket.add(d);
-		}
-	    }
-	}
-	DueOut lowest_priority = null;
-	for (int i=PRIORITY_LEVELS-1; i >= 0; i--) {
-	    bucket = (Vector)priority_buckets_.get(i);
-	    if (!bucket.isEmpty()) {
-		lowest_priority = getLowestPriorityDueOut(bucket);
-	    }
-	}
-	return lowest_priority;
-    }
-
-    private DueOut getLowestPriorityDueOut(Vector bucket) {
-	int size = bucket.size();
-	Long[] time_keys = new Long[size];
-	Hashtable map = new Hashtable();
-	DueOut d;
-	Long key;
-	// Grab the end time as sort key
-	for (int i=0; i < size; i++) {
-	    d = (DueOut)bucket.get(i);
-	    key = new Long(TaskUtils.getEndTime(d.getTask()));
-// 	    GLMDebug.DEBUG("InventoryBG", "getLowestPriorityDueOut, Key is "+key+", DueOut :"+d);
-	    map.put(key, d);
-	    time_keys[i] = key;
-	}
-	// Sort the array
-	Arrays.sort(time_keys);
-	Vector previouslyFailed = new Vector();
-	Vector previouslyFilled = new Vector();
-	// distinguish between previously successful and unsuccessful requests 
-	for (int i=time_keys.length-1; i >= 0 ; i--) {
-	    key = time_keys[i];
-	    d = (DueOut)map.get(key);
-// 	    GLMDebug.DEBUG("InventoryBG", "getLowestPriorityDueOut, Key is "+key+", DueOut :"+d);
-	    if (d.getPreviouslyFilled()) {
-		previouslyFilled.add(d);
-	    } else {
-		previouslyFailed.add(d);
-	    }
-	}
-	d = null;
-	if (!previouslyFailed.isEmpty()) {
-	    d = (DueOut)previouslyFailed.get(0);
-	} else if (!previouslyFilled.isEmpty()) {
-	    d = (DueOut)previouslyFilled.get(0);
-	}
-	return d;
-    }
-
-    /** Get the average demand for the specified range. The
-        interval is shortened as necessary to yield valid results.
-    **/
-    public Scalar getNDaysDemand(int day, int days_of_demand, int days_forward, int days_backward) {
-	int start = day - days_backward;
-	if (start < 0) {
-	    start = 0;
-	}
-	int end = day + days_forward;
-	if (end > dueOut_.size()) {
-	    end = dueOut_.size();
-	}
-	int nDays = 0;          // Counts the number of days for which valid demand is available
-        int today = getToday();
-	
-	double demand = 0.0;
-	for (int i = start; i<end; i++){
-            double thisDemand = Double.NaN;
-            if (isDueOutValid(i)) {
-                thisDemand = getDueOutTotal(i);
-            } else {
-                // No valid historical demand available
-            }
-            if (!Double.isNaN(thisDemand)) {
-                demand += thisDemand;
-                nDays++;
-            }
-	}
-// 	GLMDebug.DEBUG("InventoryBG", "getNDaysDemand(), days of demand: "+days_of_demand+", start day: "+start+
-// 		       ", end day: "+end+", period: "+period+", demand: "+demand);
-	if (nDays == 0) nDays = 1;
-	return getScalar((days_of_demand*demand) / nDays);
-    }
-
-    public int addPreviousRefillsToInventory(Task maintainInv) {
-
-	int totalRefills=0;
-// 	Enumeration refills = myPG_.getRefillSchedule().getAllScheduleElements();
-// 	ObjectScheduleElement ose;
-	if (maintainInv == null) {
-	    return 0;
-	}
-	PlanElement pe = maintainInv.getPlanElement();
-	if ((pe != null) && (pe instanceof Expansion)){
-	    Expansion expansion;
-	    Task refill;
-	    expansion = (Expansion)pe;
-	    Workflow wf = expansion.getWorkflow();
-	    Enumeration tasks = wf.getTasks();
-	    while (tasks.hasMoreElements()) {
-		boolean filled = true;
-		refill = (Task)tasks.nextElement();
-		if (TaskUtils.isSupply(refill)) {
-		    double qty = TaskUtils.getRefillQuantity(refill);
-//  		    GLMDebug.DEBUG("InventoryBG", "addPreviousRefillsToInventory(), adding Refill to inventory, amt: "+qty);
-		    if (qty == 0) {
-			filled = false;
-//			AllocationResult ar = ((Allocation)refill.getPlanElement()).getReportedResult();
-//  			GLMDebug.DEBUG("InventoryBG", "addPreviousRefillsToInventory(), adding failed allocation to dueIns table : "+ 
-//  				       TaskUtils.shortTaskDesc(refill)+" Allocation: "+ TaskUtils.arDesc(ar));
-		    }
-		    else {
-			filled = true;
-			totalRefills++;
-		    }
-		    addDueIn(refill, filled);
-		}
-	    }
-	}
- 	return totalRefills;
-    }
-
-    public int addDueIn(Task refillTask) {
-	if (TaskUtils.isProjection(refillTask)) {
-	    addProjection(refillTask, true);
-	}
-	else {
-	    addDueIn(refillTask, true);
-	}
-	return 0;
-    }
-
-    private int addDueIn(Task refillTask, boolean filled) {
-	// Add Refill to daily schedule
-	// All times set to Midnight of that day
-	long time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getRefillTime(refillTask));
-	int day = TimeUtils.getDaysBetween(getStartTime(), time);
-//    	GLMDebug.DEBUG("InventoryBG", null, "addDueIn(), Start: "+TimeUtils.dateString(getStartTime())+", task time: "+TimeUtils.dateString(time)+", day:"+day, 0);
-	if (day >= dueIns_.size()) {
-	    // Increase size of dueOut_ vector to accommodate days
-	    for (int i=dueIns_.size()-1; i<=day; i++) {
-		dueIns_.add(new Vector());
-	    }
-	}
-	if (day >= 0) {
-	    Vector v = (Vector) dueIns_.get(day);
-	    v.add(new DueIn(refillTask, filled));
-// 	    GLMDebug.DEBUG("InventoryBG", "addDueIn(), on day "+day+"for "+TaskUtils.shortTaskDesc(refillTask));
-//  	    GLMDebug.DEBUG("InventoryBG", "addDueIn(), on day "+day+".");
-	}
-	else {
-	    GLMDebug.ERROR("InventoryBG", "addDueIn(), Refill Starts in the past (start time "+
-			   TimeUtils.dateString(getStartTime())+"). Task = "+TaskUtils.taskDesc(refillTask));
-	}
-	return 0;
-    }
-
-    // By the way, this is really addDueInProjection
-    // AHF -- REFACTOR addDueInProjection and addDueOutProjection to use same piece of code
-    private void addProjection(Task task, boolean filled) {
-	long start_time = TaskUtils.getStartTime(task);
-	long end_time = TaskUtils.getEndTime(task);
-        int day0 = (int) (getStartTime() / TimeUtils.MSEC_PER_DAY);
- 	int start = ((int) (start_time / TimeUtils.MSEC_PER_DAY)) - day0;
- 	int end = ((int) (end_time / TimeUtils.MSEC_PER_DAY)) - day0;
-	if (end <= 0) { return; }
-	if (start < 0) { start = 0; }
-	while (end > dueIns_.size()) {
-            dueIns_.add(new Vector());
-	}
-	DueIn d = new DueIn(task, filled);
-//   	GLMDebug.DEBUG("addProjection()", "start="+start+"("+TimeUtils.dateString(start_time)+")"+
-//   	", end="+end+" ("+TimeUtils.dateString(end_time)+") Task:"+TaskUtils.taskDesc(task));	
-	
-        for (int day = start; day < end; day++) {
-// 	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
-	    Vector v = (Vector) dueIns_.get(day);
-	    v.add(d);
-	}
+	if (pe == null) return;
+        boolean filled = true;
+        AllocationResult ar = pe.getEstimatedResult();
+        if (ar != null) filled = ar.isSuccess();
+        addDueOut(new DueOut(request, filled, day));
     }
 
     // DRAT!!! Golden opportunity for refactoring.  Emergency demo solution
@@ -531,55 +477,426 @@ public abstract class InventoryBG implements PGDelegate {
 	PlanElement pe = task.getPlanElement();
 	// If the task has just been rescinded, the plan element will be null.
 	// This task should not affect planning
-	if (pe == null) 
-	    return;
-	boolean filled = false;
-	AllocationResult ar = pe.getEstimatedResult();
-	if(ar==null){
-	    GLMDebug.ERROR("addDueOut()", TaskUtils.taskDesc(task)+
-			   " allocation without estimated result: "+pe.getUID());
-	} else if (ar.isSuccess()) {
-	    filled = true;
-	}
-	long start_time = TaskUtils.getStartTime(task);
-	long end_time = TaskUtils.getEndTime(task);
-        int day0 = (int) (getStartTime() / TimeUtils.MSEC_PER_DAY);
- 	int start = ((int) (start_time / TimeUtils.MSEC_PER_DAY)) - day0;
- 	int end = ((int) (end_time / TimeUtils.MSEC_PER_DAY)) - day0;
-	if (end <= 0) { return; }
-	if (start < 0) { start = 0; }
-	while (end > dueOut_.size()) {
-            dueOut_.add(new Vector());
-	}
+	if (pe == null) return;
+//          Rate r = TaskUtils.getRate(task);
+//          double rate = r.getValue(0);
+        AllocationResultHelper helper = new AllocationResultHelper(task, task.getPlanElement());
+        for (int i = 0, n = helper.getPhaseCount(); i < n; i++) {
+            AllocationResultHelper.Phase phase =
+                (AllocationResultHelper.Phase) helper.getPhase(i);
+            double qty = phase.getAspectValue(AlpineAspectType.DEMANDRATE).getValue();
+            boolean filled = qty > 0.0;
+            int start = convertTimeToDay(phase.getStartTime());
+            int end = convertTimeToDay(phase.getEndTime());
+            if (start < 0) start = 0;
+            for (int day = start; day < end; day++) {
+                addDueOut(new DueOut(task, filled, day));
+            }
+        }
+    }
+
+    /**
+     * Update the allocations results of all the allocations of
+     * DueOuts for this inventory. Cycles through all the dueouts and
+     * updates the allocation results to be success or fail on the day
+     * of the dueout.
+     * @return List of the changed Allocations
+     **/
+    public List updateDueOutAllocations() {
+        List result = new ArrayList();
+	int size = dueOut_.size();
+        Map helpers = new HashMap();
+	for (int day = 0; day < size; day++) {
+            long startTime = getStartOfDay(day);
+            long endTime = startTime + TimeUtils.MSEC_PER_DAY;
+            DueOutList dueOuts = (DueOutList) dueOut_.get(day);
+            for (int i = 0, n = dueOuts.size(); i < n; i++) {
+                DueOut dueout = dueOuts.get(i);
+                Task task = dueout.getTask();
+                PlanElement pe = task.getPlanElement();
+                if (pe == null) continue; // Probably being rescinded
+                AllocationResultHelper helper =
+                    (AllocationResultHelper) helpers.get(pe);
+                if (helper == null) {
+                    helper = new AllocationResultHelper(task, pe);
+                    helpers.put(pe, helper);
+                }
+                if (dueout.getFilled() != dueout.getPreviouslyFilled()) {
+                    if (dueout.getFilled()) {
+                        if (TaskUtils.isProjection(task)) {
+                            helper.setBest(AlpineAspectType.DEMANDRATE, startTime, endTime);
+                        } else {
+                            helper.setBest(AspectType.QUANTITY, startTime, endTime);
+                        }
+                    } else {
+                        if (TaskUtils.isProjection(task)) {
+                            helper.setFailed(AlpineAspectType.DEMANDRATE, startTime, endTime);
+                        } else {
+                            helper.setFailed(AspectType.QUANTITY, startTime, endTime);
+                        }
+                    }
+                }
+            }
+        }
+        for (Iterator i = helpers.keySet().iterator(); i.hasNext(); ) {
+            PlanElement pe = (PlanElement) i.next();
+            AllocationResultHelper helper = (AllocationResultHelper) helpers.get(pe);
+            if (helper.isChanged()) {
+                AllocationResult ar = helper.getAllocationResult(1.0);
+                pe.setEstimatedResult(ar);
+                result.add(pe);
+            }
+        }
+        return result;
+    }
+
+    // Looking for the lowest priority dueout from today to the given day.
+    public DueOut getLowestPriorityDueOutBeforeDay(int end) {
+        DueOut lowest = null;
+	// Also includes this day
+	int low = Math.max(0, today_);
+	int size = dueOut_.size() - 1;
+	if (end > size) end = size;
+	// Scan all dueouts for the specified days
+	for (int i = end; i >= low; i--) {
+	    DueOutList demand = (DueOutList) dueOut_.get(i);
+            for (int h = 0, n = demand.size(); h < n; h++) {
+		DueOut d = demand.get(h);
+		if (d.getFilled()) {
+                    double weight = getWeightingFactor(d.getTask(), i - today_);
+                    if (weight > 0.0) {
+                        if (lowest == null || comparePriority(d, lowest) < 0) {
+                            lowest = d;
+                        }
+                    }
+                }
+            }
+        }
+	return lowest;            // Nothing found
+    }
+
+    /**
+     * Compare two DueOuts for priority.
+     * Returns priority(d1) - priority(d2).
+     * Remember: priority 0 is high
+     * Remember: previouslyFilled is high
+     * Remember: 0.0 quantity is low
+     * @return the difference in priority of the DueOuts which will be
+     * negative if d1 has the lowest priority.
+     **/
+    private int comparePriority(DueOut d1, DueOut d2) {
+        int diff;
+        Task t1 = d1.getTask();
+        Task t2 = d2.getTask();
+        diff = TaskUtils.getNumericPriority(t1) - TaskUtils.getNumericPriority(t2);
+        if (diff != 0) return diff;
+        diff = (d1.getPreviouslyFilled() ? 1 : 0) - (d2.getPreviouslyFilled() ? 1 : 0);
+        if (diff != 0) return diff;
+        diff = d2.getDay() - d1.getDay();
+        if (diff != 0) return diff;
+        double q1 = getRequestedDailyQuantity(t1);
+        double q2 = getRequestedDailyQuantity(t2);
+        if (q1 != q2) return (q1 < q2) ? -1 : 1;
+        return 0;
+    }
+
+    private double getRequestedDailyQuantity(Task task) {
+        if (TaskUtils.isProjection(task)) {
+            return TaskUtils.getDailyQuantity(task);
+        } else {
+            return TaskUtils.getQuantity(task);
+        }
+    }
+
+
+    public void computeThresholdSchedule(int daysOfDemand,
+					 int daysForward, 
+					 int daysBackward,
+					 double minReorderLevel,
+					 double maxReorderLevel,
+					 double goalLevelMultiplier) {
+
+	minReorderLevel_ = minReorderLevel;
+	maxReorderLevel_ = maxReorderLevel;
+	goalLevelMultiplier_ = goalLevelMultiplier;
+
+	daysOfDemand_ = daysOfDemand;
+	daysForward_ = daysForward;
+	daysBackward_ = daysBackward;
 	
-	DueOut d = new DueOut(task, filled);
-//     	GLMDebug.DEBUG("addDueOutProjection()", "start="+start+"("+TimeUtils.dateString(start_time)+")"+
-//     	", end="+end+" ("+TimeUtils.dateString(end_time)+") Task:"+TaskUtils.taskDesc(task));	
-        for (int day = start; day < end; day++) {
-//   	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
-	    Vector v = (Vector) dueOut_.get(day);
-	    v.add(d);
+	computeDemandSchedule();
+	
+    }
+
+
+    protected double getTotalValidDueOuts(int day) {
+	double result = Double.NaN;
+	if(isDueOutValid(day)) 
+	    result = getDueOutTotal(day);
+
+	if(Double.isNaN(result)) 
+	    return 0.0;
+	else
+	    return result;
+    }
+	
+    
+
+    protected void computeDemandSchedule() {
+	computeDemandSchedule(daysOfDemand_, daysForward_, daysBackward_);
+    }
+    
+    /**
+     *  Compute a schedule of the NDaysOfDemand using and averaging
+     *  window put the results in the a schedule.
+     */
+
+
+    protected void computeDemandSchedule(int daysOfDemand,
+					 int daysForward, 
+					 int daysBackward) {
+
+	int days = level_.length;
+
+	double[] newDSched = new double[days];
+	int maxDay = dueOut_.size();
+	int nDays=0;
+	double demand=0.0;
+	int totalPeriod = days+daysForward-1;
+
+	///GLMDebug.DEBUG("InventoryBG::computeDemandSchedule:MWD", "MWD TESTING Start");
+	//if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG::computeDemandSchedule:MWD", "Days Forward:" + daysForward + " Days Backward: " + daysBackward + " Days of Demand:" + daysOfDemand + " Max Day: " + maxDay);
+
+
+	for (int i=0; i< totalPeriod; i++) {
+
+	    //currDay is the day around which the window is built
+	    //i is really the leading edge of the window
+	    //start is the trailing end.
+	    int currDay=i-daysForward+1;
+	    int start=currDay-daysBackward;
+
+	    
+	    double startDemand = 0.0;
+	    double endDemand = getTotalValidDueOuts(i);
+
+	    if(start >= 0) {
+		startDemand = getTotalValidDueOuts(start-1);
+	    }
+
+	    //If the start of the window hasn't come onto the scene
+	    //just add another day of demand
+	    if(currDay <= daysBackward) {
+		demand += endDemand;
+		nDays++;
+	    }
+	    else {
+		//nominally the new day of demand comes from the right
+		//of the window, and the 1st day of window falls off the 
+		//left
+		demand = demand + (endDemand - startDemand);
+	    }
+
+	    if(currDay >= 0) {
+		if(nDays==0) nDays=1;
+		//moved daysOfDemand_ to getNDaysOfDemand
+		newDSched[currDay] = demand/nDays;
+	    }
 	}
+
+	int len = days;
+	if (demandSchedule_ != null) {
+	    int oldlen = demandSchedule_.length;
+	    for (int i=0; i < len; i++) {
+		if (i < oldlen) {
+		    double num = newDSched[i] - demandSchedule_[i];
+		    double den = newDSched[i] + demandSchedule_[i];
+		    if (den > 0.0) {
+			if (num < 0.0 || Math.abs(num)/den < 0.1) {
+			    newDSched[i] = demandSchedule_[i];
+			}
+		    }
+		}
+	    }
+	}
+	demandSchedule_ = newDSched;
+    }
+
+    public double getGoalLevel(int day) {
+
+	if(myPG_.getFillToCapacity()) {
+	    return getDouble(myPG_.getCapacity());
+	} else {
+	    double goal_level= goalLevelMultiplier_ * getReorderLevel(day);
+	    double capacity = getDouble(myPG_.getCapacity());
+
+	    if (goal_level > capacity) {
+
+		if(goalExceededCap == GOAL_EXCEEDED_CAPACITY_DEBUG_THRESHOLD) {
+		    GLMDebug.ERROR("InventoryBG", "getGoalLevel()::WARNING the goal level is exceeding the capacity.   It is probable that you should up the capacity in the inv config file.");
+		}
+
+		if(goalExceededCap <= GOAL_EXCEEDED_CAPACITY_DEBUG_THRESHOLD) {
+		    goalExceededCap++;
+		}
+            }
+
+	    return goal_level;
+	}
+    }
+
+
+    public double getNDaysDemand(int day) {
+	if (day >= demandSchedule_.length) {
+	    //	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG","ARRGH Inventory array level is : " + level_.length);
+	    throw new IllegalArgumentException("Demand Schedule Index is wrong! index = " + day + " array is length " + demandSchedule_.length);
+	}
+
+	return (daysOfDemand_ * demandSchedule_[day]);
+    }
+	
+
+    public double getReorderLevel(int day) {	
+
+	double rl = getNDaysDemand(day);
+
+	if(minReorderLevel_ > maxReorderLevel_) {
+	    throw new RuntimeException("Minimum Reorder Level is Greater than Max Reorder Level");
+	}
+
+	rl = Math.min(maxReorderLevel_,(Math.max(minReorderLevel_,rl)));
+
+	return rl;
+    }
+
+    public int addPreviousRefillsToInventory(Task maintainInv) {
+	int totalFilled=0;
+	if (maintainInv == null) {
+	    return 0;
+	}
+	PlanElement pe = maintainInv.getPlanElement();
+	if ((pe != null) && (pe instanceof Expansion)){
+	    Expansion expansion = (Expansion)pe;
+	    Workflow wf = expansion.getWorkflow();
+	    Enumeration tasks = wf.getTasks();
+	    while (tasks.hasMoreElements()) {
+		Task refill = (Task) tasks.nextElement();
+                totalFilled += addDueIn(refill);
+	    }
+	}
+ 	return totalFilled;
+    }
+
+    private void addDueIn(DueIn dueIn, int day) {
+	if (day >= 0) {
+            while (day >= dueIns_.size()) {
+                dueIns_.add(new DueInList(dueIns_.size()));
+            }
+	    DueInList v = (DueInList) dueIns_.get(day);
+	    v.add(dueIn);
+	} else {
+	    throw new IllegalArgumentException("InventoryBG: addDueIn(), Refill Starts in the past (start time "
+                                               + TimeUtils.dateString(getStartTime())
+                                               + "). Task = "
+                                               + TaskUtils.taskDesc(dueIn.getTask()));
+	}
+    }
+
+    public int addDueIn(Task refillTask) {
+	if (TaskUtils.isProjection(refillTask)) {
+	    return addDueInProjection(refillTask);
+	}
+	else {
+	    return addDueInSupply(refillTask);
+	}
+    }
+
+    private void addDueInByRequestDay(DueIn d) {
+        int day = convertTimeToDay(TaskUtils.getEndTime(d.getTask()));
+        while (day >= dueInsByRequestDay_.size()) {
+            dueInsByRequestDay_.add(new Vector(1));
+        }
+        Vector v = (Vector) dueInsByRequestDay_.elementAt(day);
+        v.addElement(d);
+    }
+
+    private void removeDueInByRequestDay(Task refillTask) {
+        int day = convertTimeToDay(TaskUtils.getEndTime(refillTask));
+        if (day < dueInsByRequestDay_.size()) {
+            Vector v = (Vector) dueInsByRequestDay_.elementAt(day);
+            for (Iterator i = v.iterator(); i.hasNext(); ) {
+                DueIn d = (DueIn) i.next();
+                if (d.getTask() == refillTask) {
+                    i.remove();
+                    return;
+                }
+            }
+        }
+    }
+
+    private int addDueInSupply(Task refill) {
+        int totalFilled = 0;
+        boolean filled = true;
+        double qty = TaskUtils.getRefillQuantity(refill);
+        if (qty == 0.0) {
+            filled = false;
+        } else {
+            filled = true;
+            totalFilled++;
+        }
+	// Add Refill to daily schedule
+	// All times set to Midnight of that day
+	long refillTime = TaskUtils.getRefillTime(refill);
+	int day = convertTimeToDay(refillTime);
+        if (day >= 0) {
+            DueIn d = new DueIn(refill, filled);
+            addDueIn(d, day);
+            addDueInByRequestDay(d);
+        } else {
+            GLMDebug.ERROR("InventoryBG", "addDueIn() on day " + day + ", refillTime=" + TimeUtils.dateString(refillTime));
+        }
+        return totalFilled;
+    }
+
+    private int addDueInProjection(Task task) {
+        int totalFilled = 0;
+        PlanElement pe = task.getPlanElement();
+        if (pe != null) {
+            AllocationResultHelper helper = new AllocationResultHelper(task, pe);
+            for (int i = 0, n = helper.getPhaseCount(); i < n; i++) {
+                AllocationResultHelper.Phase phase = helper.getPhase(i);
+                AspectValue av = phase.getAspectValue(AlpineAspectType.DEMANDRATE);
+                boolean filled = av.getValue() != 0.0;
+                totalFilled += addDueInRange(task, phase.getStartTime(), phase.getEndTime(), filled);
+            }
+        } else {
+            totalFilled += addDueInRange(task, TaskUtils.getStartTime(task), TaskUtils.getEndTime(task), true);
+        }
+        return totalFilled;
+    }
+
+    private int  addDueInRange(Task task, long startTime, long endTime, boolean filled) {
+        int totalFilled = 0;
+        int start = convertTimeToDay(startTime);
+        int end = convertTimeToDay(endTime);
+        if (start < 0) { start = 0; }
+        for (int day = start; day < end; day++) {
+            addDueIn(new DueIn(task, filled), day);
+            if (filled) totalFilled++;
+        }
+        return totalFilled;
     }
 
     public int removeDueIn(Task refillTask) {
 	// Remove Task from local structure
-	long time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getEndTime(refillTask));
-	int day = TimeUtils.getDaysBetween(getStartTime(), time);
+	int day = convertTimeToDay(TaskUtils.getEndTime(refillTask));
 	try {
-	    Vector v = (Vector)dueIns_.get(day);
-	    Enumeration e = v.elements();
-	    DueIn d;
-	    while (e.hasMoreElements()) {
-		d = (DueIn)e.nextElement();
-		if (d.getTask() == refillTask) {
-		    v.remove(d);
-		    GLMDebug.DEBUG("InventoryBG", "removeDueIn(), removing dueIn on day "+day);
-		}
-	    }
+	    DueInList v = (DueInList) dueIns_.get(day);
+            v.remove(refillTask);
 	} catch (ArrayIndexOutOfBoundsException exception) {
 	    GLMDebug.ERROR("InventoryBG", "removeDueIn, day "+day+": Refill not found. "+TaskUtils.taskDesc(refillTask));
 	}
+        removeDueInByRequestDay(refillTask);
 	return 0;
     }
 
@@ -591,39 +908,45 @@ public abstract class InventoryBG implements PGDelegate {
     }
 
     public int determineInventoryLevels() {
-	double reported_levels[] = getTimeOrderedReportedLevels();
-	double dueout, duein;
+        if (needInitializeInventoryLevels) {
+            initializeInventoryLevels();
+            needInitializeInventoryLevels = false;
+        }
+        return 0;
+    }
+
+    protected void initializeInventoryLevels() {
         int today = getToday();
 	int size = today + 1;  // Always include tomorrow in the levels.
+	double reported_levels[] = getTimeOrderedReportedLevels();
 	if (dueIns_.size() > size) size = dueIns_.size();
 	if (dueOut_.size() > size) size = dueOut_.size();
-	if (reported_levels.length > size) size = reported_levels.length;
-	double previous_level = reported_levels[0];
-//          GLMDebug.DEBUG("InventoryBG", null,
-//                         "determineInventoryLevels(), Number of planning days is "
-//                         + size
-//                         + ", DueOuts="
-//                         + dueOut_.size()
-//                         + ", DueIns="
-//                         + dueIns_.size()
-//                         + ", reported levels="
-//                         + reported_levels.length,
-//                         1000);
-	level_ = new double[size];
-	for (int i=0; i < size; i++) {
-            dueout = getDueOutTotal(i);
-	    if ((reported_levels.length > i) && !Double.isNaN(reported_levels[i])) {
-		level_[i] = reported_levels[i];
-	    } else {
-                duein = getDueInTotal(i);
-		level_[i] = previous_level + duein - dueout;
-	    }
-	    previous_level = level_[i];
+        if (reported_levels.length > size) size = reported_levels.length;
+	if (level_ == null || level_.length < size) {
+            level_ = new double[size];
+	    computeDemandSchedule();
+        }
+        /* Note that there is always at least one item in
+           reported_levels so dirtyDay_ will always end up being
+           greater than zero */
+        for (int i = dirtyDay_, n = reported_levels.length; i < n; i++) {
+            double lvl = reported_levels[i];
+            if (!Double.isNaN(lvl)) {
+                level_[i] = reported_levels[i];
+                dirtyDay_ = i + 1;
+            }
+        }
+    }
 
-//   	    GLMDebug.DEBUG("InventoryBG", "determineInventoryLevels(), day "+i+": level "+level_[i]+"= previous "+previous_level+
-//   			   " + duein "+duein+" - dueout "+dueout);
+    private void updateLevels(int day) {
+	double lvl = level_[dirtyDay_ - 1]; // dirtyDay_ always > 0 (see above)
+        for (int i = dirtyDay_; i <= day; i++) {
+            double dueout = getDueOutTotal(i);
+            double duein = getDueInTotal(i);
+            lvl += duein - dueout;
+            level_[i] = lvl;
 	}
-	return 0;
+        dirtyDay_ = day + 1;
     }
 
     private boolean isDueOutValid(int day) {
@@ -634,103 +957,22 @@ public abstract class InventoryBG implements PGDelegate {
 
     private double getDueOutTotal(int day) {
         if (!isDueOutValid(day)) return 0.0;
-	Vector dueOuts = (Vector) dueOut_.get(day);
-	Enumeration e = dueOuts.elements();
-	double actualTotal = 0.0;
-	double projectedTotal = 0.0;
-	InventoryTask t;
-	Task task;
-	int imputedDay = day + java.lang.Math.round((startTime_ -today_)/TimeUtils.MSEC_PER_DAY);
-	while (e.hasMoreElements()) {
-	    t = (InventoryTask)e.nextElement();
-	    task = t.getTask();
-	    if (t.getFilled()) {
-                if (task.getVerb().equals(Constants.Verb.WITHDRAW)){
-		    actualTotal += TaskUtils.getWithdrawQuantity(task) * getWeightingFactor(task,imputedDay);
-		} else if (task.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
-//  		    projectedTotal += TaskUtils.getWithdrawQuantity(task) * getWeightingFactor(task,imputedDay);
-		    Rate r = TaskUtils.getRate(task);
-		    if (r instanceof FlowRate) {
-			projectedTotal += ((FlowRate)r).getGallonsPerDay() * getWeightingFactor(task, imputedDay);
-		    } else if (r instanceof CountRate) {
-			projectedTotal += ((CountRate)r).getEachesPerDay() * getWeightingFactor(task, imputedDay);
-//   			GLMDebug.DEBUG("InventoryBG", null, "getDueInTotal() with factor :"+d+
-//    				       " is "+(((CountRate)r).getEachesPerDay() * d));
-		    }		
-		}		
-	    }
-	}
-//  	GLMDebug.DEBUG("InventoryBG", null, "Demand on day: "+day+"; actual= "+actualTotal+
-//  		       ", projected= "+projectedTotal);
-	return actualTotal + projectedTotal;
-    }
-
-    private double getDueInTotal(int day) {
-        if (day < 0) return 0.0;
-        if (day >= dueIns_.size()) return 0.0;
-	Vector dueIns = (Vector) dueIns_.get(day);
-	Enumeration e = dueIns.elements();
-	double actualTotal = 0.0;
-	double projectedTotal = 0.0;
-	InventoryTask t;
-	Task task;
-	int imputedDay = day + java.lang.Math.round((startTime_ -today_)/TimeUtils.MSEC_PER_DAY);
-	while (e.hasMoreElements()) {
-	    t = (InventoryTask)e.nextElement();
-	    task = t.getTask();
-	    double d = getWeightingFactor(task, imputedDay);
-	    if (t.getFilled()) {
-		if (TaskUtils.isProjection(task)) {
-		    Rate r = TaskUtils.getRate(task);
-		    if (r instanceof FlowRate) {
-			projectedTotal += ((FlowRate)r).getGallonsPerDay() * d;
-		    } else if (r instanceof CountRate) {
-			projectedTotal += ((CountRate)r).getEachesPerDay() * d;
-//   			GLMDebug.DEBUG("InventoryBG", null, "getDueInTotal() with factor :"+d+
-//    				       " is "+(((CountRate)r).getEachesPerDay() * d));
-		    }
-		}
-		else {
-		    if(d<1.0){
-			GLMDebug.ERROR("InventoryBG", null, "Inv Day: "+day+" imputedDay: "+imputedDay+
-				       "- Zero weighted supply task: "+TaskUtils.taskDesc(task));
-		    }
-		    actualTotal += TaskUtils.getRefillQuantity(task) * d;
-		}
-	    }
-	}
-//  	if(((AntsProjectionWeight)weight_).isFSB()){
-//  	GLMDebug.DEBUG("InventoryBG", null, "Refill on day: "+day+"; actual= "+actualTotal+
-//  		       ", projected= "+projectedTotal);
-//  	}
-	return actualTotal+projectedTotal;
+	DueOutList dueOuts = (DueOutList) dueOut_.get(day);
+        return dueOuts.getTotal();
     }
 
     public Scalar getProjected(int day) {
-	// ignore requests for days beyond the scope of inventory
-	if ((day < 0) ||  (day >= dueOut_.size())) {
-	    return null;
-	}
-	// dueouts for the day contain Supply and ProjectSupply tasks
-	Enumeration e = ((Vector)dueOut_.get(day)).elements();
-	double total = 0;
-	Task t = null;
-	while (e.hasMoreElements()) {
-	    t = ((InventoryTask)e.nextElement()).getTask();
-	    if (t.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
-		Rate r = TaskUtils.getRate(t);
-		if (r instanceof FlowRate) {
-		    total += ((FlowRate)r).getGallonsPerDay();
-		} else if (r instanceof CountRate) {
-		    total += ((CountRate)r).getEachesPerDay();
-		}
-//  		total += TaskUtils.getWithdrawQuantity(t);
-	    }
-	} 
-	return getScalar(total);
+        if (!isDueOutValid(day)) return null;
+	DueOutList dueOuts = (DueOutList) dueOut_.get(day);
+        return getScalar(dueOuts.getProjectedTotal());
     }
 
-//     private double getWeightingFactor(int days) {
+    public Scalar getProjectedRefill(int day) {
+        if (!isDueInValid(day)) return getScalar(0.0);
+	DueInList dueIns = (DueInList) dueIns_.get(day);
+        return getScalar(dueIns.getProjectedTotal());
+    }
+
     private double getWeightingFactor(Task task, int imputedDay) {
 	if (weight_ != null) {
 	    return weight_.getProjectionWeight(task, imputedDay);
@@ -741,19 +983,34 @@ public abstract class InventoryBG implements PGDelegate {
 	}
     }
 
+    private boolean isDueInValid(int day) {
+        if (day < 0) return false;
+        if (day >= dueIns_.size()) return false;
+        return true;
+    }
+
+    private double getDueInTotal(int day) {
+        if (!isDueInValid(day)) return 0.0;
+	DueInList dueIns = (DueInList) dueIns_.get(day);
+        return dueIns.getTotal();
+    }
+
     public Task refillAlreadyFailedOnDay(int day) {
-	if (day < dueIns_.size()) {
-	    Enumeration dueins = ((Vector)dueIns_.get(day)).elements();
-	    DueIn d;
-	    while (dueins.hasMoreElements()) {
-		d = (DueIn)dueins.nextElement();
-		if (!d.getFilled()) {
-		    GLMDebug.DEBUG("InventoryBG()", "failedRefill(), alreadyFailedOnDay "+day);
-		    return d.getTask();
-		}
-	    }
-	}
-	return null;
+        Enumeration dueins = null;
+        if (day < dueInsByRequestDay_.size()) {
+            Vector v = (Vector) dueInsByRequestDay_.get(day);
+            dueins = v.elements();
+        }
+        if (dueins != null) {
+            while (dueins.hasMoreElements()) {
+                DueIn d = (DueIn) dueins.nextElement();
+                Task task = d.getTask();
+		if (task.getVerb().equals(Constants.Verb.SUPPLY)) {
+                    if (!d.getFilled()) return task;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -762,14 +1019,16 @@ public abstract class InventoryBG implements PGDelegate {
        smallest refill for a particular day.
      **/
     public Task getRefillOnDay(int day) {
-	if (day < dueIns_.size()) {
-	    Vector refills = (Vector)dueIns_.get(day);
-	    Enumeration e = refills.elements();
-	    DueIn d;
+        Enumeration dueins = null;
+        if (day < dueInsByRequestDay_.size()) {
+            Vector v = (Vector) dueInsByRequestDay_.get(day);
+            dueins = v.elements();
+        }
+        if (dueins != null) {
 	    Task smallestRefill = null;
             double smallestQuantity = Double.POSITIVE_INFINITY;
-	    while (e.hasMoreElements()) {
-		d = (DueIn) e.nextElement();
+            while (dueins.hasMoreElements()) {
+                DueIn d = (DueIn) dueins.nextElement();
 		Task task = d.getTask();
 		if (task.getVerb().equals(Constants.Verb.SUPPLY)) {
                     double q = TaskUtils.getRefillQuantity(task);
@@ -784,6 +1043,12 @@ public abstract class InventoryBG implements PGDelegate {
 	return null;
     }
 
+    public void removeRefillProjection(int day) {
+        if (!isDueInValid(day)) return; // Nothing to remove
+	DueInList dueIns = (DueInList) dueIns_.get(day);
+        dueIns.clear();
+    }
+
     public Date lastDemandTaskEnd(Inventory inventory) {
 	long latest_time = -1;
 	long end_time;
@@ -792,32 +1057,11 @@ public abstract class InventoryBG implements PGDelegate {
 	while (role_sched.hasMoreElements()) {
 	    PlanElement pe = (PlanElement)role_sched.nextElement();
 	    task = pe.getTask();
-	    end_time = TaskUtils.getRefillTime(task);
-	    if (end_time > latest_time) {
-		latest_time = end_time;
-	    }
+            latest_time = Math.max(latest_time, TaskUtils.getRefillTime(task));
 	}
-	if (latest_time < 0) 
-	    return null;
-	return new Date(TimeUtils.pushToEndOfDay(calendar_, latest_time));
-    }
-
-    // Looking for successful dueouts that failed last run
-    public Vector getPreviouslyFailedDueOuts() {
-	int size = dueOut_.size();
-	Vector failed_dueout = new Vector();
-	Enumeration dueouts;
-	DueOut d;
-	for (int i=0; i < size; i++) {
-	    dueouts = ((Vector)dueOut_.get(i)).elements();
-	    while (dueouts.hasMoreElements()) {
-		d = (DueOut)dueouts.nextElement();
-		if (d.getFilled() && !d.getPreviouslyFilled()) {
-		    failed_dueout.add(d);
-		}
-	    }
-	}
-	return failed_dueout;
+	if (latest_time < 0) return null;
+        latest_time = canonicalTime(latest_time);
+	return new Date(latest_time);
     }
 
     public Integer getFirstOverflow(int i, ClusterIdentifier cluster) {
@@ -829,34 +1073,35 @@ public abstract class InventoryBG implements PGDelegate {
 	if ((i > size) || (i < 0))
 	    return null;
 	for (; i < size; i++) {
-//  	    GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), checking for overflow on "+
+//  	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), checking for overflow on "+
 //  			   (TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i)))+" Level: "+level_[i]+" capacity: "+capacity);
-	    if (java.lang.Math.floor(level_[i] - capacity)>1.0) {
-		day = new Integer(i);
-		GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), OVERFLOW on "+
-			       (TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i))));
-		break;
+	    if (Math.floor(level_[i] - capacity) > 1.0) {
+		//Put in printDebug statement because you put together the
+		// strings whether you print them or not which can get
+		// costly performance wise.
+		if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), OVERFLOW on "+
+			       (TimeUtils.dateString(convertDayToTime(i))));
+		return new Integer(i);
 	    }
 	}
-	return day;
+	return null;
     }
 
     public int updateContentSchedule(Inventory inventory) {
 	ScheduledContentPG scp = inventory.getScheduledContentPG();
-	Schedule sched = scp.getSchedule();
 	QuantityScheduleElement qse;
 	Vector new_elements = new Vector();
 	if (level_ == null) {
             determineInventoryLevels();
         }
 	if (level_ == null) {
-	    GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), No DueOuts or DueIns, resetting schedule.");
+	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), No DueOuts or DueIns, resetting schedule.");
 	    clearContentSchedule(inventory);
-	}
-	else {
+	} else {
 	    int days = level_.length;
-//  	    GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), Creating new Schedule for "+AssetUtils.assetDesc(inventory));
-	    for (int i=0; i < days; i++) {
+            updateLevels(days - 1); // Be sure we have all the days computed.
+//  	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), Creating new Schedule for "+AssetUtils.assetDesc(inventory));
+	    for (int i = 0; i < days; i++) {
 		// start time is eigher today or time 1st request was received + number of planning days
 		long start = TimeUtils.addNDaysTime(getStartTime(), i);
 		// end time is a millisecond before start time of next day
@@ -867,7 +1112,7 @@ public abstract class InventoryBG implements PGDelegate {
                   iae.printStackTrace();
                   continue;
                 }
-//  		GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), Start:"+TimeUtils.dateString(start)+
+//  		if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), Start:"+TimeUtils.dateString(start)+
 //  			       ", End:"+TimeUtils.dateString(end)+", Qty: "+level_[i]);
 		new_elements.add(qse);
 	    }
@@ -883,17 +1128,82 @@ public abstract class InventoryBG implements PGDelegate {
 	return 0;
     }
 
+
+    public int updateInventoryLevelsSchedule(Inventory inventory) {
+	InventoryLevelsPG ilp = inventory.getInventoryLevelsPG();
+	QuantityScheduleElement dse, rlse, glse;
+	Vector new_av_demand_elements = new Vector();
+	Vector new_reorder_elements = new Vector();
+	Vector new_goal_elements = new Vector();
+	if (demandSchedule_ == null) {
+	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateInventoryLevelsSchedule(), No Demand Schedule Set.");
+	    clearInventoryLevelsSchedule(inventory);
+	}
+	else {
+	    int days = demandSchedule_.length;
+//  	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateInventoryLevelsSchedule(), Creating new Schedule for "+AssetUtils.assetDesc(inventory));
+	    for (int i = 0; i < days; i++) {
+		// start time is eigher today or time 1st request was received + number of planning days
+		long start = TimeUtils.addNDaysTime(getStartTime(), i);
+		// end time is a millisecond before start time of next day
+		long end = TimeUtils.addNDaysTime(getStartTime(), (i+1));
+		try {
+                  dse = ScheduleUtils.buildQuantityScheduleElement(demandSchedule_[i], start, end);
+                  rlse = ScheduleUtils.buildQuantityScheduleElement(getReorderLevel(i), start, end);
+                  glse = ScheduleUtils.buildQuantityScheduleElement(getGoalLevel(i), start, end);
+                } catch (IllegalArgumentException iae) {
+                  iae.printStackTrace();
+                  continue;
+                }
+//  		if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateInventoryLevelschedule(), Start:"+TimeUtils.dateString(start)+
+//  			       ", End:"+TimeUtils.dateString(end)+", Qty: "+level_[i]);
+		new_av_demand_elements.add(dse);
+		new_reorder_elements.add(rlse);
+		new_goal_elements.add(glse);
+	    }
+	}
+	Schedule new_av_demand_schedule = 
+	    GLMFactory.newQuantitySchedule(new_av_demand_elements.elements(), 
+					   PlanScheduleType.TOTAL_INVENTORY);
+	Schedule new_reorder_schedule = 
+	    GLMFactory.newQuantitySchedule(new_reorder_elements.elements(), 
+					   PlanScheduleType.TOTAL_INVENTORY);
+	Schedule new_goal_schedule = 
+	    GLMFactory.newQuantitySchedule(new_goal_elements.elements(), 
+					   PlanScheduleType.TOTAL_INVENTORY);
+
+
+
+	if (ScheduleUtils.isOffendingSchedule(new_av_demand_schedule)) {
+	    GLMDebug.ERROR("InventoryBG", "UpdateInventoryLevelschedule(),  CREATED BAD nDays SCHEDULE  ");
+ 	    printQuantityScheduleTimes(new_av_demand_schedule);
+	}
+	if (ScheduleUtils.isOffendingSchedule(new_reorder_schedule)) {
+	    GLMDebug.ERROR("InventoryBG", "UpdateInventoryLevelschedule(),  CREATED BAD reorder SCHEDULE  ");
+ 	    printQuantityScheduleTimes(new_reorder_schedule);
+	}
+	if (ScheduleUtils.isOffendingSchedule(new_goal_schedule)) {
+	    GLMDebug.ERROR("InventoryBG", "UpdateInventoryLevelschedule(),  CREATED BAD goal SCHEDULE  ");
+ 	    printQuantityScheduleTimes(new_goal_schedule);
+	}
+	((NewInventoryLevelsPG)ilp).setAverageDemandSchedule(new_av_demand_schedule);
+	((NewInventoryLevelsPG)ilp).setReorderLevelSchedule(new_reorder_schedule);
+	((NewInventoryLevelsPG)ilp).setGoalLevelSchedule(new_goal_schedule);
+	return 0;
+    }
+
+
     public int clearContentSchedule(Inventory inventory) {
+	if (!isStartTimeSet) return -1;
 	ScheduledContentPG scp = inventory.getScheduledContentPG();
 	Schedule sched = scp.getSchedule();
 	QuantityScheduleElement qse;
 	Vector new_elements = new Vector();
-	long start = TimeUtils.addNDaysTime(getStartTime(), 0);
-	long end = TimeUtils.addNDaysTime(getStartTime(), 30);
+        long start = TimeUtils.addNDaysTime(getStartTime(), 0);
+        long end = TimeUtils.addNDaysTime(getStartTime(), 30);
 	
-	qse = ScheduleUtils.buildQuantityScheduleElement(getDouble(myPG_.getInitialLevel()), start, end);
-	new_elements.add(qse);
-
+        qse = ScheduleUtils.buildQuantityScheduleElement(getDouble(myPG_.getInitialLevel()), start, end);
+        new_elements.add(qse);
 	Schedule new_schedule = GLMFactory.newQuantitySchedule(new_elements.elements(), 
 							       PlanScheduleType.TOTAL_INVENTORY);
 
@@ -907,13 +1217,62 @@ public abstract class InventoryBG implements PGDelegate {
     }
 
 
+    public int clearInventoryLevelsSchedule(Inventory inventory) {
+	if (!isStartTimeSet) return -1;
+	InventoryLevelsPG ilp = inventory.getInventoryLevelsPG();
+	QuantityScheduleElement dse,rlse,glse;
+	Vector new_av_demand_elements = new Vector();
+	Vector new_reorder_elements = new Vector();
+	Vector new_goal_elements = new Vector();
+        long start = TimeUtils.addNDaysTime(getStartTime(), 0);
+        long end = TimeUtils.addNDaysTime(getStartTime(), 30);
+	
+        dse = ScheduleUtils.buildQuantityScheduleElement(0, start, end);
+        rlse = ScheduleUtils.buildQuantityScheduleElement(0, start, end);
+        glse = ScheduleUtils.buildQuantityScheduleElement(0, start, end);
+        new_av_demand_elements.add(dse);
+        new_reorder_elements.add(rlse);
+        new_goal_elements.add(glse);
+
+	Schedule new_av_demand_schedule = 
+	    GLMFactory.newQuantitySchedule(new_av_demand_elements.elements(), 
+					   PlanScheduleType.TOTAL_INVENTORY);
+	Schedule new_reorder_schedule = 
+	    GLMFactory.newQuantitySchedule(new_reorder_elements.elements(), 
+					   PlanScheduleType.TOTAL_INVENTORY);
+	Schedule new_goal_schedule = 
+	    GLMFactory.newQuantitySchedule(new_goal_elements.elements(), 
+					   PlanScheduleType.TOTAL_INVENTORY);
+
+	if (ScheduleUtils.isOffendingSchedule(new_av_demand_schedule)) {
+	    GLMDebug.ERROR("InventoryBG", "clearInventoryLevelSchedule(),  CREATED BAD nDays SCHEDULE  ");
+ 	    printQuantityScheduleTimes(new_av_demand_schedule);
+	}
+	if (ScheduleUtils.isOffendingSchedule(new_reorder_schedule)) {
+	    GLMDebug.ERROR("InventoryBG", "clearInventoryLevelSchedule(),  CREATED BAD reorder SCHEDULE  ");
+ 	    printQuantityScheduleTimes(new_reorder_schedule);
+	}
+	if (ScheduleUtils.isOffendingSchedule(new_goal_schedule)) {
+	    GLMDebug.ERROR("InventoryBG", "clearInventoryLevelSchedule(),  CREATED BAD goal SCHEDULE  ");
+ 	    printQuantityScheduleTimes(new_goal_schedule);
+	}
+	((NewInventoryLevelsPG)ilp).setAverageDemandSchedule(new_av_demand_schedule);
+	((NewInventoryLevelsPG)ilp).setReorderLevelSchedule(new_reorder_schedule);
+	((NewInventoryLevelsPG)ilp).setGoalLevelSchedule(new_goal_schedule);
+
+	return 0;
+ 
+    }
+
+
+
     public int printQuantityScheduleTimes(Schedule sched) {
 	Enumeration elements = sched.getAllScheduleElements();
 	QuantityScheduleElement qse;
 
 	while (elements.hasMoreElements()) {
 	    qse = (QuantityScheduleElement)elements.nextElement();
-	    GLMDebug.DEBUG("InventoryBG", "printQuantityScheduleTimes()    qty: "+qse.getQuantity()+
+	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "printQuantityScheduleTimes()    qty: "+qse.getQuantity()+
 			   " "+qse.getStartTime()+" to "+ qse.getEndTime());
 	}
 	return 0;
@@ -936,7 +1295,7 @@ public abstract class InventoryBG implements PGDelegate {
                 oldest_report = newInventoryReport;
             }
 	}
-	GLMDebug.DEBUG("InventoryBG", "addInventoryReport(), Report added!!!!!!! : "+this.hashCode());
+	if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "addInventoryReport(), Report added!!!!!!! : "+this.hashCode());
     }
 
     /**
@@ -1014,9 +1373,9 @@ public abstract class InventoryBG implements PGDelegate {
 	if (reports.length == 0) {
 	    ordered_list = new double[1];
 	    ordered_list[0] = getDouble(myPG_.getInitialLevel());
-//  	    GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), List is empty.");
+//  	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), List is empty.");
 	} else {
-//  	    GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), Sorting Report list.");
+//  	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), Sorting Report list.");
 	    // Sort the Reports by time in ascending order
 	    // Yah, it's inefficient but it's only a few lines of code and there should never
 	    // be more than 5 items in this list
@@ -1033,53 +1392,65 @@ public abstract class InventoryBG implements PGDelegate {
 	    long latest = reports[reports.length - 1].theReportDate;
 
 	    // create a double[] containing inventory levels indexed by day
-	    int len = TimeUtils.getDaysBetween(getStartTime(), TimeUtils.pushToEndOfDay(calendar_, latest))+1;
+            int reportDay = convertTimeToDay(latest);
+	    int len = reportDay + 1;
 	    if (len < 0) {
 		len = 1;
 	    }
 	    ordered_list = new double[len];
 	    java.util.Arrays.fill(ordered_list, Double.NaN);
 	    ordered_list[0] = getDouble(myPG_.getInitialLevel());
-            long start = getStartTime();
 	    for (int i = 0, n = reports.length; i < n; i++) {
 		long report_date = reports[i].theReportDate;
-		int day = TimeUtils.getDaysBetween(start, TimeUtils.pushToEndOfDay(calendar_, report_date));
+		int day = convertTimeToDay(report_date);
 		// Last Report that was received before or on day 0 becomes initial value
 		if (day < 0) {
 		    day = 0;
 		}
 		ordered_list[day] = reports[i].theQuantity;
-		GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), Report day is "+day+
+		if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), Report day is "+day+
 			       "("+TimeUtils.dateString(report_date)+"), Value is: "+ordered_list[day]);
 	    }
 	}
 	return ordered_list;
     }
 
+  private static final Volume zeroVolume = new Volume(0, Volume.GALLONS);
+  private static final Count zeroCount = new Count(0, Count.EACHES);
+  private static final Mass zeroMass = new Mass(0, Mass.SHORT_TONS);
+
     /** 
-	Given a double, create scalar apropriate for this type of inventory 
-    **/
+     * Given a double, create scalar apropriate for this type of inventory 
+     **/
     private Scalar getScalar(double amt) {
-	Scalar result = null,
-	       measure = myPG_.getInitialLevel();
+        Scalar measure = myPG_.getInitialLevel();
 	if (measure instanceof Volume) {
-	    result = new Volume(amt, Volume.GALLONS);
-	} else if (measure instanceof Count) {
-	    result = new Count(amt, Count.EACHES);
-	} else if (measure instanceof Mass) {
-	    result = new Mass(amt, Mass.SHORT_TONS);
-	} else {
-	    GLMDebug.ERROR("InventoryBG", "getScalar(), Inventory cannot determine type of measure");
+          if (amt == 0.0)
+            return zeroVolume;
+          else
+	    return new Volume(amt, Volume.GALLONS);
 	}
-	return result;
+        if (measure instanceof Count) {
+          if (amt == 0.0)
+            return zeroCount;
+          else
+	    return new Count(amt, Count.EACHES);
+	}
+        if (measure instanceof Mass) {
+          if (amt == 0.0)
+            return zeroMass;
+          else
+	    return new Mass(amt, Mass.SHORT_TONS);
+	}
+        throw new RuntimeException("InventoryBG: Unknown type of initial level");
     }
 				       
     /** 
-	Given a Scalar, return a double value representing
-	Gallons for Volume,
-	Eaches for Count and
-	Short Tons for Mass.
-    **/
+     * Given a Scalar, return a double value representing
+     * Gallons for Volume,
+     * Eaches for Count and
+     * Short Tons for Mass.
+     **/
     private double getDouble(Scalar measure) {
 	double result = Double.NaN;
 	if (measure instanceof Volume) {
@@ -1111,14 +1482,16 @@ public abstract class InventoryBG implements PGDelegate {
 	return dueInTasks_.elements();
     }
 
+
+
     public int printInventoryLevels(Inventory inventory, ClusterIdentifier clusterID) {
-	GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), Day 0 is "+TimeUtils.dateString(getStartTime()));
+	if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), Day 0 is "+TimeUtils.dateString(getStartTime()));
 	if (level_ != null) {
 	    int size = level_.length;
 	    ScheduledContentPG scpg = inventory.getScheduledContentPG();
-	    GLMDebug.DEBUG("InventoryBG", clusterID, "printInventoryLevels(), for "+AssetUtils.assetDesc(scpg.getAsset()));
+	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", clusterID, "printInventoryLevels(), for "+AssetUtils.assetDesc(scpg.getAsset()));
 	    for (int i=0; i < size; i++) {
-		GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), day: "+
+		if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), day: "+
 			       TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i))+"("+i+") "+", level: "+level_[i]);
 	    }
 	}

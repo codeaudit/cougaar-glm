@@ -21,42 +21,26 @@ import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.glm.plugins.*;
 import org.cougaar.domain.glm.debug.*;
 
-public class DueOut implements InventoryTask {
-    Task dueout_ = null;
-    // Last epoch, did we successfull fulfill this request
-    boolean previouslyFilled_ = true;
-    // Did we fulfill the request this run
-    boolean filled_ = true;
+public class DueOut extends DueIO implements InventoryTask {
+    boolean previouslyFilled_;
+    int day_;
     
-    public DueOut(Task request, boolean filled) {
-	dueout_ = request;
-	previouslyFilled_ = filled;
-    }
-    
-    public boolean getFilled() {
-	return filled_;
-    }
-    
-    public boolean setFilled(boolean filled) {
-	filled_ = filled;
-// 	GLMDebug.DEBUG("DueOut", "setFilled(), Task filled value: "+filled_+", for task "+TaskUtils.shortTaskDesc(dueout_));
-	return filled_;
+    public DueOut(Task request, boolean filled, int day) {
+        super(request, TaskUtils.isProjection(request) ? true : filled);
+        if (day < 0) throw new IllegalArgumentException("Negative dueout day = " + day);
+        day_ = day;
+        previouslyFilled_ = filled;
     }
 
     public boolean getPreviouslyFilled() {
-	return previouslyFilled_;
-    }
-
-    public Task getTask() {
-	return dueout_;
+        return previouslyFilled_;
     }
 
     public void setDueOut(Task task) {
-	dueout_ = task;
+	setTask(task);
     }
 
-    public String toString() {
-	return new String(TaskUtils.shortTaskDesc(dueout_)+": Filled-"+filled_+
-			  ", Previously Filled-"+previouslyFilled_);
+    public int getDay() {
+        return day_;
     }
 }

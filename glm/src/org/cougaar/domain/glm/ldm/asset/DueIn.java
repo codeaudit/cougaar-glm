@@ -21,33 +21,12 @@ import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.glm.plugins.*;
 import org.cougaar.domain.glm.debug.*;
 
-public class DueIn implements InventoryTask {
-    Task duein_ = null;
-
-    // Did the supplier fulfill this request
-    boolean filled_ = true;
-    
+public class DueIn extends DueIO implements InventoryTask {
     public DueIn(Task request, boolean filled) {
-	duein_ = request;
-	filled_ = filled;
-    }
-    
-    public boolean getFilled() {
-	return filled_;
-    }
-    
-    public boolean setFilled(boolean filled) {
-	filled_ = filled;
-// 	GLMDebug.DEBUG("DueOut", "setFilled(), Task filled value: "+filled_+", for task "+TaskUtils.shortTaskDesc(dueout_));
-	return filled_;
-    }
-
-
-    public Task getTask() {
-	return duein_;
+        super(request, filled);
     }
 
     public void setDueIn(Task task) {
-	duein_ = task;
+        setTask(task);
     }
 }
