@@ -10,8 +10,6 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.lib.param.ParamTable;
-
 import java.util.Date;
 import java.util.List;
 

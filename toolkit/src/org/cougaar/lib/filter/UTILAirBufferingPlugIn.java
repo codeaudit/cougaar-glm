@@ -10,14 +10,6 @@
 
 package org.cougaar.lib.filter;
 
-import java.util.Enumeration;
-
-import org.cougaar.domain.planning.ldm.plan.Task;
-
-import org.cougaar.lib.callback.UTILFilterCallbackListener;
-
-import org.cougaar.lib.param.ParamTable;
-
 /**
  * The interface between the plugin and the BufferingThread.
  *
