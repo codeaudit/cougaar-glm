@@ -603,7 +603,7 @@ public static boolean isPallet(Asset asset) {
     }
 
     if (ignoreContainers)
-	return isVehicle(asset) ? getArea (asset) : Area.newSquareFeet(0.0d);
+	return isVehicleOrAircraft(asset) ? getArea (asset) : Area.newSquareFeet(0.0d);
 
     return getArea (asset);
   }
@@ -679,8 +679,7 @@ public static boolean isPallet(Asset asset) {
     }
 
     if (ignoreVehiclesAndContainers)
-	return (((ALPAsset)asset).getGroundVehiclePG() == null
-                && !isStandardContainer(asset)) 
+	return (!isVehicleOrAircraft(asset) && !isStandardContainer(asset)) 
           ? getVolume (asset) : Volume.newCubicMeters(0.0d);
 
     return getVolume (asset);
@@ -1041,6 +1040,22 @@ public static boolean isPallet(Asset asset) {
 	return false;
       String code = mpg.getCargoCategoryCode();
       return CargoCategoryDecoder.isRORO(code);
+    }
+
+    /**
+     * Determines if the asset passed in is a vehicle (for purposes of ship 
+     * loading) or not OR is a crated aircraft.
+     * 
+     * These items are packed on ship by area.
+     **/
+    public static boolean isVehicleOrAircraft(Asset a){
+      MovabilityPG mpg = 
+        (MovabilityPG) ((ALPAsset)a).getMovabilityPG();
+      if(mpg == null)
+	return false;
+      String code = mpg.getCargoCategoryCode();
+      boolean isAircraft = (code.toUpperCase().charAt(0) == 'B');
+      return (isAircraft || CargoCategoryDecoder.isRORO(code));
     }
 
   /**
