@@ -108,22 +108,27 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
       System.err.println("OrgActivityQueryHandler.processRow() - expected 8 columns of data, " +
                          " got " + rowData.length);
     }
+    try {
+      String relation = new String ((byte[])rowData[0],"US-ASCII");
+    
+      myMaxModifiedTime = 
+        Math.max(((Date) rowData[7]).getTime(), myMaxModifiedTime);
 
-    String relation = (String) rowData[0];
-
-    myMaxModifiedTime = 
-      Math.max(((Date) rowData[7]).getTime(), myMaxModifiedTime);
-
-    if (relation.equals(myOpTempoKey)) {
-      processOpTempo(rowData);
-    }else if (relation.equals(myActivityKey)) {
-      processActivity(rowData);
-    } else if (relation.equals(myLocationKey)) {
-      processLocation(rowData);
-    } else {
-      System.err.println("OrgActivityQueryHandler.processRow(): unexpected text in RELATION_NAME column - " + relation);
-      System.err.println("Ignoring row of data: " + rowData);
+      if (relation.equals(myOpTempoKey)) {
+        processOpTempo(rowData);
+      }else if (relation.equals(myActivityKey)) {
+        processActivity(rowData);
+      } else if (relation.equals(myLocationKey)) {
+        processLocation(rowData);
+      } else {
+        System.err.println("OrgActivityQueryHandler.processRow(): unexpected text in RELATION_NAME column - " + relation);
+        System.err.println("Ignoring row of data: " + rowData);
+      }
+    }catch (Exception usee) {
+      System.err.println("Caught exception while executing a query: "+usee);
+      usee.printStackTrace();
     }
+
   }
   
 
@@ -177,110 +182,131 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
 
   protected void processOpTempo(Object[] rowData) {
-    String orgName = (String) rowData[1];
-    String opTempo = (String) rowData[3];
+    try {
+      String orgName = new String ((byte[])rowData[1],"US-ASCII");
+      String opTempo = new String ((byte[])rowData[3],"US-ASCII");
+      //String orgName = (String) rowData[1];
+      //String opTempo = (String) rowData[3];
 
-    if (!opTempo.equals(OrgActivity.HIGH_OPTEMPO) &&
-        !opTempo.equals(OrgActivity.MEDIUM_OPTEMPO) &&
-        !opTempo.equals(OrgActivity.LOW_OPTEMPO)) {
-      System.err.println("OrgActivityQueryHandler: Unrecognized op tempo - " + 
-                         opTempo + " - for " + orgName + " in " + myOplan);
-    }
-    
-    
-    OrgInfoElement element = 
-      new OrgInfoElement(opTempo, 
-                         ((Date) rowData[7]).getTime(), 
-                         myOplan.getCday(), 
-                         ((Number) rowData[5]).intValue(), 
-                         ((Number) rowData[6]).intValue());
-
-    OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
-    if (orgInfo == null) {
-      orgInfo = new OrgInfo(orgName);
-      myOrgInfoMap.put(orgName, orgInfo);
-    } else {
-      Collection opTempoCollection = 
-        orgInfo.getOpTempoSchedule().intersectingSet(element.getStartTime(),
-                                                     element.getEndTime());
-
-      if (opTempoCollection.size() > 0) {
-        System.err.println("OrgActivityQueryHandler: found more than one opTempo for " + 
-                           orgName + " during " + 
-                           new Date(element.getStartTime()) + " - " + 
-                           new Date(element.getEndTime()));
+      if (!opTempo.equals(OrgActivity.HIGH_OPTEMPO) &&
+          !opTempo.equals(OrgActivity.MEDIUM_OPTEMPO) &&
+          !opTempo.equals(OrgActivity.LOW_OPTEMPO)) {
+        System.err.println("OrgActivityQueryHandler: Unrecognized op tempo - " + 
+                           opTempo + " - for " + orgName + " in " + myOplan);
       }
-    }
-
     
-    orgInfo.getOpTempoSchedule().add(element);
+    
+      OrgInfoElement element = 
+        new OrgInfoElement(opTempo, 
+                           ((Date) rowData[7]).getTime(), 
+                           myOplan.getCday(), 
+                           ((Number) rowData[5]).intValue(), 
+                           ((Number) rowData[6]).intValue());
+
+      OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
+      if (orgInfo == null) {
+        orgInfo = new OrgInfo(orgName);
+        myOrgInfoMap.put(orgName, orgInfo);
+      } else {
+        Collection opTempoCollection = 
+          orgInfo.getOpTempoSchedule().intersectingSet(element.getStartTime(),
+                                                       element.getEndTime());
+
+        if (opTempoCollection.size() > 0) {
+          System.err.println("OrgActivityQueryHandler: found more than one opTempo for " + 
+                             orgName + " during " + 
+                             new Date(element.getStartTime()) + " - " + 
+                             new Date(element.getEndTime()));
+        }
+      }
+      orgInfo.getOpTempoSchedule().add(element);
+
+    } catch (Exception usee) {
+      System.err.println("Caught exception while executing a query: "+usee);
+      usee.printStackTrace();
+    }
+    
   }
 
   protected void processActivity(Object[] rowData) {
-    String orgName = (String) rowData[1];
-    String activity = (String) rowData[3];
+    try {
+      String orgName = new String ((byte[])rowData[1],"US-ASCII");
+      String activity = new String ((byte[])rowData[3],"US-ASCII");
+      //String orgName = (String) rowData[1];
+      //String activity = (String) rowData[3];
 
-    // validate string?
+      // validate string?
     
-    OrgInfoElement element = 
-      new OrgInfoElement(activity, 
-                         ((Date) rowData[7]).getTime(),
-                         myOplan.getCday(), 
-                         ((Number) rowData[5]).intValue(), 
-                         ((Number) rowData[6]).intValue());
+      OrgInfoElement element = 
+        new OrgInfoElement(activity, 
+                           ((Date) rowData[7]).getTime(),
+                           myOplan.getCday(), 
+                           ((Number) rowData[5]).intValue(), 
+                           ((Number) rowData[6]).intValue());
 
-    OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
-    if (orgInfo == null) {
-      orgInfo = new OrgInfo(orgName);
-      myOrgInfoMap.put(orgName, orgInfo);
-    } else {
-      Collection activityCollection = 
-        orgInfo.getActivitySchedule().intersectingSet(element.getStartTime(),
-                                                      element.getEndTime());
+      OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
+      if (orgInfo == null) {
+        orgInfo = new OrgInfo(orgName);
+        myOrgInfoMap.put(orgName, orgInfo);
+      } else {
+        Collection activityCollection = 
+          orgInfo.getActivitySchedule().intersectingSet(element.getStartTime(),
+                                                        element.getEndTime());
 
-      if (activityCollection.size() > 0) {
-        System.err.println("OrgActivityQueryHandler: found more than one activity for " + 
-                           orgName + " during " + 
-                           new Date(element.getStartTime()) + " - " + 
-                           new Date(element.getEndTime()));
+        if (activityCollection.size() > 0) {
+          System.err.println("OrgActivityQueryHandler: found more than one activity for " + 
+                             orgName + " during " + 
+                             new Date(element.getStartTime()) + " - " + 
+                             new Date(element.getEndTime()));
+        }
       }
+      orgInfo.getActivitySchedule().add(element);
+    } catch (Exception usee) {
+      System.err.println("Caught exception while executing a query: "+usee);
+      usee.printStackTrace();
     }
     
-    orgInfo.getActivitySchedule().add(element);
   }
 
   protected void processLocation(Object[] rowData) {
-    String orgName = (String) rowData[1];
-    String locCode = (String) rowData[3];
+    try {
+      String orgName = new String ((byte[])rowData[1],"US-ASCII");
+      String locCode = new String ((byte[])rowData[3],"US-ASCII");
+      //String orgName = (String) rowData[1];
+      //String locCode = (String) rowData[3];
 
-    // look up geoloc from location string
-    GeolocLocation geoLoc = (GeolocLocation) myPlugin.getLocation(locCode);
+      // look up geoloc from location string
+      GeolocLocation geoLoc = (GeolocLocation) myPlugin.getLocation(locCode);
 
-    OrgInfoElement element = 
-      new OrgInfoElement(geoLoc, 
-                         ((Date) rowData[7]).getTime(),
-                         myOplan.getCday(), 
-                         ((Number) rowData[5]).intValue(), 
-                         ((Number) rowData[6]).intValue());
+      OrgInfoElement element = 
+        new OrgInfoElement(geoLoc, 
+                           ((Date) rowData[7]).getTime(),
+                           myOplan.getCday(), 
+                           ((Number) rowData[5]).intValue(), 
+                           ((Number) rowData[6]).intValue());
 
-    OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
-    if (orgInfo == null) {
-      orgInfo = new OrgInfo(orgName);
-      myOrgInfoMap.put(orgName, orgInfo);
-    } else {
-      Collection locationCollection = 
-        orgInfo.getLocationSchedule().intersectingSet(element.getStartTime(),
-                                                      element.getEndTime());
+      OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
+      if (orgInfo == null) {
+        orgInfo = new OrgInfo(orgName);
+        myOrgInfoMap.put(orgName, orgInfo);
+      } else {
+        Collection locationCollection = 
+          orgInfo.getLocationSchedule().intersectingSet(element.getStartTime(),
+                                                        element.getEndTime());
 
-      if (locationCollection.size() > 0) {
-        System.err.println("OrgActivityQueryHandler: found more than one location for " + 
-                           orgName + " during " + 
-                           new Date(element.getStartTime()) + " - " + 
-                           new Date(element.getEndTime()));
+        if (locationCollection.size() > 0) {
+          System.err.println("OrgActivityQueryHandler: found more than one location for " + 
+                             orgName + " during " + 
+                             new Date(element.getStartTime()) + " - " + 
+                             new Date(element.getEndTime()));
+        }
       }
+      orgInfo.getLocationSchedule().add(element);
+    } catch (Exception usee) {
+      System.err.println("Caught exception while executing a query: "+usee);
+      usee.printStackTrace();
     }
-    
-    orgInfo.getLocationSchedule().add(element);
+
   }
 
   protected boolean needToUpdate(OrgInfo orgInfo) {

@@ -68,10 +68,18 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
       System.err.println("OplanQueryHandler.processRow()- expected 3 columns of data, " +
                          " got " + rowData.length);
     }
-    
-    myOperationName = (String) rowData[0];
-    myPriority = (String) rowData[1];
-    myCday = (Date) rowData[2];
+    try {
+      myOperationName = new String ((byte[])rowData[0],"US-ASCII");
+      myPriority = new String ((byte[])rowData[1],"US-ASCII");
+      //myOperationName = (String) rowData[0];
+      //myPriority = (String) rowData[1];
+      myCday = (Date) rowData[2];
+    } catch (Exception usee) {
+      System.err.println("Caught exception while executing a query: "+usee);
+      usee.printStackTrace();
+    }
+ 
+
   }
   
 

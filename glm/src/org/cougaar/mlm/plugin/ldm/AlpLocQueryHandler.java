@@ -72,14 +72,24 @@ public class AlpLocQueryHandler  extends SQLOplanQueryHandler {
     }
 
     NewGeolocLocation geoloc = GLMFactory.newGeolocLocation();
-    geoloc.setName((String) rowData[1]);
-    geoloc.setGeolocCode((String) rowData[0]);
-    geoloc.setIcaoCode((String) rowData[0]);
-    geoloc.setLatitude(Latitude.newLatitude(((Number) rowData[2]).doubleValue()));
-    geoloc.setLongitude(Longitude.newLongitude(((Number) rowData[3]).doubleValue()));
-    geoloc.setInstallationTypeCode("AlpLoc");			
+    try {
+      geoloc.setName(new String ((byte[])rowData[1],"US-ASCII"));
+      geoloc.setGeolocCode(new String ((byte[])rowData[0],"US-ASCII"));
+      geoloc.setIcaoCode(new String ((byte[])rowData[0],"US-ASCII"));
+      //geoloc.setName((String) rowData[1]);
+      //geoloc.setGeolocCode((String) rowData[0]);
+      //geoloc.setIcaoCode((String) rowData[0]);
+      geoloc.setLatitude(Latitude.newLatitude(((Number) rowData[2]).doubleValue()));
+      geoloc.setLongitude(Longitude.newLongitude(((Number) rowData[3]).doubleValue()));
+      geoloc.setInstallationTypeCode("AlpLoc");			
 
-    myPlugin.updateLocation(geoloc);
+      myPlugin.updateLocation(geoloc);
+
+    } catch (Exception usee) {
+      System.err.println("Caught exception while executing a query: "+usee);
+      usee.printStackTrace();
+    }
+
   }
 
 }
