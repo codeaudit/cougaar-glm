@@ -423,6 +423,7 @@ public abstract class InventoryBG implements PGDelegate {
 	}
 // 	GLMDebug.DEBUG("InventoryBG", "getNDaysDemand(), days of demand: "+days_of_demand+", start day: "+start+
 // 		       ", end day: "+end+", period: "+period+", demand: "+demand);
+	if (nDays == 0) nDays = 1;
 	return getScalar((days_of_demand*demand) / nDays);
     }
 
@@ -1067,6 +1068,8 @@ public abstract class InventoryBG implements PGDelegate {
 	    result = new Count(amt, Count.EACHES);
 	} else if (measure instanceof Mass) {
 	    result = new Mass(amt, Mass.SHORT_TONS);
+	} else {
+	    GLMDebug.ERROR("InventoryBG", "getScalar(), Inventory cannot determine type of measure");
 	}
 	return result;
     }
@@ -1085,6 +1088,8 @@ public abstract class InventoryBG implements PGDelegate {
 	    result = ((Count)measure).getEaches();
 	} else if (measure instanceof Mass) {
 	    result = ((Mass)measure).getShortTons();
+	} else {
+	    GLMDebug.ERROR("InventoryBG", "getDouble(), Inventory cannot determine type of measure");
 	}
 	return result;
     }	
