@@ -1,115 +1,144 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
-   <meta name="Template" content="C:\Program Files\Microsoft Office\Office\html.dot">
-   <title>Release Notes</title>
+            
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+            
+  <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
+            
+  <meta name="Template" content="C:\Program Files\Microsoft Office\Office\html.dot">
+  <title>Release Notes</title>
 </head>
-<body link="#0000FF" vlink="#800080">
-&nbsp;
-<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="600" >
-<tr>
-<td ALIGN=CENTER WIDTH="200"><a href="HTTPS://www.alpine.bbn.com/"><img SRC="alpine-logo-small.gif" BORDER=0 height=83 width=95></a></td>
-
-<td ALIGN=CENTER WIDTH="200">
-<h2>
-<b><font size=+2>Release Notes</font></b></h2>
-
-<h2>
-<b><font size=+2>COUGAAR GLM 9.0</font></b></h2>
-</td>
-
-<td ALIGN=CENTER WIDTH="200"><a href="http://www.cougaar.org"><img SRC="cougaar-smalllogo.jpg" BORDER=0 ></a></td>
-</tr>
+  <body link="#0000ff" vlink="#800080">
+   &nbsp;   
+<table border="0" cellspacing="0" cellpadding="0" width="600">
+   <tbody>
+     <tr>
+       <td align="Center" width="200"><a href="HTTPS://www.alpine.bbn.com/"><img src="alpine-logo-small.gif" border="0" height="83" width="95">
+       </a>
+       </td>
+       <td align="Center" width="200">       
+      <h2><b><font size="+2">Release Notes</font></b></h2>
+       
+      <h2><b><font size="+2">COUGAAR GLM 9.1</font></b></h2>
+       </td>
+       <td align="Center" width="200"><a href="http://www.cougaar.org"><img src="cougaar-smalllogo.jpg" border="0">
+       </a>
+       </td>
+     </tr>
+   
+  </tbody> 
 </table>
-
-<table ALIGN=LEFT BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="600" >
-<tr>
-<td ALIGN=LEFT WIDTH="600">
-<hr>
-<p>Jump down to:&nbsp;
-<ul>
-<li>
-<a href="#overview">Overview of this Release</a></li>
-
-<li>
-<a href="#future">Future Releases</a></li>
-
-<li>
-<a href="#questions">Questions and Bug Reports</a></li>
-
-<li>
-<a href="#bugs">Known bugs and other issues</a></li>
-</ul>
-
-<hr>
-<h2>
-<a NAME="overview"></a>Overview of this Release</h2>
-Build 9.0 is a major release in Cougaar development and the first one
-under the Ultra*log project.&nbsp; Notable GLM additions for this release include:
-<ul>
-<li> In repackaging for new release, removed domain portion of package, and references to PlugIn </li>
-<li>
-Addition of the readiness assessor
-</li>
-<li>
-Improvement for UniversalAllocator to approve/disapprove any task matching a provided regular expression
-</li>
-<li>
-Numerous Bug Fixes
-</ul>
-Build 8.6 is a point release along COUGAAR 8.0 and will be the final release
-under the ALP project.&nbsp; Future Cougaar releases will be under the
-Ultra*Log project. Notable GLM additions for this release include:
-<ul>
-<li>
-Enhancements to the generic UniversalExpanderPlugin which expands tasks
-according to sub-tasks defined in a database table. Enhancements include
-better ability to defined task parameters, ability to specify more than
-2 levels of expansion, and the ability to expand levels fully or expand
-them into a single flat workflow. For details please see <a href="UniversalExpanderPlugin.html">UniversalExpanderPlugin.html</a></li>
-</ul>
-For additional details, please review the following documentation:
-<ul>
-<li>
-<a href="CHANGES">CHANGES</a></li>
-
-<li>
-glm Javadoc</li>
-
-<li>
-glm/src/Changelog</li>
-</ul>
-
-<h2>
-<a NAME="developing"></a>Developing and Running COUGAAR Societies</h2>
-
-<h3>
-General Development&nbsp;</h3>
-
-<ul>
-<li>
-<a href="SocStartup-Config.html">Society Configuration and Startup</a></li>
-</ul>
-
-<h2>
-<a NAME="future"></a>Future Releases</h2>
-We anticipate that there may be further releases as we address system deficiencies
-and enhancement requests. Please watch the alp-plugin-developers email
-list and carefully read the latest Plugin Developers Guide (PDG) and all
-release notes.&nbsp;
-<h2>
-<a NAME="questions"></a>Questions and Bug Reports</h2>
-In addition, email infrastructure questions and initiate community discussions
-through alp-plugin-developers@bbn.com. Bug and system-enhancement reports
-can be submitted through the <a href="HTTPS://www.alpine.bbn.com/">ALPINE</a>
-or <a href="http://www.cougaar.org">COUGAAR</a> websites.&nbsp;
-<h2>
-<a NAME="bugs"></a>Known bugs and other issues</h2>
-None known.&nbsp;</td>
-</tr>
+ 
+<table align="Left" border="0" cellspacing="0" cellpadding="0" width="600">
+   <tbody>
+     <tr>
+       <td align="Left" width="600">       
+      <hr>       
+      <p>Jump down to:</p>
+       
+      <ul>
+         <li><a href="#overview">Overview of this Release</a>
+         </li>
+         <li><a href="#overview_of_9_0">Overview of Release 9.0</a>
+         </li>
+         <li><a href="#future">Future Releases</a>
+         </li>
+         <li><a href="#questions">Questions and Bug Reports</a>
+         </li>
+         <li><a href="#bugs">Known bugs and other issues</a>
+         </li>
+       
+      </ul>
+       <br>
+       
+      <hr>       
+      <h2><a name="overview"></a>
+  Overview of this Release</h2>
+   Build 9.1 is a point release along the Ultra*Log 9.0 branch.<br>
+       <br>
+  Notable GLM additions for this release include:              
+      <ul>
+         <li>GLM Stimulator Servlet, which allows injection of tasks into
+an agent, as defined in an xml file.&nbsp; <br>
+           <a href="StimulatorServlet.html"> Click here for more information</a>
+  .</li>
+       
+      </ul>
+       
+      <h2><a name="overview_of_9_0"></a>
+  Overview of Release 9.0</h2>
+   Build 9.0 is a major release in Cougaar development and the first one
+under  the Ultra*log project.&nbsp; Notable GLM additions for this release
+include:        <br>
+       
+      <ul>
+         <li> In repackaging for new release, removed domain portion of package,
+ and references to PlugIn </li>
+         <li> Addition of the readiness assessor </li>
+         <li> Improvement for UniversalAllocator to approve/disapprove any 
+task matching a provided regular expression </li>
+         <li> Numerous Bug Fixes </li>
+       
+      </ul>
+   Build 8.6 is a point release along COUGAAR 8.0 and will be the final release 
+ under the ALP project.&nbsp; Future Cougaar releases will be under the Ultra*Log
+ project. Notable GLM additions for this release include:               
+      <ul>
+         <li> Enhancements to the generic UniversalExpanderPlugin which expands 
+tasks  according to sub-tasks defined in a database table. Enhancements include 
+better ability to defined task parameters, ability to specify more than 2 
+levels of expansion, and the ability to expand levels fully or expand them 
+into a single flat workflow. For details please see <a href="UniversalExpanderPlugin.html">
+  UniversalExpanderPlugin.html</a>
+         </li>
+       
+      </ul>
+   For additional details, please review the following documentation:   
+           
+      <ul>
+         <li><a href="CHANGES">CHANGES</a>
+         </li>
+         <li> glm Javadoc</li>
+         <li> glm/src/Changelog</li>
+       
+      </ul>
+       
+      <h2><a name="developing"></a>
+  Developing and Running COUGAAR Societies</h2>
+       
+      <h3> General Development&nbsp;</h3>
+       
+      <ul>
+         <li><a href="SocStartup-Config.html">Society Configuration and Startup</a>
+         </li>
+       
+      </ul>
+       
+      <h2><a name="future"></a>
+  Future Releases</h2>
+   We anticipate that there may be further releases as we address system
+deficiencies  and enhancement requests. Please watch the alp-plugin-developers
+email list  and carefully read the latest Plugin Developers Guide (PDG) and
+all release  notes.&nbsp;               
+      <h2><a name="questions"></a>
+  Questions and Bug Reports</h2>
+   In addition, email infrastructure questions and initiate community discussions 
+ through alp-plugin-developers@bbn.com. Bug and system-enhancement reports 
+ can be submitted through the <a href="HTTPS://www.alpine.bbn.com/">ALPINE</a>
+   or <a href="http://www.cougaar.org">COUGAAR</a>
+   websites.&nbsp;               
+      <h2><a name="bugs"></a>
+  Known bugs and other issues</h2>
+   None known.&nbsp;</td>
+     </tr>
+     <tr>
+       <td valign="Top"><br>
+       </td>
+     </tr>
+   
+  </tbody> 
 </table>
-
+ 
 </body>
 </html>
