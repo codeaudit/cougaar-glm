@@ -612,9 +612,11 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn, St
     return classname;
   }
 
-    /** @return cluster name and plugin name */
+  /** @return cluster name and plugin name */
   public String getName () { 
-    return getClusterName () + "/" + getClassName (); 
+    if (myName == null)
+      myName = getClusterName () + "/" + getClassName ();
+    return myName;
   }
 
   /** holds persistent state, labeled with name of plugin */
@@ -643,5 +645,9 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn, St
   protected double HIGH_CONFIDENCE = 0.99d;
   protected PersistentState persistentState;
   private ClusterIdentifier originalAgentID = null;
-  
+  protected String myName;
 }
+
+
+
+
