@@ -31,6 +31,7 @@ import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
 import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.NewComposition;
 import org.cougaar.planning.ldm.plan.NewMPTask;
 import org.cougaar.planning.ldm.plan.MPTask;
@@ -48,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.HashSet;
 
 import org.cougaar.lib.filter.UTILPlugin;
 import org.cougaar.util.log.*;
@@ -205,6 +207,19 @@ public class UTILAggregate {
     comp.setCombinedTask(mptask);
     comp.setDistributor(AllocationResultDistributor.DEFAULT);
     // comp.setIsPropagating();
+    
+
+    HashSet set = new HashSet();
+    Iterator taskIt = parentTasks.iterator();
+    Task parent;
+    while (taskIt.hasNext()) {
+      parent = (Task)taskIt.next();
+      if (parent.getContext() != null) {
+        set.addAll((ContextOfOplanIds)parent.getContext());
+      }
+    }
+    mptask.setContext(new ContextOfOplanIds(set));
+
 
     // create the new MP task that represents all subtasks
     mptask.setComposition (comp);

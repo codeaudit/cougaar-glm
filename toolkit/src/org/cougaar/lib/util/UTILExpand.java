@@ -226,8 +226,10 @@ public class UTILExpand {
 				    MessageAddress source) {
     NewTask task = ldmf.newTask();
 
-    if(parent != null)
+    if(parent != null) {
       task.setParentTaskUID(parent.getUID());
+      task.setContext(parent.getContext());
+    }
     task.setDirectObject(obj);
     task.setPrepositionalPhrases(parent.getPrepositionalPhrases());
     task.setVerb(parent.getVerb ());

@@ -21,9 +21,15 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.core.service.AlarmService;
-import org.cougaar.core.service.ThreadService;
 import org.cougaar.core.agent.service.alarm.Alarm;
+
+import org.cougaar.core.component.ServiceRevokedEvent;
+import org.cougaar.core.component.ServiceRevokedListener;
+
+import org.cougaar.core.service.AgentIdentificationService;
+import org.cougaar.core.service.AlarmService;
+import org.cougaar.core.service.QuiescenceReportService;
+import org.cougaar.core.service.ThreadService;
 
 import org.cougaar.core.thread.CougaarThread;
 import org.cougaar.core.thread.Schedulable;
@@ -60,6 +66,9 @@ import java.util.List;
  */
 public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   implements UTILBufferingPlugin {
+
+  protected QuiescenceReportService qService;
+  protected AgentIdentificationService agentIDService;
 
   /**
    * <pre>
@@ -209,12 +218,32 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   public void wakeUp () {
     if (isInfoEnabled())
       info (getName () + " wakeUp called.");
-
+    
     examineBufferAgainIn (10l);
+  }
+
+  public final void setQuiescenceReportService (QuiescenceReportService qService) {
+    this.qService = qService;
   }
 
   /** Buffering runnable wants to restart later */
   public void examineBufferAgainIn (long delayTime) {
+    if (agentIDService == null) {
+      agentIDService = (AgentIdentificationService) getServiceBroker().getService (this,
+										   AgentIdentificationService.class,
+										   new ServiceRevokedListener() {
+										     public void serviceRevoked(ServiceRevokedEvent re) {
+										       error ("huh? Agent id service revoked?");
+										     }
+										   }
+										   );
+    }
+
+    qService.setAgentIdentificationService(agentIDService);
+
+    // tell the world that we are busy
+    qService.clearQuiescentState();
+
     if (isInfoEnabled())
       info (getName () + " asking to be restarted in " + delayTime);
 
@@ -269,6 +298,14 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
 
     if (currentAlarm.hasExpired()) {
       bufferingThread.run();
+
+      if (!bufferingThread.anyTasksLeft()) {
+	// tell the world that we have completed
+	if (isInfoEnabled())
+	  info (getName () + " now quiescent.");
+
+	qService.setQuiescentState();
+      }
     }
   }
 

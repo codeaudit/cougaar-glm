@@ -598,7 +598,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * rely upon load-time introspection to set these services - 
    * don't worry about revokation.
    */
-  public final void setLoggingService(LoggingService bs) {  
+  public void setLoggingService(LoggingService bs) {  
     logger = bs; 
 
     assetHelper = new UTILAsset (logger);

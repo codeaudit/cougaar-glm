@@ -485,18 +485,31 @@ public class UTILAllocate {
    * the aspect results.
    *
    * </pre>
+   * @param ignoredCreator - currently ignored slot that could be used for debugging
    * @param ldmf PlanningFactory for making the plan elements
    * @param t Task that failed to be allocated
    * @return FailedDisposition 
    * @see #makeFailedDisposition (PlanningFactory, Task, AllocationResult)
    */
-  public Disposition makeFailedDisposition(UTILPlugin creator,
-						  PlanningFactory ldmf, Task t) {
-    AllocationResult failedAR  = 
-      ldmf.newAllocationResult(HIGHEST_CONFIDENCE, RESCINDMEPLEASE, 
-			       new int[1], new double[1]);
+  public Disposition makeFailedDisposition(UTILPlugin ignoredCreator,
+					   PlanningFactory ldmf, Task task) {
+    Enumeration prefEnum;
+    synchronized(task) { prefEnum = task.getPreferences(); } // bug #2125
+    List aspectValues = new ArrayList ();
+    while (prefEnum.hasMoreElements()) {
+      Preference pref = (Preference)prefEnum.nextElement();
+      ScoringFunction sfunc = pref.getScoringFunction();
+      aspectValues.add (sfunc.getBest().getAspectValue());
+    }
+
+    AspectValue [] aspectValueArray = 
+      (AspectValue []) aspectValues.toArray(new AspectValue [aspectValues.size()]);
+
+    AllocationResult failedAR = ldmf.newAVAllocationResult(HIGHEST_CONFIDENCE, 
+							   RESCINDMEPLEASE, 
+							   aspectValueArray);
     Disposition falloc    = 
-      ldmf.createFailedDisposition(ldmf.getRealityPlan(), t, failedAR);
+      ldmf.createFailedDisposition(ldmf.getRealityPlan(), task, failedAR);
 
     return falloc;
   }

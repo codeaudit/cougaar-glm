@@ -165,6 +165,9 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
   public void reactToChangedExpansion (Expansion exp) {
     UTILExpansionListener listener = (UTILExpansionListener) myListener;
 
+    if (exp.getReportedResult () == null)
+      return;
+
     if (exp.getReportedResult().isSuccess ()) {
       if (exp.getWorkflow ().constraintViolation ()) {
 	if (logger.isInfoEnabled())
