@@ -19,9 +19,7 @@ public class LDMConnectionDriver
   private String url;
   private String user;
   private String password;
-  private LDMConnectionPool pool;
   private String queryFile;
-  private boolean wrkStatus = true;
    
   /** 
    * @param driver JDBC driver.
@@ -56,13 +54,11 @@ public class LDMConnectionDriver
     } catch (Exception e) {
       e.printStackTrace();
     }
-    pool = new LDMConnectionPool(url, user, password, minPoolSize, maxPoolSize, timeout, nTries);  
-   
   }
 
   public boolean isWorking()
   {
-    return wrkStatus;
+    return true;
   }
 
   public String getDBName()
@@ -79,17 +75,18 @@ public class LDMConnectionDriver
   {
     Connection conn;
    
-    conn = pool.getConnection();
-    if (conn == null)
-      wrkStatus = false;
+    //conn = pool.getConnection();
+    //if (conn == null)
+    // wrkStatus = false;
+    // return (conn);
 
-    return (conn);
-   
+    try {
+      return DBConnectionPool.getConnection(url, user, password);
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
-  public synchronized void closeAllConnections()
-  {
-  }// closeAllConnections
-
-
-}// LDMConnectionDriver
+  public synchronized void closeAllConnections() { }
+}
