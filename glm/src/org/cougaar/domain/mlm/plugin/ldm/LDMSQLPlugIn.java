@@ -276,13 +276,12 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
           if (queryType.equals("default")) {
             parseQueryParameter(((pt==null)?globalParameters:pt),
 				line);
-          }
+	  }
           else if (queryType.equalsIgnoreCase(dbType)){
-            String startQuery = line.substring(0, dotIndex);
-            String endQuery = line.substring(equalsIndex);
-            String newLine = startQuery + " " +endQuery;
-            parseQueryParameter(((pt==null)?globalParameters:pt),
-				newLine);
+	    StringBuffer newLine = new StringBuffer(line.substring(0, dotIndex));
+	    newLine.append(line.substring(equalsIndex));
+	    parseQueryParameter(((pt==null)?globalParameters:pt),
+				newLine.toString(), true);
           }
           else //skip if this query does not match this database type and is not a default query (WAN)
             continue;
@@ -318,9 +317,17 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       String realVal = Parameters.replaceParameters(v); //WAN added
       dbType = getDBType(realVal); //WAN added
     }
-    table.put(p,v);
+    if  (!table.containsKey(p))
+      table.put(p,v);
   }
-
+  // force the database specific query in 
+  private void parseQueryParameter(Properties table, String s, boolean dbSpecific) {
+    int i = s.indexOf('=');
+    String p = s.substring(0,i).trim();
+    String v = s.substring(i+1).trim();
+    if (dbSpecific) // if database specific, overwrite the default
+      table.put(p,v);
+  }
 
   /** sort queryhandlers into categories.
    * PeriodicQueries will get executed synchronously for the first
