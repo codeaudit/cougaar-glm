@@ -26,6 +26,10 @@ import org.cougaar.domain.glm.execution.eg.ClusterInfo;
 
 public class InventorySelector implements ActionListener {
   JPanel queryPanel;
+
+  Vector clusterNames;
+  Hashtable clusterAndAssets;
+
   JComboBox clusterNameBox;
   JComboBox assetNameBox;
   Hashtable clusterURLs;
@@ -132,7 +136,10 @@ public class InventorySelector implements ActionListener {
 
     // create cluster list
     if (queryForClusters)
-      addClusterList();
+	addClusterList();
+    //MWD addClusterList2 and updateClusterList2() work together
+    //to get all the clusters inventory at once and then just display.
+    //MWDaddClusterList2();
 
     // create inventory list
     assetNameBox = new JComboBox();
@@ -269,6 +276,7 @@ public class InventorySelector implements ActionListener {
 	    new Thread(clusterName + "updateInventoryBox") {
                 public synchronized void run() {
                     updateInventoryBox();
+		    //MWD updateInventoryBox2();
 		}});
         return;
     }
@@ -295,6 +303,27 @@ public class InventorySelector implements ActionListener {
 		assetNameBox.addItem(assetNames.elementAt(i));
 	return;
     }
+
+    public void updateInventoryBox2() {
+	if (assetNameBox.getItemCount() != 0)
+	    assetNameBox.removeAllItems();
+	assetNameBoxInitted = true;
+	assetNames = (Vector)clusterAndAssets.get(clusterName);
+	if (assetNames != null)
+	    for (int i = 0; i < assetNames.size(); i++)
+		assetNameBox.addItem(assetNames.elementAt(i));
+	return;
+    }
+    
+    private void loadClusterNamesAndAssets(Vector vNames) {
+	clusterAndAssets = new Hashtable();
+	for(int i=0; i<vNames.size(); i++ ) {
+	    String currName = (String) vNames.elementAt(i);
+	    Vector clusterAssets = getAssets(currName);
+	    clusterAndAssets.put(currName, clusterAssets);
+	}
+    }
+
 
   /* Send request to the cluster to get the list of assets
      with scheduled content property groups.
@@ -331,35 +360,64 @@ public class InventorySelector implements ActionListener {
                                   JOptionPane.ERROR_MESSAGE);
   }
 
-  private void addClusterList() {
-    System.out.println("Querying for cluster list");
-    try {
-      ConnectionHelper connection = new ConnectionHelper(hostAndPort);
-      clusterURLs = connection.getClusterIdsAndURLs();
-      if (clusterURLs == null) {
-        System.out.println("No clusters");
-        System.exit(0);
+  private Vector getClusterNames() {
+      System.out.println("Querying for cluster list");
+      try {
+	  ConnectionHelper connection = new ConnectionHelper(hostAndPort);
+	  clusterURLs = connection.getClusterIdsAndURLs();
+	  if (clusterURLs == null) {
+	      System.out.println("No clusters");
+	      System.exit(0);
+	  }
+      } catch (Exception e) {
+	  System.out.println(e);
+	  System.exit(0);
       }
-    } catch (Exception e) {
-      System.out.println(e);
-      System.exit(0);
-    }
     Enumeration names = clusterURLs.keys();
     clusterNameBox = new JComboBox();
     Vector vNames = new Vector();
     while (names.hasMoreElements())
-      vNames.addElement(names.nextElement());
+	vNames.addElement(names.nextElement());
     Collections.sort(vNames);
-    for (int i = 0; i < vNames.size(); i++)
-        clusterNameBox.addItem(vNames.elementAt(i));
-    if (!vNames.isEmpty()) 
-	clusterName = (String)vNames.elementAt(0);
+    
+    return vNames;
+
+  }
+
+    private void addClusterList2(){
+	clusterNames = getClusterNames();
+	loadClusterNamesAndAssets(clusterNames);
+	if(clusterNames.size() > 0) {
+	    for(int i=0; i<clusterNames.size(); i++) {
+		clusterNameBox.addItem(clusterNames.elementAt(i));
+	    }
+	    clusterName = (String)clusterNames.elementAt(0);
+	}
+	add("Display schedules from:", clusterNameBox, SET_CLUSTER);
+	loadClusterURLs();
+    }
+
+
+private void addClusterList() {
+
+    clusterNames = getClusterNames();
+
+    for (int i = 0; i < clusterNames.size(); i++)
+        clusterNameBox.addItem(clusterNames.elementAt(i));
+    if (!clusterNames.isEmpty()) 
+	clusterName = (String)clusterNames.elementAt(0);
     add("Display schedules from:", clusterNameBox, SET_CLUSTER);
+    // if applet, modify all cluster URLs to use the code base host and port
+    // note that this doesn't sort
+    loadClusterURLs();
+}
+
+    private void loadClusterURLs() {
     // if applet, modify all cluster URLs to use the code base host and port
     // note that this doesn't sort
     if (isApplet) {
       Hashtable tmpHT = new Hashtable();
-      names = clusterURLs.keys();
+      Enumeration names = clusterURLs.keys();
       while (names.hasMoreElements()) {
         String name = (String)names.nextElement();
         String clusterURL = (String)clusterURLs.get(name);
@@ -374,6 +432,7 @@ public class InventorySelector implements ActionListener {
       }
       clusterURLs = tmpHT; 
     }
-  }
+    }
+
 
 }

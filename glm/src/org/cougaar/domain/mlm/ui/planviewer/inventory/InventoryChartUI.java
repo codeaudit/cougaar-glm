@@ -25,11 +25,20 @@ public class InventoryChartUI extends JApplet {
   /** If called with an argument, then it is the data filename.
    */
   public static void main(String[] args) {
-    ThemeFactory.establishMetalTheme();
-
-    if (args.length != 0)
-      new InventorySelector(args[0]);
-    else {
+    String arg0 = null;
+    if (args.length != 0) {
+      for (int i = 0; i < args.length; i++) {
+        if (args[i].startsWith("-")) {
+          if (args[i].equals("-demo"))
+            ThemeFactory.establishMetalTheme();
+        } else if (arg0 == null) {
+          arg0 = args[i];
+        }
+      }
+    }
+    if (arg0 != null) {
+      new InventorySelector(arg0);
+    } else {
 	// display dialog box for location of LogPlanServer
       String clusterHost = "localhost";
       String clusterPort = "5555";
