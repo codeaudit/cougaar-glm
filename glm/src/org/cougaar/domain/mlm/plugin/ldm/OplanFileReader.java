@@ -72,6 +72,7 @@ public class OplanFileReader {
   private static final String OPERATIONNAME = "operationName";
   private static final String PRIORITY = "priority";
   private static final String CDAY = "cDay";
+  private static final String ENDDAY = "endDay";
 		
   // TimeSpan attributesth
   private static final String TIMESPAN = "timespan";
@@ -205,12 +206,14 @@ public class OplanFileReader {
   {
     try {
       doc = theCluster.getConfigFinder().parseXMLConfigFile( xmlfilename );			
-      parseFileData(doc); 		
+      parseFileData(doc);
+      if (thePlan_.getEndDay() == null) {
+        thePlan_.inferEndDay();
+      }
     } catch ( Exception e ) {
       e.printStackTrace();
     }// trycatch block
   }// readOplanData
-
    
   protected void parseFileData(Node node) 
   {
@@ -273,9 +276,11 @@ public class OplanFileReader {
   {
     NamedNodeMap attributes = data.getAttributes();
     Date cDaydate = new Date();
+    Date endDaydate = null;
 	   
     // Oplan Attributes	   
     /* cDay
+       endDay
        priority
        operationName
        oplanID  */
@@ -299,6 +304,16 @@ public class OplanFileReader {
       }// try catch
       thePlan_.setCday(cDaydate);
     }// if CDAY
+    if( attributes.getNamedItem(ENDDAY) != null) {
+      try	{
+        SimpleDateFormat formatter = datefmt;
+        endDaydate =formatter.parse(attributes.getNamedItem(ENDDAY).getNodeValue());
+      }
+      catch (ParseException e) { 
+        System.out.println(e.getMessage());
+      }// try catch
+      thePlan_.setEndDay(endDaydate);
+    }// if ENDDAY
     if( attributes.getNamedItem(THEATERID) != null)
       thePlan_.setTheaterID(attributes.getNamedItem(THEATERID).getNodeValue());
     if( attributes.getNamedItem(TERRAINTYPE) != null)
