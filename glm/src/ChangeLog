@@ -1,5 +1,8 @@
 2002-05-28  Ray Tomlinson  <RTomlinson@bbn.com>
 
+	* org/cougaar/mlm/plugin/sample/UniversalAllocatorPlugin.java:
+	Remove debug println.
+
 	* org/cougaar/mlm/ui/psp/plan/PSP_AddOplan.java: 
 	* org/cougaar/mlm/plugin/sample/CompletionAssessor.java: 
 	* org/cougaar/mlm/plugin/sample/AddAssetsGUIPlugin.java: 
