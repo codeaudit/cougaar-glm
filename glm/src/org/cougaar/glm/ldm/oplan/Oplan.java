@@ -691,5 +691,17 @@ public class Oplan extends OwnedUniqueObject
       if (diff != 0) return diff;
       return this.name.compareTo(that.name);
     }
+
+    public boolean equals(Object o) {
+      return compareTo(o) == 0;
+    }
+
+    public int hashCode() {
+      return number + name.hashCode();
+    }
+
+    public String toString() {
+      return number + "(" + name + ")";
+    }
   }
 }// OPlan
