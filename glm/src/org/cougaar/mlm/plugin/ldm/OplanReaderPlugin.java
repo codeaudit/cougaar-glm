@@ -148,7 +148,7 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   private Organization selfOrgAsset = null;
   private String orgId;
   private String orgCode;
-  private String adSuperior;
+  private String adSuperior = null;
 
   /**
    * The predicate for the Socrates subscription
@@ -370,20 +370,26 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       selfOrgAsset = (Organization) e.nextElement();
       orgId = selfOrgAsset.getItemIdentificationPG().getItemIdentification();
       orgCode = selfOrgAsset.getMilitaryOrgPG().getUIC();
-      Collection myAdSuperiors = selfOrgAsset.getRelationshipSchedule()
-        .getMatchingRelationships(Constants.Role.SUPERIOR);
-      //.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
-      for (Iterator it = myAdSuperiors.iterator(); it.hasNext(); ) {
-        Relationship rel = (Relationship)it.next();
-        adSuperior = ((Asset)rel.getB()).getItemIdentificationPG().getNomenclature();
-        if (logger.isInfoEnabled())
-          logger.info(getAgentIdentifier() + "'s superior is: " +adSuperior);
-      }
+      adSuperior = getMySuperior();
       // Setup our other subscriptions now that we know ourself
       if (glsSubscription == null) {
         setupSubscriptions2();
       }
     }
+  }
+
+  private String getMySuperior() {
+    String mySuperior = null;
+    Collection myAdSuperiors = selfOrgAsset.getRelationshipSchedule()
+      .getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
+    //  .getMatchingRelationships(Constants.Role.SUPERIOR);
+    for (Iterator it = myAdSuperiors.iterator(); it.hasNext(); ) {
+      Relationship rel = (Relationship)it.next();
+      mySuperior = ((Asset)rel.getB()).getItemIdentificationPG().getNomenclature();
+      if (logger.isInfoEnabled())
+        logger.info(getAgentIdentifier() + "'s superior is: " +mySuperior);
+    }
+    return mySuperior;
   }
 
   public synchronized void execute() {    
@@ -393,9 +399,13 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       processOrgAssets(mySelfOrgs.getAddedList());
     } else {
       if (logger.isDebugEnabled())
-	logger.debug(getAgentIdentifier() + ".execute: selfOrgs sub is " 
-                     + mySelfOrgs + ((mySelfOrgs != null) ? (" and not changed. It has " 
-                     + mySelfOrgs.size() + " elements.") : " so must have done processOrgAssets."));
+	logger.debug(getAgentIdentifier() + ".execute: selfOrgs sub is " + mySelfOrgs 
+                     + ((mySelfOrgs != null) 
+                     ? (" and not changed. It has " + mySelfOrgs.size() + " elements.") 
+                     : " so must have done processOrgAssets."));
+      if (adSuperior == null) {
+        adSuperior = getMySuperior();
+      }
     }
 
     if ((glsSubscription != null) && 
@@ -410,7 +420,9 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       
       requestOplans(lastGLSTask());
     } else if (logger.isInfoEnabled()) {
-      logger.info(getAgentIdentifier() + ".execute not requesting oplans. " + ((glsSubscription != null) ? ("Have a glsSub. Not apparently changed. It has " + glsSubscription.size() + " GLS Tasks.") : "No glsSub. Have not yet apparently done processOrgAssets"));
+      logger.info(getAgentIdentifier() + ".execute not requesting oplans. "  + ((glsSubscription != null) 
+                  ? ("Have a glsSub. Not apparently changed. It has " + glsSubscription.size() + " GLS Tasks.") 
+                  : "No glsSub. Have not yet apparently done processOrgAssets"));
     }
   }
 
@@ -669,6 +681,12 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
     orgActivity.setOpTempo(opTempo);
     //At the moment - always get adCon from the org_relation table query
     //  which means we can get it from the self org
+
+    if (adSuperior == null) {
+      if (logger.isErrorEnabled()) {
+        logger.error("Missing the AdministrativeSuperior value needed for the OrgActivity!");
+      }
+    }
     orgActivity.setAdCon(adSuperior);
     //If no opCon value was read from the database,
     // set opCon to be same as adCon
