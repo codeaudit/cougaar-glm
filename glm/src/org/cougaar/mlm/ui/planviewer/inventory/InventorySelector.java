@@ -302,7 +302,7 @@ public class InventorySelector implements ActionListener {
     String logFileName = System.getProperty("org.cougaar.log.loginventorytimes");
     FileWriter logFile = null;
     
-    if((logFileName != null) &
+    if((logFileName != null) &&
        (!(logFileName.trim().equals("")))) {
       try {
 	logFile = new FileWriter(logFileName,true);
