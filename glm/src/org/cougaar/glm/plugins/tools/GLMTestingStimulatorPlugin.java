@@ -65,14 +65,14 @@ import org.cougaar.lib.util.UTILPreference;
  * </pre>
  */
 public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
-    implements UTILAllocationListener {
+  implements UTILAllocationListener {
 
   /** Add the filter for allocations */
   public void setupFilters () {
     super.setupFilters ();
 
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for Allocations...");
+    if (isInfoEnabled())
+      info (getName () + " : Filtering for Allocations...");
     addFilter (myAllocCallback    = createAllocCallback   ());
   }
     
@@ -81,7 +81,7 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
   /***************************/
     
   protected UTILAllocationCallback myAllocCallback;
-  protected UTILAllocationCallback createAllocCallback () { return new UTILAllocationCallback(this);  } 
+  protected UTILAllocationCallback createAllocCallback () { return new UTILAllocationCallback(this, logger);  } 
   protected UTILAllocationCallback getAllocCallback    () { return myAllocCallback; }
     
   public boolean interestingNotification(Task t) { return true; }
@@ -99,9 +99,9 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
    * Cache the already handled allocations by their UID's
    */
   public void handleSuccessfulAlloc(Allocation alloc) {
-	// we were rehydrated -- no guarantees across rehydration
-	if (batchStart == null || testStart == null)
-	  return;
+    // we were rehydrated -- no guarantees across rehydration
+    if (batchStart == null || testStart == null)
+      return;
 
     // Check for a completed batch
     if ((alloc.getReportedResult() != null) && 
@@ -113,7 +113,8 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
 	// Print timing information for the completed batch
 	String t = getElapsedTime(batchStart);
 	String total = getElapsedTime(testStart);
-	System.out.println("\n*** Testing batch #" + batchesSent + " completed in " + t + " total " + total);
+	if (isInfoEnabled())
+	  info("\n*** Testing batch #" + batchesSent + " completed in " + t + " total " + total);
 
 	// Cache the timing information
 	batchTimes.add(t);
@@ -153,7 +154,7 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
 
     panel.add(button);
     panel.add(button2);
-	frame.getRootPane().setDefaultButton(button); // hitting return sends the tasks
+    frame.getRootPane().setDefaultButton(button); // hitting return sends the tasks
     panel.add(text);
     panel.add(iterations);
 
@@ -178,7 +179,7 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
    */
   class GLMTestingButtonListener extends GLMButtonListener {
     GLMTestingButtonListener(JLabel label, JTextField text, JTextField iterations){
-	  super (label, text);
+      super (label, text);
       this.iterations = iterations;
     }
     protected JTextField iterations;
@@ -210,43 +211,43 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
     myLabel = label;
     myXmlTaskFile = xmlTaskFile;
 
-	Collection tasks = null;
-	tasksSent.clear();
-	if (!subordinatesHaveReported ()) {
-	  label.setText("No subordinates to task yet.  Wait until they report.");
-	} 
-	else {
-	  try {
-	    // Have to do this all within transaction boundary
+    Collection tasks = null;
+    tasksSent.clear();
+    if (!subordinatesHaveReported ()) {
+      label.setText("No subordinates to task yet.  Wait until they report.");
+    } 
+    else {
+      try {
+	// Have to do this all within transaction boundary
 	    
-	    // For some reason, every setXXX (e.g. setVerb) on a NewTask
-	    // fires off a changeReport, and these must be inside of a transaction,
-	    // apparently.  There is no way currently to temporarily turn off this feature.
-	    // GWFV 10/11/2000
+	// For some reason, every setXXX (e.g. setVerb) on a NewTask
+	// fires off a changeReport, and these must be inside of a transaction,
+	// apparently.  There is no way currently to temporarily turn off this feature.
+	// GWFV 10/11/2000
 
-		blackboard.openTransaction();
-		// Get the tasks out of the XML file
-		tasks = readXmlTasks(xmlTaskFile);
+	blackboard.openTransaction();
+	// Get the tasks out of the XML file
+	tasks = readXmlTasks(xmlTaskFile);
 
-		// First find the organizations that we will allocate to.
-		Collection supportedOrgs = getSupportedOrgs ();
-		if(supportedOrgs.isEmpty ()){
-		  label.setText("No task sent, since no subordinates have reported (yet).");
-		} else {
-		  allocateTasks (tasks, supportedOrgs);
-		  label.setText("Sent 1 batch to " + 
-						((Organization) supportedOrgs.iterator ().next()).getItemIdentificationPG().getItemIdentification() + 
-						((supportedOrgs.size () > 1) ? ", etc. clusters" : " cluster"));
-		}
-	  } catch (Exception exc) {
-		System.err.println("Could not send tasks.");
-		System.err.println(exc.getMessage());
-		exc.printStackTrace();
-	  }
-	  finally{
-		blackboard.closeTransaction(false);
-	  }
-	} 
+	// First find the organizations that we will allocate to.
+	Collection supportedOrgs = getSupportedOrgs ();
+	if(supportedOrgs.isEmpty ()){
+	  label.setText("No task sent, since no subordinates have reported (yet).");
+	} else {
+	  allocateTasks (tasks, supportedOrgs);
+	  label.setText("Sent 1 batch to " + 
+			((Organization) supportedOrgs.iterator ().next()).getItemIdentificationPG().getItemIdentification() + 
+			((supportedOrgs.size () > 1) ? ", etc. clusters" : " cluster"));
+	}
+      } catch (Exception exc) {
+	System.err.println("Could not send tasks.");
+	System.err.println(exc.getMessage());
+	exc.printStackTrace();
+      }
+      finally{
+	blackboard.closeTransaction(false);
+      }
+    } 
   }
 
 
@@ -267,9 +268,7 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
 		      ((supportedOrgs.size () > 1) ? ", etc. clusters" : " cluster"));
       }
     } catch (Exception exc) {
-      System.err.println("Could not send tasks.");
-      System.err.println(exc.getMessage());
-      exc.printStackTrace();
+      logger.error ("Could not send tasks.",exc);
     }
   }
 
@@ -285,12 +284,12 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
   protected void printTestingSummary() {
     String totalTime = getElapsedTime (testStart);
 
-    System.out.println("\n************************* Testing Summary *************************\n");
-    System.out.println("         Batch Number             Batch Time ");
+    info("\n************************* Testing Summary *************************\n");
+    info("         Batch Number             Batch Time ");
     for (int i=0;i<batchTimes.size();i++)
-      System.out.println("            " + (i+1) + "                       " + batchTimes.elementAt(i)); 
-    System.out.println("\n         Total Time: " + totalTime);
-    System.out.println("\n*******************************************************************\n");
+      info("            " + (i+1) + "                       " + batchTimes.elementAt(i)); 
+    info("\n         Total Time: " + totalTime);
+    info("\n*******************************************************************\n");
 
   }
 
