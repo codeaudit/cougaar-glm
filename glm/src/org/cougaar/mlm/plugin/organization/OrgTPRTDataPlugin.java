@@ -86,25 +86,21 @@ import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.Reflect;
 import org.cougaar.util.TimeSpan;
 
-// END ADDED BY TOPS
-
-//Used in testing processing of remote RFS/RFD
-/*
-import org.cougaar.planning.ldm.plan.AspectScorePoint;
-import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.RemotePlanElement;
-*/
-
-
 /**
-This is a modified version of the OrgRTDataPlugin. OrgTPRTDataPlugin reads time-dependent superior/subordinate 
-relationships from a <agent-id>-relationships.ini file in place of the information found underneath the
-[Relationships] section in the prototype-ini.dat file and puts the times associated with the relationships
-in the RFS and RFD tasks in place of the DEFAULT_START_TIME and DEFAULT_END_TIME. 
-If the <agent-id>-relationships.ini is absent or has the wrong format, it defaults to the behavior 
-of the OrgRTDataPlugin.
-*/
+ * This is a modified version of the OrgRTDataPlugin. OrgTPRTDataPlugin 
+ * reads time-dependent superior/subordinate relationships from a 
+ * <agent-name>-relationships.ini file in place of the information found in the
+ * [Relationships] section in the <agent-name>-prototype-ini.dat file and 
+ * puts the times associated with the relationships
+ * in the RFS and RFD tasks in place of the DEFAULT_START_TIME and DEFAULT_END_TIME. 
+ * If the <agent-name>-relationships.ini is absent or has the wrong format, it 
+ * defaults to the behavior of the OrgRTDataPlugin.
+ *
+ * @deprecated Uses file format which is no longer supported. Use
+ * OrgDataPlugin or OrgDataParamBasedPlugin instead. Both pluging support time
+ * phased relationships.
+ *
+ */
 
 
 public class OrgTPRTDataPlugin extends SimplePlugin  {
@@ -131,24 +127,6 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
   private Organization selfOrg;
   private GLMFactory aldmf;
 
-  // Used only for testing remote RFS/RFD
-  /*
-  private static boolean once = false;
-  private IncrementalSubscription orgAssets;
-
-  public static UnaryPredicate orgPred() {
-    return new UnaryPredicate() {
-      public boolean execute(Object o) {
-        if (o instanceof Organization) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    };
-  }
-  */
-
   protected void setupSubscriptions() {
     aldmf = (GLMFactory)getFactory("glm");
     getSubscriber().setShouldBePersisted(false);
@@ -157,66 +135,9 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
       processOrganizations();	// Objects should already exist after rehydration
     }
 
-    //Used in testing processing of remote RFS/RFD
-    /*
-    orgAssets = (IncrementalSubscription)subscribe(orgPred());
-    */
   }
 
-  //Used in testing processing of remote RFS/RFD
   protected void execute() {
-    /*
-    if (orgAssets.hasChanged()) {
-      Collection collection = orgAssets.getCollection();
-
-      if ((!once) && 
-          (collection.size() > 2)) {
-        Organization self = null;
-        Organization orgA = null;
-        Organization orgB = null;
-        System.out.println(101);
-        for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-          Organization org = (Organization) iterator.next();
-
-          if (org.isSelf()) {
-            self = org;
-          } else if (orgA == null) {
-            orgA = org;
-          } else if ((orgB == null) &&
-                     (!org.equals(orgA))) {
-            orgB = org;
-            break;
-          }
-        }
-
-        Organization orgAClone = (Organization)getFactory().cloneInstance(orgA);
-        Organization orgBClone = (Organization)getFactory().cloneInstance(orgB);
-          
-        ArrayList roles = new ArrayList();
-        roles.add(Role.getRole("Bogus1"));
-        roles.add(Role.getRole("Bogus2"));
-        
-        NewTask remoteTask = createRFS(orgBClone, orgAClone, roles);
-        publish(remoteTask);
-
-
-        orgAClone = (Organization)getFactory().cloneInstance(orgA);
-        orgBClone = (Organization)getFactory().cloneInstance(orgB);
-        
-        ArrayList rfdRoles = new ArrayList();
-        rfdRoles.add(Role.getRole("Bogus_Subordinate"));
-        rfdRoles.add(Role.getRole("Operational_Subordinate"));
-        
-        remoteTask = createRFD(orgBClone, orgAClone, rfdRoles);
-        publish(remoteTask);
-        
-        System.out.println("OrgRTData: execute from " + getMessageAddress() + " " +
-                           orgAClone.getItemIdentificationPG().getItemIdentification() + 
-                           " reporting for service to " + 
-                           orgBClone.getItemIdentificationPG().getItemIdentification());
-        once = true;
-      }
-      } */
   }
 
   /**

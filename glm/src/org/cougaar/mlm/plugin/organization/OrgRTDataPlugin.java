@@ -86,15 +86,20 @@ import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.Reflect;
 import org.cougaar.util.TimeSpan;
 
-// END ADDED BY TOPS
-
-//Used in testing processing of remote RFS/RFD
-/*
-import org.cougaar.planning.ldm.plan.AspectScorePoint;
-import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.RemotePlanElement;
-*/
+/**
+ * Plugin to create a local asset and the Report tasks
+ * associated with all the local asset's relationships based on an
+ * initialization file - <agent-name>-prototype-ini.dat
+ *
+ * Local asset must have ClusterPG and 
+ * RelationshipPG, Presumption is that the 'other' assets in all the 
+ * relationships have both Cluster and Relationship PGs.
+ * Currently assumes that each Agent has exactly 1 local asset.
+ *
+ * @deprecated Uses file format which is no longer supported. Use
+ * OrgDataPlugin or OrgDataParamBasedPlugin insteadt.
+ *
+ */
 
 public class OrgRTDataPlugin extends SimplePlugin {
   private static TrivialTimeSpan ETERNITY = 
@@ -121,24 +126,6 @@ public class OrgRTDataPlugin extends SimplePlugin {
   private Organization selfOrg;
   private GLMFactory aldmf;
 
-  // Used only for testing remote RFS/RFD
-  /*
-  private static boolean once = false;
-  private IncrementalSubscription orgAssets;
-
-  public static UnaryPredicate orgPred() {
-    return new UnaryPredicate() {
-      public boolean execute(Object o) {
-        if (o instanceof Organization) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    };
-  }
-  */
-
   public void load() {
     super.load();
 
@@ -152,10 +139,6 @@ public class OrgRTDataPlugin extends SimplePlugin {
         processOrganizations();	// Objects should already exist after rehydration
       }
 
-      //Used in testing processing of remote RFS/RFD
-      /*
-         orgAssets = (IncrementalSubscription)subscribe(orgPred());
-         */
     } finally {
       getBlackboardService().closeTransaction();
     }
@@ -164,60 +147,7 @@ public class OrgRTDataPlugin extends SimplePlugin {
   protected void setupSubscriptions() {
   }
 
-  //Used in testing processing of remote RFS/RFD
-  protected void execute() {
-    /*
-    if (orgAssets.hasChanged()) {
-      Collection collection = orgAssets.getCollection();
-
-      if ((!once) && 
-          (collection.size() > 2)) {
-        Organization self = null;
-        Organization orgA = null;
-        Organization orgB = null;
-        System.out.println(101);
-        for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-          Organization org = (Organization) iterator.next();
-
-          if (org.isSelf()) {
-            self = org;
-          } else if (orgA == null) {
-            orgA = org;
-          } else if ((orgB == null) &&
-                     (!org.equals(orgA))) {
-            orgB = org;
-            break;
-          }
-        }
-
-        Organization orgAClone = (Organization)getFactory().cloneInstance(orgA);
-        Organization orgBClone = (Organization)getFactory().cloneInstance(orgB);
-          
-        ArrayList roles = new ArrayList();
-        roles.add(Role.getRole("Bogus1"));
-        roles.add(Role.getRole("Bogus2"));
-        
-        NewTask remoteTask = createRFS(orgBClone, orgAClone, roles);
-        publish(remoteTask);
-
-
-        orgAClone = (Organization)getFactory().cloneInstance(orgA);
-        orgBClone = (Organization)getFactory().cloneInstance(orgB);
-        
-        ArrayList rfdRoles = new ArrayList();
-        rfdRoles.add(Role.getRole("Bogus_Subordinate"));
-        rfdRoles.add(Role.getRole("Operational_Subordinate"));
-        
-        remoteTask = createRFD(orgBClone, orgAClone, rfdRoles);
-        publish(remoteTask);
-        
-        System.out.println("OrgRTData: execute from " + getMessageAddress() + " " +
-                           orgAClone.getItemIdentificationPG().getItemIdentification() + 
-                           " reporting for service to " + 
-                           orgBClone.getItemIdentificationPG().getItemIdentification());
-        once = true;
-      }
-      } */
+  public void execute() {
   }
 
   /**
