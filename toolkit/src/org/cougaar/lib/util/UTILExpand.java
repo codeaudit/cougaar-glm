@@ -172,7 +172,7 @@ public class UTILExpand {
    * @param ldmf the RootFactory
    * @param taskToClone the task to be cloned
    * @return cloned copy of the original task
-   * @see org.cougaar.lib.plugin.UTILAllocatorPluginAdapter
+   * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter
    */
   public static NewTask cloneTask(RootFactory ldmf,
 				  Task taskToClone) {
@@ -256,7 +256,7 @@ public class UTILExpand {
    *        into an aggregate result.  
    * @param parent task of this workflow expansion
    * @return Workflow a workflow containing the subtasks
-   * @see org.cougaar.planning.ldm.Plan.AllocationResultAggregator
+   * @see org.cougaar.planning.ldm.plan.AllocationResultAggregator
    */
   public static Workflow makeWorkflow(RootFactory ldmf, List subtasks, 
 				      AllocationResultAggregator ara,

@@ -44,15 +44,17 @@ import java.util.Vector;
 
 
 /**
- * The UTILExpanderPluginAdapter is a handy base class for TOPS 
+ * <pre>
+ * The UTILExpanderPluginAdapter is a handy base class for TOPS/GLMTrans
  * Expanders.  getSubtasks should be redefined in subclasses.
  *
  * Has hooks for handling various replanning conditions.
  *
- * defines handleFailedExpansion with the default behavior of reporting a
+ * Defines handleFailedExpansion with the default behavior of reporting a
  * changed expansion.
  *
- * @see org.cougaar.lib.plugin.plugins.UTILSimpleExpanderPlugin
+ * </pre>
+ * @see #handleFailedExpansion
  */
 public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter 
   implements UTILExpanderPlugin {
@@ -217,7 +219,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    *
    * Default does nothing.
    *
-   * @see wantToChangeExpansion
+   * @see #wantToChangeExpansion
    * @param expansion to change
    */
   public void changeExpansion(Expansion exp) {}
@@ -225,7 +227,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   /**
    * publish the change
    *
-   * @see wantToChangeExpansion
+   * @see #wantToChangeExpansion
    * @param expansion to change
    */
   public void publishChangedExpansion(Expansion exp) {
@@ -248,7 +250,9 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   }
 
   /**
-   * Handle a successful expansion
+   * Handle a successful expansion <p>
+   *
+   * Does nothing by default, unless very verbose output is turned on.
    *
    * @param exp Expansion that has succeeded.
    */
@@ -272,12 +276,14 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   }
 
   /**
+   * <pre>
    * The idea is to add subscriptions (via the filterCallback), and when 
    * they change, to have the callback react to the change, and tell 
    * the listener (many times the plugin) what to do.
    *
    * Override and call super to add new filters, or override 
    * createXXXCallback to change callback behaviour.
+   * </pre>
    */
   public void setupFilters () {
     super.setupFilters ();
@@ -300,10 +306,12 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   }
 
   /** 
+   * <pre>
    * Implemented for UTILGenericListener interface
    *
    * This method Expands the given Task and publishes the PlanElement.
    * The method expandTask should be implemented by child classes.
+   * </pre>
    * @param t the task to be expanded.
    */
   public void handleTask(Task t) {
@@ -320,6 +328,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
 			 getSubtasks(t));
   }
 
+  /** react to a rescinded task -- by default does nothing */
   public void handleRemovedTask (Task t) {
     if (myExtraExtraOutput)
       System.out.println (getName () + 
@@ -327,11 +336,13 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   }
   
   /**
+   * <pre>
    * Implemented for UTILExpanderPlugin interface
    *
    * The guts of the expansion.
    *
    * Default does nothing!  Subclass should override.
+   * </pre>
    */
   public Vector getSubtasks(Task t) { 
     System.out.println (getName () + 

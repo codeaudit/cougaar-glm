@@ -228,7 +228,7 @@ public class UTILPreference {
     * 
     * @param Task task to examine for matching preference
     * @param int aspect type you're hoping to find on the task's preference list
-    * @returns Preference first preference found (earliest in pref enum) with the
+    * @return Preference first preference found (earliest in pref enum) with the
     *  specified aspect type, null if none found
     */
   public static Preference getPrefWithAspectType(Task taskToExamine, int aspect_type) {
@@ -248,7 +248,7 @@ public class UTILPreference {
     * 
     * @param Task task to examine for matching preference
     * @param int aspect type you're hoping to find on the task's pref list
-    * @returns Preference last preference found (latest in pref enum) with the
+    * @return Preference last preference found (latest in pref enum) with the
     *  specified aspect type, null if none found
     * NOTE that if more than one pref with this aspect type is found, ALL 
     * are removed but only the latest is returned.

@@ -106,8 +106,8 @@ public class UTILBufferingThread implements Runnable {
    *
    * After waiting, calls checkBuffer.
    * 
-   * @see org.cougaar.lib.callback.UTILWorkflowCallback#reactToChangeFilter ()
-   * @see org.cougaar.lib.callback.UTILExpandableTaskCallback#reactToChangeFilter ()
+   * @see org.cougaar.lib.callback.UTILWorkflowCallback#reactToChangedFilter
+   * @see org.cougaar.lib.callback.UTILExpandableTaskCallback#reactToChangedFilter
    * @see #checkBuffer
    */
 
@@ -168,10 +168,10 @@ public class UTILBufferingThread implements Runnable {
    * alternateDispatch is called, since dispatchConditionMet should 
    * always true first.
    * 
-   * @see dispatchConditionMet
-   * @see dispatchTasks
-   * @see alternateDispatchConditionMet
-   * @see alternateDispatch
+   * @see #dispatchConditionMet
+   * @see #dispatchTasks
+   * @see #alternateDispatchConditionMet
+   * @see #alternateDispatch
    * @param buffered tasks - tasks to check to see if we're ready
    *        also the tasks sent to dispatchTasks
    */

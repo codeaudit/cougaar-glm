@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
 import java.util.Date;
 
 /**
- * Creates asset from AggregateAsset xml node.
+ * Creates asset from AggregateAsset xml node. <p>
  *
  * Called from UTILLdmXMLPlugin.
  */
@@ -45,14 +45,13 @@ public class AggregateAssetParser{
   private static final boolean testing = false;
 
   /**
-   * This function is for use with the UTILLdmXMLPlugin.
+   * This function is for use with the UTILLdmXMLPlugin. <p>
    *
    * Insensitive to the case of the <aggregateasset> tag.  (So <AggregateAsset> is OK too.)
    *
    * @param ldmFactory - the factory to ask to create instances
    * @param node       - the AggregateAsset document node itself
    * @return an aggregate asset that corresponds to the node
-   * @see org.cougaar.lib.plugin.UTILLdmXMLPlugin#getAssets
    */
   public static AggregateAsset getAggregate(LDMServesPlugin ldm, Node node){
     AggregateAsset newAsset = null;

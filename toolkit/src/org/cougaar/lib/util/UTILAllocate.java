@@ -729,7 +729,7 @@ public class UTILAllocate {
    * @return boolean true if the allocation need to be rescinded
    *         Also returns false if there is no report alloc result
    *         attached to allocation
-   * @see #handleRescindedAlloc
+   * @see org.cougaar.lib.filter.UTILAllocatorPluginAdapter#handleRescindedAlloc
    * @see org.cougaar.lib.callback.UTILAllocationCallback#reactToChangedAlloc
    * @see org.cougaar.lib.util.UTILAllocate#makeAllocation
    */

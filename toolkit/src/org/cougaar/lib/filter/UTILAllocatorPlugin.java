@@ -29,11 +29,11 @@ import org.cougaar.lib.callback.UTILAssetListener;
  * and assets.  Subclasses must add what kind of workflow they're
  * interested in (single task or generic workflow filter callbacks).
  * 
- * UTILSimpleAllocatorPlugin    - single task workflow
- * UTILBufferingAllocatorPlugin - generic workflow
+ * UTILSingleTaskAllocatorPlugin - single task workflow
+ * UTILBufferingAllocatorPlugin  - generic workflow
  *
- * @see org.cougaar.lib.plugin.plugins.UTILSimpleAllocatorPlugin
- * @see UTILBufferingAllocatorPlugin
+ * @see UTILSingleTaskAllocatorPlugin
+ * @see UTILAllocatorPluginAdapter
  */
 
 public interface UTILAllocatorPlugin 

@@ -127,7 +127,7 @@ public interface UTILExpansionListener extends UTILFilterCallbackListener {
   /**
    * The plugin changes the expansion.
    *
-   * @see wantToChangeExpansion
+   * @see #wantToChangeExpansion
    * @param expansion to change
    */
   void changeExpansion(Expansion exp);
@@ -135,7 +135,7 @@ public interface UTILExpansionListener extends UTILFilterCallbackListener {
   /**
    * publish the change
    *
-   * @see wantToChangeExpansion
+   * @see #wantToChangeExpansion
    * @param expansion to change
    */
   void publishChangedExpansion(Expansion exp);

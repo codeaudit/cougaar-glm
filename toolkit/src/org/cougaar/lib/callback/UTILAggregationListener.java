@@ -79,7 +79,7 @@ public interface UTILAggregationListener extends UTILFilterCallbackListener {
    * @param alloc allocation to check for
    * @return boolean true if task needs to be rescinded
    * @see #handleRescindedAggregation
-   * @see tops.filterPlugins.TOPSAggregatorPluginAdapter#needToRescind
+   * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter#needToRescind
    */
   boolean needToRescind (Aggregation agg);
 

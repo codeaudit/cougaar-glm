@@ -46,6 +46,7 @@ import java.util.Iterator;
 
 
 /**
+ * <pre>
  * By default listens for all Assets (please override
  * createAssetCallback to make more specific).  
  * Also listens for allocations.
@@ -56,8 +57,8 @@ import java.util.Iterator;
  *
  * - processTasks
  * - handleFailedAggregation
+ * </pre>
  */
-
 public abstract class UTILAggregatorPluginAdapter 
 extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   protected UTILAggregationCallback getAggCallback    () { return myAggCallback; }
@@ -72,6 +73,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   protected UTILAssetCallback getAssetCallback    () { return myAssetCallback; }
 
   /**
+   * <pre>
    * Override to replace with a callback that has a different predicate
    * or different behaviour when triggered.
    *
@@ -80,14 +82,14 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * them, testing them with instanceof to get the assets we want.  We should
    * use a more specific callback filter/predicate.
    * 
-   * @see org.cougaar.lib.callback.UTILPhysicalAssetCallback
-   * @see org.cougaar.lib.callback.UTILNotOrganizationCallback
+   * </pre>
    */
   protected UTILAssetCallback createAssetCallback () { 
     return new UTILAssetCallback  (this); 
   } 
 
   /**
+   * <pre>
    * The idea is to add subscriptions (via the filterCallback), and when 
    * they change, to have the callback react to the change, and tell 
    * the listener (many times the plugin) what to do.
@@ -98,6 +100,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * By default adds asset callback and allocation callback after
    * creating them.
    *
+   * </pre>
    * @see #createAssetCallback
    * @see #createAggCallback
    */
@@ -135,10 +138,12 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
 
 
   /** 
+   * <pre>
    * Implemented for UTILBufferingPlugin
    *
    * Got an ill-formed task, now handle it, by
    * publishing a failed aggregation for the task.
+   * </pre>
    * @param t badly-formed task to handle
    */
   public void handleIllFormedTask (Task t) {
@@ -147,27 +152,30 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   }
 
   /**
+   * <pre>
    * Implemented for UTILAggregationListener
    *
    * OVERRIDE to see which task notifications you
    * think are interesting
    *
-   * By default, interested in tasks with TRANSPORT verbs
-   *
+   * By default, interested in all tasks.
+   * <pre>
    * @param t task to check for notification
    * @return boolean true if task is interesting
    * @see org.cougaar.planning.ldm.plan.Verb
    */
   public boolean interestingParentTask (Task t) { 
-    return true; //(t.getVerb().equals(Constants.Verb.TRANSPORT));
+    return true;
   }
 
 
   /**
+   * <pre>
    * Implemented for UTILAssetListener
    *
    * OVERRIDE to see which assets you
    * think are interesting
+   * </pre>
    * @param a asset to check for notification
    * @return boolean true if asset is interesting
    */
@@ -185,15 +193,18 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   public void handleNewAssets(Enumeration newAssets) {}
 
   /**
+   * <pre>
    * Place to handle changed assets.
    *
    * Does nothing by default.
    *
+   * </pre>
    * @param changedAssets changed assets found in the container
    */
   public void handleChangedAssets(Enumeration changedAssets) {}
 
   /**
+   * <pre>
    * Implemented for UTILAggregationListener
    *
    * define conditions for rescinding tasks.
@@ -201,6 +212,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * Only return true if the plugin can do something different 
    * with the task that failed.  See UTILAllocate.isFailedPE.
    *
+   * </pre>
    * @param alloc allocation to check for
    * @return boolean true if task needs to be rescinded
    * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter
@@ -211,10 +223,12 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   }
     
   /**
+   * <pre>
    * Implemented for UTILAggregationListener
    *
    * Updates and publishes allocation result of aggregation.
    *
+   * </pre>
    * @param aggregation to report
    */
   public void reportChangedAggregation(Aggregation agg) {
@@ -222,10 +236,12 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   }
 
   /**
+   * <pre>
    * What to do with a successful aggregation. 
    * 
    * Called after updateAllocationResult when needToRescind returns FALSE.
    *
+   * </pre>
    * @param agg the returned successful aggregation
    * @see #needToRescind
    * @see org.cougaar.lib.filter.UTILAggregatorPluginAdapter#needToRescind
@@ -234,6 +250,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   }
 
   /** 
+   * <pre>
    * Implemented for UTILAggregationListener
    *
    * Called when an aggregation is removed from the cluster.
@@ -244,15 +261,18 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * of assets, it should update them here.
    *
    * Does nothing by default.
+   * </pre>
    */
   public void handleRemovedAggregation (Aggregation agg) {}
 
   /** 
+   * <pre>
    * Remove aggregation from cluster's log plan
    *
    * Done by 
    *  1) publishRemove of aggregation
    *  2) publishChange of task
+   * </pre>
    * @param aggregation to remove
    */
   public void publishRemovalOfAggregation (Aggregation aggToRemove) {
@@ -262,6 +282,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   }
 
   /** 
+   * <pre>
    * Utility method for finding all resource assets. 
    *
    * In general, it would be better if plugins could use more
@@ -270,10 +291,9 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    *
    * At the very least, 
    * cluster assets can be divided between organizational assets
-   * and physical assets.  And getOrganizationalAssets () in UTILPlugin
-   * returns only org assets.
+   * and physical assets.
    *
-   * @see UTILPlugin#getOrganizationAssets ()
+   * </pre>
    * @return Enumeration of ALL assets found in container
    */
   protected final Iterator getAssets() {

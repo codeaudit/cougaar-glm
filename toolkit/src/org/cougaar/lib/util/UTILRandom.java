@@ -55,7 +55,7 @@ public final class UTILRandom extends Random {
 
     /** 
      * Pseudo-random number between 0 and range-1 
-     * @returns int, ArithmeticException if range is 0
+     * @return int, ArithmeticException if range is 0
      */
     public int randomInt(int range) { 
 	if(range == 0)
@@ -68,7 +68,7 @@ public final class UTILRandom extends Random {
 
     /** 
      * Filps a coin, true == head, false == tails 
-     * @returns boolean
+     * @return boolean
      */
     public boolean flipCoin(){
 	return(this.randomInt(2) == 1);
@@ -76,7 +76,7 @@ public final class UTILRandom extends Random {
 
     /** 
      * Computes a pseudo-random integer between min and max 
-     * @returns int, ArithmeticException is min > max
+     * @return int, ArithmeticException is min > max
      */
     public int randomInt(int min, int max) {
 	if(max < min)

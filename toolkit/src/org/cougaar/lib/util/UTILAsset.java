@@ -226,7 +226,7 @@ public class UTILAsset {
    * a task immediately previous (check_backwards is true) or after (false)
    * the time given in the RoleSchedule.
    * Do we need to check the role in this allocation as well?
-   * @returns null if no task found
+   * @return null if no task found
    */
   public static Task findClosestRoleScheduleTask(RoleSchedule rs, Date time, 
 						 boolean check_backwards) {

@@ -48,6 +48,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
+ * <pre>
  * By default listens for all Assets (please override
  * createAssetCallback to make more specific).  
  * Also listens for allocations.
@@ -58,10 +59,11 @@ import java.util.Vector;
  *
  * processTasks -- different for each plugin flavor
  *
+ * </pre>
  */
 
 public abstract class UTILAllocatorPluginAdapter 
-extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
+  extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
 
   /** Reads delayBeforeAllocRemoval from environment files. */
   public void getEnvData () {
@@ -72,6 +74,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /**
+   * <pre>
    * The idea is to add subscriptions (via the filterCallback), and when 
    * they change, to have the callback react to the change, and tell 
    * the listener (many times the plugin) what to do.
@@ -82,6 +85,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    * By default adds asset callback and allocation callback after
    * creating them.
    *
+   * </pre>
    * @see #createAssetCallback
    * @see #createAllocCallback
    */
@@ -124,6 +128,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   protected UTILAssetCallback getAssetCallback    () { return myAssetCallback; }
 
   /**
+   * <pre>
    * Override to replace with a callback that has a different predicate
    * or different behaviour when triggered.
    *
@@ -132,8 +137,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    * them, testing them with instanceof to get the assets we want.  We should
    * use a more specific callback filter/predicate.
    * 
-   * @see org.cougaar.lib.callback.UTILPhysicalAssetCallback
-   * @see org.cougaar.lib.callback.UTILNotOrganizationCallback
+   * </pre>
    */
   protected UTILAssetCallback createAssetCallback () { 
     return new UTILAssetCallback  (this); 
@@ -152,10 +156,12 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   } 
 
   /** 
+   * <pre>
    * Implemented for UTILBufferingPlugin
    *
    * Got an ill-formed task, now handle it, by
    * publishing a failed allocation for the task.
+   * </pre>
    * @param t badly-formed task to handle
    */
   public void handleIllFormedTask (Task t) {
@@ -164,10 +170,12 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /**
+   * <pre>
    * Implemented for UTILAllocationListener
    *
    * OVERRIDE to see which task notifications you
    * think are interesting
+   * </pre>
    * @param t task to check for notification
    * @return boolean true if task is interesting
    */
@@ -177,10 +185,12 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
 
 
   /**
+   * <pre>
    * Implemented for UTILAssetListener
    *
    * OVERRIDE to see which assets you
    * think are interesting
+   * </pre>
    * @param a asset to check for notification
    * @return boolean true if asset is interesting
    */
@@ -189,24 +199,29 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /**
+   * <pre>
    * Place to handle new assets.
    *
    * Does nothing by default.
    *
+   * </pre>
    * @param newAssets new assets found in the container
    */
   public void handleNewAssets(Enumeration newAssets) {}
 
   /**
+   * <pre>
    * Place to handle changed assets.
    *
    * Does nothing by default.
    *
+   * </pre>
    * @param newAssets changed assets found in the container
    */
   public void handleChangedAssets(Enumeration changedAssets) {}
 
   /**
+   * <pre>
    * Implemented for UTILAllocationListener
    *
    * Defines conditions for rescinding tasks.
@@ -232,6 +247,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    *
    * Called by UTILAllocationCallback.reactToChangedAlloc.
    *
+   * </pre>
    * @param alloc the allocation to check
    * @return boolean true if the allocation need to be rescinded
    *         Also returns false if there is no report alloc result
@@ -246,6 +262,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /**
+   * <pre>
    * Implemented for UTILAllocationListener
    *
    * Public version of publishRemove
@@ -255,6 +272,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    * FIXIT! -- if you remove the try-catch block, sometimes will see
    * reset claim exceptions.
    *
+   * </pre>
    * @param alloc Allocation to remove from cluster's memory
    * @see org.cougaar.lib.callback.UTILAllocationCallback#reactToChangedAlloc
    */
@@ -272,12 +290,14 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /**
+   * <pre>
    * Here is where subclasses can deal with tasks that were marked
    * in a previous cycle as tasks to handle later.
    *
    * Initially only used with rescinding allocations.
    *
    * Default is to do nothing.
+   * </pre>
    */
   protected void dealWithDelayedTasks (Vector nextCycleTasks) {
     for (int i = 0; i < nextCycleTasks.size (); i++) {
@@ -288,6 +308,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /**
+   * <pre>
    * Implemented for UTILAllocationListener
    *
    * Defines re-allocation of a rescinded task.  
@@ -306,6 +327,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    *
    * Does nothing by default.
    *
+   * </pre>
    * @param alloc the allocation that should be rescinded
    * @see UTILPluginAdapter#updateAllocationResult
    * @see UTILAllocationListener#updateAllocationResult
@@ -314,21 +336,21 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    */
   public boolean handleRescindedAlloc (Allocation alloc) {
     /*
-    if (myExtraOutput)
+      if (myExtraOutput)
       System.out.println(getName () + 
-			 " : handling rescinded allocation for task " +
-			 alloc.getTask ().getUID ());
-    if (myExtraOutput)
+      " : handling rescinded allocation for task " +
+      alloc.getTask ().getUID ());
+      if (myExtraOutput)
       System.out.println (getName () + " : waiting " +
-			  delayBeforeAllocRemoval/1000 + 
-			  " seconds after removing alloc for task " +
-			  alloc.getTask ().getUID () + 
-			  "\n\tnow " + new Date ());
-    try {
+      delayBeforeAllocRemoval/1000 + 
+      " seconds after removing alloc for task " +
+      alloc.getTask ().getUID () + 
+      "\n\tnow " + new Date ());
+      try {
       Thread.sleep (delayBeforeAllocRemoval);
-    } catch (Exception e) {}
+      } catch (Exception e) {}
 
-    if (myExtraOutput)
+      if (myExtraOutput)
       System.out.println ("\t resuming at " + new Date ());
     */
 
@@ -336,6 +358,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /**
+   * <pre>
    * Implemented for UTILAllocationListener
    *
    * Called automatically by the UTILAllocationCallback 
@@ -351,6 +374,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    *
    * Does nothing by default.
    *
+   * </pre>
    * @param alloc the allocation that was successful
    * @see UTILPluginAdapter#updateAllocationResult
    * @see UTILAllocationListener#updateAllocationResult
@@ -359,15 +383,16 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    */
   public void handleSuccessfulAlloc (Allocation alloc) {
     /*
-    if (myExtraExtraOutput)
+      if (myExtraExtraOutput)
       System.out.println(getName () + 
-			 " : handling successful allocation for task " +
-			 alloc.getTask ().getUID () + 
-			 " by doing nothing.");
+      " : handling successful allocation for task " +
+      alloc.getTask ().getUID () + 
+      " by doing nothing.");
     */
   }
 
   /** 
+   * <pre>
    * Called when an allocation is removed from the cluster.
    * I.e. an upstream cluster removed an allocation, and this 
    * rescind has resulted in this allocation being removed.
@@ -376,6 +401,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    * of assets, it should update them here.
    *
    * Does nothing by default.
+   * </pre>
    */
   public void handleRemovedAlloc (Allocation alloc) {
     if (myExtraOutput) {
@@ -388,6 +414,7 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
   }
 
   /** 
+   * <pre>
    * Utility method for finding all resource assets. 
    *
    * In general, it would be better if plugins could use more
@@ -396,11 +423,10 @@ extends UTILBufferingPluginAdapter implements UTILAllocatorPlugin{
    *
    * At the very least, 
    * cluster assets can be divided between organizational assets
-   * and physical assets.  And getOrganizationalAssets () in UTILPlugin
-   * returns only org assets.
+   * and physical assets. 
    *
-   * @see UTILPlugin#getOrganizationAssets ()
    * @return Enumeration of ALL assets found in container
+   * </pre>
    */
   protected final Iterator getAssets() {
     Collection assets = 
