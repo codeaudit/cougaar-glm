@@ -45,7 +45,7 @@ import org.cougaar.domain.planning.ldm.plan.TaskScoreTable;
    **/
 public class UTILAllocationResultAggregator implements AllocationResultAggregator, Serializable {
 
-  static final int[] _UTIL_ASPECTS = {0,1,2,3,4,5,6,7,8,9,10,11,12,13};
+  static final int[] _UTIL_ASPECTS = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
   public AllocationResult calculate(Workflow wf, TaskScoreTable tst, AllocationResult currentar) {
     double acc[] = new double[AspectType._ASPECT_COUNT+2];
     acc[START_TIME] = Double.MAX_VALUE;
@@ -59,6 +59,7 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
     acc[TOTAL_QUANTITY] = 0.0;
     acc[TOTAL_SHIPMENTS] = 0.0;
     acc[CUSTOMER_SATISFACTION] = 1.0; // start at best
+    acc[READINESS] = 1.0;
     acc[POD_DATE] = 0.0;
     acc[POD] = 0.0;
 
