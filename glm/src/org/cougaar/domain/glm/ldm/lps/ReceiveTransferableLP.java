@@ -1,10 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 
@@ -32,7 +32,7 @@ import org.cougaar.core.society.UID;
 /**
   * ReceiveTransferableLP Adds or modifies transferables to cluster
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: ReceiveTransferableLP.java,v 1.3 2001-03-28 15:45:37 ngivler Exp $
+  * @version $Id: ReceiveTransferableLP.java,v 1.4 2001-04-05 19:27:37 mthome Exp $
   **/
 
 public class ReceiveTransferableLP extends LogPlanLogicProvider implements MessageLogicProvider

@@ -1,10 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 
@@ -33,7 +33,7 @@ import java.util.Iterator;
  * </PRE>
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: XMLPolicyPlugIn.java,v 1.4 2001-02-07 19:00:26 ngivler Exp $
+ * @version  $Id: XMLPolicyPlugIn.java,v 1.5 2001-04-05 19:27:52 mthome Exp $
  */
 public class XMLPolicyPlugIn extends SimplePlugIn
 {

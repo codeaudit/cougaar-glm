@@ -1,9 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN)  Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 
@@ -18,7 +19,7 @@ import org.cougaar.util.UnaryPredicate;
   * 
   *
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: QueryRequest.java,v 1.2 2001-03-22 14:13:48 ngivler Exp $
+  * @version $Id: QueryRequest.java,v 1.3 2001-04-05 19:27:42 mthome Exp $
   */
 public interface QueryRequest {
   

@@ -1,18 +1,18 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 // **********************************************************************
 // 
 // $Source: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/debug/ui/draw/Attic/DrawUtil.java,v $
 // $RCSfile: DrawUtil.java,v $
-// $Revision: 1.1 $
-// $Date: 2000-12-15 20:17:44 $
+// $Revision: 1.2 $
+// $Date: 2001-04-05 19:27:47 $
 // $Author: mthome $
 // 
 // **********************************************************************

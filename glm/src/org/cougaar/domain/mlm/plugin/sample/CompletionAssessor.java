@@ -1,10 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 package org.cougaar.domain.mlm.plugin.sample;
@@ -43,7 +43,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
 
 /**
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: CompletionAssessor.java,v 1.1 2000-12-15 20:17:45 mthome Exp $
+ * @version      $Id: CompletionAssessor.java,v 1.2 2001-04-05 19:27:54 mthome Exp $
  */
 
 public class CompletionAssessor extends SimplePlugIn

@@ -1,3 +1,12 @@
+/*
+ * <copyright>
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
+ * </copyright>
+ */
 package org.cougaar.domain.mlm.ui.tpfdd.transit;
 import java.util.*;
 import java.io.Serializable;
@@ -11,7 +20,7 @@ import org.cougaar.domain.mlm.ui.tpfdd.transit.Chronicle.Frame;
  * Holds a Chronicle of data about the flow of a Assets
  *
  * @author Benjamin Lubin; last modified by $Author: mthome $
- * @version $Revision: 1.1 $; Last modified on $Date: 2000-12-15 20:17:47 $
+ * @version $Revision: 1.2 $; Last modified on $Date: 2001-04-05 19:28:16 $
  * @since 12/01/00
  */
 public class AssetFlowChronicle extends AssetClassChronicle{

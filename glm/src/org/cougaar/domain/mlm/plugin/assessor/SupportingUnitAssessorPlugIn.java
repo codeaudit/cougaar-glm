@@ -1,10 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1999-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 
@@ -42,7 +42,7 @@ import org.cougaar.domain.glm.ldm.asset.Organization;
  * an Report if one is added/modified/deleted.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version $Id: SupportingUnitAssessorPlugIn.java,v 1.2 2000-12-20 18:18:40 mthome Exp $ */
+ * @version $Id: SupportingUnitAssessorPlugIn.java,v 1.3 2001-04-05 19:27:48 mthome Exp $ */
 
 public class SupportingUnitAssessorPlugIn extends SimplePlugIn {
 
