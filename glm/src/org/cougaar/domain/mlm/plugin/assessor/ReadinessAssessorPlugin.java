@@ -466,6 +466,9 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  case AspectType.POD :
 	    //ignore;
 	    break;
+	  case AlpineAspectType.DEMANDMULTIPLIER :
+	    //ignore;
+	    break;
 	  case AlpineAspectType.DEMANDRATE : 
 	    rate = avs[i].getValue();
 	    if (!ar.isSuccess()) {
