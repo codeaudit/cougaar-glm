@@ -18,9 +18,6 @@
  *  PERFORMANCE OF THE COUGAAR SOFTWARE.
  * </copyright>
  */
-
-
-
 package org.cougaar.domain.mlm.ui.psp.naming;
 
 

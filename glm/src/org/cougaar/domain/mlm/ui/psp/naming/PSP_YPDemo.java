@@ -82,59 +82,6 @@ class QueryObject {
 }
 
 
-//###########################################################################
-//###########################################################################
-//###########################################################################
-//
-// Session object - manages state at LogPlanServer with respect to
-// "session transcript".   Sessions are on a per Agent basis.
-// Meaning that there is no centralized "global session" represetnation (ahem
-// cookies next time?) across a society of Agents.
-//
-class YPDemoSession
-{
-     public final String SESSION_TRANSCRIPT_HEADERS_COLOR = "009933";
-
-     // transcript = formatted HTML text
-     private StringBuffer transcript = new StringBuffer();
-     public QueryObject qobject = null;
-     public StringBuffer buffer = new StringBuffer();
-
-     // append entry to session transcript
-     public void add(String entry){
-          buffer.append(entry);
-     }
-     public void addHeader(String entry){
-          add(createHeaderToSessionTranscript(entry) );
-     }
-
-     public void doPrepend(){
-          transcript.insert(0,buffer.toString());
-          buffer = new StringBuffer();
-     }
-     public void doAppend() {
-          transcript.append(buffer.toString());
-          buffer = new StringBuffer();
-     }
-
-     public String getTranscript(){
-          return transcript.toString();
-     }
-
-     public int getTranscriptLength() {
-          return transcript.length();
-     }
-
-   private String createHeaderToSessionTranscript(String header)
-   {
-       String ret = new String("<TABLE WIDTH=\"100%\" ><TR><TD  BGCOLOR=" +  SESSION_TRANSCRIPT_HEADERS_COLOR
-              + " COLOR=RED>"
-              + "<FONT COLOR=white>"
-              + header + "</FONT></TD></TR></TABLE>");
-       return ret;
-   }
-
-}
 
 
 
@@ -399,26 +346,9 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
        String decodedpost = URLDecoder.decode(post);
        System.out.println("DECODED POST="+  decodedpost);
 
-       /**
-       //---------------------------------------------
-       String tag1 = "offtimeout=";
-       int ind1 = post.indexOf(tag1);
-       if( ind1 > -1 ) {
-           System.out.println("[processFormPOST] offtimeout =true");
-       }
-       else  {
-           System.out.println("[processFormPOST] offtimeout =false, ind1=" + ind1);
-       }
-       //---------------------------------------------
-       String tag2 = "refuseexternalcons=";
-       int ind2 = post.indexOf(tag2);
-       if( ind2 > -1 ) {
-           System.out.println("[processFormPOST] refuseexternalcons =true");
-       }
-       else  {
-           System.out.println("[processFormPOST] refuseexternalcons =false, ind2=" + ind2);
-       }
-       **/
+       //
+       // Parse and interpet return checked fields...
+       //
        Hashtable nameAttrs = new Hashtable(); // Values are Vectors of attributes associated with named obj
 
        int idx0=0;
