@@ -19,6 +19,7 @@ package org.cougaar.domain.glm.plugins.inventory;
 
 import org.cougaar.*;
 import org.cougaar.core.cluster.*;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.domain.planning.ldm.*;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.*;
@@ -41,12 +42,14 @@ import org.cougaar.domain.glm.ldm.asset.ProjectionWeight;
  *  the closest supplier.
  */
 public abstract class GeneralInventoryManager extends InventoryManager {
+    public final int REFILL_ALTER_TASK = 0;
+    public final int REFILL_REPLACE_TASK = 1;
+    public final int REFILL_ADD_TASK = 2; // This one doesn't work. Don't use it.
+    public final int REFILL_CHANGE_METHOD = REFILL_REPLACE_TASK;
+    
     protected IncrementalSubscription refillAllocs_ = null;
     protected NewTask defaultSupplyTask = 
 	(NewTask)buildNewTask(null,Constants.Verb.SUPPLY,null);
-
-    public static final double GOAL_LEVEL_BOOST_CAPACITY_FACTOR=1.1;
-
 
     /** Constructor */
     public GeneralInventoryManager(InventoryPlugIn plugin, Organization org, String type)
@@ -76,65 +79,85 @@ public abstract class GeneralInventoryManager extends InventoryManager {
     //                                                        *
     // ********************************************************
 
-
-    protected boolean needUpdate() {
-    
-	boolean failed_refill = updateAllocations();
-	boolean refill_changed = refillAllocs_.getChangedList().hasMoreElements(); 
-	boolean inventory_changed = modifiedInventorySubscription_.getChangedList().hasMoreElements();
-	boolean inventory_policy_changed =
-            updateInventoryPolicy(inventoryPolicySubscription_.getAddedList()) ||
-            updateInventoryPolicy(inventoryPolicySubscription_.getChangedList());
-
+    // RJB changed
+    protected Set needUpdate(Set invSet) {
+	if (invSet == null) invSet = new HashSet();
+	// Determine if this inventory processor needs to run
+	// return a set of changed inventories to re-process
+	boolean refill_changed = checkRefills(refillAllocs_, invSet);
+	boolean inventory_changed = checkInventories(modifiedInventorySubscription_.getChangedList(), invSet);
+	boolean inventory_policy_changed = checkInventoryPolicies(inventoryPolicySubscription_, 
+								  modifiedInventorySubscription_.elements(), invSet);
+            
 	// Allocations of tasks with quantity > 0 to Inventory objects
 	// inventoryAllocSubscription_ only used to determine when to run processor.
 	// Inventory objects held in the plugin.
-	boolean allocatedInventories = inventoryPlugIn_.isSubscriptionChanged(inventoryAllocSubscription_);
-	//  	printDebug("allocatedInventories: "+allocatedInventories);
-	if(allocatedInventories){
- 	    printLog("<"+supplyType_+"> UPDATING INVENTORIES due to changed Inventory allocations.");
-	}
+	boolean allocatedInventories = checkInventoryAllocations(inventoryAllocSubscription_, invSet);
 
-	return failed_refill || refill_changed  || allocatedInventories || inventory_changed
-            || inventory_policy_changed;
+	if (refill_changed  || allocatedInventories || inventory_changed || inventory_policy_changed) {
+            String prefix = "<" + supplyType_ + "> UPDATING INVENTORIES: ";
+ 	    if (refill_changed          ) printLog(prefix + "refill changed.");
+ 	    if (allocatedInventories    ) printLog(prefix + "allocations added/removed.");
+ 	    if (inventory_changed       ) printLog(prefix + "inventory changed.");
+ 	    if (inventory_policy_changed) printLog(prefix + "inventory policy changed.");
+        }
+        return invSet;
     }
 
+    private boolean checkRefills(IncrementalSubscription refillAllocs, Set invSet) {
+        Enumeration refills = refillAllocs.getChangedList();
+	boolean changed = false;
+	while (refills.hasMoreElements()) {
+            Allocation alloc = (Allocation) refills.nextElement();
+            Set changes = refillAllocs.getChangeReports(alloc);
+            if (TaskUtils.checkChangeReports(changes, PlanElement.EstimatedResultChangeReport.class)) {
+                Task refill = alloc.getTask();
+                invSet.add(refill.getPrepositionalPhrase(Constants.Preposition.MAINTAINING).getIndirectObject());
+                changed = true;
+            }
+        }
+	return changed;
+    }
 
-    // Updates the alloc result on changed refill allocations.
-    // This passes the alloc result up the chain (probably not necessary)
-    // returns true if any of the new alloc results have failed.
-    protected boolean updateAllocations() {
-	int num_pub = 0;
-	PlanElement pe;
-	Task task;
-	boolean failed_refill = false;
+    private boolean checkInventories(Enumeration changedInventories, Set invSet) {
+	boolean changed = changedInventories.hasMoreElements();
+	while (changedInventories.hasMoreElements()) {
+	    invSet.add((Inventory) changedInventories.nextElement());
+	}
+	return changed;
+    }
 
-	Enumeration allocs = refillAllocs_.getChangedList();
-	while (allocs.hasMoreElements()) {
-	    pe = (PlanElement)allocs.nextElement();
-	    task = pe.getTask();
-	    // 	    printDebug("updateAllocation: "+pe+"  task:"+task);
-	    AllocationResult rep_res = pe.getReportedResult();
-	    
-	    // Debug for finding two week intervals on alloc results
-	    // if (rep_res != null) {
-	    //   printLog("updateAllocations() ReportedResult start:"+new Date((long)getStartTime(rep_res)) +
-	    //            " end:"+ new Date((long)getEndTime(rep_res))+ "task:"+TaskUtils.taskDesc(task));
-	    //  		}
-	    if ((rep_res != null) &&(!rep_res.equals(pe.getEstimatedResult()))) { 
-		updateAllocationResult(pe);
-		if (!rep_res.isSuccess()) {
-		    failed_refill = true;
-		    // reorder failure - do something....
-		    printDebug("<"+supplyType_+"> Failed allocation. Requested:"+
-			       TaskUtils.taskDesc(task)+", got"+arDesc(rep_res));
-		}
+    private boolean checkInventoryPolicies(IncrementalSubscription policySubscription, Enumeration inventories, Set invSet) {
+	boolean changed = updateInventoryPolicy(policySubscription.getAddedList()) ||
+            updateInventoryPolicy(policySubscription.getChangedList());
+	if (changed) {
+	    while (inventories.hasMoreElements()) {
+		invSet.add((Inventory) inventories.nextElement());
 	    }
 	}
-	return failed_refill;
+	return changed;
     }
 
-
+    private boolean checkInventoryAllocations(IncrementalSubscription invAllocSubscription, Set invSet) {
+	boolean changed = false;
+        if (invAllocSubscription.hasChanged()) {
+            Enumeration allocs = invAllocSubscription.getAddedList();
+            while (allocs.hasMoreElements()) {
+                Allocation alloc = (Allocation) allocs.nextElement();
+                if (!inventoryPlugIn_.hasSeenAllConsumers()) {
+                    inventoryPlugIn_.recordCustomerForTask(alloc.getTask());
+                }
+                invSet.add(alloc.getAsset());
+                changed = true;
+            }
+            allocs = invAllocSubscription.getRemovedList();
+            while (allocs.hasMoreElements()) {
+                invSet.add(((Allocation) allocs.nextElement()).getAsset());
+                changed = true;
+            }
+        }
+	return changed;
+    }
 
     // ********************************************************
     //                                                        *
@@ -142,271 +165,188 @@ public abstract class GeneralInventoryManager extends InventoryManager {
     //                                                        *
     // ********************************************************
 
-    protected void generateHandleDueIns() {
-    	printDebug("Step 3: generateHandleDueIns()");
-	addPreviousRefills();
-	boolean allocatedInventories = inventoryPlugIn_.isSubscriptionChanged(inventoryAllocSubscription_);
-	// Execution requires this to be done whenever we run
-	refillInventories();
-    }
-
     // Refill Inventories
 
     protected void refillInventories() {
-    	printDebug(1,"Refillinventories() Start");
-//       	printInventoryBins();
-	// notice low and high levels resulting from this allocation
-	Inventory inventory;
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
-//  	printDebug(1,"<"+supplyType_+"> refillInventories()");
-	while (inventories.hasMoreElements()) {
-	    inventory = (Inventory)inventories.nextElement();
-	    InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-	    invpg.determineInventoryLevels();
-	    // Start on the first day of inventory activity if the activity starts in the future
-	    // otherwise start planning today
-	    int day = invpg.getFirstPlanningDay();
- 	    int today = invpg.getToday();
-	    if (day < (today+getOrderShipTime())) {
-		day = today+getOrderShipTime();
-	    }
-	    while ((day = refillInventory(inventory,day)) != DONE) {
-// 		invpg.determineInventoryLevels();
-	    }
-
-//  	    if (isBattalionLevel()){
-//  		printDebug(1,"After refillInventories");
-//  		printInventory(inventory,invpg.getAllDueIns());
-//  	    }
-	    //      	    invpg.printInventoryLevels(inventory, clusterId_);
-	    
-	}
+        // Done as part of adjustForInadequateInventory
     }
 
-    protected int refillInventory(Inventory inventory, int startDay) {
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-//    	printDebug(1,"refillInventory on day "+startDay+" for inventory: "+AssetUtils.assetDesc(invpg.getResource()));
-	int day = refillNeeded(inventory, startDay);
-	if (day == DONE) {
-	    return DONE;
-	}
-	int nRefills = 0;
-	defaultSupplyTask.setDirectObject(invpg.getResource());
-	Task task = (Task)defaultSupplyTask;
-	Task refill;
-	if((refill = invpg.refillAlreadyFailedOnDay(day)) != null) {
-	    // Really, really don't like this, ask Rusty
-	    day = getPolicyForNextReorderDay(refill, day, inventory);
-	    printDebug(1,"refillInventory already failed, next day to look at is "+day);
-	} else if ((invpg.getProjectionWeight().getProjectionWeight(task,day - invpg.getToday())) <=0.0){
-	    // This test is to avoid generating refill SUPPLY tasks for times when the system
-	    //  will ignore their effect on inventory
-	    printDebug(1,"refillInventory asked to look beyond requisition window");
-	    return DONE;
-	} else {
-//  	    printDebug(1,"orderRefill for "+inventoryDesc(inventory)+" on day "+day);
-	    Task refillTask = orderRefill(inventory, day);
-	    if(refillTask!=null){
-		invpg.determineInventoryLevels();
-//  		invpg.printInventoryLevels(inventory, clusterId_);
-		//to see inventory printLog(date.getTime()+" refilling leaves: "+invLevel+" at: "+ inventory.getUID()+"\n");
-	    }
-	    // Increment the day, done
-	    day++;
-//  	    printDebug(1,"refillInventory ordered refill, moving to day: "+day);
-	}
-//  	printDebug(1, "<"+supplyType_+"> Sending "+nRefills+" refill orders");
-	return day;
-    }
 
-    // If we have to refill the inventory on a given day -- how
-    //  high do we fill it?
-    protected double getGoalLevel(Inventory inventory, int day) {
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-	if(invpg.getFillToCapacity()) {
-	    return convertScalarToDouble(invpg.getCapacity());
-	} else {
-	    double goal_level= goalLevelMultiplier_*getReorderLevel(inventory,day);
-	    double capacity = convertScalarToDouble(invpg.getCapacity());
- 	    printDebug("InventoryManager, getGoalLevel(), goal level: "+goal_level+", capacity: "+capacity);
-
-	    if (goal_level > capacity) {
-	        double newCapVal = 
-		    goal_level*GOAL_LEVEL_BOOST_CAPACITY_FACTOR;
-		Scalar newCapacity = 
-		    newScalarFromOldToDouble(invpg.getCapacity(),newCapVal);
-
-		TypeIdentificationPG typePG= 
-		    inventory.getScheduledContentPG().getAsset().getTypeIdentificationPG();
-
-		String assetName = typePG.getNomenclature();
-		String assetID = typePG.getTypeIdentification();
-
-		GLMDebug.DEBUG(className_, clusterId_, "GeneralInventoryManager::getGoalLevel():WARNING::GOAL LEVEL EXCEEDS CAPACITY on INVENTORY FOR ASSET: " + assetName + ":" + assetID + " - UPPING THE CAPACITY ABOVE THE GOAL LEVEL TO: " + newCapVal +".  Should adjust capacity in inv file or goal level (DaysOnHand file) accordingly.");
-
-		((NewInventoryPG)invpg).setCapacity(newCapacity);
-
-		// MWD took out below -- instead of truncating goal to below
-		// capacity now upping the capacity to be able to contain the 
-		// goal level (above) !!
-	        //goal_level = capacity;
-	    }
-	    return goal_level;
-	}
-    }
-
-    // Refill has already failed for this day, try again?  Give up?
-    protected abstract int getPolicyForNextReorderDay(Task refill, int day, Inventory inv);
-
-    /** Generate a refill order to replenish the item in storage,
-     *  assuming we already have determined we have at least an
-     *  Economic Reorder Quantity. Allocate task to provider Org. */
-    protected Task orderRefill(Inventory inventory, int day) {
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-	Date date = new Date(TimeUtils.addNDays(invpg.getStartTime(), day));
+    /**
+     * Generate a refill order to replenish the item in storage,
+     * assuming we already have determined we have at least an
+     * Economic Reorder Quantity. Allocate task to provider Org.
+     * @return true if an order was placed or changed
+     **/
+    protected boolean orderRefill(Inventory inventory, int day) {
+	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
 	double currentInventory = convertScalarToDouble(invpg.getLevel(day));
-	double goal_level = getGoalLevel(inventory,day);
-
+	double goal_level = invpg.getGoalLevel(day);
 	double refill_qty = goal_level - currentInventory;
+        double reorder_level = invpg.getReorderLevel(day);
 
+        defaultSupplyTask.setDirectObject(invpg.getResource());
+        if (invpg.getProjectionWeight().getProjectionWeight(defaultSupplyTask, invpg.getImputedDay(day)) <= 0.0) {
+  	    // This test is to avoid generating refill SUPPLY tasks for times when the system
+  	    //  will ignore their effect on inventory
+            return false;       // Can't do a refill
+        }
 
-	if(!invpg.getFillToCapacity()) {
+	if (!invpg.getFillToCapacity()) {
 	    // ** THIS IS A KLUDGE FOR SUBSISTENCE -- WITHOUT IT WE FAIL THE FIRST ORDER.
 	    //    SHOULDN'T HAPPEN LIKE THAT -- FIX ASAP -- RUSTY AND AMY!!
-  	    refill_qty = refill_qty*1.3;
+//    	    refill_qty = refill_qty*1.3;
 	    // *** KLUDGE ********
 	}
 
-
-	//  	if (isBattalionLevel()){
-	//  	    printLog("orderRefill day "+day+"("+TimeUtils.dateString(date)+") level: current= "+currentInventory+ " goal = "+ goal_level);
-	//  	}
-	if (refill_qty > 0 ) {
-	    Task task = null;	    
-	    Task prev_refill = invpg.getRefillOnDay(day);
-	    if(prev_refill!=null) {
-		return orderRefillWithPrevious(inventory, day, invpg,date,currentInventory,goal_level,refill_qty);
+        boolean isCount = invpg.getCapacity() instanceof Count;
+	if (refill_qty > 0.0) {
+            if (isPrintConcise()) {
+                printConcise("orderRefill goal=" + goal_level
+                             + " reorder level=" + reorder_level
+                             + " current level=" + currentInventory);
+            }
+	    Task task = null;
+	    Task prev_refill = invpg.refillAlreadyFailedOnDay(day);
+            if (prev_refill != null) {
+                double min_qty = reorder_level - currentInventory;
+                if (min_qty <= 0.0) { // Refill unneeded
+                    min_qty = 1e-10;
+//                      invpg.removeDueIn(prev_refill);
+//                      plugin_.publishRemoveFromExpansion(prev_refill);
+//                      return true;
+                }
+                double prev_qty = TaskUtils.getQuantity(prev_refill);
+                if (isCount) min_qty = Math.ceil(min_qty);
+                if (min_qty < prev_qty) {
+                    refill_qty = min_qty; // Retry the refill with the min needed
+                } else {
+                    return false; // Can't refill on this day.
+                }
+            } else {
+                prev_refill = invpg.getRefillOnDay(day);
+            }
+            if (isCount) {
+                refill_qty=java.lang.Math.ceil(refill_qty);
+            }
+	    if(prev_refill != null) {
+		return orderRefillWithPrevious(inventory, day, invpg, refill_qty);
 	    } else {
-		if (invpg.getCapacity() instanceof Count) {
-		    refill_qty=java.lang.Math.ceil(refill_qty);
-		}
-		task = createRefillTask(inventory, refill_qty,  TimeUtils.addNDays(invpg.getStartTime(), day));
-		//  		printDebug(1,"GeneralInventoryManager, orderRefill(), day is "+day+"for "+TaskUtils.taskDesc(task));		
-
-		// FIX ME - sets to today??? check dates.
-		// 	task.setCommitmentDate(date);
-		//      		printDebug(1,"orderRefill task:"+TaskUtils.taskDesc(task));
-		Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
-		plugin_.publishAddToExpansion(parentTask, task);
-		invpg.addDueIn(task);
+                return orderNewRefill(inventory, day, invpg, refill_qty);
 	    }
-	    //to see inventory 
-	    //  	if (isBattalionLevel()){
-	    //    	    printLog("Refill " //+ inventory.getUID() + " with= "
-	    //  		     + TaskUtils.taskDesc(task));
-	    //  	}
-	    //   	    printLog("Refill: " + TaskUtils.taskDesc(task));
-	    return task;
 	} else {
 	    printLog("OrderRefill qty < 0: "+refill_qty+" = "+goal_level+" - "+currentInventory);
-	    return null;
 	}
+        return true;
     }
 
-    protected Task orderRefillWithPrevious(Inventory inventory, int day, InventoryPG invpg, Date date,
-					   double currentInventory, double goal_level,
-					   double refill_qty){
+    protected boolean orderNewRefill(Inventory inventory,
+                                     int day,
+                                     InventoryPG invpg,
+                                     double refill_qty)
+    {
+        long time = invpg.convertDayToTime(day);
+        Task task = createRefillTask(inventory, refill_qty,  time);
+        // FIX ME - sets to today??? check dates.
+        // 	task.setCommitmentDate(date);
+        //      		printDebug(1,"orderRefill task:"+TaskUtils.taskDesc(task));
+        Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
+        plugin_.publishAddToExpansion(parentTask, task);
+        if (isPrintConcise()) {
+            printConcise("orderNewRefill() "
+                         + task.getUID()
+                         + " "
+                         + refill_qty
+                         + " on "
+                         + TimeUtils.dateString(invpg.convertDayToTime(day))
+                         );
+        }
+        invpg.addDueIn(task);
+        return true;
+    }
 
-	//   		printDebug(1,"orderRefill with previous on day: "+day+
-	//  			   " current= "+currentInventory+ " goal_level = "+ goal_level);
-	Task task = null;	    
-	Task prev_refill = invpg.getRefillOnDay(day);
-	Allocation alloc =(Allocation)prev_refill.getPlanElement();
-	AllocationResult report = null;
-
-	if(alloc!=null) {
-	    report = alloc.getReportedResult();
+    /**
+     * Modify an existing refill task if possible to increase the
+     * refill as indicated. If the previous refill has failed we don't
+     * expect an additional refill to succeed, but if the new amount
+     * is smaller than the previous one, then it might succeed so we go
+     * ahead with the change. Otherwise, we increase the amount of the
+     * existing refill (or replace with a larger refill, or add an
+     * additional refill depending on REFILL_CHANGE_METHOD).
+     * Note -- This routine is actually never called with a failed
+     * refill on day (See refillInventory).
+     * @param inventory the Inventory -- not used
+     * @param day the day of the refill
+     * @param invpg the InventoryPG of the inventory.
+     * @param date -- not used
+     * @param currentInventory -- not used
+     * @param goal_level -- not used
+     * @param refill_qty the amount needed to be added to the inventory
+     **/
+    protected boolean orderRefillWithPrevious(Inventory inventory,
+                                              int day,
+                                              InventoryPG invpg,
+                                              double refill_qty)
+    {
+	Task refill_task = invpg.getRefillOnDay(day);
+        double prev_qty = TaskUtils.getQuantity(refill_task);
+        boolean failed = false;
+	Allocation alloc = (Allocation) refill_task.getPlanElement();
+	if (alloc != null) {
+            AllocationResult report = alloc.getReportedResult();
+            if (report != null) {
+                failed = !report.isSuccess();
+            }
+        }
+	if (failed) {
+            if (prev_qty <= refill_qty) {
+		System.out.println("Known failed refill: "+TaskUtils.taskDesc(refill_task));
+//  		printLog("Known failed refill: "+TaskUtils.taskDesc(refill_task));
+		return false;
+	    } // If quantity reduced make the change
 	}
-	if (report!=null) {
-	    if (!report.isSuccess()){
-		printLog("Known failed refill: "+TaskUtils.taskDesc(prev_refill));
-		return null;
-	    } else {
-		// check if the refill came too late....
-		if (TaskUtils.getRefillTime(prev_refill) > TaskUtils.getEndTime(prev_refill)) {
-		    printDebug(0,"previous refill succeeded too late: "+
-			       TaskUtils.taskDesc(prev_refill)+
-			       " to fill: " +refill_qty);
-		    if (TaskUtils.getQuantity(prev_refill) >= refill_qty) {
-				// the refill would have been enough 
-			printDebug(0,"NO REFILL!");
-			return null;
-		    } 
-		} else {
-		    // previous refill already added to inventory, need increase 
-		    // requested amount by the old plus the new 
-		    printDebug(0,"Previous refill already added to the inventory on the right date, still need more");
-		    refill_qty += TaskUtils.getQuantity(prev_refill);
-		}
-	    }
-	} else if (TaskUtils.getQuantity(prev_refill) >= refill_qty) {
-	    printDebug(0,"NEW POLICY- DON'T LOWER PREVIOUS ORDER -- NO REFILL!");
-	    return null;
-	}
-
 	// Send orders for whole items, i.e. do not order 0.5 O-rings
 	if (invpg.getCapacity() instanceof Count) {
-	    if(refill_qty<1.0){
-		return null;
-	    } else {
-		refill_qty=java.lang.Math.ceil(refill_qty);
-		if (refill_qty == 0)
-		    return null;
-	    }
-	}
-	printDebug(1, "Refill Quantity is: "+refill_qty);
-	task = createRefillTask(inventory, refill_qty, TimeUtils.addNDays(invpg.getStartTime(), day));
-	// if prev_refill!= null, and we have no reported failure, then we
-	//  should modify this refill task
+            refill_qty = java.lang.Math.ceil(refill_qty);
+        }
 
-	printLog("Replacing: "+TaskUtils.taskDesc(prev_refill)+" by: "+
-		 TaskUtils.taskDesc(task));
-	plugin_.publishRemoveFromExpansion(prev_refill);
-	invpg.removeDueIn(prev_refill);
-	Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
-	plugin_.publishAddToExpansion(parentTask, task);
-	invpg.addDueIn(task);
-	return task;
+        if (isPrintConcise()) {
+            printConcise("orderRefillWithPrevious() "
+                         + refill_task.getUID()
+                         + " "
+                         + prev_qty
+                         + "-->"
+                         + refill_qty
+                         + " on "
+                         + TimeUtils.dateString(invpg.convertDayToTime(day))
+                         );
+        }
+	invpg.removeDueIn(refill_task);
+        switch (REFILL_CHANGE_METHOD) {
+        case REFILL_ALTER_TASK:
+            /* Change the quantity preference on the existing task.
+               refill_qty is the additional amount needed, prev_qty is
+               the effective quantity of the current task. */
+            if (!failed) refill_qty += prev_qty;
+            Preference qpref = createRefillQuantityPreference(refill_qty);
+            ((NewTask) refill_task).setPreference(qpref);
+            PlanElement pe = refill_task.getPlanElement();
+            if (pe != null) {
+                pe.setEstimatedResult(createEstimatedAllocationResult(refill_task));
+            }
+            delegate_.publishChange(refill_task);
+            invpg.addDueIn(refill_task);
+            return true;
+        case REFILL_REPLACE_TASK:
+            if (!failed) refill_qty += prev_qty;
+            plugin_.publishRemoveFromExpansion(refill_task);
+            return orderNewRefill(inventory, day, invpg, refill_qty);
+        case REFILL_ADD_TASK:
+            invpg.addDueIn(refill_task);
+            return orderNewRefill(inventory, day, invpg, refill_qty);
+        }
+        return false;
     }
-
-
-
-    protected int refillNeeded(Inventory inventory, int startDay) {
-	// 	printInventory(inventory,null);
-	boolean needed = false;
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-	int days = invpg.getPlanningDays();
-// 	printDebug(1, "InventoryManager, refillNeeded(), current day: "+startDay+", planning days :"+ days);
-	for (int day = startDay; day < days; day++) {
-//  	    double qty = java.lang.Math.ceil(convertScalarToDouble(invpg.getLevel(day)));
-
-	    // WHY DO WE TAKE A CEIL??
-	    double qty = convertScalarToDouble(invpg.getLevel(day));
-
-	    // reorder level depends on day, now, since it is often N days of supply
-	    double reorder_level = getReorderLevel(inventory,day);
-	    if (qty < reorder_level) {
-//   		printDebug(1,inventoryDesc(inventory)+" needs refill on day: "+day+
-//   			   " level= "+qty+" reorder_level="+reorder_level);
-                return day;
-	    } else {
-// 		printDebug(1,inventoryDesc(inventory)+" doesn't need refill on day"+i+
-// 			   ", level= "+qty+" reorder_level="+reorder_level);
-	    }
-	}
-        return DONE;
-    }
-
    
     // ********************************************************
     //                                                        *
@@ -415,39 +355,15 @@ public abstract class GeneralInventoryManager extends InventoryManager {
     // ********************************************************
 
     protected void adjustWithdraws() {
-	boolean refill_changed = refillAllocs_.getChangedList().hasMoreElements(); 
-
-	if (true || refill_changed) {
-	    adjustForInadequateInventory();
-	    passPreviouslyFailedDueOuts();
-	}
+	adjustForInadequateInventory();
+	passPreviouslyFailedDueOuts();
     }
 
     // Pass Previously Failed Dueouts
 
     protected void passPreviouslyFailedDueOuts() { 
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
-	printDebug("PassPreviouslyFailedDueOuts()");
-	Inventory inventory;
-	InventoryPG invpg;
-	while (inventories.hasMoreElements()) {
-	    inventory = (Inventory)inventories.nextElement();
-	    invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-	    Vector dueouts = invpg.getPreviouslyFailedDueOuts();
-	    Enumeration e = dueouts.elements();
-	    DueOut dueout;
-	    Task task;
-	    while (e.hasMoreElements()) {
-		dueout = (DueOut)e.nextElement();
-		// If it was filled this time then change allocation result
-		if (dueout.getFilled()) {
-		    task = dueout.getTask();
-		    printDebug(1, "passPreviouslyFailedDueOuts "+TaskUtils.taskDesc(task)+" didn't fail this run");
-		    // triggers SupplyInventoryAllocator to re allocate this task
-		    publishChangeTask(task);
-		}
-	    }
-	}
+        // The work formerly done by this method is now subsumed by
+        // updateDueOutAllocations()
     }
 
     // ********************************************************
@@ -505,27 +421,10 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	return daysOnHand_;
     }
 
-
-
-
-    protected void addStartEndTimePref(NewTask task, Task parent_task) {
-	
-	long parent_end = TaskUtils.getEndTime(parent_task);
-	 // allow for transportation time
-	long end = parent_end;
-	Preference p_end = createDateBeforePreference(AspectType.END_TIME, end);
-	task.addPreference(p_end);
-
-	long start =  parent_end - MSEC_PER_DAY;
-	Preference p_start = createDateAfterPreference(AspectType.START_TIME, start);
-	task.addPreference(p_start);
-
-    }
-
     /** Figure out how much of an item we can and should draw from local storage. */
     protected double calcAmountStockToDraw(Inventory inventory, double requestedAmount, Date date)
     {
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
 	double level = convertScalarToDouble(invpg.getLevel(date.getTime()));
 	return Math.min(level, requestedAmount);
     }
@@ -540,8 +439,10 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	}
     }
 
-    public boolean goBelowSafety (Inventory bin) {
+    public boolean goBelowSafety(Inventory bin) {
 	ScheduledContentPG scp = bin.getScheduledContentPG();
+	InventoryPG invpg = (InventoryPG)bin.getInventoryPG();
+
 	Schedule sched = scp.getSchedule();
 	String nsn;
 	if (sched == null) {
@@ -554,9 +455,9 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	boolean pos_inventory = true;
 	while (elements.hasMoreElements()) {
 	    qse = (QuantityScheduleElement)elements.nextElement();
-	    // inventory less than safety
+	    // inventory less than reorder
 	    int day = TimeUtils.getDaysBetween(startTime_, qse.getStartDate().getTime());
-	    if (qse.getQuantity() < getReorderLevel(bin, day) ) {
+	    if (qse.getQuantity() < invpg.getReorderLevel(day) ) {
 		pos_inventory = false;
 		break;
 	    }
@@ -590,13 +491,11 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 		    if (TaskUtils.isDirectObjectOfType(task, type_)) {
 			// need to check if externally allocated
 			if(((Allocation)o).getAsset() instanceof Organization) {
-			    if (TaskUtils.getQuantity(task) > 0.0){
-				if (TaskUtils.isMyRefillTask(task, orgName_)){
-				    return true;
-				}
-			    }
-			}
-		    }
+                            if (TaskUtils.isMyRefillTask(task, orgName_)){
+                                return true;
+                            }
+                        }
+                    }
 		}
 	    }
 	    return false;
@@ -613,7 +512,4 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	
 	refillAllocs_ = subscribe(new RefillAllocPredicate(supplyType_, myOrgName_));
     }
-
-
-
 }
