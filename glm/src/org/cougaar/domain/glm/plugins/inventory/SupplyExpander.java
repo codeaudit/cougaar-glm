@@ -315,6 +315,22 @@ public class SupplyExpander extends InventoryProcessor {
         }
     }
 
+    /**
+     * Expand a ProjectSupply task into a series of ProjectWithdraw
+     * tasks. ProjectSupply tasks are expected to extend from midnight
+     * to midnight. That is, their start and end times are of the form
+     * MM/DD/YY 00:00:00.000. The start and end times of every
+     * generated ProjectWithdraw task has a time of 23:59:59.999 and
+     * occurs for every day having any projected demand. The quantity
+     * for the ProjectWithdraw task is adjusted to account for the
+     * fraction of the day that the ProjectSupply covers. For example,
+     * a ProjectSupply ending at noon would cause a ProjectWithdraw
+     * having half the quantity. Similarly, a ProjectSupply task
+     * starting at noon would generate a ProjectWithdraw having half
+     * the quantity for the first day. This is mathematically
+     * consistent. In fact, ProjectSupply tasks could be arbitrarily
+     * subdivided with no net effect on the total withdraw demand.
+     **/
     private void expandProjectionTask(Task parent_task) {
 	double quantity = 0;
 	 if (parent_task.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
@@ -330,25 +346,19 @@ public class SupplyExpander extends InventoryProcessor {
 			TaskUtils.taskDesc(parent_task));
 	     return;
 	 }
-	long start_time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getStartTime(parent_task));
-	long orig_end_time = TimeUtils.pushToEndOfDay(calendar_, TaskUtils.getEndTime(parent_task));
-	// End Time is up to but not including
-  	long end_time = TimeUtils.addNDays(orig_end_time, -1);
-	long task_end;
+	long start_time = TaskUtils.getStartTime(parent_task);
+	long end_time = TaskUtils.getEndTime(parent_task);
 	Vector expand_tasks = new Vector();
 	NewTask withdrawTask = null;
-	if (start_time <= end_time) {
-	    while (start_time <= end_time) {
-		task_end = TimeUtils.addNDays(start_time, 1);
-//  		withdrawTask = createProjectSupplyWithdrawTask(parent_task, start_time, task_end, quantity);
-  		withdrawTask = createProjectSupplyWithdrawTask(parent_task, start_time, start_time, quantity);
-		expand_tasks.addElement(withdrawTask);
-		start_time = task_end;
-	    }
-	}
-	else { // Projection tasks spans a single day
-	    withdrawTask = createProjectSupplyWithdrawTask(parent_task, start_time, start_time, quantity);
-	    expand_tasks.addElement(withdrawTask);
+        while (start_time < end_time) {
+            long next_day = TimeUtils.pushToEndOfDay(start_time) + 1;
+            long task_end = Math.min(next_day, end_time);
+            long duration = task_end - start_time;
+            double this_quantity = (quantity  * duration) / TimeUtils.MSEC_PER_DAY;
+            long task_time = next_day - 1;
+            withdrawTask = createProjectSupplyWithdrawTask(parent_task, task_time, task_time, this_quantity);
+            expand_tasks.addElement(withdrawTask);
+            start_time = task_time + 1;
 	}
         publishExpansion(parent_task, expand_tasks);
     }
