@@ -109,7 +109,11 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                          " got " + rowData.length);
     }
     try {
-      String relation = new String ((byte[])rowData[0],"US-ASCII");
+      String relation = null;
+      if (rowData[0] instanceof String)
+	relation = (String) rowData[0];
+      else
+	relation = new String ((byte[])rowData[0],"US-ASCII");
     
       myMaxModifiedTime = 
         Math.max(((Date) rowData[7]).getTime(), myMaxModifiedTime);
@@ -183,8 +187,17 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
   protected void processOpTempo(Object[] rowData) {
     try {
-      String orgName = new String ((byte[])rowData[1],"US-ASCII");
-      String opTempo = new String ((byte[])rowData[3],"US-ASCII");
+      String orgName = null;
+      String opTempo = null;
+      if (rowData[1] instanceof String)
+	orgName = (String)rowData[1];
+      else
+	orgName = new String ((byte[])rowData[1],"US-ASCII");
+
+      if (rowData[3] instanceof String)
+	opTempo = (String)rowData[3];
+      else
+	opTempo = new String ((byte[])rowData[3],"US-ASCII");
       //String orgName = (String) rowData[1];
       //String opTempo = (String) rowData[3];
 
@@ -230,8 +243,17 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
   protected void processActivity(Object[] rowData) {
     try {
-      String orgName = new String ((byte[])rowData[1],"US-ASCII");
-      String activity = new String ((byte[])rowData[3],"US-ASCII");
+      String orgName = null;
+      String activity = null;
+      if (rowData[1] instanceof String)
+	orgName = (String)rowData[1];
+      else
+	orgName = new String ((byte[])rowData[1],"US-ASCII");
+
+      if (rowData[3] instanceof String)
+	activity = (String) rowData[3];
+      else
+	activity = new String ((byte[])rowData[3],"US-ASCII");
       //String orgName = (String) rowData[1];
       //String activity = (String) rowData[3];
 
@@ -270,8 +292,18 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
   protected void processLocation(Object[] rowData) {
     try {
-      String orgName = new String ((byte[])rowData[1],"US-ASCII");
-      String locCode = new String ((byte[])rowData[3],"US-ASCII");
+      String orgName = null;
+      String locCode = null;
+      if (rowData[1] instanceof String)
+	orgName = (String)rowData[1];
+      else
+	orgName = new String ((byte[])rowData[1],"US-ASCII");
+
+      if (rowData[3] instanceof String)
+	locCode = (String)rowData[3];
+      else
+	locCode = new String ((byte[])rowData[3],"US-ASCII");
+
       //String orgName = (String) rowData[1];
       //String locCode = (String) rowData[3];
 

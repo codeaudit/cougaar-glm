@@ -69,8 +69,16 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
                          " got " + rowData.length);
     }
     try {
-      myOperationName = new String ((byte[])rowData[0],"US-ASCII");
-      myPriority = new String ((byte[])rowData[1],"US-ASCII");
+      if (rowData[0] instanceof String)
+	myOperationName = (String) rowData[0];
+      else
+	myOperationName = new String ((byte[])rowData[0],"US-ASCII");
+
+      if (rowData[1] instanceof String)
+	myPriority = (String) rowData[1];
+      else
+	myPriority = new String ((byte[])rowData[1],"US-ASCII");
+
       //myOperationName = (String) rowData[0];
       //myPriority = (String) rowData[1];
       myCday = (Date) rowData[2];
