@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/xml/Attic/UIParser.java,v 1.1 2000-12-15 20:17:47 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/xml/Attic/UIParser.java,v 1.2 2001-04-16 20:32:36 bkrisler Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -14,15 +14,18 @@
 
 package org.cougaar.domain.mlm.ui.tpfdd.xml;
 
+
+
 import java.io.ByteArrayInputStream;
 
-import com.ibm.xml.parser.Parser;
-import com.ibm.xml.parser.TXDocument;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
-import org.cougaar.domain.mlm.ui.tpfdd.util.MismatchException;
+import org.cougaar.util.*;
+import java.io.*;
+
 import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
 import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
 
@@ -32,112 +35,92 @@ import org.cougaar.domain.mlm.ui.tpfdd.producer.PlanElementProvider;
 
 public class UIParser
 {
-    protected String tagName;
-    protected Node[] nodes;
-    protected Element element; // used between parse_one() and getOne/Allxxx()
-    private PlanElementProvider provider;
+  protected String tagName;
+  protected NodeList nodes;
+  protected Element root; // used between parse_one() and getOne/Allxxx()
+  private PlanElementProvider provider;
 
-    public UIParser(byte[] buffer, String tagName, PlanElementProvider provider) throws MismatchException
-    {
-	Parser parser = new Parser("file:///");
-	TXDocument document = parser.readStream(new ByteArrayInputStream(buffer));
-	String version = document.getVersion();
-	if ( version == null || !version.equals("1.0") ) {
-	    String error = "UIParser:UIParser bad XML (version " + version + ")";
-	    throw new MismatchException(error);
-	}
-	element = document.getDocumentElement();
+  public UIParser(byte[] buffer, String tagName, PlanElementProvider provider) {
+    try {
+      Document doc = ConfigFileFinder.parseXMLConfigFile(new String(buffer));
+      if(doc != null) {
+	root = doc.getDocumentElement();
 	nodes = getAllNodesByTag(tagName);
-	this.tagName = tagName;
-	this.provider = provider;
+      }
+    } catch(IOException e) {
+      e.printStackTrace();
     }
+    this.tagName = tagName;
+    this.provider = provider;
+  }
 		
-    public UIParser(Node[] nodes)
-    {
-	this.nodes = nodes;
-    }    
-		
-    protected Node[] getAllNodesByTag(String tagName)
-    {
-	NodeList potentials = element.getChildNodes();
-	UIVector values = new UIVector();
-				
-	if ( potentials == null ) {
-	    /* OutputHandler.out("error: empty parent: " + element.getTagName()
-	       + " while looking for: " + tagName + "!"); */
-	    return null;
-	}
-	for ( int i = 0; i < potentials.getLength(); i++ )
-	if ( (potentials.item(i)) instanceof Element ) {
-	    String name = ((Element)(potentials.item(i))).getTagName();
-	    if ( tagName.equals("all") || name.equals(tagName) )
-	        values.add(potentials.item(i)); }
-	return values.toNode();
-    }
-    
-    protected String[] getAllValuesByTag(String tagName)
-    {
-	NodeList potentials = element.getChildNodes();
-	UIVector values = new UIVector();
-				
-	if ( potentials == null ) {
-	    /* OutputHandler.out("UIP:gOVBT Error: empty parent: " + element.getTagName()
-		    + " while looking for: " + tagName + "!"); */
-	    return null;
-	}
-	for ( int i = 0; i < potentials.getLength(); i++ )
-	if ( (potentials.item(i)) instanceof Element 
-	     && ((Element)(potentials.item(i))).getTagName().equals(tagName) )
-	    values.add(potentials.item(i).getFirstChild().getNodeValue());
+  /** @deprecated Changed the <code>Node[]</code> to a NodeList.  **/
+  public UIParser(Node[] nodes) {
+    throw new IllegalArgumentException("Deprecated, now takes a NodeList");
+  }    
 	
-	return values.toStrings();
+  /**Constructor **/	
+  public UIParser(NodeList nodes) {
+    this.nodes = nodes;
+  }
+
+  /**
+   * getAllNodesByTag
+   *
+   * Returns all Elements with a given tag name.
+   * Note:  For all Elements, use '*' as the tagname.
+   *
+   * @param tagName Name of tag to match on, use '*' for all tags.
+   * @return NodeList of all matching tags.
+   */ 
+  protected NodeList getAllNodesByTag(String tagName) {
+    if(tagName.equals("all")) {
+      throw new IllegalArgumentException("Use '*' for all Elements");
     }
+    return root.getElementsByTagName(tagName);
+  }
     
-    protected String getOneValueByTag(String tagName)
-    {
-	NodeList potentials = element.getChildNodes();
-	Node theElement = null;
-	if ( potentials == null ) {
-	    /* OutputHandler.out("UIP:goVBT Error: empty parent: " + element.getTagName()
-		    + " while looking for: " + tagName + "!"); */
-	    return null;
-	}
-	for ( int i = 0; i < potentials.getLength(); i++ )
-	    if ( (potentials.item(i)) instanceof Element
-		 && ((Element)(potentials.item(i))).getTagName().equals(tagName) )
-		if ( theElement != null )
-		    OutputHandler.out("UIP:gOVBT Warning: duplicate tag in: " + element.getTagName()
-				       + " while looking for: " + tagName + ".");
-		else
-		    theElement = potentials.item(i).getFirstChild();
-	
-	if ( theElement == null ) {
-	    /* OutputHandler.out("UIP:gOVBT Error: no such tag in: " + element.getTagName()
-	       + " while looking for: " + tagName); */
-	    return null; }
-	return theElement.getNodeValue();
+  protected String[] getAllValuesByTag(String tagName)
+  {
+    NodeList nodes = root.getElementsByTagName(tagName);
+				
+    if ( nodes == null ) {
+      /* OutputHandler.out("UIP:gOVBT Error: empty parent: " + 
+	 element.getTagName() + " while looking for: " + tagName + "!"); */
+      return null;
     }
 
+    String[] values = new String[nodes.getLength()];
 
-    public UIVector parse()
-    {
-	UIVector UIObjects = new UIVector();
-
-	try {
-	    for ( int i = 0; i < nodes.length; i++ ) {
-		element = (Element)nodes[i];
-		UIObjects.add(parse_one());
-	    }
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
-	return UIObjects;
+    for ( int i = 0; i < nodes.getLength(); i++ ) {
+      values[i] = nodes.item(i).getFirstChild().getNodeValue();
     }
 
-    public Object parse_one()
-    {
-	Object object = UIObjectFactory.create(element, provider);
-	return object;
+    return values;
+  }
+    
+  protected String getOneValueByTag(String tagName)
+  {
+    NodeList nodes = root.getElementsByTagName(tagName);
+    return nodes.item(0).getFirstChild().getNodeValue();
+  }
+
+  public UIVector parse()
+  {
+    UIVector objects = new UIVector();
+
+    for ( int i = 0; i < nodes.getLength(); i++ ) {
+      objects.add(UIObjectFactory.create((Element)nodes.item(i), provider));
     }
+
+    return objects;
+  }
+
+  /** 
+   * @deprecated Removed it was only called <code>UIObjectFactory.create</code>
+   **/
+  public Object parse_one() { 
+    throw new IllegalArgumentException("Deprecated");
+  }
 }
+
