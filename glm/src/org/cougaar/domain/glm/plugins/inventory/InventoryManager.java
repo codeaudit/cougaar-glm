@@ -303,20 +303,24 @@ public abstract class InventoryManager extends InventoryProcessor {
                     if (nDays > 0) {
                         long end = start + nDays * TimeUtils.MSEC_PER_DAY;
                         double reorder = (si.highest - si.first) / nDays;
-                        Task t = newProjectSupplyTask(inventory, start, end, 
-                                                      createIncrementedDailyRate(previous, reorder));
-                        projections.add(t);
-                        invpg.addDueIn(t);
-                        start = end;
+			Rate dailyRate = createIncrementedDailyRate(previous, reorder);
+			if (dailyRate != null) {
+			    Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
+			    projections.add(t);
+			    invpg.addDueIn(t);
+			}
+			start = end;
                     }
                     nDays = day - si.highestDay;
                     if (nDays > 0) {
                         long end = start + nDays * TimeUtils.MSEC_PER_DAY;
                         double reorder = (si.last - si.highest) / nDays;
-                        Task t = newProjectSupplyTask(inventory, start, end,
-                                                      createIncrementedDailyRate(previous, reorder));
-                        projections.add(t);
-                        invpg.addDueIn(t);
+			Rate dailyRate = createIncrementedDailyRate(previous, reorder);
+			if (dailyRate != null) {
+			    Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
+			    projections.add(t);
+			    invpg.addDueIn(t);
+			}
                     }
 //                      printDebug("generateProjections(), created Projection task. Start: "
 //                                 + TimeUtils.dateString(start)+", End: "
@@ -374,11 +378,17 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected Rate createIncrementedDailyRate(Measure qty, double increment) {
 	Rate rate = null;
 	if (qty instanceof Volume) {
-	    rate = FlowRate.newGallonsPerDay(increment+((Volume)qty).getGallons());
+	    double d = increment+((Volume)qty).getGallons();
+	    if (d < 0) return null;
+	    rate = FlowRate.newGallonsPerDay(d);
 	} else if (qty instanceof Count) {
-	    rate = CountRate.newEachesPerDay(increment+((Count)qty).getEaches());
+	    double d = increment+((Count)qty).getEaches();
+	    if (d < 0) return null;
+	    rate = CountRate.newEachesPerDay(d);
 	} else if (qty instanceof Mass) {
-	    rate = MassTransferRate.newShortTonsPerDay(increment+((Mass)qty).getShortTons());
+	    double d = increment+((Mass)qty).getShortTons();
+	    if (d < 0) return null;
+	    rate = MassTransferRate.newShortTonsPerDay(d);
 	}
 	return rate;
     }
