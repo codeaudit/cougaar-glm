@@ -710,7 +710,7 @@ public abstract class InventoryBG implements PGDelegate {
 	for (; i < size; i++) {
 //  	    GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), checking for overflow on "+
 //  			   (TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i)))+" Level: "+level_[i]+" capacity: "+capacity);
-	    if (level_[i] > capacity) {
+	    if (java.lang.Math.floor(level_[i] - capacity)>1.0) {
 		day = new Integer(i);
 		GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), OVERFLOW on "+
 			       (TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i))));
