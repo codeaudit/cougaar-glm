@@ -38,7 +38,6 @@ import java.util.*;
 public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     protected Hashtable fileParameters_ = new Hashtable();
     protected String url_, user_, password_;
-    protected ClusterImpl cluster_;
     protected ClusterIdentifier clusterId_;
     protected Vector cannotHandle_ = new Vector();
     protected String className_ = null;
@@ -50,8 +49,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     protected void setupSubscriptions() { 
 	parseArguments();
 	initializeDriver();
-	cluster_ = (ClusterImpl)getCluster();
- 	clusterId_ = cluster_.getClusterIdentifier();
+ 	clusterId_ = getClusterIdentifier();
 	className_ = this.getClass().getName();
 	int indx = className_.lastIndexOf(".");
 	if (indx > -1) {
@@ -80,7 +78,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	}
 	// SHOULD NOT NEED TO BE CALLED!
 	fillProperties(asset);
-	cluster_.cachePrototype(aTypeName, asset);
+	getLDM().cachePrototype(aTypeName, asset);
 	//GLMDebug.DEBUG(className_,clusterId_, "Cached name "+aTypeName+" w/ asset "+asset, 3);
 	return asset;
     }
