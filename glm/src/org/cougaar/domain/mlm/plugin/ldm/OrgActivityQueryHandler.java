@@ -117,8 +117,6 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * SQLOplanPlugIn
    **/
   public void endQuery() {
-    System.out.println(99);
-
     // myOrgInfoMap has a TimeSpanSet for each Org
     Collection orgInfosByOrg = myOrgInfoMap.values();
     

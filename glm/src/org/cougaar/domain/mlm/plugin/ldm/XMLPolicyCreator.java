@@ -38,7 +38,7 @@ import org.w3c.dom.Text;
 
 /** XMLPolicyCreator - creates policies from xml file
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: XMLPolicyCreator.java,v 1.4 2001-03-08 17:00:14 ngivler Exp $
+ * @version $Id: XMLPolicyCreator.java,v 1.5 2001-03-13 22:25:50 ngivler Exp $
  **/
 
 public class XMLPolicyCreator {
@@ -263,7 +263,6 @@ public class XMLPolicyCreator {
 
         c = Class.forName(classType);
         crp.setValue(c);
-        System.out.println(99);
 	rp = crp;
       } catch (Exception e) {
 	System.out.println("Couldn't create class " + interfaceType + e);
