@@ -414,7 +414,9 @@ public abstract class BasicProcessor {
 	    else {
 		// check to make sure start_time is not before now
 		// long that is the maximum of now and the start_time
-		((NewTask)published_task).setPreference(new_task.getPreference(AspectType.START_TIME));
+		ScoringFunction score = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME, 
+											      TaskUtils.getPreference(new_task, AspectType.START_TIME)));
+		((NewTask)published_task).setPreference(ldmFactory_.newPreference(AspectType.END_TIME, score));
 		publishChangeTask(published_task);
 		add_tasks.add(new_task);
 	    }
