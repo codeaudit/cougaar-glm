@@ -27,16 +27,19 @@ import org.cougaar.util.UnaryPredicate;
 
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.debug.GLMDebug;
 import org.cougaar.domain.glm.plugins.ClusterOPlan;
 import org.cougaar.domain.glm.plugins.GLMDecorationPlugIn;
 import org.cougaar.domain.glm.plugins.AssetUtils;
 import org.cougaar.domain.glm.plugins.TaskUtils;
+import org.cougaar.domain.glm.plugins.TimeUtils;
 
 /** Specifies how to create SUPPLY demand tasks for demand projection.
  **/
@@ -220,12 +223,13 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
     }
 
     protected GeolocLocation getGeolocLocation(Task parent_task, long time) {
-	ClusterOPlan oplan = ((GLMDecorationPlugIn)plugin_).getOperativeOPlan(time, (ContextOfUIDs) parent_task.getContext());
-        if (oplan == null) { 
-	    printDebug("ERROR: ClusterOplan is null.");
-	    return null; // No oplan is operative, don't need pp (or task)
+	Enumeration geolocs = AssetUtils.getGeolocLocationAtTime(myOrganization_, time);
+	if (geolocs.hasMoreElements()) {
+	    GeolocLocation geoloc = (GeolocLocation)geolocs.nextElement();
+//  	    GLMDebug.DEBUG("GenerateSupplyDemandExpander", clusterId_, "At "+TimeUtils.dateString(time)+ " the geoloc is "+geoloc);
+	    return geoloc;
 	}
-	return oplan.getGeoLoc(time);
+	return null;
     }
 }
 
