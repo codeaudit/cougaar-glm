@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.5 2002-04-01 22:41:46 gvidaver Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.6 2002-04-01 22:49:39 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -60,7 +60,7 @@ public class TaskParser{
   private static Logger logger;
   public static void setLogger (Logger log) { 
     logger = log; 
-    DirectObjectParser.setLogger(log);
+    //    DirectObjectParser.setLogger(log);
   }
 
   public static Task getTask(LDMServesPlugin ldm,
