@@ -10,7 +10,7 @@
  
 package org.cougaar.domain.mlm.ui.planviewer.inventory;
 
-import org.cougaar.domain.planning.ldm.plan.ScheduleType;
+import org.cougaar.domain.glm.ldm.plan.PlanScheduleType;
 import org.cougaar.util.ThemeFactory;
 
 import com.klg.jclass.chart.*;
@@ -127,7 +127,7 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	Vector unconfirmedDueIns=dueOuts;
 
 	inventory.setAssetName("JP8 Fuel");
-	inventory.setScheduleType(ScheduleType.TOTAL_INVENTORY);
+	inventory.setScheduleType(PlanScheduleType.TOTAL_INVENTORY);
 	inventory.setProvider(true);
 	inventory.setBaseCDay(c0Time);
 
@@ -255,11 +255,11 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	String scheduleType = inventory.getScheduleType();
 	chart = new JCChart();
 	baseCDayTime = inventory.getBaseCDayTime();
-	if (scheduleType.equals(ScheduleType.TOTAL_CAPACITY)) {
+	if (scheduleType.equals(PlanScheduleType.TOTAL_CAPACITY)) {
 	    initializeTotalCapacityChart(title, inventory);
-	} else if (scheduleType.equals(ScheduleType.ACTUAL_CAPACITY)) {
+	} else if (scheduleType.equals(PlanScheduleType.ACTUAL_CAPACITY)) {
 	    initializeActualCapacityChart(title, inventory);
-	} else if (scheduleType.equals(ScheduleType.TOTAL_INVENTORY)) {
+	} else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
 	    initializeTotalInventoryChart(title, inventory);
 	} else
 	    System.out.println("Unconfirmed schedule type: " + scheduleType);
@@ -379,11 +379,11 @@ public class InventoryChart extends JPanel implements JCPickListener{
 
 	baseCDayTime = myInventory.getBaseCDayTime();
 
-	if (scheduleType.equals(ScheduleType.TOTAL_CAPACITY)) {
+	if (scheduleType.equals(PlanScheduleType.TOTAL_CAPACITY)) {
 	    initializeTotalCapacityChart(myTitle, myInventory);
-	} else if (scheduleType.equals(ScheduleType.ACTUAL_CAPACITY)) {
+	} else if (scheduleType.equals(PlanScheduleType.ACTUAL_CAPACITY)) {
 	    initializeActualCapacityChart(myTitle, myInventory);
-	} else if (scheduleType.equals(ScheduleType.TOTAL_INVENTORY)) {
+	} else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
 	    initializeTotalInventoryChart(myTitle, myInventory);
 	} else
 	    System.out.println("Unconfirmed schedule type: " + scheduleType);
@@ -722,7 +722,7 @@ public class InventoryChart extends JPanel implements JCPickListener{
       Vector onHandSchedule=null;
 
       boolean inventoryFlag = 
-	  inventory.getScheduleType().equals(ScheduleType.TOTAL_INVENTORY);
+	  inventory.getScheduleType().equals(PlanScheduleType.TOTAL_INVENTORY);
 
       if (inventoryFlag) {
 	  UISimpleNamedSchedule tmp =
@@ -751,7 +751,7 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    extractSchedulesFromInventory(scheduleNames,inventory);
 
 	boolean inventoryFlag = 
-	    inventory.getScheduleType().equals(ScheduleType.TOTAL_INVENTORY);
+	    inventory.getScheduleType().equals(PlanScheduleType.TOTAL_INVENTORY);
 	Vector onHandSchedule = extractOnHandSchedule(inventory);
 
 	return new InventoryChartDataModel(inventoryFlag,
