@@ -1202,7 +1202,7 @@ public class InventoryBG implements PGDelegate {
     }
     if (level_ == null) 
       return -1;
-    System.out.println(">>>UpdateDetailedContentSchedule ");
+//      System.out.println(">>>UpdateDetailedContentSchedule ");
     int days = level_.length;
     updateLevels(days - 1); // Be sure we have all the days computed.
     Vector quantity_schedule_elements = new Vector();
