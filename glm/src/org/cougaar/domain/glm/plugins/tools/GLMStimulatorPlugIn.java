@@ -154,7 +154,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
    * </pre>
    * @param pe the plan element to publish
    */
-  private void publishMyPlanElement(PlanElement pe) {
+  protected void publishMyPlanElement(PlanElement pe) {
     if (myExtraOutput)
 	  System.out.println (getName () + ".publishMyPlanElement : Publishing " + pe + 
 						  " of task " + pe.getTask ());
@@ -186,7 +186,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
    * @param infile - default input file. From param 
    *                 "ClusterInputFile" defined in <ClusterName>.env.xml.
    */
-  private void createGUI(String infile) {
+  protected void createGUI(String infile) {
     frame = new JFrame(getClusterName () + " - GLMStimulatorPlugIn");
     frame.getContentPane().setLayout(new BorderLayout());
 
@@ -233,8 +233,8 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
       this.label = label;
       this.text = text;
     }
-    private JLabel label;
-    private JTextField text;
+    protected JLabel label;
+    protected JTextField text;
     public void actionPerformed(ActionEvent e) {
       String lnfName = e.getActionCommand();
 
@@ -470,7 +470,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
    * @param  xmlTaskFile file defining tasks to stimulate cluster with
    * @return Collection of tasks defined in xml file
    */
-  private Collection readXmlTasks(String xmlTaskFile) {
+  protected Collection readXmlTasks(String xmlTaskFile) {
     Collection tasks = null;
     try {
       GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, getDelegate().getCluster());
