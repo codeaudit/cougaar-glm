@@ -400,12 +400,12 @@ public abstract class UTILAllocatorPluginAdapter
    * </pre>
    */
   public void handleRemovedAlloc (Allocation alloc) {
-    if (isInfoEnabled()) {
+    if (isDebugEnabled()) {
       String unit = "Undefined";//(UTILPrepPhrase.hasPrepNamed(alloc.getTask (), Constants.Preposition.FOR)) ? 
       //("" + UTILPrepPhrase.getPrepNamed(alloc.getTask (), Constants.Preposition.FOR)) : "nonUnit";
-      info (getName () + ".handleRemovedAlloc : alloc was removed for task " + 
-			  alloc.getTask ().getUID () + " w/ d.o. " +
-			  alloc.getTask ().getDirectObject () + " from " + unit);
+      debug (getName () + ".handleRemovedAlloc : alloc was removed for task " + 
+	     alloc.getTask ().getUID () + " w/ d.o. " +
+	     alloc.getTask ().getDirectObject () + " from " + unit);
     }
   }
 
