@@ -63,6 +63,7 @@ public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction
 					  ok);
   }
   
+  /*
   public void main (String [] args) {
     Calendar cal = Calendar.getInstance ();
     cal.set (1999, 6, 1, 11, 59, 59);
@@ -95,4 +96,5 @@ public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction
     av = AspectValue.newAspectValue (AspectType.END_TIME, (double) afterlate.getTime ());
     logger.debug ("Score for after late " + sf.getScore (av));
   }
+  */
 }
