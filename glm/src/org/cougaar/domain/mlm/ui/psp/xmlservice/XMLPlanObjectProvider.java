@@ -76,13 +76,15 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
     this.requestedFields = requestedFields;
   }
 
-  // could be used to provide a means for XMLifying arbitrary objects
-  //  public void addClientObject(Object obj) {
-  //    root.appendChild(XMLUIPlanObjectConverter.getPlanObjectXML(obj, doc, null));
-  //  }
+  //
+  // Pass-thru:   to comply with org.cougaar.core.util.XMLObjectProvider interface
+  public void addObject(Object obj) {
+       addPlanObject(obj);
+  }
 
+
+  //
   // create XML for "base" plan object -- task, workflow, planelement or asset
-
   public void addPlanObject(Object obj) {
     Element element = null;
     // Test the getXML method on logplan object
