@@ -63,6 +63,8 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     private long minDelta;
   
     private FileWriter fw;
+    private int expectedTask;
+    private int receivedTask;
     //    private double lastReceived=0;
   
     /**
@@ -100,6 +102,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	//for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
 	    debug(DEBUG, "ManagerPlugIn: setupSubscription  entering loop");
 	    addTask();
+	    expectedTask = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
 	    //  sequenceNum++;
 	    //}
 	allocations = (IncrementalSubscription)subscribe(myAllocationPredicate);
@@ -144,7 +147,10 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 		//arr =rep.getResult();
 		//received = arr[0];
 		//debug(DEBUG, FILENAME, fw,"ManagerPlugIn:allocateChangedTasks ........" + received);
-		printTheChange();
+		receivedTask= (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
+		assert(expectedTask, receivedTask);
+		printTheChange(receivedTask);
+		debug(DEBUG, t.getVerb() + "=>expectedTask:received::" + expectedTask + ":"+ receivedTask);
 		waitFor(BURST_TIME);
 		for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
 		    //addTask();sequenceNum++; 
@@ -194,20 +200,28 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	//debug(DEBUG, FILENAME, fw,"\nManagerPlugIn::Changing task " + t.getVerb() + " with num  " 
 	//  +t.getPreferredValue(AspectType._ASPECT_COUNT )); 
 	publishChange(t);
+	expectedTask++;
     }
 
-    protected void printTheChange(){
+    protected void printTheChange(int taskCount){
 	Date endTime = new Date();
 	long delta = endTime.getTime() - startTime.getTime();
 	if (count == 1)
 	    minDelta = delta;
 	else
 	    minDelta = Math.min(minDelta, delta);
-	int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
+	//int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
 	String msg=t.getVerb() +"=>"+taskCount+","+delta+","+ minDelta;
 	log(LOG, FILENAME, fw, msg);
 	count++;
     }
+
+	protected void assert( int expectedTask, int receivedTask){
+	    if (expectedTask != receivedTask){
+		System.out.println("ERROR!!!!! expectedTask is different from receivedTask");
+		
+	    }
+	}
 
    }
 

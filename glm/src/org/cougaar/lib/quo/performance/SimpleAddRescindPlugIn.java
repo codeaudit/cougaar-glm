@@ -65,7 +65,9 @@ public class SimpleAddRescindPlugIn extends CommonUtilPlugIn {
     //    private double lastReceived=0;
 
     private int wakeUpCount, taskAllocationCount;
-  
+    private int expectedTask;
+    private int receivedTask;
+
     /**
      * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
      */
@@ -155,7 +157,10 @@ public class SimpleAddRescindPlugIn extends CommonUtilPlugIn {
 	    rep = alloc.getReportedResult();
 	    if (rep!=null){
 		//debug(DEBUG, FILENAME, fw,"ManagerPlugIn:allocateChangedTasks ........" + received);
+		receivedTask= (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
+		assert(expectedTask, receivedTask);
 		printTheChange();
+		debug(DEBUG, t.getVerb() + "=>expectedTask:received::" + expectedTask + ":"+ receivedTask);
 		waitFor(BURST_TIME);
 		for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
 		    //addTask();
@@ -207,6 +212,7 @@ public class SimpleAddRescindPlugIn extends CommonUtilPlugIn {
 	//debug(DEBUG, FILENAME, fw,"\nManagerPlugIn::Changing task " + t.getVerb() + " with num  " 
 	//  +t.getPreferredValue(AspectType._ASPECT_COUNT )); 
 	publishChange(t);
+	expectedTask++;
     }
 
     protected void printTheChange(){
@@ -221,6 +227,14 @@ public class SimpleAddRescindPlugIn extends CommonUtilPlugIn {
 	log(LOG, FILENAME, fw, msg);
 	count++;
     }
+
+    protected void assert( int expectedTask, int receivedTask){
+	    if (expectedTask != receivedTask){
+		System.out.println("ERROR!!!!! expectedTask is different from receivedTask");
+		
+	    }
+	}
+
 
    }
 
