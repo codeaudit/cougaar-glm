@@ -128,24 +128,6 @@ class Filler {
         TRANSPORT_TONS += loadedQuantity;
 	Plan plan = ((Task)agglist.get(0)).getPlan();
         
-        // Add physicalPG info for loaded milvan 
-        PropertyGroupSchedule physicalPGSchedule = 
-          ((GLMAsset) mpt.getDirectObject()).getPhysicalPGSchedule();
-        PhysicalPG defaultPhysicalPG = 
-          (PhysicalPG) physicalPGSchedule.getDefault();
-        if (defaultPhysicalPG == null) {
-          _gp.getLoggingService().error("Filler: milvan with a null default physicalPG");
-        }
-        NewPhysicalPG loadedPhysicalPG = 
-          PropertyGroupFactory.newPhysicalPG(defaultPhysicalPG);
-        Mass loadedMass = Mass.newMass(loadedQuantity + 
-                                       defaultPhysicalPG.getMass().getShortTons(), 
-                                       Mass.SHORT_TONS);
-        loadedPhysicalPG.setMass(loadedMass);
-        loadedPhysicalPG.setTimeSpan((long) mpt.getPreferredValue(AspectType.START_TIME),
-                                     (long) mpt.getPreferredValue(AspectType.END_TIME));
-        ((GLMAsset) mpt.getDirectObject()).setPhysicalPG(loadedPhysicalPG);
-
 	_gp.createAggregation(agglist.iterator(), mpt, plan, _ard);
       }
     }

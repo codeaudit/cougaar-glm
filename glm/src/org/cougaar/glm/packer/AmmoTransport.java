@@ -218,19 +218,6 @@ public class AmmoTransport extends AggregationClosure {
     itemIdentificationPG.setAlternateItemIdentification(itemID);
     milvan.setItemIdentificationPG(itemIdentificationPG);
 
-
-    // Make unique physicalPG so weight can be modified to reflect current load
-    PropertyGroupSchedule physicalPGSchedule = 
-      milvan.getPhysicalPGSchedule();
-    PhysicalPG defaultPhysicalPG = 
-      (PhysicalPG) physicalPGSchedule.getDefault();
-    if (defaultPhysicalPG == null) {
-      _gp.getLoggingService().error("AmmoTransport: milvan with a null default physicalPG");
-    }
-    physicalPGSchedule = 
-      PropertyGroupFactory.newPhysicalPGSchedule(defaultPhysicalPG);    
-    milvan.setPhysicalPGSchedule(physicalPGSchedule);
-
     return milvan;
   }
   
