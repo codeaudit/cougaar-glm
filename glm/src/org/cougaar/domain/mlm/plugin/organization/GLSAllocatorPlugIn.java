@@ -160,8 +160,9 @@ public class GLSAllocatorPlugIn extends SimplePlugIn {
 
   } // end of execute
 
+  private static final Verb verbGLS = Verb.getVerb(Constants.Verb.GETLOGSUPPORT);
   private synchronized void allocate(Task t) {
-    if (t.getVerb().toString().equals(Constants.Verb.GETLOGSUPPORT)) {
+    if (t.getVerb().equals(verbGLS)) {
       expandGLS(t);
     } else {
       System.out.println("!!!!!!!! GLS Alloc - don't know how to allocate subtask");
@@ -464,7 +465,7 @@ public class GLSAllocatorPlugIn extends SimplePlugIn {
 	if (o instanceof Task) {
 	  Task t = (Task) o;
 	  if ( t.getPlanElement() == null ) {
-	    if (t.getVerb().toString().equals(Constants.Verb.GETLOGSUPPORT)) {
+	    if (t.getVerb().equals(verbGLS)) {
 	      Enumeration pp = t.getPrepositionalPhrases();
 	      while (pp.hasMoreElements()) {
 		PrepositionalPhrase app = (PrepositionalPhrase) pp.nextElement();
@@ -506,7 +507,7 @@ public class GLSAllocatorPlugIn extends SimplePlugIn {
 	if (o instanceof Allocation) {
 	  // if the PlanElement is for the correct kind of task - make sure its an allocation
 	  Task t = ((Allocation)o).getTask();
-	  return (t.getVerb().equals(Constants.Verb.GETLOGSUPPORT));
+	  return (t.getVerb().equals(verbGLS));
 	}
 	return matched;
       }
@@ -521,7 +522,7 @@ public class GLSAllocatorPlugIn extends SimplePlugIn {
 	  Enumeration wftasks = wf.getTasks();
 	  while (wftasks.hasMoreElements()) {
 	    Task t = (Task) wftasks.nextElement();
-	    if (t.getVerb().toString().equals(Constants.Verb.GETLOGSUPPORT)) {
+	    if (t.getVerb().equals(verbGLS)) {
 	      Enumeration pp = t.getPrepositionalPhrases();
 	      while (pp.hasMoreElements()) {
 		PrepositionalPhrase app = (PrepositionalPhrase) pp.nextElement();
