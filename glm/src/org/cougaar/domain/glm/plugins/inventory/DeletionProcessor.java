@@ -171,7 +171,7 @@ public class DeletionProcessor extends InventoryProcessor {
             boolean needPublishChange = false;
             Inventory inventory = (Inventory) keys.next();
             InventoryPG invpg =
-                (InventoryPG) inventory.searchForPropertyGroup(InventoryPG.class);
+                (InventoryPG) inventory.getInventoryPG();
             DeletionTimeRange dtr = (DeletionTimeRange) tMap.get(inventory);
             Schedule schedule =
                 inventory.getScheduledContentPG().getSchedule();
