@@ -32,7 +32,6 @@ import org.cougaar.core.component.BindingSite;
 import org.cougaar.core.component.ServiceBroker;
 
 import org.cougaar.core.domain.DomainAdapter;
-import org.cougaar.core.domain.DomainBindingSite;
 
 import org.cougaar.glm.ldm.lps.*;
 import org.cougaar.glm.ldm.plan.AlpineAspectType;
@@ -132,8 +131,7 @@ public class GLMDomain extends DomainAdapter {
   }
 
   protected void loadLPs() {
-    DomainBindingSite domainBS = (DomainBindingSite) getBindingSite();
-    RootPlan rootplan = (RootPlan) domainBS.getXPlanForDomain("root");
+    RootPlan rootplan = (RootPlan) getXPlanForDomain("root");
     if (rootplan == null) {
       throw new RuntimeException("Missing \"root\" plan!");
     }
