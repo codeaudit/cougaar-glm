@@ -24,6 +24,8 @@ package org.cougaar.lib.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.cougaar.planning.ldm.PlanningFactory;
@@ -54,6 +56,9 @@ public class UTILPreference {
   private static double ONE_OVER_ONE_DAY = 1.0d/ONE_DAY; // millis
   private static double fiftyYears = ONE_DAY*365*50; // millis
   private static double boundaryDefaultScore = 0.75;
+
+  protected Map startDateCache = new HashMap ();
+  protected Map endDateCache = new HashMap ();
 
   public double NO_ASPECT_VALUE = -1.0d;
 
@@ -136,16 +141,24 @@ public class UTILPreference {
    * What should we do with the weight of the preference?
    * Should this be set by a policy object?
    *
+   * Uses the startDateCache so only distinct instances are created.
+   *
    * @param readyAtDate - the date item is ready to move
    * @return Preference
    */
   public Preference makeStartDatePreference(PlanningFactory ldmf,
 						   Date readyAtDate) {
-    AspectValue readyAtAV = 
-      AspectValue.newAspectValue(AspectType.START_TIME, readyAtDate.getTime());
-    ScoringFunction startSF = 
-      ScoringFunction.createNearOrAbove(readyAtAV, 0.0d);
-    Preference startPref = ldmf.newPreference(AspectType.START_TIME, startSF, 1.0);
+    Preference startPref;
+    Long key = new Long (readyAtDate.getTime());
+    if ((startPref = (Preference) startDateCache.get (key)) == null) {
+      AspectValue readyAtAV = 
+	AspectValue.newAspectValue(AspectType.START_TIME, readyAtDate.getTime());
+      ScoringFunction startSF = 
+	ScoringFunction.createNearOrAbove(readyAtAV, 0.0d);
+      startPref = ldmf.newPreference(AspectType.START_TIME, startSF, 1.0);
+      startDateCache.put (key, startPref);
+    }
+
     return startPref;
   }
 
@@ -157,21 +170,29 @@ public class UTILPreference {
    *
    * What should be the relative scores of early and late?
    *
+   * Uses the endDateCache so only distinct instances are created.
+   *
    * @param earlyDate - the earliest possible date
    * @param bestDate - the best date
    * @param lateDate - the latest possible date
    * @return Preference
    */
   public Preference makeEndDatePreference(PlanningFactory ldmf,
-						 Date earlyDate,  
-						 Date bestDate,
-						 Date lateDate){  
-    return 
-      ldmf.newPreference(AspectType.END_TIME, 
-			 new UTILEndDateScoringFunction (earlyDate, 
-							 bestDate,
-							 lateDate, 
-							 boundaryDefaultScore));
+					  Date earlyDate,  
+					  Date bestDate,
+					  Date lateDate){  
+    Preference endPref;
+    Object key = earlyDate.getTime() + "-" + bestDate.getTime() + "-" + lateDate.getTime();
+    if ((endPref = (Preference) endDateCache.get (key)) == null) {
+      endPref = ldmf.newPreference(AspectType.END_TIME, 
+				   new UTILEndDateScoringFunction (earlyDate, 
+								   bestDate,
+								   lateDate, 
+								   boundaryDefaultScore));
+      endDateCache.put (key, endPref);
+    }
+
+    return endPref;
   }
 
   /**

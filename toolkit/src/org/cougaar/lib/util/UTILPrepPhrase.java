@@ -24,7 +24,9 @@ package org.cougaar.lib.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.cougaar.planning.ldm.PlanningFactory;
@@ -41,8 +43,12 @@ import org.cougaar.util.log.Logger;
 
 public class UTILPrepPhrase {
   private static String myName = "UTILPrepPhrase";
+  protected Logger logger;
 
-  public UTILPrepPhrase (Logger ignoredLog) {}
+  /** maps prepositions to map of indirect objects to prep phrases */
+  protected Map prepToIndirectMap = new HashMap ();
+
+  public UTILPrepPhrase (Logger log) { logger = log;}
 
   /**
    * Utility method for extracting the indirect object from a 
@@ -206,20 +212,37 @@ public class UTILPrepPhrase {
     ((NewTask) taskToChange).setPrepositionalPhrases (Collections.enumeration(newPrepPhrases));
   }
 
-  
   /**
    * Utility methods for creating a PrepositionalPhrases 
+   *
+   * Uses a cache - only makes unique prepositional phrases
+   *
+   * Uses the prepToIndirectMap cache so only distinct instances are created.
+   *
    * @param ldmf the PlanningFactory
    * @param prep the Preposition
    * @param object the indirect object - any generic Object
    * @return PrepositionalPhrase
    */
   public PrepositionalPhrase makePrepositionalPhrase(PlanningFactory ldmf,
-							    String prep,
-							    Object o) {
-    NewPrepositionalPhrase npp = ldmf.newPrepositionalPhrase();
-    npp.setPreposition(prep);
-    npp.setIndirectObject(o);
-    return npp;
+						     String prep,
+						     Object indirectObject) {
+    Map indirectToPhrase = (Map) prepToIndirectMap.get (prep);
+    if (indirectToPhrase == null) {
+      indirectToPhrase = new HashMap ();
+      prepToIndirectMap.put (prep, indirectToPhrase);
+    }
+
+    PrepositionalPhrase phrase = (PrepositionalPhrase) indirectToPhrase.get (indirectObject);
+
+    if (phrase == null) {
+      NewPrepositionalPhrase npp = ldmf.newPrepositionalPhrase();
+      npp.setPreposition(prep);
+      npp.setIndirectObject(indirectObject);
+      indirectToPhrase.put (indirectObject, npp);
+      phrase = npp;
+    }
+
+    return phrase;
   }
 }
