@@ -26,6 +26,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.core.adaptivity.OperatingMode;
+import org.cougaar.core.adaptivity.OperatingModeImpl;
 import org.cougaar.core.adaptivity.OMSMValueList;
 import org.cougaar.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.glm.ldm.Constants;
@@ -200,7 +201,7 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
         if (operatingModes.size() > 0) {
             speedOM = (OperatingMode) operatingModes.iterator().next();
         } else {
-            speedOM = new OperatingMode(SPEED_KNOB_NAME, new OMSMValueList(modeNames));
+            speedOM = new OperatingModeImpl(SPEED_KNOB_NAME, new OMSMValueList(modeNames));
             publishAdd(speedOM);
         }
     }
@@ -324,7 +325,7 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
     }
 
     private void setOperatingMode() {
-        String speedMode = speedOM.getValue().toString();
+        String speedMode = ((OperatingModeImpl)speedOM).getValue().toString();
         int newMode = ((Integer) modeMap.get(speedMode)).intValue();
         if (newMode != mode) {
             logger.debug("New mode is " + speedMode);
