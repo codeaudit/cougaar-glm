@@ -17,6 +17,7 @@ import org.cougaar.domain.planning.ldm.plan.Priority;
 
 // Assets, etc.
 import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
 
 import org.cougaar.domain.glm.ldm.asset.ALPAsset;
 import org.cougaar.domain.glm.ldm.asset.Container;
@@ -41,12 +42,14 @@ public class AmmoTransport extends AggregationClosure {
   public static final double PACKING_LIMIT = 16.0; /* short tons */
 
   private static Asset MILVAN_PROTOTYPE = null;
+  private static int ITEM_ID = 0;
 
   // these instance variables constitute the "context" for this
   // "closure" 
   private GeolocLocation source;
   private GeolocLocation dest;
 
+  
   // Going to try to call the geo functions from inside to see if they are the problem...
   public AmmoTransport(GeolocLocation s, GeolocLocation d) {
     source = s;
@@ -127,12 +130,22 @@ public class AmmoTransport extends AggregationClosure {
         
     Container milvan = 
       (Container)rootFactory.createInstance(MILVAN_PROTOTYPE);
+
     // AMMO Cargo Code
     NewMovabilityPG movabilityPG = 
       PropertyGroupFactory.newMovabilityPG(milvan.getMovabilityPG());
     movabilityPG.setCargoCategoryCode(AMMO_CATEGORY_CODE);
     milvan.setMovabilityPG(movabilityPG);
-    
+
+    // Unique Item Identification
+    NewItemIdentificationPG itemIdentificationPG = 
+      (NewItemIdentificationPG)milvan.getItemIdentificationPG();
+    String itemID = new String("Milvan" + ITEM_ID++);
+    itemIdentificationPG.setItemIdentification(itemID);
+    itemIdentificationPG.setNomenclature("Milvan");
+    itemIdentificationPG.setAlternateItemIdentification(itemID);
+    milvan.setItemIdentificationPG(itemIdentificationPG);
+
     return milvan;
   }
 }
