@@ -22,6 +22,8 @@ import com.klg.jclass.util.swing.JCExitFrame;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.*;
 import javax.swing.*;
 
@@ -30,10 +32,13 @@ import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.domain.mlm.ui.data.UIQuantityScheduleElement;
 
-public class InventoryChart extends JPanel implements JCPickListener{
+public class InventoryChart extends JPanel implements JCPickListener,
+ActionListener {
     JCChart chart=null;
     InventoryLegend legend=null;
     GridBagConstraints legendLocale=null;
+    JToggleButton legendButton=null;
+
     JLabel pointLabel; // initialized when creating chart, set by pick method
     Hashtable dataViews = new Hashtable(); // temporary, until data view-data model correspondence is working
     InventoryColorTable colorTable;
@@ -311,6 +316,23 @@ public class InventoryChart extends JPanel implements JCPickListener{
 					       GridBagConstraints.CENTER, 
 					       GridBagConstraints.NONE, 
 					       blankInsets, 0, 0));
+
+	legendButton = new JToggleButton(new HorzLegendIcon(), true);
+	legendButton.setSelectedIcon(new VertLegendIcon());
+	legendButton.setMargin (new Insets (0, 0, 0, 0));
+	legendButton.setBorderPainted (false);
+	legendButton.setToolTipText ("Show/Hide Legend");
+
+	//          ((JScrollPane) rainbowChart).setCorner
+        //    (JScrollPane.UPPER_RIGHT_CORNER, legendButton);
+
+
+	legendButton.addActionListener(this);
+
+	add(legendButton, new GridBagConstraints(gridx, gridy++, 1, 1, 0.2, 0.0,
+				   GridBagConstraints.WEST, 
+				   GridBagConstraints.VERTICAL, 
+				   blankInsets, 0, 0));
 
 	legend = new InventoryLegend(this,chart);
 	legendLocale =
@@ -1091,5 +1113,70 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    resetChart();
 	}
     }
+
+    public void actionPerformed(ActionEvent e) {
+	System.out.println("InventoryChart::actionPerformed: Event: " + e);
+	if(e.getSource() == legendButton) {
+	    System.out.println("Is Legend Button !");    
+	    if(legendButton.isSelected()) {
+		System.out.println("Is Selected!");
+		add(legend,legendLocale);
+	    }
+	    else {
+		remove(legend);
+	    }
+
+	    revalidate();
+	    repaint();
+	}
+    }
+
+
+  class VertLegendIcon implements Icon {
+
+    public int getIconHeight() {
+      return 16;
+    }
+
+    public int getIconWidth() {
+      return 8;
+    }
+
+    public void paintIcon (Component c, Graphics g, int x, int y) {
+      g.setColor (Color.red);
+      g.fillRect (x, y, 8, 4);
+      g.setColor (Color.blue);
+      g.fillRect (x, y + 4, 8, 4);
+      g.setColor (Color.green);
+      g.fillRect (x, y + 8, 8, 4);
+      g.setColor (Color.yellow);
+      g.fillRect (x, y + 12, 8, 4);
+    }
+
+  }
+
+
+  class HorzLegendIcon implements Icon {
+
+    public int getIconHeight() {
+      return 8;
+    }
+
+    public int getIconWidth() {
+      return 16;
+    }
+
+    public void paintIcon (Component c, Graphics g, int x, int y) {
+      g.setColor (Color.red);
+      g.fillRect (x, y, 4, 8);
+      g.setColor (Color.blue);
+      g.fillRect (x + 4, y, 4, 8);
+      g.setColor (Color.green);
+      g.fillRect (x + 8, y, 4, 8);
+      g.setColor (Color.yellow);
+      g.fillRect (x + 12, y, 4, 8);
+    }
+
+  }
 
 }
