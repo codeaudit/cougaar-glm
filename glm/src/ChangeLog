@@ -1,3 +1,13 @@
+2003-03-12  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/ldm/plan/LaborScheduleImpl.java:
+	Use platform-specific line.separator between lines to avoid mixing
+	line separator conventions in log files.
+
+	* org/cougaar/glm/ldm/GLMDomain.java: 
+	Bug #2658 -- Components incompatible with automatic service revocation feature
+	Test for null service before trying to use it.
+
 2003-03-05  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/mlm/plugin/organization/GLSAllocatorPlugin.java:
