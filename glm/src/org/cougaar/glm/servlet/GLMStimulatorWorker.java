@@ -48,6 +48,7 @@ import org.cougaar.core.servlet.ServletUtil;
 import org.cougaar.util.Trigger;
 import org.cougaar.util.TriggerModel;
 import org.cougaar.util.SyncTriggerModelImpl;
+import org.cougaar.util.log.NullLogger;
 
 import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.glm.parser.GLMTaskParser;
@@ -352,7 +353,8 @@ public class GLMStimulatorWorker
                                            support.getLDMF(),
                                            support.getAgentIdentifier(),
                                            support.getConfigFinder(),
-                                           support.getLDM());
+                                           support.getLDM(),
+					   NullLogger.getNullLogger()); // THIS SHOULD BE CHANGED ONCE THERE IS LOGGING SUPPORT
       tasks = UTILAllocate.enumToList (tp.getTasks());
     }
     catch( Exception ex ) {
