@@ -173,10 +173,15 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
   protected void setupSubscriptions() {
     super.setupSubscriptions();
-    oplans = (IncrementalSubscription)getBlackboardService().subscribe(new OplanPredicate());
-    reportForDutySubscription = (IncrementalSubscription)getBlackboardService().subscribe(myRFDpredicate);
-    myOpConInfoRelaySubscription = (IncrementalSubscription)getBlackboardService().subscribe(myOpConInfoRelayPred);
+    // Set up before the subscriptions so predicates can reference.
     myAgentAddr  = getMessageAddress();
+
+    oplans = 
+      (IncrementalSubscription) getBlackboardService().subscribe(new OplanPredicate());
+    reportForDutySubscription = 
+      (IncrementalSubscription) getBlackboardService().subscribe(myRFDpredicate);
+    myOpConInfoRelaySubscription = 
+      (IncrementalSubscription) getBlackboardService().subscribe(myOpConInfoRelayPred);
   }
 
   public void execute() {
