@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <title>GLM Stimulator Servlet Usage Guide</title>
+        
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+     
+  <meta content="MSHTML 6.00.2715.400" name="GENERATOR">
+     
+  <meta content="C:\Program Files\Microsoft Office\Office\html.dot" name="Template">
+</head>
+ <body vlink="#800080" link="#0000ff">
+ &nbsp;   
+<table cellspacing="0" cellpadding="0" width="600" border="0">
+  <tbody>
+    <tr>
+      <td align="Center" width="200"><a href="https://www.alpine.bbn.com/"><img height="83" src="CompletionWatcherServlet_files/alpine-logo-small.gif" width="95" border="0">
+      </a>
+      </td>
+      <td align="Center" width="200">
+      <h2><b><font size="+2">CompletionWatcher Servlet&nbsp;</font></b></h2>
+      <h2><b><font size="+2">Usage Guide</font></b></h2>
+      </td>
+      <td align="Center" width="200"><a href="http://www.cougaar.org/"><img src="CompletionWatcherServlet_files/cougaar-smalllogo.jpg" border="0">
+      </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="0" cellpadding="0" width="600" align="Left" border="0">
+  <tbody>
+    <tr>
+      <td align="Left" width="600">
+      <hr>
+      <p>Jump down to:&nbsp; </p>
+      <ul>
+        <li><a href="#overview">Introduction          to the Completion Watcher
+Servlet</a>
+        </li>
+        <li><a href="#Servlet_Parameters">Servlet Parameters</a>
+        </li>
+        <li><a href="#Returned_Result_Format">Returned Result Format</a>
+        </li>
+        <li><a href="#Timing_Information">Timing            Information</a>
+        </li>
+        <li><a href="#Sample_URL">Sample          URL</a>
+        </li>
+        <li><a href="#Necessary_Plugin">Necessary          Plugin</a>
+          <br>
+        </li>
+        <li><a href="#bugs">Known bugs          and other issues</a>
+        </li>
+      </ul>
+      <hr>
+      <h2><a name="overview"></a>
+ Introduction</h2>
+ The GLM Completion Watcher Servlet        allows the user to measure how 
+long it takes for an <br>
+ agent to complete its tasks. &nbsp;In other words, it measures the time
+it takes for an agent to move<br>
+ from an &#8220;idle&#8221; agent state to a &#8220;done&#8221; agent state. &nbsp;In terms of tasks, 
+this is from the input of the <br>
+ first task to the completion of the last. &nbsp;It's a close cousin of the 
+Completion Servlet.<br>
+      <br>
+ But what does it mean for a task to be complete?<br>
+      <br>
+ A task is complete when<br>
+      <ul>
+        <li>A&nbsp;task has a plan element</li>
+        <li>The plan element has an Allocation Result (Estimated or Reported)</li>
+        <li>The Allocation Result&#8217;s confidence reaches 100%</li>
+      </ul>
+ This definition requires plugins to play by the rules and attach plan elements, 
+propagate allocation results, etc.<br>
+      <br>
+A graphical representation is :<br>
+      <img src="WatcherServlet.JPG" alt="Incomplete tasks vs time" width="926" height="302">
+      <br>
+       
+      <h2><a name="Servlet_Parameters"></a>
+ Servlet Parameters</h2>
+ The servlet has a few parameters :<br>
+      <ul>
+        <li>the first quiet interval                     
+          <ul>
+            <li>parameter : firstInterval (defaults to 10 seconds)</li>
+            <li>units : seconds </li>
+          </ul>
+        </li>
+        <li>the second quiet interval                     
+          <ul>
+            <li>parameter : secondInterval (defaults to 10 seconds)</li>
+            <li>units : seconds </li>
+          </ul>
+        </li>
+        <li>show results as either html, xml, or serialized java objects 
+                   
+          <ul>
+            <li>parameter : format = html, xml, or data<br>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <h2><a name="Returned_Result_Format"></a>
+ Returned Result Format</h2>
+  The execution time returned can be in either html, xml, or serialized <br>
+  data format.       
+      <h2><a name="Timing_Information"></a>
+ Timing Information</h2>
+ You get back timing information like this        :<br>
+      <br>
+ &lt;response&gt;<br>
+ &nbsp;&lt;results totalTime=""&gt;<br>
+ &nbsp; &lt;task id="interval" time="0:35:501"/&gt;<br>
+ &nbsp;&lt;/results&gt;<br>
+ &nbsp;&lt;histogram minBucket="13" maxBucket="13"&gt;<br>
+ &nbsp; &lt;bucket elapsedTime="20000..50000" count="1"/&gt;<br>
+ &nbsp;&lt;/histogram&gt;<br>
+ &lt;/response&gt;<br>
+      <br>
+ This is the html that        the GLMStimulatorServletResponseData produces. 
+              
+      <h2><a name="Sample_URL"></a>
+ Sample URL</h2>
+ A sample URL access of the        servlet is        <br>
+      <br>
+ http://localhost:8800/$TRANSCOM/watcher?firstInterval=5&amp;secondInterval=5&amp;format=html<br>
+      <h2><a name="Necessary_Plugin"></a>
+ Necessary Plugins</h2>
+ The necessary        component is (as from an ini file) :<br>
+      <br>
+ plugin = org.cougaar.glm.servlet.CompletionWatcherServletComponent(org.cougaar.glm.servlet.CompletionWatcherServlet, 
+/watcher)              
+      <h2><a name="bugs"></a>
+ Known bugs and other issues</h2>
+ None    known.&nbsp;</td>
+    </tr>
+    <tr>
+      <td valign="Top"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
