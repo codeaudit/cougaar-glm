@@ -38,6 +38,7 @@ import org.cougaar.domain.planning.ldm.plan.*;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.plugin.util.ExpanderHelper;
+import org.cougaar.core.plugin.util.PlugInHelper;
 
 import org.cougaar.util.SingleElementEnumeration;
 import org.cougaar.util.ShortDateFormat;
@@ -73,8 +74,8 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   /** Expand into an AssetGroup if true, else separate Tasks if false **/
   protected boolean createAssetGroups = true;
 
-  /** delay re-adding DetermineRequirement Tasks by specified millis **/
-  protected long delayReAddDetermineRequirementsMillis;
+  /** delay re-processing DetermineRequirement Tasks by specified millis **/
+  protected long delayReprocessMillis;
 
   /** Defaults optionally set by parameters. **/
   protected int defaultAdjustDurationDays;
@@ -102,8 +103,11 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   /** Subscription to Failed Allocations **/
   protected IncrementalSubscription failedDRAllocsSub;
 
+  /** Subscription to Expansions **/
+  protected IncrementalSubscription expansionsSub;
+
   /** List of determine requirements tasks waiting to be added **/
-  protected TaskWaitingList waitingAddDetermineRequirementsTasks;
+  protected TaskWaitingList unhandledDetermineRequirementsTasks;
 
   /** XML file containing description of GeolocLocation used for Task fromLocation **/
   protected String originFile = null;
@@ -120,7 +124,9 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
    * Subscribe.
    */
   protected void setupSubscriptions() {
-    setDebug();
+    //setDebug();
+    setDebug(true);
+    
     if (DEBUG) {
       printDebug(getClass()+" setting up subscriptions");
     }
@@ -147,7 +153,9 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     failedDRAllocsSub = (IncrementalSubscription) 
       subscribe(newFailedDRAllocPred());
   
-    waitingAddDetermineRequirementsTasks = new TaskWaitingList();
+    expansionsSub = (IncrementalSubscription) subscribe(newExpansionsPred());
+
+    unhandledDetermineRequirementsTasks = new TaskWaitingList();
 
     if (originFile != null) {
       overrideFromLocation = getGeoLoc(originFile);
@@ -170,12 +178,12 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       //if (DEBUG) {
       //  printDebug("orgDeployActs hasChanged");
       //}
-      watchAddedOrgDeployActs(orgDeployActsSub.getAddedList());
       watchChangedOrgDeployActs(orgDeployActsSub.getChangedList());
       watchRemovedOrgDeployActs(orgDeployActsSub.getRemovedList());
+      watchAddedOrgDeployActs(orgDeployActsSub.getAddedList());
     }
 
-    Link l = waitingAddDetermineRequirementsTasks.dueLinks();
+    Link l = unhandledDetermineRequirementsTasks.dueLinks();
     if (l != null) {
       //if (DEBUG) {
       //  printDebug("DetermineReqs Tasks due");
@@ -187,12 +195,12 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       //if (DEBUG) {
       //  printDebug("DetermineReqs Tasks hasChanged");
       //}
-      watchAddedDetermineRequirementsTasks(
-          drTasksSub.getAddedList());
       watchChangedDetermineRequirementsTasks(
           drTasksSub.getChangedList());
       watchRemovedDetermineRequirementsTasks(
           drTasksSub.getRemovedList());
+      watchAddedDetermineRequirementsTasks(
+          drTasksSub.getAddedList());
     }
     
 //      if (transAssetsSub.hasChanged()) {
@@ -208,18 +216,18 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       //if (DEBUG) {
       //  printDebug("Transportable Assets hasChanged");
       //}
-      watchAddedTransportableAssets(transAssetsPersonSub.getAddedList());
       watchChangedTransportableAssets(transAssetsPersonSub.getChangedList());
       watchRemovedTransportableAssets(transAssetsPersonSub.getRemovedList());
+      watchAddedTransportableAssets(transAssetsPersonSub.getAddedList());
     }
 
     if (transAssetsEquipmentSub.hasChanged()) {
       //if (DEBUG) {
       //  printDebug("Transportable Assets hasChanged");
       //}
-      watchAddedTransportableAssets(transAssetsEquipmentSub.getAddedList());
       watchChangedTransportableAssets(transAssetsEquipmentSub.getChangedList());
       watchRemovedTransportableAssets(transAssetsEquipmentSub.getRemovedList());
+      watchAddedTransportableAssets(transAssetsEquipmentSub.getAddedList());
     }
 
     if (failedDRAllocsSub.hasChanged()) {
@@ -229,6 +237,24 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       watchFailedDispositions(failedDRAllocsSub.getChangedList());
     }
 
+    if (expansionsSub.hasChanged()) {
+      /* Debugging
+      Collection adds = expansionsSub.getAddedCollection();
+      
+      if (adds != null) {
+        for (Iterator iterator = adds.iterator();
+             iterator.hasNext();) {
+          Expansion expansion = (Expansion) iterator.next();
+          expansion.setObservedResult(expansion.getEstimatedResult());
+          publishChange(expansion);
+        }
+      }
+          
+      System.out.println(99);
+      */
+      PlugInHelper.updateAllocationResult(expansionsSub);
+    }
+                                    
   }
 
   /**
@@ -306,7 +332,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       // should be only one determine requirements task
       printError("Expecting only one DetermineReqs Task! ignoring the others");
     }
-    watchAddedDetermineRequirementsTask(lTasks.task);
+    handleDetermineRequirementsTask(lTasks.task);
   }
 
   protected Task findSingleDetermineRequirementsTask(Enumeration eTasks) {
@@ -383,9 +409,23 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
                      "OLD:\n"+oldDP+"\n"+
                      "NEW:\n"+newDP);
         }
-        // do something special?
+        
+        // Kill Associated Expansion
+        if (oldDP.expandedWorkflow != null) {
+          killWorkflow(oldDP.expandedWorkflow);
+        }
       }
       setDeployPlan(newDP);
+
+
+      // Re-process all existing DETERMINEREQUIREMENTS tasks in
+      // light of the new Org Activity
+      Collection drTasks = drTasksSub.getCollection();
+      for (Iterator iterator = drTasks.iterator();
+           iterator.hasNext();) {
+        Task drTask = (Task) iterator.next();
+        reprocessDetermineRequirementsTask(drTask);
+      }
     }
   }
 
@@ -396,14 +436,19 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     if (DEBUG) {
       printDebug("  kill workflow: "+wf);
     }
-    Enumeration subtasksE = wf.getTasks();
-    while (subtasksE.hasMoreElements()) {
-      Task subt = (Task)subtasksE.nextElement();
-      if (DEBUG) {
-        printDebug("    remove task: "+subt);
+    
+    // Only need to kill subtasks if wf was set to not propagate
+    if (!wf.isPropagatingToSubtasks()) {
+      Enumeration subtasksE = wf.getTasks();
+      while (subtasksE.hasMoreElements()) {
+        Task subt = (Task)subtasksE.nextElement();
+        if (DEBUG) {
+          printDebug("    remove task: "+subt);
+        }
+        publishRemove(subt);
       }
-      publishRemove(subt);
     }
+
     // okay to get parent
     Task ptask = wf.getParentTask();
     if (ptask != null) {
@@ -457,6 +502,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     if (DEBUG) {
       printDebug("  old dp: "+oldDP+"\n  new dp: "+newDP);
     }
+
     Task drTask = oldDP.detReqsTask;
     if (drTask != null) {
       if (newDP != null) {
@@ -466,27 +512,16 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
           oldDP.expandedWorkflow = null;
         }
       }
-      if (delayReAddDetermineRequirementsMillis > 0) {
-        // delay specified millis before re-adding task
-        if (DEBUG) {
-          printDebug("  delay re-add drTask: "+drTask);
-        }
-        waitingAddDetermineRequirementsTasks.addLink(
-          delayReAddDetermineRequirementsMillis,
-          drTask);
-        wakeAfterRealTime(delayReAddDetermineRequirementsMillis);
-      } else {
-        // re-add task immediately
-        if (DEBUG) {
-          printDebug("  immediate re-add drTask: "+drTask);
-        }
-        watchAddedDetermineRequirementsTask(drTask);
-      }
+
+      reprocessDetermineRequirementsTask(drTask);
+
     }
     if (DEBUG) {
       printDebug("done");
     }
   }
+
+
 
   /**
    * Handle removed selfOrgAct.  We'll assume that the tasks are 
@@ -501,7 +536,11 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
         printDebug("Remove Deployment Plan!\nOLD:\n"+oldDP);
       }
       setDeployPlan(null);
-      // do something special?
+
+      // Kill Associated Expansion
+      if (oldDP.expandedWorkflow != null) {
+        killWorkflow(oldDP.expandedWorkflow);
+      }
     }
   }
 
@@ -511,43 +550,9 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
    * Carefully check for replacing prior drTasks.
    */
   protected void watchAddedDetermineRequirementsTask(Task drTask) {
-    DeployPlan dp = getDeployPlan();
-    if (dp == null) {
-      // no deploy plan
-      return;
-    }
-    if (DEBUG) {
-      printDebug("Add drTask with Deploy Plan: "+dp);
-      if ((dp.detReqsTask != null) && (dp.detReqsTask != drTask)) {
-        printDebug("  Different drTask!  "+drTask+" != "+dp.detReqsTask);
-      }
-    }
-    dp.detReqsTask = drTask;
-    // replace workflow
-    Workflow wf = dp.expandedWorkflow;
-    if (wf != null) {
-      // remove existing workflow
-      dp.expandedWorkflow = null;
-      killWorkflow(wf);
-    }
-    // create tasks for the assets
-    Enumeration eAssets = transAssetsPersonSub.elements();
-    if (eAssets.hasMoreElements()) {
-      expandDetermineRequirements(dp, drTask, eAssets);
-    } else {
-      if (DEBUG) {
-        printDebug("No assets to transport");
-      }
-    }
-    eAssets = transAssetsEquipmentSub.elements();
-    if (eAssets.hasMoreElements()) {
-      expandDetermineRequirements(dp, drTask, eAssets);
-    } else {
-      if (DEBUG) {
-        printDebug("No assets to transport");
-      }
-    }
+    handleDetermineRequirementsTask(drTask);
   }
+
 
   /**
    * Handle changed DetermineRequirements Task.  This is also
@@ -748,6 +753,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
    * Protected methods other than subcription watchers
    */
 
+  
   protected boolean DEBUG = false;
   protected String debugPrefix;
   protected String errorPrefix;
@@ -804,7 +810,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   }
 
   protected void setDefaults(Enumeration eParams) {
-    delayReAddDetermineRequirementsMillis = 0;
+    delayReprocessMillis = 0;
     defaultAdjustDurationDays = -2;
     while (eParams.hasMoreElements()) {
       String sParam = (String)eParams.nextElement();
@@ -823,7 +829,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
           createAssetGroups = (val.equalsIgnoreCase("true"));
         } else if (name.equalsIgnoreCase("delayMillis")) {
           try {
-            delayReAddDetermineRequirementsMillis = Long.parseLong(val);
+            delayReprocessMillis = Long.parseLong(val);
           } catch (Exception e) {
             printError("Invalid long for "+sParam);
           }
@@ -1159,26 +1165,60 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     }
   }
 
-  /**
-   * If the reported allocation result has been successfully calculated
-   * for the workflow set the estimated equal to the reported to send a
-   * notification back up.
-   * <p>
-   * This is currently not used. The NotificationLP is handling propagation 
-   * of AllocationResults.
-   */
-  protected void updateAllocationResult(PlanElement cpe) {
-    if (cpe.getReportedResult() != null) {
-      // compare allocationresult objects.
-      // if they are not equal, re-set the estimated result
-      // for now ignore whether the composition of the results are the same.
-      AllocationResult reportedresult = cpe.getReportedResult();
-      AllocationResult estimatedresult = cpe.getEstimatedResult();
-      if ((estimatedresult == null) || 
-         (!(estimatedresult.equals(reportedresult)))) {
-        cpe.setEstimatedResult(reportedresult);
-        publishChange(cpe);
+  private void handleDetermineRequirementsTask(Task drTask) {
+    DeployPlan dp = getDeployPlan();
+    if (dp == null) {
+      // no deploy plan
+      return;
+    }
+    if (DEBUG) {
+      printDebug("Add drTask with Deploy Plan: "+dp);
+      if ((dp.detReqsTask != null) && (dp.detReqsTask != drTask)) {
+        printDebug("  Different drTask!  "+drTask+" != "+dp.detReqsTask);
       }
+    }
+    dp.detReqsTask = drTask;
+    // replace workflow
+    Workflow wf = dp.expandedWorkflow;
+    if (wf != null) {
+      // remove existing workflow
+      dp.expandedWorkflow = null;
+      killWorkflow(wf);
+    }
+    // create tasks for the assets
+    Enumeration eAssets = transAssetsPersonSub.elements();
+    if (eAssets.hasMoreElements()) {
+      expandDetermineRequirements(dp, drTask, eAssets);
+    } else {
+      if (DEBUG) {
+        printDebug("No assets to transport");
+      }
+    }
+    eAssets = transAssetsEquipmentSub.elements();
+    if (eAssets.hasMoreElements()) {
+      expandDetermineRequirements(dp, drTask, eAssets);
+    } else {
+      if (DEBUG) {
+        printDebug("No assets to transport");
+      }
+    }
+  }
+
+  private void reprocessDetermineRequirementsTask(Task drTask) {
+    if (delayReprocessMillis > 0) {
+      // delay specified millis before re-adding task
+      if (DEBUG) {
+        printDebug("  delay re-add drTask: "+drTask);
+      }
+      unhandledDetermineRequirementsTasks.addLink(delayReprocessMillis,
+                                                  drTask);
+      wakeAfterRealTime(delayReprocessMillis);
+    } else {
+      // re-add task immediately
+      if (DEBUG) {
+        printDebug("  immediate re-add drTask: "+drTask);
+      }
+      handleDetermineRequirementsTask(drTask);
     }
   }
 
@@ -1397,6 +1437,23 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       }
     };
   }
+
+  /**
+   * Test if this object is an expansion of one of our tasks. We use
+   * taskPred for the latter.
+   **/
+  protected static UnaryPredicate newExpansionsPred() {
+    return new UnaryPredicate() {
+      protected UnaryPredicate myTaskPred = newDRTasksPred();
+      public boolean execute(Object o) {
+        if (o instanceof Expansion) {
+          return myTaskPred.execute(((Expansion) o).getTask());
+        } 
+        return false;
+      }
+    };
+  }
+
 
   /**
    * Predicate to find a specific Oplan by UID
