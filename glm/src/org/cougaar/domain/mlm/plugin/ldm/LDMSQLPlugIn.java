@@ -336,15 +336,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       props.put("user", user);
       props.put("password", pass);
 
-      // open a connection - prefer a connection from the DBConnectionPool
-      // unless the pool parameter = false.
-      Connection conn;
-      String poolP = qh.getParameter("pool");
-      if (poolP == null || poolP.equals("false")) {
-        conn = DriverManager.getConnection(dbname, props);
-      } else {
-        conn = DBConnectionPool.getConnection(dbname, user, pass);
-      }
+      Connection conn = DBConnectionPool.getConnection(dbname, user, pass);
       try {
         Statement statement = conn.createStatement();
         ResultSet rset = statement.executeQuery(sql);
