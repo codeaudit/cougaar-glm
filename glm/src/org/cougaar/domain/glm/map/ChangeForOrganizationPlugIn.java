@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 Defense Advanced Research Projects Agency (DARPA) and Clark Software Engineering (CSE) This software to be used in accordance with the COUGAAR license agreement
+ *  Copyright 1997-2001 Clark Software Engineering (CSE) 
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
