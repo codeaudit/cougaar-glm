@@ -478,7 +478,6 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected void adjustForInadequateInventory() {
 	// GLK NEED TO FILL IN, POSSIBLY FROM GIM
   	printLog("adjustForInadequateInventory()-----------------------------Inventory before failUnfillableDueOuts()");
-// 	printInventoryBins(0);
 	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
 	Inventory inventory;
 	InventoryPG invpg;
@@ -498,7 +497,12 @@ public abstract class InventoryManager extends InventoryProcessor {
 		if (lowestPriorityDueOut != null) {
 		    // Fail Request
 		    Task task = lowestPriorityDueOut.getTask();
-		    printDebug("    ---->Failing due-out: "+TaskUtils.taskDesc(task));
+		    printDebug("    ---->Failing due-out: "+TaskUtils.taskDesc(task)+"\n");
+		    
+		    // DEBUG PRINTOUT
+		    Enumeration dueIns = invpg.getAllDueIns();
+		    printInventory(inventory,dueIns,0);
+
 		    PlanElement pe = task.getPlanElement();
 		    if (pe instanceof Allocation) {
 			failAlloc(inventory, (Allocation)pe);
