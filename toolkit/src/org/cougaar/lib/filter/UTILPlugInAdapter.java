@@ -61,6 +61,7 @@ import java.util.Iterator;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.LDMService;
 import org.cougaar.core.plugin.PluginBindingSite;
+import org.cougaar.core.component.StateObject;
 
 /**
  * Implementation of UTILPlugIn interface.
@@ -71,7 +72,46 @@ import org.cougaar.core.plugin.PluginBindingSite;
  * thread is started.
  */
 
-public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
+public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn, StateObject {
+  /**
+   * Implemented for StateObject
+   * <p>
+   * Get the current state of the Component that is sufficient to
+   * reload the Component from a ComponentDescription.
+   *
+   * @return null if this Component currently has no state
+   */
+  public Object getState() {
+    if (originalAgentID == null)
+	  return ((PluginBindingSite)getBindingSite()).getAgentIdentifier();
+    else 
+	  return originalAgentID;
+  }
+
+  protected ClusterIdentifier getOriginalAgentID () {
+	return originalAgentID;
+  }
+  
+  /**
+   * Implemented for StateObject
+   * <p>
+   * Set-state is called by the parent Container if the state
+   * is non-null.
+   * <p>
+   * The state Object is whatever this StateComponent provided
+   * in it's <tt>getState()</tt> implementation.
+   * @param o the state saved before
+   */
+  public void setState(Object o) {
+	originalAgentID = (ClusterIdentifier) o;
+  }
+
+  /** true iff originalAgentID is not null -- i.e. setState got called */
+  protected boolean didSpawn () {
+	boolean val = (originalAgentID != null);
+	return val;
+  }
+
   /**
    * This method is called before cycle is ever called to
    * set up safe transactions for container subscriptions.
@@ -224,7 +264,11 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
 	  myP = new Vector ();
 
     // create the parameter table
-    myParams = createParamTable (myP, ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
+	ClusterIdentifier agentID = (didSpawn () ? 
+								 getOriginalAgentID () :
+								 ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
+								 
+    myParams = createParamTable (myP, agentID);
 
     // set instance variables
     try{myExtraExtraOutput = myParams.getBooleanParam("ExtraExtraOutput");}
@@ -598,4 +642,6 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
   protected boolean skipLowConfidence = true;
   protected double HIGH_CONFIDENCE = 0.99d;
   protected PersistentState persistentState;
+  private ClusterIdentifier originalAgentID = null;
+  
 }
