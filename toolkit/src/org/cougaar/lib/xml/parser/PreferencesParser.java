@@ -55,6 +55,23 @@ public class PreferencesParser{
     return UTILPreference.makeCostPreference(ldmf, cost);
   }
 
+  /**
+   * Get the quantity preference
+   */
+  public static Preference getQuantity(RootFactory ldmf, Node node){
+    NodeList  nlist    = node.getChildNodes();      
+    int       nlength  = nlist.getLength();
+    long      quantity = 0l;
+
+    for(int i = 0; i < nlength; i++){
+      Node    child       = nlist.item(i);
+      String  childname   = child.getNodeName();
+      Long l = new Long(child.getNodeValue());
+      quantity = l.longValue();
+    }
+    return UTILPreference.makeQuantityPreference(ldmf, quantity);
+  }
+
 
   /**
    * Get the start date preference
@@ -103,7 +120,11 @@ public class PreferencesParser{
 	}
       }
     }
-    return UTILPreference.makeEndDatePreference(ldmf, earldate, bestdate, latedate);
+
+    if (earldate == null || latedate == null)
+      return UTILPreference.makeEndDateBelowPreference(ldmf, bestdate);
+    else
+      return UTILPreference.makeEndDatePreference(ldmf, earldate, bestdate, latedate);
   }
 
 }
