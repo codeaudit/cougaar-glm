@@ -190,6 +190,13 @@ public class UTILPreference {
     return endPref;
   }
 
+  public static Preference makeEndDateBelowPreference(RootFactory ldmf, Date bestDate) {
+    AspectValue endAV = new AspectValue(AspectType.END_TIME, bestDate.getTime());
+    ScoringFunction endSF = ScoringFunction.createNearOrBelow(endAV, 0.0);
+    Preference endPref = ldmf.newPreference(AspectType.END_TIME, endSF, 1.0);
+    return endPref;
+  }
+
   /**
    * What should we do with the weight of the preference?
    * Should this be set by a policy object?
