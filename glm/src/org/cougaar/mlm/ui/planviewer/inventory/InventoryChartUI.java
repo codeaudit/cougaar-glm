@@ -52,7 +52,7 @@ public class InventoryChartUI extends JApplet {
     } else {
 	// display dialog box for location of LogPlanServer
       String clusterHost = "localhost";
-      String clusterPort = "5555";
+      String clusterPort = "8800";
       String msg = "Enter cluster Log Plan Server location as host:port";
       String s = ConnectionHelper.getClusterHostPort(null, msg);
       if (s == null)

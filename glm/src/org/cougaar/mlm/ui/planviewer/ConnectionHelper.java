@@ -259,7 +259,9 @@ return results
                                      msg,
                                      "Cluster Location",
                                      OptionPane.QUESTION_MESSAGE,
-                                     null, null, "localhost:5555");
+                                     //null, null, "localhost:5555");
+                                     null, null, "localhost:8800");
+
   }
 
   public static Hashtable getClusterInfo(java.awt.Component parent) {
@@ -274,10 +276,12 @@ return results
     try {
       host = host.trim();
       if (host.length() == 0) {
-        host = "localhost:5555";
+        //host = "localhost:5555";
+        host = "localhost:8800";
       } else {
         if (host.indexOf(':') < 0) {
-          host += ":5555";
+          //host += ":5555";
+          host += ":8800";
         }
       }
       ConnectionHelper connection = new ConnectionHelper("http://" + host + "/");
