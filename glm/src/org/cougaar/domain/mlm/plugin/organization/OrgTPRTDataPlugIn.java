@@ -660,7 +660,10 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
       // It adds the property to the organization and
       // adds the organization to ccv2 collections
       NewAssignedPG assignedCap = (NewAssignedPG)getFactory().createPropertyGroup(AssignedPGImpl.class);
-      assignedCap.setRoles(new ArrayList(org.getOrganizationPG().getRoles()));
+      Collection roles =  org.getOrganizationPG().getRoles();
+      if (roles != null) {
+        assignedCap.setRoles(new ArrayList(roles));
+      }
       org.setAssignedPG(assignedCap);
       
       // set up this asset's available schedule
