@@ -72,12 +72,13 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
+import java.io.Serializable;
 
 import java.sql.*;
 
 public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
 
-  private ArrayList oplans = new ArrayList();
+  private ArrayList oplans;
   private HashMap locations = new HashMap();
 
   // Additions/Modifications/Deletions which have not yet been published
@@ -86,7 +87,7 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
   private HashSet removedObjects = new HashSet();
 
   private IncrementalSubscription oplanCoupons;
-//   private IncrementalSubscription oplanSubscription;
+  private IncrementalSubscription oplanSubscription;
   private IncrementalSubscription stateSubscription;
 
   private static UnaryPredicate oplanCouponPred = new UnaryPredicate() {
@@ -106,7 +107,7 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
     }
   };
 
-  private class OplanCouponMapPredicate implements UnaryPredicate {
+  private static class OplanCouponMapPredicate implements UnaryPredicate {
     UID _couponUID;
     public OplanCouponMapPredicate(UID couponUID) {
       _couponUID = couponUID;
@@ -130,15 +131,6 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
       myOplan = oplan;
     }
 
-//     public void setOrgId(String orgId) {
-//       myOrgId = orgId;
-//     }
-
-//     public boolean execute(Object o) {
-//       if ((myOplan == null) ||
-//           (myOrgId.equals(""))) {
-//         return false;
-//       }
     public boolean execute(Object o) {
       if (myOplan == null)  {
         return false;
@@ -147,10 +139,10 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
       return ((o instanceof OrgActivity) &&
               (((OrgActivity) o).getOplanUID().equals(myOplan.getUID())));
     }
-  }   
+  }
+   
   private static OrgActivityPredicate orgActivityPredicate = 
     new OrgActivityPredicate();  
-
 
 
   protected void setupSubscriptions() {
@@ -165,15 +157,20 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
 					 });
     }
     theFactory = ((PlanningFactory) domainService.getFactory("planning"));
+    oplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(oplanPredicate);
 
-    if (!getBlackboardService().didRehydrate()) {
+    oplans = new ArrayList();
+    // refill oplan Collection on rehydrate
+    processOplanAdds(oplanSubscription.getCollection());
+
+//     if (!getBlackboardService().didRehydrate()) {
       try {
 	// set up initial properties - use super method
 	initProperties();
       } catch (SubscriberException se) {
 	System.err.println(this.toString()+": Initialization failed: "+se);
       }
-    }
+//     }
 
     oplanCoupons = (IncrementalSubscription)subscribe(oplanCouponPred);
   }
@@ -243,7 +240,7 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
     }
   }
 
-  private class OplanCouponMap {
+  private static class OplanCouponMap implements Serializable {
     UID _couponUID;
     UID _contributorUID;
 
@@ -449,6 +446,13 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
       }
     } // end syncronization on oplans
     return oplan;
+  }
+
+  private void processOplanAdds(Collection adds) {
+    for (Iterator it = adds.iterator(); it.hasNext();) {
+      Oplan oplan = (Oplan) it.next();
+      oplans.add(oplan);
+    }
   }
 }
 

@@ -176,7 +176,8 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
     // default package for QueryHandler
     globalParameters.put("Package", "org.cougaar.mlm.plugin.ldm");
     globalParameters.put("agent","'"+getMessageAddress()+"'");
-    //System.out.println("LDMSQLPlugin, globalParameters is: "+globalParameters);
+    //globalParameters.put("PublishOnSelfOrg","true");
+    //System.out.println("LDMSQLPlugin, globalParameters are: "+globalParameters);
   }
 
   // retrieve and parse the arguments
