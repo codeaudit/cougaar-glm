@@ -188,7 +188,7 @@ public class GenericBufferedTablePlugin extends GenericTablePlugin {
     // Have to do this transaction boundary
     openTransaction();
     buttonExecute();
-    closeTransaction(false);
+    closeTransactionDontReset();
   }
 
   // Return an allocation result that gives back a successful/optimistic answer

@@ -533,11 +533,9 @@ public class GenericTablePlugin extends SimplePlugin {
       public boolean execute(Object o) {
         if (o instanceof Task) {
           Task t = (Task) o;
-          if (t.getPlanElement() == null) {
-            if ((t.getVerb()).equals(verb)) {
-              if (checkForOfType(t, tfor, oftype)) {
-                return true;
-              }
+          if ((t.getVerb()).equals(verb)) {
+            if (checkForOfType(t, tfor, oftype)) {
+              return true;
             }
           }
         }
