@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/PSPClientConfig.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/PSPClientConfig.java,v 1.2 2001-01-19 20:08:10 gvidaver Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -36,4 +36,6 @@ public class PSPClientConfig
     public static final String SubordinatesPSP_id = "SUBORDINATES.PSP";
 
     public static final String AssetPopulationPSP_id = "ASSET_POPULATION.PSP";
+
+    public static final String HierarchyPSP_id = "HIERARCHY.PSP";
 }
