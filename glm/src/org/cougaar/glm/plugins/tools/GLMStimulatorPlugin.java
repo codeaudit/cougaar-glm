@@ -92,6 +92,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
   public void setupFilters () {
     super.setupFilters ();
     addFilter (myOrgCallback = createOrganizationCallback ());
+    glmAssetUtil = new AssetUtil (logger);
   }
 
   /** Filter out/listen for all organizations... */
@@ -166,10 +167,10 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
     // Order matters here!
     publishAdd(pe.getTask());
     Vector createdObjects;
-    if (!AssetUtil.isPassenger(pe.getTask().getDirectObject ())) {
+    if (!glmAssetUtil.isPassenger(pe.getTask().getDirectObject ())) {
       if (isInfoEnabled()) 
 	info ("not a passenger");
-      createdObjects = AssetUtil.ExpandAsset (getLDMService().getLDM().getFactory (), pe.getTask ().getDirectObject ());
+      createdObjects = glmAssetUtil.ExpandAsset (getLDMService().getLDM().getFactory (), pe.getTask ().getDirectObject ());
     }
     else {
       if (isInfoEnabled()) 
@@ -414,14 +415,14 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    */
   protected void allocateToOrg (Task task, Organization supportedOrg) {
     Allocation alloc = (Allocation) 
-      UTILAllocate.makeAllocation (this,
+      allocHelper.makeAllocation (this,
 				   ldmf,
 				   ldmf.getRealityPlan(), 
 				   task,
 				   supportedOrg,
-				   UTILPreference.getReadyAt(task),
-				   UTILPreference.getBestDate(task),
-				   UTILAllocate.HIGHEST_CONFIDENCE,
+				   prefHelper.getReadyAt(task),
+				   prefHelper.getBestDate(task),
+				   allocHelper.HIGHEST_CONFIDENCE,
 				   Constants.Role.TRANSPORTER);
     if (isInfoEnabled())
       info(getName () +" allocating to " + supportedOrg);
@@ -451,8 +452,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
 	tasksSent.remove(removed);
 	label.setText("Rescinded last task. " + tasksSent.size () + " left.");
       }catch (Exception exc) {
-	System.err.println(exc.getMessage());
-	exc.printStackTrace();
+	logger.error ("exception ", exc);
       }
       finally{
 	blackboard.closeTransaction(false);
@@ -482,7 +482,8 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
       GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, 
 					   ((PluginBindingSite) getBindingSite()).getAgentIdentifier(),
 					   getConfigFinder(),
-					   getLDMService().getLDM());
+					   getLDMService().getLDM(),
+					   logger);
       tasks = UTILAllocate.enumToList (tp.getTasks());
     } 
     catch( Exception ex ) {
@@ -500,6 +501,8 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
   /** The callback mediating the org subscription */
   protected GLMOrganizationCallback myOrgCallback;
   GLMButtonListener myGLMListener;
+
+  AssetUtil glmAssetUtil;
 }
 
 

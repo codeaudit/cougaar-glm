@@ -41,6 +41,7 @@ import org.cougaar.util.ConfigFinder;
 import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.util.UTILRuntimeException;
 import org.cougaar.glm.xml.parser.TaskParser;
+import org.cougaar.util.log.Logger;
 
 import org.apache.xerces.parsers.DOMParser;
 
@@ -67,32 +68,34 @@ public class GLMTaskParser{
    * @param pfile the name of the parameter file.
    */
   public GLMTaskParser(String pfile, 
-					   RootFactory ldmf, 
-					   ClusterIdentifier clusterIdentifier, 
-					   ConfigFinder configFinder,
-					   LDMServesPlugin ldmServesPlugin) {
+		       RootFactory ldmf, 
+		       ClusterIdentifier clusterIdentifier, 
+		       ConfigFinder configFinder,
+		       LDMServesPlugin ldmServesPlugin,
+		       Logger logger) {
     try{
+      this.logger = logger;
+      taskParser = new TaskParser (logger);
       DOMParser parser = new DOMParser();
       parser.setFeature(
                  "http://apache.org/xml/features/allow-java-encodings", true);
-      parser.setEntityResolver (new UTILEntityResolver ());
+      parser.setEntityResolver (new UTILEntityResolver (logger));
 
       InputStream inputStream = configFinder.open(pfile);
       parser.parse(new InputSource (inputStream));
       Document doc = parser.getDocument();
       //System.out.println("making dom parser ");
 
-	  myLdmf    = ldmf;
-	  this.clusterIdentifier = clusterIdentifier;
+      myLdmf    = ldmf;
+      this.clusterIdentifier = clusterIdentifier;
       myLdm     = ldmServesPlugin;
       myTasks   = this.getTaskList(doc);
     }
     catch(FileNotFoundException fnfe){
-      System.err.println("\nCould not find file : " + fnfe.getMessage () + ".");
+      logger.error("\nCould not find file : " + fnfe.getMessage () + ".", fnfe);
     }
     catch(Exception e){
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      logger.error ("error", e);
     }
   }
 
@@ -121,7 +124,7 @@ public class GLMTaskParser{
         //System.out.println(node.getNodeName());
         //System.out.println(node.getNodeType());
         if(node.getNodeType() == Node.ELEMENT_NODE){
-          Task task = TaskParser.getTask(myLdm, clusterIdentifier, myLdmf, node);
+          Task task = taskParser.getTask(myLdm, clusterIdentifier, myLdmf, node);
 	  taskbuf.addElement(task);
         }
       }
@@ -138,4 +141,7 @@ public class GLMTaskParser{
   private RootFactory           myLdmf     = null;
   private Vector                myTasks    = null;
   private LDMServesPlugin       myLdm      = null;
+  protected Logger logger;
+
+  protected TaskParser taskParser;
 }

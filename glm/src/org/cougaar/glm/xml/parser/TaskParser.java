@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.6 2002-04-01 22:49:39 gvidaver Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.7 2002-04-02 20:54:53 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -57,16 +57,20 @@ import org.cougaar.util.log.*;
 public class TaskParser{
   private static String PREPO="PREPO";
 
-  private static Logger logger;
-  public static void setLogger (Logger log) { 
+  public TaskParser (Logger log) { 
     logger = log; 
-    //    DirectObjectParser.setLogger(log);
+    verbParser = new VerbParser ();
+    dateParser = new DateParser ();
+    preferencesParser = new PreferencesParser (log);
+    directObjectParser = new DirectObjectParser (log);
+    locationParser = new LocationParser ();
+    itineraryParser = new ItineraryParser ();
   }
 
-  public static Task getTask(LDMServesPlugin ldm,
-			     ClusterIdentifier clusterIdentifier, 
-			     RootFactory ldmf, 
-			     Node node){
+  public Task getTask(LDMServesPlugin ldm,
+		      ClusterIdentifier clusterIdentifier, 
+		      RootFactory ldmf, 
+		      Node node){
     NewTask task = null;
     
     if(node.getNodeName().equals("task")){
@@ -89,22 +93,22 @@ public class TaskParser{
         if(child.getNodeType() == Node.ELEMENT_NODE){
 
 	  if(childname.equals("verb")){
-	    Verb verb = VerbParser.getVerb(child);
+	    Verb verb = verbParser.getVerb(child);
 	    task.setVerb(verb);
 	  }
 	  else if(childname.equals("directobject")){
-	    task.setDirectObject(DirectObjectParser.getDirectObject(ldm, child));
+	    task.setDirectObject(directObjectParser.getDirectObject(ldm, child));
 	  }
 	  else if(childname.equals("from")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.FROM);
-	    newpp.setIndirectObject(LocationParser.getLocation(ldm, child));
+	    newpp.setIndirectObject(locationParser.getLocation(ldm, child));
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("to")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.TO);
-	    newpp.setIndirectObject(LocationParser.getLocation(ldm, child));
+	    newpp.setIndirectObject(locationParser.getLocation(ldm, child));
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("with")){
@@ -149,31 +153,31 @@ public class TaskParser{
 	  else if(childname.equals("readyat")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.READYAT);
-	    Date readyat = DateParser.getDate(child);
+	    Date readyat = dateParser.getDate(child);
 	    Schedule sched = ldmf.newSimpleSchedule(readyat, readyat);
 	    newpp.setIndirectObject(sched);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("startdate")){
-	    Preference p = PreferencesParser.getStartDate(ldmf, child);
+	    Preference p = preferencesParser.getStartDate(ldmf, child);
 	    task.addPreference(p);
 	  }
 	  else if(childname.equals("enddate")){
-	    Preference p = PreferencesParser.getEndDate(ldmf, child);
+	    Preference p = preferencesParser.getEndDate(ldmf, child);
 	    task.addPreference(p);
 	  }
 	  else if (childname.equals("cost")){
-	    Preference p = PreferencesParser.getCost(ldmf, child);
+	    Preference p = preferencesParser.getCost(ldmf, child);
 	    task.addPreference(p);
 	  }
 	  else if (childname.equals("quantity")){
-	    Preference p = PreferencesParser.getQuantity(ldmf, child);
+	    Preference p = preferencesParser.getQuantity(ldmf, child);
 	    task.addPreference(p);
 	  }
 	  else if(childname.equals("ItineraryOf")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.ITINERARYOF);
-	    newpp.setIndirectObject(ItineraryParser.getItinerary(ldm, child));
+	    newpp.setIndirectObject(itineraryParser.getItinerary(ldm, child));
 	    //task.setPrepositionalPhrase(newpp);
 	    prep_phrases.addElement(newpp);
 	  }
@@ -212,7 +216,7 @@ public class TaskParser{
 	      typeId.setTypeIdentification(child.getFirstChild().getNodeValue());
 	      typeId.setNomenclature(child.getFirstChild().getNodeValue());
 	    } catch (Exception exc) {
-	      System.err.println("problem creating the AbstractAsset for FromTask");
+	      logger.error("problem creating the AbstractAsset for FromTask", exc);
 	    }
 	    newpp.setIndirectObject(AEF);
 	    prep_phrases.addElement(newpp);
@@ -224,7 +228,7 @@ public class TaskParser{
     return task;
   }
 
-  private static Object getStuff(LDMServesPlugin ldm, Node node){
+  private Object getStuff(LDMServesPlugin ldm, Node node){
     Object object = null;
     
     NodeList  nlist    = node.getChildNodes();      
@@ -237,7 +241,7 @@ public class TaskParser{
       if(child.getNodeType() == Node.ELEMENT_NODE){
 	if(childname.equals("asset")){
 	  // object = AssetParser.getAsset(ldm, child);
-	  object = DirectObjectParser.getDirectObject(ldm, node);
+	  object = directObjectParser.getDirectObject(ldm, node);
 	  break;
 	}
       } else if (child.getNodeType() == Node.TEXT_NODE) {
@@ -279,4 +283,12 @@ public class TaskParser{
     Node data = node.getFirstChild();
     return data.getNodeValue();
   }
+
+  private Logger logger;
+  VerbParser verbParser;
+  DateParser dateParser;
+  PreferencesParser preferencesParser;
+  DirectObjectParser directObjectParser;
+  LocationParser locationParser;
+  ItineraryParser itineraryParser;
 }
