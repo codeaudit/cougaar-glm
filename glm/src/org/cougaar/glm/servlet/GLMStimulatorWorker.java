@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import org.cougaar.core.servlet.SimpleServletSupport;
-import org.cougaar.core.servlet.ServletUtil;
 
 import org.cougaar.util.Trigger;
 import org.cougaar.util.TriggerModel;
