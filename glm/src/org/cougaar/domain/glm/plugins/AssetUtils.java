@@ -25,6 +25,8 @@ import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.plan.Relationship;
 import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.domain.planning.ldm.plan.Role;
+import org.cougaar.domain.planning.ldm.plan.Schedule;
+import org.cougaar.domain.planning.ldm.plan.LocationScheduleElement;
 import org.cougaar.util.Enumerator;
 import org.cougaar.util.MutableTimeSpan;
 import org.cougaar.util.TimeSpan;
@@ -36,8 +38,10 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.ldm.asset.SupplyClassPG;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 /** Provides convenience methods. */
@@ -123,7 +127,24 @@ public class AssetUtils {
 	}
 	return support_orgs.elements();
     }
-    
+
+    public static Enumeration getGeolocLocationAtTime(Organization org, long time) {
+	LocationSchedulePG lspg = org.getLocationSchedulePG();
+	Vector geolocs = new Vector();
+	try {
+	    Schedule ls = lspg.getSchedule();
+	    Iterator i  = ls.getScheduleElementsWithTime(time).iterator();
+	    while (i.hasNext()) {
+		LocationScheduleElement lse = (LocationScheduleElement)i.next(); 
+		geolocs.add((GeolocLocation)lse.getLocation());
+	    }
+	} catch (NullPointerException npe) {
+	    GLMDebug.ERROR("AssetUtils", 
+			   "getGeolocLocationAtTime(), LocationSchedulePG NOT found on "+org);
+	}
+	return geolocs.elements();
+    }
+
     public static void printRelationshipSchedule(Organization myOrg) {
 	RelationshipSchedule sched = myOrg.getRelationshipSchedule();
 	GLMDebug.DEBUG("AssetUtils",null,"____________________________________________________________");
