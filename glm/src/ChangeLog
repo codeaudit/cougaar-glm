@@ -1,3 +1,34 @@
+2001-09-07  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/mlm/plugin/organization/GLSRescindPlugIn.java:
+	Make random pusher GUI optional controlled by
+	org.cougaar.domain.mlm.plugin.organization.GLSRescindPlugIn.hidden
+	system property. Defaults to true (hidden).
+
+	* org/cougaar/domain/mlm/plugin/organization/GLSGUIInitPlugIn.java:
+	Make random pusher GUI optional controlled by
+	org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.hidden
+	system property. Defaults to true (hidden).
+
+2001-09-06  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Fix off by one error in processing inventory reports. Manifested
+	as array index exception.
+
+	* org/cougaar/domain/glm/ldm/QueryLDMPlugIn.java:
+	Include the failing query when printing a failed query message.
+	What good is an error message that says that one of your many
+	queries failed, but doesn't say which one.
+
+2001-08-17  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* src/org/cougaar/domain/mlm/plugin/CompletionAssessor.java:
+	Add unload() to dispose the GUI frame.
+
+	* src/org/cougaar/domain/mlm/plugin/GLSGUIBasePlugIn.java: 
+	Add unload() to dispose the GUI frame.	
+
 2001-06-06  Beth DePass  <bdepass@bbn.com>
   * org/cougaar/domain/mlm/plugin/generic/UniversalExpanderPlugIn.java:
   Now uses a parameter specified in cougaar.rc to define what the 
