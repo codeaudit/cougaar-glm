@@ -260,9 +260,6 @@ public class OrgRTDataPlugIn extends SimplePlugIn implements StateObject {
   
 
   protected void createSuperior(String sup) {
-
-	System.out.println ("OrgRTDataPlugIn.createSuperior - creating superior " + sup);
-	
     if ((sup == null) ||
         (sup.equals(""))) {
       System.err.println("OrgRTDataPlugIn@" + getClusterIdentifier() + " ignoring Superior specified as \"\"");
