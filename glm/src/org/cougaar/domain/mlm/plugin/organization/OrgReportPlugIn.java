@@ -292,30 +292,33 @@ public class OrgReportPlugIn extends SimplePlugIn
         resendRequired = true;
       }
       if (resendRequired) {
+        resendAssetTransfers(selfOrg, myRFSAssetTransfers.getCollection(), changeReports);
+        resendAssetTransfers(selfOrg, myRFDAssetTransfers.getCollection(), changeReports);
+      }
+    }
+  }
 
-        Collection rfsAssetTransfers = myRFSAssetTransfers.getCollection();
-        Collection rfdAssetTransfers = myRFDAssetTransfers.getCollection();
-
-        for (Iterator rfsIterator = rfsAssetTransfers.iterator();
-             rfsIterator.hasNext();) {
-          AssetTransfer assetTransfer = (AssetTransfer) rfsIterator.next();
-          
-          if (assetTransfer.getAsset().equals(selfOrg)) {
-            assetTransfer.indicateAssetChange();
-            publishChange(assetTransfer, changeReports);
-          }
+  /**
+     Resend a collection of AssetTransfers. Asset transfers are "sent"
+     by doing a publishChange. The change reports are supplied by the
+     caller, but are just the change reports of the change that
+     initiated this resend. Only transfers of our Organization to
+     other Organizations are sent, the rest are ignored.
+   **/
+  private void resendAssetTransfers(Organization selfOrg,
+                                    Collection transfers,
+                                    Collection changeReports)
+  {
+    for (Iterator i = transfers.iterator(); i.hasNext();) {
+      AssetTransfer at = (AssetTransfer) i.next();
+      if (at.getAsset().equals(selfOrg)) {
+        if (at.getAssignee().equals(selfOrg)) {
+          // System.out.println("Not resending " + at);
+        } else {
+          at.indicateAssetChange();
+          publishChange(at, changeReports);
         }
-        
-        for (Iterator rfdIterator = rfdAssetTransfers.iterator();
-             rfdIterator.hasNext();) {
-          AssetTransfer assetTransfer = (AssetTransfer) rfdIterator.next();
-          
-          if (assetTransfer.getAsset().equals(selfOrg)) {
-            assetTransfer.indicateAssetChange();
-            publishChange(assetTransfer, changeReports);
-          }
-        }
-      } 
+      }
     }
   }
 
@@ -402,10 +405,4 @@ public class OrgReportPlugIn extends SimplePlugIn
       }
     };
   }
-
 }
-
-
-
-
-
