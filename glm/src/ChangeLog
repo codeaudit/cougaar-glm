@@ -1,3 +1,42 @@
+2001-03-9 Noelle Givler  <NGivler@bbn.com>
+
+	* XMLPolicyCreator
+	Changed format for RangeRuleEntry to support associated RuleParameter
+	values.
+	
+	Old format -
+	
+	...
+	<RuleParam name="Breakfast">
+	  <RangeSet value="MRE">
+	    <RangeEntry min="0"  max="20" value="MRE"/>     
+            <RangeEntry min="20"  max="60" value="MRE"/>
+	  </RangeSet>
+        </RuleParam>
+	...
+
+	New format - 
+
+	...
+        <RuleParam name="Breakfast">
+          <RangeSet value="MRE">
+            <RangeEntry min="0"  max="20">
+              <String value="MRE"/>     
+	    </RangeEntry>
+	    <RangeEntry min="20"  max="60" >
+	      <String value="MRE"/>
+	    </RangeEntry>
+	    <RangeEntry min="30"  max="50">
+	      <RuleParam name="LongDaysOfSupply">
+                <Long value="98" min="-56790" max="689999"/> 
+              </RuleParam>
+            </RangeEntry>
+          </RangeSet>
+        </RuleParam>
+        ...
+
+	New format includes a RangeEntry whose value is a LongRuleParameter.
+
 2001-03-01  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* InventoryPolicy -- et. al.
