@@ -276,15 +276,22 @@ public abstract class InventoryBG implements PGDelegate {
 			   TimeUtils.dateString(TaskUtils.getStartTime(request))+
 			   ", Task: "+TaskUtils.taskDesc(request));
 	}
-	if (day >= dueOut_.size()) {
-	    // Increase size of dueOut_ vector to accommodate days
-	    for (int i=dueOut_.size()-1; i<=day; i++) {
-		dueOut_.add(new Vector());
-	    }
+	while (day >= dueOut_.size()) {
+	    dueOut_.add(new Vector());
 	}
+//  	if (day >= dueOut_.size()) {
+//  	    // Increase size of dueOut_ vector to accommodate days
+//  	    for (int i=dueOut_.size()-1; i<=day; i++) {
+//  		dueOut_.add(new Vector());
+//  	    }
+//  	}
 //     	GLMDebug.DEBUG("InventoryBG", "addDueOut(), Adding dueout on day "+day+"("+TimeUtils.dateString(time)+")"+TaskUtils.taskDesc(request));
 	Vector v = (Vector)dueOut_.get(day);
 	PlanElement pe = request.getPlanElement();
+	// If the request has just been rescinded, the plan element will be null.
+	// This task should not affect planning
+	if (pe == null) 
+	    return;
 	AllocationResult ar = pe.getEstimatedResult();
 	if(ar==null){
 	    GLMDebug.ERROR("addDueOut()", TaskUtils.taskDesc(request)+
@@ -428,15 +435,15 @@ public abstract class InventoryBG implements PGDelegate {
 	    expansion = (Expansion)pe;
 	    Workflow wf = expansion.getWorkflow();
 	    Enumeration tasks = wf.getTasks();
-	    boolean filled = true;
 	    while (tasks.hasMoreElements()) {
+		boolean filled = true;
 		refill = (Task)tasks.nextElement();
 		if (TaskUtils.isSupply(refill)) {
 		    double qty = TaskUtils.getRefillQuantity(refill);
 //  		    GLMDebug.DEBUG("InventoryBG", "addPreviousRefillsToInventory(), adding Refill to inventory, amt: "+qty);
 		    if (qty == 0) {
 			filled = false;
-			AllocationResult ar = ((Allocation)refill.getPlanElement()).getReportedResult();
+//			AllocationResult ar = ((Allocation)refill.getPlanElement()).getReportedResult();
 //  			GLMDebug.DEBUG("InventoryBG", "addPreviousRefillsToInventory(), adding failed allocation to dueIns table : "+ 
 //  				       TaskUtils.shortTaskDesc(refill)+" Allocation: "+ TaskUtils.arDesc(ar));
 		    }
@@ -444,12 +451,7 @@ public abstract class InventoryBG implements PGDelegate {
 			filled = true;
 			totalRefills++;
 		    }
-		    if (TaskUtils.isProjection(refill)) {
-			addProjection(refill, filled);
-		    }
-		    else {
-			addDueIn(refill, filled);
-		    }
+		    addDueIn(refill, filled);
 		}
 	    }
 	}
