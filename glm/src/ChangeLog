@@ -1,3 +1,8 @@
+2001-01-11 Jim Winston <jwinston@bbn.com>
+	* org.cougaar.domain.mlm.plugin.generic.PropgationPlugIn
+	* org.cougaar.domain.mlm.plugin.ldm.XMLPolicyPlugIn
+	Both PlugIns now accept more than one XML file parameter. 
+	
 2001-01-11 Amy Fedyk <afedyk@bbn.com>
 	* org.cougaar.domain.glm.plugins.projection.GenerateSupplyDemandExpander
 	Removed dependency on OPlan for determining time phased location.
