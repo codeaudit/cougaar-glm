@@ -63,15 +63,28 @@ public class PSP_ALPInventory extends PSP_BaseAdapter implements PlanServiceProv
 
   private UIInventoryImpl getInventoryFromLogPlan(Collection container) {
     UIInventoryImpl inventory = new UIInventoryImpl();
+    Allocation lastAllocation=null;
     for (Iterator i = container.iterator(); i.hasNext(); ) {
       Object o = i.next();
-      if (o instanceof Asset)
+      if (o instanceof Asset) {
 	inventory.setAsset((Asset)o);
+      }
       else if (o instanceof Allocation) {
+	lastAllocation = (Allocation) o;
 	inventory.addDueInSchedule((Allocation)o);
 	inventory.addRequestedDueInSchedule((Allocation)o);
       }
     }
+    //MWD new code if there are no ALPAsset Inventories it's likely
+    //the Asset has not been set on this UIInventoryImpl.
+    //There are just allocations in this InventoryPredicate returned
+    //collection and hence if (o instanceof Asset) has been used.
+    if((lastAllocation != null) &&
+       (inventory.getAsset() == null)) {
+	Asset directAsset = lastAllocation.getTask().getDirectObject();
+	inventory.setAsset(directAsset);	    
+    }
+
     return inventory;
   }
 
@@ -85,6 +98,7 @@ public class PSP_ALPInventory extends PSP_BaseAdapter implements PlanServiceProv
 						  boolean provider,
 						  Date cDay) {
     UISimpleInventory inv = new UISimpleInventory();
+    
     inv.setAssetName(inventory.getAssetName());
     inv.setUnitType(inventory.getUnitType());
     inv.setProvider(provider); // ui uses this to determine chart labels
@@ -121,7 +135,21 @@ public class PSP_ALPInventory extends PSP_BaseAdapter implements PlanServiceProv
 
  //       inv.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_OUT_SHORTFALL, 
 //  			   inventory.getDueOutShortfallSchedule());
-    } else {
+    } 
+    else if (scheduleType.equals(inventory.NO_INVENTORY_SCHEDULE_JUST_CONSUME)){
+	inv.addNamedSchedule(UISimpleNamedSchedule.DUE_IN, inventory.getDueInSchedule());
+	inv.addNamedSchedule(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN, inventory.getUnconfirmedDueInSchedule());
+	inv.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
+			   inventory.getRequestedDueInSchedule());
+	inv.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_DUE_IN, 
+			   inventory.getProjectedDueInSchedule());
+	inv.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN, 
+			   inventory.getProjectedRequestedDueInSchedule());
+
+	System.out.println("getInventoryForClient: returning schedule type: " + scheduleType);
+
+    } 
+    else {
       System.out.println("WARNING: Unsupported schedule type: " + 
 			 scheduleType);
       return null;
@@ -169,9 +197,14 @@ public class PSP_ALPInventory extends PSP_BaseAdapter implements PlanServiceProv
 
     // return list of asset names
     if (desiredAssetName.equals("ASSET")) {
+
+	/****
+	 **
+
       Vector assetNames = new Vector();
       Subscription subscription = 
 	psc.getServerPlugInSupport().subscribe(this, new AssetPredicate());
+
       Collection container = 
 	((CollectionSubscription)subscription).getCollection();
       for (Iterator i = container.iterator(); i.hasNext(); ) {
@@ -186,6 +219,33 @@ public class PSP_ALPInventory extends PSP_BaseAdapter implements PlanServiceProv
 	  nomenclature = typeId;
 	assetNames.addElement(nomenclature);
       }
+
+      ****
+       * MWD fix and try this out -below
+       * MWD get rid of old commented out above replaced by below
+       * to get demand even where no inventories.
+       ***/
+       
+       HashSet assetNamesSet = new HashSet();
+       Subscription subscription = 
+         psc.getServerPlugInSupport().subscribe(this, new DemandObjectPredicate());
+
+      Collection container = 
+	((CollectionSubscription)subscription).getCollection();
+      for (Iterator i = container.iterator(); i.hasNext(); ) {
+	Asset asset = ((Task)(i.next())).getDirectObject();
+	TypeIdentificationPG typeIdPG = asset.getTypeIdentificationPG();
+	String nomenclature = typeIdPG.getNomenclature();
+	String typeId = typeIdPG.getTypeIdentification();
+	if (nomenclature != null)
+	  nomenclature = nomenclature + ":" + typeId;
+	else
+	  nomenclature = typeId;
+	assetNamesSet.add(nomenclature);
+      }
+
+      Vector assetNames = new Vector(assetNamesSet);
+
       // unsubscribe, don't need this subscription any more
       psc.getServerPluginSupport().unsubscribeForSubscriber(subscription);
       // send the results
@@ -406,14 +466,21 @@ class InventoryPredicate implements UnaryPredicate {
       if (!(allocation.getAsset() instanceof Organization))
 	return false;
       Task task = allocation.getTask();
-      if (!task.getVerb().equals(Constants.Verb.SUPPLY))
+      if (!((task.getVerb().equals(Constants.Verb.SUPPLY)) ||
+	    (task.getVerb().equals(Constants.Verb.PROJECTSUPPLY))))
 	  return false;
       Object directObject = task.getDirectObject();
       if (directObject == null)
 	return false;
       if (!(directObject instanceof Asset))
 	return false;
-      return assetMatch((Asset)directObject);
+      boolean aMatch = assetMatch((Asset)directObject);
+      /** MWD Debug
+      if(aMatch) {
+	  System.out.println("PSP_ALPInventory::InventoryPredicate:Matching allocations task is with Verb: " + task.getVerb());
+      }
+      */
+      return aMatch;
     }
     return false; 
   }
@@ -434,6 +501,27 @@ class AssetPredicate implements UnaryPredicate {
       return false;
     }
     TypeIdentificationPG typeIdPG = a1.getTypeIdentificationPG();
+    if (typeIdPG == null) {
+      System.out.println("WARNING: No typeIdentificationPG for asset");
+      return false;
+    }
+    return true;
+  }
+}
+
+class DemandObjectPredicate implements UnaryPredicate {
+
+  public boolean execute(Object o) {
+    if (!(o instanceof Task))
+      return false;
+    Task task = (Task)o;
+    if(!((task.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) ||
+	 (task.getVerb().equals(Constants.Verb.SUPPLY)))) 
+	return false;
+    Asset asset = task.getDirectObject();
+    if (asset == null)
+	return false;
+    TypeIdentificationPG typeIdPG = asset.getTypeIdentificationPG();
     if (typeIdPG == null) {
       System.out.println("WARNING: No typeIdentificationPG for asset");
       return false;
