@@ -713,7 +713,8 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	int printInventoryLevels(Inventory inventory, ClusterIdentifier clusterID);\
 	PGDelegate copy(PropertyGroup pg);\
 	Enumeration getAllDueIns();\	
-	ProjectionWeight getProjectionWeight();\	
+	ProjectionWeight getProjectionWeight();\
+        void setProjectionWeight(ProjectionWeight newWeight);\
 	void addInventoryReport(InventoryReport anInventoryReport);\
         InventoryReport getLatestInventoryReport();\
         InventoryReport getOldestInventoryReport();\
