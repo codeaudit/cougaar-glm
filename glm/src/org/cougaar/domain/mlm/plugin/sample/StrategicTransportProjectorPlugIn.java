@@ -1506,7 +1506,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       if (actTS != null) {
         // do we want to fix dates to be after System time?
 	// startDate will be null if OffsetDays days wasn't an command line parameter
-        this.thruTime = actTS.getThruDate();
+        this.thruTime = actTS.getEndDate();
 	this.startTime = actTS.getStartDate();
 
 	if (prepoStartDate == null) {
