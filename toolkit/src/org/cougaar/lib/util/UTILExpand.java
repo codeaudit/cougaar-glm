@@ -597,6 +597,7 @@ public class UTILExpand {
     for (Iterator i = subtasks.iterator (); i.hasNext ();) {
       plugin.publishAdd (i.next());
     }
+	plugin.publishAdd(wf);
     plugin.publishAdd(exp);
 
     if (myExtraOutput){
