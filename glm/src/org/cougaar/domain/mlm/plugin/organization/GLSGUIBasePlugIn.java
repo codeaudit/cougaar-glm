@@ -41,10 +41,14 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * subclasses to allow labels to be updated.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIBasePlugIn.java,v 1.3 2001-04-05 19:27:52 mthome Exp $
+ * @version      $Id: GLSGUIBasePlugIn.java,v 1.4 2001-05-18 14:55:15 tomlinso Exp $
  * */
 
 public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
+  private static String EXIT_ON_CLOSE_PROP =
+    "org.cougaar.domain.mlm.plugin.organization.GLSGUIBasePlugIn.exitOnClose";
+  private static boolean exitOnClose = System.getProperty(EXIT_ON_CLOSE_PROP, "false").equals("true");
+
   /** frame for 1-button UI **/
   static JFrame frame;
 
@@ -145,6 +149,7 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
 
   private void createGUI() {
     frame = new JFrame(getGUITitle());
+    if (exitOnClose) frame.setDefaultCloseOperation(3);
     frame.setLocation(0,0);
     // Create the button
     // Register a listener for the radio buttons
