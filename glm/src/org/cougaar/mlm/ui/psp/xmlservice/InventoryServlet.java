@@ -68,8 +68,7 @@ public class InventoryServlet
 
   private SimpleServletSupport support;
 
-  public InventoryServlet(SimpleServletSupport support) {
-    super();
+  public void setSimpleServletSupport(SimpleServletSupport support) {
     this.support = support;
   }
 
@@ -120,7 +119,7 @@ public class InventoryServlet
      * this makes it clear that InventoryGetter only uses
      * the "support" from the outer class.
      */    
-    static SimpleServletSupport support;
+    SimpleServletSupport support;
     
     final public static String ASSET = "ASSET";
     final public static String ASSET_AND_CLASSTYPE = ASSET + ":" + "CLASS_TYPE:";

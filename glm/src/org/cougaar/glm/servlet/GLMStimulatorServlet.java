@@ -94,8 +94,8 @@ import org.cougaar.core.servlet.SimpleServletSupport;
  * </pre>
  */
 public class GLMStimulatorServlet extends ServletBase {
-  public GLMStimulatorServlet(SimpleServletSupport support) {
-    super(support);
+  public void setSimpleServletSupport(SimpleServletSupport support) {
+    super.setSimpleServletSupport(support);
   }
 
   public static final String INPUT_FILE      = "inputFileName";
