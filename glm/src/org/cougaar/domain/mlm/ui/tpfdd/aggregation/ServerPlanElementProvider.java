@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.3 2001-01-20 02:08:42 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.4 2001-02-26 22:19:59 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -97,7 +97,7 @@ public class ServerPlanElementProvider extends PlanElementProvider
 	byUnit = new VectorHashtable();
 	itineraryBrothers = new VectorHashtable();
 	unitManifests = new Hashtable();
-	unitTree = new UnitHierarchy(clusterCache.getHost());
+	unitTree = new UnitHierarchy(clusterCache.getDemandHost());
 	seenAssetUnit = new Hashtable();	 
 	itinsMissingUnit = new VectorHashtable();
         count ++;
@@ -113,6 +113,7 @@ public class ServerPlanElementProvider extends PlanElementProvider
 
     public TaskNode getRollupNode(String unitName)
     {
+// 	System.out.println("getRollupNode: "+unitName);
 	TaskNode rollupNode;
 
 	if ( (rollupNode = (TaskNode)(UUIDPool.get("ROLLUP:" + 
@@ -129,6 +130,7 @@ public class ServerPlanElementProvider extends PlanElementProvider
 
     public TaskNode getEquipmentNode(String unitName)
     {
+// 	System.out.println("getEquipmentNode: "+unitName);
 	TaskNode equipNode;
 
 	if ( (equipNode = (TaskNode)(UUIDPool.get("EQUIP:" + 
@@ -224,71 +226,71 @@ public class ServerPlanElementProvider extends PlanElementProvider
     return elem.getTransportationMode() == TaskNode.MODE_AIR;
   }
   
-  public void printMissingAccount(){
-    Enumeration enum = itinsMissingUnit.elements();
-    int count = 0;
-    while (enum.hasMoreElements()) {
-      Vector vect = (Vector) enum.nextElement();
-      System.out.println(vect.size() + " things sitting around");
-    }     
-    if (count == 0) {
-      System.out.println("Nothing sitting around");
-    }
-  }
+//   public void printMissingAccount(){
+//     Enumeration enum = itinsMissingUnit.elements();
+//     int count = 0;
+//     while (enum.hasMoreElements()) {
+//       Vector vect = (Vector) enum.nextElement();
+//       System.out.println(vect.size() + " things sitting around");
+//     }     
+//     if (count == 0) {
+//       System.out.println("Nothing sitting around");
+//     }
+//   }
 
-  /**See if this uid has a recorded unit name
-   */
-  private String findStoredUnitName(String uid) {
-    String name = null;
-    synchronized (seenAssetUnit) {
-      name = (String) seenAssetUnit.get(uid);
-    }
-    return name;
-  }
+//   /**See if this uid has a recorded unit name
+//    */
+//   private String findStoredUnitName(String uid) {
+//     String name = null;
+//     synchronized (seenAssetUnit) {
+//       name = (String) seenAssetUnit.get(uid);
+//     }
+//     return name;
+//   }
 
-  /**Stores the unit name for this UID 
-   * Returns true if it gets stored, ie, it's not already in there
-   * Returns false if it's already there
-   **/
-  private boolean storeUnitName(String uid, String name) {
+//   /**Stores the unit name for this UID 
+//    * Returns true if it gets stored, ie, it's not already in there
+//    * Returns false if it's already there
+//    **/
+//   private boolean storeUnitName(String uid, String name) {
     
-    boolean response = false;
-    synchronized (seenAssetUnit) {
-      if (seenAssetUnit.get(uid) == null) {
-	seenAssetUnit.put(uid,name);
-	response = true;
-      }
-    }
-    return response;
-  }
+//     boolean response = false;
+//     synchronized (seenAssetUnit) {
+//       if (seenAssetUnit.get(uid) == null) {
+// 	seenAssetUnit.put(uid,name);
+// 	response = true;
+//       }
+//     }
+//     return response;
+//   }
 
-  /**
-   * Store itineraries that don't have transported unit names
-   * Store them by the UID of the asset in the itinerary
-   * Hopefully, something will eventually come in with the info
-   **/
-  private void storeItinerary(UITaskItinerary itinerary) {
-    //Vector hashtable is already synchronized!
-    itinsMissingUnit.put(itinerary.getAssetUID(),itinerary);
-  }
+//   /**
+//    * Store itineraries that don't have transported unit names
+//    * Store them by the UID of the asset in the itinerary
+//    * Hopefully, something will eventually come in with the info
+//    **/
+//   private void storeItinerary(UITaskItinerary itinerary) {
+//     //Vector hashtable is already synchronized!
+//     itinsMissingUnit.put(itinerary.getAssetUID(),itinerary);
+//   }
 
-  /**
-   * Process the stored itineraries
-   * Retrieve all the itineraries for the UID, and process them
-   * And, take them out of the table
-   **/
-  private void processStoredItineraries(String uid, String name) {
-    Vector storedItins = itinsMissingUnit.findAndRemove(uid);
+//   /**
+//    * Process the stored itineraries
+//    * Retrieve all the itineraries for the UID, and process them
+//    * And, take them out of the table
+//    **/
+//   private void processStoredItineraries(String uid, String name) {
+//     Vector storedItins = itinsMissingUnit.findAndRemove(uid);
 
-    if (storedItins != null) {
+//     if (storedItins != null) {
 
-      for (Iterator i = storedItins.iterator(); i.hasNext();) {
-	UITaskItinerary itin = (UITaskItinerary)i.next();
-	itin.setTransportedUnitName(name);
-       	handleCompleteItinerary(itin,name);	  
-      }
-    }
-  }
+//       for (Iterator i = storedItins.iterator(); i.hasNext();) {
+// 	UITaskItinerary itin = (UITaskItinerary)i.next();
+// 	itin.setTransportedUnitName(name);
+//        	handleCompleteItinerary(itin,name);	  
+//       }
+//     }
+//   }
 
   /**
    * function to process itineraries received
@@ -296,40 +298,41 @@ public class ServerPlanElementProvider extends PlanElementProvider
    * was in original task -- to match up the asset with
    * transportedUnitName(the FOR information)
    **/
-  private void handleNewItinerary(UITaskItinerary itinerary) {
+//   private void handleNewItinerary(UITaskItinerary itinerary) {
+//       System.out.println("HANDLING: "+itinerary);
 
-    // If null, no FOR information was attached to the task
-    // Have to see if anything else for this asset came in with
-    // the FOR information
-    if (itinerary.getTransportedUnitName() == null) {
-      String foundName = findStoredUnitName(itinerary.getAssetUID());
-      // Info already recorded in server, so just fill out itinerary
-      // and pass on for processing
-      if (foundName != null) {
-	itinerary.setTransportedUnitName(foundName);
-	handleCompleteItinerary(itinerary,foundName);	  
-      }
-      else {
-	storeItinerary(itinerary);
-      }
-    }
+//     // If null, no FOR information was attached to the task
+//     // Have to see if anything else for this asset came in with
+//     // the FOR information
+//     if (itinerary.getTransportedUnitName() == null) {
+//       String foundName = findStoredUnitName(itinerary.getAssetUID());
+//       // Info already recorded in server, so just fill out itinerary
+//       // and pass on for processing
+//       if (foundName != null) {
+// 	itinerary.setTransportedUnitName(foundName);
+// 	handleCompleteItinerary(itinerary,foundName);	  
+//       }
+//       else {
+// 	storeItinerary(itinerary);
+//       }
+//     }
     
-    // unitName included in UITaskItinerary 
-    // We can process this intinerary, but we also need to store
-    // this asset/unitName info if we don't have it already, and
-    // we need to process any intineraries waiting around for this
-    // info
-    else {
+//     // unitName included in UITaskItinerary 
+//     // We can process this intinerary, but we also need to store
+//     // this asset/unitName info if we don't have it already, and
+//     // we need to process any intineraries waiting around for this
+//     // info
+//     else {
 
-      String unitName = 
-	PathString.basename(itinerary.getTransportedUnitName());
+//       String unitName = 
+// 	PathString.basename(itinerary.getTransportedUnitName());
 
 
-      handleCompleteItinerary(itinerary,unitName);
-      if (storeUnitName(itinerary.getAssetUID(),unitName) == true)
-	processStoredItineraries(itinerary.getAssetUID(),unitName);
-    }
-  } 
+//       handleCompleteItinerary(itinerary,unitName);
+//       if (storeUnitName(itinerary.getAssetUID(),unitName) == true)
+// 	processStoredItineraries(itinerary.getAssetUID(),unitName);
+//     }
+//   } 
 
   boolean doingOldFiltering = false;
 
@@ -341,6 +344,7 @@ public class ServerPlanElementProvider extends PlanElementProvider
    */
   private void handleCompleteItinerary(UITaskItinerary itinerary, 
 					String unitName) {
+//       System.out.println("HANDLING COMPLETE: "+itinerary);
 	
     // Store the itineraries -- this is used for saving the state
     // of the aggregation server
@@ -562,14 +566,13 @@ public class ServerPlanElementProvider extends PlanElementProvider
 	  }
 	  // Carrier node
 	  else {
+
 	    // If it's not an instance of that, then I don't know why
 	    // it's here.  If things are disappearing, this could be
 	    // changed to just add the thing anyway.
 	    if ( goodLegs[j] instanceof UITaskItineraryElementCarrier ) {
-	      UITaskItineraryElementCarrier carrierLeg = 
-		(UITaskItineraryElementCarrier)goodLegs[j];
-	      if (brother.getCarrierName() == 
-		  carrierLeg.getCarrierItemNomenclature()) {
+		UITaskItineraryElementCarrier carrierLeg = (UITaskItineraryElementCarrier)goodLegs[j];
+		if (brother.getCarrierType().equals(carrierLeg.getCarrierTypeNomenclature())) {
 		childLeg = new TaskNode(this, 
 					goodLegs[j], 
 					brother, 
@@ -811,7 +814,9 @@ public class ServerPlanElementProvider extends PlanElementProvider
 
   public void fireItemAdded(Object item){
     if ( item instanceof UITaskItinerary )
-      handleNewItinerary((UITaskItinerary)item);
+	handleCompleteItinerary((UITaskItinerary)item,
+				PathString.basename(((UITaskItinerary)item).getTransportedUnitName()));
+//       handleNewItinerary((UITaskItinerary)item);
     else if ( item instanceof TaskNode )
       handleNewTaskNode((TaskNode)item);
     else if ( item instanceof Object[] ) {

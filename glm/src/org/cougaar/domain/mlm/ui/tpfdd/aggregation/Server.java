@@ -126,6 +126,7 @@ public class Server implements ActionListener, ServerCommands
     private Fifo requests;
     private boolean useCanned = false;
     private String host;
+    private String demandHost;
     private String defaultOosDir = null;
   private static boolean useSubordinatesPSP = true;
 
@@ -399,6 +400,7 @@ public class Server implements ActionListener, ServerCommands
     private void loadNewLive()
     {
 	  host = clusterCache.guiSetHost();
+	  demandHost = clusterCache.guiSetDemandHost();
 
 	OutputHandler.out("Server:loadNewLive loading new aggregation server data.");
 	if ( itineraryProducers == null) {
@@ -832,6 +834,7 @@ public class Server implements ActionListener, ServerCommands
   {
     OutputHandler.out("Commencing ALPINE Aggregation Server ");
 	host = clusterCache.guiSetHost();
+	demandHost = clusterCache.guiSetDemandHost();
     getitineraryProducers();
     requests = new Fifo();
     
