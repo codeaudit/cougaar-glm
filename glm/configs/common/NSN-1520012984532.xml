@@ -7,7 +7,7 @@
             <value>NSN/1520012984532</value>
           </field>
           <field name="Nomenclature" type="String">
-            <value>UH-60L - HELICOPTER UTILITY</value>
+            <value>UH-60L - HELICOPTER UTILITY - REDUCED FOR AIRLIFT</value>
           </field>
           <field name="AlternateTypeIdentification" type="String">
             <value>LIN/H32361</value>
@@ -22,7 +22,7 @@
             <value>
               <object class="org.cougaar.domain.planning.ldm.measure.Distance">
                 <field name="Inches" type="double">
-                  <value>778.0</value>
+                  <value>496.0</value>
                 </field>
               </object>
             </value>
@@ -31,7 +31,7 @@
             <value>
               <object class="org.cougaar.domain.planning.ldm.measure.Distance">
                 <field name="Inches" type="double">
-                  <value>644.0</value>
+                  <value>117.0</value>
                 </field>
               </object>
             </value>
@@ -40,7 +40,7 @@
             <value>
               <object class="org.cougaar.domain.planning.ldm.measure.Distance">
                 <field name="Inches" type="double">
-                  <value>205.0</value>
+                  <value>105.0</value>
                 </field>
               </object>
             </value>
@@ -49,7 +49,7 @@
             <value>
               <object class="org.cougaar.domain.planning.ldm.measure.Mass">
                 <field name="Pounds" type="double">
-                  <value>20250.0</value>
+                  <value>16200.0</value>
                 </field>
               </object>
             </value>
@@ -58,7 +58,7 @@
             <value>
               <object class="org.cougaar.domain.planning.ldm.measure.Area">
                 <field name="SquareFeet" type="double">
-                  <value>3480.0</value>
+                  <value>403.0</value>
                 </field>
               </object>
             </value>
@@ -67,7 +67,7 @@
             <value>
               <object class="org.cougaar.domain.planning.ldm.measure.Volume">
                 <field name="CubicFeet" type="double">
-                  <value>59440.0</value>
+                  <value>3527.0</value>
                 </field>
               </object>
             </value>
@@ -82,7 +82,7 @@
             <value>True</value>
           </field>
           <field name="CargoCategoryCode" type="String">
-            <value>B0D</value>
+            <value>B2D</value>
           </field>
         </object>
       </value>
