@@ -40,7 +40,7 @@ import org.w3c.dom.NodeList;
  * PropagationPlugIn propagates Transferables based on xml files in parameter list
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.5 2001-02-13 16:50:47 tomlinso Exp $
+ * @version $Id: PropagationPlugIn.java,v 1.6 2001-02-15 13:34:08 tomlinso Exp $
  */
 
 public class PropagationPlugIn extends SimplePlugIn
@@ -144,7 +144,6 @@ public class PropagationPlugIn extends SimplePlugIn
               }
             }
             if (isRelationshipChange) {
-              System.out.println("Propagating from " + getClusterIdentifier() + " to " + org);
               for (Iterator transferables = 
                      currentSubscriptions.getTransferableSubscription().getCollection().iterator(); 
                    transferables.hasNext();) {
@@ -209,7 +208,7 @@ public class PropagationPlugIn extends SimplePlugIn
       try {
         doc = getCluster().getConfigFinder().parseXMLConfigFile(xmlfilename);
 	if (doc == null) {
-	  System.out.println("XML Parser could not handle file " + xmlfilename);
+	  System.err.println("XML Parser could not handle file " + xmlfilename);
 	  return ;
 	}
       } catch (Exception e) {
