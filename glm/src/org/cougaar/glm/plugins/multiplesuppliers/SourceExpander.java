@@ -28,6 +28,7 @@ import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.*;
 import org.cougaar.core.domain.*;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.*;
 import org.cougaar.planning.ldm.plan.*;
@@ -86,6 +87,23 @@ public class SourceExpander extends SimplePlugin {
     }
   }
 
+  /** 
+   * rely upon load-time introspection to set these services - 
+   * don't worry about revokation.
+   */
+  public final void setLoggingService(LoggingService bs) {  
+    logger = bs; 
+
+    prepHelper = new UTILPrepPhrase (logger);
+    prefHelper = new UTILPreference (logger);
+    expandHelper = new UTILExpand   (logger);
+  }
+
+  /**
+   * Get the logging service, for subclass use.
+   */
+  protected LoggingService getLoggingService() {  return logger; }
+
   /**
    * This method is meant to be overridden by subclasses for those instances where
    * the subclass needs to do any initialization at the beginning of each execute() loop.
@@ -129,7 +147,7 @@ public class SourceExpander extends SimplePlugin {
 
     String curSupplierName = curSupplier.getItemIdentificationPG().getNomenclature();
 
-    PrepositionalPhrase pPhrase = UTILPrepPhrase.getPrepNamed( task, Grammar.WITHSUPPLIERS);
+    PrepositionalPhrase pPhrase = prepHelper.getPrepNamed( task, Grammar.WITHSUPPLIERS);
     Vector suppliers = (Vector)pPhrase.getIndirectObject();
     Enumeration suppliersEnum = suppliers.elements();
 
@@ -340,12 +358,12 @@ public class SourceExpander extends SimplePlugin {
                     AspectValue quantityAV = new AspectValue( AspectType.QUANTITY, shortfallCount);
                     ScoringFunction quantitySF = ScoringFunction.createNearOrBelow( quantityAV, shortfallCount);
                     Preference quantityPreference = getFactory().newPreference( AspectType.QUANTITY, quantitySF);
-                    UTILPreference.replacePreference( subtask, quantityPreference);
+                    prefHelper.replacePreference( subtask, quantityPreference);
 
                     NewPrepositionalPhrase newPhrase = getFactory().newPrepositionalPhrase();
                     newPhrase.setPreposition( Grammar.USESUPPLIER);
                     newPhrase.setIndirectObject( nextSupplier);
-                    UTILPrepPhrase.replacePrepOnTask( subtask, newPhrase);
+                    prepHelper.replacePrepOnTask( subtask, newPhrase);
 
                     boolean redirectToCluster = false;
                     // If nextSupplier is myself, set the verb to SUPPLY.
@@ -400,7 +418,7 @@ public class SourceExpander extends SimplePlugin {
       // Then add the remaining "new" suppliers to the UsedSuppliersList (if they aren't already in there)
       // so they won't get tasked by other suppliers' source tasks
       NewPrepositionalPhrase usedSuppliersPhrase
-          = (NewPrepositionalPhrase)UTILPrepPhrase.getPrepNamed( subtask, Grammar.WITHUSEDSUPPLIERS);
+          = (NewPrepositionalPhrase)prepHelper.getPrepNamed( subtask, Grammar.WITHUSEDSUPPLIERS);
       if ( usedSuppliersPhrase != null) {
         usedSuppliersVector = (Vector)usedSuppliersPhrase.getIndirectObject();
         Enumeration usedSuppliersEnum = usedSuppliersVector.elements();
@@ -420,7 +438,7 @@ public class SourceExpander extends SimplePlugin {
         usedSuppliersPhrase = getFactory().newPrepositionalPhrase();
         usedSuppliersPhrase.setPreposition( Grammar.WITHUSEDSUPPLIERS);
         usedSuppliersPhrase.setIndirectObject( new Vector());
-        UTILPrepPhrase.replacePrepOnTask( subtask, usedSuppliersPhrase);
+        prepHelper.replacePrepOnTask( subtask, usedSuppliersPhrase);
         usedSuppliersVector = (Vector)usedSuppliersPhrase.getIndirectObject();
       }
 
@@ -439,7 +457,7 @@ public class SourceExpander extends SimplePlugin {
       NewPrepositionalPhrase newPhrase = getFactory().newPrepositionalPhrase();
       newPhrase.setPreposition( Grammar.WITHSUPPLIERS);
       newPhrase.setIndirectObject( mySuppliers);
-      UTILPrepPhrase.replacePrepOnTask( subtask, newPhrase);
+      prepHelper.replacePrepOnTask( subtask, newPhrase);
 
       // Put in a USESUPPLIER clause in order to allocate this subtask to the first supplier.
       // Note that the SourceAllocator will create a FailedAllocation if the indirect object
@@ -451,7 +469,7 @@ public class SourceExpander extends SimplePlugin {
       newPhrase = getFactory().newPrepositionalPhrase();
       newPhrase.setPreposition( Grammar.USESUPPLIER);
       newPhrase.setIndirectObject( firstSupplier);
-      UTILPrepPhrase.replacePrepOnTask( subtask, newPhrase);
+      prepHelper.replacePrepOnTask( subtask, newPhrase);
 
       boolean redirectToCluster = false;
       // If firstSupplier is myself, set the verb to SUPPLY.
@@ -464,8 +482,8 @@ public class SourceExpander extends SimplePlugin {
       }
 
       subtasks.add( subtask);
-      Workflow wf = UTILExpand.makeWorkflow( getFactory(), subtasks, task);
-      publishAddExpansion( UTILExpand.makeExpansion( getFactory(), wf));
+      Workflow wf = expandHelper.makeWorkflow( getFactory(), subtasks, task);
+      publishAddExpansion( expandHelper.makeExpansion( getFactory(), wf));
     }
     return retval;
   }
@@ -490,4 +508,9 @@ public class SourceExpander extends SimplePlugin {
     }
     return true;
   }
+
+  protected LoggingService logger;
+  protected UTILExpand expandHelper;
+  protected UTILPreference prefHelper;
+  protected UTILPrepPhrase prepHelper;
 }

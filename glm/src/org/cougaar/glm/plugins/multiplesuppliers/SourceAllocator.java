@@ -29,6 +29,7 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.*;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.domain.*;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.measure.*;
 import org.cougaar.planning.ldm.plan.*;
@@ -78,6 +79,21 @@ public class SourceAllocator extends SimplePlugin {
       return false;
     }
   }
+
+  /** 
+   * rely upon load-time introspection to set these services - 
+   * don't worry about revokation.
+   */
+  public final void setLoggingService(LoggingService bs) {  
+    logger = bs; 
+
+    prepHelper = new UTILPrepPhrase (logger);
+  }
+
+  /**
+   * Get the logging service, for subclass use.
+   */
+  protected LoggingService getLoggingService() {  return logger; }
 
   /**
    * This method is meant to be overridden by subclasses for those instances where
@@ -194,7 +210,7 @@ public class SourceAllocator extends SimplePlugin {
 
     String verbStr = task.getVerb().toString();
     if (verbStr.equals( Grammar.SOURCE)) {
-      PrepositionalPhrase pPhrase = UTILPrepPhrase.getPrepNamed( task, Grammar.USESUPPLIER);
+      PrepositionalPhrase pPhrase = prepHelper.getPrepNamed( task, Grammar.USESUPPLIER);
       if ( pPhrase == null) {
         System.out.println( "SourceAllocator.allocateTask: SOURCE task missing USESUPPLIER phrase");
         return false;
@@ -211,4 +227,7 @@ public class SourceAllocator extends SimplePlugin {
     }
     return retval;
   }
+
+  protected LoggingService logger;
+  protected UTILPrepPhrase prepHelper;
 }
