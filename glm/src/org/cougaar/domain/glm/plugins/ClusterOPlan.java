@@ -66,7 +66,7 @@ public class ClusterOPlan implements Serializable {
     }
     
     public long getEndTime(OrgActivity act) {
-	return act.getTimeSpan().getThruDate().getTime();
+	return act.getTimeSpan().getEndDate().getTime();
     }
 
     public long getStartTime(OrgActivity act) {
