@@ -291,7 +291,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
           */
           statement.close();
         } catch (java.sql.SQLException sqle) {
-          GLMDebug.ERROR(className_,"executeQuery failed: "+sqle);
+          GLMDebug.ERROR(className_,"executeQuery failed: "+sqle+": " + query);
           sqle.printStackTrace();
           return null;
         } finally {
