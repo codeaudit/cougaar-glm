@@ -329,12 +329,6 @@ abstract public class GenericPlugin extends SimplePlugin  {
    * Uses predicates returned by getTaskPredicate() & getPlanElementPredicate
    */
   protected void setupSubscriptions() {
-    LoggingControlService lcs = 
-      (LoggingControlService) getDelegate().getServiceBroker().getService(this, LoggingControlService.class, null);
-    String logging = System.getProperty("org.cougaar.glm.packer.logging", 
-                                        INFO_STRING);
-    lcs.setLoggingLevel(getLogLevel(logging));
-
     myLoggingService = 
       (LoggingService) getDelegate().getServiceBroker().getService(this, LoggingService.class, null);
 
