@@ -113,10 +113,17 @@ public class UTILBufferingThread implements Runnable {
   public void run() {
     try {
       while (true) {
-	if (pleaseStopFlag) // the buffering plugin is about to be moved/suspended stop!
-	  break;
-
 	synchronized (this) {
+
+          // the buffering plugin is about to be moved/suspended stop!
+          if (pleaseStopFlag) {
+            if (!stoppedFlag) {
+              stoppedFlag = true;
+              notifyAll();
+            }
+            break;
+          }
+
 	  // grab all the tasks that have come in recently
 
 	  notYetDispatched.addAll (bufferedTasks);
@@ -141,6 +148,9 @@ public class UTILBufferingThread implements Runnable {
 			    " waiting with nothing to do.  Has " + tasksLeft + ".");
 	    wait ();
 	  }
+
+          // ignore the "pleaseStopFlag" until after we've 
+          // emptied our buffer
 	}
 
 	checkBuffer (notYetDispatched);
@@ -316,7 +326,28 @@ public class UTILBufferingThread implements Runnable {
   }
 
   public void pleaseStop () {
-    pleaseStopFlag = true;
+    synchronized (this) {
+      if (!stoppedFlag) {
+        pleaseStopFlag = true;
+        if (logger.isInfoEnabled()) {
+          logger.info (this + " - stopping");
+        }
+        notifyAll();
+        while (!stoppedFlag) {
+          try {
+            wait();
+          } catch (InterruptedException ie) {
+            if (logger.isErrorEnabled()) {
+              logger.error (this + " - stop interrupted", ie);
+            }
+            break;
+          }
+        }
+        if (logger.isInfoEnabled()) {
+          logger.info (this + " - stopped");
+        }
+      }
+    }
   }
 
   /**
@@ -339,6 +370,7 @@ public class UTILBufferingThread implements Runnable {
   protected long MAXTIME; // milliseconds
   protected Date lastupdate = null;
   protected boolean pleaseStopFlag = false;
+  protected boolean stoppedFlag = false;
 
   protected Logger logger;
 }
