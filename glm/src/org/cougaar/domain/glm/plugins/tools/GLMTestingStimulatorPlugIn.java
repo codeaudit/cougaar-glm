@@ -223,7 +223,7 @@ public class GLMTestingStimulatorPlugIn extends GLMStimulatorPlugIn
 	    // apparently.  There is no way currently to temporarily turn off this feature.
 	    // GWFV 10/11/2000
 
-		openTransaction();
+		blackboard.openTransaction();
 		// Get the tasks out of the XML file
 		tasks = readXmlTasks(xmlTaskFile);
 
@@ -243,7 +243,7 @@ public class GLMTestingStimulatorPlugIn extends GLMStimulatorPlugIn
 		exc.printStackTrace();
 	  }
 	  finally{
-		closeTransaction(false);
+		blackboard.closeTransaction(false);
 	  }
 	} 
   }

@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.core.cluster.ClusterServesPlugIn;
+import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.planning.ldm.*;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.plan.*;
@@ -67,22 +67,24 @@ public class GLMTaskParser{
    * @param pfile the name of the parameter file.
    */
   public GLMTaskParser(String pfile, 
-		       RootFactory ldmf, 
-		       ClusterServesPlugIn cluster) {
+					   RootFactory ldmf, 
+					   ClusterIdentifier clusterIdentifier, 
+					   ConfigFinder configFinder,
+					   LDMServesPlugIn ldmServesPlugIn) {
     try{
       DOMParser parser = new DOMParser();
       parser.setFeature(
                  "http://apache.org/xml/features/allow-java-encodings", true);
       parser.setEntityResolver (new UTILEntityResolver ());
 
-      InputStream inputStream = cluster.getConfigFinder().open(pfile);
+      InputStream inputStream = configFinder.open(pfile);
       parser.parse(new InputSource (inputStream));
       Document doc = parser.getDocument();
       //System.out.println("making dom parser ");
 
-      myLdmf     = ldmf;
-      myCluster = cluster;
-      myLdm     = cluster.getLDM();
+	  myLdmf    = ldmf;
+	  this.clusterIdentifier = clusterIdentifier;
+      myLdm     = ldmServesPlugIn;
       myTasks   = this.getTaskList(doc);
     }
     catch(FileNotFoundException fnfe){
@@ -119,7 +121,7 @@ public class GLMTaskParser{
         //System.out.println(node.getNodeName());
         //System.out.println(node.getNodeType());
         if(node.getNodeType() == Node.ELEMENT_NODE){
-          Task task = TaskParser.getTask(myLdm, myCluster, myLdmf, node);
+          Task task = TaskParser.getTask(myLdm, clusterIdentifier, myLdmf, node);
 	  taskbuf.addElement(task);
         }
       }
@@ -132,8 +134,8 @@ public class GLMTaskParser{
     return taskbuf;
   }
 
-  private ClusterServesPlugIn   myCluster  = null;
-  private RootFactory            myLdmf     = null;
+  private ClusterIdentifier   clusterIdentifier  = null;
+  private RootFactory           myLdmf     = null;
   private Vector                myTasks    = null;
   private LDMServesPlugIn       myLdm      = null;
 }

@@ -165,7 +165,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
     if (!AssetUtil.isPassenger(pe.getTask().getDirectObject ())) {
       if (myExtraOutput) 
 		System.out.println ("not a passenger");
-      createdObjects = AssetUtil.ExpandAsset (getFactory (), pe.getTask ().getDirectObject ());
+      createdObjects = AssetUtil.ExpandAsset (getLDMService().getLDM().getFactory (), pe.getTask ().getDirectObject ());
     }
     else {
       if (myExtraOutput) 
@@ -284,7 +284,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 	    // apparently.  There is no way currently to temporarily turn off this feature.
 	    // GWFV 10/11/2000
 
-		openTransaction();
+		blackboard.openTransaction();
 		// Get the tasks out of the XML file
 		tasks = readXmlTasks(xmlTaskFile);
 		// First find the organizations that we will allocate to.
@@ -303,7 +303,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 		exc.printStackTrace();
 	  }
 	  finally{
-		closeTransaction(false);
+		blackboard.closeTransaction(false);
 	  }
 	} 
   }
@@ -434,7 +434,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 	  label.setText("No tasks to Rescind.");
 	} else {
 	  try {
-		openTransaction();
+		blackboard.openTransaction();
 		Iterator iter = tasksSent.iterator ();
 		Object removed = iter.next ();
 		iter.remove ();
@@ -449,7 +449,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 		exc.printStackTrace();
 	  }
 	  finally{
-		closeTransaction(false);
+		blackboard.closeTransaction(false);
 	  }
 	}
   }
@@ -473,7 +473,9 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
   protected Collection readXmlTasks(String xmlTaskFile) {
     Collection tasks = null;
     try {
-      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, getDelegate().getCluster());
+      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, 
+										   getClusterIdentifier(), getConfigFinder(),
+										   getLDMService().getLDM());
       tasks = UTILAllocate.enumToList (tp.getTasks());
     } 
     catch( Exception ex ) {

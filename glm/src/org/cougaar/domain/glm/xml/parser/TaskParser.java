@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/TaskParser.java,v 1.6 2001-08-22 20:27:30 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/TaskParser.java,v 1.7 2001-10-17 21:53:12 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -26,7 +26,8 @@ import java.util.Date;
 import java.util.Vector;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.cluster.ClusterServesPlugIn;
+
+import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
 import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.plan.Preference;
@@ -55,7 +56,7 @@ public class TaskParser{
   private static String PREPO="PREPO";
 
   public static Task getTask(LDMServesPlugIn ldm,
-			     ClusterServesPlugIn cluster, 
+			     ClusterIdentifier clusterIdentifier, 
 			     RootFactory ldmf, 
 			     Node node){
     NewTask task = null;
@@ -66,8 +67,8 @@ public class TaskParser{
       
       task = ldmf.newTask();
       task.setPlan(ldmf.getRealityPlan());
-      task.setSource(cluster.getClusterIdentifier());
-      task.setDestination(cluster.getClusterIdentifier());
+      task.setSource(clusterIdentifier);
+      task.setDestination(clusterIdentifier);
 
       Vector prep_phrases = new Vector();
       for(int i = 0; i < nlength; i++){
