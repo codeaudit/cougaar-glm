@@ -746,6 +746,8 @@ public class GLSInitServlet extends ComponentPlugin
   }
 
   private void updateGLS() {
+    sendGLS();
+    /*
     Vector prepphrases = new Vector();
     PlanElement pe = (PlanElement) glsSubscription.first();
     Task gls = pe.getTask();
@@ -788,8 +790,9 @@ public class GLSInitServlet extends ComponentPlugin
     
     if (logger.isDebugEnabled()) {
       logger.debug("\n" + formatDate(System.currentTimeMillis()) 
-                   + " Updating Task: " + gls);
+                   + " Adding Task: " + gls);
     }
+    */
   }
 
 

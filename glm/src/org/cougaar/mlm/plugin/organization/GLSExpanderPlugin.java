@@ -98,6 +98,11 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
   private IncrementalSubscription myFindProvidersExpansions;
   
   /**
+   * Subscription to the DetermineRequirements tasks I create 
+   **/
+  private IncrementalSubscription myDetermineRequirementsTasks;
+  
+  /**
    * The Socrates subscription
    **/
   private IncrementalSubscription mySelfOrgs;
@@ -150,7 +155,18 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
     }
   }
   
+  private UnaryPredicate myDetermineRequirementsPredicate =  new UnaryPredicate() {
+    public boolean execute (Object o) {
+      if (o instanceof Task) {
+	Task task = (Task) o;
+	Verb verb = task.getVerb();
+	return  (Constants.Verb.DetermineRequirements.equals(verb));
+      }
+      return false;
+    }
+  };
   
+
   private class TaskPredicate implements UnaryPredicate {
     private Verb myVerb;
 
@@ -209,6 +225,10 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
       (IncrementalSubscription) blackboard.subscribe(taskPredicate);
     myFindProvidersExpansions = 
       (IncrementalSubscription) blackboard.subscribe(new ExpansionPredicate(taskPredicate));
+    
+    myDetermineRequirementsTasks = 
+      (IncrementalSubscription) blackboard.subscribe(myDetermineRequirementsPredicate);
+    
   }
   
   /**
@@ -432,22 +452,16 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
       return;
     }
 
-    Expansion exp = (Expansion) task.getPlanElement();
-    Workflow wf = exp.getWorkflow();
-
     // Check whether DR already exist
-    for (Enumeration subtasks = wf.getTasks(); subtasks.hasMoreElements(); ) {
-      NewTask subtask = (NewTask) subtasks.nextElement();
-      Verb verb = subtask.getVerb();
-
-      if (Constants.Verb.DetermineRequirements.equals(verb)) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Already have DetermineRequirements task " + subtask);
-        }
-	return;
-      } 
+    if (myDetermineRequirementsTasks.size() > 0) {
+      if (logger.isDebugEnabled()) {
+	logger.debug("Already have DetermineRequirements tasks " + 
+		     myDetermineRequirementsTasks);
+      }
+      return;
     }
 
+    Expansion exp = (Expansion) task.getPlanElement();
 
     if (logger.isDebugEnabled()) {
       logger.debug("Adding DR tasks");
