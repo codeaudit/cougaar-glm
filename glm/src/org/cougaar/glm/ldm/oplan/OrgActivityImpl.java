@@ -324,4 +324,9 @@ public class OrgActivityImpl extends OwnedUniqueObject
   public static final String unique(String s) {
     return (s==null)?null:(s.intern());
   }
+
+  public String toString() {
+    // FIXME: What else would be useful in here?
+    return "<OrgActivity name:" + getActivityName() + ", type:" + getActivityType() + ", TimeSpan:" + getTimeSpan() + ", Tempo:" + getOpTempo() + ", GeoLoc: " + getGeoLoc() + ", Org:" + getOrgID() + ">";
+  }
 }
