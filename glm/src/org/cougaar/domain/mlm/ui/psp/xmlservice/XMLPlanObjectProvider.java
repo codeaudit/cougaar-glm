@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.List;
 
 
 import org.cougaar.core.cluster.ClusterIdentifier;
@@ -65,7 +66,7 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
   }
 
   public void  reset() {
-     collection = new ArrayList();
+     collection.clear();
      doc = new TXDocument();
      doc.setVersion("1.0");
      root = doc.createElement("LogPlan");
@@ -129,62 +130,64 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
   }
 
   public void writeDocumentToFile(String pathname) {
-    FileOutputStream fos = null;
-    try {
-      fos = new FileOutputStream(pathname);
-      writeDocument(fos);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+      FileOutputStream fos = null;
+      try {
+          fos = new FileOutputStream(pathname);
+          writeDocument(fos);
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
   }
 
   public void writeDocument(OutputStream os) {
-  
-    for(int i=0; i< collection.size(); i++) {
-       this.docAddPlanObject(collection.get(i));
-    }
 
-    try {
-      PrintWriter pw = new PrintWriter(os);
-      doc.print(pw);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+      for(int i=0; i< collection.size(); i++) {
+          this.docAddPlanObject(collection.get(i));
+      }
+
+      try {
+          PrintWriter pw = new PrintWriter(os);
+          doc.print(pw);
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
   }
 
-
   public TXDocument getDocument() {
-    // for debugging, also print it
-    //    printDocument();
-    return doc;
+      // for debugging, also print it
+      //    printDocument();
+      return doc;
   }
 
 
   public Document getDocumentRef() {
-    // for debugging, also print it
-    //    printDocument();
-    return doc;
+      for(int i=0; i< collection.size(); i++) {
+          this.docAddPlanObject(collection.get(i));
+      }
+      collection.clear();
+
+      return doc;
   }
 
   // for testing
   private TXDocument testGenerateXML() {
-    TXDocument doc = new TXDocument();
-    doc.setVersion("1.0");
+      TXDocument doc = new TXDocument();
+      doc.setVersion("1.0");
 
-    Element root = doc.createElement("LogPlan");
-    Element taskItem = doc.createElement("Task");
-    Element item = doc.createElement("SOURCE");
-    item.appendChild(doc.createTextNode("3ID"));
-    taskItem.appendChild(item);
-    item = doc.createElement("DESTINATION");
-    item.appendChild(doc.createTextNode("MCCGlobalMode"));
-    taskItem.appendChild(item);
-    item = doc.createElement("VERB");
-    item.appendChild(doc.createTextNode("Transport"));
-    taskItem.appendChild(item);
-    root.appendChild(taskItem);
-    doc.appendChild(root);
-    return doc;
+      Element root = doc.createElement("LogPlan");
+      Element taskItem = doc.createElement("Task");
+      Element item = doc.createElement("SOURCE");
+      item.appendChild(doc.createTextNode("3ID"));
+      taskItem.appendChild(item);
+      item = doc.createElement("DESTINATION");
+      item.appendChild(doc.createTextNode("MCCGlobalMode"));
+      taskItem.appendChild(item);
+      item = doc.createElement("VERB");
+      item.appendChild(doc.createTextNode("Transport"));
+      taskItem.appendChild(item);
+      root.appendChild(taskItem);
+      doc.appendChild(root);
+      return doc;
   }
 
   /*
