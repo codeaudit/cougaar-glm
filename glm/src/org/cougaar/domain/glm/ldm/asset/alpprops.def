@@ -714,7 +714,10 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	PGDelegate copy(PropertyGroup pg);\
 	Enumeration getAllDueIns();\	
 	ProjectionWeight getProjectionWeight();\	
-	void addInventoryReport(InventoryReport anInventoryReport);
+	void addInventoryReport(InventoryReport anInventoryReport);\
+        InventoryReport getLatestInventoryReport();\
+        InventoryReport getOldestInventoryReport();\
+        void pruneOldInventoryReports(long pruneTime);
 reorder_level.doc=volume level at which you are allowed to reorder. 
 in_reorder.doc=minimum volume you can order. Should be \ 
         less than or equal to reorder level. 
