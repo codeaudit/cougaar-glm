@@ -1,4 +1,15 @@
-2001-09-18  Ray Tomlinson  <RTomlinson@HEFEWEIZEN>
+2001-09-27  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugIn.java (Repository):
+	Remove superfluous imports and replace wild card imports. Extend
+	AssetDataPlugInBase instead of AssetDataPlugIn pending renaming of
+	the AssetDataPlugIn.
+
+	* org/cougaar/domain/glm/ldm/asset/OrganizationAdapter.java (Repository):
+	Remove isSelf method. This is reimplemented in subclasses in a
+	different way and does not need to be here.
+
+2001-09-18  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugInFile.java (Repository): 
 	File version of OrgDataPlugIn extends AssetDataPlugInFile.
@@ -6,7 +17,7 @@
 	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugInDB.java (Repository): 
 	Database version of OrgDataPlugIn extends AssetDataPlugInDB.
 
-2001-09-14  Ray Tomlinson  <RTomlinson@HEFEWEIZEN>
+2001-09-14  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/domain/glm/plugins/GLMDecorationPlugIn.java (Repository): 
 	* org/cougaar/domain/glm/plugins/ClusterOPlan.java (Repository):
