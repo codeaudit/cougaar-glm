@@ -30,16 +30,18 @@ import org.cougaar.util.log.*;
  *
  */
 public class TestParam{
+  // this is OK since it's just for testing
   private static Logger logger=LoggerFactory.getInstance().createLogger("TestParam");
 
   /**
    * Test main function
    */
-  public static void main(String[] argv){
+  public void main(String[] argv){
     Vector v = new Vector();
     v.addElement("envDir={String}.");
     v.addElement("envFile={String}testparam.xml");
-    ParamTable pt = new ParamTable(v);
+    ParamTable pt = new ParamTable(logger);
+    pt.addIniParameters (v);
     boolean b = false;
     short s = 20;
     int i = 50;

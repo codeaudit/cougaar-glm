@@ -58,12 +58,6 @@ import org.cougaar.util.log.*;
  * </pre>
  */
 public class ParamTable implements ParamMap {
-  private static Logger logger=LoggerFactory.getInstance().createLogger("ParamTable");
-
-  //  public static boolean showMissingFiles = 
-  //    "true".equals (System.getProperty ("org.cougaar.lib.param.ParamTable.showMissingFiles", 
-  //				       "true"));
-  
   /**
    * No default Constructor.
    */
@@ -92,9 +86,13 @@ public class ParamTable implements ParamMap {
    * </pre>
    * @param envParams vector of ParamParse-able strings
    */
-  public ParamTable(Vector envParams){
+  public ParamTable(Logger logger){
     paramTable = new HashMap ();
+    paramParser = new ParamParser ();
+    this.logger = logger;
+  }
 
+  protected void addIniParameters (Vector envParams) {
     // environment parameters are "name={type}value" or "name=StringValue"
     // parse parameters.  Remember these special ones: envDir, envFile
 
@@ -105,7 +103,7 @@ public class ParamTable implements ParamMap {
     Enumeration ps = envParams.elements(); 
     while(ps.hasMoreElements()){
       String envS = (String) ps.nextElement();
-      Param p = ParamParser.getParam(envS);
+      Param p = paramParser.getParam(envS);
       if (p != null) {
         envPV.add(p);
         String n = p.getName();
@@ -160,7 +158,7 @@ public class ParamTable implements ParamMap {
 
       SAXParser parser = new SAXParser();
       parser.setContentHandler(new ParamHandler(this));
-      parser.setEntityResolver (new UTILEntityResolver ());
+      parser.setEntityResolver (new UTILEntityResolver (logger));
       InputSource is = new InputSource (inputStream);
       is.setSystemId (pfile);
       parser.parse(is);
@@ -292,6 +290,9 @@ public class ParamTable implements ParamMap {
     throw new ParamException("parameter " + name + " not found");
   }
 
+  /** is the parameter in the table? */
+  public boolean hasParam (String name) { return paramTable.containsKey(name); }
+
   /** show the parameters in the map **/
   public String toString () {
     StringBuffer sb = new StringBuffer ();
@@ -306,5 +307,7 @@ public class ParamTable implements ParamMap {
   }
 
   private Map paramTable;
+  protected Logger logger;
+  protected ParamParser paramParser;
 }
 
