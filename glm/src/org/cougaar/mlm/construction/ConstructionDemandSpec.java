@@ -44,7 +44,6 @@ import org.cougaar.planning.ldm.plan.ScheduleElement;
 
 /*
  * Construction (ClassIV) Demand Spec for producing inventory demand 
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 public class ConstructionDemandSpec extends ConsumerSpec {

@@ -53,7 +53,6 @@ import org.w3c.dom.NodeList;
 /**
  * PropagationPlugin propagates Transferables based on xml files in parameter list
  *
- * @author  ALPINE <alpine-software@bbn.com>
  *
  */
 

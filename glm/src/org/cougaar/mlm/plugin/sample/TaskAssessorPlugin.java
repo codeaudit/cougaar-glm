@@ -53,7 +53,6 @@ import org.cougaar.util.UnaryPredicate;
  * The TaskAssessorPlugin monitors the disposition of Tasks and
  * displays a summary.
  *
- * @author       ALPINE <alpine-software@bbn.com>
  */
 
 public class TaskAssessorPlugin extends SimplePlugin

@@ -32,7 +32,6 @@ import org.cougaar.planning.ldm.asset.Asset;
 /**
  * This COUGAAR Asset class serves as a base class for the ProgrammerAsset class.
  * The ProgrammerAsset class is generated using the AssetWriter utility
- * @author ALPINE (alpine-software@bbn.com)
  *
  */
 public class ProgrammerAssetAdapter extends Asset {

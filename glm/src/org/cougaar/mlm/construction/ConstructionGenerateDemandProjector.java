@@ -65,7 +65,6 @@ import org.cougaar.util.UnaryPredicate;
 /*
  * Construction (ClassIV) plugin that takes construction tasks and 
  * creates GenerateProjection tasks.
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 

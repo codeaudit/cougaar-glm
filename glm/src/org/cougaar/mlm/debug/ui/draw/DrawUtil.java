@@ -25,11 +25,11 @@
  */
 // **********************************************************************
 // 
-// $Source: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/debug/ui/draw/DrawUtil.java,v $
-// $RCSfile: DrawUtil.java,v $
-// $Revision: 1.3 $
-// $Date: 2004-03-18 20:50:21 $
-// $Author: mthome $
+// 
+// 
+// 
+// 
+// 
 // 
 // **********************************************************************
 

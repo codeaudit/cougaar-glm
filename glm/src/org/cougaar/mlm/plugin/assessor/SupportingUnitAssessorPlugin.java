@@ -48,7 +48,6 @@ import org.cougaar.util.UnaryPredicate;
  * The SupportingUnitAssessorPlugin monitors organization assets and generates
  * an Report if one is added/modified/deleted.
  *
- * @author       ALPINE <alpine-software@bbn.com>
  */
 
 public class SupportingUnitAssessorPlugin extends SimplePlugin {

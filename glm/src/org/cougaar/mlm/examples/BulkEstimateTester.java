@@ -57,7 +57,6 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * The bulkestimate tester
  *
- * @author       ALPINE <alpine-software@bbn.com>
  *
  */
 

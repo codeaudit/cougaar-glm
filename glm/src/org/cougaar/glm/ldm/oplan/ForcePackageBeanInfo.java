@@ -40,7 +40,6 @@ import java.beans.SimpleBeanInfo;
 /**
  * ForcePackageBeanInfo
  * 
- * @author  ALPINE <alpine-software@bbn.com>
  *
  */
 public class ForcePackageBeanInfo extends SimpleBeanInfo {

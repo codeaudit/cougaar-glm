@@ -34,7 +34,6 @@ import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
 /**
  * A CapacityScheduleElement is an encapsulation of temporal relationships
  * and a capacity over that time interval.
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 

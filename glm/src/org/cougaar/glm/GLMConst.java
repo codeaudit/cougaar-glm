@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/GLMConst.java,v 1.3 2004-03-18 20:50:16 mthome Exp $ */
+/*  */
 /*
  * <copyright>
  *  

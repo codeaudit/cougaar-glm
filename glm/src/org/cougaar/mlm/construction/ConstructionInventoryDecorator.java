@@ -36,7 +36,6 @@ import org.cougaar.glm.plugins.inventory.SupplyExpander;
 import org.cougaar.glm.plugins.inventory.WithdrawAllocator;
 
  /** Establishes necessary processes for Construction Inventory.
-  * @author  ALPINE <alpine-software@bbn.com>
   *
   **/
  public class ConstructionInventoryDecorator extends  PluginDecorator {

@@ -44,7 +44,6 @@ package org.cougaar.mlm.debug.ui.draw;
  * Hyperbolic arc cosine   2 log  (sqrt((x+1)/2) + sqrt((x-1)/2))  
  * Hyperbolic arc tangent  (log  (1+x) - log (1-x))/2
  *
- * @author alpine-software@bbn.com
  *
  * @since jdk1.1
  * */

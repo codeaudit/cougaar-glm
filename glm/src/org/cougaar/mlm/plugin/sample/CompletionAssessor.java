@@ -69,7 +69,6 @@ import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.util.UnaryPredicate;
 
 /**
- * @author       ALPINE <alpine-software@bbn.com>
  *
  */
 

@@ -42,7 +42,6 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * The GSLRescindPlugin will rescind the ?? task
  *
- * @author       ALPINE <alpine-software@bbn.com>
  *
  */
 

@@ -44,7 +44,6 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
- * @author ALPINE (alpine-software@bbn.com)
  *
  **/
 public class ManagerAllocatorPlugin extends  CommonUtilPlugin {

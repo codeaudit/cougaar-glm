@@ -32,7 +32,6 @@ import org.cougaar.glm.plugins.GLMDecorationPlugin;
 
 /*
  * Construction (ClassIV) Projection Plugin 
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 

@@ -32,7 +32,6 @@ import org.cougaar.planning.ldm.plan.ScheduleElementWithValue;
 /**
  * A QuantityScheduleElement is a subclass of ScheduleElement which provides
  * a slot for a quantity (double)
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 

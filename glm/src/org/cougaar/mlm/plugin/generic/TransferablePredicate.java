@@ -33,7 +33,6 @@ import org.cougaar.util.UnaryPredicate;
  * implementation of a Transferable
  * 
  *
- * @author  ALPINE <alpine-software@bbn.com>
  *
  */
 

@@ -34,7 +34,6 @@ import org.cougaar.planning.ldm.policy.RuleParameterIllegalValueException;
 /**
  * StockLevelPolicy
  *
- * @author   ALPINE <alpine-software@bbn.com>
  *
  */
 

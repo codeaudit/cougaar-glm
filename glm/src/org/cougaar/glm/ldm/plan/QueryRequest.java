@@ -33,7 +33,6 @@ import org.cougaar.util.UnaryPredicate;
 /** QueryRequest Interface
   * 
   *
-  * @author  ALPINE <alpine-software@bbn.com>
   *
   */
 public interface QueryRequest {

@@ -45,7 +45,6 @@ import org.cougaar.util.UnaryPredicate;
 
 /**
   * ReceiveTransferableLP Adds or modifies transferables to agents.
-  * @author  ALPINE <alpine-software@bbn.com>
   *
   **/
 

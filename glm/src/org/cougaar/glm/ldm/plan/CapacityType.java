@@ -31,7 +31,6 @@ package org.cougaar.glm.ldm.plan;
  * This interface defines most of the used Capacity types.
  * However, MOS/43M etc can also be used for Capacity type
  *
- *  @author  ALPINE <alpine-software@bbn.com>
  *
  */
 

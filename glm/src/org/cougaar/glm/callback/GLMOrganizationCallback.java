@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/callback/GLMOrganizationCallback.java,v 1.5 2004-03-18 20:50:17 mthome Exp $ */
+/*  */
 /*
  * <copyright>
  *  

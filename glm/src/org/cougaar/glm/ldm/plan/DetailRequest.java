@@ -33,7 +33,6 @@ import org.cougaar.core.util.UID;
 /** DetailRequest Interface
   * 
   *
-  * @author  ALPINE <alpine-software@bbn.com>
   *
   */
 public interface DetailRequest {

@@ -38,7 +38,6 @@ import org.cougaar.planning.plugin.legacy.SimplePlugin;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
- * @author ALPINE (alpine-software@bbn.com)
  *
  */
 public class ProgrammerLDMPlugin extends SimplePlugin {

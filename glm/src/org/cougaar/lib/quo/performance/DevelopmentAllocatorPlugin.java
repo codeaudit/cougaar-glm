@@ -47,8 +47,6 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.6 2004-03-18 20:50:21 mthome Exp $
  **/
 public class DevelopmentAllocatorPlugin extends CommonUtilPlugin
 {

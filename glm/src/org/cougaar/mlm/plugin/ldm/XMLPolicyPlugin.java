@@ -46,7 +46,6 @@ import org.cougaar.planning.plugin.legacy.SimplePlugin;
  * plugin=org.cougaar.mlm.plugin.ldm.XMLPolicyPlugin( policy.ldm.xml, shippolicy.ldm.xml )
  * </PRE>
  *
- * @author   ALPINE <alpine-software@bbn.com>
  *
  */
 public class XMLPolicyPlugin extends SimplePlugin

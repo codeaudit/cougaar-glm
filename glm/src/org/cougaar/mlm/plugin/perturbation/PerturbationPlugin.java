@@ -43,8 +43,6 @@ import org.cougaar.util.UnaryPredicate;
   * allows for the modification and/or deletion of Log Plan
   * objects in Scenario Time.
   *
-  * @version PPI v1.0
-  * @author  Raython Systems Company/J. Beasley
   *
   */
 public class PerturbationPlugin extends SimplePlugin

@@ -33,7 +33,6 @@ import org.cougaar.util.UnaryPredicate;
  * A class that holds subscriptions for a Transferable and its desired
  * destinaton
  *
- * @author  ALPINE <alpine-software@bbn.com>
  *
  */
 

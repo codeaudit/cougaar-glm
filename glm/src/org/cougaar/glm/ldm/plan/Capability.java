@@ -29,7 +29,6 @@ package org.cougaar.glm.ldm.plan;
 /**
  * Capability - the Capability an Asset has.
  *
- *  @author  ALPINE <alpine-software@bbn.com>
  *
  */
 

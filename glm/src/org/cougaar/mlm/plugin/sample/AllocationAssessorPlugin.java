@@ -54,7 +54,6 @@ import org.cougaar.util.UnaryPredicate;
  * The AllocationsAssessorPlugin publishes an Alert for each
  * failed allocations in it's collection
  *
- * @author       ALPINE <alpine-software@bbn.com>
  *
  */
 

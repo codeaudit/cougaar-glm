@@ -36,7 +36,6 @@ import org.cougaar.util.UnaryPredicate;
 
 /**
  * Construction Decorator Stub
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 

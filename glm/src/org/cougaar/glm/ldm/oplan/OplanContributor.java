@@ -32,7 +32,6 @@ import org.cougaar.planning.ldm.plan.Transferable;
  * Unify a bunch of getters that oplan sub-objects (hence "contributor"s)
  * support.
  * 
- * @author  ALPINE <alpine-software@bbn.com>
  *
  */
 

@@ -74,8 +74,6 @@ import org.cougaar.util.UnaryPredicate;
   * The Plugin will access a database that contains information about 
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugin.html for database and argument details.
-  * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: UniversalExpanderPlugin.java,v 1.7 2004-03-18 20:50:21 mthome Exp $
   **/
 
 public class UniversalExpanderPlugin extends ComponentPlugin {

@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.13 2004-03-18 20:50:21 mthome Exp $
+// 
 /*
  * <copyright>
  *  

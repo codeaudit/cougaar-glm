@@ -41,7 +41,6 @@ public class DateParser{
    *
    * Calendar.set sets the date to be month+1 i.e. 0 = Jan
    *
-   * @author Gordon Vidaver 7/2/99
    */
   public Date getDate(Node node){
     Calendar  cal       = Calendar.getInstance();

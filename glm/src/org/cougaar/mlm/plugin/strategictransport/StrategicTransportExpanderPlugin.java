@@ -52,7 +52,6 @@ import org.cougaar.util.UnaryPredicate;
  * Current functionality (MB3.0) allows only for pass-through
  * of Tasks through a Workflow.
  *
- * @author       ALPINE <alpine-software@bbn.com>
  *
  *
  */

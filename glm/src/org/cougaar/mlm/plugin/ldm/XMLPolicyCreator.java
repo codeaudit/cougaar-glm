@@ -51,7 +51,6 @@ import org.w3c.dom.NodeList;
 
 
 /** XMLPolicyCreator - creates policies from xml file
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 

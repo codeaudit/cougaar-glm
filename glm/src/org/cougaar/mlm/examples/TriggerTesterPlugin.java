@@ -70,7 +70,6 @@ import org.cougaar.util.UnaryPredicate;
  * watch for stale allocations, and rescind them and 1 predicatebasedmonitor that looks
  * for certain planelements and marks them as stale.
  *
- * @author       ALPINE <alpine-software@bbn.com>
  *
  */
 

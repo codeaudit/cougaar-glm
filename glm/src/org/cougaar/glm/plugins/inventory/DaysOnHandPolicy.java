@@ -34,7 +34,6 @@ import org.cougaar.planning.ldm.policy.StringRuleParameter;
 /**
  * The PolicyPlugin
  *
- * @author   ALPINE <alpine-software@bbn.com>
  *
  */
 

@@ -36,7 +36,6 @@ import java.beans.SimpleBeanInfo;
    attribute name, bean class, read method name, write method name
    All other beaninfo is defaulted.
 
- * @author  ALPINE <alpine-software@bbn.com>
  *
 
 */

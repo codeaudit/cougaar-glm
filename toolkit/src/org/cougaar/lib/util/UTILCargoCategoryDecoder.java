@@ -32,7 +32,6 @@ package org.cougaar.lib.util;
  * Cargo category codes are 3 letter codes that define
  * how a piece of cargo can be transported from point A 
  * to point B.
- * @author Jose L. Herrero
  */
 public final class UTILCargoCategoryDecoder {
     

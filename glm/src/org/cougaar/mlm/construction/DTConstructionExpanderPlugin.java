@@ -54,7 +54,6 @@ import org.cougaar.util.UnaryPredicate;
 
 
 /** ExpanderPlugin that takes Determine Requirements of Type construction tasks and expands them into predefined construction tasks. 
-  * @author  ALPINE <alpine-software@bbn.com>
   *
   **/
 

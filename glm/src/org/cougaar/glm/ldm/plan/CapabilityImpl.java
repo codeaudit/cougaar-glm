@@ -34,7 +34,6 @@ import java.io.Serializable;
 
 
 /** Implementation of Capability.  
- * @author ALPINE <alpine-software@bbn.com>
  *
  */
 	

@@ -38,7 +38,6 @@ import org.cougaar.planning.ldm.plan.Task;
 
 /** Allocate SUPPLY tasks for construction supplies to local construction inventory
  *  (if there is any) or to the closest supplier.
- * @author  ALPINE <alpine-software@bbn.com>
  *
  **/
 public class ConstructionInventoryManager extends GeneralInventoryManager {

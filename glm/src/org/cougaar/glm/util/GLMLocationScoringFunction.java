@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.7 2004-03-18 20:50:21 mthome Exp $ */
+/*  */
 /*
  * <copyright>
  *  
