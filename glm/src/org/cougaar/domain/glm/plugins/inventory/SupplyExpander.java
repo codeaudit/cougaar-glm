@@ -595,17 +595,28 @@ public class SupplyExpander extends InventoryProcessor {
 	prep_phrase.setIndirectObject(orgName);
 // 	prep_phrase.setIndirectObject(myOrganization_);
 	pps.addElement(prep_phrase);
+
 	
+	String ofTypeString = THEATER_TRANSPORT;
+	// if parent task has an ofType <commodity> copy it into the Transport task
+	// this allows users of the transport task to do commodity based routing
+	PrepositionalPhrase pp_commodityType = parent_task.getPrepositionalPhrase(Constants.Preposition.OFTYPE);
+	if (pp_commodityType != null) {
+		String ind_obj = (String)pp_commodityType.getIndirectObject();
+		ofTypeString = ind_obj+"_"+ofTypeString;
+	}
+
 	// OfType
 	prep_phrase = ldmFactory_.newPrepositionalPhrase();
 	prep_phrase.setPreposition( Constants.Preposition.OFTYPE );
 	Asset transport_asset = 
-	    ldmFactory_.createPrototype("AbstractAsset", THEATER_TRANSPORT);
+	    ldmFactory_.createPrototype("AbstractAsset", ofTypeString);
 	NewTypeIdentificationPG tipg = 
 	    (NewTypeIdentificationPG)transport_asset.getTypeIdentificationPG();
-	tipg.setTypeIdentification(THEATER_TRANSPORT);
+	tipg.setTypeIdentification(ofTypeString);
 	prep_phrase.setIndirectObject(transport_asset);
 	pps.addElement(prep_phrase);
+
 
 	// Fill in verb.
 	subtask.setDirectObject( aggAsset );
