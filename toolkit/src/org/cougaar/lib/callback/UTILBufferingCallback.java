@@ -110,7 +110,7 @@ public class UTILBufferingCallback extends UTILFilterCallbackAdapter {
 	logger.info ("UTILBufferingCallback : Notifying " + myListener + 
 		     " about " + i + 
 		     " tasks");
-      if (logger.isInfEnabled())
+      if (logger.isInfoEnabled())
 	logger.info("mySub had added or changed tasks - regardless of whether they are wellformed, we are waking up the listener");
       ((UTILGenericListener) myListener).wakeUp();
     }
