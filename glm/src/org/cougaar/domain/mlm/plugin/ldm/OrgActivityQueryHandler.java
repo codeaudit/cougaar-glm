@@ -51,7 +51,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
   private static Calendar myCalendar = Calendar.getInstance();
 
-  private long myLastQueryTime = TimeSpan.MIN_VALUE;
+  private long myLastModifiedTime = TimeSpan.MIN_VALUE;
+  private long myMaxModifiedTime = TimeSpan.MIN_VALUE;
 
   private HashMap myOrgInfoMap = new HashMap();	
   private Oplan myOplan;
@@ -78,6 +79,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     myLocationKey = getParameter(LOCATION_PARAMETER);
 
     myOrgInfoMap.clear();
+    myMaxModifiedTime = myLastModifiedTime;
   }
                         
   /** Construct and return an SQL query to be used by the Database engine.
@@ -97,6 +99,9 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     }
 
     String relation = (String) rowData[0];
+
+    myMaxModifiedTime = 
+      Math.max(((Date) rowData[7]).getTime(), myMaxModifiedTime);
 
     if (relation.equals(myOpTempoKey)) {
       processOpTempo(rowData);
@@ -143,7 +148,6 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                              orgActivity.getGeoLoc());
         }
         */
-        
         myPlugIn.updateOrgActivities(myOplan, orgInfo.getOrgName(), 
                                      orgActivities);
       }
@@ -157,7 +161,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
       myPlugIn.updateOplanInfo(myOplan);
     }
 
-    myLastQueryTime = new Date().getTime();
+    myLastModifiedTime = myMaxModifiedTime;
   }
 
 
@@ -171,6 +175,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
       System.err.println("OrgActivityQueryHandler: Unrecognized op tempo - " + 
                          opTempo + " - for " + orgName + " in " + myOplan);
     }
+    
     
     OrgInfoElement element = 
       new OrgInfoElement(opTempo, 
@@ -271,7 +276,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     for (Iterator iterator = orgInfo.getActivitySchedule().iterator();
          iterator.hasNext();) {
       OrgInfoElement element = (OrgInfoElement) iterator.next();
-      if (element.getLastModified() > myLastQueryTime) {
+      if (element.getLastModified() > myLastModifiedTime) {
         return true;
       }
     }
@@ -279,7 +284,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     for (Iterator iterator = orgInfo.getLocationSchedule().iterator();
          iterator.hasNext();) {
       OrgInfoElement element = (OrgInfoElement) iterator.next();
-      if (element.getLastModified() > myLastQueryTime) {
+      if (element.getLastModified() > myLastModifiedTime) {
         return true;
       }
     }
@@ -287,7 +292,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     for (Iterator iterator = orgInfo.getOpTempoSchedule().iterator();
          iterator.hasNext();) {
       OrgInfoElement element = (OrgInfoElement) iterator.next();
-      if (element.getLastModified() > myLastQueryTime) {
+      if (element.getLastModified() > myLastModifiedTime) {
         return true;
       }
     }
