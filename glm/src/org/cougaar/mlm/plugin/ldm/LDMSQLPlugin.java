@@ -307,7 +307,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
      * to the QueryHandler.  Had to name it differently than
      * getLDM() because the plugin adapter version of getLDM() is final.
      */
-  public LDMServesPlugin getLDMPlugin() { return super.getLDM(); }
+  public LDMServesPlugin getLDMPlugin() { return getLDM(); }
 
   private String getDBType(String databaseVal) {
     int colonIndex1 = databaseVal.indexOf(':');
