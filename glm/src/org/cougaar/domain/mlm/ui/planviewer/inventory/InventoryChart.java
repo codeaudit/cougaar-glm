@@ -1483,10 +1483,10 @@ public class InventoryChart extends JPanel
 	    setSelectedIcon(new VertLegendIcon());
 	    setMargin (blankInsets);
 	    setBorderPainted (false);
-	    setToolTipText ("Show/Hide Legend");
+	    this.setToolTipText ("Show/Hide Legend");
 
 
-	    setOpaque(true);
+	    this.setOpaque(true);
 	}
 
 	/**
