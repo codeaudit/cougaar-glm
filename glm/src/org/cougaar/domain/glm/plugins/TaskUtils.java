@@ -25,7 +25,7 @@ import org.cougaar.util.MoreMath;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.domain.planning.ldm.LdmFactory;
+import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.measure.*;
 
@@ -417,17 +417,17 @@ public class TaskUtils extends PlugInHelper {
     return !isProjection(t);
   }
 
-  public static Preference createDemandRatePreference(LdmFactory ldmf, Rate rate) {
+  public static Preference createDemandRatePreference(RootFactory rf, Rate rate) {
     ScoringFunction sf = ScoringFunction
       .createStrictlyAtValue(new AspectRate(AlpineAspectType.DEMANDRATE,
 					    rate));
-    return ldmf.newPreference(AlpineAspectType.DEMANDRATE, sf);
+    return rf.newPreference(AlpineAspectType.DEMANDRATE, sf);
   }
 
-  public static Preference createDemandMultiplierPreference(LdmFactory ldmf, double mult) {
+  public static Preference createDemandMultiplierPreference(RootFactory rf, double mult) {
     ScoringFunction sf = ScoringFunction
       .createStrictlyAtValue(new AspectValue(AlpineAspectType.DEMANDMULTIPLIER,
 					     mult));
-    return ldmf.newPreference(AlpineAspectType.DEMANDMULTIPLIER, sf);
+    return rf.newPreference(AlpineAspectType.DEMANDMULTIPLIER, sf);
   }
 }

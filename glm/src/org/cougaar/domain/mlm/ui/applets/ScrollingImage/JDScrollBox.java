@@ -22,6 +22,7 @@
 package org.cougaar.domain.mlm.ui.applets.ScrollingImage;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * @JDScrollBox.java
@@ -145,12 +146,16 @@ JDScrollBox( Image bigPicInImg, Image indexPicImgIn, int scaleIn,
   peekImgBuffer = createImage( peekWindowWidth, peekWindowHeight);
   imgBuffer = createImage( imgBufferWidth, imgBufferHeight);
 
-  this.resize(imgBufferWidth, imgBufferHeight);
+  this.setSize(imgBufferWidth, imgBufferHeight);
 
   MenuItem mi = new MenuItem("Activate Demo Sprites");
-  mi.enable(true);
+  mi.setEnabled(true);  
+
   popup.add(mi);
   this.add(popup);
+
+  this.enableEvents(AWTEvent.MOUSE_EVENT_MASK);
+  this.enableEvents(AWTEvent.MOUSE_MOTION_EVENT_MASK);
 
  }
 
@@ -189,52 +194,57 @@ JDScrollBox( Image bigPicInImg, Image indexPicImgIn, int scaleIn,
   // not this canvas.
   // This is so that the mouse clicks can be used in the applet to do HTML image-map
   // type functions.
-  public boolean handleEvent(Event evt)
+  public void processEvent(AWTEvent evt)
    {
     int clickX, clickY;
 
+    if(evt instanceof MouseEvent) {
+	MouseEvent mEvt = (MouseEvent) evt;
 
-    int mode = 0;
-
-    //Was it a click on our canvas ?
-    if ( (evt.target == this) &&
-         ( (evt.id == Event.MOUSE_DOWN) || (evt.id == Event.MOUSE_DRAG) ) )
-     {
-         if( evt.controlDown() ) {
-            mode = 2;
-         }else mode =1;
-     }
-   // CONTROL DOWN MOUSE CLICK
-   if( mode == 2 ) {
-        System.out.println("POPUPMENU");
-        popup.show(this,10,10);
-        return true;
+	int mode = 0;
+	
+	//Was it a click on our canvas ?
+	if ( (mEvt.getComponent() == this) &&
+	     ( (mEvt.getID() == MouseEvent.MOUSE_PRESSED) || (mEvt.getID() == MouseEvent.MOUSE_DRAGGED) ) ) {
+	    if( mEvt.isControlDown() ) {
+		mode = 2;
+	    }else mode =1;
+	}
+	// CONTROL DOWN MOUSE CLICK
+	if( mode == 2 ) {
+	    System.out.println("POPUPMENU");
+	    popup.show(this,10,10);
+	    return;
+	}
+	// REGULAR MOUSE CLICK
+	if( mode == 1 ) {
+	    clickX = mEvt.getX() - bt;
+	    clickY = mEvt.getY() - bt;
+	    // It was in the canvas but was it on our index picture ?
+	    if ( ( clickX > indexPos.x) && ( clickY > indexPos.y) )
+		{
+		    processScrollboxClick(clickX, clickY);
+		    return;
+		}
+	    else
+		{
+		    // Change this to be the x,y on our big pic so that caller can do imagemap stuff
+		    mEvt.translatePoint(rectPos.x * (-1 * indexToBigMultiple),
+				       rectPos.y * (-1 * indexToBigMultiple));
+		    
+		    //evt.x += ( rectPos.x * (-1 * indexToBigMultiple));
+		    //evt.y += ( rectPos.y * (-1 * indexToBigMultiple));
+		    super.processEvent(mEvt);    //This passess the mouse click back up to Applet
+		}
+	}
+	else
+	    {
+		super.processEvent(mEvt);    //This passess the mouse click back up to Applet
+	    }
+    }
    }
-   // REGULAR MOUSE CLICK
-   if( mode == 1 ) {
-      clickX = evt.x - bt;
-      clickY = evt.y - bt;
-      // It was in the canvas but was it on our index picture ?
-      if ( ( clickX > indexPos.x) && ( clickY > indexPos.y) )
-       {
-        processScrollboxClick(clickX, clickY);
-        return true;
-       }
-      else
-       {
-         // Change this to be the x,y on our big pic so that caller can do imagemap stuff
-         evt.x += ( rectPos.x * (-1 * indexToBigMultiple));
-         evt.y += ( rectPos.y * (-1 * indexToBigMultiple));
-        return super.handleEvent(evt);    //This passess the mouse click back up to Applet
-       }
-     }
-    else
-     {
-      return super.handleEvent(evt);    //This passess the mouse click back up to Applet
-     }
-   }
-
-
+    
+    
 
   public void processScrollboxClick( int x, int y)
    {

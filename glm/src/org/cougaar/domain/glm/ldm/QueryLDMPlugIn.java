@@ -188,7 +188,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     **/
     protected void parseQueryFile(String queryFile) {
 	try {
-	    BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
+	    BufferedReader in = new BufferedReader(new InputStreamReader(getConfigFinder().open(queryFile)));
 	    for (String line = in.readLine(); line != null; line=in.readLine()) {
 		line = line.trim();
 		// skip empty lines

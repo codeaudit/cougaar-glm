@@ -213,7 +213,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
 
   /** needed so internal class can find the xml task file */
   public ConfigFinder getFinder () {
-	return getCluster().getConfigFinder();  
+	return getConfigFinder();  
   }
   
   /** 
@@ -473,7 +473,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
   private Collection readXmlTasks(String xmlTaskFile) {
     Collection tasks = null;
     try {
-      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, getCluster());
+      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, getDelegate().getCluster());
       tasks = UTILAllocate.enumToList (tp.getTasks());
     } 
     catch( Exception ex ) {

@@ -124,7 +124,7 @@ public class PSP_ModifyAlert extends PSP_BaseAdapter
       if (uidStr.equals("")) {
         throw new RuntimePSPException("No UID for alert.");
       }
-      myModifyUID = new UID(uidStr);
+      myModifyUID = UID.toUID(uidStr);
       
       String ackStr = parseParameter(postData, ACK_LABEL, DELIM);
       if (ackStr.equals("")) {

@@ -33,6 +33,8 @@ public class ClientPSPEventDemo extends Applet implements Runnable
    private Thread myThread = null;
    private Image doubleBuffer = null;
 
+   private boolean shouldStop=true;
+
    private int width = 0;
    private int height  = 0;
 
@@ -65,6 +67,7 @@ public class ClientPSPEventDemo extends Applet implements Runnable
 
       if (myThread == null) {
         myThread = new Thread(this);
+	shouldStop = false;
         myThread.start();
         //myThread.setPriority(Thread.MIN_PRIORITY);
       }
@@ -82,8 +85,25 @@ public class ClientPSPEventDemo extends Applet implements Runnable
    public void destroy()
    {
        if (myThread != null) {
-         myThread.stop();
-         myThread = null;
+	 int ctr=0;
+	 this.shouldStop=true;
+         myThread.interrupt();
+	 while(myThread.isAlive() && ctr<50) {
+	     try {
+		 Thread.sleep(100);
+	     }
+	     catch (InterruptedException ie) {
+		 System.out.println("PopBrowser: Interupted during Destroy: this is bad" + ie.getMessage());
+		 throw new RuntimeException(ie.getMessage());
+	     }
+	     ctr++;
+	 }
+	 if(myThread.isAlive()) {
+	     System.out.println("ERROR: PopBrowser: Couldn't stop thread!!");
+	 }
+	 else {
+	     myThread = null;
+	 }
        }
    }
 
@@ -125,7 +145,7 @@ public class ClientPSPEventDemo extends Applet implements Runnable
      int counter=0;
      msg = msgPrefix;
 
-     while(true) {
+     while(!shouldStop) {
          sleepInterval = (int)8000;
          counter++;
 
@@ -135,16 +155,30 @@ public class ClientPSPEventDemo extends Applet implements Runnable
             myThread.sleep(sleepInterval);
             //URL newdoc = new URL( this.getCodeBase().getProtocol(),
             //                      this.getCodeBase().getHost(),"HTMLALERTS.PSP?NUM=" + counter);
+	    
+	    URL newdoc = new URL("http://" + this.getCodeBase().getHost()
+				     + ":" + basePort
+				 + "/alpine/demo/HTMLALERT.PSP?NUM=" + counter);
+	    if(!shouldStop) {
+		System.out.println("URL=" + newdoc.toExternalForm() );
+	    }
 
-            URL newdoc = new URL("http://" + this.getCodeBase().getHost()
-                      + ":" + basePort
-                      + "/alpine/demo/HTMLALERT.PSP?NUM=" + counter);
-            System.out.println("URL=" + newdoc.toExternalForm() );
-
-            this.getAppletContext().showDocument(newdoc,updateWindowName); // "_blank");
-         } catch (Exception e) {
+	    if(!shouldStop) {
+		this.getAppletContext().showDocument(newdoc,updateWindowName); // "_blank");
+	    }
+         }
+	 catch (InterruptedException e) {
+	     if(!shouldStop) {
+	      System.out.println("PopBrowser: Unexepected Interuppt Exeception: " + e.getMessage());
+	     }
+	 }
+	 catch (Exception e) {
              System.out.println("PopBrowser: Exception:" + e.getMessage());
          }
+	 
+	 if(shouldStop) {
+	     System.out.println("PopBrowser: Has been stopped cleanly.");
+	 }
      }
   }
 

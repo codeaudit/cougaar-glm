@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.domain.glm.plugins;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -83,10 +83,15 @@ public final class FileUtils {
 	return readLines.elements();
     }
 
+    /** @deprecated  Use readConfigFile(filename,configFinder) with plugins or clusters config finder passed **/
     public static Enumeration readConfigFile(String filename) {
+	return readConfigFile(filename,ConfigFinder.getInstance());
+    }
+
+    public static Enumeration readConfigFile(String filename, ConfigFinder finder) {
 	Vector readLines = new Vector();
 	try {
-	    InputStreamReader isr = new InputStreamReader(ConfigFileFinder.open(filename));
+	    InputStreamReader isr = new InputStreamReader(finder.open(filename));
     	    LineNumberReader lnr = new LineNumberReader(isr);
 	    String line;
 	    while((line = lnr.readLine()) != null) {

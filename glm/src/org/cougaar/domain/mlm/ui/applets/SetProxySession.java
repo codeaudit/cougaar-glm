@@ -34,6 +34,8 @@ public class SetProxySession extends Applet implements Runnable
    private Thread myThread = null;
    private Image doubleBuffer = null;
 
+   private boolean shouldStop=true;
+
    private int width = 0;
    private int height  = 0;
    private int basePort;
@@ -87,6 +89,7 @@ public class SetProxySession extends Applet implements Runnable
 
       if (myThread == null) {
         myThread = new Thread(this);
+	shouldStop=false;
         myThread.start();
         //myThread.setPriority(Thread.MIN_PRIORITY);
       }
@@ -106,8 +109,25 @@ public class SetProxySession extends Applet implements Runnable
    public void destroy()
    {
         if (myThread != null) {
-           myThread.stop();
-           myThread = null;
+	 int ctr=0;
+         //MWD stop replaced with below - myThread.stop();
+	 this.shouldStop=true;
+	 while(myThread.isAlive() && ctr<50) {
+	     try {
+		 Thread.sleep(100);
+	     }
+	     catch (InterruptedException ie) {
+		 System.out.println("SetProxySession: Interupted during Destroy: this is bad" + ie.getMessage());
+		 throw new RuntimeException(ie.getMessage());
+	     }
+	     ctr++;
+	 }
+	 if(myThread.isAlive()) {
+	     System.out.println("ERROR: SetProxySession: Couldn't stop thread!!");
+	 }
+	 else {
+	     myThread = null;
+	 }
         }
    }
 
@@ -124,6 +144,9 @@ public class SetProxySession extends Applet implements Runnable
    public void run()
    {
 
+     URLConnection uc=null;
+     InputStream is=null;
+
      try {
        //URL newdoc = new URL( this.getCodeBase().getProtocol(),
        //                      this.getCodeBase().getHost(),"HTMLALERTS.PSP?NUM=" + counter);
@@ -131,21 +154,42 @@ public class SetProxySession extends Applet implements Runnable
        URL newdoc = new URL("http://" + this.getCodeBase().getHost()
          + ":" + this.getCodeBase().getPort()
          + "/" + commandURL);
-       System.out.println(">URL=" + newdoc.toExternalForm() );
 
-       URLConnection uc = newdoc.openConnection();
-       uc.setDoInput(true);
-       InputStream is = uc.getInputStream();
-       byte b[] = new byte[512];
-       int len;
-       while( (len = is.read(b,0,512)) > -1 )
-       {
-         // System.out.write(b,0,len);
+       if(!shouldStop) {
+	   System.out.println(">URL=" + newdoc.toExternalForm() );
+       }
+       
+       if(!shouldStop) {
+	   uc = newdoc.openConnection();
+	   uc.setDoInput(true);
+       }
+
+       if(!shouldStop) {	   
+	   is = uc.getInputStream();
+	   byte b[] = new byte[512];
+	   int len;
+	   while(( (len = is.read(b,0,512)) > -1 ) &&
+		 (!shouldStop))
+	       {
+		   // System.out.write(b,0,len);
+	       }
        }
 
        //this.getAppletContext().showDocument(newdoc,"_blank");
+
+       is.close();
+       is=null;
+
      } catch (Exception e) {
-       System.out.println("Exception:" + e.getMessage());
+       System.out.println("SetProxySession:Exception:" + e.getMessage());
+       if(is != null) {
+	   try {
+	       is.close();
+	   }
+	   catch(IOException ioe) {
+	       System.out.println("SetProxySession:Got IOException when trying to close the InputStream:" + ioe.getMessage());
+	   }
+       }
      }
   }
 

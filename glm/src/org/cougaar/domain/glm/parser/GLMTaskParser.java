@@ -35,9 +35,8 @@ import org.cougaar.domain.planning.ldm.*;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.measure.*;
-import org.cougaar.core.plugin.SimplifiedPlugIn;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.util.UTILRuntimeException;
@@ -76,7 +75,7 @@ public class GLMTaskParser{
                  "http://apache.org/xml/features/allow-java-encodings", true);
       parser.setEntityResolver (new UTILEntityResolver ());
 
-      InputStream inputStream = ConfigFileFinder.open(pfile);
+      InputStream inputStream = myCluster.getConfigFinder().open(pfile);
       parser.parse(new InputSource (inputStream));
       Document doc = parser.getDocument();
       //System.out.println("making dom parser ");

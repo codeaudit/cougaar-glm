@@ -286,7 +286,8 @@ public abstract class BasicProcessor {
 	if (!(pe instanceof Expansion)) {
 	    printError("publishExpansion: problem pe not Expansion?"+pe
 		       +"\n  Task:"+PublicationKey.getTotalTaskKey(task)
-		       +"\n  Parent Task:"+PublicationKey.getTotalTaskKey(parent));
+		       +"\n  Parent Task:"+PublicationKey
+.getTotalTaskKey(parent));
 	    return;
 	}
 

@@ -177,6 +177,16 @@ public class JDScrollingImagemap extends Applet
      windowCanvas = new Graph(bigMapImg, smallMapImg, scale, scrollBoxColor, borderColor, defaultXIndexPos,
                                     defaultYIndexPos, centerZoom);
 
+     windowCanvas.addMouseListener(new MouseAdapter() { 
+	 public void mousePressed(MouseEvent evt) {
+	     int mX, mY;
+	     // translate these back to canvas context
+	     mX = (evt.getX() - windowCanvas.getBounds().x);
+	     mY = (evt.getY() - windowCanvas.getBounds().y);
+	     processImagemapClick(mX,mY);
+	 }});
+	 
+
      if( edges != null ){
          windowCanvas.load( edges, center );
          windowCanvas.start();
@@ -226,19 +236,23 @@ public class JDScrollingImagemap extends Applet
   /**
    * If the user clicked on the scrolling Canavs we will catch it here and
    * do our html style image-map stuff
-   */
+   *
+   * handleEvent taken out (deprecated style) use the MouseAdapter above
+   *   to do the same thing - MWD.
+   *
   public boolean handleEvent(Event evt)
    {
     if ( evt.target == windowCanvas && evt.id == Event.MOUSE_DOWN  )
      {
       // translate these back to canvas context
-      evt.x = (evt.x - windowCanvas.bounds().x);
-      evt.y = (evt.y - windowCanvas.bounds().y);
+      evt.x = (evt.x - windowCanvas.getBounds().x);
+      evt.y = (evt.y - windowCanvas.getBounds().y);
       processImagemapClick(evt.x, evt.y);
      }
     return true;    //Dont allow event to continue up
    }
 
+  */
 
  /**
   * processImagemapClick

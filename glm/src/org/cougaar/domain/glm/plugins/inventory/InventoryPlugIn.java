@@ -614,7 +614,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     public void initializeInventoryFile(String type) {
 
 	String invFile = getInventoryFile(type);
-	Enumeration initialInv = FileUtils.readConfigFile(invFile);
+	Enumeration initialInv = FileUtils.readConfigFile(invFile, getConfigFinder());
 	if (initialInv != null) {
 	    stashInventoryInformation(type, initialInv);
 	    GLMDebug.DEBUG("InventoryPlugIn", getClusterIdentifier(), 
