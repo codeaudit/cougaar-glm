@@ -107,7 +107,6 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  if (o instanceof Task) {
 	    Task t = (Task)o;
 	    if (t.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
-	    //if (t.getVerb().equals(Constants.Verb.SUPPLY)) {
 	      if (t.getPrepositionalPhrase(Constants.Preposition.REFILL) == null) {
 		  return true;
 	      }
@@ -202,9 +201,9 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     earliest = Math.round(readinessTask.getPreferredValue(AspectType.START_TIME));
     latest = Math.round(readinessTask.getPreferredValue(AspectType.END_TIME));
     rollupSpan = Math.round(readinessTask.getPreferredValue(AspectType.INTERVAL));
-    System.out.println(debugStart +" got earliest date: " 
-		       +new Date(earliest).toString() +
-		       " and rollupSpan: " + rollupSpan);
+//      System.out.println(debugStart +" got earliest date: " 
+//  		       +new Date(earliest).toString() +
+//  		       " and rollupSpan: " + rollupSpan);
 
     expandAndAllocateToSubordinates(readinessTask);
     HashMap pacingItems = new HashMap(13);
@@ -232,7 +231,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       // find the buckets for that asset
       HashMap itemBuckets = (HashMap) pacingItems.get(pacing);
       if (itemBuckets == null) {
-	System.out.println(debugStart + ": adding new set of buckets for " + pacing.getTypeIdentification());
+	//System.out.println(debugStart + ": adding new set of buckets for " + pacing.getTypeIdentification());
 	itemBuckets = new HashMap(13);
 	pacingItems.put(pacing, itemBuckets);
       }
@@ -242,7 +241,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       ArrayList results = (ArrayList) itemBuckets.get(directObject);
 
       if (results == null) {
-	System.out.println(debugStart + ": adding new bucket for " + directObject);
+	//System.out.println(debugStart + ": adding new bucket for " + directObject);
 	results = new ArrayList(13);
 	itemBuckets.put(directObject, results);
       }
@@ -274,6 +273,8 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     // Collection of AspectValue[] for a pacing item and supply type
     ArrayList pacingAndSupplyResults = new ArrayList(13);
 
+    int mergeCount = 0;
+
     for (Iterator itemIt = tree.keySet().iterator(); itemIt.hasNext();) {
       MaintainedItem pacingItem = (MaintainedItem)itemIt.next();
       // make new subtask of toplevel task
@@ -300,7 +301,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
   	  }
 	  AspectValue[] avs = newReadinessAspectArray(day1, dayn, average(in));
   	  if (Double.isNaN(avs[2].getValue())) {
-	    System.out.println(avs);
+	    System.err.println(debugStart + "invalid aspect value " + avs);
 	  }
 	  pacingAndSupplyResults.add(avs);
 	}
@@ -309,16 +310,20 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	Task pacingAndSupplyTask = createSubTask(pacingTask, pacingItem, suppliedItem);
 	if (pacingResults.isEmpty()) {
 	  pacingResults.addAll(pacingAndSupplyResults);
+	  mergeCount = 1;
 	} else {
-	  merge(pacingResults, pacingAndSupplyResults);
+	  mergeAdd(pacingResults, pacingAndSupplyResults);
+	  mergeCount++;
 	}
 	publishAddToExpansion(pacingTask, pacingAndSupplyTask);
-	publishAllocationResult(pacingAndSupplyTask, pacingResults);
-	System.out.println();
-	System.out.println(pacingItem + " " + suppliedItem);
-	printResults(pacingAndSupplyResults);
+	publishAllocationResult(pacingAndSupplyTask, pacingAndSupplyResults);
+	//System.out.println();
+	//System.out.println(pacingItem + " " + suppliedItem);
+	//printResults(pacingAndSupplyResults);
 	pacingAndSupplyResults.clear();
       }
+
+      averageResults(pacingResults, mergeCount);
       // At this point we have enough info to fill in the allocation result collection for the the pacing item task
       // fill in allocation result of pacing item subtask
 
@@ -331,10 +336,10 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       publishAddToExpansion(parentTask, pacingTask);
       publishAllocationResult(pacingTask, pacingResults);
 
-      System.out.println();  System.out.println();
-      System.out.println(debugStart);
-      System.out.println(pacingItem);
-      printResults(pacingResults);
+//        System.out.println();  System.out.println();
+//        System.out.println(debugStart);
+//        System.out.println(pacingItem);
+//        printResults(pacingResults);
       pacingResults.clear();
     }
     publishAllocationResult(parentTask, overallResults );
@@ -344,14 +349,14 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
   /**
    * pick the minimum readiness value of each phase
-   * @param oldList running total of phased results
+   * @param oldList min of previous phased results
    * @param newList new phased result to merge in
    **/
   private void merge(ArrayList oldList, ArrayList newList) {
     // sure hope these cover the same time span!
 
     if (oldList.size() != newList.size()) {
-      System.out.println(debugStart + ".merge() - bad assumption, Bub. The results have different cardinalities!");
+      System.err.println(debugStart + ".merge() - bad assumption, Bub. The results have different cardinalities!");
       return;
     }
 
@@ -361,11 +366,11 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
       // arrays should have the same three aspect types
       if (oldAV[0].getValue() != newAV[0].getValue()) {
-	System.out.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different start dates!");
+	System.err.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different start dates!");
 	return;
       }
       if (oldAV[1].getValue() != newAV[1].getValue()) {
-	System.out.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different end dates!");
+	System.err.println(debugStart + ".merge() - bad assumption, Bub. The AspectValues have different end dates!");
 	return;
       }
 
@@ -376,6 +381,48 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     }
   }
 
+  /**
+   * add the readiness value of each phase
+   * @param runningTotalList running total each phase of phased results
+   * @param newList new phased result to add to total
+   **/
+  private void mergeAdd(ArrayList runningTotalList, ArrayList newList) {
+    // sure hope these cover the same time span!
+
+    if (runningTotalList.size() != newList.size()) {
+      System.err.println(debugStart + ".mergeAdd() - bad assumption, Bub. The results have different cardinalities!");
+      return;
+    }
+
+    for (int i = 0; i < runningTotalList.size(); i++) {
+      AspectValue[] oldAV = (AspectValue[]) runningTotalList.get(i);
+      AspectValue[] newAV = (AspectValue[]) newList.get(i);
+
+      // arrays should have the same three aspect types
+      if (oldAV[0].getValue() != newAV[0].getValue()) {
+	System.err.println(debugStart + ".mergeAdd() - bad assumption, Bub. The AspectValues have different start dates!");
+	return;
+      }
+      if (oldAV[1].getValue() != newAV[1].getValue()) {
+	System.err.println(debugStart + ".mergeAdd() - bad assumption, Bub. The AspectValues have different end dates!");
+	return;
+      }
+
+      oldAV[2].setValue(oldAV[2].getValue() + newAV[2].getValue());
+    }
+  }
+
+  /**
+   * divide each qty by the number of items added together to produce the qty.
+   **/
+  private void averageResults(ArrayList results, int denominator) {
+
+    for (int i = 0; i < results.size(); i++) {
+      AspectValue[] avs = (AspectValue[]) results.get(i);
+      avs[2].setValue(avs[2].getValue()/denominator);
+    }
+  }
+
   private static final long MILLISPERDAY = 1000*60*60*24;
 
   /**
@@ -383,6 +430,18 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
    **/
   private ArrayList splitResult(AllocationResult ar, double preferedRate) {
     ArrayList schedule = new ArrayList(13);
+    if (ar == null)
+      return schedule;
+
+//      if (!ar.isSuccess()) {
+//        AspectValue[] rollup = ar.getAspectValueResults();
+//        for (int i=0; i<rollup.length; i++) {
+//  	if (rollup[i].getAspectType() == AlpineAspectType.DEMANDRATE) {
+//  	  System.out.println(debugStart + " failed task with rollup demand rate of " + rollup[i].getValue());
+//  	  break;
+//  	}
+//        }
+//      }
 
     if (ar.isPhased()) {
       for (Iterator phasedIterator = ar.getPhasedAspectValueResults().iterator(); phasedIterator.hasNext();) {
@@ -405,9 +464,12 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	    break;
 	  case AlpineAspectType.DEMANDRATE : 
 	    rate = avs[i].getValue();
+	    if (!ar.isSuccess()) {
+	      //System.out.println(debugStart + " failed task DemandRate is " + rate + " task Prefered rate is " + preferedRate);
+	    }
 	    break;
 	  default:
-	    System.out.println(debugStart + " Unexpected AspectType: " + avs[i].getAspectType());
+	    System.err.println(debugStart + " Unexpected AspectType: " + avs[i].getAspectType());
 	    break;
 	    }
 	  if (start==-1 || end==-1 || rate==-1)
@@ -421,14 +483,14 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	    rse = new RateScheduleElement(day, rate/preferedRate);
 	  } else {
 	    rse = new RateScheduleElement(day, 1.0);
-	    System.out.println(debugStart + "preferedRate of task is zero. why?");
+	    System.err.println(debugStart + "preferedRate of task is zero. why?");
 	  }
 //  	  System.out.println("ReadinessAssessor.splitResult() adding " + rse);
 	  schedule.add(rse);
 	}
       }
     } else {
-      System.out.println(debugStart + ".splitResult() allocation result is not phased");
+      System.err.println(debugStart + ".splitResult() allocation result is not phased");
     }
     return schedule;
   }
