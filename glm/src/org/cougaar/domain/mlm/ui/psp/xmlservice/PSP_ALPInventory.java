@@ -144,14 +144,18 @@ public class PSP_ALPInventory
       inv.addNamedSchedule(REQUESTED_DUE_OUT           +INACTIVE, inventory.getInactiveRequestedDueOutSchedule());
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT +INACTIVE, inventory.getInactiveProjectedRequestedDueOutSchedule());
 
-//    inv.addNamedSchedule(REQUESTED_DUE_OUT_SHORTFALL, inventory.getDueOutShortfallSchedule());
     } 
     else if (scheduleType.equals(inventory.NO_INVENTORY_SCHEDULE_JUST_CONSUME)){
-	inv.addNamedSchedule(DUE_IN,                     inventory.getDueInSchedule());
-	inv.addNamedSchedule(UNCONFIRMED_DUE_IN,         inventory.getUnconfirmedDueInSchedule());
-	inv.addNamedSchedule(REQUESTED_DUE_IN,           inventory.getRequestedDueInSchedule());
-	inv.addNamedSchedule(PROJECTED_DUE_IN,           inventory.getProjectedDueInSchedule());
-	inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN, inventory.getProjectedRequestedDueInSchedule());
+	inv.addNamedSchedule(DUE_IN,                              inventory.getDueInSchedule());
+	inv.addNamedSchedule(UNCONFIRMED_DUE_IN,                  inventory.getUnconfirmedDueInSchedule());
+	inv.addNamedSchedule(REQUESTED_DUE_IN,                    inventory.getRequestedDueInSchedule());
+	inv.addNamedSchedule(PROJECTED_DUE_IN,                    inventory.getProjectedDueInSchedule());
+	inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN,          inventory.getProjectedRequestedDueInSchedule());
+	inv.addNamedSchedule(DUE_IN                    +INACTIVE, inventory.getInactiveDueInSchedule());
+	inv.addNamedSchedule(PROJECTED_DUE_IN          +INACTIVE, inventory.getInactiveProjectedDueInSchedule());
+	inv.addNamedSchedule(UNCONFIRMED_DUE_IN        +INACTIVE, inventory.getInactiveUnconfirmedDueInSchedule());
+	inv.addNamedSchedule(REQUESTED_DUE_IN          +INACTIVE, inventory.getInactiveRequestedDueInSchedule());
+	inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN+INACTIVE, inventory.getInactiveProjectedRequestedDueInSchedule());
 
 	System.out.println("getInventoryForClient: returning schedule type: " + scheduleType);
 
