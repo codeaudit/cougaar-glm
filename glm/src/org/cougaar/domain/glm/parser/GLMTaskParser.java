@@ -75,7 +75,7 @@ public class GLMTaskParser{
                  "http://apache.org/xml/features/allow-java-encodings", true);
       parser.setEntityResolver (new UTILEntityResolver ());
 
-      InputStream inputStream = myCluster.getConfigFinder().open(pfile);
+      InputStream inputStream = cluster.getConfigFinder().open(pfile);
       parser.parse(new InputSource (inputStream));
       Document doc = parser.getDocument();
       //System.out.println("making dom parser ");
