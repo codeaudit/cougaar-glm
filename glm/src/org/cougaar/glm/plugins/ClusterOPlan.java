@@ -158,7 +158,11 @@ public class ClusterOPlan implements Serializable {
    **/
   public synchronized TimeSpan getOplanSpan() {
     MutableTimeSpan ts = new MutableTimeSpan();
-    ts.setTimeSpan(startTime_, endTime_);
+    try {
+      ts.setTimeSpan(startTime_, endTime_);
+    } catch (IllegalArgumentException iae) {
+      System.err.println(clusterId_ + " ClusterOPlan has invalid oplan start/end times. Start: " + startTime_ + ", End: " + endTime_);
+    }
     return ts;
   }
 
