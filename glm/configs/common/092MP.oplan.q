@@ -1,4 +1,3 @@
-#Database=jdbc:oracle:thin:@${org.cougaar.database}
 Database=jdbc:oracle:thin:@${oplan.test.database}
 Username=${oplan.test.database.user}
 Password=${oplan.test.database.password}
@@ -23,7 +22,11 @@ OplanInfoQuery = select operation_name, priority, c0_date from oplan where oplan
 activity = ACTIVITY
 opTempo = OPTEMPO
 location = LOCATION
-OrgActivityQuery = select relation_name, force, force_type, relates_to, relates_to_type, start_day, end_day from drop_relationship where oplan = ':oplanid' and relation_name in (':activity', ':opTempo', ':location')
+OrgActivityQuery = select relation_name, force, force_type, relates_to, relates_to_type, start_day, end_day, last_modified from drop_relationship where oplan = ':oplanid' and relation_name in (':activity', ':opTempo', ':location')
+
+
+
+
 
 
 
