@@ -41,6 +41,61 @@ import org.cougaar.util.UnaryPredicate;
 //
 public class YPDemoJNDI
 {
+
+    /**
+     *   createLookupDirectory_andBindObject() does the following:
+     *
+     *       0.) Expects Context of 'rootContextName' to exist.
+     *       1.) Looks up (or creates if doesn't exist) Context identified by 'rootContextName' beneath 'rootContextName'
+     *       2.) Binds 'bindingObject' of name 'objName' to Context.
+     *       3.) Attaches 'attributes' to 'bindingObject'
+     *
+     *   @return true if successful, else false
+     */
+     public static boolean createLookupDirectory_andBindObject(
+                                     String rootContextName, String subContextName,
+                                     String objName, Object bindingObject, Attributes attributes,
+                                     NamingService nservice )
+     {
+          DirContext agents = null;
+          try{
+              DirContext dirc = (DirContext)nservice.getRootContext();
+              agents = (DirContext)dirc.lookup(rootContextName);
+          } catch (NamingException ex) {
+              //
+              // hmmm, we gotta fail if can't find "Agents" subdirectory
+              // as it should have already been created by infrastructure...
+              //
+              ex.printStackTrace();
+              return false;
+          }
+
+          DirContext subKontext = null;
+          try{
+              try{
+                    subKontext = (DirContext)agents.createSubcontext(subContextName);
+              } catch( NameAlreadyBoundException ex ) {
+                    //
+                    // catch NameAlreadyBoundException -  directory already exists
+                    // perform a lookup instead of creating new
+                    //
+                    subKontext = (DirContext)agents.lookup(subContextName);
+              }
+              System.out.println("Created Subdirectory=" + subKontext.getNameInNamespace());
+                          //subKontext.bind("Roles", new AgentRole("http://www.ultralog.net")); //, new BasicAttributes("name", role.getName()));
+
+              System.out.println("Binding attributes, size=" + attributes.size() );
+              subKontext.bind(objName, bindingObject, attributes );
+
+         } catch ( NamingException ex ) {
+              // Hmmm, complain
+              ex.printStackTrace();
+              return false;
+         }
+          return true;
+     }
+
+
      //###########################################################################
      //
      //

@@ -252,13 +252,6 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
 
         //session.append( session.createHeaderToSessionTranscript("Attributes added to YP.") );
         NamingService nservice = psc.getServerPlugInSupport().getNamingService();
-        DirContext root = null;
-
-        try{
-            root = (DirContext)nservice.getRootContext();
-        } catch( NamingException ex ){
-            ex.printStackTrace();
-        }
 
         PlugInDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
         Subscription subscription = psc.getServerPluginSupport().subscribe(this,
@@ -267,7 +260,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         Object [] objs = container.toArray();
         for( int i=0; i< objs.length; i++) {
               Object obj = objs[i];
-              processRoles(obj, root, session);
+              processRoles(obj, session, nservice);
         }
     }
 
@@ -275,7 +268,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
     // Processes organization assets from blackboard and populates
     //  AgentRoles in JNDI
     //
-    private void processRoles( Object obj, DirContext dirc, YPDemoSession session ) {
+    private void processRoles( Object obj,  YPDemoSession session, NamingService nservice ) {
           if( obj instanceof Organization ) {
               Organization og = (Organization)obj;
               if( og.isSelf() )
@@ -298,7 +291,6 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                   Object[] arr  = relations.toArray();
 
                   //
-                  // TO DO: FACTOR JNDI LOGIC (below) INTO YPDemoJNDI.java
                   //
                   BasicAttributes attributes = new BasicAttributes();
                   session.add("<TABLE>");
@@ -309,21 +301,32 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                       BasicAttribute attribute = new BasicAttribute(role.getName(), "true");
                       attributes.put(attribute);
                   }
+                  session.add("</TABLE>");
+                  session.doPrepend();
 
+                  YPDemoJNDI.createLookupDirectory_andBindObject(
+                                     "Agents", og.getItemIdentificationPG().getNomenclature(),
+                                     "Roles",
+                                     new AgentRole("http://www.ultralog.net"),
+                                     attributes,
+                                     nservice );
+
+                  /**
                   //
                   // BIND ATTRIBUTES OBJ TO NAME
                   //
                   try{
-                         DirContext subKontext = null;
+                         DirContext  subKontext =null;
+                         DirContext dirc = (DirContext)nservice.getRootContext();
                          try{
                                   DirContext agents = (DirContext)dirc.lookup("Agents");
                                   subKontext = (DirContext)agents.createSubcontext(og.getItemIdentificationPG().getNomenclature());
                           } catch( NameAlreadyBoundException ex ) {
-                                      //
-                                      // catch NameAlreadyBoundException -  directory already exists
-                                      // perform a lookup instead of creating new
-                                      //
-                                      subKontext = (DirContext)dirc.lookup(og.getItemIdentificationPG().getNomenclature());
+                                  //
+                                  // catch NameAlreadyBoundException -  directory already exists
+                                  // perform a lookup instead of creating new
+                                  //
+                                  subKontext = (DirContext)dirc.lookup(og.getItemIdentificationPG().getNomenclature());
                           }
                           System.out.println("Created Subdirectory=" + subKontext.getNameInNamespace());
                           //subKontext.bind("Roles", new AgentRole("http://www.ultralog.net")); //, new BasicAttributes("name", role.getName()));
@@ -333,9 +336,9 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                     } catch( NamingException ex ){
                           // if already bound, ignore
                     }
-                    session.add("</TABLE>");
-                    session.doPrepend();
+                   **/
               }
+
           }
     }
 
@@ -447,7 +450,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         out.println("as well as each time you change view (to new Agent).</P></FONT></I>");
 
         out.println("<div align=center>");
-        out.println("<input type=submit name="+BUTTON_GET_YP_ATTRIBUTES +" value=\"Get queryiable attributes from Yellow Pages\">");
+        out.println("<input type=submit name="+BUTTON_GET_YP_ATTRIBUTES +" value=\"Get queryable attributes from Yellow Pages\">");
         out.println("</div>");
         out.println("<P>");
         out.println("</P>");
@@ -472,7 +475,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         // BUTTON 3 ------------------
 
         out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Search Yellow Pages...' to search from all JNDI entries");
-        out.println("Select context <FONT COLOR=BLUE>NAME</FONT> and <FONT COLOR=MAGENTA>ATTRIBUTE</FONT> pairs below.");
+        out.println("Select <FONT COLOR=BLUE>CONTEXT NAME</FONT> and <FONT COLOR=MAGENTA>ATTRIBUTE</FONT> pairs below.");
         out.println("To update list, choose 'Get queryable attributes...' above.");
         out.println("</I></FONT></P>");
         out.println("<div align=center>");
