@@ -244,12 +244,12 @@ public class PredictorExpanderPlugin extends SimplePlugin
         subtask.setPlan(task.getPlan());
         
         Vector prefs = new Vector();
-        AspectValue startAV = new AspectValue(AspectType.START_TIME, tt.getStartTime().getTime());
+        AspectValue startAV = AspectValue.newAspectValue(AspectType.START_TIME, tt.getStartTime().getTime());
         ScoringFunction startSF = ScoringFunction.createPreferredAtValue(startAV, 2);
         Preference startPref = theLDMF.newPreference(AspectType.START_TIME, startSF);
         prefs.addElement(startPref);
 
-        AspectValue endAV = new AspectValue(AspectType.END_TIME, tt.getEndTime().getTime());
+        AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, tt.getEndTime().getTime());
         ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, 2);
         Preference endPref = theLDMF.newPreference(AspectType.END_TIME, endSF);
         prefs.addElement(endPref);

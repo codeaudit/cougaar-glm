@@ -523,13 +523,13 @@ public abstract class BasicProcessor {
     }
 
     protected void setEndTimePreference(NewTask task, long end) {
-        AspectValue av = new TimeAspectValue(AspectType.END_TIME, end);
+        AspectValue av = TimeAspectValue.create(AspectType.END_TIME, end);
         ScoringFunction score = ScoringFunction.createStrictlyAtValue(av);
         task.setPreference(ldmFactory_.newPreference(AspectType.END_TIME, score));
     }
 
     protected void setStartTimePreference(NewTask task, long start) {
-        AspectValue av = new TimeAspectValue(AspectType.START_TIME, start);
+        AspectValue av = TimeAspectValue.create(AspectType.START_TIME, start);
         ScoringFunction score = ScoringFunction.createStrictlyAtValue(av);
         task.setPreference(ldmFactory_.newPreference(AspectType.START_TIME, score));
     }
@@ -1113,7 +1113,7 @@ public abstract class BasicProcessor {
     /** Create a preference with the Strict scoring function at 'value' for the
 	given aspect type */
     public Preference createPreference(int aspect, double value) {
-	AspectValue av = new AspectValue(aspect,value);
+	AspectValue av = AspectValue.newAspectValue(aspect,value);
 // 	ScoringFunction score = ScoringFunction.createPreferredAtValue(av, 2);
  	ScoringFunction score = ScoringFunction.createStrictlyAtValue(av);
 	return ldmFactory_.newPreference(aspect, score);
@@ -1122,19 +1122,19 @@ public abstract class BasicProcessor {
     /** Create a preference with the scoring NearOrAbove function at 'value' for the
 	given aspect type */
     public Preference createQuantityPreference(int aspect, double value) {
-	AspectValue av = new AspectValue(aspect,value);
+	AspectValue av = AspectValue.newAspectValue(aspect,value);
  	ScoringFunction score = ScoringFunction.createNearOrAbove(av, 0);
 	return ldmFactory_.newPreference(aspect, score);
     }
 
     public Preference createDateBeforePreference(int aspect, long value) {
-	AspectValue av = new AspectValue(aspect,value);
+	AspectValue av = AspectValue.newAspectValue(aspect,value);
  	ScoringFunction score = ScoringFunction.createNearOrBelow(av, 0);
 	return ldmFactory_.newPreference(aspect, score);
     }
 
     public Preference createDateAfterPreference(int aspect, long value) {
-	AspectValue av = new AspectValue(aspect,value);
+	AspectValue av = AspectValue.newAspectValue(aspect,value);
  	ScoringFunction score = ScoringFunction.createNearOrAbove(av, 0);
 	return ldmFactory_.newPreference(aspect, score);
     }

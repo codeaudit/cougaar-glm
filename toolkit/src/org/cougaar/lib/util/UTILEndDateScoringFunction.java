@@ -40,9 +40,9 @@ public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction
 
   public UTILEndDateScoringFunction(Date early, Date best, Date late,
 				    double boundaryScore) {
-    super (new AspectValue (AspectType.END_TIME, (double) early.getTime ()),
-	   new AspectValue (AspectType.END_TIME, (double) best.getTime  ()),
-	   new AspectValue (AspectType.END_TIME, (double) late.getTime  ()),
+    super (AspectValue.newAspectValue (AspectType.END_TIME, (double) early.getTime ()),
+	   AspectValue.newAspectValue (AspectType.END_TIME, (double) best.getTime  ()),
+	   AspectValue.newAspectValue (AspectType.END_TIME, (double) late.getTime  ()),
 	   boundaryScore);
   }
 
@@ -79,20 +79,20 @@ public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction
     ScoringFunction sf = new UTILEndDateScoringFunction (early, 
 							 best,
 							 late, 0.9);
-    AspectValue av = new AspectValue (AspectType.END_TIME, 
+    AspectValue av = AspectValue.newAspectValue (AspectType.END_TIME, 
 				      (double) beforeearly.getTime ());
     logger.debug ("Score for before early " + sf.getScore (av));
 
-    av = new AspectValue (AspectType.END_TIME, (double) early.getTime ());
+    av = AspectValue.newAspectValue (AspectType.END_TIME, (double) early.getTime ());
     logger.debug ("Score for early " + sf.getScore (av));
 
-    av = new AspectValue (AspectType.END_TIME, (double) best.getTime ());
+    av = AspectValue.newAspectValue (AspectType.END_TIME, (double) best.getTime ());
     logger.debug ("Score for best " + sf.getScore (av));
 
-    av = new AspectValue (AspectType.END_TIME, (double) late.getTime ());
+    av = AspectValue.newAspectValue (AspectType.END_TIME, (double) late.getTime ());
     logger.debug ("Score for late " + sf.getScore (av));
 
-    av = new AspectValue (AspectType.END_TIME, (double) afterlate.getTime ());
+    av = AspectValue.newAspectValue (AspectType.END_TIME, (double) afterlate.getTime ());
     logger.debug ("Score for after late " + sf.getScore (av));
   }
 }

@@ -216,15 +216,15 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     
     Vector prefs = new Vector(2);
     Preference p = rootFactory.newPreference(AspectType.START_TIME, 
-					     ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME, getOplanStartTime())));
+					     ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.START_TIME, getOplanStartTime())));
 
     prefs.add(p);
     p = rootFactory.newPreference(AspectType.END_TIME, 
-					     ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME, getOplanEndTime())));
+					     ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.END_TIME, getOplanEndTime())));
 
     prefs.add(p);
     p = rootFactory.newPreference(AspectType.INTERVAL,
-				  ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.INTERVAL, rollupSpan)));
+				  ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.INTERVAL, rollupSpan)));
     prefs.add(p);
 
     task.setPreferences(prefs.elements());

@@ -153,7 +153,7 @@ public class ManagerPlugin extends CommonUtilPlugin {
     protected void setPreference ( Task t, int aspectType, 
 				   int sequenceOfTask){
 	startTime = new Date(); 
-	aspectVal = new AspectValue(aspectType, sequenceOfTask);
+	aspectVal = AspectValue.newAspectValue(aspectType, sequenceOfTask);
 	ScoringFunction scorefcn = 
 	    ScoringFunction.createStrictlyAtValue(aspectVal);
 	Preference pref = theLDMF.newPreference(aspectType, scorefcn);

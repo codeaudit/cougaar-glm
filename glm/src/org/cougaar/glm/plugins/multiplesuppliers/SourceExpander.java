@@ -355,7 +355,7 @@ public class SourceExpander extends SimplePlugin {
                   if ( nextSupplier != null) {
                     NewTask subtask = Utility.cloneTask( getFactory(), lastSubtask, null);
 
-                    AspectValue quantityAV = new AspectValue( AspectType.QUANTITY, shortfallCount);
+                    AspectValue quantityAV = AspectValue.newAspectValue( AspectType.QUANTITY, shortfallCount);
                     ScoringFunction quantitySF = ScoringFunction.createNearOrBelow( quantityAV, shortfallCount);
                     Preference quantityPreference = getFactory().newPreference( AspectType.QUANTITY, quantitySF);
                     prefHelper.replacePreference( subtask, quantityPreference);

@@ -226,7 +226,7 @@ public class SimpleMultilegExpanderPlugin extends org.cougaar.core.plugin.Simple
 	// Set up START_TIME preference
 	ScoringFunction start_scorefcn = 
 	    ScoringFunction.createNearOrAbove
-	    (new AspectValue(AspectType.START_TIME, 
+	    (AspectValue.newAspectValue(AspectType.START_TIME, 
 			     (double)earliest_start.getTime()), 
 	     0.0d);
 
@@ -236,11 +236,11 @@ public class SimpleMultilegExpanderPlugin extends org.cougaar.core.plugin.Simple
 	// Set up preference for END_TIME
 	ScoringFunction end_scorefcn = 
 	    ScoringFunction.createStrictlyBetweenWithBestValues
-	    (new AspectValue(AspectType.END_TIME, 
+	    (AspectValue.newAspectValue(AspectType.END_TIME, 
 			     (double)(latest_end.getTime() - (0l*ONE_DAY))),
-	     new AspectValue(AspectType.END_TIME,
+	     AspectValue.newAspectValue(AspectType.END_TIME,
 			     (double)(latest_end.getTime() + (2l*ONE_DAY))),
-	     new AspectValue(AspectType.END_TIME, 
+	     AspectValue.newAspectValue(AspectType.END_TIME, 
 			     (double)(latest_end.getTime() + (7l*ONE_DAY))));
 
 	Preference end_pref = theLDMF.newPreference(AspectType.END_TIME, end_scorefcn);

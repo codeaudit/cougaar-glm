@@ -349,7 +349,7 @@ public class UTILExpand {
       Integer aspectTypeInt = new Integer (aspectType);
       Preference pref = (Preference) map.remove (aspectTypeInt);
       if (pref != null) {
-	AspectValue av = new AspectValue (aspectType, aspectValues[i]);
+	AspectValue av = AspectValue.newAspectValue (aspectType, aspectValues[i]);
 	if (aspectType == AspectType.END_TIME)
 	  logger.warn(printEndTime (t, av));
 	else
@@ -511,7 +511,7 @@ public class UTILExpand {
 
     while(prefs.hasMoreElements()){
       Preference p = (Preference)prefs.nextElement();
-      aspect_values.add(new AspectValue(p.getAspectType(), pref.getPreferenceBestValue(p)));
+      aspect_values.add(AspectValue.newAspectValue(p.getAspectType(), pref.getPreferenceBestValue(p)));
     }
 
     AllocationResult ar = 

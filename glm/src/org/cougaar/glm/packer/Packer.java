@@ -326,7 +326,7 @@ public abstract class Packer extends GenericPlugin {
           if (aspectValues[i].getAspectType() == AspectType.QUANTITY) {
             if (aspectValues[i].getValue() != prefValue) {
               // set the quantity to be the preference quantity
-              aspectValues[i].setValue(prefValue); 
+              aspectValues[i] = aspectValues[i].dupAspectValue(prefValue); 
               needToCorrectQuantity = true;
             }
 	    foundQuantity = true;
@@ -337,7 +337,7 @@ public abstract class Packer extends GenericPlugin {
 	if (!foundQuantity) {
 	  AspectValue [] copy = new AspectValue [aspectValues.length+1];
 	  System.arraycopy(aspectValues,0,copy,0,aspectValues.length);
-	  copy[aspectValues.length] = new AspectValue (AspectType.QUANTITY, prefValue);
+	  copy[aspectValues.length] = AspectValue.newAspectValue (AspectType.QUANTITY, prefValue);
 	  aspectValues=copy;
 	}
 

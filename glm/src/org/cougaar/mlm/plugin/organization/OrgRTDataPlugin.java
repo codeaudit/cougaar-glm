@@ -50,6 +50,7 @@ import org.cougaar.planning.ldm.asset.PropertyGroup;
 import org.cougaar.planning.ldm.asset.PropertyGroupSchedule;
 
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.NewRoleSchedule;
 import org.cougaar.planning.ldm.plan.NewSchedule;
@@ -445,15 +446,15 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
     reportTask.setPlan(getFactory().getRealityPlan());
     reportTask.setSource(getClusterIdentifier());
 
-    TimeAspectValue startTAV = 
-      new TimeAspectValue(AspectType.START_TIME, startTime);
+    AspectValue startTAV = 
+      TimeAspectValue.create(AspectType.START_TIME, startTime);
     ScoringFunction startScoreFunc = 
       ScoringFunction.createStrictlyAtValue(startTAV);
     Preference startPreference = 
       getFactory().newPreference(AspectType.START_TIME, startScoreFunc);
 
-    TimeAspectValue endTAV = 
-      new TimeAspectValue(AspectType.END_TIME, endTime);
+    AspectValue endTAV = 
+      TimeAspectValue.create(AspectType.END_TIME, endTime);
     ScoringFunction endScoreFunc = 
       ScoringFunction.createStrictlyAtValue(endTAV);    
     Preference endPreference = 

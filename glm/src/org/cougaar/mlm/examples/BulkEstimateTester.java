@@ -141,17 +141,17 @@ public class BulkEstimateTester extends SimplePlugin
     
     // create some AspectValues
     Calendar now = Calendar.getInstance();
-    AspectValue time1 = new TimeAspectValue(AspectType.START_TIME, now.getTime());
+    AspectValue time1 = TimeAspectValue.create(AspectType.START_TIME, now.getTime());
     now.add(Calendar.DATE, 5);
-    AspectValue time2 = new TimeAspectValue(AspectType.START_TIME, now.getTime());
+    AspectValue time2 = TimeAspectValue.create(AspectType.START_TIME, now.getTime());
     now.add(Calendar.DATE, 5);
-    AspectValue time3 = new TimeAspectValue(AspectType.START_TIME, now.getTime());
+    AspectValue time3 = TimeAspectValue.create(AspectType.START_TIME, now.getTime());
     now.add(Calendar.DATE, 5);
-    AspectValue time4 = new TimeAspectValue(AspectType.END_TIME, now.getTime());
+    AspectValue time4 = TimeAspectValue.create(AspectType.END_TIME, now.getTime());
     now.add(Calendar.DATE, 5);
-    AspectValue time5 = new TimeAspectValue(AspectType.END_TIME, now.getTime());
+    AspectValue time5 = TimeAspectValue.create(AspectType.END_TIME, now.getTime());
     now.add(Calendar.DATE, 5);
-    AspectValue time6 = new TimeAspectValue(AspectType.END_TIME, now.getTime());
+    AspectValue time6 = TimeAspectValue.create(AspectType.END_TIME, now.getTime());
     
     
     ScoringFunction sf1 = ScoringFunction.createStrictlyAtValue(time1);

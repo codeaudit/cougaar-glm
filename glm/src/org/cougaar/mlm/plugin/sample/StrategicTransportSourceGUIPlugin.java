@@ -53,6 +53,7 @@ import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.oplan.Oplan;
 
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Preference;
@@ -331,10 +332,10 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
     rightNow.add(Calendar.MONTH, 3);
     Date endDate = rightNow.getTime();
     
-    TimeAspectValue startTav = 
-      new TimeAspectValue( AspectType.START_TIME, startDate);
-    TimeAspectValue endTav = 
-      new TimeAspectValue( AspectType.END_TIME, endDate);
+    AspectValue startTav = 
+      TimeAspectValue.create( AspectType.START_TIME, startDate);
+    AspectValue endTav = 
+      TimeAspectValue.create( AspectType.END_TIME, endDate);
 
     ScoringFunction myStartScoreFunc = 
       ScoringFunction.createStrictlyAtValue( startTav );

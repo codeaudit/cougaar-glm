@@ -576,7 +576,7 @@ public class TestDeletionPlugin extends SimplePlugin {
     private void setStartTimePreference(NewTask mpTask, long newStartTime) {
         ScoringFunction sf;
         Preference pref;
-        sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME,
+        sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.START_TIME,
                                                                    newStartTime));
         pref = theLDMF.newPreference(AspectType.START_TIME, sf);
         mpTask.setPreference(pref);
@@ -587,7 +587,7 @@ public class TestDeletionPlugin extends SimplePlugin {
     private void setEndTimePreference(NewTask mpTask, long newEndTime) {
         ScoringFunction sf;
         Preference pref;
-        sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME,
+        sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.END_TIME,
                                                                    newEndTime));
         pref = theLDMF.newPreference(AspectType.END_TIME, sf);
         mpTask.setPreference(pref);
@@ -696,21 +696,21 @@ public class TestDeletionPlugin extends SimplePlugin {
         Preference pref;
         long slop = ((endTime - startTime) - duration) / 2L;
         if (slop <= 0) {
-            sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME,
+            sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.START_TIME,
                                                                        startTime));
         } else {
             double slope = 1.0 / slop; // Slope such that score reaches 1.0 in slop msec
-            sf = new ScoringFunction.AboveScoringFunction(new AspectValue(AspectType.START_TIME,
+            sf = new ScoringFunction.AboveScoringFunction(AspectValue.newAspectValue(AspectType.START_TIME,
                                                                           startTime), slope);
         }
         pref = theLDMF.newPreference(AspectType.START_TIME, sf);
         task.setPreference(pref);
         if (slop <= 0) {
-            sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME,
+            sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.END_TIME,
                                                                        endTime));
         } else {
             double slope = 1.0 / slop; // Slope such that score reaches 1.0 in slop msec
-            sf = new ScoringFunction.BelowScoringFunction(new AspectValue(AspectType.END_TIME,
+            sf = new ScoringFunction.BelowScoringFunction(AspectValue.newAspectValue(AspectType.END_TIME,
                                                                           endTime), slope);
         }
         pref = theLDMF.newPreference(AspectType.END_TIME, sf);

@@ -45,6 +45,7 @@ import org.cougaar.core.domain.RootFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -263,8 +264,8 @@ public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
       endTime = cal.getTime().getTime();
     }
 
-    TimeAspectValue startTav = new TimeAspectValue(AspectType.START_TIME, startTime);
-    TimeAspectValue endTav = new TimeAspectValue(AspectType.END_TIME, endTime);
+    AspectValue startTav = TimeAspectValue.create(AspectType.START_TIME, startTime);
+    AspectValue endTav = TimeAspectValue.create(AspectType.END_TIME, endTime);
 
     ScoringFunction myStartScoreFunc = ScoringFunction.createStrictlyAtValue( startTav );
     ScoringFunction myEndScoreFunc = ScoringFunction.createStrictlyAtValue( endTav );    

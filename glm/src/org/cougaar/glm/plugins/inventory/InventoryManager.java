@@ -406,9 +406,9 @@ public abstract class InventoryManager extends InventoryProcessor {
     // Create start and end time preferences (strictly at)
     ScoringFunction score;
     Vector prefs = new Vector();
-    score = ScoringFunction.createStrictlyAtValue(new TimeAspectValue(AspectType.START_TIME, start));
+    score = ScoringFunction.createStrictlyAtValue(TimeAspectValue.create(AspectType.START_TIME, start));
     prefs.addElement(ldmFactory_.newPreference(AspectType.START_TIME, score));
-    score = ScoringFunction.createStrictlyAtValue(new TimeAspectValue(AspectType.END_TIME, end));
+    score = ScoringFunction.createStrictlyAtValue(TimeAspectValue.create(AspectType.END_TIME, end));
     prefs.addElement(ldmFactory_.newPreference(AspectType.END_TIME, score));
     Vector prep_phrases = new Vector();
     prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.FOR, myOrgName_));
@@ -518,9 +518,9 @@ public abstract class InventoryManager extends InventoryProcessor {
   }
 
   protected Preference createRefillQuantityPreference(double refill_qty) {
-    AspectValue lowAV = new AspectValue(AspectType.QUANTITY, 0.01);
-    AspectValue bestAV = new AspectValue(AspectType.QUANTITY, refill_qty);
-    AspectValue highAV = new AspectValue(AspectType.QUANTITY, refill_qty+1.0);
+    AspectValue lowAV = AspectValue.newAspectValue(AspectType.QUANTITY, 0.01);
+    AspectValue bestAV = AspectValue.newAspectValue(AspectType.QUANTITY, refill_qty);
+    AspectValue highAV = AspectValue.newAspectValue(AspectType.QUANTITY, refill_qty+1.0);
     ScoringFunction qtySF = ScoringFunction.createVScoringFunction(lowAV, bestAV, highAV);
     return  ldmFactory_.newPreference(AspectType.QUANTITY, qtySF);
     //  	return createQuantityPreference(AspectType.QUANTITY, refill_qty);

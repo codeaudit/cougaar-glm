@@ -55,7 +55,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugin.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: UniversalExpanderPlugin.java,v 1.1 2002-02-12 17:48:20 jwinston Exp $
+  * @version $Id: UniversalExpanderPlugin.java,v 1.2 2002-10-17 19:48:43 mthome Exp $
   **/
 
 public class UniversalExpanderPlugin extends ComponentPlugin {
@@ -331,7 +331,7 @@ public class UniversalExpanderPlugin extends ComponentPlugin {
         newsubtask.setDirectObject(directObject);
         int qty = rset.getInt(10);
         // create quantity preference
-        AspectValue qtyAV = new AspectValue(AspectType.QUANTITY, qty);
+        AspectValue qtyAV = AspectValue.newAspectValue(AspectType.QUANTITY, qty);
         ScoringFunction qtySF = ScoringFunction.createPreferredAtValue(qtyAV, 2);
         Preference qtyPref = theFactory.newPreference(AspectType.QUANTITY, qtySF);
         newsubtask.addPreference(qtyPref);
@@ -388,11 +388,11 @@ public class UniversalExpanderPlugin extends ComponentPlugin {
     //make a start and end as usual - note that for generic purposes
     //even if this is a supply task, it may end up with a start and end time
     //pref that are equal
-    AspectValue startAV = new AspectValue(AspectType.START_TIME, childST.getTime());
+    AspectValue startAV = AspectValue.newAspectValue(AspectType.START_TIME, childST.getTime());
     ScoringFunction startSF = ScoringFunction.createPreferredAtValue(startAV, 2);
     Preference startPref = theFactory.newPreference(AspectType.START_TIME, startSF);
     prefs.addElement(startPref); 
-    AspectValue endAV = new AspectValue(AspectType.END_TIME, childET.getTime());
+    AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, childET.getTime());
     ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, 2);
     Preference endPref = theFactory.newPreference(AspectType.END_TIME, endSF);
     prefs.addElement(endPref);
@@ -482,11 +482,11 @@ public class UniversalExpanderPlugin extends ComponentPlugin {
       }
       shipmentET = shipmentcal.getTime();
       Vector prefs = new Vector();
-      AspectValue shipmentAV = new AspectValue(AspectType.END_TIME, shipmentET.getTime());
+      AspectValue shipmentAV = AspectValue.newAspectValue(AspectType.END_TIME, shipmentET.getTime());
       ScoringFunction shipmentSF = ScoringFunction.createPreferredAtValue(shipmentAV, 2);
       Preference shipmentPref = theFactory.newPreference(AspectType.END_TIME, shipmentSF);
       prefs.addElement(shipmentPref); 
-      AspectValue qtyAV = new AspectValue(AspectType.QUANTITY, qtypershipment);
+      AspectValue qtyAV = AspectValue.newAspectValue(AspectType.QUANTITY, qtypershipment);
       ScoringFunction qtySF = ScoringFunction.createPreferredAtValue(qtyAV, 2);
       Preference qtyPref = theFactory.newPreference(AspectType.QUANTITY, qtySF);
       prefs.addElement(qtyPref);

@@ -377,7 +377,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
       // You are the weekest link!
       if (oldAV[2].getValue() > newAV[2].getValue()) {
-	oldAV[2].setValue(newAV[2].getValue());
+	oldAV[2] = newAV[2];
       }
     }
   }
@@ -409,7 +409,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	return;
       }
 
-      oldAV[2].setValue(oldAV[2].getValue() + newAV[2].getValue());
+      oldAV[2] = oldAV[2].dupAspectValue(oldAV[2].getValue() + newAV[2].getValue());
     }
   }
 
@@ -424,7 +424,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
     for (int i = 0; i < results.size(); i++) {
       AspectValue[] avs = (AspectValue[]) results.get(i);
-      avs[2].setValue(avs[2].getValue()/denominator);
+      avs[2]=avs[2].dupAspectValue(avs[2].getValue()/denominator);
     }
   }
 
@@ -528,10 +528,10 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 
   protected AspectValue[] newReadinessAspectArray(long startTime, long endTime, double readiness) {
     AspectValue[] values = new AspectValue[3];
-    values[0] = new AspectValue(AspectType.START_TIME, startTime);
-    values[1] = new AspectValue(AspectType.END_TIME, endTime);
+    values[0] = AspectValue.newAspectValue(AspectType.START_TIME, startTime);
+    values[1] = AspectValue.newAspectValue(AspectType.END_TIME, endTime);
     // where do I put READINESS aspecttype?
-    values[2] = new AspectValue(AspectType.READINESS, readiness);
+    values[2] = AspectValue.newAspectValue(AspectType.READINESS, readiness);
     return values;
   }
 

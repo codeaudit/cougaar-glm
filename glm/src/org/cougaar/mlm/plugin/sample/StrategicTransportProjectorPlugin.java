@@ -978,9 +978,9 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     //   START DATE  (startTime)
     AspectValue startAV;
     if (isPersonAsset) {
-      startAV = new AspectValue(AspectType.START_TIME, dp.startTime.getTime());
+      startAV = AspectValue.newAspectValue(AspectType.START_TIME, dp.startTime.getTime());
     } else {
-      startAV = new AspectValue(AspectType.START_TIME, dp.prepoStartTime.getTime());
+      startAV = AspectValue.newAspectValue(AspectType.START_TIME, dp.prepoStartTime.getTime());
     }
     ScoringFunction startSF = 
      ScoringFunction.createNearOrAbove(startAV, 0);
@@ -997,11 +997,11 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       earlyEndDate = dp.startTime;
 
     AspectValue earlyEndAV = 
-      new AspectValue(AspectType.END_TIME, earlyEndDate.getTime());
+      AspectValue.newAspectValue(AspectType.END_TIME, earlyEndDate.getTime());
     AspectValue bestEndAV = 
-      new AspectValue(AspectType.END_TIME, bestEndDate.getTime());
+      AspectValue.newAspectValue(AspectType.END_TIME, bestEndDate.getTime());
     AspectValue lateEndAV = 
-      new AspectValue(AspectType.END_TIME, lateEndDate.getTime());
+      AspectValue.newAspectValue(AspectType.END_TIME, lateEndDate.getTime());
 
     ScoringFunction endSF = 
       ScoringFunction.createStrictlyBetweenWithBestValues(

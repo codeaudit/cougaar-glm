@@ -92,14 +92,14 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
 
   // Added the rootFactory argument.  Seemed to need it to make the pref. CGW
   private Preference makeQuantityPreference(double amount, RootFactory rootFactory) {
-    AspectValue av = new AspectValue(AspectType.QUANTITY, amount );
+    AspectValue av = AspectValue.newAspectValue(AspectType.QUANTITY, amount );
     ScoringFunction sf = ScoringFunction.createNearOrBelow(av, 0.1);
     Preference pref = rootFactory.newPreference(AspectType.QUANTITY, sf );
     return pref;
   }
 
   private Preference makeStartPreference(double startDate, RootFactory rootFactory) {
-    AspectValue startTime = new AspectValue(AspectType.START_TIME, startDate);
+    AspectValue startTime = AspectValue.newAspectValue(AspectType.START_TIME, startDate);
     ScoringFunction sf = ScoringFunction.createNearOrAbove(startTime, 0.0);
     Preference pref = rootFactory.newPreference(AspectType.START_TIME, sf);
     return pref;
@@ -113,13 +113,13 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
   private Preference makeEndPreference(double endDate, RootFactory rootFactory) {
 
     AspectValue earliest = 
-      new AspectValue(AspectType.END_TIME, endDate + EARLIEST_INCREMENT);
+      AspectValue.newAspectValue(AspectType.END_TIME, endDate + EARLIEST_INCREMENT);
 
     AspectValue best = 
-      new AspectValue(AspectType.END_TIME, endDate + BEST_INCREMENT);
+      AspectValue.newAspectValue(AspectType.END_TIME, endDate + BEST_INCREMENT);
 
     AspectValue latest = 
-      new AspectValue(AspectType.END_TIME, endDate + LATEST_INCREMENT);
+      AspectValue.newAspectValue(AspectType.END_TIME, endDate + LATEST_INCREMENT);
 
     ScoringFunction sf = 
       ScoringFunction.createVScoringFunction(earliest, best, latest);

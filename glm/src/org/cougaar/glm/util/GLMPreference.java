@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.3 2002-04-02 20:54:04 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.4 2002-10-17 19:48:42 mthome Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -94,7 +94,7 @@ public class GLMPreference extends UTILPreference {
     if (bestDate == null || bestDate.before(new Date(1000))) {
       System.err.println("GLMPreference creating bad POD_Date preference: the date is " + bestDate);
     }
-    AspectValue podAV = new AspectValue(AspectType.POD_DATE, bestDate.getTime());
+    AspectValue podAV = AspectValue.newAspectValue(AspectType.POD_DATE, bestDate.getTime());
     ScoringFunction podSF = ScoringFunction.createPreferredAtValue(podAV, 
 								   ONE_OVER_ONE_DAY);
     Preference podPref = ldmf.newPreference(AspectType.POD_DATE, podSF, 1.0);

@@ -171,11 +171,11 @@ public class DTConstructionExpanderPlugin extends SimplePlugin {
     }
 	
     Vector prefs = new Vector();
-    AspectValue startAV = new AspectValue(AspectType.START_TIME, childST.getTime());
+    AspectValue startAV = AspectValue.newAspectValue(AspectType.START_TIME, childST.getTime());
     ScoringFunction startSF = ScoringFunction.createPreferredAtValue(startAV, 2);
     Preference startPref = theLDMF.newPreference(AspectType.START_TIME, startSF);
     prefs.addElement(startPref); 
-    AspectValue endAV = new AspectValue(AspectType.END_TIME, childET.getTime());
+    AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, childET.getTime());
     ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, 2);
     Preference endPref = theLDMF.newPreference(AspectType.END_TIME, endSF);
     prefs.addElement(endPref);

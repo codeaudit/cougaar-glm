@@ -229,9 +229,9 @@ public class TriggerTesterPlugin extends SimplePlugin
       // create an allocationresult
       Calendar now = Calendar.getInstance();
       now.add(Calendar.DATE, 5);
-      AspectValue time1 = new TimeAspectValue(AspectType.START_TIME, now.getTime());
+      AspectValue time1 = TimeAspectValue.create(AspectType.START_TIME, now.getTime());
       now.add(Calendar.DATE, 5);
-      AspectValue time2 = new TimeAspectValue(AspectType.END_TIME, now.getTime());
+      AspectValue time2 = TimeAspectValue.create(AspectType.END_TIME, now.getTime());
       AspectValue[] avresults = {time1, time2};
       AllocationResult theresult = factory.newAVAllocationResult(1.0, true, avresults);
       // create an allocation of the new task to this cluster

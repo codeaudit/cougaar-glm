@@ -310,13 +310,13 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
     }
 
     public Preference createTransportStartPref(long start) {
-	AspectValue startAV = new AspectValue(AspectType.START_TIME, start);
+	AspectValue startAV = AspectValue.newAspectValue(AspectType.START_TIME, start);
 	ScoringFunction startSF = ScoringFunction.createNearOrAbove(startAV, 0);
 	return ldmFactory_.newPreference(AspectType.START_TIME, startSF);
     }
 
     public Preference createTransportEndPref(long end) {
-	AspectValue endAV = new AspectValue(AspectType.END_TIME, end);
+	AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, end);
 	ScoringFunction endSF = ScoringFunction.createNearOrBelow(endAV, 0);
 	return ldmFactory_.newPreference(AspectType.END_TIME, endSF);
     }
@@ -328,9 +328,9 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 	long best = rdd;
 	long end = best+(3*MSEC_PER_DAY);
 	long early = best-(3*MSEC_PER_DAY);
-	AspectValue lateEndAV = new AspectValue(AspectType.END_TIME, end);
-	AspectValue bestEndAV = new AspectValue(AspectType.END_TIME, best);
-	AspectValue earlyEndAV = new AspectValue(AspectType.END_TIME, early);
+	AspectValue lateEndAV = AspectValue.newAspectValue(AspectType.END_TIME, end);
+	AspectValue bestEndAV = AspectValue.newAspectValue(AspectType.END_TIME, best);
+	AspectValue earlyEndAV = AspectValue.newAspectValue(AspectType.END_TIME, early);
 	ScoringFunction endSF = ScoringFunction.createStrictlyBetweenWithBestValues(earlyEndAV, bestEndAV, lateEndAV);
 	return ldmFactory_.newPreference(AspectType.END_TIME, endSF);
     }
@@ -342,9 +342,9 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 	long best = rdd-(10*MSEC_PER_DAY);
 //  	long end = best+(3*MSEC_PER_DAY);
 //  	long early = best-(3*MSEC_PER_DAY);
-//  	AspectValue lateEndAV = new AspectValue(AspectType.START_TIME, end);
-	AspectValue bestEndAV = new AspectValue(AspectType.START_TIME, best);
-//  	AspectValue earlyEndAV = new AspectValue(AspectType.START_TIME, early);
+//  	AspectValue lateEndAV = AspectValue.newAspectValue(AspectType.START_TIME, end);
+	AspectValue bestEndAV = AspectValue.newAspectValue(AspectType.START_TIME, best);
+//  	AspectValue earlyEndAV = AspectValue.newAspectValue(AspectType.START_TIME, early);
 //  	ScoringFunction startSF = ScoringFunction.createStrictlyBetweenWithBestValues(earlyEndAV, bestEndAV, lateEndAV);
 	ScoringFunction startSF = ScoringFunction.createNearOrAbove(bestEndAV, 0);
 	return ldmFactory_.newPreference(AspectType.START_TIME, startSF);

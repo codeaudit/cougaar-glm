@@ -202,7 +202,7 @@ class Sizer {
       }
     }
       
-    AspectValue av = new AspectValue( AspectType.QUANTITY, size );
+    AspectValue av = AspectValue.newAspectValue( AspectType.QUANTITY, size );
     ScoringFunction sf = ScoringFunction.createNearOrBelow(av, 0.1);
     Preference pref = factory.newPreference( AspectType.QUANTITY, sf );
     prefs.add(0, pref);

@@ -48,6 +48,7 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.core.servlet.ServletService;
 
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -718,8 +719,8 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       endTime = cal.getTime().getTime();
     }
 
-    TimeAspectValue startTav = new TimeAspectValue(AspectType.START_TIME, startTime);
-    TimeAspectValue endTav = new TimeAspectValue(AspectType.END_TIME, endTime);
+    AspectValue startTav = TimeAspectValue.create(AspectType.START_TIME, startTime);
+    AspectValue endTav = TimeAspectValue.create(AspectType.END_TIME, endTime);
 
     ScoringFunction myStartScoreFunc = ScoringFunction.createStrictlyAtValue( startTav );
     ScoringFunction myEndScoreFunc = ScoringFunction.createStrictlyAtValue( endTav );    

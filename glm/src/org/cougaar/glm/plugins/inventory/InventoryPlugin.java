@@ -398,7 +398,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
     private void setStartTimePreference(NewTask mpTask, long newStartTime) {
         ScoringFunction sf;
         Preference pref;
-        sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME,
+        sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.START_TIME,
                                                                    newStartTime));
         pref = theLDMF.newPreference(AspectType.START_TIME, sf);
         mpTask.setPreference(pref);
@@ -409,7 +409,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
     private void setEndTimePreference(NewTask mpTask, long newEndTime) {
         ScoringFunction sf;
         Preference pref;
-        sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME,
+        sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.END_TIME,
                                                                    newEndTime));
         pref = theLDMF.newPreference(AspectType.END_TIME, sf);
         mpTask.setPreference(pref);

@@ -175,7 +175,7 @@ public class SimpleAddRescindPlugin extends CommonUtilPlugin {
     
     protected void setPreference ( Task t, int aspectType, int sequenceOfTask){
 	startTime = new Date(); // Add a start_time and end_time strict preference
-	aspectVal = new AspectValue(aspectType, sequenceOfTask);
+	aspectVal = AspectValue.newAspectValue(aspectType, sequenceOfTask);
 	ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue(aspectVal);
 	Preference pref = theLDMF.newPreference(aspectType, scorefcn);
 	((NewTask) t).setPreference(pref);

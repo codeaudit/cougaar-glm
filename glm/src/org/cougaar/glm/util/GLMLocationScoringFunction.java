@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.2 2002-04-02 20:54:04 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMLocationScoringFunction.java,v 1.3 2002-10-17 19:48:42 mthome Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -57,7 +57,7 @@ public class GLMLocationScoringFunction extends ScoringFunction.PreferredValueSc
    * @see org.cougaar.planning.ldm.plan.AspectType
    */
   public GLMLocationScoringFunction(GeolocLocation loc, Logger logger) {
-    super (new AspectLocation (AspectType.POD, loc), 0);
+    super (AspectValue.newAspectValue(AspectType.POD, loc), 0);
     //    my_loc = loc;
     measureHelper = new GLMMeasure (logger);
   }

@@ -419,14 +419,14 @@ public class TaskUtils extends PluginHelper {
 
   public static Preference createDemandRatePreference(RootFactory rf, Rate rate) {
     ScoringFunction sf = ScoringFunction
-      .createStrictlyAtValue(new AspectRate(AlpineAspectType.DEMANDRATE,
-					    rate));
+      .createStrictlyAtValue(AspectValue.newAspectValue(AlpineAspectType.DEMANDRATE,
+                                                        rate));
     return rf.newPreference(AlpineAspectType.DEMANDRATE, sf);
   }
 
   public static Preference createDemandMultiplierPreference(RootFactory rf, double mult) {
     ScoringFunction sf = ScoringFunction
-      .createStrictlyAtValue(new AspectValue(AlpineAspectType.DEMANDMULTIPLIER,
+      .createStrictlyAtValue(AspectValue.newAspectValue(AlpineAspectType.DEMANDMULTIPLIER,
 					     mult));
     return rf.newPreference(AlpineAspectType.DEMANDMULTIPLIER, sf);
   }

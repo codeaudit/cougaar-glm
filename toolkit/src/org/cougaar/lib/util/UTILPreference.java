@@ -107,9 +107,9 @@ public class UTILPreference {
    */
 
   public Preference makeCostPreference(RootFactory ldmf, double cost) {
-    AspectValue lowAV      = new AspectValue(AspectType.COST, -0.01d);
-    AspectValue bestAV     = new AspectValue(AspectType.COST, 0.0d);
-    AspectValue costAV     = new AspectValue(AspectType.COST, cost);
+    AspectValue lowAV      = AspectValue.newAspectValue(AspectType.COST, -0.01d);
+    AspectValue bestAV     = AspectValue.newAspectValue(AspectType.COST, 0.0d);
+    AspectValue costAV     = AspectValue.newAspectValue(AspectType.COST, cost);
     ScoringFunction costSF = ScoringFunction.createVScoringFunction (lowAV, bestAV, costAV, 1.0);
     Preference costPref = ldmf.newPreference(AspectType.COST, costSF);
     return costPref;
@@ -126,7 +126,7 @@ public class UTILPreference {
    */
   public Preference makeQuantityPreference(RootFactory ldmf, long quantity) {
     AspectValue quantityAV = 
-      new AspectValue(AspectType.QUANTITY, quantity);
+      AspectValue.newAspectValue(AspectType.QUANTITY, quantity);
     ScoringFunction quantitySF = 
       ScoringFunction.createNearOrAbove(quantityAV, 0.0d);
     Preference quantityPref = ldmf.newPreference(AspectType.QUANTITY, quantitySF, 1.0);
@@ -145,7 +145,7 @@ public class UTILPreference {
   public Preference makeStartDatePreference(RootFactory ldmf,
 						   Date readyAtDate) {
     AspectValue readyAtAV = 
-      new AspectValue(AspectType.START_TIME, readyAtDate.getTime());
+      AspectValue.newAspectValue(AspectType.START_TIME, readyAtDate.getTime());
     ScoringFunction startSF = 
       ScoringFunction.createNearOrAbove(readyAtAV, 0.0d);
     Preference startPref = ldmf.newPreference(AspectType.START_TIME, startSF, 1.0);
@@ -191,14 +191,14 @@ public class UTILPreference {
    */
   public Preference makeEndDatePreference(RootFactory ldmf,
 						 Date bestDate) {
-    AspectValue endAV = new AspectValue(AspectType.END_TIME, bestDate.getTime());
+    AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, bestDate.getTime());
     ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, ONE_OVER_ONE_DAY);
     Preference endPref = ldmf.newPreference(AspectType.END_TIME, endSF, 1.0);
     return endPref;
   }
 
   public Preference makeEndDateBelowPreference(RootFactory ldmf, Date bestDate) {
-    AspectValue endAV = new AspectValue(AspectType.END_TIME, bestDate.getTime());
+    AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, bestDate.getTime());
     ScoringFunction endSF = ScoringFunction.createNearOrBelow(endAV, 0.0);
     Preference endPref = ldmf.newPreference(AspectType.END_TIME, endSF, 1.0);
     return endPref;
@@ -216,7 +216,7 @@ public class UTILPreference {
     if (bestDate == null || bestDate.before(new Date(1000))) {
       logger.error("UTILPreference creating bad POD_Date preference: the date is " + bestDate);
     }
-    AspectValue podAV = new AspectValue(AspectType.POD_DATE, bestDate.getTime());
+    AspectValue podAV = AspectValue.newAspectValue(AspectType.POD_DATE, bestDate.getTime());
     ScoringFunction podSF = ScoringFunction.createPreferredAtValue(podAV, 
 								   ONE_OVER_ONE_DAY);
     Preference podPref = ldmf.newPreference(AspectType.POD_DATE, podSF, 1.0);
@@ -521,9 +521,9 @@ public class UTILPreference {
     Date endOfRange = (Date) cal.getTime();
 
     Enumeration validRanges = 
-      endDatePref.getScoringFunction().getValidRanges (new TimeAspectValue (AspectType.END_TIME,
+      endDatePref.getScoringFunction().getValidRanges (TimeAspectValue.create(AspectType.END_TIME,
 									    0l),
-						       new TimeAspectValue (AspectType.END_TIME,
+						       TimeAspectValue.create(AspectType.END_TIME,
 									    endOfRange));
     return validRanges;
   }

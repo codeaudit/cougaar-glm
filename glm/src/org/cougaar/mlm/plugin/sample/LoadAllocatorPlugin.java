@@ -648,7 +648,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
 							   ScheduleUtilities.millisperday);
       if (allocatedSet.size() > 0) {
 	//Find out how much we have allocated
-        qtyAsked = rs.addAspectValues(allocatedSet, AspectValue.QUANTITY);
+        qtyAsked = rs.addAspectValues(allocatedSet, AspectType.QUANTITY);
 	Collection capacitySet 
 	    = capacitySchedule.getOverlappingScheduleElements( currentDate,
 							       currentDate + 
@@ -803,7 +803,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
 
   private Preference createDatePreference(int timeAspectType, long date, 
                                           int scoringFunction) {
-    TimeAspectValue timeAV = new TimeAspectValue(timeAspectType, date);
+    AspectValue timeAV = TimeAspectValue.create(timeAspectType, date);
     ScoringFunction timeSF = ScoringFunction.createPreferredAtValue(timeAV, scoringFunction);
     return theLDMF.newPreference(timeAspectType, timeSF);
   }
@@ -872,7 +872,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
 	
     TypedQuantityAspectValue tav = new TypedQuantityAspectValue(proto,  qty);
     ScoringFunction sf = ScoringFunction.createPreferredAtValue(tav, 0.5);
-    return theLDMF.newPreference(AspectValue.TYPED_QUANTITY,sf);
+    return theLDMF.newPreference(AspectType.TYPED_QUANTITY,sf);
   }
 
   /** Publish new or changed Allocation of SupportRequest task*/

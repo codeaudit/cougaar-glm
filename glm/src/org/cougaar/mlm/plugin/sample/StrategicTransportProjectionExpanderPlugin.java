@@ -189,11 +189,11 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
       subtask.setPlan( task.getPlan() );
 				// create some start and end time preferences
       mypreferences.removeAllElements();
-      AspectValue startAV = new AspectValue(AspectType.START_TIME, startDate.getTime());
+      AspectValue startAV = AspectValue.newAspectValue(AspectType.START_TIME, startDate.getTime());
       ScoringFunction startSF = ScoringFunction.createPreferredAtValue(startAV, 2);
       Preference startPref = theLDMF.newPreference(AspectType.START_TIME, startSF);
       mypreferences.addElement(startPref);
-      AspectValue endAV = new AspectValue(AspectType.END_TIME, endDate.getTime());
+      AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, endDate.getTime());
       ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, 2);
       Preference endPref = theLDMF.newPreference(AspectType.END_TIME, endSF);
       mypreferences.addElement(endPref);
@@ -254,30 +254,17 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
   // N.B. if this Plugin was running in a more complex society, we may want to
   // incorporate some thread-safe code here...
   private void updatePreferences( NewTask t ) {
-//      Enumeration prefs = t.getPreferences();
-//      Vector newPrefs = new Vector();
-//      long old_end = 0;
-//      long new_end = 0;
-//      if (  prefs != null && prefs.hasMoreElements() ) {
-//        // Get start/end times
-//        while ( prefs.hasMoreElements() ) {
-//  	Preference pref = (Preference) prefs.nextElement();
-//  	int at = pref.getAspectType();
-//  	if ( at == AspectType.END_TIME ) {
-//  	  old_end = pref.getScoringFunction().getBest().getAspectValue().longValue();
-//  	  new_end = old_end + ONE_WEEK;
-//  	  AspectValue endAV = new AspectValue(AspectType.END_TIME, new_end);
-//  	  ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, 2);
-//  	  pref = theLDMF.newPreference( AspectType.END_TIME, endSF );
-//  	}
-//  	newPrefs.addElement(pref);
-//        }
-//      }
-//      t.setPreferences( newPrefs.elements() );
     Preference endTimePreference = t.getPreference(AspectType.END_TIME);
     long old_end = endTimePreference.getScoringFunction().getBest().getAspectValue().longValue();
     long new_end = old_end + ONE_WEEK;
-    endTimePreference.getScoringFunction().getBest().getAspectValue().setValue(new_end);
+// // This is what we did until AspectValues were immutable.
+//    endTimePreference.getScoringFunction().getBest().getAspectValue().setValue(new_end);
+
+    AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, new_end);
+    ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, 2);
+    Preference endPref = theLDMF.newPreference(AspectType.END_TIME, endSF);
+    t.setPreference(endPref);
+
     publishChange((Task) t);
   }
 

@@ -403,7 +403,7 @@ public class UTILAllocate {
 	Integer aspectTypeInt = new Integer (aspectType);
 	Preference pref = (Preference) map.remove (aspectTypeInt);
 
-	AspectValue av = new AspectValue (aspectType, aspectValues[i]);
+	AspectValue av = AspectValue.newAspectValue (aspectType, aspectValues[i]);
 	double score = pref.getScoringFunction().getScore (av);
 
 	if (score > (ScoringFunction.HIGH_THRESHOLD - 0.000001d)) {
@@ -412,8 +412,8 @@ public class UTILAllocate {
 	    logger.debug ("UTILAllocate.exceedsPreferences - score " + score + 
 			  " exceeds threshold " + ScoringFunction.HIGH_THRESHOLD + 
 			  " for " + t.getUID ());
-	    AspectValue lower = new AspectValue (aspectType, 0.0d);
-	    AspectValue upper = new AspectValue (aspectType, 1000000000.0d);
+	    AspectValue lower = AspectValue.newAspectValue (aspectType, 0.0d);
+	    AspectValue upper = AspectValue.newAspectValue (aspectType, 1000000000.0d);
 	    print (av, pref, score, pref.getScoringFunction().getDefinedRange (),
 		   pref.getScoringFunction().getValidRanges (lower, upper));
 	  }
@@ -549,8 +549,8 @@ public class UTILAllocate {
    */
   public AspectValue [] getAspectsFromDates (Date start, Date end) {
     AspectValue [] aspects = new AspectValue [2];
-    aspects[0] = new AspectValue (AspectType.START_TIME, (double) start.getTime ());
-    aspects[1] = new AspectValue (AspectType.END_TIME,   (double) end.getTime ());
+    aspects[0] = AspectValue.newAspectValue (AspectType.START_TIME, start.getTime ());
+    aspects[1] = AspectValue.newAspectValue (AspectType.END_TIME,   end.getTime ());
     return aspects;
   }
 
@@ -564,9 +564,9 @@ public class UTILAllocate {
    */
   public AspectValue [] getAspects (Date start, Date end, double cost) {
     AspectValue [] aspects = new AspectValue [3];
-    aspects[0] = new AspectValue (AspectType.START_TIME, (double) start.getTime ());
-    aspects[1] = new AspectValue (AspectType.END_TIME,   (double) end.getTime ());
-    aspects[2] = new AspectValue (AspectType.COST,       cost);
+    aspects[0] = AspectValue.newAspectValue (AspectType.START_TIME, start.getTime ());
+    aspects[1] = AspectValue.newAspectValue (AspectType.END_TIME,   end.getTime ());
+    aspects[2] = AspectValue.newAspectValue (AspectType.COST,       cost);
     return aspects;
   }
 
@@ -581,10 +581,10 @@ public class UTILAllocate {
    */
   public AspectValue [] getAspects (Date start, Date end, double cost, long quantity) {
     AspectValue[] aspects = new AspectValue[4];
-    aspects[0] = new AspectValue (AspectType.START_TIME, (double) start.getTime ());
-    aspects[1] = new AspectValue (AspectType.END_TIME,   (double) end.getTime ());
-    aspects[2] = new AspectValue (AspectType.COST,       cost);
-    aspects[3] = new AspectValue (AspectType.QUANTITY,   quantity);
+    aspects[0] = AspectValue.newAspectValue (AspectType.START_TIME, start.getTime ());
+    aspects[1] = AspectValue.newAspectValue (AspectType.END_TIME,   end.getTime ());
+    aspects[2] = AspectValue.newAspectValue (AspectType.COST,       cost);
+    aspects[3] = AspectValue.newAspectValue (AspectType.QUANTITY,   quantity);
     return aspects;
   }
 
@@ -600,7 +600,7 @@ public class UTILAllocate {
     AspectValue [] aspects = new AspectValue [aspectarray.length];
 
     for (int i = 0; i < aspectarray.length; i++)
-      aspects [i] = new AspectValue (aspectarray[i], resultsarray[i]);
+      aspects [i] = AspectValue.newAspectValue (aspectarray[i], resultsarray[i]);
 
     return aspects;
   }
@@ -718,7 +718,7 @@ public class UTILAllocate {
       for (int i = 0; i < aspectTypes.length; i++) {
 	aspectType = aspectTypes[i];
 	Preference pref = (Preference) hash.get (new Integer (aspectType));
-	AspectValue av = new AspectValue (aspectType, aspectValues[i]);
+	AspectValue av = AspectValue.newAspectValue (aspectType, aspectValues[i]);
 	double score = pref.getScoringFunction().getScore (av);
 	double weight = (pref.getWeight () == 0) ? 1 : pref.getWeight ();
 	total += score*weight;

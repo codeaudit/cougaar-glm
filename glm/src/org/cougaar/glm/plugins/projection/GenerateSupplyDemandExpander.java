@@ -174,10 +174,10 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
     ScoringFunction score;
     Vector prefs = new Vector();
 
-    score = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME, start));
+    score = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.START_TIME, start));
     prefs.addElement(ldmFactory_.newPreference(AspectType.START_TIME, score));
 
-    score = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME, end));
+    score = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.END_TIME, end));
     prefs.addElement(ldmFactory_.newPreference(AspectType.END_TIME, score));
 
     prefs.addElement(TaskUtils.createDemandRatePreference(ldmFactory_, rate));

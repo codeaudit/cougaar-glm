@@ -165,15 +165,15 @@ public class PSP_EventMonitor
       Preference pref;
       ScoringFunction sf;
       AspectValue av;
-      av = new AspectValue(AspectType.START_TIME, aFailureConsumptionReport.theReceivedDate);
+      av = AspectValue.newAspectValue(AspectType.START_TIME, aFailureConsumptionReport.theReceivedDate);
       sf = new ScoringFunction.StepScoringFunction(av, 0.00, 0.99);
       pref = factory.newPreference(AspectType.START_TIME, sf, 1.0);
       prefs.addElement(pref);
-      av = new AspectValue(AspectType.END_TIME, aFailureConsumptionReport.theReceivedDate);
+      av = AspectValue.newAspectValue(AspectType.END_TIME, aFailureConsumptionReport.theReceivedDate);
       sf = new ScoringFunction.StepScoringFunction(av, 0.00, 0.99);
       pref = factory.newPreference(AspectType.END_TIME, sf, 1.0);
       prefs.addElement(pref);
-      av = new AspectValue(AspectType.QUANTITY, aFailureConsumptionReport.theQuantity);
+      av = AspectValue.newAspectValue(AspectType.QUANTITY, aFailureConsumptionReport.theQuantity);
       sf = new ScoringFunction.StrictValueScoringFunction(av);
       pref = factory.newPreference(AspectType.QUANTITY, sf, 1.0);
       prefs.addElement(pref);
