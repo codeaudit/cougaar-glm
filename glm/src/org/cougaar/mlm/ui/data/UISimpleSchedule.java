@@ -55,7 +55,7 @@ public class UISimpleSchedule implements Serializable {
     return endDate;
   }
 
-  public void setEndDate(Date EndDate) {
+  public void setEndDate(Date endDate) {
     this.endDate = endDate;
   }
 }

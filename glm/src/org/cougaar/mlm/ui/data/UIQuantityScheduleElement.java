@@ -65,7 +65,7 @@ public class UIQuantityScheduleElement  implements TimeSpan,
     return endTime;
   }
 
-  public void setEndTime(long EndTime) {
+  public void setEndTime(long endTime) {
     this.endTime = endTime;
   }
 
