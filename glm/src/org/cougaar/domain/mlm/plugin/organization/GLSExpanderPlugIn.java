@@ -12,7 +12,6 @@ package org.cougaar.domain.mlm.plugin.organization;
 import java.util.Collection;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.component.ServiceRevokedListener;
-//import org.cougaar.domain.mlm.plugin.ldm.LDMService;
 import org.cougaar.core.plugin.LDMService;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.core.cluster.ClusterIdentifier;
@@ -67,7 +66,7 @@ import org.cougaar.util.UnaryPredicate;
 public class GLSExpanderPlugIn extends ComponentPlugin {
   /** Subscription to hold collection of input tasks **/
   private IncrementalSubscription expandableTasks;
- 
+
   /** Subscription to the Expansions I create */
   private IncrementalSubscription myExpansions;
 
@@ -147,7 +146,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
     };
     myExpansions = (IncrementalSubscription) blackboard.subscribe(myExpansionPred);
   }
-    
+   
     /**
    * The predicate for the Socrates subscription
    **/
@@ -168,8 +167,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
   protected void execute() {
 
     if (mySelfOrgs.hasChanged()) {
-      //processOrgAssets(mySelfOrgs.getAddedList());
-      processOrgAssets(mySelfOrgs.getChangedList());
+      processOrgAssets(mySelfOrgs.getAddedList());
     }
 
     if (expandableTasks == null) 
@@ -225,16 +223,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
 
     Vector prepphrases = new Vector();
 
-    // The following is removed because we should depend on the context, instead
-    //      // get the existing prep phrase(s) - propagate "with OPlan" phrase only
-    //      Enumeration origpp = task.getPrepositionalPhrases();
-    //      while (origpp.hasMoreElements()) {
-    //        PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
-    //        if ((theorigpp.getPreposition().equals(Constants.Preposition.WITH)) &&
-    //            (theorigpp.getIndirectObject() instanceof Oplan)) {	
-    //          prepphrases.addElement(theorigpp);
-    //        }
-    //      }
+
     // make the "subordinates" abstract asset and add a prep phrase with it
     Asset subasset_proto = theLDMF.createPrototype(Asset.class, "Subordinates");
     Asset subasset = theLDMF.createInstance(subasset_proto);
