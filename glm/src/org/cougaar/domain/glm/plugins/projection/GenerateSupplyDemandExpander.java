@@ -226,7 +226,13 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 	}  
 
 	if (consumer != null) {
-	    pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, consumer));
+	    StringBuffer consumerID = new StringBuffer();
+	    if (consumer instanceof Asset) {
+		consumerID.append("Asset:").append(((Asset)consumer).getTypeIdentificationPG().getTypeIdentification());
+	    } else {
+		consumerID.append("Other:").append(consumer.toString());
+	    }
+	    pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, consumerID.toString()));
 	}
 
 	return pp_vector;

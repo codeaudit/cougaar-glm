@@ -617,7 +617,9 @@ public abstract class InventoryManager extends InventoryProcessor {
 	Vector prep_phrases = new Vector();
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.FOR, myOrgName_));
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.OFTYPE, supplyType_));
-	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inventory));
+	Asset resource = inventory.getInventoryPG().getResource();
+	StringBuffer inventoryID = new StringBuffer().append("Inventory:").append(resource.getTypeIdentificationPG().getTypeIdentification());
+	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inventoryID.toString()));
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.REFILL));
 
 	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
@@ -734,7 +736,9 @@ public abstract class InventoryManager extends InventoryProcessor {
 	    io = thisGeoloc_;
 	}
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO, io));
-	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inv));
+	Asset resource = inv.getInventoryPG().getResource();
+	StringBuffer inventoryID = new StringBuffer().append("Inventory:").append(resource.getTypeIdentificationPG().getTypeIdentification());
+	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inventoryID.toString()));
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.REFILL));
 
 	NewTask task =  (NewTask)buildTask(null, Constants.Verb.SUPPLY, 

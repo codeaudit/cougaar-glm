@@ -145,8 +145,14 @@ public class TaskUtils extends PlugInHelper {
 	    String orgName = (String)io;
 	    if ( orgName.equals(myOrgName)) {
 		pp = task.getPrepositionalPhrase(Constants.Preposition.MAINTAINING);
-		if (AssetUtils.isAssetOfType((Asset)pp.getIndirectObject(), "Inventory")) {
-		    return true;
+		if (pp != null) {
+		    try {
+			if (((String)pp.getIndirectObject()).startsWith("Inventory")) {
+			    return true;
+			} 
+		    } catch (ClassCastException exc) {
+			return false;
+		    }
 		}
  	    }
 	}

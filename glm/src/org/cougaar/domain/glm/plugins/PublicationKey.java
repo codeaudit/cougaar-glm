@@ -167,11 +167,10 @@ public class PublicationKey
 		    printError("getTaskKey() FOR prep phrase not an org or string id. key:"+key+" TASK:"+taskDesc(task));
 		}
 	    } else if (pp.equals(Constants.Preposition.MAINTAINING)) {
-		if (indirect_obj instanceof Asset) {
-		    description = ((Asset)indirect_obj).getTypeIdentificationPG().getTypeIdentification() +
-			"/UID:" + ((Asset)indirect_obj).getUID();
+		if (indirect_obj instanceof String) {
+		    description = (String)indirect_obj;
 		} else {
-		    printError("getTaskKey() Maintaining prep phrase not an asset:"+key+" TASK:"+taskDesc(task));
+		    printError("getTaskKey() Maintaining prep phrase not a String:"+key+" TASK:"+taskDesc(task));
 		}
 	    }
 	    key += " "+preposition+" "+description;
