@@ -20,7 +20,6 @@
  */
 package org.cougaar.glm.execution.eg;
 
-import org.cougaar.planning.ldm.measure.AbstractRate;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionListener;

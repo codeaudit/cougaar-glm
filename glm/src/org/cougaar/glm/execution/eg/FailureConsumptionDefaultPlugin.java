@@ -21,7 +21,6 @@
 package org.cougaar.glm.execution.eg;
 
 import org.cougaar.glm.execution.common.*;
-import org.cougaar.planning.ldm.measure.AbstractRate;
 import org.cougaar.util.Random;
 
 public class FailureConsumptionDefaultPlugin implements FailureConsumptionPlugin, TimeConstants {

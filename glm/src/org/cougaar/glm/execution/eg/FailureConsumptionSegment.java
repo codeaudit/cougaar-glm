@@ -21,7 +21,7 @@
 package org.cougaar.glm.execution.eg;
 
 import org.cougaar.glm.execution.common.*;
-import org.cougaar.planning.ldm.measure.AbstractRate;
+import org.cougaar.planning.ldm.measure.Duration;
 
 public class FailureConsumptionSegment
   extends Timed
@@ -32,7 +32,7 @@ public class FailureConsumptionSegment
   public FailureConsumptionRate theFailureConsumptionRate;
   public FailureConsumptionRate theOriginalFailureConsumptionRate;
   public FailureConsumptionPluginItem thePluginItem;
-  private int theUnits = AbstractRate.PER_DAY;
+  private int theUnits = Duration.DAYS;
 
   public FailureConsumptionSegment(String aSource,
                                    FailureConsumptionRate aFailureConsumptionRate,

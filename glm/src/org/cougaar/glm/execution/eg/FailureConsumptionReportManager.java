@@ -43,7 +43,6 @@ import javax.swing.JComponent;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import org.cougaar.glm.execution.common.*;
-import org.cougaar.planning.ldm.measure.AbstractRate;
 
 /**
  * Keeps track of the inventory report schedules and decide if/when to
