@@ -10,7 +10,7 @@
 	</String>
     </RuleParam>
     <RuleParam name="DaysOnHand">
-	<Integer value="3" min="-1" max="90"> 
+	<Integer value="2" min="-1" max="90"> 
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
@@ -32,12 +32,16 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="1" min="0" max="30">
+        <Integer value="5" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="1" min="0" max="30">
+        <Integer value="5" min="0" max="30">
 	</Integer>
+    </RuleParam>
+    <RuleParam name="GoalLevelMultiplier">
+        <Double value="2" min="1.0" max="30">
+	</Double>
     </RuleParam>
   </Policy>
  <Policy name="PackagedPOLOnHandPolicy" type="org.cougaar.domain.glm.plugins.inventory.DaysOnHandPolicy">
@@ -50,12 +54,16 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="1" min="0" max="30">
+        <Integer value="5" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="1" min="0" max="30">
+        <Integer value="5" min="0" max="30">
 	</Integer>
+    </RuleParam>
+    <RuleParam name="GoalLevelMultiplier">
+        <Double value="3.5" min="1.0" max="30">
+	</Double>
     </RuleParam>
   </Policy>
 </Policies>
