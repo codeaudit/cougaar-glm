@@ -346,7 +346,7 @@ public class InventorySelector implements ActionListener {
     }
 
     //System.out.println("Submitting: " + queryStr + " to: " + clusterURL +
-                       " for: " + PSP_id);
+    //                   " for: " + PSP_id);
     InputStream is = null;
     try {
       ConnectionHelper connection = 
