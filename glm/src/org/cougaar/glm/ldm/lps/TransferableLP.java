@@ -37,7 +37,6 @@ import org.cougaar.planning.ldm.plan.NewTransferableAssignment;
 import org.cougaar.planning.ldm.plan.NewTransferableRescind;
 import org.cougaar.planning.ldm.plan.NewTransferableVerification;
 import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.util.Debug;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Collection;
