@@ -36,7 +36,7 @@ import java.util.Iterator;
  * class that it is supposed to filter.
  **/
 public class FilteredSet extends AbstractSet implements SortedSet {
-  public static interface Filter {
+  public interface Filter {
     Class getElementClass();
     boolean apply(Object element);
   }

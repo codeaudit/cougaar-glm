@@ -28,10 +28,10 @@ import org.cougaar.planning.ldm.plan.ScheduleElementType;
  */
 public interface PlanScheduleElementType extends ScheduleElementType {
 
-  static final Class CAPACITY = CapacityScheduleElement.class;
-  static final Class OBJECT = ObjectScheduleElement.class;
-  static final Class QUANTITY = QuantityScheduleElement.class;
-  static final Class QUANTITYRANGE = QuantityRangeScheduleElement.class;
-  static final Class RATE = RateScheduleElement.class;
+  Class CAPACITY = CapacityScheduleElement.class;
+  Class OBJECT = ObjectScheduleElement.class;
+  Class QUANTITY = QuantityScheduleElement.class;
+  Class QUANTITYRANGE = QuantityRangeScheduleElement.class;
+  Class RATE = RateScheduleElement.class;
 }
 

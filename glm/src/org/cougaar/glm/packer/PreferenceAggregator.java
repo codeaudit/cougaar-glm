@@ -22,7 +22,7 @@ public interface PreferenceAggregator {
     * setPreferences method.
     * @see org.cougaar.planning.ldm.plan.NewTask#setPreferences
     */ 
-  public abstract ArrayList aggregatePreferences(Iterator tasks, RootFactory rootFactory);
+  ArrayList aggregatePreferences(Iterator tasks, RootFactory rootFactory);
 }
 
 

@@ -124,7 +124,7 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
     public boolean isHidden() {
       return hidden;
     }
-  };
+  }
   
   protected void sendPSP(OplanWrapper wrapper) {
 	if (selfOrgAsset == null) {

@@ -100,7 +100,7 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
       }
       return false;
     }
-  };
+  }
 
   /** Create SUPPLY Task w/  prep phrases
    * @param parent_task

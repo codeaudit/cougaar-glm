@@ -30,7 +30,7 @@ import java.io.IOException;
  * arg constructor.
  **/
 public interface EGObject {
-  static final Class[] egObjectClasses = {
+  Class[] egObjectClasses = {
     ExecutionTimeStatus.class,
     EGObjectArray.class,
     InventoryReport.class,

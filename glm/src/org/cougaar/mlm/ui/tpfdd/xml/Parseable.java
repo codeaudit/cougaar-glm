@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/xml/Attic/Parseable.java,v 1.1 2001-12-27 22:44:36 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/xml/Attic/Parseable.java,v 1.2 2002-01-30 21:59:00 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -20,9 +20,9 @@ import org.cougaar.mlm.ui.tpfdd.util.Copiable;
 
 public interface Parseable extends Copiable
 {
-    public String toXMLDocument();
+    String toXMLDocument();
 
-    public String toXML();
+    String toXML();
 
-    public String toURLQuery();
+    String toURLQuery();
 }

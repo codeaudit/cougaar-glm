@@ -110,7 +110,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
       }
       return false;
     }
-  };
+  }
 
   /** Create Demand Task 
    * @param parent_task
@@ -174,7 +174,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
       }
       return false;
     }
-  };   
+  }   
 
   /**
    *  Subscribe for generate demand tasks.

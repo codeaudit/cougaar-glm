@@ -21,8 +21,7 @@ import org.cougaar.planning.ldm.plan.Task;
 
 public interface InventoryTask {
     
-    public boolean getFilled();
+    boolean getFilled();
     
-    public Task getTask();
-
+    Task getTask();
 }

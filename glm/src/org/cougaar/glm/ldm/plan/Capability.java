@@ -30,12 +30,12 @@ package org.cougaar.glm.ldm.plan;
 
 public interface Capability { 
   // capability prototypes
-  static final String SELF = "Self";
-  static final String SPAREPARTSPROJECTOR = "SparePartsProjector";
-  static final String SPAREPARTSPROVIDER = "SparePartsProvider";
-  static final String SUPERIOR = "Superior";
-  static final String SPAREPART = "SparePart";
-  static final String MAJORENDITEM = "MajorEndItem";
-  static final String SUBORDINATE = "Subordinate";
-  static final String ORDER = "Order";
+  String SELF = "Self";
+  String SPAREPARTSPROJECTOR = "SparePartsProjector";
+  String SPAREPARTSPROVIDER = "SparePartsProvider";
+  String SUPERIOR = "Superior";
+  String SPAREPART = "SparePart";
+  String MAJORENDITEM = "MajorEndItem";
+  String SUBORDINATE = "Subordinate";
+  String ORDER = "Order";
 }

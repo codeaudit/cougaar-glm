@@ -28,7 +28,7 @@ import javax.swing.event.*;
 import java.util.*;
 
 public class AlertClusterSelector extends JPanel implements ListSelectionListener {
-    public static interface Listener {
+    public interface Listener {
         void clusterSelected(String clusterName);
         void clusterDeselected(String clusterName);
     }

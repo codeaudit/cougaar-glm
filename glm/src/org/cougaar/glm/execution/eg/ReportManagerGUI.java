@@ -187,7 +187,7 @@ public class ReportManagerGUI extends JPanel {
       result.setToolTipText(model.getToolTipText(row, column));
       return result;
     }
-  };
+  }
 
   private static class MyTableSorter extends TableSorter implements EGTableModel {
     public MyTableSorter(EGTableModel model) {

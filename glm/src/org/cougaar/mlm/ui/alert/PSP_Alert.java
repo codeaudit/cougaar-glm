@@ -279,7 +279,7 @@ public class PSP_Alert extends PSP_BaseAdapter
             this.remove = remove;
             this.alert = alert;
         }
-    };
+    }
     
     /**
    * subscriptionChanged - adds new subscriptions to myIncomingAlerts.

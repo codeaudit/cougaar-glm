@@ -113,7 +113,7 @@ public class DestinationPredicate implements UnaryPredicate {
     }
     return false;
   }
-};
+}
 
 
 

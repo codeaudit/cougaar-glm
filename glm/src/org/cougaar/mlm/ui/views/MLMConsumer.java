@@ -26,7 +26,7 @@ import org.cougaar.mlm.ui.producers.MLMProducer;
 public interface MLMConsumer {
 
   // Simplified to only support bulk update.
-  public void fireDataUpdate(Object []updateData, Object source);
+  void fireDataUpdate(Object []updateData, Object source);
 
-  public void fireErrorReport(String errorText, Object source);
+  void fireErrorReport(String errorText, Object source);
 }

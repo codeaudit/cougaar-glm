@@ -23,18 +23,18 @@ import java.io.Serializable;
 
 /**
  * Instances of this class contain the actual bins of data
- * @author Benjamin Lubin; last modified by $Author: bdepass $
+ * @author Benjamin Lubin; last modified by $Author: ahelsing $
  *
  * @since 11/14/00
  */
 public interface Tallier extends Serializable{
   
   /** tally in the TransitData **/
-  public boolean increment(TransitData td);
+  boolean increment(TransitData td);
   
   /** remove data from tally **/
-  public boolean decrement(TransitData td);
+  boolean decrement(TransitData td);
   
   /** This should return a deep copy of this instance **/
-  public Tallier deepClone();
+  Tallier deepClone();
 }

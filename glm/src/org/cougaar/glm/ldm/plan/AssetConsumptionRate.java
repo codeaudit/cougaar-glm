@@ -35,7 +35,7 @@ public interface AssetConsumptionRate extends Serializable {
   /** 
    * @return Enumeration of Assets which have failure/consumption rates.
    **/
-  public Enumeration getAssets();
+  Enumeration getAssets();
 
   /** The actual Failure/Consumption rate for a given Asset
    *
@@ -44,5 +44,5 @@ public interface AssetConsumptionRate extends Serializable {
    * @return failure/consumption rate of the part at the given optempo, 
    * in terms of Unit of Issue (usually Each).
    **/
-  public Rate getRate(Asset asset, String optempo);
+  Rate getRate(Asset asset, String optempo);
 }

@@ -92,7 +92,7 @@ private static UnaryPredicate rescindGLSRootPredicate = new UnaryPredicate() {
     public boolean isHidden() {
       return hidden;
     }
-  };
+  }
   
   public void rescindPSP(OplanWrapper wrapper) {
 	if (wrapper.tasks.isEmpty())

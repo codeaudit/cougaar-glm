@@ -25,7 +25,7 @@ import java.io.*;
 import java.util.*;
 
 public interface NmsWebPlugin {
-  public void exStart(Object arg);
-  public void exCommand(PrintWriter out, String command);
+  void exStart(Object arg);
+  void exCommand(PrintWriter out, String command);
 }
 

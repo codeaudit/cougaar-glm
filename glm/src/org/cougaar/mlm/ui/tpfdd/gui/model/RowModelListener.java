@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/model/Attic/RowModelListener.java,v 1.1 2001-12-27 22:44:24 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/model/Attic/RowModelListener.java,v 1.2 2002-01-30 21:58:59 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -26,9 +26,9 @@ import org.cougaar.mlm.ui.tpfdd.util.Consumer;
 
 public interface RowModelListener extends Consumer
 {
-    public void fireRowAdded(int row);
+    void fireRowAdded(int row);
 
-    public void fireRowDeleted(int row);
+    void fireRowDeleted(int row);
 
-    public void fireRowChanged(int row);
+    void fireRowChanged(int row);
 }

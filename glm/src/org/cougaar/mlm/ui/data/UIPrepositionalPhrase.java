@@ -41,32 +41,32 @@ public interface UIPrepositionalPhrase {
 
   /** @return String - the preposition as defined in org.cougaar.planning.ldm.plan.Constants.Preposition. */
 
-  public String getPreposition();
+  String getPreposition();
 
   /** @return String - the class of the indirect object.
     Returns one of: "Asset", "Location", "Schedule", "Requisition", "OPlan".
   */
 
-  public String getIndirectObjectType();
+  String getIndirectObjectType();
 
   /** @return String - the UID of the asset indirect object. */
 
-  public String getUIAssetUUID();
+  String getUIAssetUUID();
 
   /** @return UILocation - the UI representation of the location indirect object. */
-  public UILocation getLocation();
+  UILocation getLocation();
 
   /** @return UISchedule - the UI representation of the schedule indirect object. */
 
-  public UISchedule getSchedule();
+  UISchedule getSchedule();
 
   /** @return UIRequisition - the UI representation of the requisition indirect object. */
 
-  public UIRequisition getRequisition();
+  UIRequisition getRequisition();
 
   /** @return UIOPlan - the UI representation of the OPlan indirect object. */
 
-  public UIOPlan getOPlan();
+  UIOPlan getOPlan();
 
 }
 

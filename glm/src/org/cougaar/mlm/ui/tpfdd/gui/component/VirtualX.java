@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/component/Attic/VirtualX.java,v 1.1 2001-12-27 22:44:23 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/component/Attic/VirtualX.java,v 1.2 2002-01-30 21:58:59 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -47,8 +47,8 @@ public interface VirtualX
 	  * @return A <code>long</code> value for the left edge of this element
 	  * @see org.cougaar.mlm.ui.tpfdd.gui.component#setVirtualXLocation
 	  */
-	public abstract long getVirtualXLocation();
-	public abstract long getVirtualXSize();
-	public abstract void setVirtualXLocation( long newLocation );
-	public abstract void setVirtualXSize( long newSize );
+	long getVirtualXLocation();
+	long getVirtualXSize();
+	void setVirtualXLocation( long newLocation );
+	void setVirtualXSize( long newSize );
 }

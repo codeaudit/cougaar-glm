@@ -93,7 +93,7 @@ public abstract class InventoryManager extends InventoryProcessor {
       }
       return false;
     }
-  };   
+  }   
 
   // Allocations of tasks with quantity > 0 to Inventory objects
   static class AllocToInventoryPredicate implements UnaryPredicate

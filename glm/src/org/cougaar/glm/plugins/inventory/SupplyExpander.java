@@ -236,7 +236,7 @@ public class SupplyExpander extends InventoryProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
 
     static class ProjectionExpansionTaskPredicate implements UnaryPredicate
     {
@@ -256,7 +256,7 @@ public class SupplyExpander extends InventoryProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
     
     static class ProjectionExpansionPredicate implements UnaryPredicate
     {
@@ -275,7 +275,7 @@ public class SupplyExpander extends InventoryProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
     
     static class SupplyExpansionPredicate implements UnaryPredicate
     {
@@ -294,7 +294,7 @@ public class SupplyExpander extends InventoryProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
     
 
     /** This method is called everytime a subscription has changed. */

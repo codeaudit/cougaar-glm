@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/component/Attic/MessageListener.java,v 1.1 2001-12-27 22:44:22 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/component/Attic/MessageListener.java,v 1.2 2002-01-30 21:58:59 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -16,5 +16,5 @@ package org.cougaar.mlm.ui.tpfdd.gui.component;
 
 public interface MessageListener
 {
-	public void setMessage(String msg);
+  void setMessage(String msg);
 }

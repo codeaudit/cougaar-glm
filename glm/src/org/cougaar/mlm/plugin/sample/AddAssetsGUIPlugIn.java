@@ -303,14 +303,14 @@ public final class AddAssetsGUIPlugIn extends SimplePlugIn {
       else
         watchRemoveButton();
     }
-  };
+  }
 
   /** An ItemListener that listens to the Aggregates CheckBox */
   class AggregateListener implements ItemListener {
       public void itemStateChanged(ItemEvent e) {
 	  createAggregates = (e.getStateChange() == ItemEvent.SELECTED);
       }
-  };
+  }
 
   private String getClusterID() {
     try {

@@ -116,7 +116,7 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
 
     static class ProjectionTaskPredicate implements UnaryPredicate
     {
@@ -141,7 +141,7 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
 
 
     static class MyProjectionTaskPredicate implements UnaryPredicate
@@ -167,7 +167,7 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
 
 
     static class RefillTaskPredicate implements UnaryPredicate
@@ -195,7 +195,7 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
 
     /**
      *  Set up subscriptions, 
@@ -365,7 +365,7 @@ public class InventoryProcessor extends org.cougaar.glm.plugins.BasicProcessor {
 //  	double capacity = inv.getContainPG().getMaximumVolume().getGallons();
 	// 	return output+" cap:"+capacity;
 	return output;
-    };
+    }
     
     public String getInventoryType(Inventory inventory) {
 	ScheduledContentPG scp = inventory.getScheduledContentPG();

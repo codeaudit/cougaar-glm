@@ -28,9 +28,9 @@ package org.cougaar.mlm.ui.planviewer;
 
 public interface PSPConnectionInfo {
 
-  public static final String [] allNames = {""};
+  String [] allNames = {""};
 
-  public static final String[] clusterNames = {
+  String[] clusterNames = {
     "1-64-ARBN",
     "1BDE",
     "1FSB",
@@ -56,12 +56,12 @@ public interface PSPConnectionInfo {
   /**
    * PSP_package - location of the PSP
    */
-  public String getPSPPackage();
+  String getPSPPackage();
 
   /**
    * PSP_id - name of the PSP
    */
-  public String getPSPId();
+  String getPSPId();
 }
 
 

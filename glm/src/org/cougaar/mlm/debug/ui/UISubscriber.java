@@ -29,6 +29,6 @@ public interface UISubscriber {
   /** Tell the subscriber that their subscription has changed.
    */
 
-    public void subscriptionChanged(IncrementalSubscription container);
+    void subscriptionChanged(IncrementalSubscription container);
 
 }

@@ -41,8 +41,8 @@ public class InventoryExecutionTimeStatusHandler  {
 								    
   private Vector dayRolloverListeners;
   
-  public long theExecutionTime=-1L;;
-  public long lastRolloverTime=-1L;;
+  public long theExecutionTime=-1L;
+  public long lastRolloverTime=-1L;
   public double theExecutionRate;
 
   public InventoryExecutionTimeStatusHandler() {

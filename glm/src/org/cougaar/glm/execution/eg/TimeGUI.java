@@ -45,7 +45,7 @@ import java.util.TimeZone;
 import java.util.Date;
 
 public class TimeGUI extends JPanel implements ActionListener, Runnable {
-    public static interface Listener {
+    public interface Listener {
         void timePlay();
         void timePause();
         void timeStop();

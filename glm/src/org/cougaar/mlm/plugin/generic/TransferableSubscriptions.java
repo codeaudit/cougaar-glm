@@ -51,4 +51,4 @@ public class TransferableSubscriptions {
   public UnaryPredicate getDestinationPredicate() {
     return destinationPredicate;
   }
-};
+}

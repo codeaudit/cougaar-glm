@@ -23,11 +23,11 @@ package org.cougaar.mlm.ui.tpfdd.aggregation;
 
 public interface ServerCommands {
 
-  public String SEND_HIERARCHY = "Send Hierarchy";
-  public String SEND_ASSETLOC = "Send Asset Locations";
-  public String SEND_ASSETID_TD_MAPS = "Send AssetID To Transit Data Maps";
-  public String SEND_UNIT_MANIFESTS = "Send unitManifests";
-  public String RELOAD = "RELOAD yourself";
+  String SEND_HIERARCHY = "Send Hierarchy";
+  String SEND_ASSETLOC = "Send Asset Locations";
+  String SEND_ASSETID_TD_MAPS = "Send AssetID To Transit Data Maps";
+  String SEND_UNIT_MANIFESTS = "Send unitManifests";
+  String RELOAD = "RELOAD yourself";
   
 
 }

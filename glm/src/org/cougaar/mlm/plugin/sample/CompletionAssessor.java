@@ -414,7 +414,7 @@ public class CompletionAssessor extends SimplePlugIn
       g.setColor(Color.white);
       g.drawRect(x + 1, y + 1, 11, 11);
     }
-  };
+  }
 
   static class WhiteCheckIcon extends WhiteBlankIcon implements Icon {
     public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -425,7 +425,7 @@ public class CompletionAssessor extends SimplePlugIn
       g.drawLine(x + 5, y + 7, x + 9, y + 3);
       g.drawLine(x + 5, y + 8, x + 9, y + 4);
     }
-  };
+  }
 
   Icon whiteCheckIcon = new WhiteCheckIcon();
   Icon whiteBlankIcon = new WhiteBlankIcon();

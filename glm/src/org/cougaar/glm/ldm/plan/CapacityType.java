@@ -32,21 +32,19 @@ package org.cougaar.glm.ldm.plan;
 
 public interface CapacityType { 
 
-  static final String HETTRANSPORTATION = "HETTransportation";                  //Tons
-  static final String AMMUNITIONTRANSPORTATION = "AmmunitionTransportation";    //Tons
-  static final String CONTAINERTRANSPORTATION = "ContainerTransportation";      //Count
-  static final String NONCONTAINERTRANSPORTATION = "NonContainerTransportation";//Tons
-  static final String PASSENGERTRANSPORTATION = "PassengerTransportation";      //Count
-  static final String WATERTRANSPORTATION = "WaterTransportation";              //Gallons
-  static final String FUELTRANSPORTATION = "FuelTransportation";                //Gallons
-  static final String AMMUNITIONHANDLING = "AmmunitionHandling";                //TonsPerDay
-  static final String FUELHANDLING = "FuelHandling";                            //GallonsPerDay
-  static final String FUELSTORAGE = "FuelStorage";                              //Gallons
-  static final String AMMUNITIONSTORAGE = "AmmunitionStorage";                  //Tons
-  static final String WATERSTORAGE = "WaterStorage";                            //Gallons
-  static final String MATERIELSTORAGE = "MaterielStorage";                      //Tons
-  static final String MATERIELHANDLING = "MaterielHandling";                    //TonsPerDay
-  
-
+  String HETTRANSPORTATION = "HETTransportation";                  //Tons
+  String AMMUNITIONTRANSPORTATION = "AmmunitionTransportation";    //Tons
+  String CONTAINERTRANSPORTATION = "ContainerTransportation";      //Count
+  String NONCONTAINERTRANSPORTATION = "NonContainerTransportation";//Tons
+  String PASSENGERTRANSPORTATION = "PassengerTransportation";      //Count
+  String WATERTRANSPORTATION = "WaterTransportation";              //Gallons
+  String FUELTRANSPORTATION = "FuelTransportation";                //Gallons
+  String AMMUNITIONHANDLING = "AmmunitionHandling";                //TonsPerDay
+  String FUELHANDLING = "FuelHandling";                            //GallonsPerDay
+  String FUELSTORAGE = "FuelStorage";                              //Gallons
+  String AMMUNITIONSTORAGE = "AmmunitionStorage";                  //Tons
+  String WATERSTORAGE = "WaterStorage";                            //Gallons
+  String MATERIELSTORAGE = "MaterielStorage";                      //Tons
+  String MATERIELHANDLING = "MaterielHandling";                    //TonsPerDay
   
 }

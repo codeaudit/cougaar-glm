@@ -136,7 +136,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	    }
 	    return false;
 	}
-    };
+    }
 
     /** Subscription for aggregatable support requests. **/
     private IncrementalSubscription detReqSubscription_;
@@ -211,7 +211,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	    }
 	    return false;
 	}
-    };
+    }
 
     /**
        Passes DetermineRequirements tasks of type MaintainInventory.

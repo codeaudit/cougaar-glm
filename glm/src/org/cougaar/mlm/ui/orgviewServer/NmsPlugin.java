@@ -22,6 +22,6 @@
 package org.cougaar.mlm.ui.orgviewServer;
 
 public interface NmsPlugin {
-  public void run(Object arg);
+  void run(Object arg);
 }
 

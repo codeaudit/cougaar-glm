@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/component/Attic/VirtualXAdjustmentListener.java,v 1.1 2001-12-27 22:44:23 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/component/Attic/VirtualXAdjustmentListener.java,v 1.2 2002-01-30 21:58:59 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -15,8 +15,8 @@ package org.cougaar.mlm.ui.tpfdd.gui.component;
 
 public interface VirtualXAdjustmentListener
 {	
-	public final int LOCATION_CHANGED = 1<<0;
-	public final int SIZE_CHANGED = 1<<1;
-
-	public abstract void VirtualXChanged( int changeType, VirtualX vx );
+  int LOCATION_CHANGED = 1<<0;
+  int SIZE_CHANGED = 1<<1;
+  
+  void VirtualXChanged( int changeType, VirtualX vx );
 }

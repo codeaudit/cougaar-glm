@@ -21,5 +21,5 @@ import org.cougaar.planning.ldm.plan.Task;
 
 public interface ProjectionWeight {
 
-    public double getProjectionWeight(Task task, int imputedDay);
+    double getProjectionWeight(Task task, int imputedDay);
 }

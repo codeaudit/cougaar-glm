@@ -286,7 +286,7 @@ public abstract class TripletFCPlugIn implements FailureConsumptionPlugIn, TimeC
     }
   }
 
-  protected static interface TripletValue {
+  protected interface TripletValue {
     long getStartDate(); 		// For basic computation
     long getEndDate();                  // For basic computation
     AnnotatedDouble getMultiplier();    // For basic computation
@@ -610,7 +610,7 @@ public abstract class TripletFCPlugIn implements FailureConsumptionPlugIn, TimeC
     }
   }
 
-  private static interface ValueCoder {
+  private interface ValueCoder {
     int getFieldCount();
     String getValue(Object o, int i);
     Object createKey(String keyString);

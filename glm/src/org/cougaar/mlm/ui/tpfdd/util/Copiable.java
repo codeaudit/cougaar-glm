@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/util/Attic/Copiable.java,v 1.1 2001-12-27 22:44:31 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/util/Attic/Copiable.java,v 1.2 2002-01-30 21:59:00 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -20,12 +20,12 @@ import java.lang.reflect.Method;
 
 public interface Copiable
 {
-    public void copyFrom(Object source) throws MismatchException;
+    void copyFrom(Object source) throws MismatchException;
 
-    public Method getReader(String readerName);
+    Method getReader(String readerName);
     
-    public Method getWriter(String writerName);
+    Method getWriter(String writerName);
 
     // NOT REENTRANT (at least as far as indentation is concerned)
-    public String toString();
+    String toString();
 }

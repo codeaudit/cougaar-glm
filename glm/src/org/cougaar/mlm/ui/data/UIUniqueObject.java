@@ -22,5 +22,5 @@
 package org.cougaar.mlm.ui.data;
 
 public interface UIUniqueObject {
-  public UUID getUUID();
+  UUID getUUID();
 }

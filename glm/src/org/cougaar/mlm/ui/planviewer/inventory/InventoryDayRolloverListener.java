@@ -28,5 +28,5 @@ public interface InventoryDayRolloverListener {
  
     //public static final String PSP_id = "EXECUTION_WATCHER.PSP";
 
-    public void dayRolloverUpdate(long date, double rate);
+    void dayRolloverUpdate(long date, double rate);
 }

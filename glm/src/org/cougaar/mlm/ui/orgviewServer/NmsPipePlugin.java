@@ -25,7 +25,7 @@ import java.io.*;
 import java.util.*;
 
 public interface NmsPipePlugin {
-  public void execute(InputStream is, OutputStream os, Object arg);
-  public void control(String command);
+  void execute(InputStream is, OutputStream os, Object arg);
+  void control(String command);
 }
 

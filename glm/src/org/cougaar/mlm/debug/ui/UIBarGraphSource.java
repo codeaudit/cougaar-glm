@@ -34,69 +34,69 @@ public interface UIBarGraphSource {
     @return number of x-axis intervals
     */
 
-  public int getNumberOfXIntervals();
+  int getNumberOfXIntervals();
 
   /** Return the string to display beneath the x-axis.
     @return string to display beneath the x-axis
     */
 
-  public String getXLegend();
+  String getXLegend();
 
   /** Return the strings to display beneath the x-axis tick marks.
     @return strings to display beneath x-axis tick marks
     */
 
-  public String[] getXLabels();
+  String[] getXLabels();
   
   /** Return the number of intervals to display on the y-axis.
     @return number of y-axis intervals
     */
 
-  public int getNumberOfYIntervals();
+  int getNumberOfYIntervals();
 
   /** Return the string to display to the left of the y-axis
     @return string to display for y-axis
     */
 
-  public String getYLegend();
+  String getYLegend();
 
   /** Return the strings to display to the left of the y-axis tick marks
     @return strings to display on y-axis tick marks
     */
 
-  public String[] getYLabels();
+  String[] getYLabels();
 
   /** Return the strings to use in a legend explaining the vertical bar sets.
     @return strings (one for each vertical bar) explaining the vertical bars
     */
 
-  public String[] getLegend();
+  String[] getLegend();
 
   /** Return the values to display.
     @return sets of values for vertical bars
     */
 
-  public int[][] getValues();
+  int[][] getValues();
 
   /** Return whether or not to display the bars contiguously.
     @return true for contiguous bars
     */
 
-  public boolean getContiguous();
+  boolean getContiguous();
 
   /** Register for changes in the information displayed in the bar graph.
     @param listener object to notify when data changes
    */
-  public void registerListener(ActionListener listener);
+  void registerListener(ActionListener listener);
 
   /** Update the data fetched with the above methods.
    */
 
-  public void update();
+  void update();
 
   /** Start subscription which will get data from CCV2 collection.
    */
 
-  public void startSubscription();
+  void startSubscription();
 
 }

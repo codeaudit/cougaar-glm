@@ -88,7 +88,7 @@ public class DeletionProcessor extends InventoryProcessor {
 	    }
 	    return false;
 	}
-    };
+    }
 
     /**
      *  Set up subscriptions, 

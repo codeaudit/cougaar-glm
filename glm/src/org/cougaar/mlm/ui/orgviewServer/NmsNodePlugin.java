@@ -24,6 +24,6 @@ package org.cougaar.mlm.ui.orgviewServer;
 import java.util.*;
 
 public interface NmsNodePlugin {
-  public void run(Hashtable Nodehash, Object arg);
+  void run(Hashtable Nodehash, Object arg);
 }
 

@@ -371,7 +371,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     return result;
   }
 
-  public static interface RowHandler {
+  public interface RowHandler {
     /** Called by executeQuery per row.
      * @return true iff the query is done (bail out early)
      **/

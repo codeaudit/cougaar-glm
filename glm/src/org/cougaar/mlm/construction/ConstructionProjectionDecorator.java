@@ -64,7 +64,7 @@ public class ConstructionProjectionDecorator extends PlugInDecorator {
 	      }
 	      return false;
 	    }
-    };
+    }
 
     /** 
      *  Customizes the given ConstructionProjectionPlugin with one or more BasicProcessor 

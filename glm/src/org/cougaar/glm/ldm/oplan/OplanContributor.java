@@ -35,16 +35,15 @@ import org.cougaar.core.util.UID;
 
 public interface OplanContributor extends Transferable {
   /** Gets the time span in force. **/
-  public TimeSpan getTimeSpan();
+  TimeSpan getTimeSpan();
 
   /** Gets the time span in force. **/
-  public void setTimeSpan(TimeSpan span);
+  void setTimeSpan(TimeSpan span);
   
   /** @deprecated Use getOplanUID*/
-  public UID getOplanID();
+  UID getOplanID();
 
   /** Which oplan are we connected to? **/
-  public UID getOplanUID();
-
+  UID getOplanUID();
 }
 

@@ -1083,7 +1083,7 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	    frame.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
 			System.exit(0);
-		    };
+		    }
 		});
 	    frame.setVisible(true);
 	    aTPFDDShell.start();

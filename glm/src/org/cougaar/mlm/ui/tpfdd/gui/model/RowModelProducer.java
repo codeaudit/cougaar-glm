@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/model/Attic/RowModelProducer.java,v 1.1 2001-12-27 22:44:24 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/model/Attic/RowModelProducer.java,v 1.2 2002-01-30 21:58:59 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -36,7 +36,7 @@ public interface RowModelProducer
 
     void changeRowsNotify(int[] rows);
 
-    public void addConsumer(RowModelListener consumer);
+    void addConsumer(RowModelListener consumer);
 
-    public void deleteConsumer(RowModelListener consumer);
+    void deleteConsumer(RowModelListener consumer);
 }

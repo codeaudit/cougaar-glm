@@ -25,7 +25,7 @@ import java.io.Serializable;
 /**
  * Holds a Chronicle of data about the location of some String indexed property
  *
- * @author Benjamin Lubin; last modified by $Author: bdepass $
+ * @author Benjamin Lubin; last modified by $Author: ahelsing $
  *
  * @since 11/15/00
  */
@@ -205,10 +205,10 @@ public class TagChronicle extends Chronicle{
   public interface TagTallier extends Tallier{
 
     /**return a map from tags (strings) to counts (Integers)**/
-    public Map getTagToCountMap();
+    Map getTagToCountMap();
 
     /**get the count for a given tag**/
-    public int getCount(String tag);
+    int getCount(String tag);
   }
 
   /**

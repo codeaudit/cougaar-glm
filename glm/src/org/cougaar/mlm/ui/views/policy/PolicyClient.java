@@ -32,7 +32,7 @@ public interface PolicyClient {
    *
    * @param policyInfo UIPolicyInfo whose parameters have changed
    */
-  public void firePolicyChange(UIPolicyInfo p);
+  void firePolicyChange(UIPolicyInfo p);
 }
 
 

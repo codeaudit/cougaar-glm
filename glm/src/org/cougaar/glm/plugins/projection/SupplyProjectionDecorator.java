@@ -76,7 +76,7 @@ public class SupplyProjectionDecorator extends PlugInDecorator {
 	    }
 	    return false;
 	}
-    };
+    }
 
     /** 
      *  Customizes the given SupplyProjectionPlugin with one or more BasicProcessor 

@@ -38,6 +38,6 @@ public interface GeolocLocation extends NamedPosition, Cloneable {
   /** @return String  - the Icao code representing this position*/
   String getIcaoCode();
 
-  public Object clone();	
+  Object clone();	
 	
 }

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/model/Attic/ItemPoolModelListener.java,v 1.1 2001-12-27 22:44:23 bdepass Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/mlm/ui/tpfdd/gui/model/Attic/ItemPoolModelListener.java,v 1.2 2002-01-30 21:58:59 ahelsing Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -29,11 +29,11 @@ import org.cougaar.mlm.ui.tpfdd.util.Consumer;
 
 public interface ItemPoolModelListener extends Consumer
 {
-    public void fireItemAdded(Object item);
+    void fireItemAdded(Object item);
 
-    public void fireItemDeleted(Object item);
+    void fireItemDeleted(Object item);
 
-    public void fireItemValueChanged(Object item);
+    void fireItemValueChanged(Object item);
 
-    public void fireItemWithIndexDeleted(Object item, int index);
+    void fireItemWithIndexDeleted(Object item, int index);
 }
