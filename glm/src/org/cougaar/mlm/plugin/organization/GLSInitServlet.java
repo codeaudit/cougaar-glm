@@ -298,9 +298,9 @@ public class GLSInitServlet extends ComponentPlugin
       else {
         //get c0 and next stage info from state object
         myPrivateState = (MyPrivateState)stateColl.iterator().next();
-        long stateC0 = ((Date)(myPrivateState.opInfo.getCDate())).getTime();
-        if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- stateC0 is: " +((Date)(myPrivateState.opInfo.getCDate()))); 
-        SortedSet stateSentStages = myPrivateState.opInfo.getSentStages(); 
+	boolean haveOpInfo = (myPrivateState.opInfo != null);
+        if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- stateC0 is: " + (haveOpInfo ? ((Date)(myPrivateState.opInfo.getCDate())).toString() : "<undefined -- No OpInfo yet!>")); 
+        SortedSet stateSentStages = (haveOpInfo ? myPrivateState.opInfo.getSentStages() : new TreeSet()); 
         if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- stateSentStages has size: " +stateSentStages.size()); 
 
         //get c0 and next stage info from gls task
