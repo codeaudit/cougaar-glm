@@ -152,7 +152,7 @@ public abstract class Packer extends GenericPlugin {
 				  getAllocationResultDistributor());
 
 
-    if ((tonsPacked > tonsReceived + 0.0001) || (tonsPacked < tonsReceived - 0.0001)) {
+    if ((tonsPacked > tonsReceived + 0.1) || (tonsPacked < tonsReceived - 0.1)) {
       if (getLoggingService().isErrorEnabled()) {
 	getLoggingService().warn("Packer - received " + tonsReceived + " tons but packed " + tonsPacked + 
 				  " tons, (total received " + ADD_TONS + " vs total packed " + Filler.TRANSPORT_TONS +
@@ -232,8 +232,8 @@ public abstract class Packer extends GenericPlugin {
   }
     
   protected void handleUnplanned (Collection unplanned) {
-    if (getLoggingService().isWarnEnabled())
-      getLoggingService().warn("Packer: found " + unplanned.size() + " tasks -- replanning them!");
+    if (getLoggingService().isInfoEnabled())
+      getLoggingService().info("Packer: found " + unplanned.size() + " tasks -- replanning them!");
 
     for (Iterator iter = unplanned.iterator(); iter.hasNext(); ) {
       Task task = (Task) iter.next();

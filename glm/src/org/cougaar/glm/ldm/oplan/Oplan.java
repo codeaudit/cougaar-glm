@@ -81,6 +81,11 @@ public class Oplan extends OwnedUniqueObject
   private boolean hnsWater;
   private Vector pods = new Vector();
   private Vector dfspVector = new Vector();
+
+  // The max stage currently active
+  private int maxActiveStage = -1;
+  // The minimum stage where we become active
+  private int minRequiredStage = 0;
 	
   // Priority values
   public static final String HIGH = "High";
@@ -534,6 +539,8 @@ public class Oplan extends OwnedUniqueObject
     copyVectorInto(getPODsV(), newOplan.getPODsV());
     copyVectorInto(getDFSPsV(), newOplan.getDFSPsV());
     newOplan.setXMLFileName(xmlfilename_);
+    newOplan.setMaxActiveStage(maxActiveStage);
+    newOplan.setMinRequiredStage(minRequiredStage);
     return newOplan;
   }//clone
 
@@ -587,7 +594,9 @@ public class Oplan extends OwnedUniqueObject
         (getHNSForWater() == oplan.getHNSForWater()) &&
         matches(getHNSWaterCapability(), oplan.getHNSWaterCapability()) &&
         matches(getPODsV(), oplan.getPODsV()) &&
-        matches(getDFSPsV(), oplan.getDFSPsV());
+        matches(getDFSPsV(), oplan.getDFSPsV()) &&
+        getMinRequiredStage() == oplan.getMinRequiredStage() &&
+        getMaxActiveStage() == oplan.getMaxActiveStage();
     } else
       return false;
   }
@@ -629,7 +638,29 @@ public class Oplan extends OwnedUniqueObject
     cDay = otherOplan.getCday();
     endDay = otherOplan.getEndDay();
     xmlfilename_ = otherOplan.getXMLFileName();
+    maxActiveStage = otherOplan.maxActiveStage;
+    minRequiredStage = otherOplan.minRequiredStage;
   }// setAll
+
+  public boolean isActive() {
+    return maxActiveStage >= minRequiredStage;
+  }
+
+  public void setMaxActiveStage(int newMax) {
+    maxActiveStage = newMax;
+  }
+
+  public int getMaxActiveStage() {
+    return maxActiveStage;
+  }
+
+  public void setMinRequiredStage(int newMin) {
+    minRequiredStage = newMin;
+  }
+
+  public int getMinRequiredStage() {
+    return minRequiredStage;
+  }
 
   //dummy PropertyChangeSupport for the Jess Interpreter.
   protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);

@@ -446,8 +446,7 @@ public class MDBConfigWriter {
   // Given Hashtable mapping cluster name to Vector of plugin names
   // <Cluster>.ini File format:
   // [ Cluster ]
-  // class = org.cougaar.core.agent.ClusterImpl
-  // uic = <Clustername>
+  // uic = <Agentname>
   // cloned = false
   // [ Plugins ]
   // plugin = <pluginname>
@@ -469,7 +468,6 @@ public class MDBConfigWriter {
         }   
 
         cluster_file.println("[ Cluster ]");
-        cluster_file.println("class = org.cougaar.core.agent.ClusterImpl");
         cluster_file.println("uic = " + cluster_name);
         cluster_file.println("cloned = false\n");
         cluster_file.println("[ Plugins ]");

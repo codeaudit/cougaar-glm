@@ -63,6 +63,32 @@ import org.cougaar.glm.ldm.plan.GeolocLocationImpl;
 public class AmmoTransport extends AggregationClosure {
   public static final String AMMO_CATEGORY_CODE = "MBB";
   public static final String MILVAN_NSN = "NSN/8115001682275";
+  
+  /* From Jeff Berliner - 
+   * found this data in an Army Field Manual, FM 55-15, page C-2.
+   *
+   *  Table C-3. Mean content weight in tons 
+   *  by container size 
+   *           CONTAINER SIZE 
+   *  CONTENTS    20-Foot  40-Foot 
+   *  Ammunition   13.90      ----- 
+   *  General Cargo  6.47     15.42
+   *
+   * This, apparently, is the source of the constant 13.9 as the tons of ammo that is 
+   * packed into each container by the Ammo Packer. We should probably document this 
+   * source of that data.
+   * 
+   * I posted this document, along with many other reference-type documents, on my web 
+   * page on eiger: http://www.alpine.bbn.com/~berliner/
+   *
+   * The particular Field Manual of Transportation Reference Data is:
+   *
+   * http://www.alpine.bbn.com/~berliner/alp-cougaar-ultralog-data/FM55-15-Transportation-Reference-Data/
+   * 
+   * The Appendix with this Transportation-Related data is:
+   *
+   * http://www.alpine.bbn.com/~berliner/alp-cougaar-ultralog-data/FM55-15-Transportation-Reference-Data/APPC.PDF
+   */
   public static final double PACKING_LIMIT = 13.9; /* short tons */
 
   private static Asset MILVAN_PROTOTYPE = null;

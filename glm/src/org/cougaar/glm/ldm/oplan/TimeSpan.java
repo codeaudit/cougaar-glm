@@ -47,6 +47,10 @@ public class TimeSpan
     this.endDate = internDate(endDate);
   }
 
+  public TimeSpan(long startTime, long endTime) {
+    this(new Date(startTime), new Date(endTime));
+  }
+
   public boolean equals(Object o) {
     if (o instanceof TimeSpan) {
       TimeSpan ots = (TimeSpan) o;
@@ -225,13 +229,16 @@ public class TimeSpan
     }
   }
 
+  public String toString() {
+    return formatDate(startDate) + " - " + formatDate(endDate);
+  }
+  private static SimpleDateFormat dateFormat =
+    new SimpleDateFormat("MM/dd/yy HH:mm");
+
+  private static String formatDate(long time) {
+    return formatDate(new Date(time));
+  }
+  private static String formatDate(Date date) {
+    return dateFormat.format(date);
+  }
 }
-
-
-
-
-
-
-
-
-

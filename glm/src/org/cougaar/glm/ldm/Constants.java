@@ -23,8 +23,14 @@ package org.cougaar.glm.ldm;
 
 import org.cougaar.planning.ldm.plan.AspectType;
 
+/** Holder of constants for GLM users.
+ * @note Any attempt to instantiate it will result in a thrown exception.
+ **/
 public class Constants implements org.cougaar.planning.Constants {
-  private Constants() {}
+  /** Have a non-private constructor so that it may be subclassed, but 
+   * throw an exception if anyone tries any funny stuff.
+   **/
+  protected Constants() { throw new IllegalArgumentException("Constants should not be instantiated"); }
 
   public static final String DSMAINTENANCE = "DSMaintenance";
   public static final String DURING = "During";
@@ -42,6 +48,7 @@ public class Constants implements org.cougaar.planning.Constants {
     String DETERMINEREQUIREMENTS = "DetermineRequirements";
     String ESTABLISHMISSIONREQUIREMENTS = "EstablishMissionRequirements";
     String EXECUTE = "Execute";
+    String FINDPROVIDERS = "FindProviders";
     String FUEL = "Fuel";
     String GENERATEAEF = "GenerateAEF";
     String GENERATEPROJECTIONS = "GenerateProjections";
@@ -55,9 +62,12 @@ public class Constants implements org.cougaar.planning.Constants {
     String PREPAREFORTRANSPORT = "PrepareForTransport";
     String PRODUCEWATER = "ProduceWater";
     String PROJECTWITHDRAW = "ProjectWithdraw";
+    String PROPAGATEFINDPROVIDERS = "PropagateFindProviders";
+    String PROPAGATEREGISTERSERVICES = "PropagateRegisterServices";
     String PROVIDEFOOD = "ProvideFood";
     String PROVIDEWATER = "ProvideWater";
     String QUARTERMASTERHANDLING = "QuartermasterHandling";
+    String REGISTERSERVICES = "RegisterServices";
     String REPORTFORDUTY = "ReportForDuty";
     String REPORTFORSERVICE = "ReportForService";
     String REPORTREADINESS = "ReportReadiness";
@@ -85,6 +95,7 @@ public class Constants implements org.cougaar.planning.Constants {
     org.cougaar.planning.ldm.plan.Verb DetermineRequirements = org.cougaar.planning.ldm.plan.Verb.get("DetermineRequirements");
     org.cougaar.planning.ldm.plan.Verb EstablishMissionRequirements = org.cougaar.planning.ldm.plan.Verb.get("EstablishMissionRequirements");
     org.cougaar.planning.ldm.plan.Verb Execute = org.cougaar.planning.ldm.plan.Verb.get("Execute");
+    org.cougaar.planning.ldm.plan.Verb FindProviders = org.cougaar.planning.ldm.plan.Verb.getVerb(FINDPROVIDERS);
     org.cougaar.planning.ldm.plan.Verb Fuel = org.cougaar.planning.ldm.plan.Verb.get("Fuel");
     org.cougaar.planning.ldm.plan.Verb GetLogSupport = org.cougaar.planning.ldm.plan.Verb.get("GetLogSupport");
     org.cougaar.planning.ldm.plan.Verb GenerateAEF = org.cougaar.planning.ldm.plan.Verb.get("GenerateAEF");
@@ -98,9 +109,12 @@ public class Constants implements org.cougaar.planning.Constants {
     org.cougaar.planning.ldm.plan.Verb PrepareForTransport = org.cougaar.planning.ldm.plan.Verb.get("PrepareForTransport");
     org.cougaar.planning.ldm.plan.Verb ProduceWater = org.cougaar.planning.ldm.plan.Verb.get("ProduceWater");
     org.cougaar.planning.ldm.plan.Verb ProjectWithdraw = org.cougaar.planning.ldm.plan.Verb.get("ProjectWithdraw");
+    org.cougaar.planning.ldm.plan.Verb PropagateFindProviders = org.cougaar.planning.ldm.plan.Verb.getVerb(PROPAGATEFINDPROVIDERS);
+    org.cougaar.planning.ldm.plan.Verb PropagateRegisterServices = org.cougaar.planning.ldm.plan.Verb.getVerb(PROPAGATEREGISTERSERVICES);
     org.cougaar.planning.ldm.plan.Verb ProvideFood = org.cougaar.planning.ldm.plan.Verb.get("ProvideFood");
     org.cougaar.planning.ldm.plan.Verb ProvideWater = org.cougaar.planning.ldm.plan.Verb.get("ProvideWater");
     org.cougaar.planning.ldm.plan.Verb QuartermasterHandling = org.cougaar.planning.ldm.plan.Verb.get("QuartermasterHandling");
+    org.cougaar.planning.ldm.plan.Verb RegisterServices = org.cougaar.planning.ldm.plan.Verb.getVerb(REGISTERSERVICES);
     org.cougaar.planning.ldm.plan.Verb ReportForDuty = org.cougaar.planning.ldm.plan.Verb.get("ReportForDuty");
     org.cougaar.planning.ldm.plan.Verb ReportForService = org.cougaar.planning.ldm.plan.Verb.get("ReportForService");
     org.cougaar.planning.ldm.plan.Verb ReportReadiness = org.cougaar.planning.ldm.plan.Verb.get("ReportReadiness");

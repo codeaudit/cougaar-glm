@@ -24,7 +24,6 @@ package org.cougaar.mlm.plugin.sample;
 import org.cougaar.glm.ldm.Constants;
 import java.util.Vector;
 import java.util.Enumeration;
-import java.util.Calendar;
 import java.util.Date;
 
 import java.awt.Color;
@@ -324,18 +323,20 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
     publishRemove(t);
   }
 
+  private final static long ONE_DAY = 24L*60L*60L*1000L;
+  private final static long ONE_MONTH = 30L*ONE_DAY;
+
   protected Enumeration getPreferences() {
-    // schedule
-    Calendar rightNow = Calendar.getInstance();
-    Date startDate = rightNow.getTime();
+     // schedule
+    long now = currentTimeMillis();
+    long startTime = now;
     // increment date by 3 MONTHs
-    rightNow.add(Calendar.MONTH, 3);
-    Date endDate = rightNow.getTime();
+    long endTime = now + 3 * ONE_MONTH;
     
     AspectValue startTav = 
-      TimeAspectValue.create( AspectType.START_TIME, startDate);
+      TimeAspectValue.create( AspectType.START_TIME, startTime);
     AspectValue endTav = 
-      TimeAspectValue.create( AspectType.END_TIME, endDate);
+      TimeAspectValue.create( AspectType.END_TIME, endTime);
 
     ScoringFunction myStartScoreFunc = 
       ScoringFunction.createStrictlyAtValue( startTav );

@@ -131,7 +131,7 @@ public class GLMCompletionSocietyPlugin extends CompletionSocietyPlugin {
 
   private void sendOplan() {
     GLSInitServlet.Request req =
-      new GLSInitServlet.Request(GLSInitServlet.SENDOPLAN);
+      new GLSInitServlet.Request(GLSInitServlet.GETOPINFO);
     blackboard.publishAdd(req);
   }
 

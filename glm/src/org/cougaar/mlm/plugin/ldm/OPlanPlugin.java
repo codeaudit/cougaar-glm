@@ -234,6 +234,7 @@ public class OPlanPlugin extends SimplePlugin
         if (oplan.getEndDay() == null) {
           oplan.inferEndDay(oplanComponents);
         }
+	oplan.setMaxActiveStage(0);
       }
     } else {
       System.err.println("OPlanPlugin : No parameters were specified");

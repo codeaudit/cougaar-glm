@@ -1,3 +1,93 @@
+2003-05-12  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/organization/GLSInitServlet.java:
+	Parse out the oplan.q part of the parameter for the name of the
+	queryFile. Also completely replace the ForOplanStages phrase
+	instead of replacing the indirect object. This insures that the
+	change is detectable in LPs.
+
+	* org/cougaar/mlm/plugin/organization/GLSExpanderPlugin.java:
+	Add more logging.
+
+2003-05-09  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/ldm/oplan/TimeSpan.java:
+	Add constructor from longs for convenience.
+
+	* org/cougaar/mlm/plugin/ldm/OplanReaderPlugin.java:
+	Revised to eliminate dependence on LDMSQLPlugin. The result is
+	much simpler and straightforward. Functionality is unchanged.
+
+	* org/cougaar/mlm/plugin/ldm/NewQueryHandler.java:
+	Abstract base class of new query handlers
+
+	* org/cougaar/mlm/plugin/ldm/NewOplanPlugin.java:
+	Interface of delegate for query handler use to access info from
+	OplanReaderPlugin.
+
+	* org/cougaar/mlm/plugin/ldm/NewOrgActivityQueryHandler.java: 
+	* org/cougaar/mlm/plugin/ldm/NewOplanQueryHandler.java: 
+	* org/cougaar/mlm/plugin/ldm/NewGeoLocQueryHandler.java: 
+	* org/cougaar/mlm/plugin/ldm/NewAlpLocQueryHandler.java: 
+	* org/cougaar/mlm/plugin/ldm/NewActiveStagesQueryHandler.java:
+	New query handler for use with non-LDMSQLPlugin-based
+	OplanReaderPlugin
+
+	* org/cougaar/mlm/plugin/organization/GLSExpanderPlugin.java:
+	Fix problem of multple determine requirements expansions when GLS
+	follows determine requirements.
+
+2003-05-07  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/organization/GLSExpanderPlugin.java: 
+	Propagate new prep phrase to subordinates. React to GLS changes to
+	update GLS for subordinates. Delay generating
+	DetermineRequirements tasks until non-empty oplan phases are
+	specified.
+
+	* org/cougaar/mlm/plugin/organization/GLSAllocatorPlugin.java:
+	Propagate new prep phrase to subordinates. React to GLS changes to
+	update GLS for subordinates.
+
+	* org/cougaar/mlm/plugin/organization/GLSConstants.java:
+	New interface defines constants for the prepositions of
+	GetLogSupport tasks so that all GLS-related plugins and servlets
+	are assure of using the same values.
+
+	* org/cougaar/mlm/plugin/ldm/OrgActivityQueryHandler.java:
+	Revised to read oplan stages.
+
+	* org/cougaar/mlm/plugin/ldm/OplanReaderPlugin.java:
+	Modifications to support multi-stage oplans. As stages of an oplan
+	are added, the new org activities are overlaid onto the existing
+	ones. Where there are conflicts, the old org activities are
+	trimmed to not exist for the time spans of the new ones.
+
+	* org/cougaar/mlm/plugin/ldm/OplanQueryHandler.java:
+	Put the modifications in a clone of the Oplan. Otherwise, the
+	OplanReaderPlugin can't detect changes.
+
+	* org/cougaar/mlm/plugin/ldm/ActiveStagesQueryHandler.java:
+	Query handler for reading oplan_active_stage table.
+
+	* org/cougaar/glm/ldm/oplan/OplanStage.java:
+	New class contains the number and name of an oplan stage.
+
+	* org/cougaar/glm/ldm/oplan/Oplan.java:
+	Add ability to indicate whether the Oplan is activated by the
+	currently active stages.
+
+2003-04-29  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/glm/ldm/oplan/Oplan.java:
+	* org/cougaar/glm/ldm/oplan/OplanPhase.java:
+	Bug #2558 -- Phased Oplan and GLS support needed for assessment
+	Moved Oplan.Phase to OplanPhase.
+
+	* org/cougaar/glm/ldm/oplan/Oplan.java:
+	Bug #2558 -- Phased Oplan and GLS support needed for assessment
+	Add Oplan.Phase declaration to identify oplan phases.
+
 2003-03-28  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/mlm/plugin/sample/RootWatcherServletComponent.java:

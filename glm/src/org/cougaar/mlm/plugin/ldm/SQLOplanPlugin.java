@@ -83,7 +83,8 @@ public class SQLOplanPlugin extends LDMSQLPlugin implements SQLOplanBase{
   private boolean UTBPublishOplan()
   {
 	if(!readyToPublishOplan) {
-		System.out.println("OPLAN CANNOT BE PUBLISHED AGAIN.");
+	  if (log.isWarnEnabled())
+	    log.warn("OPLAN CANNOT BE PUBLISHED AGAIN.");
 		return false;
 	}
 	else
@@ -275,8 +276,7 @@ public class SQLOplanPlugin extends LDMSQLPlugin implements SQLOplanBase{
       Oplan oplan = getOplan(oplanID);
       
       if (oplan == null) {
-        System.err.println("SQLOplanPlugin.updateOrgActivities(): can't find" +
-                           " referenced Oplan " + oplanID);
+	log.error("In " + getMessageAddress() + "updateOrgActivities(): can't find referenced Oplan " + oplanID);
         return;
       }
       
@@ -366,7 +366,8 @@ public class SQLOplanPlugin extends LDMSQLPlugin implements SQLOplanBase{
       oplan = getOplan(oplanID);
       
       if (oplan != null) {
-        System.err.println("SQLOplanPlugin.addOplan(): " + oplanID + 
+	if (log.isWarnEnabled())
+	  log.warn("In " + getMessageAddress() + "addOplan(): " + oplanID + 
                            " already exists.");
         return oplan;
       } else {
@@ -560,7 +561,8 @@ public class SQLOplanPlugin extends LDMSQLPlugin implements SQLOplanBase{
       Collection coupons = 
         getBlackboardService().query(new CouponPredicate((UID) iterator.next()));
       for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
-	System.out.println("SQLOplanPlugin: publishChanging OplanCoupon");
+	if (log.isInfoEnabled())
+	  log.info("In " + getMessageAddress() + " publishChanging OplanCoupon");
 	getBlackboardService().publishChange(couponIt.next());
       }
     }

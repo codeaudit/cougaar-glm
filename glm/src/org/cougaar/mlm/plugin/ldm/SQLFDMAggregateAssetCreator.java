@@ -68,13 +68,25 @@ public class SQLFDMAggregateAssetCreator extends PeriodicQuery
     public static int TID_EQ_TY_CD=17;     // 17     fted.tid_eq_ty_cd
     public static int FOOTPRINT=18; //    tid_ftprnt_ar area footprint
     public void processRow(Object[] data) {
-	//System.out.println("I see "+data[1]+" of "+data[0]);
+      //System.out.println("I see "+data[1]+" of "+data[0]);
 
+      String nsn = (String)data[NSN];
 
+      // Non-vehicle agents must use the globalArguments (are they available?)
+      // and skip rows where the nsn matches something in the args
+      // -- use getParameter(String key) method to get at args
+      // Use param exclude_types=type1&type2&type3
+      String excludes = getParameter("exclude_types");
 
+      // IF the exclude parameter list includes this vehicle
+      // type then dont use it.
+      if (excludes != null && (excludes.indexOf(nsn+'&') != -1 || excludes.endsWith(nsn))) {
+	  // FIXME: No logging service available? Sure wish I had one...
+	  // Log as debug that we're excluding this
+	  System.out.println(myMessageAddress.getAddress() + ".SQLFDMAggAssetCreator: excluding vehicle of type " + nsn);
+	  return;
+      }
 
-        
-	String nsn = (String)data[NSN];
 	Number count = (Number)data[QTY];
 	String nomenclature = (String) data[TI_NM];
 

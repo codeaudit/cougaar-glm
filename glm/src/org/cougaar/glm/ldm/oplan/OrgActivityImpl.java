@@ -220,9 +220,9 @@ public class OrgActivityImpl extends OwnedUniqueObject
       orgID = oa.getOrgID();
       oplanUID = oa.getOplanUID();
       setUID(oa.getOrgActivityId());
-      // this is wrong - we should not inherit the ownership!
-      //setOwner(oa.getOwner());
-      
+      if (oa instanceof OwnedUniqueObject) {
+        setOwner(((OwnedUniqueObject)oa).getOwner());
+      }
       geoLoc = oa.getGeoLoc();	
     }
   }
@@ -262,8 +262,7 @@ public class OrgActivityImpl extends OwnedUniqueObject
     oa.setActivityType(activityType);
     oa.setActivityName(activityName);
     oa.setUID(getUID());
-    // this is wrong - we should not inherit the ownership!
-    //oa.setOwner(getOwner());
+    oa.setOwner(getOwner());
 	
     if (oaHashMap != null) oa.oaHashMap = new HashMap((HashMap)oaHashMap.clone()); 	
 

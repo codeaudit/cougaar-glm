@@ -21,7 +21,6 @@
 package org.cougaar.glm.ldm;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.agent.ClusterImpl;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.util.Parameters;

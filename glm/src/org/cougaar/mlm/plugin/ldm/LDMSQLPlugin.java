@@ -27,6 +27,7 @@ import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.util.StateModelException;
 import org.cougaar.util.DBConnectionPool;
 import org.cougaar.core.service.BlackboardService;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.SubscriberException;
 import org.cougaar.planning.ldm.asset.Asset;
@@ -121,6 +122,8 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
   DomainService domainService = null;
   protected PlanningFactory theFactory = null;
 
+  protected LoggingService log = LoggingService.NULL;
+
   public LDMSQLPlugin() {}
 
   // the global parameters table (String -> object/String
@@ -148,6 +151,15 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 					 });
     }
     theFactory = ((PlanningFactory) domainService.getFactory("planning"));
+
+    LoggingService thelog = (LoggingService) getBindingSite().getServiceBroker().getService(this, LoggingService.class, 
+											    new ServiceRevokedListener() {
+											      public void serviceRevoked(ServiceRevokedEvent re) {
+												log = LoggingService.NULL;
+											      }
+											    });
+    if (thelog != null)
+      log = thelog;
     
     // set up the subscription
     // This could be a future site for maintaining a Container of created
@@ -164,7 +176,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 	// sort the queryhandlers into categories.
 	grokQueries();
       } catch (SubscriberException se) {
-	System.err.println(this.toString()+": Initialization failed: "+se);
+	log.error("Initialization Failed in " + getMessageAddress(), se);
       }
     }
   }
@@ -177,7 +189,8 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
     globalParameters.put("Package", "org.cougaar.mlm.plugin.ldm");
     globalParameters.put("agent","'"+getMessageAddress()+"'");
     //globalParameters.put("PublishOnSelfOrg","true");
-    //System.out.println("LDMSQLPlugin, globalParameters are: "+globalParameters);
+//     if (log.isDebugEnabled()) 
+//       log.debug("In " + getMessageAddress() + " globalParameters are: "+globalParameters);
   }
 
   // retrieve and parse the arguments
@@ -207,7 +220,8 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 
   // parse the query file
   protected void parseQueryFile() {
-      //System.out.println("LDMSQLPlugin, query file is: "+queryFile);
+//     if (log.isDebugEnabled())
+//       log.debug("In " + getMessageAddress() + " query file is: "+queryFile);
     try {
       BufferedReader in = new BufferedReader(new InputStreamReader(getConfigFinder().open(queryFile)));
 				//BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
@@ -251,7 +265,8 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 	      QueryHandler cqh= (QueryHandler)(Class.forName(s).newInstance());
 	      
 	      pt = (Properties)globalParameters.clone();
-	      //System.out.println("LDMSQLPlugin, pt is: "+pt);
+// 	      if (log.isDebugEnabled())
+// 		log.debug("LDMSQLPlugin, pt is: "+pt);
 	      cqh.initialize(this, // LDMEssentialPlugin
 			     // this, // ldmservice
 			     getMessageAddress(),
@@ -261,8 +276,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 			     getBlackboardService());
 	      queries.addElement(cqh);
 	    } catch (Exception bogon) {
-	      System.err.println("Exception creating "+s+": "+bogon);
-	      bogon.printStackTrace();
+	      log.error("In " + getMessageAddress() + ", Exception creating "+s, bogon);
 	    }
 	  }
 	} else if (line.indexOf("select ") != -1) { //WAN if the word "select " is found process as if query
@@ -297,8 +311,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
       in.close();
 
     } catch (Exception e) {
-      System.err.println("Error reading '"+queryFile+"': "+e);
-      e.printStackTrace();
+      log.error("In " + getMessageAddress() + ", Error reading '"+queryFile+"'",e);
       throw new RuntimeException("No QueryFile: "+e);
     }
   }
@@ -318,7 +331,8 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 
   private void parseQueryParameter(Properties table, String s) {
     int i = s.indexOf('=');
-    //System.err.println( "\ns = " + s );
+//     if (log.isDebugEnabled())
+//       log.debug( "\ns = " + s );
     String p = s.substring(0,i).trim();
     String v = s.substring(i+1).trim();
 
@@ -382,7 +396,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 	String param = s.substring(i,j);
 	String value = qh.getParameter(param);
 	if (value == null) {
-	    //System.out.println("qh.getParameter(param="+param);
+	  log.error("Subsituting params in agent " + getMessageAddress() + " in '"+s+"' at "+(i-1)+ " got null value for param: " + param);
 	    throw new RuntimeException("Parameter Substitution problem in '"+s+
 				       "' at "+(i-1));
 	}
@@ -418,7 +432,8 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
       if (driver != null) {
 	DBConnectionPool.registerDriver(driver);
       } else {
-        System.err.println("No Driver parameter specified for " + dbType +
+	if (log.isWarnEnabled())
+	  log.warn("In agent " + getMessageAddress() + ": No Driver parameter specified for " + dbType +
                            " - using default driver - " + DEFAULT_DB_DRIVER);
         DBConnectionPool.registerDriver(DEFAULT_DB_DRIVER);
       }
@@ -454,14 +469,13 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
 
         statement.close();
       } catch (SQLException sqe) {
-	  System.err.println("executeQuery failed: "+sqe+"\n" + sql);
+	log.error("In agent " + getMessageAddress() + ": executeQuery failed for " + sql, sqe);
       } finally {
         conn.close();
       }
 
     } catch (Exception e) {
-      System.err.println("Caught exception while executing a query: "+e);
-      e.printStackTrace();
+      log.error("In agent " + getMessageAddress() + ": Caught exception while executing a query",e);
     }
   }
 

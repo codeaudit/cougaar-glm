@@ -195,6 +195,8 @@ public class GenericTablePlugin extends SimplePlugin {
 	    for (int i = 0; i < tasksSub.length; i++) {
 	      CommandInfo c = allCommands[i];
 	      if (c.type_id == CommandInfo.TYPE_ALLOCATE) {
+		if (logger.isDebugEnabled())
+		  logger.debug(getAgentIdentifier() + " had RelatSched change on self org, so re-alloc all allocatable tasks.");
 		allocate((AllocateCommandInfo) c, tasksSub[i]);
 	      }
 	    }
@@ -207,6 +209,8 @@ public class GenericTablePlugin extends SimplePlugin {
       if (tasksSub[i].hasChanged()) {
 	CommandInfo c = allCommands[i];
 	if (c.type_id == CommandInfo.TYPE_ALLOCATE) {
+	  if (logger.isDebugEnabled())
+	    logger.debug(getAgentIdentifier() + " has changed task supposed to allocate - will alloc all added");
 	  allocate((AllocateCommandInfo) c, tasksSub[i].getAddedCollection());
 	} else if (c.type_id == CommandInfo.TYPE_EXPAND) {
 	  // expand
@@ -216,6 +220,8 @@ public class GenericTablePlugin extends SimplePlugin {
 	    Task task = (Task) iterator.next();
 	    if (task.getPlanElement() == null) {
 	      for (int j = 0; j < toTasks.length; j++) {
+		if (logger.isDebugEnabled())
+		  logger.debug(getAgentIdentifier() + " had un-planned expandable Task added to sub - will expand: " + task);
 		doExpansion(toTasks[j], task);
 	      }
 	    }
@@ -232,6 +238,8 @@ public class GenericTablePlugin extends SimplePlugin {
 
     for (int i = 0; i < allocationsSub.length; i++) {
       if (allocationsSub[i].hasChanged()) {
+	if (logger.isDebugEnabled())
+	  logger.debug(getAgentIdentifier() + " had changed Alloc -- will update results.");
         updateAllocationResult(allocationsSub[i]);
       }
     }
@@ -249,6 +257,8 @@ public class GenericTablePlugin extends SimplePlugin {
     Allocation myalloc = getFactory().createAllocation(
             task.getPlan(), task, org, 
             allocResult, Role.BOGUS);
+    if (logger.isDebugEnabled())
+      logger.debug(getAgentIdentifier() + " adding alloc of " + task + " to " + org.getClusterPG().getMessageAddress());
     publishAdd(myalloc);
   }
 
@@ -402,6 +412,8 @@ public class GenericTablePlugin extends SimplePlugin {
       PluginHelper.createEstimatedAllocationResult(newTask, theLDMF, 0.0, true);
     Expansion exp =
       f.createExpansion(parentTask.getPlan(), newTask, wf, ar);
+    if (logger.isDebugEnabled())
+      logger.debug(getAgentIdentifier() + " adding exp of a task!");
     publishAdd(exp);
   }
 
@@ -416,7 +428,17 @@ public class GenericTablePlugin extends SimplePlugin {
           //!repar.isEqual(estar))  <--BROKEN in AllocatorHelper!
           (repar != estar)) {
         pe.setEstimatedResult(repar);
-        publishChange(pe);
+
+	// We always force the reported and estimated to be ==
+	// But only publishChange it if they are not .isEqual
+	// That is, it is more correct to only require .isEqual, but try to only minimally rock-the-boat for now
+	if (repar.isEqual(estar)) {
+	  // Turn this down from Warn to DEBUG after ensuring we dont see this with the ReceiveNotificationLP change in place.
+	  if (logger.isInfoEnabled())
+	    logger.info(getAgentIdentifier() + " NOT pubChanging AllocResult due to RepAR.isEqual(EstAR) but not ==. For PE: " + pe + ". Rep was != Est. Rep: " + repar);
+	} else {
+	  publishChange(pe);
+	}
       }
     }
   }

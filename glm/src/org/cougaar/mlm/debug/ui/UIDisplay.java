@@ -198,18 +198,6 @@ public class UIDisplay implements ActionListener, Runnable {
     createRow("Display Output File", OUTPUT_FILE_COMMAND, plan);
 
     // add buttons for user input
-    // assign assets
-    //    if (org.cougaar.core.agent.ClusterImpl.useTH) {
-    //      gridx = 0;
-    //      JButton button1 = new JButton("Assign Assets");
-    //      button1.setActionCommand(ASSIGN_ASSETS_COMMAND);
-    //      button1.addActionListener(this);
-    //      button1.setEnabled(false);
-    //      addComponent(panel, button1, gridx, gridy++, 
-    //		   GridBagConstraints.REMAINDER, 1, 
-    //		   GridBagConstraints.CENTER, GridBagConstraints.NONE,
-    //		   0, 0, internalPadding, 0, 0);
-      //    }
     // provide log support
       //    gridx = 0;
       //    JButton button2 = new JButton("Provide Log Support");

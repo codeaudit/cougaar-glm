@@ -21,7 +21,6 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -30,6 +29,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.Collections;
+import java.util.TreeSet;
+import java.util.SortedSet;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -37,6 +38,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Connection;
 
+import java.text.NumberFormat;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
@@ -48,15 +50,24 @@ import org.cougaar.util.DBProperties;
 import org.cougaar.util.DBConnectionPool;
 import org.cougaar.util.Parameters;
 import org.cougaar.util.UnaryPredicate;
-  
-import org.cougaar.core.service.ServletService;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+
+import org.cougaar.core.service.DomainService;
+import org.cougaar.core.service.ServletService;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.core.logging.LoggingServiceWithPrefix;
+
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
-import org.cougaar.planning.ldm.plan.ContextOfUIDs;
+//import org.cougaar.planning.ldm.plan.ContextOfUIDs;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.RelationshipSchedule;
@@ -64,13 +75,10 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
-import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.oplan.OplanStage;
 import org.cougaar.glm.ldm.asset.Organization;
-
-import org.cougaar.mlm.plugin.ldm.LDMSQLPlugin;
-import org.cougaar.mlm.plugin.ldm.SQLOplanBase;
-import org.cougaar.mlm.plugin.ldm.SQLOplanQueryHandler;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -85,21 +93,32 @@ import java.io.*;
  * servlets in this plugin to publish the oplan and gls tasks
  *
  **/
-public class GLSInitServlet extends LDMSQLPlugin {
+public class GLSInitServlet extends ComponentPlugin 
+  implements GLSConstants {
 
-  public static final String SENDOPLAN = "sendoplan";
-//   public static final String UPDATEOPLAN = "updateoplan";
+  public static final String GETOPINFO = "getopinfo";
   public static final String PUBLISHGLS = "publishgls";
   public static final String RESCINDGLS = "rescindgls";
 
   private static final String PUBLISH_ON_SELF_ORG = "PublishOnSelfOrg";
 
-  private static final String QUERY_NAME = "OplanTimeframeQuery";
+  public static final String QUERY_FILE = "oplan.q";
+  private static final String TIME_QUERY_NAME = "OplanTimeframeQuery";
+  private static final String STAGE_QUERY_NAME = "OplanStageQuery";
+  
+  public static final int LISTENING_TO_NOTHING = 0;
+  public static final int LISTENING_TO_PROP_REG_SRVCS= 1;
+  public static final int LISTENING_TO_PROP_FIND_PROV = 2;
+  public static final int LISTENING_TO_GLS = 3;
+
+  static NumberFormat confidenceFormat = NumberFormat.getPercentInstance();
 
   private DBProperties dbp;
   private String database;
   private String username;
   private String password;
+
+  private String oplanId;
 
   private static DateFormat cDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -115,16 +134,13 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
   private IncrementalSubscription glsSubscription;
 
-  private IncrementalSubscription oplanInfoSubscription;
+  private IncrementalSubscription regSrvcsSubscription;
+
+  private IncrementalSubscription findProvSubscription;
 
   private IncrementalSubscription myorgassets;
 
-  private IncrementalSubscription stateSubscription;
-
   private IncrementalSubscription requestSubscription;
-
-  /** for knowing when we get our self org asset **/
-  private Organization selfOrgAsset = null;
 
   private static final String forRoot = "ForRoot".intern();
 
@@ -134,37 +150,63 @@ public class GLSInitServlet extends LDMSQLPlugin {
   private static class MyPrivateState implements java.io.Serializable {
     boolean oplanInfoExists = false;
     boolean unpublishedChanges = false;
-    boolean errorOccurred = false;
-    int taskNumber = 0;
+    int glsTaskNumber = 0;
+    int prsTaskNumber = 0;
+    int pfpTaskNumber = 0;
+    OplanInfo opInfo;
+    int listening_to = LISTENING_TO_NOTHING;
+    boolean initialSendGLS = true;
+    boolean initialSendFindProv = true;
   }
 
   private MyPrivateState myPrivateState;
 
-  private OplanInfo myOplanInfo;
 
-  private static UnaryPredicate myOplanInfoPredicate = new UnaryPredicate() {
-      public boolean execute(Object o) { 
-        if (o instanceof OplanInfo) {
-          return true;
-        } else {
-          return false;
-        }
+  /**
+   * This predicate selects for root GLStasks injected by the GLSInitServlet
+   **/
+  private UnaryPredicate glsPredicate =  new UnaryPredicate() {
+      public boolean execute(Object o) {
+	if (!(o instanceof PlanElement)) return false;
+	PlanElement pe = (PlanElement) o;
+	Task task = pe.getTask();
+	if (!task.getVerb().equals(GET_LOG_SUPPORT)) return false;
+	if (!task.getSource().equals(getAgentIdentifier())) return false;
+	if (!task.getDestination().equals(getAgentIdentifier())) return false;
+	return (task.getPrepositionalPhrase(forRoot) != null);
       }
     };
 
   /**
-   * This predicate selects for root tasks injected by the GLSGUIInitPlugin
+   * This predicate selects for root PropagateRegisterServices tasks injected by the GLSInitServlet
    **/
-  private UnaryPredicate glsPredicate =  new UnaryPredicate() {
+  private UnaryPredicate regSrvcsPredicate =  new UnaryPredicate() {
       public boolean execute(Object o) {
-	if (!(o instanceof Task)) return false;
-	Task task = (Task) o;
-	if (!task.getVerb().equals(Constants.Verb.GETLOGSUPPORT)) return false;
-	if (!task.getSource().equals(getMessageAddress())) return false;
-	if (!task.getDestination().equals(getMessageAddress())) return false;
+	if (!(o instanceof PlanElement)) return false;
+	PlanElement pe = (PlanElement) o;
+	Task task = pe.getTask();
+	if (!task.getVerb().equals(PROPAGATE_REGISTER_SERVICES)) return false;
+	if (!task.getSource().equals(getAgentIdentifier())) return false;
+	if (!task.getDestination().equals(getAgentIdentifier())) return false;
 	return (task.getPrepositionalPhrase(forRoot) != null);
       }
     };
+
+  /**
+   * This predicate selects for root PropagateFindProviders tasks injected by the GLSInitServlet
+   **/
+  private UnaryPredicate findProvPredicate =  new UnaryPredicate() {
+      public boolean execute(Object o) {
+	if (!(o instanceof PlanElement)) return false;
+	PlanElement pe = (PlanElement) o;
+	Task task = pe.getTask();
+	if (!task.getVerb().equals(PROPAGATE_FIND_PROVIDERS)) return false;
+	if (!task.getSource().equals(getAgentIdentifier())) return false;
+	if (!task.getDestination().equals(getAgentIdentifier())) return false;
+	return (task.getPrepositionalPhrase(forRoot) != null);
+      }
+    };
+
 
   // Subscribe to my private state object to recover on rehydrate
   private static UnaryPredicate statePredicate = new UnaryPredicate() {
@@ -192,31 +234,106 @@ public class GLSInitServlet extends LDMSQLPlugin {
     servletService = ss;
   }
 
+  private LoggingService logger;
+  public void setLoggingService(LoggingService ls) {
+    logger = ls;
+  }
 
+  private PlanningFactory theLDMF;
+  public void setDomainService(DomainService ds) {
+    if (ds == null)
+      theLDMF = null;
+    else {
+      theLDMF = (PlanningFactory)ds.getFactory("planning");
+    }
+  }
+
+  
   /*
    * Creates a subscription.
    */
   protected void setupSubscriptions() 
-  {
-    initProperties();  //super
-    grokArguments();   //super
+  { 
+    logger = LoggingServiceWithPrefix.add(logger, getAgentIdentifier()+": ");
     
-    getBlackboardService().getSubscriber().setShouldBePersisted(false);
+    Collection params = getParameters();
+    if ((params == null) ||
+        (params.size() == 0)) {
+      throw new IllegalArgumentException("GLSInitServlet: Missing plugin parameter.");
+    }
 
-    stateSubscription = (IncrementalSubscription) getBlackboardService().subscribe(statePredicate);
-    oplanInfoSubscription = (IncrementalSubscription) getBlackboardService().subscribe(myOplanInfoPredicate);
-    glsSubscription = (IncrementalSubscription) getBlackboardService().subscribe(glsPredicate);
-    myorgassets = (IncrementalSubscription) subscribe(orgAssetPred);
-    requestSubscription = (IncrementalSubscription) subscribe(requestPredicate);
+    // Get the OPLAN ID from the args.
+    oplanId = (String) params.iterator().next();
+
+    try {
+      dbp = DBProperties.readQueryFile(QUERY_FILE);
+      database = dbp.getProperty("Database");
+      username = dbp.getProperty("Username");
+      password = dbp.getProperty("Password");
+    }catch (IOException ioe) {
+      throw new RuntimeException("Can't read query file: "+QUERY_FILE, ioe);
+    }
+
+    glsSubscription = (IncrementalSubscription) blackboard.subscribe(glsPredicate);
+    myorgassets = (IncrementalSubscription) blackboard.subscribe(orgAssetPred);
+    requestSubscription = (IncrementalSubscription) blackboard.subscribe(requestPredicate);
+    regSrvcsSubscription = (IncrementalSubscription) blackboard.subscribe(regSrvcsPredicate);
+    findProvSubscription = (IncrementalSubscription) blackboard.subscribe(findProvPredicate);
 
     // Set up the local private state object
     // It is put on the blackboard for persistence and recovered 
     // on rehydration
-    if (getBlackboardService().didRehydrate()) {
-      checkForPrivateState(stateSubscription.elements());
-    } else {
+    Collection stateColl = blackboard.query(statePredicate);
+
+    // DEBUGGING
+    if (blackboard.didRehydrate()){
+      if ( stateColl.isEmpty()) {
+        if (logger.isErrorEnabled()) logger.error("GLSInitServlet: myPrivateState object did not persist!" );
+      }
+      else {
+        //get c0 and next stage info from state object
+        myPrivateState = (MyPrivateState)stateColl.iterator().next();
+        long stateC0 = ((Date)(myPrivateState.opInfo.getCDate())).getTime();
+        if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- stateC0 is: " +((Date)(myPrivateState.opInfo.getCDate()))); 
+        SortedSet stateSentStages = myPrivateState.opInfo.getSentStages(); 
+        if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- stateSentStages has size: " +stateSentStages.size()); 
+
+        //get c0 and next stage info from gls task
+        if (glsSubscription.isEmpty()) {
+          if (logger.isWarnEnabled()) logger.warn("GLSInitServlet- glsSubscription is empty on rehydration."); 
+        }
+        else {
+          PlanElement pe = (PlanElement) glsSubscription.first();
+          Task gls = pe.getTask();
+
+          PrepositionalPhrase stagespp = gls.getPrepositionalPhrase(FOR_OPLAN_STAGES);
+          SortedSet glsStages = (SortedSet)stagespp.getIndirectObject(); 
+          if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- glsStages have size: " +glsStages.size()); 
+
+          PrepositionalPhrase c0pp = gls.getPrepositionalPhrase(WITH_C0);
+          long  gls_c0 = ((Long)(c0pp.getIndirectObject())).longValue();
+          Date gls_c0_date = new Date(gls_c0);
+          if (logger.isDebugEnabled()) logger.debug("GLSInitServlet- gls_c0_date is: " +gls_c0_date); 
+
+          //compare c0 from private state to c0 in gls task
+          //TO_DO
+          //compare number of sent stages  from private state to sent stages in gls task
+          if (stateSentStages.size() != glsStages.size()) {
+            if (logger.isErrorEnabled()) {
+              logger.error("GLSInitServlet: myPrivateState sent Stages do not match GLS task after rehyration.");
+            }
+          }
+        }
+      }
+    }
+    // EMD DEBUGGING
+
+    if (stateColl.isEmpty()){
       myPrivateState = new MyPrivateState();
-      getBlackboardService().publishAdd(myPrivateState);
+      blackboard.publishAdd(myPrivateState);
+    }
+    else {
+      myPrivateState = (MyPrivateState)stateColl.iterator().next();
     }
 
     // register with servlet service
@@ -226,9 +343,11 @@ public class GLSInitServlet extends LDMSQLPlugin {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
     
-    System.out.println("GLSInitServlet: " + PUBLISH_ON_SELF_ORG + " = " + 
-                       globalParameters.get(PUBLISH_ON_SELF_ORG));
+    //if (logger.isDebugEnabled()) logger.debug("GLSInitServlet: " 
+    //                                          + PUBLISH_ON_SELF_ORG + " = " + 
+    //                                          globalParameters.get(PUBLISH_ON_SELF_ORG));
   }	   		 
 
 
@@ -237,109 +356,167 @@ public class GLSInitServlet extends LDMSQLPlugin {
    */
   public void execute(){
 
-    boolean doNotify = false;
+    switch (myPrivateState.listening_to) {
 
-    // This block not necessary
-    // Only need to get the private state object at startup
-    // from rehydration
-//     if (stateSubscription.hasChanged()) {
-//       checkForPrivateState(stateSubscription.getAddedList());
-//     }
-
-    // Handle case where we're self-running based on the Self Org
-    if (myorgassets.hasChanged()) {
-      handleMyOrgAssets(myorgassets.getAddedList());
-
-      if ((selfOrgAsset != null) &&
-          (Boolean.valueOf((String) globalParameters.get(PUBLISH_ON_SELF_ORG)).booleanValue())) {
-        publishOplan(); //reads db and sets default cDate
-        String opId = parseOplanID(queryFile); //using default cDate
-        OplanInfo opInfo = findOplanById(opId);
-        sendGLS(opInfo);
+    case LISTENING_TO_PROP_REG_SRVCS:
+      if (regSrvcsSubscription.hasChanged()) {
+        boolean readyForFP = checkIfStageComplete(regSrvcsSubscription.getChangedCollection());
+        if (readyForFP) {
+          boolean hasFindProvidersStep = checkForFindProviders();
+          if (hasFindProvidersStep) {
+            myPrivateState.initialSendFindProv = false;
+            myPrivateState.opInfo.advanceStage();
+            myPrivateState.listening_to = LISTENING_TO_PROP_FIND_PROV;
+            sendPropagateFindProviders();
+          }
+          else {
+            myPrivateState.initialSendGLS = false;
+            myPrivateState.opInfo.advanceStage();
+            myPrivateState.listening_to = LISTENING_TO_GLS;
+            sendGLS();
+          }
+        }
       }
-    }
-        
-    if (glsSubscription.hasChanged()) {
-      doNotify = true;
+      break;
+    case LISTENING_TO_PROP_FIND_PROV:
+      if (findProvSubscription.hasChanged()) {
+        boolean readyForStage = checkIfStageComplete(findProvSubscription.getChangedCollection());
+        if (readyForStage) {
+          myPrivateState.listening_to = LISTENING_TO_GLS;
+          if (myPrivateState.initialSendGLS) {
+            myPrivateState.initialSendGLS = false;
+            myPrivateState.opInfo.advanceStage();
+            sendGLS();
+          }
+          else {
+            if (logger.isDebugEnabled()) {
+              logger.debug("GLSInitServlet: automatically advancing to next Stage");
+            }
+            updateRootGLS();
+          }
+        }
+      }
+      break;
+
+    case LISTENING_TO_GLS:
+      if (glsSubscription.hasChanged()) {
+        boolean readyForNext = checkIfStageComplete(glsSubscription.getChangedCollection());
+        if (readyForNext) {
+          myPrivateState.listening_to = LISTENING_TO_NOTHING;
+          myPrivateState.opInfo.updateDisplayStage();
+          blackboard.publishChange(myPrivateState);
+          doNotify();
+        }
+      }
+      break;
     }
 
-    if (oplanInfoSubscription.hasChanged()) {
-      doNotify = true;
-    }
-    
     if (requestSubscription.hasChanged()) {
       processRequests(requestSubscription.getAddedCollection());
     }
+  }
 
-    // update gui, if needed
-    if (doNotify) {
+  private boolean checkForFindProviders(){
+    
+    SortedSet remaining = myPrivateState.opInfo.getRemainingStages(); 
+    if (!remaining.isEmpty()) {
+      int nextStageNum = ((OplanStage)(remaining.first())).getNumber();
+      if ((nextStageNum & 1) != 0) { //odd stage number indicates FindProviders Stage
+        if (logger.isDebugEnabled()) {
+          logger.debug("GLSInitServlet: Found a FindProviders Stage");
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  private boolean checkIfStageComplete(Collection changedRootTasks) {
+    double confidence = 0;
+    if (changedRootTasks.size() > 1 ) {
+      logger.error("GLSInitServlet: More than 1 root task of a certain type." );
+    }
+    for (Iterator i = changedRootTasks.iterator(); i.hasNext(); ) {
+      PlanElement pe = (PlanElement) i.next();
+
+      AllocationResult ar = null;
+      if (pe != null) {
+        ar = pe.getEstimatedResult();
+        confidence = ar.getConfidenceRating();
+        if (logger.isDebugEnabled()) {
+          switch (myPrivateState.listening_to) {
+          case LISTENING_TO_NOTHING:
+            logger.debug("checkIfStageComplete():  State is LISTENING_TO_NOTHING");
+          break;
+          case LISTENING_TO_PROP_REG_SRVCS:
+            logger.debug("checkIfStageComplete():  State is LISTENING_TO_PROP_REG_SRVCS");
+          break;
+          case LISTENING_TO_PROP_FIND_PROV:
+            logger.debug("checkIfStageComplete():  State is LISTENING_TO_PROP_FIND_PROV");
+          break;
+          case LISTENING_TO_GLS:
+            logger.debug("checkIfStageComplete():  State is LISTENING_TO_GLS");
+          break;
+          } //end switch
+          logger.debug("GLSInitServlet: changed task is " +pe.getTask());
+          logger.debug("GLSInitServlet: confidence of changed task - " +confidence );
+        }
+      }
+      if (confidence >= 1.0){
+        //ready to move to next stage
+        if (logger.isDebugEnabled()) {
+          logger.debug("GLSInitServlet: Stage is Complete- Confidence is- " +confidence +"\n");
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private void doNotify() {
       synchronized(monitor) {
 	monitor.notifyAll();
       }
-    }
-  }
+  }    
 
   private void processRequests(Collection newRequests){
     for (Iterator i = newRequests.iterator(); i.hasNext(); ) {
       Request request = (Request) i.next();
-      if (request.command.equals("sendoplan")) {
+      if (request.command.equals(GETOPINFO)) {
         publishOplan();
-      } else if (request.command.equals("publishgls")) {
+      } else if (request.command.equals(PUBLISHGLS)) {
 	publishAllRootGLS();
       }
-      publishRemove(request);
+      blackboard.publishRemove(request);
     }
   }
 
-  /** finds the selected oplan using its ID as a key
-  */
-  private OplanInfo findOplanById(String oplanID) {
-    synchronized(oplanInfoSubscription) {
-      for (Iterator iterator = oplanInfoSubscription.iterator(); 
-	   iterator.hasNext();) {
-	OplanInfo moi = (OplanInfo) iterator.next();
-	if (oplanID.equals(moi.getOpId())) {
-	  return moi;
-	}
-      }
-      return null;
-    }
-  }
-
-  private void handleMyOrgAssets(Enumeration e) {
-    while (e.hasMoreElements()) {
-      Organization org = (Organization)e.nextElement();
+  private Organization getSelfOrg() {
+    for (Iterator iterator = myorgassets.iterator();
+	 iterator.hasNext();) {
+      Organization org = (Organization) iterator.next();
 
       // Pick up self org
       if (org.isSelf()) {
-        selfOrgAsset = org;
+	return org;
       }
     }
-  }
 
-  // Helper method used only on rehydration
-  private void checkForPrivateState(Enumeration e) {
-    if (myPrivateState == null) {
-      while(e.hasMoreElements()) {
-        myPrivateState = (MyPrivateState) e.nextElement();
-      }
-    }
-  }
+    return null;
 
+  }
+  
   private void readOplanTimeframe() 
     throws SQLException, IOException {
-
-    String oplanId = parseOplanID(queryFile);
-
-    dbp = DBProperties.readQueryFile(queryFile);
-    database = dbp.getProperty("Database");
-    username = dbp.getProperty("Username");
-    password = dbp.getProperty("Password");
 
     String oplan_opName;
     int min_planning_offset;
     int start_offset;
     int end_offset;
+    String stage_name;
+    String stage_desc;
+    SortedSet ss = new TreeSet();
 
     try {
       String dbtype = dbp.getDBType();
@@ -347,8 +524,9 @@ public class GLSInitServlet extends LDMSQLPlugin {
       Connection conn =  DBConnectionPool.getConnection(database, username, password);
       try {
         Statement stmt = conn.createStatement();
-        String query = dbp.getQuery("OplanTimeframeQuery", 
-                                    Collections.singletonMap(":oplan_id:", oplanId));
+        String query = dbp.getQuery(TIME_QUERY_NAME, 
+                                    Collections.singletonMap(":oplanid:", oplanId));
+
         ResultSet rs = stmt.executeQuery(query);
         if ( rs.next()) {
           if (rs.getObject(1) instanceof String)
@@ -363,6 +541,29 @@ public class GLSInitServlet extends LDMSQLPlugin {
           throw new SQLException("No results from query:" +query);
         }
         rs.close();
+
+        query = dbp.getQuery(STAGE_QUERY_NAME, 
+                                    Collections.singletonMap(":oplanid:", oplanId));
+
+        rs = stmt.executeQuery(query);
+        while (rs.next()) {
+          if (rs.getObject(1) instanceof String) {
+            stage_name = ((String)rs.getObject(1));
+          }
+          else
+            stage_name = new String ((byte[])rs.getObject(1),"US-ASCII");
+          int stage_num = ((Number)(rs.getObject(2))).intValue();
+          if (rs.getObject(3) instanceof String) {
+            stage_desc = ((String)rs.getObject(3));
+          }
+          else
+            stage_desc = new String ((byte[])rs.getObject(3),"US-ASCII");
+          OplanStage op = new OplanStage(stage_num, stage_name, stage_desc);
+          ss.add(op);
+        }
+
+
+
         stmt.close();
       } catch (Exception except){
         if (except instanceof SQLException) {
@@ -386,13 +587,21 @@ public class GLSInitServlet extends LDMSQLPlugin {
     }
 
     long start_time = currentTimeMillis();
-    OplanInfo moi = new OplanInfo(oplanId, 
+    myPrivateState.opInfo = new OplanInfo(oplanId, 
                                   oplan_opName, 
                                   start_time, 
                                   min_planning_offset, 
                                   start_offset, 
-                                  end_offset);
-    getBlackboardService().publishAdd(moi);
+                                  end_offset,
+                                  ss);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("GLSInitServlet: OplanStages from db are: "
+                   +myPrivateState.opInfo.getRemainingStages());
+    }
+    
+    blackboard.publishChange(myPrivateState);
+    doNotify();
 
   }
 
@@ -402,98 +611,302 @@ public class GLSInitServlet extends LDMSQLPlugin {
     if (driverClass == null) {
       // this is likely a "cougaar.rc" problem.
       // Parameters should be modified to help generate this exception:
-      throw new SQLException("Unable to find driver class for \""+
-                             driverParam+"\" -- check your \"cougaar.rc\"");
+      throw new SQLException("Unable to find driver class for \""
+                             +driverParam+"\" -- check your \"cougaar.rc\"");
     }
     Class.forName(driverClass);
   }
   
-  private String parseOplanID(String queryFile) {
-    String oplanId = null;
-    int dot = queryFile.indexOf('.');
-    oplanId = queryFile.substring(0,dot);
-    
-    return oplanId;
-  }
-
   private void publishOplan() {
-    getBlackboardService().openTransaction();
+    if (myPrivateState.oplanInfoExists) {
+      // Calling this is an error
+      if (logger.isWarnEnabled())
+	logger.warn("Not re-fetching Oplan Info", new Throwable());
+      return;
+    }
+
+    blackboard.openTransaction();
     try {
       readOplanTimeframe();
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Failed to get oplan timeframe from DB", e);
     }
     myPrivateState.oplanInfoExists = true;
-    getBlackboardService().publishChange(myPrivateState);    
-    getBlackboardService().closeTransactionDontReset();
-    myPrivateState.unpublishedChanges=false;
+    blackboard.publishChange(myPrivateState);    
+    blackboard.closeTransactionDontReset();
   }
 
   private void publishAllRootGLS() {
-    for (Iterator i = oplanInfoSubscription.iterator(); i.hasNext(); ) {
-      OplanInfo moi = (OplanInfo) i.next();
-        sendGLS(moi);
-    }
+    sendGLS();
   }
 
   public void publishRootGLS(String oplanID, String c0_date) {
-    openTransaction();
-    OplanInfo oi = findOplanById(oplanID);
-    oi.setCDate(c0_date);
-    sendGLS(oi);
-    closeTransactionDontReset();
-  }
-
-  public void rescindRootGLS(String oplanID) {
-    openTransaction();
-    OplanInfo myOpIn = findOplanById(oplanID);
-    System.out.println("rescindRootGLS() myOpIn " + myOpIn);
-    for (Iterator it = glsSubscription.iterator(); it.hasNext();) {
-      Task t = (Task) it.next();
-      ContextOfOplanIds coi = (ContextOfOplanIds) t.getContext();
-      if (coi.contains(myOpIn.getOpId())) {
-	publishRemove(t);
+    blackboard.openTransaction();
+    if (myPrivateState.initialSendGLS){
+      myPrivateState.opInfo.setCDate(c0_date); 
+      myPrivateState.listening_to = LISTENING_TO_PROP_REG_SRVCS;
+      sendPropagateRegisterServices();
+    }
+    else {
+      boolean hasFindProvidersStep = checkForFindProviders();
+      if (hasFindProvidersStep) {
+        myPrivateState.listening_to = LISTENING_TO_PROP_FIND_PROV;
+        myPrivateState.opInfo.advanceStage();
+        if (myPrivateState.initialSendFindProv){
+          myPrivateState.initialSendFindProv = false;
+          sendPropagateFindProviders();
+        }
+        else {
+          updateRootPropFindProviders();
+        }
+      }
+      else {
+        myPrivateState.listening_to = LISTENING_TO_GLS;
+        updateRootGLS();
       }
     }
-    closeTransactionDontReset();
+    blackboard.closeTransactionDontReset();
   }
 
-  private void sendGLS(OplanInfo moi) {
+  private void updateRootPropFindProviders(){
+    SortedSet remaining =myPrivateState.opInfo.getRemainingStages(); 
+    if (remaining.isEmpty()) {
+      return;
+    }
+    myPrivateState.opInfo.advanceStage();
+    updatePropFindProviders();
+    blackboard.publishChange(myPrivateState);    
+    if (logger.isDebugEnabled()) {
+      logger.debug("updateRootPropFindProviders: remainingStages are " 
+                   +myPrivateState.opInfo.getRemainingStages() );
+    }
+
+  }
+  private void updatePropFindProviders(){
+    Vector prepphrases = new Vector();
+    PlanElement pe = (PlanElement) findProvSubscription.first();
+    Task pfp = pe.getTask();
+
+    NewPrepositionalPhrase pp = makeForOplanStagesPhrase();
+
+    // Get the curr EstimatedResult. If it is not 1.0, complain loudly
+    // with a Stacktrace
+    AllocationResult currAR = pe.getEstimatedResult();
+    if (currAR != null && currAR.getConfidenceRating() < 1.0) {
+      logger.error("updatePropFindProviders asked to change OplanStages to " 
+                   + pp.getIndirectObject() + " when confidence was " 
+                   + currAR.getConfidenceRating(), new Throwable());
+      return;
+    }
+
+    Enumeration origpp = pfp.getPrepositionalPhrases();
+    while (origpp.hasMoreElements()) {
+      PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
+      if (theorigpp.getPreposition().equals("ForOplanStages")) {
+        prepphrases.addElement(pp); // Substitute new phrase
+      } else {
+ 	prepphrases.addElement(theorigpp);
+      }
+    }
+    ((NewTask)pfp).setPrepositionalPhrases(prepphrases.elements());
+
+    if (logger.isInfoEnabled()) {
+      logger.info("updatePropFindProviders: sentStages changing to: " 
+                  + pp.getIndirectObject());
+    }
+
+    blackboard.publishChange(pfp);
+
+    // Explicitely set confidence to 0.0 so we don't get premature completion
+    pe.setEstimatedResult(PluginHelper.createEstimatedAllocationResult(pfp,
+								       theLDMF,
+								       0.0,
+								       true));
+    blackboard.publishChange(pe);
+    
+    if (logger.isDebugEnabled()) {
+      logger.debug("\n" + formatDate(System.currentTimeMillis()) 
+                   + " Updating Task: " + pfp);
+    }
+
+  }
+
+  public void updateRootGLS() {
+    SortedSet remaining =myPrivateState.opInfo.getRemainingStages(); 
+    if (remaining.isEmpty()) {
+      return;
+    }
+    myPrivateState.opInfo.advanceStage();
+    updateGLS();
+    blackboard.publishChange(myPrivateState);    
+    if (logger.isDebugEnabled()) {
+      logger.debug("updateRootGLS: remainingStages are " 
+                   +myPrivateState.opInfo.getRemainingStages() );
+    }
+  }
+
+  private void updateGLS() {
+    Vector prepphrases = new Vector();
+    PlanElement pe = (PlanElement) glsSubscription.first();
+    Task gls = pe.getTask();
+
+    NewPrepositionalPhrase pp = makeForOplanStagesPhrase();
+
+    // Get the curr EstimatedResult. If it is not 1.0, complain loudly
+    // with a Stacktrace
+    AllocationResult currAR = pe.getEstimatedResult();
+    if (currAR != null && currAR.getConfidenceRating() < 1.0) {
+      logger.error("updateGLS asked to change OplanStages to " + pp.getIndirectObject() 
+                   + " when confidence was " 
+                   + currAR.getConfidenceRating(), new Throwable());
+      return;
+    }
+
+    Enumeration origpp = gls.getPrepositionalPhrases();
+    while (origpp.hasMoreElements()) {
+      PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
+      if (theorigpp.getPreposition().equals("ForOplanStages")) {
+        prepphrases.addElement(pp); // Substitute new phrase
+      } else {
+ 	prepphrases.addElement(theorigpp);
+      }
+    }
+    ((NewTask)gls).setPrepositionalPhrases(prepphrases.elements());
+
+    if (logger.isInfoEnabled()) {
+      logger.info("updateGLS: sentStages changing to: " + pp.getIndirectObject());
+    }
+
+    blackboard.publishChange(gls);
+
+    // Explicitely set confidence to 0.0 so we don't get premature completion
+    pe.setEstimatedResult(PluginHelper.createEstimatedAllocationResult(gls,
+								       theLDMF,
+								       0.0,
+								       true));
+    blackboard.publishChange(pe);
+    
+    if (logger.isDebugEnabled()) {
+      logger.debug("\n" + formatDate(System.currentTimeMillis()) 
+                   + " Updating Task: " + gls);
+    }
+  }
+
+
+  private void sendPropagateRegisterServices() {
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
-    task.setSource(getMessageAddress());
-    task.setDestination(getMessageAddress());
+    task.setSource(getAgentIdentifier());
+    task.setDestination(getAgentIdentifier());
+    
+    // set prepositional phrases
+    Vector phrases = new Vector(2);
+    NewPrepositionalPhrase newpp;
+
+    newpp = theLDMF.newPrepositionalPhrase();
+    newpp.setPreposition(FOR_ORGANIZATION);
+    newpp.setIndirectObject(getSelfOrg());
+    phrases.add(newpp);
+
+    newpp = theLDMF.newPrepositionalPhrase();
+    newpp.setPreposition(FOR_ROOT);
+    newpp.setIndirectObject(new Integer(++myPrivateState.prsTaskNumber));
+    phrases.add(newpp);
+    task.setPrepositionalPhrases(phrases.elements());
+
+    // Set the context
+    try {
+      ContextOfOplanIds context = new ContextOfOplanIds(oplanId);
+      task.setContext(context);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+    // verb
+    task.setVerb(PROPAGATE_REGISTER_SERVICES);
+
+    blackboard.publishChange(myPrivateState);
+    blackboard.publishAdd(task);
+  }
+
+  private void sendPropagateFindProviders() {
+    NewTask task = theLDMF.newTask();
+    // ensure this is a root level task
+    task.setPlan(theLDMF.getRealityPlan());
+    task.setSource(getAgentIdentifier());
+    task.setDestination(getAgentIdentifier());
     
     // set prepositional phrases
     Vector phrases = new Vector(3);
     NewPrepositionalPhrase newpp;
 
     newpp = theLDMF.newPrepositionalPhrase();
-    newpp.setPreposition(Constants.Preposition.FOR);
-    newpp.setIndirectObject(selfOrgAsset);
+    newpp.setPreposition(FOR_ORGANIZATION);
+    newpp.setIndirectObject(getSelfOrg());
     phrases.add(newpp);
 
     newpp = theLDMF.newPrepositionalPhrase();
-    newpp.setPreposition("ForRoot");
-    newpp.setIndirectObject(new Integer(++myPrivateState.taskNumber));
+    newpp.setPreposition(FOR_ROOT);
+    newpp.setIndirectObject(new Integer(++myPrivateState.pfpTaskNumber));
+    phrases.add(newpp);
+    phrases.add(makeForOplanStagesPhrase());
+
+    task.setPrepositionalPhrases(phrases.elements());
+
+    // Set the context
+    try {
+      ContextOfOplanIds context = new ContextOfOplanIds(oplanId);
+      task.setContext(context);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+    // verb
+    task.setVerb(PROPAGATE_FIND_PROVIDERS);
+
+    blackboard.publishChange(myPrivateState);
+    blackboard.publishAdd(task);
+  }
+
+
+
+  private void sendGLS() {
+    NewTask task = theLDMF.newTask();
+    // ensure this is a root level task
+    task.setPlan(theLDMF.getRealityPlan());
+    task.setSource(getAgentIdentifier());
+    task.setDestination(getAgentIdentifier());
+    
+    // set prepositional phrases
+    Vector phrases = new Vector(4);
+    NewPrepositionalPhrase newpp;
+
+    newpp = theLDMF.newPrepositionalPhrase();
+    newpp.setPreposition(FOR_ORGANIZATION);
+    newpp.setIndirectObject(getSelfOrg());
     phrases.add(newpp);
 
     newpp = theLDMF.newPrepositionalPhrase();
-    newpp.setPreposition("WithC0");
-    newpp.setIndirectObject(new Long(moi.getCDate().getTime()));
+    newpp.setPreposition(FOR_ROOT);
+    newpp.setIndirectObject(new Integer(++myPrivateState.glsTaskNumber));
     phrases.add(newpp);
 
-    publishChange(myPrivateState);
+    newpp = theLDMF.newPrepositionalPhrase();
+    newpp.setPreposition(WITH_C0);
+    newpp.setIndirectObject(new Long(myPrivateState.opInfo.getCDate().getTime()));
+    phrases.add(newpp);
+    phrases.add(makeForOplanStagesPhrase());
+    blackboard.publishChange(myPrivateState);
 
     task.setPrepositionalPhrases(phrases.elements());
 
     // verb
-    task.setVerb(Constants.Verb.GetLogSupport);
+    task.setVerb(GET_LOG_SUPPORT);
 
     // schedule
-    long startTime = moi.getStartDay().getTime();
-    long endTime = moi.getEndDay().getTime();
+    long startTime = myPrivateState.opInfo.getStartDay().getTime();
+    long endTime = myPrivateState.opInfo.getEndDay().getTime();
 
     AspectValue startTav = TimeAspectValue.create(AspectType.START_TIME, startTime);
     AspectValue endTav = TimeAspectValue.create(AspectType.END_TIME, endTime);
@@ -512,18 +925,30 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
     // Set the context
     try {
-      String oplanId = parseOplanID(queryFile);
       ContextOfOplanIds context = new ContextOfOplanIds(oplanId);
-      System.out.println("GLSInitPlugin: Setting context to: " + oplanId);      
+      if (logger.isDebugEnabled()) {
+        logger.debug("GLSInitPlugin: Setting context to: " + oplanId);      
+      }
       task.setContext(context);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
     
-    publishAdd(task);
-    System.out.println("\n" + formatDate(System.currentTimeMillis()) + " Send Task: " + task);
+    blackboard.publishAdd(task);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("\n" + formatDate(System.currentTimeMillis()) 
+                   + " Send Task: " + task);
+    }
   }
-  
+
+  private NewPrepositionalPhrase makeForOplanStagesPhrase() {
+    NewPrepositionalPhrase newpp = theLDMF.newPrepositionalPhrase();
+    newpp.setPreposition(FOR_OPLAN_STAGES);
+    newpp.setIndirectObject(new TreeSet(myPrivateState.opInfo.getSentStages()));
+    return newpp;
+  }
+
   protected static DateFormat logTimeFormat =
     new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
 
@@ -541,20 +966,27 @@ public class GLSInitServlet extends LDMSQLPlugin {
     private Date startDay;
     private Date endDay;
     private long start_time;
+    private SortedSet remainingStages;
+    private SortedSet sentStages;
+    private OplanStage displayStage;
 
     public OplanInfo(String opId, 
                      String opName, 
                      long start_time,
                      int min_planning_offset, 
                      int start_offset, 
-                     int end_offset)  {
+                     int end_offset,
+                     SortedSet s)  {
       this.opId = opId;
       this.opName = opName;
       this.start_time = start_time;
       this.min_planning_offset = min_planning_offset;
       this.start_offset = start_offset;
       this.end_offset = end_offset;
+      remainingStages = s;
+      sentStages = new TreeSet();
 
+      updateDisplayStage();
       setCDate();
     }
     public String getOpName(){
@@ -590,11 +1022,48 @@ public class GLSInitServlet extends LDMSQLPlugin {
     public void setStartDay() {
       long startCalc = cDate.getTime() + (start_offset * 86400000L);
       startDay = new Date(startCalc);
-
     }
     public void setEndDay() {
-      long endCalc = cDate.getTime() + (end_offset * 86400000L);  // days in milliseconds
+      long endCalc = cDate.getTime() + (end_offset * 86400000L);// days in milliseconds
       endDay = new Date(endCalc);
+    }
+    public SortedSet getRemainingStages() {
+      return remainingStages;
+    }
+
+    public SortedSet getSentStages() {
+      return sentStages;
+    }
+
+    public void setDisplayStage(OplanStage dispStage){
+      displayStage = dispStage;
+    }
+    
+    public OplanStage getDisplayStage() {
+      return displayStage;
+    }
+
+    public void updateDisplayStage() {
+      for (Iterator i = remainingStages.iterator(); i.hasNext();) {
+        OplanStage os = (OplanStage) i.next();
+        //check whether stage is evenly numbered indicating major stage
+        if ((os.getNumber() & 1) == 0) { 
+          setDisplayStage(os);
+          break;
+        }
+      }
+    }
+    
+    public void advanceStage() {
+      OplanStage op = (OplanStage)remainingStages.first();
+      sentStages.add(op);
+      remainingStages.remove(op);
+    }
+
+    public void resetStages() {
+      for(Iterator i = sentStages.iterator(); i.hasNext();){
+        remainingStages.add((OplanStage)i.next());
+      }
     }
   }
 
@@ -603,7 +1072,7 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
       String command = request.getParameter("command");
-      //System.out.println("GLSServlet got request command is: " + command);
+      if (logger.isDebugEnabled()) logger.debug("GLSServlet got request command is: " + command);
       response.setContentType("text/html");
       try {
 	PrintWriter out = response.getWriter();
@@ -611,22 +1080,15 @@ public class GLSInitServlet extends LDMSQLPlugin {
 	out.close();
       } catch (java.io.IOException ie) { ie.printStackTrace(); }
 
-      if (command.equals(SENDOPLAN)) {
+      if (command.equals(GETOPINFO)) {
 	publishOplan();
       }
-//       if (command.equals(UPDATEOPLAN)) {
-// 	refreshOplan();
-//       }
       if (command.equals(PUBLISHGLS)) {
-	//System.out.println("oplanID is " + request.getParameter("oplanID"));
- 	//System.out.println("cDay is " + request.getParameter("c0_date"));
+	if (logger.isDebugEnabled()) logger.debug("oplanID is " + request.getParameter("oplanID"));
+ 	if (logger.isDebugEnabled()) logger.debug("cDay is " + request.getParameter("c0_date"));
         String oplanID = request.getParameter("oplanID");
         String c0 = request.getParameter("c0_date");
 	publishRootGLS(oplanID, c0);
-      }
-      if (command.equals(RESCINDGLS)) {
-	//System.out.println("oplanID is " + request.getParameter("oplanID"));
-	rescindRootGLS(request.getParameter("oplanID"));
       }
     }
   }
@@ -635,7 +1097,9 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
       String command = request.getParameter("command");
-      //System.out.println("GLSReplyServlet got request " + command);
+      if (logger.isDebugEnabled()) {
+        logger.debug("GLSReplyServlet got request " + command);
+      }
       // make this smarter?
       ReplyWorker worker = new ReplyWorker(request, response);
       worker.execute();
@@ -658,22 +1122,37 @@ public class GLSInitServlet extends LDMSQLPlugin {
 	PrintWriter out = response.getWriter();
 	// keep writing back to the client
   	while(true) {
-	  StringBuffer sb = new StringBuffer();
-	  for (Iterator it = oplanInfoSubscription.iterator(); it.hasNext(); ) {
-	    OplanInfo myOpInfo = (OplanInfo) it.next();
-	    sb.append("<oplan name=" );
-	    sb.append(myOpInfo.getOpName());
-	    sb.append(" id=");
-	    sb.append(myOpInfo.getOpId());
-            sb.append( "c0_date=");
-            sb.append(cDateFormat.format(myOpInfo.getCDate()));
-	    sb.append(">");
-	    out.println(sb);
-	    //System.out.println(sb);
-	  }
-	  out.println("<GLS " + glsSubscription.size() + ">");
-	  //System.out.println("GLS " + glsSubscription.size());
-	  out.flush();
+          if (logger.isDebugEnabled()) {
+            logger.debug("GLSInitServlet: Refreshing GLSClient.");
+          }
+          if (myPrivateState.opInfo != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("<oplan name=" );
+            sb.append(myPrivateState.opInfo.getOpName());
+            sb.append(" id=");
+            sb.append(myPrivateState.opInfo.getOpId());
+            sb.append(" c0_date=");
+            sb.append(cDateFormat.format(myPrivateState.opInfo.getCDate()));
+            sb.append(" nextStage=");
+
+            SortedSet remaining =myPrivateState.opInfo.getRemainingStages(); 
+            if (remaining.isEmpty()) {
+              sb.append("All Stages Sent");
+              sb.append(" stageDesc=");
+            }
+            else {
+              sb.append(((OplanStage)(myPrivateState.opInfo.getDisplayStage())).getName());
+              sb.append(" stageDesc=");
+              sb.append(((OplanStage)(myPrivateState.opInfo.getDisplayStage())).getDescription());
+            }
+            sb.append(">");
+            out.println(sb);
+            if (logger.isDebugEnabled()) {
+              logger.debug("GLSInitServlet: ReplyWorker stringbuffer :"+sb);
+            }
+          }
+          
+          out.flush();
   	  synchronized(monitor) {
   	    try {
 	      // sit until notified that gls or oplan has changed
@@ -683,8 +1162,11 @@ public class GLSInitServlet extends LDMSQLPlugin {
   	    }
   	  }
   	}
-      } catch (java.io.IOException ie) {ie.printStackTrace(); }
+      } catch (java.io.IOException ie) {
+        ie.printStackTrace(); 
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
     }
   }
 }
-

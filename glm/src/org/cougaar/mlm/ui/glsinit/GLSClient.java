@@ -57,20 +57,24 @@ public class GLSClient extends JPanel {
   private JTextField agentField = new JTextField(10);
 
   /** for feedback to user on whether root GLS was successful **/
-  private JLabel initLabel = new JLabel ("0 GLS Tasks published ");
+  private JLabel initLabel = new JLabel("Next Stage Description");
   private JLabel oplanPubLabel = new JLabel("No Oplan Info retrieved");
 
   /** A button to push to kick things off **/
-  private JButton initButton = new JButton("Send GLS root");
+  private JButton initButton = new JButton("Send Next Stage");
   private JButton oplanButton = new JButton("Get Oplan Info");
-  private JButton rescindButton = new JButton("Rescind GLS root");
+//   private JButton rescindButton = new JButton("Rescind GLS root");
   private JButton connectButton = new JButton("Connect");
 
   /** A label for displaying the given Oplan **/
   private JLabel oplanLabel = new JLabel();
   
   private String myOplanId;
+  //private String myStageName;
 
+  /** A label for displaying the current Stage **/
+  private JLabel currStageLabel = new JLabel("Current Stage Description");
+  private String currentStage;
 
   /** A text field for setting the CDay **/
   private JTextField cDayField = new JTextField(10); 
@@ -86,8 +90,8 @@ public class GLSClient extends JPanel {
   /** commands and parameters sent to those servlets **/
   private static final String CONNECT_COMMAND = "connect";
   private static final String INIT_COMMAND = "publishgls";
-  private static final String RESCIND_COMMAND = "rescindgls";
-  private static final String OPLAN_COMMAND = "sendoplan";
+//   private static final String RESCIND_COMMAND = "rescindgls";
+  private static final String OPLAN_COMMAND = "getopinfo";
   private static final String OPLAN_PARAM_NAME = "&oplanID=";
   private static final String CDATE_PARAM_NAME = "&c0_date=";
 
@@ -162,6 +166,7 @@ public class GLSClient extends JPanel {
     else
       createSimpleConnectionPanel();
     createOplanPanel();
+    createStageDescPanel();
     createInitPanel();
   }
 
@@ -220,7 +225,7 @@ public class GLSClient extends JPanel {
   private void disableButtons() {
     initButton.setEnabled(false);
     oplanButton.setEnabled(false);
-    rescindButton.setEnabled(false);
+    //rescindButton.setEnabled(false);
     connectButton.setEnabled(false);
   }
 
@@ -230,7 +235,8 @@ public class GLSClient extends JPanel {
     panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
     
     panel.add(comp1);
-    panel.add(comp2);
+    if (comp2 != null)
+      panel.add(comp2);
     return panel;
   }
 
@@ -380,15 +386,26 @@ public class GLSClient extends JPanel {
     add(oplanInfoPanel);
   }
 
+
+  private void createStageDescPanel(){
+    JPanel stagePanel = new JPanel(new FlowLayout());
+    stagePanel.setBorder(BorderFactory.createTitledBorder("Current Stage"));
+    stagePanel.add(currStageLabel);
+
+    add(stagePanel);
+  }
+
+
+
   private void createInitPanel() {
     initButton.setFocusPainted(false);
     initButton.setEnabled(false); // Leave this disabled until we have oplans
-    rescindButton.setFocusPainted(false);
-    rescindButton.setEnabled(false); // Leave this disabled until we have oplans
+//     rescindButton.setFocusPainted(false);
+//     rescindButton.setEnabled(false); // Leave this disabled until we have oplans
     initButton.addActionListener(buttonListener);
     initButton.setActionCommand(INIT_COMMAND);
-    rescindButton.addActionListener(buttonListener);
-    rescindButton.setActionCommand(RESCIND_COMMAND);
+//     rescindButton.addActionListener(buttonListener);
+//     rescindButton.setActionCommand(RESCIND_COMMAND);
     
     JPanel glsButtons = new JPanel(new GridBagLayout());
     int x = 0;
@@ -406,19 +423,20 @@ public class GLSClient extends JPanel {
                                           new Insets(0, 5, 5, 5),
                                           0, 0));
 
-    JPanel rescindPanel = new JPanel(new GridBagLayout());
-    x = 0;
-    y = 0;
-    rescindPanel.add(rescindButton,
-                   new GridBagConstraints(x, y, 1, 1, 0.0, 0.0,
-                                          GridBagConstraints.WEST,
-                                          GridBagConstraints.HORIZONTAL,
-                                          new Insets(0, 5, 5, 5),
-                                          0, 0));
+//     JPanel rescindPanel = new JPanel(new GridBagLayout());
+//     x = 0;
+//     y = 0;
+//     rescindPanel.add(rescindButton,
+//                    new GridBagConstraints(x, y, 1, 1, 0.0, 0.0,
+//                                           GridBagConstraints.WEST,
+//                                           GridBagConstraints.HORIZONTAL,
+//                                           new Insets(0, 5, 5, 5),
+//                                           0, 0));
 
 
-    JPanel glsPanel = createXPanel(glsButtons, rescindPanel);
-    glsPanel.setBorder(BorderFactory.createTitledBorder("GLS"));
+//     JPanel glsPanel = createXPanel(glsButtons, rescindPanel);
+     JPanel glsPanel = createXPanel(glsButtons, null);
+    glsPanel.setBorder(BorderFactory.createTitledBorder("Next Stage"));
     add(glsPanel);
   }
 
@@ -463,9 +481,15 @@ public class GLSClient extends JPanel {
     public void actionPerformed(ActionEvent ae) {
       String command = ae.getActionCommand();
       String c0Date = null;
-      if (command.equals(INIT_COMMAND) || command.equals(RESCIND_COMMAND)) {
-        c0Date = (String)cDayField.getText();
+      if (command.equals(INIT_COMMAND)){
+          initButton.setEnabled(false);
+          initLabel.setText("");
+          currStageLabel.setText(currentStage);
+          c0Date = (String)cDayField.getText();
       }
+//       if (command.equals(INIT_COMMAND) || command.equals(RESCIND_COMMAND)) {
+//         c0Date = (String)cDayField.getText();
+//       }
       String urlString = getURLString(GLS_INIT_SERVLET, command, myOplanId, c0Date);
       URL url;
       URLConnection urlConnection;
@@ -575,11 +599,11 @@ public class GLSClient extends JPanel {
 
   	String inputLine;
   	while ((inputLine = in.readLine()) != null && !stopping) {
-	  if (inputLine.indexOf("oplan") > 0) {
+	  if (inputLine.indexOf("oplan") > 0) {//>=
             addOplanInfo(inputLine);
           }          
-	  else if (inputLine.indexOf("GLS") > 0)
-            updateGLSTasks(inputLine);
+// 	  else if (inputLine.indexOf("GLS") > 0)//>=
+//             updateGLSTasks(inputLine);
 	}
   	in.close();
         if (stopping)
@@ -625,7 +649,8 @@ public class GLSClient extends JPanel {
 
     /**
      * Add OPlan c0 date read from the agent to the display,
-     * and update the GUI for the oplan name.
+     * and update the GUI for the oplan name.  Also read 
+     * next stage of oplan to send.
      */
     private void addOplanInfo(String s) {
       int nameIndex = s.indexOf("name=") + 5;
@@ -636,31 +661,47 @@ public class GLSClient extends JPanel {
       myOplanId = s.substring(idIndex +3, idIndex + 8);
 
       int dateIndex = s.indexOf("c0_date=") + 8;
-      String c0Date = s.substring(dateIndex, s.length()-1);
+      int endOfDateInd = s.indexOf("nextStage") -1;
+      String c0Date = s.substring(dateIndex,endOfDateInd);
       cDayField.setEditable(true);
       cDayField.setText(c0Date);
       
       oplanButton.setEnabled(false);
       oplanPubLabel.setText("Oplan Info Retrieved");
-      initButton.setEnabled(true);
+      
+      int stageIndex = s.indexOf("nextStage=") + 10;
+      int endOfStageIndex = s.indexOf("stageDesc") -1;
+      String stageName = s.substring(stageIndex, endOfStageIndex);
+      if (stageName.equals("All Stages Sent")) {
+        initButton.setText(stageName);
+        initLabel.setText("");
+      }
+      else {
+        int stageDescIndex = s.indexOf("stageDesc=") + 10;
+        String stageDesc = s.substring(stageDescIndex, s.length()-1);
+        initButton.setText("Send " +stageName);
+        initButton.setEnabled(true);
+        String nameAndDesc = stageName +": "+stageDesc;
+        initLabel.setText(nameAndDesc);
+        currentStage = nameAndDesc;
+      }
       getRootPane().setDefaultButton(initButton); 
     }
 
-
-
-    /**
-     * Update information about GLS tasks from information
-     * read from the agent and update the GUI.
-     */
-    private void updateGLSTasks(String s) {
-      int numGLS = Integer.parseInt(s.substring(s.indexOf("GLS")+4, 
-                                                s.length()-1));
-      initLabel.setText(numGLS + " GLS Tasks published");
-      if (numGLS > 0) 
-        rescindButton.setEnabled(true);
-      else
-        rescindButton.setEnabled(false);
-    }
+//     /**
+//      * Update information about GLS tasks from information
+//      * read from the agent and update the GUI.
+//      */
+//     private void updateGLSTasks(String s) {
+//       int numGLS = Integer.parseInt(s.substring(s.indexOf("GLS")+4, 
+//                                                 s.length()-1));
+//       initLabel.setText(numGLS + " GLS Tasks published");
+      //Disable rescind button temporarily until its working again.
+//       if (numGLS > 0) 
+//         rescindButton.setEnabled(true);
+//       else
+//         rescindButton.setEnabled(false);
+//     }
 
   } // end LineReader class
 
@@ -672,7 +713,7 @@ public class GLSClient extends JPanel {
    */
   public static void main(String args[]) {
     GLSClient gui = new GLSClient("localhost", "8800", "NCA");
-    JFrame frame = new JFrame("GLS");
+    JFrame frame = new JFrame("OPlan Control");
     frame.getContentPane().add(gui);
     gui.setDefaultButton();
     String EXIT_ON_CLOSE_PROP =

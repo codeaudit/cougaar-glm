@@ -100,8 +100,8 @@ public class GeolocLocationImpl extends NamedPositionImpl
     String n = getName();
     return
       ((n != null) ?
-       (GeolocCode+"("+n+")") :
-       GeolocCode);
+       (super.toString()+" "+GeolocCode+"("+n+")") :
+       (super.toString()+" "+GeolocCode));
   }
 
   public Object clone() {

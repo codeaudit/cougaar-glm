@@ -107,7 +107,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    **/
   public void processRow(Object[] rowData) {
     if (rowData.length != 7) {
-      System.err.println("OrgActivityQueryHandler.processRow() - expected 8 columns of data, " +
+      System.err.println("OrgActivityQueryHandler.processRow() - expected 7 columns of data, " +
                          " got " + rowData.length);
     }
     try {
@@ -159,7 +159,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
       if (needToUpdate(orgInfo)) {
         
         /* Debugging  */
-        /*
+        
         for (Iterator oaIterator = orgActivities.iterator();
              oaIterator.hasNext();) {
           OrgActivity orgActivity = (OrgActivity)oaIterator.next();
@@ -170,7 +170,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                              orgActivity.getTimeSpan().getEndDate() + " " + 
                              orgActivity.getGeoLoc());
         }
-        */
+        
         myPlugin.updateOrgActivities(myOplan, orgInfo.getOrgName(), 
                                      orgActivities);
       }
@@ -212,7 +212,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     
       OrgInfoElement element = 
         new OrgInfoElement(opTempo, 
-                           ((Date) myOplan.getCday()).getTime(), 
+                           System.currentTimeMillis(), 
                            myOplan.getCday(), 
                            ((Number) rowData[5]).intValue(), 
                            ((Number) rowData[6]).intValue());
@@ -258,7 +258,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
       OrgInfoElement element = 
         new OrgInfoElement(activity, 
-                           ((Date) myOplan.getCday()).getTime(),
+                           System.currentTimeMillis(),
                            myOplan.getCday(), 
                            ((Number) rowData[5]).intValue(), 
                            ((Number) rowData[6]).intValue());
@@ -306,7 +306,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
       OrgInfoElement element = 
         new OrgInfoElement(geoLoc, 
-                           ((Date) myOplan.getCday()).getTime(),
+                           System.currentTimeMillis(),
                            myOplan.getCday(), 
                            ((Number) rowData[5]).intValue(), 
                            ((Number) rowData[6]).intValue());
@@ -336,31 +336,32 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
   }
 
   protected boolean needToUpdate(OrgInfo orgInfo) {
-    for (Iterator iterator = orgInfo.getActivitySchedule().iterator();
-         iterator.hasNext();) {
-      OrgInfoElement element = (OrgInfoElement) iterator.next();
-      if (element.getLastModified() > myLastModifiedTime) {
-        return true;
-      }
-    }
+    return true;
+//     for (Iterator iterator = orgInfo.getActivitySchedule().iterator();
+//          iterator.hasNext();) {
+//       OrgInfoElement element = (OrgInfoElement) iterator.next();
+//       if (element.getLastModified() > myLastModifiedTime) {
+//         return true;
+//       }
+//     }
 
-    for (Iterator iterator = orgInfo.getLocationSchedule().iterator();
-         iterator.hasNext();) {
-      OrgInfoElement element = (OrgInfoElement) iterator.next();
-      if (element.getLastModified() > myLastModifiedTime) {
-        return true;
-      }
-    }
+//     for (Iterator iterator = orgInfo.getLocationSchedule().iterator();
+//          iterator.hasNext();) {
+//       OrgInfoElement element = (OrgInfoElement) iterator.next();
+//       if (element.getLastModified() > myLastModifiedTime) {
+//         return true;
+//       }
+//     }
 
-    for (Iterator iterator = orgInfo.getOpTempoSchedule().iterator();
-         iterator.hasNext();) {
-      OrgInfoElement element = (OrgInfoElement) iterator.next();
-      if (element.getLastModified() > myLastModifiedTime) {
-        return true;
-      }
-    }
+//     for (Iterator iterator = orgInfo.getOpTempoSchedule().iterator();
+//          iterator.hasNext();) {
+//       OrgInfoElement element = (OrgInfoElement) iterator.next();
+//       if (element.getLastModified() > myLastModifiedTime) {
+//         return true;
+//       }
+//     }
 
-    return false;
+//     return false;
   }
 
   /**
@@ -417,7 +418,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
         OrgActivity orgActivity = makeOrgActivity(orgInfo.getOrgName(),
                                                   start, end, activity, 
                                                   location, opTempo);
-        /** Debugging
+        /** Debugging**/
         if (orgActivity == null) {
           System.out.println(orgInfo.getOrgName() + ": activity row count = " + orgInfo.getActivitySchedule().size() +
                              " location row count = " + orgInfo.getLocationSchedule().size() +
@@ -427,7 +428,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
           re.printStackTrace();
           throw re;
         }
-        **/
+        /****/
         timeSpanSet.add(orgActivity);
 
         activity = endsAfter(end, activity, activityIterator);

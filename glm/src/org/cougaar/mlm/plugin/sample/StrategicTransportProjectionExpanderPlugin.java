@@ -60,14 +60,16 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
   private IncrementalSubscription nonorgassets;
   // Look for Failed Dispositions
   private IncrementalSubscription allocs;
-  private Calendar rightNow = Calendar.getInstance();
   private int count = 0;
-  Date startDate, endDate;
+  long startTime, endTime;
 	
+  private long now;
+
   private final static long ONE_DAY = 24L*60L*60L*1000L;
   private final static long ONE_WEEK = 7L*ONE_DAY;
 
   protected void setupSubscriptions() {
+    now = currentTimeMillis(); // start of run (scenario time)
     //subscribe to incoming tasks
     incomingTasks = (IncrementalSubscription) subscribe(taskPred);
     myExpansions = (IncrementalSubscription) subscribe(expansionPred);
@@ -110,10 +112,10 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
     //	System.out.println("&&&&&&&&&&&&&&&&&&&&& DRtoST myComponent is: " + myComponent);
     MessageAddress me = getMessageAddress();
     Verb newverb = Verb.get(Constants.Verb.TRANSPORT);
-    startDate = rightNow.getTime();
+    startTime = now;
     // increment date by 5 DAYS
-    rightNow.add(Calendar.DATE, 5);
-    endDate = rightNow.getTime();
+    now += 5 * ONE_DAY;
+    endTime = now;
     Vector mypreferences = new Vector();
     Enumeration e = nonorgassets.elements();
     NewWorkflow wf = theLDMF.newWorkflow();
@@ -189,11 +191,11 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
       subtask.setPlan( task.getPlan() );
 				// create some start and end time preferences
       mypreferences.removeAllElements();
-      AspectValue startAV = AspectValue.newAspectValue(AspectType.START_TIME, startDate.getTime());
+      AspectValue startAV = AspectValue.newAspectValue(AspectType.START_TIME, startTime);
       ScoringFunction startSF = ScoringFunction.createPreferredAtValue(startAV, 2);
       Preference startPref = theLDMF.newPreference(AspectType.START_TIME, startSF);
       mypreferences.addElement(startPref);
-      AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, endDate.getTime());
+      AspectValue endAV = AspectValue.newAspectValue(AspectType.END_TIME, endTime);
       ScoringFunction endSF = ScoringFunction.createPreferredAtValue(endAV, 2);
       Preference endPref = theLDMF.newPreference(AspectType.END_TIME, endSF);
       mypreferences.addElement(endPref);
@@ -211,11 +213,11 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
   // change the start & end time of the tasks
   private void resettime() {
     // increment date by 2 DAYS
-    rightNow.add(Calendar.DATE, 2);
-    startDate = rightNow.getTime();
+    now += 2 * ONE_DAY;
+    startTime = now;
     // increment date by 5 DAYS
-    rightNow.add(Calendar.DATE, 5);
-    endDate = rightNow.getTime();
+    now += 5 * ONE_DAY;
+    endTime = now;
     //reset counter
     count = 0;
   }

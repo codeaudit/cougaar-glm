@@ -215,19 +215,19 @@ public class MCCTriggerCreatorPlugin extends SimplePlugin
     {
         if (myVehicles.size() == 0) return false;
         ListIterator li = myVehicles.listIterator();
-        Calendar now = Calendar.getInstance();
+        long now = currentTimeMillis();
         while (li.hasNext()) {
             Asset asset = (Asset)li.next();
             RoleSchedule rs = asset.getRoleSchedule();
-            Date startDate = now.getTime();
-            Date endDate = new Date(startDate.getTime() + ONE_DAY);
+            long startTime = now;
+            long endTime = now + ONE_DAY;
             Task maintTask = createTask(asset);
             int[] aspectarray = new int[2];
             double[] resultsarray = new double[2];
             aspectarray[0] = AspectType.START_TIME;
             aspectarray[1] = AspectType.END_TIME;
-            resultsarray[0] = (double)startDate.getTime();
-            resultsarray[1] = (double)endDate.getTime();
+            resultsarray[0] = (double) startTime;
+            resultsarray[1] = (double) endTime;
             AllocationResult ar =
 	      theLDMF.newAllocationResult(0.0, true, aspectarray, resultsarray);
             Allocation alloc =

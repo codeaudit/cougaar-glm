@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.HashSet;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
@@ -36,6 +37,7 @@ import org.cougaar.planning.ldm.measure.Mass;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.NewMPTask;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.Preference;
@@ -50,6 +52,7 @@ import org.cougaar.glm.ldm.asset.NewContentsPG;
 import org.cougaar.glm.ldm.asset.NewPhysicalPG;
 import org.cougaar.glm.ldm.asset.PhysicalPG;
 import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
+
 
 class Filler {
   private static final String UNKNOWN = "UNKNOWN";
@@ -156,10 +159,22 @@ class Filler {
     return loadedQuantity;
   }
 
+  /** agglist is the list of parent tasks */
   protected double createMPTask (List agglist) {
     // now we do the aggregation
     NewMPTask mpt = _ac.newTask();
-        
+
+    HashSet set = new HashSet();
+    Iterator taskIt = agglist.iterator();
+    Task parentTask;
+    while (taskIt.hasNext()) {
+      parentTask = (Task)taskIt.next();
+      if (parentTask.getContext() != null) {
+        set.addAll((ContextOfOplanIds)parentTask.getContext());
+      }
+    }
+    mpt.setContext(new ContextOfOplanIds(set));
+
     // Set ContentsPG on container
     addContentsInfo((GLMAsset) mpt.getDirectObject(), agglist);
         

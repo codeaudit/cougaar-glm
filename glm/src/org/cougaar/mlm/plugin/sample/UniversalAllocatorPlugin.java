@@ -30,6 +30,8 @@ import org.cougaar.planning.plugin.util.AllocationResultHelper;
 import org.cougaar.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AbstractAsset;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
@@ -178,8 +180,40 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
             assetName.append('_');
             assetName.append(filter.verb);
         }
-	sink_asset = theLDMF.createPrototype("AbstractAsset", assetName.substring(0));
-	publishAdd(sink_asset);
+
+	final String aName = assetName.substring(0);
+
+	// See if an AbstractAsset with the appropriate TypeID already exists if rehydrating
+	if (didRehydrate()) {
+	  Collection sinks = query(new UnaryPredicate() {
+	      public boolean execute(Object o) {
+		if (o instanceof AbstractAsset) {
+		  Asset a = (Asset)o;
+		  // Must be a prototype with appropriate name
+		  // the assetName is the TypeId and the classname of the Asset is AbstractAsset
+		  TypeIdentificationPG tip = a.getTypeIdentificationPG();
+		  if (tip != null && aName.equals(tip.getTypeIdentification()))
+		    return true;
+		}
+		return false;
+	      }
+	    });
+	  if (sinks != null && ! sinks.isEmpty()) {
+	    Iterator iter = sinks.iterator();
+	    if (iter.hasNext())
+	      sink_asset = (Asset) iter.next();
+	  }
+	} // end didRehydrate test
+
+	if (sink_asset == null) {
+	  if (logger.isDebugEnabled())
+	    logger.debug(getAgentIdentifier() + " creating new AbAsset " + aName);
+	  sink_asset = theLDMF.createPrototype("AbstractAsset", aName);
+	  publishAdd(sink_asset);
+	} else {
+	  if (logger.isDebugEnabled())
+	    logger.debug(getAgentIdentifier() + " found old AbAsset " + aName);
+	}
     }
 
     /**

@@ -39,18 +39,16 @@ import org.cougaar.glm.ldm.oplan.Oplan;
  * behalf of SQLOplanPlugin. Updates oplan maintained by SQLOplanPlugin.
  */
 
-public class OplanQueryHandler  extends SQLOplanQueryHandler {
-  private static final String QUERY_NAME = "OplanInfoQuery";
+public class ActiveStagesQueryHandler  extends SQLOplanQueryHandler {
+  private static final String QUERY_NAME = "ActiveStagesQuery";
 
-  private String myOperationName;
-  private String myPriority;
-  //private Date myCday;
+  private int minRequiredStage = 0;
 
   /** this method is called before a query is started,
-   * before even getQuery.  The default method is empty
-   * but may be overridden.
+   * before even getQuery.
    **/
   public void startQuery() {
+    minRequiredStage = 0;      // In case it's not specified
   }
                         
   /** Construct and return an SQL query to be used by the Database engine.
@@ -64,42 +62,27 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
    * doing whatever is required.
    **/
   public void processRow(Object[] rowData) {
-    if (rowData.length != 2) {
-      System.err.println("OplanQueryHandler.processRow()- expected 2 columns of data, " +
+    if (rowData.length != 1) {
+      System.err.println("ActiveStagesQueryHandler.processRow()- expected 1 columns of data, " +
                          " got " + rowData.length);
     }
     try {
-      if (rowData[0] instanceof String)
-	myOperationName = (String) rowData[0];
-      else
-	myOperationName = new String ((byte[])rowData[0],"US-ASCII");
-
-      if (rowData[1] instanceof String)
-	myPriority = (String) rowData[1];
-      else
-	myPriority = new String ((byte[])rowData[1],"US-ASCII");
-
+      Number n = (Number) rowData[0];
+      minRequiredStage = n == null ? 0 : n.intValue();
     } catch (Exception usee) {
       System.err.println("Caught exception while executing a query: "+usee);
       usee.printStackTrace();
     }
- 
-
   }
-  
-
 
   /** this method is called when a query is complete, 
-   * afer the last call to processRow.  The default method is empty
-   * but may be overridden by subclasses.
+   * afer the last call to processRow.
    **/
   public void endQuery() {
     String oplanID = getParameter(OplanReaderPlugin.OPLAN_ID_PARAMETER);
     //should already have this oplan
     Oplan oplan = (Oplan) myPlugin.getOplan(oplanID).clone();
-    oplan.setOperationName(myOperationName);
-    oplan.setPriority(myPriority);
-      
+    oplan.setMinRequiredStage(minRequiredStage);
     myPlugin.updateOplanInfo(oplan);
   }
 }
