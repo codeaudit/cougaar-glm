@@ -138,18 +138,29 @@ public class OrgRTDataPlugin extends SimplePlugin implements StateObject {
   }
   */
 
-  protected void setupSubscriptions() {
-    aldmf = (GLMFactory)getFactory("glm");
-    getBlackboardService().setShouldBePersisted(false);
+  public void load() {
+    super.load();
 
-    if (!didRehydrate()) {
-      processOrganizations();	// Objects should already exist after rehydration
+    try {
+      getBlackboardService().openTransaction();
+
+      aldmf = (GLMFactory)getFactory("glm");
+      getBlackboardService().setShouldBePersisted(false);
+
+      if (!didRehydrate()) {
+        processOrganizations();	// Objects should already exist after rehydration
+      }
+
+      //Used in testing processing of remote RFS/RFD
+      /*
+         orgAssets = (IncrementalSubscription)subscribe(orgPred());
+         */
+    } finally {
+      getBlackboardService().closeTransaction();
     }
+  }
 
-    //Used in testing processing of remote RFS/RFD
-    /*
-    orgAssets = (IncrementalSubscription)subscribe(orgPred());
-    */
+  protected void setupSubscriptions() {
   }
 
   //Used in testing processing of remote RFS/RFD
