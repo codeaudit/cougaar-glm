@@ -474,7 +474,7 @@ public abstract class InventoryBG implements PGDelegate {
 
   // DRAT!!! Golden opportunity for refactoring.  Emergency demo solution
   // AHF -- Need to merge common code from addDueOut() and addDueOutProjeciton()
-  // demos SUCK!
+  // 
   private void addDueOutProjection(Task task) {
     PlanElement pe = task.getPlanElement();
     // If the task has just been rescinded, the plan element will be null.
