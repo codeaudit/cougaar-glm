@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 
 import java.util.*;
 
+import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.IncrementalSubscription;
 
 import org.cougaar.domain.planning.ldm.RootFactory;
@@ -423,6 +424,13 @@ abstract public class GenericPlugin extends SimplePlugIn  {
     */
   public RootFactory getGPFactory() {
     return getFactory();
+  }
+
+  /**
+    * Provides access to a protected method.
+    */
+  public ClusterIdentifier getGPClusterIdentifier() {
+    return getClusterIdentifier();
   }
 
 

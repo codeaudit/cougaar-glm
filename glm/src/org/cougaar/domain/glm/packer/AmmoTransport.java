@@ -4,6 +4,8 @@
 
 package org.cougaar.domain.glm.packer;
 
+import org.cougaar.core.cluster.ClusterIdentifier;
+
 // factories
 import org.cougaar.domain.planning.ldm.RootFactory;
 
@@ -42,7 +44,7 @@ public class AmmoTransport extends AggregationClosure {
   public static final double PACKING_LIMIT = 16.0; /* short tons */
 
   private static Asset MILVAN_PROTOTYPE = null;
-  private static int ITEM_ID = 0;
+  private static long counter = 0;
 
   // these instance variables constitute the "context" for this
   // "closure" 
@@ -74,19 +76,18 @@ public class AmmoTransport extends AggregationClosure {
 	return null;
       }
 
-      RootFactory factory = _gp.getGPFactory();
       if ((source == null) || 
           (dest == null)) {
 	System.err.println("AmmoTransport:  Error!  AmmoTransport not properly initialized: some parameter(s) are null.");
 	return null;
       }
 
-      Asset milvan = makeMilvan(factory);
+      Asset milvan = makeMilvan();
       if (milvan == null) {
         return null;
       }
 
-      NewMPTask task = factory.newMPTask();
+      NewMPTask task = _gp.getGPFactory().newMPTask();
       task.setVerb(Constants.Verb.Transport);
 
       task.setPriority(Priority.UNDEFINED);
@@ -96,14 +97,14 @@ public class AmmoTransport extends AggregationClosure {
       Vector preps = new Vector(2);
 
       NewPrepositionalPhrase fromPrepositionalPhrase = 
-        factory.newPrepositionalPhrase();
+        _gp.getGPFactory().newPrepositionalPhrase();
       fromPrepositionalPhrase.setPreposition(Constants.Preposition.FROM);
       fromPrepositionalPhrase.setIndirectObject(source);
       preps.addElement(fromPrepositionalPhrase);
 
       NewPrepositionalPhrase toPrepositionalPhrase = 
-        factory.newPrepositionalPhrase();
-      toPrepositionalPhrase = factory.newPrepositionalPhrase();
+        _gp.getGPFactory().newPrepositionalPhrase();
+      toPrepositionalPhrase = _gp.getGPFactory().newPrepositionalPhrase();
       toPrepositionalPhrase.setPreposition(Constants.Preposition.TO);
       toPrepositionalPhrase.setIndirectObject(dest);
       preps.addElement(toPrepositionalPhrase);
@@ -117,9 +118,10 @@ public class AmmoTransport extends AggregationClosure {
     * An ancillary method that creates an asset that represents a MILVAN 
     * (military container) carrying ammunition
     */
-  public static Asset makeMilvan(RootFactory rootFactory) {
+  protected Asset makeMilvan() {
+
     if (MILVAN_PROTOTYPE == null) {
-      MILVAN_PROTOTYPE = rootFactory.getPrototype(MILVAN_NSN);
+      MILVAN_PROTOTYPE = _gp.getGPFactory().getPrototype(MILVAN_NSN);
 
       if (MILVAN_PROTOTYPE == null) {
         System.err.println("AmmoTransport: Error! Unable to get prototype for" +
@@ -129,7 +131,7 @@ public class AmmoTransport extends AggregationClosure {
     }
         
     Container milvan = 
-      (Container)rootFactory.createInstance(MILVAN_PROTOTYPE);
+      (Container)_gp.getGPFactory().createInstance(MILVAN_PROTOTYPE);
 
     // AMMO Cargo Code
     NewMovabilityPG movabilityPG = 
@@ -140,7 +142,7 @@ public class AmmoTransport extends AggregationClosure {
     // Unique Item Identification
     NewItemIdentificationPG itemIdentificationPG = 
       (NewItemIdentificationPG)milvan.getItemIdentificationPG();
-    String itemID = new String("Milvan" + ITEM_ID++);
+    String itemID = makeMilvanID();
     itemIdentificationPG.setItemIdentification(itemID);
     itemIdentificationPG.setNomenclature("Milvan");
     itemIdentificationPG.setAlternateItemIdentification(itemID);
@@ -148,7 +150,22 @@ public class AmmoTransport extends AggregationClosure {
 
     return milvan;
   }
+
+  protected String makeMilvanID() {
+    
+    return new String(_gp.getGPClusterIdentifier() + 
+                      ":Milvan" + getCounter());
+  }
+
+  private static synchronized long getCounter() {
+    return counter++;
+  }
+    
 }
+
+
+
+
 
 
 
