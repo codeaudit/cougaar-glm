@@ -75,7 +75,7 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
   private JTextField opTempoText;
   private JLabel cDayLabel;
   private JTextField startText;
-  private JTextField thruText;
+  private JTextField endText;
 
   /** status label **/
   private JLabel statusLabel;
@@ -169,7 +169,7 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
       opTempoText.setText("");
       cDayLabel.setText(cDateString);
       startText.setText("");
-      thruText.setText("");
+      endText.setText("");
       return "Missing Org Activity";
     }
     if (orgAct.getOplanUID() != oplan.getUID()) {
@@ -188,20 +188,20 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
         dateFormatter.toString(
             timeSpan.getStartDate());
     }
-    String thruDateString;
-    if (timeSpan.getThruDate() == null)
-      thruDateString = cDateString;
+    String endDateString;
+    if (timeSpan.getEndDate() == null)
+      endDateString = cDateString;
     else {
-      thruDateString = 
+      endDateString = 
         dateFormatter.toString(
-            timeSpan.getThruDate());
+            timeSpan.getEndDate());
     }
     orgIdLabel.setText(orgAct.getOrgID());
     //typeText.setText(orgAct.getActivityType());
     opTempoText.setText(orgAct.getOpTempo());
     cDayLabel.setText(cDateString);
     startText.setText(startDateString);
-    thruText.setText(thruDateString);
+    endText.setText(endDateString);
     return null;
   }
 
@@ -227,9 +227,9 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
     if (startDate == null) {
       return "Invalid start date";
     }
-    Date thruDate = dateFormatter.toDate(thruText.getText().trim(), false);
-    if (thruDate == null) {
-      return "Invalid thru date";
+    Date endDate = dateFormatter.toDate(endText.getText().trim(), false);
+    if (endDate == null) {
+      return "Invalid end date";
     }
     boolean changed = false;
     if (!opTempo.equals(orgAct.getOpTempo())) {
@@ -240,8 +240,8 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
       timeSpan.setStartDate(startDate);
       changed = true;
     }
-    if (!thruDate.equals(timeSpan.getThruDate())) {
-      timeSpan.setThruDate(thruDate);
+    if (!endDate.equals(timeSpan.getEndDate())) {
+      timeSpan.setEndDate(endDate);
       changed = true;
     }
     if (!changed) {
@@ -316,7 +316,7 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
     cDayLabel = new JLabel();
     cDayLabel.setForeground(Color.black);
     startText = new JTextField(11);
-    thruText = new JTextField(11);
+    endText = new JTextField(11);
     getOrgActButton = new JButton("Get Org Activity");
     getOrgActButton.addActionListener(new DRTListener());
     modifyOrgActButton = new JButton("Modify Org Activity");
@@ -350,7 +350,7 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
     orgActInfoTextPanel.add(new JLabel("OpTempo:"));
     orgActInfoTextPanel.add(new JLabel("cDay:"));
     orgActInfoTextPanel.add(new JLabel("Start Date:"));
-    orgActInfoTextPanel.add(new JLabel("Thru Date:"));
+    orgActInfoTextPanel.add(new JLabel("End Date:"));
     JPanel orgActInfoValuePanel = new JPanel();
     orgActInfoValuePanel.setLayout(new GridLayout(6,1));
     orgActInfoValuePanel.add(orgIdLabel);
@@ -358,7 +358,7 @@ public class ModifyOrgActivityGUIPlugIn extends SimplePlugIn {
     orgActInfoValuePanel.add(opTempoText);
     orgActInfoValuePanel.add(cDayLabel);
     orgActInfoValuePanel.add(startText);
-    orgActInfoValuePanel.add(thruText);
+    orgActInfoValuePanel.add(endText);
     orgActInfoPanel.add(orgActInfoTextPanel, BorderLayout.CENTER);
     orgActInfoPanel.add(orgActInfoValuePanel, BorderLayout.EAST);
     orgActPanel.add(orgActInfoPanel, BorderLayout.CENTER);
