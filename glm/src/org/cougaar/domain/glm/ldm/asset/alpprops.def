@@ -694,7 +694,7 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	Scalar getLevel(long day);\
 	Scalar getLevel(int day);\
 	int withdrawFromInventory(Inventory inventory, ClusterIdentifier cluster);\
-	Scalar getNDaysDemand(int day, int days_of_demand);\
+	Scalar getNDaysDemand(int day, int daysOnHand, int daysForward, int daysBackward);\
 	int addPreviousRefillsToInventory(Task maintainInv);\
 	int addDueIn(Task refillTask);\
 	int removeDueIn(Task refillTask);\

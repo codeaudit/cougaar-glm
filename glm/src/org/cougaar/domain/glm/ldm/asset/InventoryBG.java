@@ -64,7 +64,6 @@ public abstract class InventoryBG implements PGDelegate {
     private long startTime_;
     private boolean startTimeNeverSet = true;
     protected long firstDayOfDemand_;
-    protected int demandAveragePeriod_ = 30;
     private ProjectionWeight weight_;
     // Stuff for execution below
     protected ArrayList report_history;
@@ -350,14 +349,14 @@ public abstract class InventoryBG implements PGDelegate {
 	return d;
     }
 
-    public Scalar getNDaysDemand(int day, int days_of_demand) {
+//      public Scalar getNDaysDemand(int day, int days_of_demand) {
+    public Scalar getNDaysDemand(int day, int days_of_demand, int days_forward, int days_backward) {
 	// Needs work still (lost the 30 day buffer at either end)
-	int start = day;
-	start = start-(demandAveragePeriod_/2);
+	int start = day - days_backward;
 	if (start < 0) {
 	    start = 0;
 	}
-	int end = start + demandAveragePeriod_;
+	int end = day + days_forward;
 	if (end > dueOut_.size()) {
 	    end = dueOut_.size();
 	}
