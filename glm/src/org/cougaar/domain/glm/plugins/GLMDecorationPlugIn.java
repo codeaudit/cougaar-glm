@@ -44,7 +44,8 @@ import org.cougaar.domain.glm.ldm.oplan.Oplan;
  * @see PlugInDecorator
  */
 public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
-
+    private static final String SYNCHRONOUS_MODE_PROP =
+        "org.cougaar.domain.glm.plugins.synchronous";
     public Vector                        ClusterOPlans_ = new Vector();
     //    public ClusterOPlan                        oplan_ = null;
     public IncrementalSubscription         oplans_;
@@ -85,6 +86,52 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
 	    doUpdateOplans();
 	}
     }
+
+    private static Object syncLock = new Object();
+    private static boolean syncLocked = false;
+    private static boolean synchronousMode =
+        System.getProperty(SYNCHRONOUS_MODE_PROP, "false").equals("true");
+
+    private void syncStart() {
+        synchronized (syncLock) {
+            while (syncLocked) {
+                try {
+                    syncLock.wait();
+                } catch (InterruptedException ie) {
+                }
+            }
+            syncLocked = true;
+        }
+        GLMDebug.setDelayedSeparator("---------- BEGIN execute() "
+                                     + getShortClassName()
+                                     + "("
+                                     + clusterId_
+                                     + ")"
+                                     + " ----------");
+    }
+
+    private void syncFinish() {
+        GLMDebug.clearDelayedSeparator("------------ END execute() "
+                                       + getShortClassName()
+                                       + "("
+                                       + clusterId_
+                                       + ")"
+                                       + " ----------");
+        synchronized (syncLock) {
+            syncLocked = false;
+            syncLock.notify();
+        }
+    }
+    private String shortClassName = null;
+    private String getShortClassName() {
+        if (shortClassName == null) {
+            String s = getClass().getName();
+            int ix = s.lastIndexOf('.');
+            if (ix >= 0) s = s.substring(ix + 1);
+            shortClassName = s;
+        }
+        return shortClassName;
+    }
    
     /** Invokes all of the processors used to decorate this plugin.
      *  The first time execute() is invoked, it configures the plugin by
@@ -93,14 +140,19 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
      */
     public synchronized void execute()
     {
-	super.execute();
-	if (!invoke_) return;
-	oplanChanged_ = false;
-	orgActChanged_ = false;
-	clusterOplanChanged_ = updateOplans();
-	orgActChanged_ = updateOrgActivities();
-	oplanChanged_ = clusterOplanChanged_ || orgActChanged_;
-	runProcessors();
+        if (synchronousMode) syncStart();
+        try {
+            super.execute();
+            if (!invoke_) return;
+            oplanChanged_ = false;
+            orgActChanged_ = false;
+            clusterOplanChanged_ = updateOplans();
+            orgActChanged_ = updateOrgActivities();
+            oplanChanged_ = clusterOplanChanged_ || orgActChanged_;
+            runProcessors();
+        } finally {
+            if (synchronousMode) syncFinish();
+        }
     }
 
     private boolean updateOplans() {
@@ -126,7 +178,7 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
 		IncrementalSubscription oplanActivities = 
 		    (IncrementalSubscription)subscribe(new OplanOrgActivitiesPredicate(oplan.getUID()));
 		monitorPlugInSubscription(oplanActivities);
-		System.out.println("--- Creating new ClusterOPlan for "+oplan);
+//  		System.out.println("--- Creating new ClusterOPlan for "+oplan);
 		ClusterOPlans_.add(new ClusterOPlan(clusterId_, oplan, oplanActivities));
 	    }
 	}
