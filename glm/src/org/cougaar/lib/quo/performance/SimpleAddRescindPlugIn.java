@@ -147,10 +147,9 @@ public class SimpleAddRescindPlugIn extends CommonUtilPlugIn {
 	//double received = 0;
 	while (allo_enum.hasMoreElements()) {
 	    taskAllocationCount++;
-	    
 	    int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
-	    debug(DEBUG,"ManagerPlugIn:allocateChangedTasks ....taskAllocationCount.." + taskAllocationCount + " for task# " + taskCount);
-
+	    debug(DEBUG,"ManagerPlugIn:allocateChangedTasks ....taskAllocationCount.." + 
+		  taskAllocationCount + " for task# " + taskCount);
 	    Allocation alloc = (Allocation)allo_enum.nextElement() ;
 	    est=null; rep=null;
 	    est = alloc.getEstimatedResult();

@@ -28,33 +28,28 @@ import java.io.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.11 2002-01-23 22:13:28 psharma Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.12 2002-01-31 15:43:12 psharma Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 {
     private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
     private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
 
-    protected int CPUCONSUME;
-    protected int MESSAGESIZE;
-    protected String FILENAME;
-    protected int MAXCOUNT, THINK_TIME;
-    protected int  OUTSTANDING_MESSAGES;
-    protected String VERB;
+    protected int CPUCONSUME,  MESSAGESIZE, MAXCOUNT;
+    protected int THINK_TIME,OUTSTANDING_MESSAGES ;
+    protected String FILENAME, VERB;
     protected Task task;
-    protected boolean DEBUG = false;
-    protected boolean LOG = false;
-
+    protected boolean DEBUG = false, LOG=false;
     protected Date startTime;
-    private  int count = 1;
-    private long minDelta=0;
-    private FileWriter fw;
-    private int wakeUpCount, taskAllocationCount;
-    private AspectValue allocAspectVal;
-    double allocNum = 0;
-    private int expectedSeqNum = 1;
+    protected long minDelta=0;
+    protected FileWriter fw;
+    protected int wakeUpCount, taskAllocationCount, count = 1;
+    protected AspectValue allocAspectVal;
+    protected double allocNum = 0;
+    protected int expectedSeqNum = 1;
+
     /**
-     * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
+     * parsing the plugIn arguments and setting the values
      */
     protected void parseParameter(){
 	Vector p = getParameters();
@@ -67,8 +62,8 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 	LOG=getParameterBooleanValue(p, "LOG");
 	VERB=getParameterValue(p, "VERB");
 	THINK_TIME=getParameterIntValue(p, "THINK_TIME");
-	
     }
+
     static class MyChangeReport implements ChangeReport {
 	private byte[] bytes;
 	MyChangeReport(byte[] bytes){
@@ -93,9 +88,7 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 		if (o instanceof Task)
 		    {	
 			Task task = (Task)o;
-			//System.out.println("==>" + task.getVerb() + "  " + Verb.getVerb(VERB));
 			return task.getVerb().equals(Verb.getVerb(VERB));
-			//return true;
 		    }
 		return false;
 	    }
@@ -107,8 +100,10 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
      **/
     public void setupSubscriptions() {
 	parseParameter();
-	allProgrammers = (IncrementalSubscription)subscribe(allProgrammersPredicate);
-	allCodeTasks =  (IncrementalSubscription)subscribe(codeTaskPredicate);
+	allProgrammers = 
+	    (IncrementalSubscription)subscribe(allProgrammersPredicate);
+	allCodeTasks =  
+	    (IncrementalSubscription)subscribe(codeTaskPredicate);
     }
 
     /**
@@ -116,27 +111,21 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
      **/
     public void execute() {
 	wakeUpCount++;
-	debug(DEBUG, "" +System.currentTimeMillis() + " wakeUpcount " + wakeUpCount+"------------------") ;
-
+	debug(DEBUG, "" +System.currentTimeMillis() 
+	      + " wakeUpcount " + wakeUpCount+"------------------") ;
 	allocateTasks(allCodeTasks.getAddedList());
-	//ignoring the first task;
 	allocateTasks(allCodeTasks.getChangedList());
     }
   
     private void allocateTasks(Enumeration task_enum) {
 	while (task_enum.hasMoreElements()) {
 	    taskAllocationCount++;
-
 	    task = (Task)task_enum.nextElement();
-	    
-	    //debug(DEBUG, FILENAME, fw, "DevelopmentAllocatorPlugIn: Got task from blackboard.." 
-	    //+ task.getPreferredValue(AspectType._ASPECT_COUNT ) + " with verb " + task.getVerb());
 	    startTime = new Date();
 	    waitFor(THINK_TIME);
 	    allocateTask(task, startMonth(task));
 	}
     }
-
    
     /**
      * Extract the start month from a task
@@ -160,31 +149,28 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 	// select an available programmer at random
 	Vector programmers = new Vector(allProgrammers.getCollection());
 	boolean allocated = false;
-    	while ((!allocated) && (programmers.size() > 0)) {
+    	
+	while ((!allocated) && (programmers.size() > 0)) {
 	    int stuckee = (int)Math.floor(Math.random() * programmers.size());
-	    ProgrammerAsset asset = (ProgrammerAsset)programmers.elementAt(stuckee);
-	    
-	    // Create an estimate that reports that we did just what we  were asked to do
+	    ProgrammerAsset asset = 
+		(ProgrammerAsset)programmers.elementAt(stuckee);
 	    allocNum =  task.getPreferredValue(AspectType._ASPECT_COUNT );
-	    // debug(DEBUG, FILENAME, fw,"DevelopmentAllocator:allocateTask" + allocNum + " received");
+	    String msg = "expectedSeqNum::receivedSeNum::" +
+		      expectedSeqNum +":"+allocNum;
 	    if (expectedSeqNum > allocNum){
-		debug(DEBUG, "Warning out of sequence task: expectedSeqNum::receivedSeNum::" +
-		      expectedSeqNum +":"+allocNum);
-		
+		debug(DEBUG, "Warning out of sequence task: " + msg); 
 	    }
 	    else {
-	       if (expectedSeqNum < allocNum){
-		   debug(DEBUG,"Skipped a  task: expectedSeqNum::receivedSeNum::" +
-			 expectedSeqNum +":"+allocNum);
-	       }
-	      if (expectedSeqNum== allocNum){
-		 debug( DEBUG,"expectedSeqNum == receivedSeNum::" +
-				      expectedSeqNum +":"+allocNum);
-	      }
-	       int []aspect_types = {AspectType._ASPECT_COUNT};
-	       double []results = {allocNum};
-	       AllocationResult estAR =  
-		    theLDMF.newAllocationResult(1.0, onTime,aspect_types, results  );
+		if (expectedSeqNum < allocNum){
+		    debug(DEBUG,"Skipped a  task: " + msg); 
+		}
+		if (expectedSeqNum== allocNum){
+		    debug( DEBUG,"expectedSeqNum == receivedSeNum::" + msg);
+		}
+		int []aspect_types = {AspectType._ASPECT_COUNT};
+		double []results = {allocNum};
+		AllocationResult estAR =  theLDMF.newAllocationResult
+		    (1.0, onTime,aspect_types, results  );
 
 		ChangeReport cr = null;
 		if (MESSAGESIZE != -1)
@@ -192,7 +178,8 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 		else 
 		    cr = new MyChangeReport(alterMessageSize(0));
 
-		PlanElement pe = task.getPlanElement(); //Allocation  planElement
+		//Allocation  planElement
+		PlanElement pe = task.getPlanElement(); 
 		if (pe == null) {
 		    pe = theLDMF.createAllocation(task.getPlan(), task,
 						  asset, estAR, Role.ASSIGNED);

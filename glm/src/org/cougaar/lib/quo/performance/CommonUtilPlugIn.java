@@ -36,7 +36,7 @@ import java.io.*;
 public  class CommonUtilPlugIn extends SimplePlugIn {
    
     /**
-     * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
+     * parsing the plugIn arguments and setting the values 
      */
     protected String getParameterValue(Vector p, String param){
 	String strParam=null;
@@ -44,25 +44,11 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
 	    String s = (String)p.elementAt(i);
 	    if (s.indexOf(param) != -1){
 		 strParam = s.substring(s.indexOf("=")+1, s.length());
-		 //debug(DEBUG, fw, "CommonUtilPlugn::getParameterValue -- " + param + ": " + strParam);
 	    }
 	}
 
 	return strParam;
     }
-
-     //  protected String getValues(int count) {
-// 	Date endTime = new Date();
-// 	long delta = endTime.getTime() - startTime.getTime();
-// 	count++;
-// 	if (count == 1)
-// 	    minDelta = delta;
-// 	else
-// 	    minDelta = Math.min(minDelta, delta);
-// 	String msg=count+","+delta+","+ minDelta;
-// 	return msg;
-//     }
-
    protected int getParameterIntValue(Vector p, String param) {
        int returnVal=-1;
        String str = getParameterValue(p, param);
@@ -91,26 +77,6 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
 	Vector p = getParameters();
     }
     
-       
-   
-    //  public void debug(boolean DEBUG, String out, FileWriter fw, String message) {
-//  	try {
-//  	    if (DEBUG) //default to stdout
-//  		//System.out.println(formatMessage(message));
-//  		System.out.println(message);
-	    
-//  	    if (out != null)
-//  		{
-//  		    //System.out.println("CommonUtilPlugIn:debug -Writing to file " + out);
-//  		    fw = new FileWriter(out, true);
-//  		    fw.write(message+"\n");
-//  		    fw.close();
-//  		}
-//  	} catch (IOException ie) {
-//  	    ie.printStackTrace();
-//  	}//catch
-//      }
-
     public void debug(boolean DEBUG, String message) {
 	if (DEBUG) //default to stdout
 	    //System.out.println(formatMessage(message));
@@ -122,7 +88,6 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
 	    if (LOG) {//default to stdout
 		if (out != null)
 		    {
-			//System.out.println("CommonUtilPlugIn:debug -Writing to file " + out);
 			fw = new FileWriter(out, true);
 			fw.write(message+"\n");
 			fw.close();
@@ -176,4 +141,12 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
 	}
     }
    }
+
+
+
+
+
+
+
+
 
