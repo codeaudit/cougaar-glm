@@ -24,8 +24,6 @@ import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
-import com.ibm.xml.parsers.*;
-
 import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
