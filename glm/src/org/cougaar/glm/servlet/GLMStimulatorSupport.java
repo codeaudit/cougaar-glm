@@ -6,6 +6,7 @@ import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.NamingService;
 import org.cougaar.util.ConfigFinder;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.service.SchedulerService;
 
@@ -15,11 +16,12 @@ public class GLMStimulatorSupport extends SimpleServletSupportImpl {
       ClusterIdentifier agentId,
       BlackboardService blackboard,
       NamingService ns,
+      LoggingService logger,
       ConfigFinder configFinder,
       RootFactory ldmf,
       LDMServesPlugin ldm,
       SchedulerService scheduler) {
-    super (path, agentId, blackboard, ns);
+    super (path, agentId, blackboard, ns, logger);
     this.configFinder = configFinder;
     this.ldmf = ldmf;
     this.ldm = ldm;

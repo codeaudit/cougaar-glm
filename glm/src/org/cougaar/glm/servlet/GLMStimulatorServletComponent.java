@@ -1,5 +1,7 @@
 package org.cougaar.glm.servlet;
 
+import javax.servlet.Servlet;
+
 import org.cougaar.core.servlet.SimpleServletComponent;
 import org.cougaar.core.servlet.SimpleServletSupport;
 
@@ -32,39 +34,23 @@ public class GLMStimulatorServletComponent extends SimpleServletComponent {
     scheduler = ss;
   }
 
-  // just like the core, except I can create a servlet support subclass
-  protected SimpleServletSupport createSimpleServletSupport() {
-    // the agentId is known from "setBindingSite(..)"
-
-    // get the blackboard service (for "query")
-    blackboard = (BlackboardService)
-      serviceBroker.getService(
-          this, 
-          BlackboardService.class,
-          null);
-    if (blackboard == null) {
-      throw new RuntimeException(
-          "Unable to obtain blackboard service");
-    }
-
-    // get the naming service (for "listAgentNames")
-    ns = (NamingService)
-      serviceBroker.getService(
-          this, 
-          NamingService.class,
-          null);
-    if (ns == null) {
-      throw new RuntimeException(
-          "Unable to obtain naming service");
-    }
-
+  /** just like the core, except I can create a servlet support subclass */
+  protected SimpleServletSupport createSimpleServletSupport(Servlet servlet) {
+    SimpleServletSupport support = super.createSimpleServletSupport(servlet);
+    
+    // throw original support object away
     // create a new "SimpleServletSupport" instance
     return makeServletSupport ();
   }
 
-  // so a subclass can create a different servlet support just by overriding this method
-  // perhaps the core should work like this?
+  /**
+   * so a subclass can create a different servlet support just by overriding this method
+   * perhaps the core should work like this?
+   */
   protected SimpleServletSupport makeServletSupport () {
+    if (log.isInfoEnabled())
+      log.info ("Creating GLMStimulatorSupport");
+
     // create a new "SimpleServletSupport" instance
     return 
       new GLMStimulatorSupport (
@@ -72,6 +58,7 @@ public class GLMStimulatorServletComponent extends SimpleServletComponent {
         agentId,
         blackboard,
         ns,
+	log,
 	getConfigFinder(),
 	getLDMService().getFactory(),
 	getLDMService().getLDM(),
