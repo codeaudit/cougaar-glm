@@ -22,6 +22,8 @@ package org.cougaar.glm.ldm.plan;
 
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.AspectRate;
+import org.cougaar.planning.ldm.plan.FloatAspectValue;
 
 public class AlpineAspectType implements AspectType {
   public static final int DEMANDRATE       = N_CORE_ASPECTS + 0;
@@ -48,4 +50,24 @@ public class AlpineAspectType implements AspectType {
       return AspectValue.aspectTypeToString(aspectType);
     }
   }
+
+  /** Start time of given Task **/
+  public static final Factory DemandRate = new Factory () { 
+      public int getKey() { return DEMANDRATE; }
+      public String getName() { return "DEMANDRATE"; }
+      public AspectValue newAspectValue(Object o) { return AspectRate.create(DEMANDRATE,o); }
+    };
+  /** Start time of given Task **/
+  public static final Factory DemandMultiplier = new Factory () { 
+      public int getKey() { return DEMANDMULTIPLIER; }
+      public String getName() { return "DEMANDMULTIPLIER"; }
+      public AspectValue newAspectValue(Object o) { return FloatAspectValue.create(DEMANDMULTIPLIER,o); }
+    };
+
+  static {
+    registry.registerFactory(DemandRate);
+    registry.registerFactory(DemandMultiplier);
+  }
+
+
 }
