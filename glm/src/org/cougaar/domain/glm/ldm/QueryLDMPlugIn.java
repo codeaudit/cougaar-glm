@@ -195,6 +195,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 		    continue;
 
 		// should be a param=value line
+		line = Parameters.replaceParameters(line);
 		parseQueryLine(line);
 	    }
 	    in.close();
@@ -220,7 +221,6 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     // document fileParameters_ hashtable
     protected String getParm(String name) {
 	String value = (String)fileParameters_.get(name);
-	value = Parameters.replaceParameters(value, fileParameters_);
 	if (value == null) {
 	    throw new RuntimeException(this.toString()+": Couldn't initializeDriver need to specify "+name);
 	}
