@@ -108,7 +108,8 @@ public class GLMTestingStimulatorPlugIn extends GLMStimulatorPlugIn
 
 	// Print timing information for the completed batch
 	String t = getElapsedTime(batchStart);
-	System.out.println("\n*** Testing batch #" + batchesSent + " completed in " + t);
+	String total = getElapsedTime(testStart);
+	System.out.println("\n*** Testing batch #" + batchesSent + " completed in " + t + " total " + total);
 
 	// Cache the timing information
 	batchTimes.add(t);
