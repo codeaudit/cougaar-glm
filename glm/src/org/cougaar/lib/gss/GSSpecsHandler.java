@@ -10,8 +10,14 @@
 
 package org.cougaar.lib.gss;
 
-import org.xml.sax.HandlerBase;
-import org.xml.sax.AttributeList;
+// old IBM XML references
+// import org.xml.sax.HandlerBase;
+// import org.xml.sax.AttributeList;
+
+// modern xerces references
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +26,10 @@ import java.util.List;
  * The class that handles parsing the XML data.
  *
  */
-
-public class GSSpecsHandler extends HandlerBase {
+// old IBM XML jar
+// public class GSSpecsHandler extends HandlerBase {
+// new xerces jar
+public class GSSpecsHandler extends DefaultHandler {
 
   private String className;
   private java.util.Stack objectStack = new java.util.Stack();
@@ -47,7 +55,10 @@ public class GSSpecsHandler extends HandlerBase {
    * @param name the type of object
    * @param atts the arguments passed to the constructor
    */
-  public void startElement (String name, AttributeList atts) {
+  // for modern Xerces jar
+  public void startElement (String uri, String local, String name, Attributes atts) throws SAXException {
+  // for old (June 1999) IBM XML jar
+  //public void startElement (String name, AttributeList atts) {
 
     if (name.equals ("taskFilter"))
       addObject (new GSTaskFilter (atts.getValue ("verb"),
@@ -95,8 +106,8 @@ public class GSSpecsHandler extends HandlerBase {
                  (atts.getValue ("methodName"), className,
                   (GSSchedulingSpecs) objectStack.elementAt (0)));
 
-//     else if (name.equals ("locationAccessor"))
-//       addObject (new GSLocationAccessor (atts.getValue ("representation")));
+    //     else if (name.equals ("locationAccessor"))
+    //       addObject (new GSLocationAccessor (atts.getValue ("representation")));
 
     //    else if (name.equals ("taskAccessor"))
     //      addObject (new GSTaskAccessorImpl (atts.getValue ("preposition")));
@@ -156,7 +167,7 @@ public class GSSpecsHandler extends HandlerBase {
   /**
    * Pop object off stack and add to parent
    */
-  public void endElement (String name) {
+  public void endElement (String uri, String localName, String name) {
     if (name.equals ("schedulingSpecs"))
       return;
     Object obj = objectStack.pop();
@@ -165,3 +176,4 @@ public class GSSpecsHandler extends HandlerBase {
 
     List debugables = new ArrayList ();
 }
+

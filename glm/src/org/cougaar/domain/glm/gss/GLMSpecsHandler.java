@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/gss/Attic/GLMSpecsHandler.java,v 1.2 2001-04-05 19:27:35 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/gss/Attic/GLMSpecsHandler.java,v 1.3 2001-05-25 16:48:47 rwu Exp $
 /*
  * <copyright>
  * Copyright 1997-2001 Defense Advanced Research Projects
@@ -11,8 +11,8 @@
 
 package org.cougaar.domain.glm.gss;
 
-import org.xml.sax.HandlerBase;
-import org.xml.sax.AttributeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,10 @@ public class GLMSpecsHandler extends GSSpecsHandler {
    * @param name the type of object
    * @param atts the arguments passed to the constructor
    */
-  public void startElement (String name, AttributeList atts) {
+  // for modern Xerces jar
+  public void startElement (String uri, String local, String name, Attributes atts) throws SAXException {
+  // for old (June 1999) IBM XML jar
+  // public void startElement (String name, AttributeList atts) {
 
     if (name.equals ("locationAccessor"))
       addObject (new GLMLocationAccessor (atts.getValue ("representation")));
@@ -48,6 +51,15 @@ public class GLMSpecsHandler extends GSSpecsHandler {
       addObject (new GLMTaskClassMatch (atts.getValue ("preposition")));
 
     else
-      super.startElement(name, atts);
+      super.startElement(uri, local, name, atts);
   }
 }
+
+
+
+
+
+
+
+
+

@@ -58,23 +58,10 @@ public class GSTaskFilter implements GSParent {
              ((generatingCluster == INTERNAL) ==
               (clusterAddress.equals (task.getSource().getAddress())))));
 
-    /*
-    System.out.println ("GSTaskFilter - found " + task.getUID () +
-			" - task's verb " + task.getVerb () + " vs filter verb " + verb + " - " +
-			((result) ? " interesting " : " NOT interesting."));
-    */
-
     if (boolExpr != null) {
       List args = new ArrayList ();
       args.add (task);
       boolean exprResult = boolExpr.eval (args);
-
-      /*
-      if (exprResult)
-	System.out.println ("" + task.getUID ()  + " does not have prep");
-      else
-	System.out.println ("" + task.getUID ()  + " does have prep");
-      */
 
       return result && exprResult;
     }

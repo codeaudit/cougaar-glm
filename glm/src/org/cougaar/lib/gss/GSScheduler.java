@@ -13,6 +13,8 @@ package org.cougaar.lib.gss;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 
 import org.cougaar.domain.planning.ldm.plan.Task;
+//import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 import java.io.File;
 
@@ -26,11 +28,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.xml.sax.DocumentHandler;
-import org.xml.sax.EntityResolver;
+// old IBM XML references
+// import org.xml.sax.DocumentHandler;
+// import org.xml.sax.InputSource;
+// import org.xml.sax.Parser;
+// import org.xml.sax.helpers.ParserFactory;
+
+// modern xerces references
+import org.apache.xerces.parsers.SAXParser;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.Attributes;
+
 import org.xml.sax.InputSource;
-import org.xml.sax.Parser;
-import org.xml.sax.helpers.ParserFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.EntityResolver;
 
 /**
  * The main class for the generic scheduler
@@ -51,31 +64,43 @@ public class GSScheduler {
   public GSSchedulingSpecs getSpecs () { return specs; }
 
   /** parse the XML specifications */
+  /*
   public static GSScheduler parseSpecs (String filename, GSSpecsHandler sh) {
     if(! new File(filename).exists()){
       String e = ("GSSScheduler: could  not open gss specs file: " + filename);
       throw new RuntimeException(e);
     }
     try {
-      Parser parser =
-        ParserFactory.makeParser ("com.ibm.xml.parsers.SAXParser");
+      // old IBM XML jar
+      // Parser parser = ParserFactory.makeParser ("com.ibm.xml.parsers.SAXParser");
+      // modern xerces jar
+      SAXParser parser = new SAXParser();
 
-      parser.setDocumentHandler (sh);
+      // old IBM XML jar
+      // parser.setDocumentHandler (sh);
+      // modern xerces jar
+      parser.setContentHandler ((ContentHandler) sh);
       parser.parse (filename);
 
       return sh.getScheduler();
     }
-    catch(InstantiationException e) {
-      System.err.println (e.getMessage());
-      e.printStackTrace();
-    }
-    catch(IllegalAccessException e) {
-      System.err.println (e.getMessage());
-      e.printStackTrace();
-    }
-    catch(ClassNotFoundException e) {
-      System.err.println (e.getMessage());
-      e.printStackTrace();
+//      catch(InstantiationException e) {
+//        System.err.println (e.getMessage());
+//        e.printStackTrace();
+//      }
+//      catch(IllegalAccessException e) {
+//        System.err.println (e.getMessage());
+//        e.printStackTrace();
+//      }
+//      catch(ClassNotFoundException e) {
+//        System.err.println (e.getMessage());
+//        e.printStackTrace();
+//      }
+    catch(SAXParseException saxe) {
+      System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - got SAX Parse exception in file " + 
+			  saxe.getSystemId () + " line " + saxe.getLineNumber () + " col " + saxe.getColumnNumber ()+"\n"+
+			  "Exception was :");
+      System.err.println(saxe.getMessage());
     }
     catch(org.xml.sax.SAXException e) {
       System.err.println (e.getMessage());
@@ -87,30 +112,47 @@ public class GSScheduler {
     }
     return null;
   }
+  */
 
   /** parse the XML specifications */
-  public static GSScheduler parseSpecs (InputStream inputStream, EntityResolver specialResolver, GSSpecsHandler sh) {
+  public static GSScheduler parseSpecs (String gssfile, EntityResolver specialResolver, GSSpecsHandler sh) {
     try {
-      Parser parser =
-        ParserFactory.makeParser ("com.ibm.xml.parsers.SAXParser");
+      InputStream inputStream = ConfigFinder.getInstance().open(gssfile);
 
-      parser.setDocumentHandler (sh);
+      // old IBM XML jar
+      // Parser parser = ParserFactory.makeParser ("com.ibm.xml.parsers.SAXParser");
+      // modern xerces jar
+      SAXParser parser = new SAXParser();
+
+      // old IBM XML jar
+      // parser.setDocumentHandler (sh);
+      // modern xerces jar
+      parser.setContentHandler ((ContentHandler) sh);
+
       parser.setEntityResolver (specialResolver);
-      parser.parse (new InputSource(inputStream));
+      InputSource is = new InputSource (inputStream);
+      is.setSystemId (gssfile);
+      parser.parse (is);
 
       return sh.getScheduler();
     }
-    catch(InstantiationException e) {
-      System.err.println ("Instantion exception : " + e.getMessage());
-      e.printStackTrace();
-    }
-    catch(IllegalAccessException e) {
-      System.err.println ("IllegalAccess exception : " + e.getMessage());
-      e.printStackTrace();
-    }
-    catch(ClassNotFoundException e) {
-      System.err.println ("ClassNotFound exception : " + e.getMessage());
-      e.printStackTrace();
+//      catch(InstantiationException e) {
+//        System.err.println ("Instantion exception : " + e.getMessage());
+//        e.printStackTrace();
+//      }
+//      catch(IllegalAccessException e) {
+//        System.err.println ("IllegalAccess exception : " + e.getMessage());
+//        e.printStackTrace();
+//      }
+//      catch(ClassNotFoundException e) {
+//        System.err.println ("ClassNotFound exception : " + e.getMessage());
+//        e.printStackTrace();
+//      }
+    catch(SAXParseException saxe) {
+      System.out.println ("UTILLdmXMLPlugIn.getParsedDocument - got SAX Parse exception in file " + 
+			  saxe.getSystemId () + " line " + saxe.getLineNumber () + " col " + saxe.getColumnNumber ()+"\n"+
+			  "Exception was :");
+      System.err.println(saxe.getMessage());
     }
     catch(org.xml.sax.SAXException e) {
       System.err.println ("SAX exception : " + e.getMessage());

@@ -109,8 +109,7 @@ public abstract class UTILGSSBufferingPlugInAdapter
 	System.out.println (getName () + " reading from " + 
 			    gssxmlfile + " gss xml file");
 
-      InputStream inputStream = ConfigFileFinder.open(gssxmlfile);
-      scheduler = GSScheduler.parseSpecs (inputStream,
+      scheduler = GSScheduler.parseSpecs (gssxmlfile,
 					  new UTILEntityResolver (),
 					  getSpecsHandler());
       schedulerResult = new GSSchedulerResult (scheduler);
@@ -215,7 +214,12 @@ public abstract class UTILGSSBufferingPlugInAdapter
    * @see mil.darpa.log.UTIL.filterPlugins.UTILGSSBufferingPlugIn
    */
   public boolean interestingTask(Task task){
-    return scheduler.interestingTask (task);
+    boolean interested = scheduler.interestingTask (task);
+
+    if (myExtraExtraOutput)
+      System.out.println (getName () + ".interestingTask - finds task " +task.getUID () + 
+			  (interested ? " interesting " : " NOT interesting"));
+    return interested;
   }
 
   /******************************************************************************/
