@@ -372,8 +372,8 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
 	  */
 	}
 	else {
-	  if (logger.isDebugEnabled())
-	    logger.debug ("UTILLdmXMLPlugin.getAssets - got non-element node " + child);
+	  //	  if (logger.isDebugEnabled())
+	  //	    logger.debug ("UTILLdmXMLPlugin.getAssets - got non-element node " + child);
 	}
       }
     }
