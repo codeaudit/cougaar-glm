@@ -148,15 +148,21 @@ slots=MilitaryPersonPG, \
 
 [MissileLauncher Weapon]
 
+;; OrganizationAdapter will fail if it the actual asset does not have at least
+;; a ClusterPG and a RelationshipPG
 [ClientOrganization OrganizationAdapter]
-slots=ClusterPG
+slots=ClusterPG, \
+        RelationshipPG
 
+;; OrganizationAdapter will fail if it the actual asset does not have at least
+;; a ClusterPG and a RelationshipPG
 [Organization OrganizationAdapter]
-;; OrganizationAdapter extends Asset
+;; OrganizationAdapter extends GLMAsset
 slots=ManagedAssetPG, \
 	AssignmentPG, \
 	ClusterPG, \
-	OrganizationPG
+	OrganizationPG, \
+        RelationshipPG
 
 [MilitaryOrganization Organization]
 slots=MilitaryOrgPG

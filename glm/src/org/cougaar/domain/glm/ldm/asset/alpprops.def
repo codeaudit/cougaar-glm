@@ -520,18 +520,13 @@ home_location.doc=Location of the Org when it is not deployed. \
 	Should match AssignedPG.homeStation if defined.
 
 [LocationSchedulePG]
+local=true
 slots=Schedule schedule
 schedule.doc=A schedule of LocationScheduleElement elements.  The \
   semantics of location and overlapping time ranges is not defined. \
   Consumers of the schedule should probably synchronize on the schedule \
   object in order to prevent comodification exceptions.
 
-
-;[OrganizationRelationPG]
-;import=org.cougaar.domain.planning.ldm.asset.Asset
-;extends=OrganizationPropertyGroups
-;slots=Asset parent_organization
-;;slots=Organization parent_organization, Vector subordinate_organization, Vector supporting_organization, Vector supported_organization
 
 [ManagedAssetPG]
 slots=long number_of_personnel

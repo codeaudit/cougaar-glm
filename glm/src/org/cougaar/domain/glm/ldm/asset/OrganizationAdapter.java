@@ -24,6 +24,10 @@ import java.util.Collection;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.planning.ldm.asset.ClusterPG;
+import org.cougaar.domain.planning.ldm.asset.RelationshipBG;
+import org.cougaar.domain.planning.ldm.asset.NewRelationshipPG;
+import org.cougaar.domain.planning.ldm.asset.RelationshipPGImpl;
+
 import org.cougaar.domain.planning.ldm.plan.HasRelationships;
 import org.cougaar.domain.planning.ldm.plan.RelationshipImpl;
 import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
@@ -33,17 +37,16 @@ import org.cougaar.util.TimeSpan;
 
 import org.cougaar.domain.glm.ldm.Constants;
 
-public abstract class OrganizationAdapter extends GLMAsset
-  implements HasRelationships {
+
+public abstract class OrganizationAdapter extends GLMAsset {
+
 
   public OrganizationAdapter() { 
     super();
-    initRelationshipSchedule();
   }
 
   protected OrganizationAdapter(OrganizationAdapter prototype) {
     super(prototype);
-    initRelationshipSchedule();
   }
 
   private transient ClusterIdentifier cid = null;
@@ -61,36 +64,19 @@ public abstract class OrganizationAdapter extends GLMAsset
     }
   }
   
-  private transient RelationshipSchedule relationshipSchedule;
-
-  public boolean hasRelationshipSchedule() {
-    return true;
-  }
-
-  public RelationshipSchedule getRelationshipSchedule()  {
-    return relationshipSchedule;
-  }
-
-  public void setRelationshipSchedule(RelationshipSchedule schedule)  {
-    if (!schedule.getHasRelationships().equals(this)) {
-      throw new IllegalArgumentException("Attempt to use RelationshipSchedule for a different asset.");
-    }
-    relationshipSchedule = schedule;
-  }
-
   public boolean isSelf() {
-    return relationshipSchedule.getMatchingRelationships(Constants.Role.SELF).size() > 0;
+    return getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.SELF).size() > 0;
   }
 
   public Collection getSuperiors(long startTime, long endTime) {
     Collection superiors = 
-      relationshipSchedule.getMatchingRelationships(Constants.Role.SUPERIOR,
+      getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.SUPERIOR,
                                                     startTime,
                                                     endTime);
 
     if (superiors.isEmpty()) {
       superiors = 
-        relationshipSchedule.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR,
+        getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR,
                                                       startTime,
                                                       endTime);
     }
@@ -104,12 +90,12 @@ public abstract class OrganizationAdapter extends GLMAsset
 
   public Collection getSubordinates(long startTime, long endTime) {
     Collection subordinates = 
-      relationshipSchedule.getMatchingRelationships(Constants.Role.SUBORDINATE,
+      getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.SUBORDINATE,
                                                     startTime, endTime);
 
     if (subordinates.isEmpty()) {
       subordinates = 
-        relationshipSchedule.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUBORDINATE,
+        getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.ADMINISTRATIVESUBORDINATE,
                                                       startTime,
                                                       endTime);
     }
@@ -120,16 +106,11 @@ public abstract class OrganizationAdapter extends GLMAsset
     return getSubordinates(timeSpan.getStartTime(), timeSpan.getEndTime());
   }
 
-  private void initRelationshipSchedule() {
-    relationshipSchedule = new RelationshipScheduleImpl(this);
-  }
-
   private static PropertyDescriptor properties[];
   static {
     try {
-      properties = new PropertyDescriptor[2];
-      properties[0] = new PropertyDescriptor("relationshipSchedule", OrganizationAdapter.class, "getRelationshipSchedule", null);
-      properties[1] = new PropertyDescriptor("ClusterIdentifier", OrganizationAdapter.class, "getClusterIdentifier", null);
+      properties = new PropertyDescriptor[1];
+      properties[0] = new PropertyDescriptor("ClusterIdentifier", OrganizationAdapter.class, "getClusterIdentifier", null);
     } catch (IntrospectionException ie) {}
   }
 
@@ -148,24 +129,29 @@ public abstract class OrganizationAdapter extends GLMAsset
     return clone;
   }
 
-
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    out.defaultWriteObject();
-    if (out instanceof org.cougaar.core.cluster.persist.PersistenceOutputStream) {
-      out.writeObject(relationshipSchedule);
-    }
+  public void initRelationshipSchedule() {
+    NewRelationshipPG relationshipPG = 
+      (NewRelationshipPG) PropertyGroupFactory.newRelationshipPG();
+    relationshipPG.setRelationshipBG(new RelationshipBG(relationshipPG, (HasRelationships) this));
+    setRelationshipPG(relationshipPG);
   }
-
-  
-  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
-    in.defaultReadObject();
-    if (in instanceof org.cougaar.core.cluster.persist.PersistenceInputStream) {
-      relationshipSchedule = (RelationshipSchedule)in.readObject();
-    } else {      
-      initRelationshipSchedule();
-    }
-  }       
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
