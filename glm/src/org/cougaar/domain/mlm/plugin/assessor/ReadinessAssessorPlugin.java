@@ -107,6 +107,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  if (o instanceof Task) {
 	    Task t = (Task)o;
 	    if (t.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
+	    //if (t.getVerb().equals(Constants.Verb.SUPPLY)) {
 	      if (t.getPrepositionalPhrase(Constants.Preposition.REFILL) == null) {
 		  return true;
 	      }
@@ -369,7 +370,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       }
 
       // You are the weekest link!
-      if (oldAV[2].getValue() < newAV[2].getValue()) {
+      if (oldAV[2].getValue() > newAV[2].getValue()) {
 	oldAV[2].setValue(newAV[2].getValue());
       }
     }
