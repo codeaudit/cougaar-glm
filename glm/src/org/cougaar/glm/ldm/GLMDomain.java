@@ -23,50 +23,41 @@ package org.cougaar.glm.ldm;
 
 import java.util.*;
 
-import org.cougaar.core.blackboard.BlackboardServesLogicProvider;
 import org.cougaar.core.agent.ClusterServesLogicProvider;
+
 import org.cougaar.core.blackboard.LogPlan;
-import org.cougaar.core.blackboard.LogPlanServesLogicProvider;
 import org.cougaar.core.blackboard.XPlanServesBlackboard;
-import org.cougaar.core.domain.Domain;
-import org.cougaar.core.domain.Factory;
-import org.cougaar.core.domain.LDMServesPlugin;
+
+import org.cougaar.core.component.BindingSite;
+
+import org.cougaar.core.domain.DomainAdapter;
+import org.cougaar.core.domain.DomainBindingSite;
+
 import org.cougaar.glm.ldm.lps.*;
 
 /**
  * COUGAAR Domain package definition.
  **/
 
-public class GLMDomain implements Domain {
-  public GLMDomain() { }
+public class GLMDomain extends DomainAdapter {
+  private static final String GLM_NAME = "glm".intern();
+
+  public String getDomainName() {
+    return GLM_NAME;
+  }
+
+  public GLMDomain() {
+    super();
+
+  }
 
   public void initialize() {
-    // register COUGAAR Verbs, etc... maybe just put 'em in the factory or somesuch
-    Constants.Role.init();      // Insure that our Role constants are initted
+    super.initialize();
+    Constants.Role.init();    // Insure that our Role constants are initted
   }
 
-  public Factory getFactory(LDMServesPlugin ldm) {
-    return new GLMFactory(ldm);
-  }
-
-  public XPlanServesBlackboard createXPlan(Collection existingXPlans) {
-    for (Iterator plans = existingXPlans.iterator(); plans.hasNext(); ) {
-      XPlanServesBlackboard xPlan = (XPlanServesBlackboard) plans.next();
-      if (xPlan instanceof LogPlan) return xPlan;
-    }
-    return new LogPlan();
-  }
-
-  public Collection createLogicProviders(BlackboardServesLogicProvider alpplan,
-                                         ClusterServesLogicProvider cluster) {
-    ArrayList l = new ArrayList(4); // don't let this be too small.
-
-    LogPlan logplan = (LogPlan) alpplan;
-    l.add(new ReceiveTransferableLP(logplan, cluster));
-    l.add(new TransferableLP(logplan, cluster));
-    l.add(new DetailRequestLP(logplan, cluster));
-    l.add(new OPlanWatcherLP(logplan, cluster));
-    return l;
+  public void load() {
+    super.load();
   }
 
   public Collection getAliases() {
@@ -76,4 +67,69 @@ public class GLMDomain implements Domain {
     l.add("alp");
     return l;
   }
+
+  protected void loadFactory() {
+    DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
+
+    if (bindingSite == null) {
+      throw new RuntimeException("Binding site for the domain has not be set.\n" +
+                             "Unable to initialize domain Factory without a binding site.");
+    } 
+
+    setFactory(new GLMFactory(bindingSite.getClusterServesLogicProvider().getLDM()));
+  }
+
+  protected void loadXPlan() {
+    DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
+
+    if (bindingSite == null) {
+      throw new RuntimeException("Binding site for the domain has not be set.\n" +
+                             "Unable to initialize domain XPlan without a binding site.");
+    } 
+
+    Collection xPlans = bindingSite.getXPlans();
+    LogPlan logPlan = null;
+    
+    for (Iterator iterator = xPlans.iterator(); iterator.hasNext();) {
+      XPlanServesBlackboard  xPlan = (XPlanServesBlackboard) iterator.next();
+      if (xPlan instanceof LogPlan) {
+        // Note that this means there are 2 paths to the plan.
+        // Is this okay?
+        logPlan = (LogPlan) logPlan;
+        break;
+      }
+    }
+    
+    if (logPlan == null) {
+      logPlan = new LogPlan();
+    }
+    
+    setXPlan(logPlan);
+  }
+
+  protected void loadLPs() {
+    DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
+
+    if (bindingSite == null) {
+      throw new RuntimeException("Binding site for the domain has not be set.\n" +
+                             "Unable to initialize domain LPs without a binding site.");
+    } 
+
+    ClusterServesLogicProvider cluster = bindingSite.getClusterServesLogicProvider();
+    LogPlan logPlan = (LogPlan) getXPlan();
+
+    addLogicProvider(new ReceiveTransferableLP(logPlan, cluster));
+    addLogicProvider(new TransferableLP(logPlan, cluster));
+    addLogicProvider(new DetailRequestLP(logPlan, cluster));
+    addLogicProvider(new OPlanWatcherLP(logPlan, cluster));
+  }
+
 }
+
+
+
+
+
+
+
+
