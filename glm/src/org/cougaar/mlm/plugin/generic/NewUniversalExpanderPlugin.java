@@ -70,7 +70,7 @@ import org.cougaar.util.UnaryPredicate;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugin.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: NewUniversalExpanderPlugin.java,v 1.5 2003-12-09 17:55:15 rtomlinson Exp $
+  * @version $Id: NewUniversalExpanderPlugin.java,v 1.6 2004-02-04 17:17:44 ahelsing Exp $
   **/
 
 public class NewUniversalExpanderPlugin extends ComponentPlugin {
@@ -376,7 +376,7 @@ public class NewUniversalExpanderPlugin extends ComponentPlugin {
   private NewTask createSubTask(Task parent, String st_verb, int offset, int duration) {
     NewTask subtask = theFactory.newTask();
     subtask.setParentTaskUID(parent.getUID());
-    subtask.setVerb(Verb.getVerb(st_verb));
+    subtask.setVerb(Verb.get(st_verb));
     subtask.setPlan(parent.getPlan());
     subtask.setContext(parent.getContext());
     // pass along parent's prep phrases for now. A new one can be added also.

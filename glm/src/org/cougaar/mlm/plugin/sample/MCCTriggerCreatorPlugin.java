@@ -234,12 +234,12 @@ public class MCCTriggerCreatorPlugin extends SimplePlugin
     {
         NewTask nt = theLDMF.newTask();
         nt.setPlan(theLDMF.getRealityPlan());
-        nt.setVerb(Verb.getVerb(Constants.Verb.MAINTAIN));
+        nt.setVerb(Verb.get(Constants.Verb.MAINTAIN));
         nt.setDirectObject(asset);
         NewPrepositionalPhrase npp = theLDMF.newPrepositionalPhrase();
         npp.setPreposition(Constants.Preposition.USING);
         npp.setIndirectObject(maintenanceAsset);
-        nt.setPrepositionalPhrase(npp);
+        nt.setPrepositionalPhrases(npp);
         publishAdd(nt);
         return nt;
     }

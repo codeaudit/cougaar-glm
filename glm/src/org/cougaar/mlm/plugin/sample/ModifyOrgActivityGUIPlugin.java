@@ -300,7 +300,7 @@ public class ModifyOrgActivityGUIPlugin extends SimplePlugin {
 
   private String getClusterID() {
     try {
-      return getCluster().getMessageAddress().toString();
+      return getAgentIdentifier().toString();
     } catch (Exception e) {
       return "<UNKNOWN>";
     }

@@ -1089,7 +1089,7 @@ public abstract class BasicProcessor {
 	    newtask.setPrepositionalPhrases(input_task.getPrepositionalPhrases());
 	}
 	newtask.setDirectObject(direct_object);
-	newtask.setVerb(Verb.getVerb(output_verb));
+	newtask.setVerb(Verb.get(output_verb));
 	return newtask;
     }
 

@@ -138,7 +138,7 @@ public class SupportingUnitAssessorPlugin extends SimplePlugin {
       if (supportingRelationships.size() > 0) {
         NewReport report = getFactory().newReport();
         
-        report.setDate(new Date(getCluster().currentTimeMillis()));
+        report.setDate(new Date(getAlarmService().currentTimeMillis()));
         report.setText(myFormat.format(getMessageArgs(org, 
                                                       supportingRelationships)));
         
@@ -170,7 +170,7 @@ public class SupportingUnitAssessorPlugin extends SimplePlugin {
       if (supportingRelationships.size() > 0) {
         NewReport report = getFactory().newReport();
         
-        report.setDate(new Date(getCluster().currentTimeMillis()));
+        report.setDate(new Date(getAlarmService().currentTimeMillis()));
         report.setText(myFormat.format(getMessageArgs(org, 
                                                       supportingRelationships)));
         
@@ -200,7 +200,7 @@ public class SupportingUnitAssessorPlugin extends SimplePlugin {
       if (supportingRelationships.size() > 0) {
         NewReport report = getFactory().newReport();
         
-        report.setDate(new Date(getCluster().currentTimeMillis()));
+        report.setDate(new Date(getAlarmService().currentTimeMillis()));
         report.setText(myRemoveFormat.format(getMessageArgs(org, 
                                                             supportingRelationships)));
         

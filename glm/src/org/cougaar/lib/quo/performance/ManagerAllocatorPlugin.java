@@ -66,7 +66,7 @@ public class ManagerAllocatorPlugin extends  CommonUtilPlugin {
 		if (o instanceof Allocation) {
 		    Task task = ((Allocation)o).getTask();
 		    
-		return (task != null) && (task.getVerb().equals(Verb.getVerb(VERB)));
+		return (task != null) && (task.getVerb().equals(Verb.get(VERB)));
 		}
 		return false;
 	    }
@@ -81,7 +81,7 @@ public class ManagerAllocatorPlugin extends  CommonUtilPlugin {
 		if (o instanceof Task)
 		    {
 			Task task = (Task)o;
-			return task.getVerb().equals(Verb.getVerb(VERB));
+			return task.getVerb().equals(Verb.get(VERB));
 		    }
 		return false;
 	    }

@@ -76,6 +76,7 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.TaggedLocationScheduleElement;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.ConfigFinder;
 import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.Reflect;
 import org.cougaar.util.TimeSpan;
@@ -559,7 +560,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 
     try {
       fileStream = 
-        new InputStreamReader(getCluster().getConfigFinder().open(filename));
+        new InputStreamReader(ConfigFinder.getInstance().open(filename));
       input = new BufferedReader(fileStream);
       StreamTokenizer tokens = new StreamTokenizer(input);
       tokens.commentChar('#');
@@ -700,7 +701,7 @@ public class OrgTPRTDataPlugin extends SimplePlugin  {
 	    String filename = clusterId + "-relationships.ini";
 
 		try {
-			StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(filename))));
+			StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(ConfigFinder.getInstance().open(filename))));
 			st.eolIsSignificant(true);
 	        st.commentChar('#');
 			int count = 1;

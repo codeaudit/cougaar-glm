@@ -87,7 +87,7 @@ public class UserInputTask {
 					   phrasePhysicalAssetName,
 					   phraseCapabilities, 
 					   phraseAssetQuantity));
-      task.setPrepositionalPhrase(phrase);
+      task.setPrepositionalPhrases(phrase);
     }
     if (verb != "")
       task.setVerb(Verb.get(verb));

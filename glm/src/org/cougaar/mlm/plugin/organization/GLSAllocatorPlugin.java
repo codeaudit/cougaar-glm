@@ -73,7 +73,7 @@ public class GLSAllocatorPlugin extends SimplePlugin implements GLSConstants {
   protected void setupSubscriptions() {
     myLogger = 
       LoggingServiceWithPrefix.add(myLogger, 
-				   getCluster().getMessageAddress().getAddress()+ ": ");
+				   getMessageAddress().getAddress()+ ": ");
 
     // subscribe for GLS tasks for subordinates
     myAllocatableTasks = (IncrementalSubscription)subscribe(myAllocatableTaskPredicate);
@@ -303,7 +303,7 @@ public class GLSAllocatorPlugin extends SimplePlugin implements GLSConstants {
     // in a real expander you would want to distribute the parents preferences
     // across the subtasks.
     subtask.setPreferences(t.getPreferences());
-    subtask.setSource(this.getCluster().getMessageAddress());
+    subtask.setSource(this.getMessageAddress());
     
     return subtask;
 

@@ -68,7 +68,7 @@ public class GLSMiniAllocatorPlugin extends SimplePlugin {
   
     //Override the setupSubscriptions() in the SimplePlugin.
   protected void setupSubscriptions() {
-    me = getCluster().getMessageAddress().getAddress();
+    me = getAgentIdentifier().getAddress();
 
     // subscribe for GLS tasks for subordinates
     allocatableGLSTask = (IncrementalSubscription)subscribe(allocGLSPred);
@@ -260,7 +260,7 @@ public class GLSMiniAllocatorPlugin extends SimplePlugin {
     // in a real expander you would want to distribute the parents preferences
     // across the subtasks.
     subtask.setPreferences( t.getPreferences() );
-    subtask.setSource(this.getCluster().getMessageAddress());
+    subtask.setSource(this.getAgentIdentifier());
     
     return subtask;
 

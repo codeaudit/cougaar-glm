@@ -116,7 +116,7 @@ public class ClockTest extends SimplePlugin
         // Note - we can do this directly (without a transaction)
         // because time is not LDM controlled.
         System.err.println("ClockTest at "+cid+" Advancing to "+
-                           new Date(cluster.currentTimeMillis()+10*60*1000)
+                           new Date(currentTimeMillis()+10*60*1000)
                            );
         cluster.advanceTime(10 * 60 * 1000);
 

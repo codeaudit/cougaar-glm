@@ -252,10 +252,10 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
             String verbPattern = tokens.nextToken();
             int slashPos = verbPattern.indexOf('/');
             if (slashPos >= 0) {
-                filter.verb = Verb.getVerb(verbPattern.substring(0, slashPos));
+                filter.verb = Verb.get(verbPattern.substring(0, slashPos));
                 filter.regex = Pattern.compile(verbPattern.substring(slashPos + 1));
             } else {
-                filter.verb = Verb.getVerb(verbPattern);
+                filter.verb = Verb.get(verbPattern);
                 filter.regex = null;
             }
             while (tokens.hasMoreTokens()) {

@@ -57,6 +57,7 @@ import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.ExpanderHelper;
 import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.util.ConfigFinder;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 import org.w3c.dom.Document;
@@ -395,7 +396,7 @@ public class GenericTablePlugin extends SimplePlugin {
     newTask.setPlan(parentTask.getPlan());
     newTask.setDirectObject(parentTask.getDirectObject());
     newTask.setPreferences(parentTask.getPreferences());
-    newTask.setVerb(Verb.getVerb(toTask.verb));
+    newTask.setVerb(Verb.get(toTask.verb));
                     
     NewPrepositionalPhrase npp = f.newPrepositionalPhrase();
     npp.setPreposition(Constants.Preposition.FOR);
@@ -456,7 +457,7 @@ public class GenericTablePlugin extends SimplePlugin {
 
   protected void readXMLFile(String xmlFileString) {
     try {
-      Document document = getCluster().getConfigFinder().parseXMLConfigFile(xmlFileString);
+      Document document = ConfigFinder.getInstance().parseXMLConfigFile(xmlFileString);
       Element root = document.getDocumentElement();
       allCommands = parseCommands(root);
     } catch (java.io.IOException ioe) {

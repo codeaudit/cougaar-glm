@@ -313,7 +313,7 @@ public class CompletionWatcherWorker extends ServletWorker {
     Set verbSet = new HashSet ();
 
     while (tokenizer.hasMoreTokens())
-      verbSet.add (Verb.getVerb(tokenizer.nextToken().trim()));
+      verbSet.add (Verb.get(tokenizer.nextToken().trim()));
 
     return verbSet;
   }

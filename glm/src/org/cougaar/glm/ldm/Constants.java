@@ -94,7 +94,7 @@ public class Constants implements org.cougaar.planning.Constants {
     org.cougaar.planning.ldm.plan.Verb DetermineRequirements = org.cougaar.planning.ldm.plan.Verb.get("DetermineRequirements");
     org.cougaar.planning.ldm.plan.Verb EstablishMissionRequirements = org.cougaar.planning.ldm.plan.Verb.get("EstablishMissionRequirements");
     org.cougaar.planning.ldm.plan.Verb Execute = org.cougaar.planning.ldm.plan.Verb.get("Execute");
-    org.cougaar.planning.ldm.plan.Verb FindProviders = org.cougaar.planning.ldm.plan.Verb.getVerb(FINDPROVIDERS);
+    org.cougaar.planning.ldm.plan.Verb FindProviders = org.cougaar.planning.ldm.plan.Verb.get(FINDPROVIDERS);
     org.cougaar.planning.ldm.plan.Verb Fuel = org.cougaar.planning.ldm.plan.Verb.get("Fuel");
     org.cougaar.planning.ldm.plan.Verb GetLogSupport = org.cougaar.planning.ldm.plan.Verb.get("GetLogSupport");
     org.cougaar.planning.ldm.plan.Verb GenerateAEF = org.cougaar.planning.ldm.plan.Verb.get("GenerateAEF");
@@ -108,12 +108,12 @@ public class Constants implements org.cougaar.planning.Constants {
     org.cougaar.planning.ldm.plan.Verb PrepareForTransport = org.cougaar.planning.ldm.plan.Verb.get("PrepareForTransport");
     org.cougaar.planning.ldm.plan.Verb ProduceWater = org.cougaar.planning.ldm.plan.Verb.get("ProduceWater");
     org.cougaar.planning.ldm.plan.Verb ProjectWithdraw = org.cougaar.planning.ldm.plan.Verb.get("ProjectWithdraw");
-    org.cougaar.planning.ldm.plan.Verb PropagateFindProviders = org.cougaar.planning.ldm.plan.Verb.getVerb(PROPAGATEFINDPROVIDERS);
-    org.cougaar.planning.ldm.plan.Verb PropagateRegisterServices = org.cougaar.planning.ldm.plan.Verb.getVerb(PROPAGATEREGISTERSERVICES);
+    org.cougaar.planning.ldm.plan.Verb PropagateFindProviders = org.cougaar.planning.ldm.plan.Verb.get(PROPAGATEFINDPROVIDERS);
+    org.cougaar.planning.ldm.plan.Verb PropagateRegisterServices = org.cougaar.planning.ldm.plan.Verb.get(PROPAGATEREGISTERSERVICES);
     org.cougaar.planning.ldm.plan.Verb ProvideFood = org.cougaar.planning.ldm.plan.Verb.get("ProvideFood");
     org.cougaar.planning.ldm.plan.Verb ProvideWater = org.cougaar.planning.ldm.plan.Verb.get("ProvideWater");
     org.cougaar.planning.ldm.plan.Verb QuartermasterHandling = org.cougaar.planning.ldm.plan.Verb.get("QuartermasterHandling");
-    org.cougaar.planning.ldm.plan.Verb RegisterServices = org.cougaar.planning.ldm.plan.Verb.getVerb(REGISTERSERVICES);
+    org.cougaar.planning.ldm.plan.Verb RegisterServices = org.cougaar.planning.ldm.plan.Verb.get(REGISTERSERVICES);
     org.cougaar.planning.ldm.plan.Verb ReportForDuty = org.cougaar.planning.ldm.plan.Verb.get("ReportForDuty");
     org.cougaar.planning.ldm.plan.Verb ReportForService = org.cougaar.planning.ldm.plan.Verb.get("ReportForService");
     org.cougaar.planning.ldm.plan.Verb ReportReadiness = org.cougaar.planning.ldm.plan.Verb.get("ReportReadiness");

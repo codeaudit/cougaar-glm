@@ -190,8 +190,8 @@ public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
-    task.setSource(this.getCluster().getMessageAddress());
-    task.setDestination(this.getCluster().getMessageAddress());
+    task.setSource(this.getMessageAddress());
+    task.setDestination(this.getMessageAddress());
     
     // set prepositional phrases
     Vector phrases = new Vector(3);

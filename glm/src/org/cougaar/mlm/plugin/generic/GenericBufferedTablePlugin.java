@@ -259,7 +259,7 @@ public class GenericBufferedTablePlugin extends GenericTablePlugin {
   protected String getClusterID() {
     String s;
     try {
-      s = getCluster().getMessageAddress().toString();
+      s = getAgentIdentifier().toString();
     } catch (Exception e) {
       s = "UNKNOWN";
     }

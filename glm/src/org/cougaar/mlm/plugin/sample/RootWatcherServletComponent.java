@@ -190,7 +190,7 @@ public class RootWatcherServletComponent extends ComponentPlugin {
     for (Iterator i = selfOrgs.iterator(); i.hasNext(); ) {
       Organization self = (Organization) i.next();
       logger.info("self org found");
-      UnaryPredicate pred = new GLSPredicate(self, getMessageAddress());
+      UnaryPredicate pred = new GLSPredicate(self, getAgentIdentifier());
       glsSub = (IncrementalSubscription) blackboard.subscribe(pred);
       blackboard.unsubscribe(selfOrgSubscription);
       selfOrgSubscription = null;

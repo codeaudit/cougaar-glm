@@ -154,7 +154,7 @@ public class DTConstructionExpanderPlugin extends SimplePlugin {
   private Task createSubTask(Task parent, String st_verb, int offset, int duration) {
     NewTask subtask = theLDMF.newTask();
     subtask.setParentTask(parent);
-    subtask.setVerb(Verb.getVerb(st_verb));
+    subtask.setVerb(Verb.get(st_verb));
     subtask.setPlan(parent.getPlan());
     // use parent's prep phrases for now.
     subtask.setPrepositionalPhrases(parent.getPrepositionalPhrases());

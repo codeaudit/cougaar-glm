@@ -36,6 +36,7 @@ import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.ConfigFinder;
 import org.cougaar.util.Filters;
 import org.cougaar.util.UnaryPredicate;
 import org.w3c.dom.Document;
@@ -214,7 +215,7 @@ public class PropagationPlugin extends SimplePlugin
       Document doc;
 
       try {
-        doc = getCluster().getConfigFinder().parseXMLConfigFile(xmlfilename);
+        doc = ConfigFinder.getInstance().parseXMLConfigFile(xmlfilename);
 	if (doc == null) {
 	  System.err.println("XML Parser could not handle file " + xmlfilename);
 	  return ;
@@ -259,7 +260,7 @@ public class PropagationPlugin extends SimplePlugin
 
                 DestinationPredicate dp = 
                   new DestinationPredicate(caps, 
-                                           getCluster().getMessageAddress());
+                                           getAgentIdentifier());
 
                 IncrementalSubscription ts
                   = (IncrementalSubscription)transferableSubscriptions.get(tp);

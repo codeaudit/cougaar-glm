@@ -111,7 +111,7 @@ public class TopsStubExpanderPlugin extends SimplePlugin
     }
 
     private NewTask doExpansion( Task task ) {
-	MessageAddress me = this.getCluster().getMessageAddress();
+	MessageAddress me = this.getMessageAddress();
 	NewTask subtask = theLDMF.newTask();
 	
 	// Create copy of parent Task

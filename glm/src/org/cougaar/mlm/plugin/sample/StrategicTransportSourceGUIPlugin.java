@@ -257,7 +257,7 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
 
   protected Task startSource(
         Oplan oplan, Organization selfOrg) {
-    MessageAddress clusterID = this.getCluster().getMessageAddress();
+    MessageAddress clusterID = this.getAgentIdentifier();
 
     NewTask task = ldmf.newTask();
 

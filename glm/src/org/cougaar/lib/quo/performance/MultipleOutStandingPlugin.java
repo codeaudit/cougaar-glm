@@ -101,7 +101,7 @@ public class MultipleOutStandingPlugin extends CommonUtilPlugin {
 	    public boolean execute(Object o) {
 		if (o instanceof Allocation) {
 		    Task t = ((Allocation)o).getTask();
-		    return (t != null) && (t.getVerb().equals(Verb.getVerb(VERB)));	
+		    return (t != null) && (t.getVerb().equals(Verb.get(VERB)));	
 		}
 		return false;
 	    }
@@ -205,7 +205,7 @@ public class MultipleOutStandingPlugin extends CommonUtilPlugin {
 	    npp.setIndirectObject(alterMessageSize(0));
 	else
 	    npp.setIndirectObject(alterMessageSize(MESSAGESIZE));
-	new_task.setPrepositionalPhrase(npp);
+	new_task.setPrepositionalPhrases(npp);
 	return new_task;
     }
 

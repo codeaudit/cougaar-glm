@@ -378,7 +378,7 @@ public class TaskUtils extends PluginHelper {
   {
     Enumeration enum = task.getPrepositionalPhrases();
     if (!enum.hasMoreElements())
-      task.setPrepositionalPhrase(pp);
+      task.setPrepositionalPhrases(pp);
     else {
       Vector phrases = new Vector();
       while (enum.hasMoreElements()) {
