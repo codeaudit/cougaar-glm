@@ -31,7 +31,8 @@ endif
 # But you may still use properties if you wish.
 #set MYDOMAINS="-Dalp.domain.alp=org.cougaar.domain.glm.ALPDomain"
 set MYDOMAINS=""
-set MYPROPERTIES="$MYDOMAINS -Dalp.install.path=$ALP_INSTALL_PATH -Duser.timezone=GMT"
+set MYPROPERTIES="$MYDOMAINS  -Dorg.cougaar.system.path=$ALP3RDPARTY -Dorg.cougaar.install.path=$ALP_INSTALL_PATH -Duser.timezone=GMT"
+
 set MYMEMORY=""
 
 set node = $argv[1]
@@ -74,7 +75,8 @@ if ( ! $?JDK_INSTALL_PATH ) then
   exit;
 endif
 
-set javaargs="$osargs -Dalp.persistence.enable=true -Xbootclasspath:$ALP_INSTALL_PATH/lib/javaiopatch.jar:$JDK_INSTALL_PATH/jre/lib/rt.jar $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS"
+set javaargs="$osargs -Dorg.cougaar.core.cluster.persistence.enable=true -Xbootclasspath:$ALP_INSTALL_PATH/lib/javaiopatch.jar:$JDK_INSTALL_PATH/jre/lib/rt.jar $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS"
+
 
 if ($?ALP_DEV_PATH) then
     echo java $javaargs org.cougaar.core.society.Node $args
