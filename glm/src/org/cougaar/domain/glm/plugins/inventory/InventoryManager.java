@@ -263,6 +263,17 @@ public abstract class InventoryManager extends InventoryProcessor {
 	}
     }
 
+    /**
+     * Generate resupply projections. Get the projected demand for
+     * every planning day and for each constant rate segment generate
+     * one or two projected resupply tasks. The rates of the projected
+     * resupply tasks are adjusted to gradually build up the inventory
+     * to the highest reorder level in the interval and then back down
+     * to the final reorder level of the interval. When the day of the
+     * highest reorder level coincides with the first or last day of
+     * the interval, the corresponding projected resupply task is not
+     * generated.
+     **/
     protected Enumeration generateProjections(Inventory inventory) {
 //  	printDebug("STEP 2:  GenerateProjections() for "+AssetUtils.getAssetIdentifier(inventory));
 	Vector projections = new Vector();
@@ -284,17 +295,29 @@ public abstract class InventoryManager extends InventoryProcessor {
                 double value = convertScalarToDouble(previous);
                 if (!Double.isNaN(value) && value > 0.0) {
                     long start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
-                    // safety accounts for the safety level which the inventory attempts to maintain.
-                    // add the safety 'demand' to projected demand.
-                    double safety = determineSafetyIncrement(periodBegin, day-1, inventory);
-                    Task t = newProjectSupplyTask(inventory, start,
-                                                  start + (day - periodBegin) * TimeUtils.MSEC_PER_DAY, 
-                                                  createIncrementedDailyRate(previous, safety));
-//                      if (safety > 0) {
-//                          printDebug(0, "  !!! projection with dailyRate=" + createDailyRate(previous)+" and safetyRate="+safety);
-//                      }
-                    projections.add(t);
-                    invpg.addDueIn(t);
+                    // reorder accounts for the reorder level which the inventory attempts to maintain.
+                    // add the reorder 'demand' to projected demand.
+                    ReorderIncrement si = determineReorderIncrement(periodBegin, day, inventory);
+                    int nDays;
+                    nDays = si.highestDay - periodBegin;
+                    if (nDays > 0) {
+                        long end = start + nDays * TimeUtils.MSEC_PER_DAY;
+                        double reorder = (si.highest - si.first) / nDays;
+                        Task t = newProjectSupplyTask(inventory, start, end, 
+                                                      createIncrementedDailyRate(previous, reorder));
+                        projections.add(t);
+                        invpg.addDueIn(t);
+                        start = end;
+                    }
+                    nDays = day - si.highestDay;
+                    if (nDays > 0) {
+                        long end = start + nDays * TimeUtils.MSEC_PER_DAY;
+                        double reorder = (si.last - si.highest) / nDays;
+                        Task t = newProjectSupplyTask(inventory, start, end,
+                                                      createIncrementedDailyRate(previous, reorder));
+                        projections.add(t);
+                        invpg.addDueIn(t);
+                    }
 //                      printDebug("generateProjections(), created Projection task. Start: "
 //                                 + TimeUtils.dateString(start)+", End: "
 //                                 + TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(), day))
@@ -309,23 +332,31 @@ public abstract class InventoryManager extends InventoryProcessor {
 
     protected abstract double getReorderLevel(Inventory inventory, int day);
 
-    protected double determineSafetyIncrement(int periodStart, int periodEnd, Inventory inventory) {
+    protected static class ReorderIncrement {
+        public double first;
+        public double highest;
+        public double last;
+        public int highestDay;
+    }
 
-	double first = getReorderLevel(inventory, periodStart);
-	double highest = first;
-	int highestDay = periodStart;
-	for(int i = periodStart; i<=periodEnd; i++){
+    protected ReorderIncrement determineReorderIncrement(int startDay, int endDay, Inventory inventory) {
+        double first = getReorderLevel(inventory, startDay);
+        double highest = first;
+        double last = getReorderLevel(inventory, endDay);
+        int highestDay = startDay;
+        for (int i = startDay + 1; i < endDay; i++) {
 	    double reorder = getReorderLevel(inventory, i);
-	    if(reorder>highest){
+	    if (reorder > highest){
 		highest = reorder;
 		highestDay = i;
 	    }
 	}
-	if(periodEnd==periodStart) {
-	    return 0.0;
-	} else {
-	    return ((highest-first)/(periodEnd-periodStart));
-	}
+        ReorderIncrement si = new ReorderIncrement();
+        si.first = first;
+        si.highest = highest;
+        si.highestDay = highestDay;
+        si.last = last;
+        return si;
     }
 
     protected Rate createDailyRate(Measure qty) {
