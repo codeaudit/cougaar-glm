@@ -1,0 +1,450 @@
+DIV-HHC.ASSET_FILE=eiger_MSB_assets.q
+BDE-HHC.ASSET_FILE=eiger_MSB_assets.q
+DISCOM-HHC.ASSET_FILE=eiger_assets.q
+MSB.ASSET_FILE=eiger_MSB_assets.q
+FSB.ASSET_FILE=eiger_FSB_assets.q
+ARBN.ASSET_FILE=eiger_ARBN_assets.q
+INFBN.ASSET_FILE=eiger_INFBN_assets.q
+FABN.ASSET_FILE=eiger_FABN_assets.q
+ENGBN.ASSET_FILE=eiger_ENGBN_assets.q
+DASB.ASSET_FILE=eiger_DASB_assets.q
+AVNBN-ATTACK.ASSET_FILE=eiger_AVNBN_ATTACK_assets.q
+AVNBN-TRANSPORT.ASSET_FILE=eiger_AVNBN_TRANSPORT_assets.q
+CAVSQDN.ASSET_FILE=eiger_CAVSQDN_assets.q
+CORPS-MAINT.ASSET_FILE=fdm_all_aggregate_assets.q
+PLUSUP-UNIT.ASSET_FILE=fdm_all_aggregate_assets.q
+PLUSUP-MAINT-UNIT.ASSET_FILE=fdm_all_aggregate_assets.q
+SPTGP-UNIT.ASSET_FILE=fdm_all_aggregate_assets.q
+SPTGP-HHC.ASSET_FILE=fdm_all_aggregate_assets.q
+IBCT-SPTBN.ASSET_FILE=fdm_all_aggregate_assets.q
+MEDICAL.ASSET_FILE=fdm_all_aggregate_assets.q
+MEDICAL-SUPPLY.ASSET_FILE=fdm_all_aggregate_assets.q
+THEATER-TRANSPORT.ASSET_FILE=fdm_all_aggregate_assets.q
+THEATER-TRANSPORT-VISHNU.ASSET_FILE=fdm_all_aggregate_assets.q
+THEATER-CONSTRUCTION.ASSET_FILE=fdm_all_aggregate_assets.q
+89-TKCO-CGO.ASSET_FILE=89-TKCO-CGO.assets.q
+416-TKCO-POL.ASSET_FILE=416-TKCO-POL.assets.q
+418-TKCO-POL.ASSET_FILE=418-TKCO-POL.assets.q
+3ID-OTHER.ASSET_FILE=fdm_all_aggregate_assets.q
+IBCT-OTHER.ASSET_FILE=fdm_all_aggregate_assets.q
+3-BDE-2ID-HHC.ASSET_FILE=fdm_all_aggregate_assets.q
+1-23-INFBN.ASSET_FILE=fdm_all_aggregate_assets.q
+5-20-INFBN.ASSET_FILE=fdm_all_aggregate_assets.q
+2-3-INFBN.ASSET_FILE=fdm_all_aggregate_assets.q
+1-14-CAVSQDN.ASSET_FILE=fdm_all_aggregate_assets.q
+1-37-FABN.ASSET_FILE=fdm_all_aggregate_assets.q
+296-SPTBN.ASSET_FILE=fdm_all_aggregate_assets.q
+POL-SUPPLY.ASSET_FILE=fdm_all_aggregate_assets.q
+AMMO-SUPPLY.ASSET_FILE=fdm_all_aggregate_assets.q
+MATERIEL-SUPPLY.ASSET_FILE=fdm_all_aggregate_assets.q
+TRANS-TERMINAL.ASSET_FILE=fdm_all_aggregate_assets.q
+PREPO.ASSET_FILE=fdm_all_aggregate_assets.q
+REFUGEE.ASSET_FILE=fdm_all_aggregate_assets.q
+RELIEF-HQ.ASSET_FILE=fdm_all_aggregate_assets.q
+RELIEF-SUPPLY.ASSET_FILE=fdm_all_aggregate_assets.q
+RELIEF-TRANSPORT.ASSET_FILE=fdm_all_aggregate_assets.q
+CV.ASSET_FILE=fdm_all_aggregate_assets.q
+CAG.ASSET_FILE=fdm_all_aggregate_assets.q
+NAVY-AIR-SQDN.ASSET_FILE=fdm_all_aggregate_assets.q
+MARINE-ACE.ASSET_FILE=eiger_ACE_assets.q
+MARINE-CE.ASSET_FILE=eiger_CE_assets.q
+MARINE-CSSE.ASSET_FILE=eiger_CSSE_assets.q
+MARINE-ESBN.ASSET_FILE=eiger_CSSE_assets.q
+MARINE-GCE.ASSET_FILE=eiger_GCE_assets.q
+MARINE-MEU.ASSET_FILE=eiger_MEU_assets.q
+MARINE-MPSRON.ASSET_FILE=MPSRON-2.ldm.xml
+MARINE-SUPBN.ASSET_FILE=eiger_CSSE_assets.q
+OTHER.ASSET_FILE=fdm_all_aggregate_assets.q
+COALITION-BDE-HQ.ASSET_FILE=fdm_all_aggregate_assets.q
+COALITION-INFBN.ASSET_FILE=fdm_all_aggregate_assets.q
+
+ALL.STRAT_TRANS_ARGS=OriginFile=GEOLOC-PLDR.xml, OffsetDays=7
+
+3-BDE-2ID-HHC.STRAT_TRANS_ARGS=OriginFile=None
+334-SIGCO.STRAT_TRANS_ARGS=OriginFile=None
+209-MICO.STRAT_TRANS_ARGS=OriginFile=None
+1-23-INFBN.STRAT_TRANS_ARGS=OriginFile=None
+5-20-INFBN.STRAT_TRANS_ARGS=OriginFile=None
+2-3-INFBN.STRAT_TRANS_ARGS=OriginFile=None
+2-3-INFBN.STRAT_TRANS_ARGS=OriginFile=None
+1-14-CAVSQDN.STRAT_TRANS_ARGS=OriginFile=None
+52-INF-CCO.STRAT_TRANS_ARGS=OriginFile=None
+1-37-FABN.STRAT_TRANS_ARGS=OriginFile=None
+18-ENGCO.STRAT_TRANS_ARGS=OriginFile=None
+296-SPTBN.STRAT_TRANS_ARGS=OriginFile=None
+126-MEDTM-FSURG.STRAT_TRANS_ARGS=OriginFile=None
+
+2-BDE-3ID-HHC.STRAT_TRANS_ARGS=OriginFile=None
+2-7-INFBN.STRAT_TRANS_ARGS=OriginFile=None
+3-69-ARBN.STRAT_TRANS_ARGS=OriginFile=None
+4-64-ARBN.STRAT_TRANS_ARGS=OriginFile=None
+1-41-FABN.STRAT_TRANS_ARGS=OriginFile=None
+10-ENGBN.STRAT_TRANS_ARGS=OriginFile=None
+3-FSB.STRAT_TRANS_ARGS=OriginFile=None
+
+3-BDE-3ID-HHC.STRAT_TRANS_ARGS=OriginFile=None
+1-15-INFBN.STRAT_TRANS_ARGS=OriginFile=None
+1-30-INFBN.STRAT_TRANS_ARGS=OriginFile=None
+2-69-ARBN.STRAT_TRANS_ARGS=OriginFile=None
+1-10-FABN.STRAT_TRANS_ARGS=OriginFile=None
+317-ENGBN.STRAT_TRANS_ARGS=OriginFile=None
+203-FSB.STRAT_TRANS_ARGS=OriginFile=None
+
+FSB.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +FuelsSourcingAllocator, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+DASB.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +FuelsSourcingAllocator, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+IBCT-SPTBN.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, Ammunition_inv=FSB_ammunition.inv, +FuelsSourcingAllocator, +BulkPOLInventory, BulkPOL_inv=FSB_bulkpol.inv, +PackagedPOLInventory, PackagedPOL_inv=FSB_packagedpol.inv, +ConsumableInventory, Consumable_inv=FSB_consumable.inv
+MSB.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +FuelsSourcingAllocator, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+FUTURE.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, -BulkPOLInventory, -PackagedPOLInventory, -ConsumableInventory, +DLAInventoryManager, +ConsumableSupplyTasks
+PREPO.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, +BulkPOLInventory, BulkPOL_inv=APS_bulkpol.inv, +PackagedPOLInventory, PackagedPOL_inv=APS_packagedpol.inv, -ConsumableInventory
+DFSP.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, +BulkPOLInventory, -PackagedPOLInventory, -ConsumableInventory, -DLAInventoryManager
+HNS.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, -ConsumableInventory, -DLAInventoryManager
+POL-SUPPLY.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, +BulkPOLInventory, +BulkPOLTransport, BulkPOL_inv=POLSPLY_bulkpol.inv, +PackagedPOLInventory, +PackagedPOLTransport, PackagedPOL_inv=POLSPLY_packagedpol.inv, -ConsumableInventory, -DLAInventoryManager
+AMMO-SUPPLY.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, -DLAInventoryManager
+MATERIEL-SUPPLY.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, +ConsumableInventory, -DLAInventoryManager
+TRANS-TERMINAL.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +BulkPOLTransport, BulkPOL_inv=TCBN-HHC_bulkpol.inv, +PackagedPOLInventory, +PackagedPOLTransport, PackagedPOL_inv=TCBN-HHC_packagedpol.inv, +ConsumableInventory, -DLAInventoryManager
+TFSP.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, -ConsumableInventory, -DLAInventoryManager
+MASSAWA-PORT.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, -ConsumableInventory
+INFBN.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+COALITION-INFBN.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+ARBN.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+AVNBN-ATTACK.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+AVNBN-TRANSPORT.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+FABN.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+ENGBN.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+CAVSQDN.INVENTORY_MANAGEMENT_ARGS=+AmmunitionInventory, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory, -DLAInventoryManager
+RELIEF-SUPPLY.INVENTORY_MANAGEMENT_ARGS=-AmmunitionInventory, -BulkPOLInventory, -PackagedPOLInventory, -ConsumableInventory, -DLAInventoryManager
+MARINE-ACE.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MARINE_DEFAULT_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MARINE-CE.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MARINE_DEFAULT_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MARINE-CSSE.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MARINE_DEFAULT_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MARINE-ESBN.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=ESBN_bulkpol.inv, PackagedPOL_inv=ESBN_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MARINE-GCE.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MARINE_DEFAULT_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MARINE-MEU.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MARINE_DEFAULT_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MARINE-MPSRON.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MARINE_DEFAULT_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MARINE-SUPBN.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MARINE_DEFAULT_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=SUPBN_consumable.inv, +AmmunitionInventory, Ammunition_inv=SUPBN_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MWSS-373.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MWSS_bulkpol.inv, PackagedPOL_inv=MWSS_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+MWSS-374.INVENTORY_MANAGEMENT_ARGS=BulkPOL_inv=MWSS_bulkpol.inv, PackagedPOL_inv=MARINE_DEFAULT_packagedpol.inv, Consumable_inv=MARINE_DEFAULT_consumable.inv, +AmmunitionInventory, Ammunition_inv=MARINE_DEFAULT_ammunition.inv, +BulkPOLInventory, +PackagedPOLInventory, +ConsumableInventory
+
+
+ALL.MEDICAL_INVENTORY_ARGS=+MedicalInventory
+
+FSB.SUBSISTENCE_INVENTORY_ARGS=+SubsistenceInventory
+DASB.SUBSISTENCE_INVENTORY_ARGS=+SubsistenceInventory
+IBCT-SPTBN.SUBSISTENCE_INVENTORY_ARGS=+SubsistenceInventory
+MSB.SUBSISTENCE_INVENTORY_ARGS=+SubsistenceInventory
+MATERIEL-SUPPLY.SUBSISTENCE_INVENTORY_ARGS=+SubsistenceInventory, -ClassISubsistenceTransport, ClassISubsistence_inv=CSB-HHD_classisubsistence.inv
+TRANS-TERMINAL.SUBSISTENCE_INVENTORY_ARGS=+SubsistenceInventory, +ClassISubsistenceTransport, ClassISubsistence_inv=TCBN-HHC_classisubsistence.inv
+MARINE-ACE.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=MARINE_DEFAULT_classisubsistence.inv, +SubsistenceInventory
+MARINE-CE.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=MARINE_DEFAULT_classisubsistence.inv, +SubsistenceInventory
+MARINE-CSSE.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=MARINE_DEFAULT_classisubsistence.inv, +SubsistenceInventory
+MARINE-ESBN.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=MARINE_DEFAULT_classisubsistence.inv, +SubsistenceInventory
+MARINE-GCE.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=MARINE_DEFAULT_classisubsistence.inv, +SubsistenceInventory
+MARINE-MEU.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=MARINE_DEFAULT_classisubsistence.inv, +SubsistenceInventory
+MARINE-MPSRON.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=MARINE_DEFAULT_classisubsistence.inv, +SubsistenceInventory
+MARINE-SUPBN.SUBSISTENCE_INVENTORY_ARGS=ClassISubsistence_inv=SUPBN_classisubsistence.inv, +SubsistenceInventory, ClassISubsistenceProjectionWeight=1.0
+
+ALL.SUBSISTENCE_INVENTORY_ARGS=+SubsistenceInventory
+
+ALL.SUBSISTENCE_CONSUMER_LDM_FILE=subsistence.q
+ALL.SUBSISTENCE_LDM_ARGS=subsistence.q, +PrototypeProvider
+ALL.SUBSISTENCE_PROJECTION_ARGS=ClassISubsistence
+
+HNS.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-HNS.ldm.xml
+PREPO.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-PREPO.ldm.xml
+DFSP.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-DFSP.ldm.xml
+FUTURE.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-SUPPLY-ROOT.ldm.xml
+THEATER-CONSTRUCTION.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-Construction.ldm.xml
+
+TRANS-TERMINAL.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-TRANS-TERMINAL.ldm.xml
+MATERIEL-SUPPLY.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-MATERIEL-SUPPLY.ldm.xml
+POL-SUPPLY.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-MATERIEL-SUPPLY.ldm.xml
+AMMO-SUPPLY.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-MATERIEL-SUPPLY.ldm.xml
+MEDICAL-SUPPLY.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-MATERIEL-SUPPLY.ldm.xml
+MSB.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-MSB.ldm.xml
+FSB.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-FSB.ldm.xml
+DASB.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-FSB.ldm.xml
+IBCT-SPTBN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-FSB.ldm.xml
+MEDICAL.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+ARBN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+INFBN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+COALITION-INFBN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+FABN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+ENGBN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+CAVSQDN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+AVNBN-ATTACK.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+AVNBN-TRANSPORT.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml
+REFUGEE.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ARBN.ldm.xml, RefugeeFeedingPolicy.ldm.xml
+RELIEF-SUPPLY.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-TRANS-TERMINAL.ldm.xml
+MARINE-ACE.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-USMC.ldm.xml
+MARINE-CE.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-USMC.ldm.xml
+MARINE-CSSE.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-USMC.ldm.xml
+MARINE-ESBN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-ESBN.ldm.xml
+MARINE-GCE.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-USMC.ldm.xml
+MARINE-MEU.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-USMC.ldm.xml
+MARINE-MPSRON.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-USMC.ldm.xml
+MARINE-SUPBN.INVENTORY_MANAGEMENT_POLICY_FILE=InventoryPolicy-USMC.ldm.xml
+
+MMMFSB.SUBSISTENCE_POLICY_FILE=DaysOnHandPolicy-FSB.ldm.xml
+MMMDASB.SUBSISTENCE_POLICY_FILE=DaysOnHandPolicy-FSB.ldm.xml
+MMMIBCT-SPTBN.SUBSISTENCE_POLICY_FILE=DaysOnHandPolicy-FSB.ldm.xml
+MMMMSB.SUBSISTENCE_POLICY_FILE=DaysOnHandPolicy-MSB.ldm.xml
+MMMMATERIEL-SUPPLY.SUBSISTENCE_POLICY_FILE=DaysOnHandPolicy-MATERIEL-SUPPLY.ldm.xml
+MMMTRANS-TERMINAL.SUBSISTENCE_POLICY_FILE=DaysOnHandPolicy-TRANS-TERMINAL.ldm.xml
+MMMALL.SUBSISTENCE_POLICY_FILE=DaysOnHandPolicy-ARBN.ldm.xml
+MMMPOL-SUPPLY.POL_POLICY_FILE=DaysOnHandPolicy-POLSPLY.ldm.xml
+
+ALL.NCA_POLICY_FILES=LimitResourcesPolicy.ldm.xml
+3ID-HHC.DIV_POLICY_FILES=ArmyFeedingPolicy.ldm.xml,BasicLoadPolicy.ldm.xml
+MARINE-MEU.DIV_POLICY_FILES=MarineFeedingPolicy.ldm.xml
+MARINE-CE.DIV_POLICY_FILES=MarineFeedingPolicy.ldm.xml
+
+TEMPALL1.GLS_EXPANDER_ARGS=StrategicTransportation, Consumable, BulkPOL, ClassISubsistence, ClassVIIIMedical, DSMaintenance, GSMaintenance, BulkWater, Food, MaintainInventory
+TEMPALL2.GLS_EXPANDER_ARGS=BulkPOL, MaintainInventory
+TEMPALL3.GLS_EXPANDER_ARGS=StrategicTransportation, MaintainInventory
+
+XXXALL.GLS_EXPANDER_ARGS=StrategicTransportation
+OTHER.GLS_EXPANDER_ARGS=StrategicTransportation
+DIV-HHC.GLS_EXPANDER_ARGS=StrategicTransportation,Construction,MaintainInventory
+BDE-HHC.GLS_EXPANDER_ARGS=StrategicTransportation
+SPTGP-UNIT.GLS_EXPANDER_ARGS=StrategicTransportation
+SPTGP-HHC.GLS_EXPANDER_ARGS=StrategicTransportation
+DFSP.GLS_EXPANDER_ARGS=MaintainInventory
+HNS.GLS_EXPANDER_ARGS=MaintainInventory
+APS-3.GLS_EXPANDER_ARGS=MaintainInventory
+TFSP.GLS_EXPANDER_ARGS=MaintainInventory
+FUTURE.GLS_EXPANDER_ARGS=MaintainInventory
+XVIIICOSCOM-HHC.GLS_EXPANDER_ARGS=StrategicTransportation
+
+3ID-OTHER.GLS_EXPANDER_ARGS=StrategicTransportation
+IBCT-OTHER.GLS_EXPANDER_ARGS=StrategicTransportation
+DISCOM-HHC.GLS_EXPANDER_ARGS=StrategicTransportation
+COALITION-BDE-HQ.GLS_EXPANDER_ARGS=StrategicTransportation
+THEATER-TRANSPORT.GLS_EXPANDER_ARGS=StrategicTransportation
+THEATER-TRANSPORT-VISHNU.GLS_EXPANDER_ARGS=StrategicTransportation
+CORPS-MAINT.GLS_EXPANDER_ARGS=StrategicTransportation
+RELIEF-SUPPLY.GLS_EXPANDER_ARGS=MaintainInventory
+RELIEF-TRANSPORT.GLS_EXPANDER_ARGS=StrategicTransportation
+RELIEF-HQ.GLS_EXPANDER_ARGS=
+SUPPORTED-CINC-HHC.GLS_EXPANDER_ARGS=
+NCA.GLS_EXPANDER_ARGS=
+JTF-HHC.GLS_EXPANDER_ARGS=
+COALITION-HQ.GLS_EXPANDER_ARGS=
+
+MARINE-MEU.GLS_EXPANDER_ARGS=
+MARINE-MPSRON.GLS_EXPANDER_ARGS=
+1-MEF.GLS_EXPANDER_ARGS=
+ARG.GLS_EXPANDER_ARGS=
+MARFORCENT.GLS_EXPANDER_ARGS=
+MPSRON-2.GLS_EXPANDER_ARGS=
+NAVCENT.GLS_EXPANDER_ARGS=
+
+MARINE-ACE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+MARINE-CE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+MARINE-CSSE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+MARINE-ESBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+MARINE-GCE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+MARINE-SUPBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+
+
+ARBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+INFBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+COALITION-INFBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+ENGBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+FABN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+FSB.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+IBCT-SPTBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+MSB.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+TRANS-TERMINAL.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+POL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+AMMO-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+MATERIEL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+THEATER-CONSTRUCTION.GLS_EXPANDER_ARGS=StrategicTransportation,ClassVIIIMedical,MaintainInventory
+DASB.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+CAVSQDN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+AVNBN-ATTACK.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+AVNBN-TRANSPORT.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,Ammunition,BulkPOL,PackagedPOL,ClassISubsistence,ClassVIIIMedical,MaintainInventory
+REFUGEE.GLS_EXPANDER_ARGS=HumanitarianDailyRation,ClassVIIIMedical,MaintainInventory
+MEDICAL.GLS_EXPANDER_ARGS=StrategicTransportation,ClassVIIIMedical,MaintainInventory
+MEDICAL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,ClassVIIIMedical,MaintainInventory
+
+
+HHHARBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHINFBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHCOALITION-INFBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHENGBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHFABN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHFSB.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHIBCT-SPTBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHMSB.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHTRANS-TERMINAL.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHPOL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHAMMO-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHMATERIEL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHTHEATER-CONSTRUCTION.GLS_EXPANDER_ARGS=StrategicTransportation,MaintainInventory
+HHHDASB.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHCAVSQDN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHAVNBN-ATTACK.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHAVNBN-TRANSPORT.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHREFUGEE.GLS_EXPANDER_ARGS=HumanitarianDailyRation,MaintainInventory
+HHHMEDICAL.GLS_EXPANDER_ARGS=StrategicTransportation,MaintainInventory
+HHHMEDICAL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,MaintainInventory
+
+HHHMARINE-ACE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHMARINE-CE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHMARINE-CSSE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHMARINE-ESBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHMARINE-GCE.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+HHHMARINE-SUPBN.GLS_EXPANDER_ARGS=StrategicTransportation,Consumable,BulkPOL,PackagedPOL,ClassISubsistence,MaintainInventory
+
+XXXARBN.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXINFBN.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXCOALITION-INFBN.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXENGBN.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXFABN.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXFSB.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXIBCT-SPTBN.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXMSB.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXTRANS-TERMINAL.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXPOL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXAMMO-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXMATERIEL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXTHEATER-CONSTRUCTION.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXDASB.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXCAVSQDN.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXAVNBN-ATTACK.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXAVNBN-TRANSPORT.GLS_EXPANDER_ARGS=StrategicTransportation,BulkPOL,PackagedPOL,MaintainInventory
+XXXREFUGEE.GLS_EXPANDER_ARGS=HumanitarianDailyRation,MaintainInventory
+XXXMEDICAL.GLS_EXPANDER_ARGS=StrategicTransportation,MaintainInventory
+XXXMEDICAL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,MaintainInventory
+
+YYYARBN.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYINFBN.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYCOALITION-INFBN.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYENGBN.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYFABN.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYFSB.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYIBCT-SPTBN.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYMSB.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYTRANS-TERMINAL.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYPOL-SUPPLY.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYAMMO-SUPPLY.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYMATERIEL-SUPPLY.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYTHEATER-CONSTRUCTION.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYDASB.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYCAVSQDN.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYAVNBN-ATTACK.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYAVNBN-TRANSPORT.GLS_EXPANDER_ARGS=ClassISubsistence,MaintainInventory
+YYYREFUGEE.GLS_EXPANDER_ARGS=MaintainInventory
+YYYMEDICAL.GLS_EXPANDER_ARGS=MaintainInventory
+YYYMEDICAL-SUPPLY.GLS_EXPANDER_ARGS=MaintainInventory
+
+ZZZARBN.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZINFBN.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZCOALITION-INFBN.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZENGBN.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZFABN.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZFSB.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZIBCT-SPTBN.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZMSB.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZTRANS-TERMINAL.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZPOL-SUPPLY.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZAMMO-SUPPLY.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZMATERIEL-SUPPLY.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZTHEATER-CONSTRUCTION.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZDASB.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZCAVSQDN.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZAVNBN-ATTACK.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZAVNBN-TRANSPORT.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZREFUGEE.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZMEDICAL.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+ZZZMEDICAL-SUPPLY.GLS_EXPANDER_ARGS=ClassVIIIMedical,MaintainInventory
+
+WWWARBN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWINFBN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWCOALITION-INFBN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWENGBN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWFABN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWFSB.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWIBCT-SPTBN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWMSB.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWTRANS-TERMINAL.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWPOL-SUPPLY.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWAMMO-SUPPLY.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWMATERIEL-SUPPLY.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWTHEATER-CONSTRUCTION.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWDASB.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWCAVSQDN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWAVNBN-ATTACK.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWAVNBN-TRANSPORT.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWREFUGEE.GLS_EXPANDER_ARGS=MaintainInventory
+WWWMEDICAL.GLS_EXPANDER_ARGS=MaintainInventory
+WWWMEDICAL-SUPPLY.GLS_EXPANDER_ARGS=MaintainInventory
+
+WWWMARINE-ACE.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWMARINE-CE.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWMARINE-CSSE.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWMARINE-ESBN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWMARINE-GCE.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+WWWMARINE-SUPBN.GLS_EXPANDER_ARGS=Ammunition,MaintainInventory
+
+
+QQQARBN.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQINFBN.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQCOALITION-INFBN.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQENGBN.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQFABN.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQFSB.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQIBCT-SPTBN.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQMSB.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQTRANS-TERMINAL.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQPOL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQAMMO-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQMATERIEL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQTHEATER-CONSTRUCTION.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQDASB.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQCAVSQDN.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQAVNBN-ATTACK.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQAVNBN-TRANSPORT.GLS_EXPANDER_ARGS=StrategicTransportation,DSMaintenance,GSMaintenance,BulkWater,Food,MaintainInventory
+QQQREFUGEE.GLS_EXPANDER_ARGS=MaintainInventory
+QQQMEDICAL.GLS_EXPANDER_ARGS=StrategicTransportation,MaintainInventory
+QQQMEDICAL-SUPPLY.GLS_EXPANDER_ARGS=StrategicTransportation,MaintainInventory
+
+ALL.ALLOCATION_RULES=default_allocation_rules.xml
+SUPPLY-SOURCE.ALLOCATION_RULES=trans_router.xml
+IOC.ALLOCATION_RULES=IOC_allocation_rules.xml
+XXXDIV-HHC.ALLOCATION_RULES=3ID_allocation_rules.xml
+
+
+HOST-NATION-REFINERY.BLACKJACK_ALLOCATOR_ARGS=Supply,ProjectSupply
+INDUSTRIAL-BASE.UNIVERSAL_ALLOCATOR_ARGS=Supply
+IOC.UNIVERSAL_ALLOCATOR_ARGS=Supply
+FUTURE.UNIVERSAL_ALLOCATOR_ARGS=Supply
+DLAHQ.UNIVERSAL_ALLOCATOR_ARGS=Supply
+ICP-PROXY.UNIVERSAL_ALLOCATOR_ARGS=Supply
+TRANSCOM.UNIVERSAL_ALLOCATOR_ARGS=Transport
+THEATER-TRANSPORT.UNIVERSAL_ALLOCATOR_ARGS=Transport
+RELIEF-TRANSPORT.UNIVERSAL_ALLOCATOR_ARGS=Transport
+
+THEATER-CONSTRUCTION.UNIVERSAL_EXPANDER_ARGS=Expand_Runway_Apron, Build_Short_Runway, Build_Small_Tent_City
+THEATER-CONSTRUCTION.CONSTRUCTION_PROJECTION_ARGS=-ClassIVConstructionMaterialSupplyTasks
+THEATER-CONSTRUCTION.CONSTRUCTION_INVENTORY_ARGS=+ClassIVConstructionMaterialInventory
+
+MARINE-ACE.MEILDM_FILE=icisMarineMEI.q
+MARINE-CE.MEILDM_FILE=icisMarineMEI.q
+MARINE-CSSE.MEILDM_FILE=icisMarineMEI.q
+MARINE-ESBN.MEILDM_FILE=icisMarineMEI.q
+MARINE-GCE.MEILDM_FILE=icisMarineMEI.q
+MARINE-MEU.MEILDM_FILE=icisMarineMEI.q
+MARINE-MPSRON.MEILDM_FILE=icisMarineMEI.q
+MARINE-SUPBN.MEILDM_FILE=icisMarineMEI.q
+
+MARINE-ACE.PARTSLDM_FILE=icisMarineParts.q
+MARINE-CE.PARTSLDM_FILE=icisMarineParts.q
+MARINE-CSSE.PARTSLDM_FILE=icisMarineParts.q
+MARINE-ESBN.PARTSLDM_FILE=icisMarineParts.q
+MARINE-GCE.PARTSLDM_FILE=icisMarineParts.q
+MARINE-MEU.PARTSLDM_FILE=icisMarineParts.q
+MARINE-MPSRON.PARTSLDM_FILE=icisMarineParts.q
+MARINE-SUPBN.PARTSLDM_FILE=icisMarineParts.q
+
+ALL.OPLAN_FILE=092MP.oplan.xml
+ALL.OPLAN_Q_FILE=092MP.oplan.q

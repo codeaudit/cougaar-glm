@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/HMM-165-REF"
+
+[Relationship]
+Superior "MEU-REF" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "HMM-165 for the Refugees"
+AlternateTypeIdentification String "SRC/"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "HMM-165-REF"
+
+[OrganizationPG]
+Roles Collection<Role> "MaterielTransportProvider-Helo"
+Service Service "Marine"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "REFHMM"
+Echelon String ""
+UTC String ""
+SRC String ""
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=LYTM, InstallationTypeCode=PRT, CountryStateCode=PK, CountryStateName=PAKISTAN, Name=KARACHI, Latitude=Latitude 24.7833degrees, Longitude=Longitude 66.9833degrees"

@@ -1,0 +1,30 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/MEU-REF"
+
+[Relationship]
+Superior "CENTCOM-HHC" ""
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "MEU for the Refugees"
+AlternateTypeIdentification String "SRC/"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "MEU-REF"
+
+[OrganizationPG]
+Roles Collection<Role> ""
+Service Service "Marine"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "REFMEU"
+Echelon String ""
+UTC String ""
+SRC String ""
+Hierarchy2525 String ""
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=LYTM, InstallationTypeCode=PRT, CountryStateCode=PK, CountryStateName=PAKISTAN, Name=KARACHI, Latitude=Latitude 24.7833degrees, Longitude=Longitude 66.9833degrees"
