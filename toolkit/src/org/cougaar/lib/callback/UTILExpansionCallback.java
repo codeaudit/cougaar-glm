@@ -39,8 +39,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.cougaar.util.log.Logger;
 
 /**
+ * <pre>
  * Filters for expansions, testing if the parent task
  * is interesting.  Calls the listener's handleExpansion 
  * method (which gives the expansion to the listener).
@@ -50,11 +52,12 @@ import java.util.Map;
  *
  * Allocators should use one of the WorkflowCallbacks.
  *
+ * </pre>
  */
 
 public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
-  public UTILExpansionCallback (UTILExpansionListener listener) {
-    super (listener);
+  public UTILExpansionCallback (UTILExpansionListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   /** 
@@ -62,17 +65,17 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
    */
   protected UnaryPredicate getPredicate () {
     return new UnaryPredicate() {
-      public boolean execute(Object o) {
-	if (o instanceof Expansion) {
-	  Expansion exp = (Expansion) o;
-	  if (((UTILExpansionListener) 
-	       myListener).interestingExpandedTask (exp.getTask ())){
-	    return true;
+	public boolean execute(Object o) {
+	  if (o instanceof Expansion) {
+	    Expansion exp = (Expansion) o;
+	    if (((UTILExpansionListener) 
+		 myListener).interestingExpandedTask (exp.getTask ())){
+	      return true;
+	    }
 	  }
+	  return false;
 	}
-	return false;
-      }
-    };
+      };
   }
 
   /**
@@ -83,7 +86,7 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
    * New and removed expansions can be safely ignored.
    */
   public void reactToChangedFilter () {
-      //    Map seenExpsMap = new HashMap ();
+    //    Map seenExpsMap = new HashMap ();
 
     Enumeration changedExps = mySub.getChangedList();
 
@@ -92,24 +95,25 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
 
       //      if (seenExpsMap.get (exp) == null) {
       reactToChangedExpansion (exp);
-	//  	seenExpsMap.put (exp, exp);
-	//      } else if (xxdebug) 
-	//  	System.out.println ("UTILExpansionCallback : " + 
-	//  			    "Duplicate changed exp for task " + 
-	//  			    exp.getTask ().getUID () + " ignored.");
+      //  	seenExpsMap.put (exp, exp);
+      //      } else if (logger.isDebugEnabled()) 
+      //  	logger.info ("UTILExpansionCallback : " + 
+      //  			    "Duplicate changed exp for task " + 
+      //  			    exp.getTask ().getUID () + " ignored.");
     }
 
-    if (xxdebug) {
+    if (logger.isDebugEnabled()) {
       Enumeration removedExps = mySub.getRemovedList();
       if (removedExps.hasMoreElements ()) {
 	Expansion exp = (Expansion)removedExps.nextElement ();
-	System.err.println(myListener.getClass() + " saw removed expansion for task " + 
-			   exp.getTask ().getUID ());
+	logger.debug (myListener.getClass() + " saw removed expansion for task " + 
+		      exp.getTask ().getUID ());
       }
     }
   }
 
   /**
+   * <pre>
    * Defines protocol for dealing with Expansions as they change over time.
    *
    * This follows the expansion lifecycle.  When an expansion fails, we get an initial
@@ -119,7 +123,7 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
    * If there are still some subtasks in the workflow that we could
    * not replace, then the expansion is a failure and should be reported as such.
    *
-   * Uses getSubTaskResults, which erases it's info after being called. (Another call
+   * Uses getSubTaskResults, which erases it's logger.info after being called. (Another call
    * will give an empty list.)  It reports on subtask alloc results that have changed.
    *
    * This breaks down into 6 steps (= each if statement below):
@@ -155,6 +159,7 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
    *
    * BOZO - 01/11/00 GWFV
    *
+   * </pre>
    * @param Expansion to examine
    */
   public void reactToChangedExpansion (Expansion exp) {
@@ -162,17 +167,17 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
 
     if (exp.getReportedResult().isSuccess ()) {
       if (exp.getWorkflow ().constraintViolation ()) {
-	if (xdebug)
-	  System.err.println(listener.getClass() +
-			     " Expansion " + exp.getUID() + " violated constraints.");
+	if (logger.isInfoEnabled())
+	  logger.info(listener.getClass() +
+		      " Expansion " + exp.getUID() + " violated constraints.");
 	List violatedList = 
 	  enumToList (exp.getWorkflow ().getViolatedConstraints ());
 	listener.handleConstraintViolation (exp, violatedList);
       } else if (listener.wantToChangeExpansion (exp)) {
-	if (xdebug)
-	  System.err.println(listener.getClass() +
-			     " Expansion " + exp.getUID() + 
-			     " successful, but wants to be changed.");
+	if (logger.isInfoEnabled())
+	  logger.info(listener.getClass() +
+		      " Expansion " + exp.getUID() + 
+		      " successful, but wants to be changed.");
 	// NOTE that if the listener wants to change the expansion,
 	// it is responsible for calling or not calling 
 	// handleSuccessfulExpansion
@@ -180,23 +185,23 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
 	listener.publishChangedExpansion (exp);
       }
       else {
-	  if (xxdebug)
-	      System.err.println(listener.getClass() +
-				 " Expansion " + exp.getUID() + " was successful.");
-	  listener.reportChangedExpansion (exp);
+	if (logger.isDebugEnabled())
+	  logger.debug(listener.getClass() +
+		       " Expansion " + exp.getUID() + " was successful.");
+	listener.reportChangedExpansion (exp);
 
-	  List subtaskResults = ((NewExpansion) exp).getSubTaskResults();
+	List subtaskResults = ((NewExpansion) exp).getSubTaskResults();
 
-	  /** only use the following if getSubTaskResults is expensive */
-	  /*
-	    List subtaskResults;
-	    if (listener.wantsSuccessfulExpResults ())
-	    subtaskResults = ((NewExpansion) exp).getSubTaskResults();
-	    else
-	    subtaskResults = new ArrayList ();
-      */
+	/** only use the following if getSubTaskResults is expensive */
+	/*
+	  List subtaskResults;
+	  if (listener.wantsSuccessfulExpResults ())
+	  subtaskResults = ((NewExpansion) exp).getSubTaskResults();
+	  else
+	  subtaskResults = new ArrayList ();
+	*/
 
-	  listener.handleSuccessfulExpansion(exp, subtaskResults);
+	listener.handleSuccessfulExpansion(exp, subtaskResults);
       }
     }
     else {
@@ -206,33 +211,33 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
       // have a chance to catch it before it becomes a nasty bug.
 
       List subtaskResults = ((NewExpansion) exp).getSubTaskResults();
-      if (xxdebug)
-	System.out.println (listener.getClass() + " - reportChangedExpansion " +
-			    exp.getUID ());
+      if (logger.isDebugEnabled())
+	logger.debug (listener.getClass() + " - reportChangedExpansion " +
+		      exp.getUID ());
 
       List failedSubTaskResults = getFailedSubTaskResults (subtaskResults);
 
       if (!failedSubTaskResults.isEmpty ()) {
-	if (xdebug)
-	  System.err.println(listener.getClass() +
-			     " Expansion " + exp.getUID() + 
-			     " task " + exp.getTask ().getUID() + 
-			     " failed.");
+	if (logger.isInfoEnabled())
+	  logger.info(listener.getClass() +
+		      " Expansion " + exp.getUID() + 
+		      " task " + exp.getTask ().getUID() + 
+		      " failed.");
 	listener.handleFailedExpansion(exp, failedSubTaskResults);
       } else if (exp.getWorkflow ().constraintViolation ()) {
-	if (xdebug)
-	  System.err.println(listener.getClass() +
-			     " Expansion " + exp.getUID() + " violated constraints.");
+	if (logger.isInfoEnabled())
+	  logger.info(listener.getClass() +
+		      " Expansion " + exp.getUID() + " violated constraints.");
 	List violatedList = 
 	  enumToList (exp.getWorkflow ().getViolatedConstraints ());
 	listener.handleConstraintViolation (exp, violatedList);
       } else if (getNumFailedSubTasks(subtaskResults) > 0 ) {
-	if (xdebug)
-	  System.err.println(listener.getClass() +
-			     " Expansion " + exp.getUID() + 
-			     " task " + exp.getTask ().getUID() + 
-			     " had failed subtasks, " + 
-			     "but all have been seen before (NO REPORT!)");
+	if (logger.isInfoEnabled())
+	  logger.info(listener.getClass() +
+		      " Expansion " + exp.getUID() + 
+		      " task " + exp.getTask ().getUID() + 
+		      " had failed subtasks, " + 
+		      "but all have been seen before (NO REPORT!)");
 	// BOZO - GWFV 01/11/00 - We may have to revisit this.
 	// Some cases where this may not be what we want.
       
@@ -243,11 +248,11 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
       
 	listener.reportChangedExpansion (exp);
       } else {
-	if (xxdebug)
-	  System.err.println(listener.getClass() +
-			     " Expansion " + exp.getUID() + 
-			     " task " + exp.getTask ().getUID() + 
-			     " - failed expansion, but has been handled already.");
+	if (logger.isDebugEnabled())
+	  logger.debug(listener.getClass() +
+		       " Expansion " + exp.getUID() + 
+		       " task " + exp.getTask ().getUID() + 
+		       " - failed expansion, but has been handled already.");
       }
     }
   }
@@ -264,9 +269,9 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
       boolean didFail = false;
       if (stres.getAllocationResult () != null)
 	didFail = !stres.getAllocationResult().isSuccess ();
-      else
-	System.out.println ("getFailedSubtasks - null AR for subtask " + 
-			    stres.getTask ());
+      else if (logger.isInfoEnabled ())
+	logger.info ("getFailedSubtasks - null AR for subtask " + 
+		     stres.getTask ());
 	
       if (didFail)
 	n++;
@@ -274,10 +279,10 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
 	result.add (stres);
     }
 
-    if (xdebug && (n > 0))
-      System.out.println (this + " : getFailedSubtasks - " + n + 
-			  " failed subtasks, " + result.size () + 
-			  " changed.");
+    if (logger.isInfoEnabled() && (n > 0))
+      logger.info (this + " : getFailedSubtasks - " + n + 
+		   " failed subtasks, " + result.size () + 
+		   " changed.");
 
     return result;
   }

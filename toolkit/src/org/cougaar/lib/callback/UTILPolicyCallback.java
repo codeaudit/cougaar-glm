@@ -30,6 +30,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import org.cougaar.util.log.Logger;
+
 public class UTILPolicyCallback extends UTILFilterCallbackAdapter {
 
   /////////////////////////////////////////////////////////////////
@@ -41,8 +43,8 @@ public class UTILPolicyCallback extends UTILFilterCallbackAdapter {
    * (which in most cases is a plugin that implements that listener
    * interface.
    */
-  public UTILPolicyCallback (UTILPolicyListener listener) {
-    super (listener);
+  public UTILPolicyCallback (UTILPolicyListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   /////////////////////////////////////////////////////////////////

@@ -32,12 +32,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * Parses fields of objects.
  *
  * (This is quite involved and complicated, actually.)
  */
 public class FieldParser{
+
+  public static Logger logger;
+  public static void setLogger (Logger l) { logger = l; }
 
   /**
    * set a field given by node in an object obj
@@ -90,7 +95,7 @@ public class FieldParser{
           // BOZO, need to do something here.
           fieldSetter = null;
           
-          //System.err.println(e.getMessage());
+          //logger.error(e.getMessage());
           //e.printStackTrace();
           //System.exit(1);
         }
@@ -116,7 +121,7 @@ public class FieldParser{
           // BOZO, need to do something here.
           fieldSetter = null;
           
-          //System.err.println(e.getMessage());
+          //logger.error(e.getMessage());
           //e.printStackTrace();
           //System.exit(1);
         }
@@ -141,11 +146,11 @@ public class FieldParser{
         }
         catch(Exception e){
           // BOZO, need to do something here.
-          //System.err.println(e.getMessage());
+          //logger.error(e.getMessage());
           //e.printStackTrace();
           fieldSetter = null;
           
-          //System.err.println(e.getMessage());
+          //logger.error(e.getMessage());
           //e.printStackTrace();
           //System.exit(1);
         }
@@ -153,18 +158,18 @@ public class FieldParser{
       
       // we are hosed
       if(fieldSetter == null){
-        System.err.println("");
-        System.err.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        System.err.println("XXXX  Method not found: set" + fieldName + "(" + origFieldClass.getName() + ")");
-        System.err.println("XXXX: In object: " + obj);
-        System.err.println("XXXX: Please revise your ldm.xml file");
-	System.err.println("XXXX: NOTE: If you are suddenly having unexplained problems with ");
-	System.err.println("XXXX:   this code, please contact hkieserm@bbn.com or revert the ");
-	System.err.println("XXXX:   method oldGetSetterMethod to the name getSetterMethod in");
-	System.err.println("XXXX:   xmlparser.FieldParser");
-        System.err.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        System.err.println("");
-        System.exit(1);
+        logger.error("");
+        logger.error("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        logger.error("XXXX  Method not found: set" + fieldName + "(" + origFieldClass.getName() + ")");
+        logger.error("XXXX: In object: " + obj);
+        logger.error("XXXX: Please revise your ldm.xml file");
+	logger.error("XXXX: NOTE: If you are suddenly having unexplained problems with ");
+	logger.error("XXXX:   this code, please contact gvidaver@bbn.com.");
+	//	logger.error("XXXX:   method oldGetSetterMethod to the name getSetterMethod in");
+	//	logger.error("XXXX:   xmlparser.FieldParser");
+        logger.error("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        logger.error("");
+	// System.exit(1);
       }
     }
     return obj;
@@ -275,7 +280,7 @@ public class FieldParser{
     for(int i = 0; i < methods.length; i++){
       if(name.equals(methods[i].getName())){
         Class[] params = methods[i].getParameterTypes();
-        //System.out.println(":XXX:: " + methods[i] + " (" + params[0] + ")");
+        //logger.debug(":XXX:: " + methods[i] + " (" + params[0] + ")");
         if(params[0].isAssignableFrom(argtype))
           return methods[i];
         
@@ -410,7 +415,7 @@ public class FieldParser{
     try {
       retcoll = (Collection)collectionClass.newInstance();
     } catch (Exception noInstanceE) {
-      System.err.println(
+      logger.error(
         "Unable to create instance of Collection Class "+collectionClass);
       noInstanceE.printStackTrace();
       return null;
@@ -497,9 +502,7 @@ public class FieldParser{
         retval = Class.forName(fieldType);
       }
       catch(ClassNotFoundException e){
-        System.err.println("XXXXXXX: could not find class: " + fieldType);
-        System.err.println(e.getMessage());
-        e.printStackTrace();
+        logger.error("XXXXXXX: could not find class: " + fieldType, e);
       }
     }
     return retval;

@@ -118,7 +118,7 @@ class ParamHandler extends DefaultHandler {
       paramTable.addParam(attributeName, param);
       
       /*
-       * System.out.println(" Name = " + attributeName  + 
+       * logger.debug(" Name = " + attributeName  + 
        *                    " Type = " + attributeType + 
        *		      " Value =  " + attributeValue);  
        */

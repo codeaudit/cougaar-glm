@@ -80,11 +80,11 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * @see org.cougaar.lib.callback.UTILWorkflowCallback
    */
   protected UTILFilterCallback createThreadCallback (UTILGenericListener bufferingThread) { 
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for Expandable Tasks...");
+    if (isInfoEnabled())
+      info (getName () + " : Filtering for Expandable Tasks...");
 
-    myInputTaskCallback = new UTILExpandableTaskCallback (bufferingThread);  
-    myInputTaskCallback.setExtraDebug (myExtraExtraOutput);
+    myInputTaskCallback = new UTILExpandableTaskCallback (bufferingThread, logger);  
+
     return myInputTaskCallback;
   } 
 
@@ -121,13 +121,10 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * create the expansion callback
    */
   protected UTILFilterCallback createExpansionCallback () { 
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for Expansions...");
+    if (isInfoEnabled())
+      info (getName () + " : Filtering for Expansions...");
         
-    UTILFilterCallback cb = new UTILExpansionCallback (this); 
-    cb.setExtraDebug      (myExtraOutput);
-    cb.setExtraExtraDebug (myExtraExtraOutput);
-
+    UTILFilterCallback cb = new UTILExpansionCallback (this, logger); 
     return cb;
   }
 
@@ -142,13 +139,14 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    */
   public boolean interestingExpandedTask (Task t) { 
     boolean val = interestingTask(t); 
-    if (myExtraExtraOutput)
-      System.out.println (getName () + ".interestingExpandedTask - " + 
+    if (isDebugEnabled())
+      debug (getName () + ".interestingExpandedTask - " + 
 			  (val ? "interested in " : " NOT interested in ") + t.getUID());
     return val;
   }
 
   /**
+   * <pre>
    * Implemented for UTILExpansionListener
    *
    * An expansion has failed.  It's up to the plugin how to deal with the
@@ -156,13 +154,16 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    *
    * Just report it to superior, where hopefully it will be dealt with.
    *
+   * Dumps to error info about the failed tasks.
+   * </pre>
    * @param expansion that failed
+   * @param failedSubTaskResults - the subtasks of the expansion that failed
    */
   public void handleFailedExpansion(Expansion exp, List failedSubTaskResults) {
     reportChangedExpansion (exp);
 
     if (failedSubTaskResults.size () == 0)
-      System.err.println(getName () + " - empty list of failed subtasks?"); 
+      error(getName () + " - empty list of failed subtasks?"); 
       
     // Go through the list of failed subtasks
     Iterator failed_it = failedSubTaskResults.iterator();
@@ -171,9 +172,9 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
       SubTaskResult str = (SubTaskResult)failed_it.next();
       Task failed_e_task = str.getTask();
 
-      System.err.println("\tFailed task : " + failed_e_task + 
-			     "\n\twith pe " + failed_e_task.getPlanElement ());
-      System.err.println("\nPref-Aspect comparison : ");
+      error("\tFailed task : " + failed_e_task + 
+	    "\n\twith pe " + failed_e_task.getPlanElement ());
+      error("\nPref-Aspect comparison : ");
       UTILExpand.showPlanElement (failed_e_task);
     }
   }
@@ -242,9 +243,9 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * @see UTILPluginAdapter#updateAllocationResult
    */
   public void reportChangedExpansion(Expansion exp) { 
-    if (myExtraExtraOutput)
-      System.out.println (getName () + 
-			  " : reporting changed expansion to superior.");
+    if (isDebugEnabled())
+      debug (getName () + 
+	    " : reporting changed expansion to superior.");
       
     updateAllocationResult (exp); 
   }
@@ -257,7 +258,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * @param exp Expansion that has succeeded.
    */
   public void handleSuccessfulExpansion(Expansion exp, List successfulSubtasks) { 
-    if (myExtraExtraOutput) {
+    if (isDebugEnabled()) {
       AllocationResult estAR = exp.getEstimatedResult();
       AllocationResult repAR = exp.getReportedResult();
       String est = "e null/";
@@ -269,9 +270,9 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
 	rep = " r " + (repAR.isSuccess () ? "S" : "F") + " - " +
 	  (int) (repAR.getConfidenceRating ()*100.0) + "%";
 
-      System.out.println (getName () + 
-			  " : got successful expansion for task " + exp.getTask ().getUID() + 
-			  est + rep);
+      debug (getName () + 
+	    " : got successful expansion for task " + exp.getTask ().getUID() + 
+	    est + rep);
     }
   }
 
@@ -298,8 +299,8 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * @see UTILBufferingPlugin
    */
   public void processTasks (List tasks) {
-    if (myExtraOutput)
-      System.out.println (getName () + 
+    if (isInfoEnabled())
+      info (getName () + 
 			  ".processTasks - processing " + tasks.size() + " tasks.");
     for (int i = 0; i < tasks.size (); i++)
       handleTask ((Task) tasks.get (i));
@@ -315,24 +316,24 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * @param t the task to be expanded.
    */
   public void handleTask(Task t) {
-    if (myExtraOutput)
-      System.out.println (getName () + 
-			  ".handleTask : called on - " + t.getUID());
+    if (isDebugEnabled())
+      debug (getName () + 
+	     ".handleTask : called on - " + t.getUID());
 
     UTILExpand.handleTask(ldmf, 
 			 getBlackboardService(), 
 			 getName(),
 			 wantConfidence, 
-			 myExtraOutput,
+			 isInfoEnabled(),
 			 t, 
 			 getSubtasks(t));
   }
 
   /** react to a rescinded task -- by default does nothing */
   public void handleRemovedTask (Task t) {
-    if (myExtraExtraOutput)
-      System.out.println (getName () + 
-			  ".handleRemovedTask : ignoring removed task - " + t.getUID());
+    if (isDebugEnabled())
+      debug (getName () + 
+	    ".handleRemovedTask : ignoring removed task - " + t.getUID());
   }
   
   /**
@@ -345,9 +346,9 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    * </pre>
    */
   public Vector getSubtasks(Task t) { 
-    System.out.println (getName () + 
-			" : WARNING - getSubtasks should be overriden." +
-			" Default does nothing.");
+    warn (getName () + 
+	  " : WARNING - getSubtasks should be overriden." +
+	  " Default does nothing.");
     return new Vector (); 
   }
 

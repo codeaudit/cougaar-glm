@@ -26,25 +26,20 @@ import org.w3c.dom.NodeList;
 import org.cougaar.core.agent.ClusterServesPlugin;
 import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.util.log.*;
 
 /**
  * Parses prototype tags in an ldm.xml file.  Caches the prototype
  * in the ldm.
  */
 public class PrototypeParser {
-  public static boolean debug = false;
+  private static Logger logger=LoggerFactory.getInstance().createLogger("PrototypeParser");
 
-  public static void setDebug (boolean d) { 
-    debug = d; 
-    if (debug)
-      System.out.println ("PrototypeParser - debug set to true");
+  public static void cachePrototype(LDMServesPlugin ldm, Node node) {
+    cachePrototype(ldm, node, false); 
   }
-
-    public static void cachePrototype(LDMServesPlugin ldm, Node node) {
-      cachePrototype(ldm, node, false); 
-    }
-    public static Asset cachePrototype(LDMServesPlugin ldm, Node node,
-					boolean return_first) {
+  public static Asset cachePrototype(LDMServesPlugin ldm, Node node,
+				     boolean return_first) {
    
     LDMServesPlugin myLDMServesPlugin = ldm;
     Asset prototype = null;
@@ -66,24 +61,24 @@ public class PrototypeParser {
 	Node    child       = nlist.item(i);
 	String  childname   = child.getNodeName();
 
-	if (debug)
-	  System.out.println ("PrototypeParser.cachePrototype - child " + childname);
+	if (logger.isDebugEnabled())
+	  logger.debug ("PrototypeParser.cachePrototype - child " + childname);
 	
 	if(child.getNodeType() == Node.ELEMENT_NODE) {
 	  if (childname.equals("object")) { 
 	    prototype = (Asset)ObjectParser.getObject(ldm, child);
 	    if (return_first) return prototype;
 	    ldm.cachePrototype(prototypeName,prototype);
-	    if (debug)
-	      System.out.println ("Caching " + prototypeName + " -> " + prototype + " UID " + prototype.getUID() + " in " + ldm);
+	    if (logger.isDebugEnabled())
+	      logger.debug ("Caching " + prototypeName + " -> " + prototype + " UID " + prototype.getUID() + " in " + ldm);
 	    if (!ldm.isPrototypeCached (prototypeName))
-	      System.out.println ("HUH? " + prototypeName + " not cached?");
+	      logger.debug ("HUH? " + prototypeName + " not cached?");
 	    
 	  }
 	}
       } 
     }
-  return prototype;
- }
+    return prototype;
+  }
 }
 

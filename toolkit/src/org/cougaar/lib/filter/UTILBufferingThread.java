@@ -24,9 +24,10 @@ package org.cougaar.lib.filter;
 import org.cougaar.lib.param.ParamMap;
 
 import org.cougaar.lib.util.UTILPluginException;
+import org.cougaar.util.log.Logger;
 
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,12 +52,10 @@ public class UTILBufferingThread implements Runnable {
   /** 
    * Works with a buffering plugin
    */
-  public UTILBufferingThread (UTILBufferingPlugin bufferingPlugin,
-			      boolean myExtraOutput, boolean myExtraExtraOutput) {
+  public UTILBufferingThread (UTILBufferingPlugin bufferingPlugin, Logger logger) {
     myPlugin = bufferingPlugin;
 
-    this.myExtraOutput      = myExtraOutput;
-    this.myExtraExtraOutput = myExtraExtraOutput;
+    this.logger=logger;
     getEnvData ();
 
     bufferedTasks    = new ArrayList ();
@@ -84,15 +83,15 @@ public class UTILBufferingThread implements Runnable {
     } catch (Exception e) {
       MAXTIME = 1000;
     }
-    if (myExtraOutput)
-      System.out.println (this + 
-			  " - Buffering thread params : MaxSize " + MAXSIZE +
-			  " MinSize " + MINSIZE +
-			  " MaxTime " + MAXTIME/1000 +
-			  " seconds");
-    if (MINSIZE > 1)
-      System.out.println (this + " - WARNING - MINSIZE > 1 (" + MINSIZE + 
-			  ") - some tasks may not be handled!");
+    if (logger.isInfoEnabled()) {
+      logger.info (this + " - Buffering thread params : MaxSize " + MAXSIZE +
+		   " MinSize " + MINSIZE +
+		   " MaxTime " + MAXTIME/1000 +
+		   " seconds");
+      if (MINSIZE > 1)
+	logger.info (this + " - WARNING - MINSIZE > 1 (" + MINSIZE + 
+		     ") - some tasks may not be handled!");
+    }
   }
 
   /**
@@ -125,18 +124,18 @@ public class UTILBufferingThread implements Runnable {
 	    long waitTime = getWaitTime ();
 	    if (waitTime > 0) {
 		
-	      if (myExtraExtraOutput) 
-		System.out.println ("" + this + " listener " + myPlugin.getName () + 
-				    " super has " + tasksLeft + " tasks left, waiting " + waitTime);
+	      if (logger.isDebugEnabled()) 
+		logger.debug ("" + this + " listener " + myPlugin.getName () + 
+			      " super has " + tasksLeft + " tasks left, waiting " + waitTime);
 	      wait (waitTime);
 	    }
-	    else if (myExtraExtraOutput) 
-	      System.out.println ("" + this + " listener " + myPlugin.getName () + " not waiting");
+	    else if (logger.isDebugEnabled()) 
+	      logger.debug ("" + this + " listener " + myPlugin.getName () + " not waiting");
 	  }
 	  else {
-	    if (myExtraExtraOutput) 
-	      System.out.println ("" + this + " listener " + myPlugin.getName () +
-				  " waiting with nothing to do.  Has " + tasksLeft + ".");
+	    if (logger.isDebugEnabled()) 
+	      logger.debug ("" + this + " listener " + myPlugin.getName () +
+			    " waiting with nothing to do.  Has " + tasksLeft + ".");
 	    wait ();
 	  }
 	}
@@ -177,14 +176,14 @@ public class UTILBufferingThread implements Runnable {
    */
   protected void checkBuffer (List notYetDispatched) { 
     if (dispatchConditionMet (notYetDispatched)) {
-      if (myExtraExtraOutput) 
-	System.out.println ("" + this + 
-			    " - thread has " + notYetDispatched.size() + 
-			    " tasks buffered.");
-      if (myExtraExtraOutput) 
-	System.out.println ("" + this + 
-			    "- thread - " + staticTime()/1000 + 
-			    " seconds spent waiting.");
+      if (logger.isDebugEnabled()) 
+	logger.debug ("" + this + 
+		      " - thread has " + notYetDispatched.size() + 
+		      " tasks buffered.");
+      if (logger.isDebugEnabled()) 
+	logger.debug ("" + this + 
+		      "- thread - " + staticTime()/1000 + 
+		      " seconds spent waiting.");
       dispatchTasks(notYetDispatched);
 
       // having handled the tasks, we forget about them.
@@ -214,21 +213,21 @@ public class UTILBufferingThread implements Runnable {
       if (lastupdate == null)
 	lastupdate = new Date();
 
-      if (myExtraExtraOutput) 
-	System.out.println("" + this + 
-			   " after add, thread now has " + bufferedTasks.size () + 
-			   " elements queued.");
+      if (logger.isDebugEnabled()) 
+	logger.debug ("" + this + 
+		      " after add, thread now has " + bufferedTasks.size () + 
+		      " elements queued.");
     }
   }
 
   protected void removeTask(Object removedObject) {
     synchronized (this) {
       bufferedTasks.remove (removedObject);
-      if (myExtraExtraOutput) 
-		System.out.println("" + this + 
-						   " after remove, thread now has " + bufferedTasks.size () + 
-						   " elements queued.");
-	}
+      if (logger.isDebugEnabled()) 
+	logger.debug("" + this + 
+		     " after remove, thread now has " + bufferedTasks.size () + 
+		     " elements queued.");
+    }
   }
   
   /**
@@ -277,9 +276,9 @@ public class UTILBufferingThread implements Runnable {
   protected void dispatchTasks(List tasks) {
     lastupdate = new Date ();
 
-    if (myExtraExtraOutput) 
-      System.out.println("" + this + " - dispatching " + 
-			 tasks.size () + " tasks.");
+    if (logger.isDebugEnabled()) 
+      logger.debug("" + this + " - dispatching " + 
+		   tasks.size () + " tasks.");
 
     // Start a transaction
     myPlugin.startTransaction();
@@ -287,11 +286,10 @@ public class UTILBufferingThread implements Runnable {
     try{
       processBufferedTasks (tasks);
     } catch(Exception e){
-      if (myExtraOutput)
-	System.err.println("" + this + 
-			   " - Exception raised in processTasks; dropping " +
-			   tasks.size() + " tasks on the floor.");
-      e.printStackTrace();
+      if (logger.isErrorEnabled())
+	logger.error("" + this + 
+		     " - Exception raised in processTasks; dropping " +
+		     tasks.size() + " tasks on the floor.", e);
     } finally {
       // end the transaction
       myPlugin.endTransaction();
@@ -334,6 +332,5 @@ public class UTILBufferingThread implements Runnable {
   protected long MAXTIME; // milliseconds
   protected Date lastupdate = null;
 
-  protected boolean myExtraOutput;
-  protected boolean myExtraExtraOutput;
+  protected Logger logger;
 }

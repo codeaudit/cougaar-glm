@@ -31,8 +31,10 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.lib.callback.UTILGenericListener;
 
 import java.util.Collection;
+import org.cougaar.util.log.Logger;
 
 /**
+ * <pre>
  * A buffering thread that is a generic listener.
  * 
  * Paired with an ExpandableTaskCallback, it can be used
@@ -42,6 +44,7 @@ import java.util.Collection;
  * in a buffering allocator plugin.
  * 
  * Assumes that the buffered objects are tasks.
+ * </pre>
  */
 
 public class UTILListeningBufferingThread 
@@ -51,10 +54,8 @@ public class UTILListeningBufferingThread
   /** 
    * Works with a buffering plugin
    */
-  public UTILListeningBufferingThread (UTILBufferingPlugin bufferingPlugin,
-				      boolean myExtraOutput, 
-				      boolean myExtraExtraOutput) {
-    super (bufferingPlugin, myExtraOutput, myExtraExtraOutput);
+  public UTILListeningBufferingThread (UTILBufferingPlugin bufferingPlugin, Logger logger) {
+    super (bufferingPlugin, logger);
   }
 
   /** 
@@ -71,20 +72,20 @@ public class UTILListeningBufferingThread
    * will call processTasks on BufferingPlugin.
    */
   public void handleTask (Task t) { 
-    if (myExtraExtraOutput)
-      System.out.println (classname + 
-			  ".handleTask : " + this + " got task " + t + 
-			  "\nfrom " + t.getSource ());
+    if (logger.isDebugEnabled())
+      logger.debug (classname + 
+	     ".handleTask : " + this + " got task " + t + 
+	     "\nfrom " + t.getSource ());
     addTask (t); 
   }
 
   public void handleRemovedTask (Task t) {
-    if (myExtraExtraOutput)
-      System.out.println (classname + 
-			  ".handleRemovedTask : " + this + " got task " + t + 
-			  "\nfrom " + t.getSource ());
+    if (logger.isDebugEnabled())
+      logger.debug (classname + 
+	     ".handleRemovedTask : " + this + " got task " + t + 
+	     "\nfrom " + t.getSource ());
 
-	removeTask (t);
+    removeTask (t);
   }
   
   /** 

@@ -28,6 +28,7 @@ import org.cougaar.planning.ldm.plan.Task;
 import java.util.List;
 
 /**
+ * <pre>
  * Listener intended to be used by all expanders.
  *
  * Being an expansion listener now means participating in a 4 step process.
@@ -80,6 +81,7 @@ import java.util.List;
  *
  * Allocators should use/be a GenericListener.
  *
+ * </pre>
  * @see org.cougaar.lib.callback.UTILExpansionCallback
  * @see org.cougaar.lib.callback.UTILAggregationListener
  * @see org.cougaar.lib.callback.UTILAllocationListener

@@ -41,6 +41,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.cougaar.util.log.Logger;
+
 /** 
  * This class contains preference-related methods.
  * Can ask basic questions like ready at, early, best, and latest date for
@@ -58,6 +60,8 @@ public class UTILPreference {
 
   public static double NO_ASPECT_VALUE = -1.0d;
 
+  public static Logger logger;
+  public static void setLogger (Logger l) { logger = l; }
 
   /** 
    * Utility methods
@@ -207,7 +211,7 @@ public class UTILPreference {
   public static Preference makePODDatePreference(RootFactory ldmf,
 						 Date bestDate) {
     if (bestDate == null || bestDate.before(new Date(1000))) {
-      System.err.println("UTILPreference creating bad POD_Date preference: the date is " + bestDate);
+      logger.error("UTILPreference creating bad POD_Date preference: the date is " + bestDate);
     }
     AspectValue podAV = new AspectValue(AspectType.POD_DATE, bestDate.getTime());
     ScoringFunction podSF = ScoringFunction.createPreferredAtValue(podAV, 

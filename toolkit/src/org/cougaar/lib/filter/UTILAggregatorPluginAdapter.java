@@ -67,7 +67,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * or different behaviour when triggered.
    */
   protected UTILAggregationCallback createAggCallback () { 
-    return new UTILAggregationCallback  (this); 
+    return new UTILAggregationCallback  (this, logger); 
   } 
 
   protected UTILAssetCallback getAssetCallback    () { return myAssetCallback; }
@@ -85,7 +85,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * </pre>
    */
   protected UTILAssetCallback createAssetCallback () { 
-    return new UTILAssetCallback  (this); 
+    return new UTILAssetCallback  (this, logger); 
   } 
 
   /**
@@ -107,13 +107,13 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   public void setupFilters () {
     super.setupFilters ();
 
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for generic Assets...");
+    if (isInfoEnabled())
+      info (getName () + " : Filtering for generic Assets...");
 
     addFilter (myAssetCallback    = createAssetCallback    ());
 
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for Aggregations...");
+    if (isInfoEnabled())
+      info (getName () + " : Filtering for Aggregations...");
 
     addFilter (myAggCallback    = createAggCallback    ());
   }
@@ -125,10 +125,10 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    * @return a WorkflowCallback with the buffering thread as its listener
    */
   protected UTILFilterCallback createThreadCallback (UTILGenericListener bufferingThread) { 
-    if (myExtraOutput)
-      System.out.println (getName () + " Filtering for Generic Workflows...");
+    if (isInfoEnabled())
+      info (getName () + " Filtering for Generic Workflows...");
 
-    myWorkflowCallback = new UTILWorkflowCallback  (bufferingThread); 
+    myWorkflowCallback = new UTILWorkflowCallback  (bufferingThread, logger); 
     return myWorkflowCallback;
   } 
 

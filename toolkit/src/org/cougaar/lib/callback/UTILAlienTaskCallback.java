@@ -27,6 +27,8 @@ import org.cougaar.util.UnaryPredicate;
  
 import java.util.Enumeration;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * For use with the record/playback system.
  *
@@ -35,8 +37,8 @@ import java.util.Enumeration;
  */
 
 public class UTILAlienTaskCallback extends UTILFilterCallbackAdapter {
-  public UTILAlienTaskCallback (UTILAlienListener listener) {
-    super (listener);
+  public UTILAlienTaskCallback (UTILAlienListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   protected UnaryPredicate getPredicate () {
@@ -63,15 +65,14 @@ public class UTILAlienTaskCallback extends UTILFilterCallbackAdapter {
       alienListener.handleTask (t);
     }
 
-    if (xxdebug) {
+    if (logger.isDebugEnabled()) {
       if (mySub.getChangedList().hasMoreElements ())
-	System.out.println ("UTILAlienTaskCallback : " + 
-			    "Alien tasks were changed.");
+	logger.debug ("UTILAlienTaskCallback : Alien tasks were changed.");
       if (mySub.getRemovedList().hasMoreElements ()) {
 	Enumeration removedtasks = mySub.getRemovedList();
 	while (removedtasks.hasMoreElements()) {
 	  Task t = (Task) removedtasks.nextElement();
-	  System.out.println ("UTILAlienTaskCallback : Alien task " + 
+	  logger.info ("UTILAlienTaskCallback : Alien task " + 
 			      t.getUID () + 
 			      " was removed from container.");
 	}

@@ -29,6 +29,8 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * Root callback implementation.  All current callbacks extend
  * this.
@@ -40,13 +42,15 @@ public class UTILFilterCallbackAdapter implements UTILFilterCallback {
    * and stores a subscription, which gets a predicate from the
    * the getPredicate () method.
    */
-  public UTILFilterCallbackAdapter (UTILFilterCallbackListener listener) {
+  public UTILFilterCallbackAdapter (UTILFilterCallbackListener listener, Logger logger) {
     myListener = listener;
+    this.logger = logger;
     mySub = myListener.subscribeFromCallback(getPredicate ());
   }
 
 
   /**
+   * <pre>
    * Exactly like other constructor, but allows passing in a 
    * container to use for the objects that match the predicate.  
    *
@@ -54,28 +58,15 @@ public class UTILFilterCallbackAdapter implements UTILFilterCallback {
    * of objects, and a special container (e.g. a descendant
    * of com.objectspace.jgl.OrderedSet) would make lookup more efficient.
    *
+   * </pre>
    * @param useContainer - not used, just makes this a different constructor
    */
   public UTILFilterCallbackAdapter (UTILFilterCallbackListener listener,
-				    boolean useContainer) {
+				    boolean useContainer, Logger logger) {
     myListener = listener;
     mySub = myListener.subscribeFromCallback(getPredicate (), getCollection ());
+    this.logger = logger;
   }
-
-
-  public void setExtraDebug      (boolean d) { xdebug  = d; }
-
-  /**
-   * Set to true if you want to see when the container changes in
-   * ways that *don't* notify the listener.
-   *
-   * (This can make you feel better, since interestingXXX calls are
-   * made even on objects that are about to disappear from your
-   * container.  This can let you know that it's OK that even though
-   * the listener finds the object interesting, it's not being acted
-   * upon.)
-   */
-  public void setExtraExtraDebug (boolean d) { xxdebug = d; }
 
   /** 
    * Used by plugins to ask the subscription direct questions,
@@ -126,6 +117,5 @@ public class UTILFilterCallbackAdapter implements UTILFilterCallback {
   /** the subscription created with the getPredicate predicate */
   protected IncrementalSubscription mySub = null;
 
-  protected boolean xdebug  = false;
-  protected boolean xxdebug = false;
+  protected Logger logger;
 }

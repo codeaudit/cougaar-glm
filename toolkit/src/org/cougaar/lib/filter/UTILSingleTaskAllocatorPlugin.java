@@ -53,8 +53,8 @@ public abstract class UTILSingleTaskAllocatorPlugin
    * @param alloc Allocation to remove from cluster's memory
    */
   public void publishAddingOfAllocation (PlanElement allocOrFailedAlloc) { 
-    if (myExtraExtraOutput) {
-        System.out.println (getName () + 
+    if (isDebugEnabled()) {
+        debug (getName () + 
 			    " : Publishing alloc " + allocOrFailedAlloc.getUID () + 
 			    " for task " + allocOrFailedAlloc.getTask ().getUID());
     }

@@ -49,8 +49,8 @@ public class UTILSchedule {
   }
 
   public static Schedule andAvail(Schedule x, Schedule y, RootFactory ldmf) {
-    //    System.out.println("X: "+x);
-    //    System.out.println("Y: "+y);
+    //    logger.debug("X: "+x);
+    //    logger.debug("Y: "+y);
     Vector newElem = new Vector();
     Enumeration a = x.getAllScheduleElements();
     Enumeration b = y.getAllScheduleElements();

@@ -28,8 +28,10 @@ import org.xml.sax.InputSource;
 import java.net.URL;
 
 import java.io.*;
+import org.cougaar.util.log.*;
 
 /**
+ * <pre>
  * EntityResolver for use with all UTIL xml parsers.
  *
  * Wraps config file finder and uses it to resolve (find) xml entities.
@@ -38,12 +40,13 @@ import java.io.*;
  * The entity resolver is just a wrapper of the configFinder.
  * The resolver is expected to resolve a systemID, where:
  *
- *
+ * </pre>
  */
 public class UTILEntityResolver implements EntityResolver {
-  public static boolean debug = 
-	"true".equals (System.getProperty ("org.cougaar.lib.plugin.UTILEntityResolver.debug",
-									   "false"));
+  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILEntityResolver");
+  //  public static boolean debug = 
+  //	"true".equals (System.getProperty ("org.cougaar.lib.plugin.UTILEntityResolver.debug",
+  //									   "false"));
 
   /** 
    * Set org.cougaar.lib.plugin.UTILEntityResolver.debug to true to see debug info. <p>
@@ -65,17 +68,15 @@ public class UTILEntityResolver implements EntityResolver {
     // return a special input source
     try {
       InputSource is = new InputSource(ConfigFinder.getInstance().open(filename));
-	  if (debug)
-		System.out.println ("UTILEntityResolver.resolveEntity - publicID " + 
- 			  publicId + " system ID " + 
-  			  systemId + " filename from systemID " + 
-  			  filename + " input source " + is);
+      if (logger.isDebugEnabled())
+	logger.debug ("UTILEntityResolver.resolveEntity - publicID " + 
+		      publicId + " system ID " + 
+		      systemId + " filename from systemID " + 
+		      filename + " input source " + is);
 
       return is;
     } catch (Exception e) {
-      System.err.println(e.getMessage());
-      System.err.println ("UTILLdmXMLPlugin.getParsedDocument - Could not find on config path");
-      e.printStackTrace();
+      logger.error ("UTILLdmXMLPlugin.getParsedDocument - Could not find on config path", e);
       return null;
     }
   }

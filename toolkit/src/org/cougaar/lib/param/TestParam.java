@@ -22,6 +22,7 @@
 package  org.cougaar.lib.param;
 
 import java.util.Vector;
+import org.cougaar.util.log.*;
 
 /**
  * Class that is used to test a ParamTable.  The table consists of
@@ -29,6 +30,7 @@ import java.util.Vector;
  *
  */
 public class TestParam{
+  private static Logger logger=LoggerFactory.getInstance().createLogger("TestParam");
 
   /**
    * Test main function
@@ -47,44 +49,44 @@ public class TestParam{
     long l = 50000;
 
     try{b = pt.getBooleanParam("debug");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("debug = " + b);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("debug = " + b);
 
     try{b = pt.getBooleanParam("print");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("print = " + b);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("print = " + b);
 
     try{b = pt.getBooleanParam("run");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("run = " + b);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("run = " + b);
 
     try{b = pt.getBooleanParam("test");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("test = " + b);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("test = " + b);
 
     try{str = pt.getStringParam("planeType");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("planeType = " + str);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("planeType = " + str);
 
     try{s = pt.getShortParam("testShort");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("testShort = " + s);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("testShort = " + s);
 
     try{f = pt.getFloatParam("testFloat");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("testFloat = " + f);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("testFloat = " + f);
 
     try{l = pt.getLongParam("testLong");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("testLong = " + l);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("testLong = " + l);
 
     try{d = pt.getDoubleParam("testDouble");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("testDouble = " + d);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("testDouble = " + d);
 
     try{i = pt.getIntParam("numPlanes");}
-    catch(ParamException e){System.err.println(e.getMessage());}
-    System.out.println("numPlanes = " + i);
+    catch(ParamException e){logger.error(e.getMessage());}
+    logger.debug("numPlanes = " + i);
   }
 }
 

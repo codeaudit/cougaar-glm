@@ -30,6 +30,7 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Workflow;
 
 import java.util.Enumeration;
+import org.cougaar.util.log.Logger;
 
 /**
  * Filters for expansions with workflows, where the tasks
@@ -43,8 +44,8 @@ import java.util.Enumeration;
  */
 
 public class UTILInclusiveWorkflowCallback extends UTILFilterCallbackAdapter {
-  public UTILInclusiveWorkflowCallback (UTILGenericListener listener) {
-    super (listener);
+  public UTILInclusiveWorkflowCallback (UTILGenericListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   /**
@@ -53,7 +54,7 @@ public class UTILInclusiveWorkflowCallback extends UTILFilterCallbackAdapter {
    * associated plan elements.  These are then tested
    * against the plugin-specific interestingTask test.
    *
-   * set xxdebug to true if you want to see info on every 
+   * set logger.isDebugEnabled() to true if you want to see logger.info on every 
    * handled expansion.  I.e. which tasks have been 
    * allocated and which failed to allocate.
    * (Previously handled expansions are ignored by the 
@@ -86,7 +87,7 @@ public class UTILInclusiveWorkflowCallback extends UTILFilterCallbackAdapter {
   /**
    * Tells listener of new expansions
    *
-   * set xxdebug to true if you want to see what gets
+   * set logger.isDebugEnabled() to true if you want to see what gets
    * ignored by the callback.  (Changed and removed
    * expansions are ignored.)  
    *
@@ -118,17 +119,17 @@ public class UTILInclusiveWorkflowCallback extends UTILFilterCallbackAdapter {
       }
     }
 
-    if (xxdebug) {
+    if (logger.isDebugEnabled()) {
       if (mySub.getChangedList().hasMoreElements ())
-	System.out.println ("UTILWorkflowCallback : " + 
-			    "Expansions were changed. (Ignored by callback)");
+	logger.debug ("UTILWorkflowCallback : " + 
+		      "Expansions were changed. (Ignored by callback)");
       if (mySub.getRemovedList().hasMoreElements ())
-	System.out.println ("UTILWorkflowCallback : " + 
+	logger.debug ("UTILWorkflowCallback : " + 
 			    "Expansions were removed. (Ignored by callback)");
     }
-    System.out.println("Prapare to clean up");
+    logger.info("Prapare to clean up");
     if (genericListener instanceof UTILTemporaryListener) {
-      System.out.println("CLEAN UP");
+      logger.info("CLEAN UP");
       ((UTILTemporaryListener)genericListener).cleanup();
     }
   }

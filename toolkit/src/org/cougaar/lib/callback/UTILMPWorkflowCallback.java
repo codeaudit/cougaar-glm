@@ -24,6 +24,7 @@ package org.cougaar.lib.callback;
 import org.cougaar.planning.ldm.plan.MPTask;
 
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logger;
 
 /**
  * Filters for MP tasks, where the tasks
@@ -32,8 +33,8 @@ import org.cougaar.util.UnaryPredicate;
  */
 
 public class UTILMPWorkflowCallback extends UTILWorkflowCallback {
-  public UTILMPWorkflowCallback (UTILGenericListener listener) {
-    super (listener);
+  public UTILMPWorkflowCallback (UTILGenericListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   /**
@@ -42,7 +43,7 @@ public class UTILMPWorkflowCallback extends UTILWorkflowCallback {
    * They are tested
    * against the plugin-specific interestingTask test.
    *
-   * set xxdebug to true if you want to see info on every 
+   * set logger.isDebugEnabled() to true if you want to see logger.info on every 
    * handled task.  That is, which tasks have been 
    * allocated and which failed to allocate.
    * (Previously handled tasks will not be given to the listener.)
@@ -58,7 +59,7 @@ public class UTILMPWorkflowCallback extends UTILWorkflowCallback {
 	  boolean hasBeenAllocated =
 	    (subtask.getPlanElement () != null);
 
-	  if (xxdebug) 
+	  if (logger.isDebugEnabled()) 
 	    debugInfo (subtask, hasBeenAllocated);
 
 	  if (!hasBeenAllocated &&

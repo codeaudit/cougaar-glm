@@ -46,6 +46,8 @@ import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.xml.parser.ParamParser;
 import org.cougaar.lib.param.ParamMap;
 
+import org.cougaar.util.log.*;
+
 /**
  * <pre>
  * Class that encapsulates a parameter table.  The table consists of
@@ -56,13 +58,11 @@ import org.cougaar.lib.param.ParamMap;
  * </pre>
  */
 public class ParamTable implements ParamMap {
+  private static Logger logger=LoggerFactory.getInstance().createLogger("ParamTable");
 
-  public static boolean debug = 
-	"true".equals (System.getProperty ("org.cougaar.lib.param.ParamTable.debug", 
-									   "false"));
-  public static boolean showMissingFiles = 
-	"true".equals (System.getProperty ("org.cougaar.lib.param.ParamTable.showMissingFiles", 
-									   "true"));
+  //  public static boolean showMissingFiles = 
+  //    "true".equals (System.getProperty ("org.cougaar.lib.param.ParamTable.showMissingFiles", 
+  //				       "true"));
   
   /**
    * No default Constructor.
@@ -118,8 +118,7 @@ public class ParamTable implements ParamMap {
 	  }
         } 
 	catch (Exception e) { 
-	  System.err.println(e.getMessage());
-	  e.printStackTrace();
+	  logger.error(e.getMessage(), e);
 	}
       }
     }
@@ -128,13 +127,13 @@ public class ParamTable implements ParamMap {
     if (envDir == null)
       envDir = "";
     else {
-	// append slash if needed.
-	envDir = getWithSlashAppended (envDir);
+      // append slash if needed.
+      envDir = getWithSlashAppended (envDir);
     }
 
     String pfile = envDir + envFile;
 
-	populateParamMap (pfile);
+    populateParamMap (pfile);
 	
     // add environment parameters, replacing any from file
     for (Enumeration pv = envPV.elements(); pv.hasMoreElements();) {
@@ -157,25 +156,23 @@ public class ParamTable implements ParamMap {
    **/
   protected void populateParamMap (String pfile) {
     try {
-	  InputStream inputStream = ConfigFinder.getInstance().open(pfile);
+      InputStream inputStream = ConfigFinder.getInstance().open(pfile);
 
-	  SAXParser parser = new SAXParser();
-	  parser.setContentHandler(new ParamHandler(this));
-	  parser.setEntityResolver (new UTILEntityResolver ());
-	  InputSource is = new InputSource (inputStream);
-	  is.setSystemId (pfile);
-	  parser.parse(is);
+      SAXParser parser = new SAXParser();
+      parser.setContentHandler(new ParamHandler(this));
+      parser.setEntityResolver (new UTILEntityResolver ());
+      InputSource is = new InputSource (inputStream);
+      is.setSystemId (pfile);
+      parser.parse(is);
     }
     catch(Exception e){
-	  if (debug) {
-		System.err.println(e.getMessage());
-		e.printStackTrace();
-	  }
-	  if (showMissingFiles && (e instanceof FileNotFoundException)) {
-		System.err.println("ParamTable.populateParamMap - could not find env.xml file : "+
-						   e.getMessage() + "\nTurn this message off with " +
-						   "-Dorg.cougaar.lib.param.ParamTable.showMissingFiles=false");
-	  }
+      if (logger.isDebugEnabled ()) {
+	logger.debug(e.getMessage(), e);
+      }
+      if (logger.isInfoEnabled() && (e instanceof FileNotFoundException)) {
+	logger.info("ParamTable.populateParamMap - could not find env.xml file : "+
+		    e.getMessage() + "\nTurn this message off by setting logger to normal setting.");
+      }
     }
   }
   
@@ -277,7 +274,7 @@ public class ParamTable implements ParamMap {
   public short getShortParam(String name) throws ParamException{
     if(paramTable.containsKey(name)){
       Param p = (Param)paramTable.get(name);
-        return p.getShortValue();
+      return p.getShortValue();
     }
     throw new ParamException("parameter " + name + " not found");
   }
@@ -298,8 +295,8 @@ public class ParamTable implements ParamMap {
   /** show the parameters in the map **/
   public String toString () {
     StringBuffer sb = new StringBuffer ();
-	List keys = new ArrayList (paramTable.keySet());
-	Collections.sort (keys);
+    List keys = new ArrayList (paramTable.keySet());
+    Collections.sort (keys);
 	
     for (Iterator i = keys.iterator (); i.hasNext (); ) {
       Object key = i.next ();

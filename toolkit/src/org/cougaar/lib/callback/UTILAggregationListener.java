@@ -28,6 +28,7 @@ import org.cougaar.planning.ldm.plan.Task;
 import java.util.List;
 
 /**
+ * <pre>
  * Listener intended to be used by all aggregators.
  *
  * Being an aggregation listener now means participating in a 2 step process.
@@ -56,6 +57,7 @@ import java.util.List;
  *  
  * ???Default behavior is to do this.  
  *
+ * </pre>
  * @see org.cougaar.lib.callback.UTILAggregationCallback
  * @see org.cougaar.lib.callback.UTILExpansionListener
  * @see org.cougaar.lib.callback.UTILAllocationListener

@@ -112,7 +112,7 @@ public class InstanceParser{
       // Set the Schedule
       ((NewRoleSchedule)newAsset.getRoleSchedule()).setAvailableSchedule(newSchedule);
 
-      //System.out.println ("Making new asset " + newAsset + " with UID " + 
+      //logger.debug ("Making new asset " + newAsset + " with UID " + 
       //newAsset.getUID());
       return newAsset;
     }

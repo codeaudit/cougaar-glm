@@ -102,26 +102,26 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
 
   protected void reportIllFormedTask (Task t) {
     if (!UTILVerify.isTaskTimingCorrect(t)) 
-      System.out.println (getName () + 
+      info (getName () + 
 			  ".reportIllFormedTask - task " + t + 
 			  " has " + UTILVerify.reportTimingError (t));  
     else if (!UTILVerify.hasDirectObject (t)) {
-      System.out.println (getName () + 
+      info (getName () + 
 			  ".reportIllFormedTask - task " + t.getUID () + 
 			  " is missing direct object.");
     }
     else if (!UTILVerify.hasStartPreference (t)) {
-      System.out.println (getName () + 
+      info (getName () + 
 			  ".reportIllFormedTask - task " + t.getUID () + 
 			  " is start time preference.");
     }
     else if (!UTILVerify.hasEndPreference (t)) {
-      System.out.println (getName () + 
+      info (getName () + 
 			  ".reportIllFormedTask - task " + t.getUID () + 
 			  " is end time preference.");
     }
     else {
-      System.out.println (getName () + 
+      info (getName () + 
 			  ".reportIllFormedTask - task " + t + 
 			  " was ill formed.  (start " + UTILPreference.getReadyAt(t) + 
 			  " e " + UTILPreference.getEarlyDate(t) + 
@@ -141,9 +141,8 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
 
     bufferingThread = createBufferingThread ();
 
-    if (myExtraOutput)
-      System.out.println (getName () + 
-			  " creating buffering thread " + bufferingThread);
+    if (isDebugEnabled())
+      debug (getName () + " creating buffering thread " + bufferingThread);
 
     UTILFilterCallback threadCallback = 
       createThreadCallback ((UTILGenericListener) bufferingThread);
@@ -170,8 +169,7 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    * @see UTILListeningBufferingThread
    */
   protected UTILBufferingThread createBufferingThread () {
-    return new 
-      UTILListeningBufferingThread (this, myExtraOutput, myExtraExtraOutput);
+    return new UTILListeningBufferingThread (this, logger);
   }
 
   /** accessor */

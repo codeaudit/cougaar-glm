@@ -28,6 +28,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import org.cougaar.util.log.Logger;
 
 /**
  * For use with (threaded?) expanders.
@@ -36,26 +37,26 @@ import java.util.Iterator;
  */
 
 public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implements UTILRehydrateReactor {
-  public UTILExpandableTaskCallback (UTILGenericListener listener) {
-    super (listener);
+  public UTILExpandableTaskCallback (UTILGenericListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   protected UnaryPredicate getPredicate () {
     return new UnaryPredicate() {
-      public boolean execute(Object o) {
-	if ( o instanceof Task ) {
-	  if (xxdebug) {
-	    System.out.println("T:"+o);
-	    System.out.println("W:"+((Task)o).getWorkflow());
-	    System.out.println("PE:"+((Task)o).getPlanElement());
+	public boolean execute(Object o) {
+	  if ( o instanceof Task ) {
+	    if (logger.isDebugEnabled()) {
+	      logger.debug("T:"+o);
+	      logger.debug("W:"+((Task)o).getWorkflow());
+	      logger.debug("PE:"+((Task)o).getPlanElement());
+	    }
+	    return ( (((Task)o).getWorkflow() == null )  &&
+		     (((Task)o).getPlanElement() == null ) &&
+		     ((UTILGenericListener) myListener).interestingTask ((Task) o)); 
 	  }
-	  return ( (((Task)o).getWorkflow() == null )  &&
-		   (((Task)o).getPlanElement() == null ) &&
-		   ((UTILGenericListener) myListener).interestingTask ((Task) o)); 
+	  return false;
 	}
-	return false;
-      }
-    };
+      };
   }
 
   /**
@@ -70,7 +71,7 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implem
    * situations.  Should tackle them as they arise.
    *
    *
-   * Has debug info to tell how many new tasks have arrived.  Also to tell
+   * Has debug logger.info to tell how many new tasks have arrived.  Also to tell
    * how many expandable tasks have been removed from container.
    *
    * @see #isWellFormed
@@ -85,14 +86,14 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implem
 
     while (newtasks.hasMoreElements()) {
       Task t = (Task) newtasks.nextElement();
-	  if (removedCollection.contains (t))
-		continue;
+      if (removedCollection.contains (t))
+	continue;
 	  
       if (isWellFormed (t)) {
 	((UTILGenericListener) myListener).handleTask (t);
-	if (xxdebug) 
-	  System.out.println ("UTILExpandableTaskCallback : Notifying " + myListener + 
-			      " about " + t.getUID());
+	if (logger.isDebugEnabled()) 
+	  logger.debug ("UTILExpandableTaskCallback : Notifying " + myListener + 
+			" about " + t.getUID());
 	i++;
       }
     }
@@ -104,12 +105,12 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implem
 
     while (changedTasks.hasMoreElements()) {
       Task changedT = (Task)changedTasks.nextElement();
-	  if (removedCollection.contains (changedT))
-		continue;
+      if (removedCollection.contains (changedT))
+	continue;
       if (isWellFormed (changedT)) {
 	((UTILGenericListener) myListener).handleTask(changedT);
-	System.out.println ("UTILExpandableTaskCallback : Notifying " + myListener + 
-			    " about changed task " + changedT.getUID());
+	logger.debug ("UTILExpandableTaskCallback : Notifying " + myListener + 
+		      " about changed task " + changedT.getUID());
 	i++;
       }
     }
@@ -117,31 +118,31 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implem
 
     if (anythingChanged)
       synchronized (myListener) {
-	if (xxdebug)
-	  System.out.println ("UTILExpandableTaskCallback : Notifying " + myListener + 
-			      " about " + i + 
-			      " tasks");
+	if (logger.isDebugEnabled())
+	  logger.debug ("UTILExpandableTaskCallback : Notifying " + myListener + 
+			" about " + i + 
+			" tasks");
 	myListener.notify ();
       }
 
-	if (mySub.getRemovedList().hasMoreElements ()) {
-	  Enumeration removedtasks = mySub.getRemovedList();
-	  while (removedtasks.hasMoreElements()) {
-		Task t = (Task) removedtasks.nextElement();
-		if (xxdebug)
-		  System.out.println ("UTILExpandableTaskCallback : Telling listener that task " + t.getUID() + 
-							  " was removed.");
-		((UTILGenericListener) myListener).handleRemovedTask(t);
-	  }
-	}
+    if (mySub.getRemovedList().hasMoreElements ()) {
+      Enumeration removedtasks = mySub.getRemovedList();
+      while (removedtasks.hasMoreElements()) {
+	Task t = (Task) removedtasks.nextElement();
+	if (logger.isDebugEnabled())
+	  logger.debug ("UTILExpandableTaskCallback : Telling listener that task " + t.getUID() + 
+			" was removed.");
+	((UTILGenericListener) myListener).handleRemovedTask(t);
+      }
+    }
 	
-    if (xxdebug) {
+    if (logger.isDebugEnabled()) {
       if (mySub.getRemovedList().hasMoreElements ()) {
 	Enumeration removedtasks = mySub.getRemovedList();
 	while (removedtasks.hasMoreElements()) {
 	  Task t = (Task) removedtasks.nextElement();
-	  System.out.println ("UTILExpandableTaskCallback : Expandable task " + t + 
-			      " was removed from container.");
+	  logger.debug ("UTILExpandableTaskCallback : Expandable task " + t + 
+			" was removed from container.");
 	}
       }
     }
@@ -151,28 +152,28 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implem
   public void reactToRehydrate () {
     Collection contents = mySub.getCollection ();
 	
-	if (xdebug || xxdebug || true) 
-	  System.out.println ("UTILExpandableTaskCallback.reactToRehydrate - Notifying " + myListener + 
-						  " about " + contents.size () + " previously buffered tasks.");
+    if (logger.isInfoEnabled())
+      logger.info ("UTILExpandableTaskCallback.reactToRehydrate - Notifying " + myListener + 
+		   " about " + contents.size () + " previously buffered tasks.");
 
     for (Iterator iter = contents.iterator (); iter.hasNext ();) {
       Task t = (Task) iter.next();
 	  
       if (isWellFormed (t)) {
-		((UTILGenericListener) myListener).handleTask (t);
-		if (xxdebug) 
-		  System.out.println ("UTILExpandableTaskCallback.reactToRehydrate - Notifying " + myListener + 
-							  " about " + t.getUID());
+	((UTILGenericListener) myListener).handleTask (t);
+	if (logger.isDebugEnabled()) 
+	  logger.debug ("UTILExpandableTaskCallback.reactToRehydrate - Notifying " + myListener + 
+			" about " + t.getUID());
       }
     }
-	synchronized (myListener) {  myListener.notify ();	}
+    synchronized (myListener) {  myListener.notify ();	}
   }  
 
   /**
    * NOTE : duplicate in UTILWorkflowCallback -- should make common base class later!
    *
    * Examines an incoming task to see if it is well formed.
-   * Looks at timing information, and asks listener to examine
+   * Looks at timing logger.information, and asks listener to examine
    * task as well.  If task is ill formed, asks listener to handle
    * it (probably publish as a failed plan element).
    */
@@ -187,11 +188,4 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implem
 
     return false;
   }
-}
-        
-        
-                
-                        
-                
-        
-        
+}        

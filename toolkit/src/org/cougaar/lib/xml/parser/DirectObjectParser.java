@@ -26,6 +26,8 @@ import org.cougaar.core.domain.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.w3c.dom.NodeList;
 
+import org.cougaar.util.log.*;
+
 /**
  * Parses direct objects of tasks in test input files.
  */
@@ -53,15 +55,14 @@ public class DirectObjectParser{
 	    asset = AssetGroupParser.getAssetGroup(ldm, child);
 	  }
 	  else {
-	    System.out.println ("DirectObjectParser - XML Syntax error : " + 
+	    logger.debug ("DirectObjectParser - XML Syntax error : " + 
 				"expecting one of <asset>, <aggregateasset>, or <assetgroup> but got <" + childname + ">");
 	  }
 	}
       }
     }
     catch(Exception e){
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      logger.error("exception " + e.getMessage(), e);
     }
 
     return asset;
@@ -69,4 +70,5 @@ public class DirectObjectParser{
 
   private DirectObjectParser(){}
 
+  private static Logger logger=LoggerFactory.getInstance().createLogger("DirectObjectParser");
 }

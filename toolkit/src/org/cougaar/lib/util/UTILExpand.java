@@ -61,6 +61,8 @@ import java.util.Vector;
 
 import org.cougaar.core.service.BlackboardService;
 
+import org.cougaar.util.log.*;
+
 /** 
  * This class contains utility functions related to
  * subtasks and expansions.
@@ -231,8 +233,8 @@ public class UTILExpand {
    * @return Workflow a workflow containing the subtasks
    */
   /*  public static Workflow makeWorkflow(LdmFactory ldmf, List subtasks) {
-    return makeWorkflow (ldmf, subtasks, myARA);//AllocationResultAggregator.DEFAULT);
-    }*/
+      return makeWorkflow (ldmf, subtasks, myARA);//AllocationResultAggregator.DEFAULT);
+      }*/
 
   /**
    * Create a new Workflow from the subtask(s)
@@ -279,90 +281,90 @@ public class UTILExpand {
   }
 
   public static void showExpansion(Expansion exp) {
-    System.out.println ("--------------- exp " + exp.getUID () + " ----------------");
+    logger.info("--------------- exp " + exp.getUID () + " ----------------");
     Workflow wf = exp.getWorkflow ();
     int i = 0;
     for (Enumeration enum = wf.getTasks (); enum.hasMoreElements (); ) {
-	showPlanElement((Task) enum.nextElement (), i++);
+      showPlanElement((Task) enum.nextElement (), i++);
     }
   }
 
-    public static void showPlanElement (Task subTask) {
-	showPlanElement (subTask, -1);
+  public static void showPlanElement (Task subTask) {
+    showPlanElement (subTask, -1);
+  }
+
+  protected static void showPlanElement (Task subTask, int taskNum) {
+    PlanElement pe = subTask.getPlanElement ();
+    String extra = "";
+    if (UTILPrepPhrase.hasPrepNamed (subTask, "TASKEDTO")) 
+      extra = " TASKEDTO " + UTILPrepPhrase.getIndirectObject (subTask, "TASKEDTO"); 
+
+    // 	logger.debug ("\t" + ((taskNum != -1) ? "#" + taskNum : "") + 
+    // 			    " FROM " + UTILPrepPhrase.getFromLocation (subTask) + 
+    // 			    " TO "    + UTILPrepPhrase.getToLocation   (subTask) + extra);
+    if (pe == null) {
+      logger.info ("\t no PE yet.");
+      showPreferences (subTask);
+    }
+    else {
+      if (pe.getEstimatedResult () == null)
+	logger.info ("\t" + " NULL EST AR");
+      else
+	showPreferences (subTask, 
+			 pe.getEstimatedResult().getAspectTypes (),
+			 pe.getEstimatedResult().getResult ());
+    }
+  }
+
+  public static void showPreferences (Task t,
+				      int [] aspectTypes,
+				      double [] aspectValues) {
+    boolean prefExceeded = false;
+    Enumeration prefs = t.getPreferences ();
+    Map map = new HashMap ();
+    int aspectType = -1;
+
+    for (; prefs.hasMoreElements (); ) {
+      Preference pref = (Preference) prefs.nextElement ();
+      map.put (new Integer (pref.getAspectType ()), pref);
     }
 
-    protected static void showPlanElement (Task subTask, int taskNum) {
-	PlanElement pe = subTask.getPlanElement ();
-	String extra = "";
-	if (UTILPrepPhrase.hasPrepNamed (subTask, "TASKEDTO")) 
-	    extra = " TASKEDTO " + UTILPrepPhrase.getIndirectObject (subTask, "TASKEDTO"); 
+    //    String prefString = "";
 
-// 	System.out.println ("\t" + ((taskNum != -1) ? "#" + taskNum : "") + 
-// 			    " FROM " + UTILPrepPhrase.getFromLocation (subTask) + 
-// 			    " TO "    + UTILPrepPhrase.getToLocation   (subTask) + extra);
-	if (pe == null) {
-	    System.out.println ("\t no PE yet.");
-	    showPreferences (subTask);
-	}
-	else {
-	    if (pe.getEstimatedResult () == null)
-		System.out.println ("\t" + " NULL EST AR");
-	    else
-		showPreferences (subTask, 
-				 pe.getEstimatedResult().getAspectTypes (),
-				 pe.getEstimatedResult().getResult ());
-	}
+    for (int i = 0; i < aspectTypes.length; i++) {
+      aspectType = aspectTypes[i];
+      Integer aspectTypeInt = new Integer (aspectType);
+      Preference pref = (Preference) map.remove (aspectTypeInt);
+      if (pref != null) {
+	AspectValue av = new AspectValue (aspectType, aspectValues[i]);
+	if (aspectType == AspectType.END_TIME)
+	  logger.info(printEndTime (t, av));
+	else
+	  logger.info(print (av, pref));
+      }
     }
-
-    public static void showPreferences (Task t,
-					int [] aspectTypes,
-					double [] aspectValues) {
-	boolean prefExceeded = false;
-	Enumeration prefs = t.getPreferences ();
-	Map map = new HashMap ();
-	int aspectType = -1;
-
-	for (; prefs.hasMoreElements (); ) {
-	    Preference pref = (Preference) prefs.nextElement ();
-	    map.put (new Integer (pref.getAspectType ()), pref);
-	}
-
-	//    String prefString = "";
-
-	for (int i = 0; i < aspectTypes.length; i++) {
-	    aspectType = aspectTypes[i];
-	    Integer aspectTypeInt = new Integer (aspectType);
-	    Preference pref = (Preference) map.remove (aspectTypeInt);
-	    if (pref != null) {
-		AspectValue av = new AspectValue (aspectType, aspectValues[i]);
-		if (aspectType == AspectType.END_TIME)
-		    System.out.println (printEndTime (t, av));
-		else
-		    System.out.println (print (av, pref));
-	    }
-	}
     
-	//    System.out.println (prefString);
+    //    logger.debug (prefString);
+  }
+
+  public static void showPreferences (Task t) {
+    boolean prefExceeded = false;
+    Enumeration prefs = t.getPreferences ();
+    Map map = new HashMap ();
+    int aspectType = -1;
+
+    for (; prefs.hasMoreElements (); ) {
+      Preference pref = (Preference) prefs.nextElement ();
+      if (pref != null) {
+	if (pref.getAspectType () == AspectType.END_TIME)
+	  logger.info(printEndTime (t));
+	else
+	  logger.info(print (pref));
+      }
     }
-
-    public static void showPreferences (Task t) {
-	boolean prefExceeded = false;
-	Enumeration prefs = t.getPreferences ();
-	Map map = new HashMap ();
-	int aspectType = -1;
-
-	for (; prefs.hasMoreElements (); ) {
-	    Preference pref = (Preference) prefs.nextElement ();
-	    if (pref != null) {
-		if (pref.getAspectType () == AspectType.END_TIME)
-		    System.out.println (printEndTime (t));
-		else
-		    System.out.println (print (pref));
-	    }
-	}
     
-	//    System.out.println (prefString);
-    }
+    //    logger.debug (prefString);
+  }
 
   protected static String print (AspectValue av, Preference pref) {
     String type = null;
@@ -442,9 +444,9 @@ public class UTILExpand {
     String lateMark  = (avDate.after  (late )) ? " >" : "";
 
     return 
-	(type + ":p-e " + early + earlyMark + " a " + value) + "\n" + 
-	(type + ":p-b " + best  + " a " + value) + "\n" + 
-	(type + ":p-l " + late  + lateMark + " a " + value);
+      (type + ":p-e " + early + earlyMark + " a " + value) + "\n" + 
+      (type + ":p-b " + best  + " a " + value) + "\n" + 
+      (type + ":p-l " + late  + lateMark + " a " + value);
   }
 
   protected static String printEndTime (Task t) {
@@ -461,9 +463,9 @@ public class UTILExpand {
     Date late  = UTILPreference.getLateDate(t);
 
     return 
-	(type + ":p-e " + early + "\n") + 
-	(type + ":p-b " + best  + "\n") + 
-	(type + ":p-l " + late);
+      (type + ":p-e " + early + "\n") + 
+      (type + ":p-b " + best  + "\n") + 
+      (type + ":p-l " + late);
   }
 
   /**
@@ -528,8 +530,8 @@ public class UTILExpand {
 
     Expansion exp = ldmf.createExpansion(t.getPlan(), t, ldmf.newWorkflow(), failedAR);
 
-    if (creator != null)
-      creator.showDebugIfFailure ();
+    //    if (creator != null)
+    //      creator.showDebugIfFailure ();
 
     return exp;
   }
@@ -548,7 +550,7 @@ public class UTILExpand {
   public static void handleTask(RootFactory ldmf, PluginDelegate plugin, String pluginName,
 				boolean wantConfidence, boolean myExtraOutput,
 				Task t, List subtasks) {
-	handleTask (ldmf, plugin.getBlackboardService (), pluginName, wantConfidence, myExtraOutput, t, subtasks);
+    handleTask (ldmf, plugin.getBlackboardService (), pluginName, wantConfidence, myExtraOutput, t, subtasks);
   }
   
   public static void handleTask(RootFactory ldmf, BlackboardService blackboard, String pluginName,
@@ -562,10 +564,10 @@ public class UTILExpand {
     // However, in general if we try to create expansions containing
     // MPTasks, we crash, so this is a slightly better solution for now.
     if (myExtraOutput){
-      System.out.println(pluginName + 
-			 ".handleTask: Subtask(s) created for " +
-			 ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
-			 t.getUID());
+      logger.debug(pluginName + 
+		   ".handleTask: Subtask(s) created for " +
+		   ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
+		   t.getUID());
     }
 
     Workflow wf = null;
@@ -577,7 +579,7 @@ public class UTILExpand {
       boolean contains_mptasks = false;
       while (sub_t_i.hasNext()) {
 	if (sub_t_i.next() instanceof MPTask)
-	 contains_mptasks = true;
+	  contains_mptasks = true;
 	else if (contains_mptasks == true)
 	  throw new UTILPluginException(pluginName +
 					".handleTask : ERROR: Found expansion with mixed Task and MPTask children.");
@@ -595,9 +597,9 @@ public class UTILExpand {
     } 
 
     /*
-    if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Workflow created.");
-    }
+      if (myExtraOutput){
+      logger.debug(pluginName + ".handleTask: Workflow created.");
+      }
     */
 
     Expansion exp = null;
@@ -609,19 +611,19 @@ public class UTILExpand {
     }
 
     if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Expansion created. (" +
-			 exp.getUID() + ")");
+      logger.debug(pluginName + ".handleTask: Expansion created. (" +
+		   exp.getUID() + ")");
     }
     
     for (Iterator i = subtasks.iterator (); i.hasNext ();) {
       blackboard.publishAdd (i.next());
     }
-	//	plugin.publishAdd(wf); // Mike Thome says never publish the workflow
+    //	plugin.publishAdd(wf); // Mike Thome says never publish the workflow
     blackboard.publishAdd(exp);
 
     if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Expansion published. Workflow has " + 
-			 UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
+      logger.debug(pluginName + ".handleTask: Expansion published. Workflow has " + 
+		   UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
     }
 
   }
@@ -630,17 +632,17 @@ public class UTILExpand {
    * who uses this anymore anyway?  TOPS?
    */
   public static Expansion handleTaskPrime(RootFactory ldmf, PluginDelegate plugin, String pluginName,
-				boolean wantConfidence, boolean myExtraOutput,
-										  Task t, List subtasks) {
-	return handleTaskPrime (ldmf, plugin.getBlackboardService(), pluginName, wantConfidence, myExtraOutput, t, subtasks);
+					  boolean wantConfidence, boolean myExtraOutput,
+					  Task t, List subtasks) {
+    return handleTaskPrime (ldmf, plugin.getBlackboardService(), pluginName, wantConfidence, myExtraOutput, t, subtasks);
   }
   
   /** 
    * who uses this anymore anyway?   TOPS?
    */
   public static Expansion handleTaskPrime(RootFactory ldmf, BlackboardService blackboard, String pluginName,
-				boolean wantConfidence, boolean myExtraOutput,
-				Task t, List subtasks) {
+					  boolean wantConfidence, boolean myExtraOutput,
+					  Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
       throw new UTILPluginException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
     }
@@ -649,10 +651,10 @@ public class UTILExpand {
     // However, in general if we try to create expansions containing
     // MPTasks, we crash, so this is a slightly better solution for now.
     if (myExtraOutput){
-      System.out.println(pluginName + 
-			 ".handleTask: Subtask(s) created for " +
-			 ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
-			 t.getUID());
+      logger.debug(pluginName + 
+		   ".handleTask: Subtask(s) created for " +
+		   ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
+		   t.getUID());
     }
 
     Workflow wf = null;
@@ -664,7 +666,7 @@ public class UTILExpand {
       boolean contains_mptasks = false;
       while (sub_t_i.hasNext()) {
 	if (sub_t_i.next() instanceof MPTask)
-	 contains_mptasks = true;
+	  contains_mptasks = true;
 	else if (contains_mptasks == true)
 	  throw new UTILPluginException(pluginName +
 					".handleTask : ERROR: Found expansion with mixed Task and MPTask children.");
@@ -682,9 +684,9 @@ public class UTILExpand {
     } 
 
     /*
-    if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Workflow created.");
-    }
+      if (myExtraOutput){
+      logger.debug(pluginName + ".handleTask: Workflow created.");
+      }
     */
 
     Expansion exp = null;
@@ -696,8 +698,8 @@ public class UTILExpand {
     }
 
     if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Expansion created. (" +
-			 exp.getUID() + ")");
+      logger.debug(pluginName + ".handleTask: Expansion created. (" +
+		   exp.getUID() + ")");
     }
     
     for (Iterator i = subtasks.iterator (); i.hasNext ();) {
@@ -706,15 +708,15 @@ public class UTILExpand {
     blackboard.publishAdd(exp);
 
     if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Expansion published. Workflow has " + 
-			 UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
+      logger.debug(pluginName + ".handleTask: Expansion published. Workflow has " + 
+		   UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
     }
 
     return exp;
 
   }
 
-  public static Enumeration createDividedPreferences(RootFactory ldmf, Task t, Date begin, Date end) {
+  public static Enumeration createDividedPreferences(RootFactory ldmf, Task t, Date begin, Date end, Logger logger) {
     Enumeration taskPrefs = t.getPreferences();
     Vector newPrefs = new Vector();
     Date start = null;
@@ -750,15 +752,15 @@ public class UTILExpand {
     Date newEarly = new Date(end.getTime() - (early_to_best + best_to_late));
     Date newBest  = new Date(end.getTime() - best_to_late);
 
-    if (debugAlot) {
-      System.out.println ("createDivided - begin " + begin + 
-			  " e " + newEarly + 
-			  " b " + newBest + 
-			  " l " + end);
-      System.out.println ("createDivided - task's start " + start +
-			  " e " + early + 
-			  " b " + best + 
-			  " l " + late);
+    if (logger.isDebugEnabled()) {
+      logger.debug("createDivided - begin " + begin + 
+		   " e " + newEarly + 
+		   " b " + newBest + 
+		   " l " + end);
+      logger.debug("createDivided - task's start " + start +
+		   " e " + early + 
+		   " b " + best + 
+		   " l " + late);
     }
 
     newPrefs.addElement(UTILPreference.makeStartDatePreference(ldmf, begin));
@@ -773,4 +775,6 @@ public class UTILExpand {
   //  private static AllocationResultAggregator myARA = new UTILAllocationResultAggregator ();
   private static AllocationResultAggregator myARA = AllocationResultAggregator.DEFAULT;
   private static boolean debugAlot = false;
+
+  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILExpand");
 }

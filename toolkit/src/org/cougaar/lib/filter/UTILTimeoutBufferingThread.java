@@ -24,7 +24,10 @@ package org.cougaar.lib.filter;
 import java.util.Date;
 import java.util.List;
 
+import org.cougaar.util.log.Logger;
+
 /**
+ * <pre>
  * Interacts with a BufferingPlugin.
  *
  * Implements runnable -- must be started inside a java Thread.
@@ -39,6 +42,7 @@ import java.util.List;
  * This class doesn't do much by itself -- it needs to be a listener
  * to get tasks. 
  *
+ * </pre>
  * @see UTILListeningBufferingThread
  */
 
@@ -46,9 +50,8 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
   /** 
    * Works with a buffering plugin
    */
-  public UTILTimeoutBufferingThread (UTILTimeoutBufferingPlugin bufferingPlugin,
-				     boolean myExtraOutput, boolean myExtraExtraOutput) {
-      super (bufferingPlugin, myExtraOutput, myExtraExtraOutput);
+  public UTILTimeoutBufferingThread (UTILTimeoutBufferingPlugin bufferingPlugin,Logger logger) {
+    super (bufferingPlugin, logger);
   }
 
   /** Read additional data from environment files. */
@@ -77,8 +80,8 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
       boolean retval = (lastDisposition != null) && 
 	  ((UTILTimeoutBufferingPlugin) myPlugin).anyTasksLeft ();
 
-      if (myExtraExtraOutput && retval)
-	  System.out.println (this + " - Has tasks left");
+      if (logger.isDebugEnabled() && retval)
+	  logger.debug (this + " - Has tasks left");
 
       return retval;
   }
@@ -95,14 +98,15 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
 
     long myWaitTime = DISPATCH_TIMEOUT - dispositionWaitTime();
 
-    if (myExtraExtraOutput)
-      System.out.println ("" + this + "super wait " + waitTime + 
-			  " mission wait " + myWaitTime);
+    if (logger.isDebugEnabled())
+      logger.debug ("" + this + "super wait " + waitTime + 
+	    " mission wait " + myWaitTime);
 
     return  ((waitTime > myWaitTime) ? waitTime : myWaitTime);
   }
 
   /** 
+   * <pre>
    * Way for to fire off actions independent of task buffering.
    *
    * Implements a timer, so even partially full assets will have plan 
@@ -111,18 +115,19 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
    * Note : lastDisposition will be set after the first time
    *        dispatchTasks is called, but will be null after alternateDispatch
    *        
+   * </pre>
    * @return true if 
    *         1) we haven't met this condition before on the list of tasks AND
    *         2) we have waited long enough (> DISPATCH_TIMEOUT) AND
    *         3) there are tasks left over
    */
   protected boolean alternateDispatchConditionMet () {
-    if (myExtraOutput)
+    if (logger.isInfoEnabled())
       if (lastDisposition != null)
-	System.out.println ("" + this + 
-			    " - Disposition wait time " + dispositionWaitTime ()/1000 + 
-			    " secs. Compare with TIMEOUT max time " + DISPATCH_TIMEOUT/1000 + 
-			    " secs.");
+	logger.info ("" + this + 
+		     " - Disposition wait time " + dispositionWaitTime ()/1000 + 
+		     " secs. Compare with TIMEOUT max time " + DISPATCH_TIMEOUT/1000 + 
+		     " secs.");
 
     return ((lastDisposition != null) &&
 	    (dispositionWaitTime() >= DISPATCH_TIMEOUT) &&
@@ -130,12 +135,14 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
   }
 
   /**
+   * <pre>
    * Tell plugin to process these tasks.
    *
    * Gives no more than MAXSIZE tasks to plugin
    *
    * reset last disposition to time to now
    *
+   * </pre>
    * @param bufferedTasks - currently buffered tasks to give to plugin
    */
   protected void processBufferedTasks (List bufferedTasks) {
@@ -147,6 +154,7 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
   }
 
   /**
+   * <pre>
    * Deal with the tasks that the plugin has accumulated.
    *
    * Records that there all "leftover" tasks have been handled.
@@ -154,6 +162,7 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
    * wraps processLeftoverTasks call in COUGAAR transaction
    *
    * calls UTILBufferingPlugin.processTasks
+   * </pre>
    * @see UTILBufferingPlugin#processTasks
    */
   protected void alternateDispatch () {

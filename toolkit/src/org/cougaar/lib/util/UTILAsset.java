@@ -50,12 +50,15 @@ import java.util.*;
 
 import org.cougaar.lib.util.UTILPreference;
 
+import org.cougaar.util.log.*;
+
 /**
  * This class contains utility functions for getting
  * Assets.
  */
 
 public class UTILAsset {
+  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILAsset");
   private static String myName = "UTILAsset";
   
   /**
@@ -210,7 +213,7 @@ public class UTILAsset {
   private static void expandAssetGroup(AssetGroup group, Vector buffer){
     Vector subobjects = group.getAssets();
     if (subobjects.isEmpty ())
-      System.out.println ("WARNING -- asset group is empty!");
+      logger.debug ("WARNING -- asset group is empty!");
     for (int i=0; i<subobjects.size(); i++) {
       Object subobject = subobjects.elementAt(i);
 

@@ -36,6 +36,8 @@ import org.w3c.dom.NodeList;
 
 import java.util.Date;
 
+import org.cougaar.util.log.*;
+
 /**
  * Creates asset from AggregateAsset xml node. <p>
  *
@@ -77,7 +79,7 @@ public class AggregateAssetParser{
 		String quantityNodeValue = quantityNode.getNodeValue();
 		quantity = (new Integer(quantityNodeValue)).intValue();
       } catch (NullPointerException npe) {
-	System.out.println (classname + 
+	logger.debug (classname + 
 			    ".getAggregate - XML syntax error : expecting *quantity* attribute on tag <" + 
 			    node.getNodeName() + "> or child node.");
 	return null;
@@ -86,27 +88,27 @@ public class AggregateAssetParser{
       try {
 	prototype = prototypeNode.getNodeValue ();
       } catch (NullPointerException npe) {
-	System.out.println (classname + 
+	logger.debug (classname + 
 			    ".getAggregate - XML syntax error : expecting *prototype* attribute on tag <" + 
 			    node.getNodeName() + "> or child node.");
 	return null;
       }
       
-      if (testing) 
-	System.out.println ("Creating " + quantity + " of "  + prototype);
+      if (logger.isDebugEnabled()) 
+	logger.debug ("Creating " + quantity + " of "  + prototype);
 
       Asset proto = ldm.getFactory().getPrototype(prototype);
 	  
       if (proto == null)
-	System.out.println (classname + 
+	logger.debug (classname + 
 			    ".getAggregate - XML syntax error : no prototype " + prototype + 
 			    " known. Check cluster's ldm.xml file to make sure " + prototype + 
 			    "'s prototype file is included."); 
 
       else {
 	newAsset = (AggregateAsset)ldm.getFactory().createAggregate(proto, quantity);
-	if (testing)
-	  System.out.println (classname + ".getAggregate - Creating agg asset " + newAsset);
+	if (logger.isDebugEnabled())
+	  logger.debug (classname + ".getAggregate - Creating agg asset " + newAsset);
 
 	Schedule sched = getSchedule (ldm, node.getChildNodes ());
 	if (sched != null)
@@ -114,7 +116,7 @@ public class AggregateAssetParser{
       }
     }
     else {
-      System.out.println (classname + 
+      logger.debug (classname + 
 			  ".getAggregate - XML syntax error : expecting <AggregateAsset> instead got <" + 
 			  node.getNodeName() + ">"); 
     }
@@ -156,8 +158,8 @@ public class AggregateAssetParser{
   protected static void setSchedule (LDMServesPlugin ldm, 
 				     Asset asset, 
 				     Schedule newSchedule) {
-    if (testing)
-      System.out.println ("setSchedule");
+    if (logger.isDebugEnabled())
+      logger.debug ("setSchedule");
     Schedule copySchedule = ldm.getFactory().newSimpleSchedule(new Date(newSchedule.getStartTime()),
 							       new Date(newSchedule.getEndTime()));
     // Set the Schedule
@@ -168,4 +170,5 @@ public class AggregateAssetParser{
   private AggregateAssetParser(){}
   
   private static String classname = AggregateAssetParser.class.getName ();
+  private static Logger logger=LoggerFactory.getInstance().createLogger("AggregateAssetParser");
 }

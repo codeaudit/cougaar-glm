@@ -21,10 +21,25 @@
 
 package org.cougaar.lib.filter;
 
+import java.io.Serializable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 
+import org.cougaar.core.component.StateObject;
 import org.cougaar.core.domain.RootFactory;
+import org.cougaar.core.plugin.PluginAdapter;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.LDMService;
+import org.cougaar.core.plugin.PluginBindingSite;
+import org.cougaar.core.service.LoggingService;
 
 import org.cougaar.planning.ldm.asset.Asset;
 
@@ -36,11 +51,6 @@ import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
 
-import org.cougaar.core.plugin.PluginAdapter;
-
-import org.cougaar.util.StateModelException;
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.lib.callback.UTILFilterCallback;
 import org.cougaar.lib.callback.UTILRehydrateReactor;
 import org.cougaar.lib.param.ParamMap;
@@ -49,29 +59,19 @@ import org.cougaar.lib.util.UTILExpand;
 import org.cougaar.lib.util.UTILParamTable;
 import org.cougaar.lib.xml.parser.ParamParser;
 
-import java.io.Serializable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-import java.util.Iterator;
-
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.LDMService;
-import org.cougaar.core.plugin.PluginBindingSite;
-import org.cougaar.core.component.StateObject;
+import org.cougaar.util.StateModelException;
+import org.cougaar.util.UnaryPredicate;
 
 /**
+ * <pre>
  * Implementation of UTILPlugin interface.
  * 
  * parameters are read when the plugin is loaded.
  *
  * filterCallbacks are added just before the plugin
  * thread is started.
+ * </pre>
  */
-
 public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, StateObject {
   /**
    * Implemented for StateObject
@@ -83,13 +83,13 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    */
   public Object getState() {
     if (originalAgentID == null)
-	  return ((PluginBindingSite)getBindingSite()).getAgentIdentifier();
+      return ((PluginBindingSite)getBindingSite()).getAgentIdentifier();
     else 
-	  return originalAgentID;
+      return originalAgentID;
   }
 
   protected ClusterIdentifier getOriginalAgentID () {
-	return originalAgentID;
+    return originalAgentID;
   }
   
   /**
@@ -103,13 +103,13 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * @param o the state saved before
    */
   public void setState(Object o) {
-	originalAgentID = (ClusterIdentifier) o;
+    originalAgentID = (ClusterIdentifier) o;
   }
 
   /** true iff originalAgentID is not null -- i.e. setState got called */
   protected boolean didSpawn () {
-	boolean val = (originalAgentID != null);
-	return val;
+    boolean val = (originalAgentID != null);
+    return val;
   }
 
   /**
@@ -119,15 +119,15 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * setupFilters () is wrapped in an open/closeTransaction block.
    */
   protected final void setupSubscriptions() {
-	if (blackboard.didRehydrate ())
-	  justRehydrated ();
+    if (blackboard.didRehydrate ())
+      justRehydrated ();
 	
     getEnvData();
     setInstanceVariables ();
 
     preFilterSetup ();
 
-	setupFilters ();
+    setupFilters ();
 
     localSetup();
   }
@@ -147,7 +147,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   private void setInstanceVariables () {
     ldmf = getLDMService().getFactory();
     myClusterName = ((PluginBindingSite)getBindingSite()).getAgentIdentifier().getAddress();
-	realityPlan = ldmf.getRealityPlan();
+    realityPlan = ldmf.getRealityPlan();
     mySubscriptions = new Vector ();
   }
 
@@ -168,6 +168,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    **/
 
   /**
+   * <pre>
    * The idea is to add subscriptions (via the filterCallback), and when 
    * they change, to have the callback react to the change, and tell 
    * the listener (many times the plugin) what to do.
@@ -177,6 +178,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * Note that there is no restraint on when a subclass can add a 
    * filter, as long as it doesn't happen before setupFilters ().
    * 
+   * </pre>
    * @see #addFilter ()
    */
   public void setupFilters () {
@@ -193,8 +195,8 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    */
   public void addFilter  (UTILFilterCallback callbackObj) {
     if (callbackObj == null) {
-      if (myExtraFilterOutput)
-        System.out.println ("Adding null filter (THIS MAY BE OK.)");
+      if (isDebugEnabled ())
+        debug ("Adding null filter (THIS MAY BE OK.)");
       return;
     }
 
@@ -220,7 +222,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   public void removeFilter  (UTILFilterCallback callbackObj) {
     synchronized (mySubscriptions) {
       mySubscriptions.removeElement (callbackObj);
-	  blackboard.unsubscribe(callbackObj.getSubscription ());
+      blackboard.unsubscribe(callbackObj.getSubscription ());
     }
   }
 
@@ -230,8 +232,8 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * This allows callbacks to make subscriptions.
    */
   public IncrementalSubscription subscribeFromCallback (UnaryPredicate pred) {
-    if (myExtraFilterOutput) 
-      System.out.println (getName () + " : Subscribing to " + pred);
+    if (isDebugEnabled ()) 
+      debug (getName () + " : Subscribing to " + pred);
 
     return (IncrementalSubscription) blackboard.subscribe (pred); 
   }
@@ -243,8 +245,8 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    */
   public IncrementalSubscription subscribeFromCallback (UnaryPredicate pred,
 							Collection specialContainer) {
-    if (myExtraFilterOutput) 
-      System.out.println (getName () + " : Subscribing to " + pred);
+    if (isDebugEnabled ()) 
+      debug (getName () + " : Subscribing to " + pred);
 
     return (IncrementalSubscription) blackboard.subscribe (pred, specialContainer); 
   }
@@ -258,54 +260,48 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 
     // Don't care to clone the vector?
     Vector myP;
-	if (getParameters () != null)
-	  myP = new Vector (getParameters());
-	else
-	  myP = new Vector ();
+    if (getParameters () != null)
+      myP = new Vector (getParameters());
+    else
+      myP = new Vector ();
 
     // create the parameter table
-	ClusterIdentifier agentID = (didSpawn () ? 
-								 getOriginalAgentID () :
-								 ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
+    ClusterIdentifier agentID = (didSpawn () ? 
+				 getOriginalAgentID () :
+				 ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
 								 
     myParams = createParamTable (myP, agentID);
 
     // set instance variables
-    try{myExtraExtraOutput = myParams.getBooleanParam("ExtraExtraOutput");}
-    catch(Exception e){myExtraExtraOutput = false;}
-    try{myExtraOutput = (myParams.getBooleanParam("ExtraOutput")||myExtraExtraOutput);}
-    catch(Exception e){myExtraOutput = (false||myExtraExtraOutput);}
-    try{myExtraFilterOutput = myParams.getBooleanParam("ExtraFilterOutput");}
-    catch(Exception e){myExtraFilterOutput = false;}
 
-    if (myExtraOutput) {
+    if (isInfoEnabled()) {
       String optionalEnvFile = null;
       try {
         optionalEnvFile = myParams.getStringParam("envFile");
         if (optionalEnvFile == null)
           optionalEnvFile = myParams.getStringParam("default_envFile");
       } catch (Exception e){}
-      System.out.println (getClassName () + ".getEnvData : read param file <" + optionalEnvFile + ">");
+      info (getClassName () + ".getEnvData : read param file <" + optionalEnvFile + ">");
     }
     
-    if (showParameters)
-      System.out.println (getName () + " - Params : " + myParams);
+    if (isDebugEnabled())
+      debug (getName () + " - Params : " + myParams);
   }
 
   /**
    * Subclass to return a different ParamTable.
    */
   protected ParamMap createParamTable (Vector envParams, 
-					 ClusterIdentifier ident) {
-    if (showParameters) {
-      System.out.println (getName () + " - creating param table, identifier was " + ident);
+				       ClusterIdentifier ident) {
+    if (isDebugEnabled()) {
+      debug (getName () + " - creating param table, identifier was " + ident);
       for (Iterator i = envParams.iterator(); i.hasNext();) {
 	String runtimeParam = (String)i.next();
 	Param p = ParamParser.getParam(runtimeParam);
 	if(p != null){
 	  String name = p.getName();
-	  System.out.println("UTILPluginAdapter.createParamTable() - got param name " + name
-			     + " with value " + p);
+	  debug("UTILPluginAdapter.createParamTable() - got param name " + name
+		+ " with value " + p);
 	}
       }
     }
@@ -317,19 +313,11 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * Place to put any local plugin startup initiallization.
    * This is a good place to read local data from files.
    *
-   * By default all plugins have a showDebugOnFailure option.
-   * When set to true (default), whenever a plugin makes a failed plan element, the
-   * myExtraOutput and myExtraExtraOutput flags are turned on and lots of
-   * debug output is generated.
-   * This can be turned off by setting showDebugOnFailure to false.
-   *
-   * This is useful during integration when getting as much as information
+   * This is useful during integration when getting as much as debugrmation
    * as possible at the point of failure is critical.
    * </pre>
    */
   public void localSetup () {
-    try {showDebugOnFailure = getMyParams().getBooleanParam("showDebugOnFailure");}
-    catch (Exception e) {showDebugOnFailure = true;}
     try {skipLowConfidence = getMyParams().getBooleanParam("skipLowConfidence");}
     catch (Exception e) {skipLowConfidence = true;}
     try {HIGH_CONFIDENCE = getMyParams().getFloatParam("HIGH_CONFIDENCE");}
@@ -346,6 +334,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   }
 
   /**
+   * <pre>
    * if the reported allocation result has been successfully calculated
    * set the estimated equal to the reported to send a notification
    * back up.
@@ -356,10 +345,11 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    *
    * Takes care not to copy nulls from reported aux query results into
    * estimated fields.
+   * </pre>
    */
   public final void updateAllocationResult(PlanElement cpe) {
-    if (myExtraExtraOutput)
-      System.out.println (getName () + " : Received changed pe " + 
+    if (isDebugEnabled ())
+      debug (getName () + " : Received changed pe " + 
 			  cpe.getUID () + " for task " + 
 			  cpe.getTask ().getUID());
     AllocationResult reportedresult = cpe.getReportedResult();
@@ -373,23 +363,22 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 
       if ( nullEstimated  || 
 	   (highConfidence &&
-	   (! estimatedresult.isEqual(reportedresult)))) { 
-	if (myExtraExtraOutput)
-          System.out.println (getName () + " : Swapping Alloc Results for task " + 
+	    (! estimatedresult.isEqual(reportedresult)))) { 
+	if (isDebugEnabled ())
+          debug (getName () + " : Swapping Alloc Results for task " + 
                               cpe.getTask ().getUID ());
-        if ((myExtraOutput || myExtraExtraOutput) &&
-            !reportedresult.isSuccess ())
-          System.out.println (getName () + " : " + 
-                              cpe.getTask ().getUID () + " failed to allocate.");
+        if (isWarnEnabled() && !reportedresult.isSuccess ())
+          warn (getName () + " : " + 
+		cpe.getTask ().getUID () + " failed to allocate.");
 
         cpe.setEstimatedResult(reportedresult);
 
 	if (!(estimatedresult == null)){
-	  if (myExtraExtraOutput) {
-	    System.out.println (getName() + " auxiliaryQueries for task " +
+	  if (isDebugEnabled ()) {
+	    debug (getName() + " auxiliaryQueries for task " +
 				cpe.getTask().getUID()); 	  
 	    for (int i= 0; i<AuxiliaryQueryType.LAST_AQTYPE+1; i++) {
-	      System.out.println ("\tEstimatedResult - " + i +  ", " +
+	      debug ("\tEstimatedResult - " + i +  ", " +
 				  estimatedresult.auxiliaryQuery(i) + 
 				  "\tReportedResult - " + i + ", " +
 				  reportedresult.auxiliaryQuery(i));
@@ -406,26 +395,12 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
       }
     }
     else if (!cpe.getTask().getSource ().equals (((PluginBindingSite)getBindingSite()).getAgentIdentifier())) {
-      System.out.println ("ERROR! " + getName () + 
-                          " : "     + cpe.getTask ().getUID () + 
-                          " has a null reported allocation.");
+      error ("ERROR! " + getName () + 
+	     " : "     + cpe.getTask ().getUID () + 
+	     " has a null reported allocation.");
     }
   }
   
-    /**
-     * Turns on debug output if a failed plan element is generated.
-     */
-    public void showDebugIfFailure () {
-      if (showDebugOnFailure && 
-	  !myExtraOutput && !myExtraExtraOutput) {
-	System.out.println (getName () + ".showDebugOnFailure - found " + 
-			    " failed PE " + 
-			    "so now turning on debug output.");
-	myExtraOutput = true;
-	myExtraExtraOutput = true;
-      }
-    }
-
   /** 
    * Called every time one of the filterCallback subscriptions
    * change.
@@ -436,27 +411,27 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * to react to the change in some way.
    */
   protected void execute() {
-    if (myExtraFilterOutput)
-      System.out.println (getName () + " : cycle called (a subscription changed)");
+    if (isDebugEnabled ())
+      debug (getName () + " : cycle called (a subscription changed)");
 
     synchronized (mySubscriptions) {
       for (int i = 0; i < mySubscriptions.size ();  i++) {
         UTILFilterCallback cb = (UTILFilterCallback) mySubscriptions.elementAt (i);
-		if (blackboard.didRehydrate ()) {
-		  if (cb instanceof UTILRehydrateReactor) {
-			((UTILRehydrateReactor)cb).reactToRehydrate();
-			// don't react to a changed filter, since react to rehydrate should
-			// already deal with new items in the container
-			continue;
-		  }
-		}
+	if (blackboard.didRehydrate ()) {
+	  if (cb instanceof UTILRehydrateReactor) {
+	    ((UTILRehydrateReactor)cb).reactToRehydrate();
+	    // don't react to a changed filter, since react to rehydrate should
+	    // already deal with new items in the container
+	    continue;
+	  }
+	}
 		
         if (cb.getSubscription ().hasChanged ()) {
-          if (myExtraFilterOutput)
-            System.out.println ("\tFilter# " + i + 
-                                " of Subscription " + 
-                                cb.getSubscription() + 
-                                " has changed.");
+          if (isDebugEnabled ())
+            debug ("\tFilter# " + i + 
+		   " of Subscription " + 
+		   cb.getSubscription() + 
+		   " has changed.");
           cb.reactToChangedFilter ();
         }
       }
@@ -469,21 +444,21 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * Calls rehydrate if appropriate 
    */
   protected void justRehydrated () {
-	if (myExtraExtraOutput)
-	  System.out.println (getName () + ".justRehydrated.");
+    if (isInfoEnabled ())
+      info (getName () + ".justRehydrated.");
 
-	persistentState = findState ();
+    persistentState = findState ();
 	
-	// tell subclasses about rehydrated state
-	if (persistentState != null) {
-	  if (myExtraOutput || true)
-		System.out.println (getName () + ".justRehydrated - found state.");
-	  rehydrateState (persistentState.stuff);
-	}
-	else {
-	  if (myExtraOutput || true)
-		System.out.println (getName () + ".justRehydrated - no state found.");
-	}
+    // tell subclasses about rehydrated state
+    if (persistentState != null) {
+      if (isDebugEnabled())
+	debug (getName () + ".justRehydrated - found state.");
+      rehydrateState (persistentState.stuff);
+    }
+    else {
+      if (isDebugEnabled())
+	debug (getName () + ".justRehydrated - no state found.");
+    }
   }
 
   /** 
@@ -492,53 +467,53 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * Call from inside of a transaction.
    */
   protected void registerPersistentState (Object obj) {
-	if (blackboard.didRehydrate ()) {
-	  System.out.println (getName () + ".registerPersistentState - just rehydrated, " + 
-						  "so ignoring register request for " + obj);
-	  return;
-	}
+    if (blackboard.didRehydrate ()) {
+      debug (getName () + ".registerPersistentState - just rehydrated, " + 
+	     "so ignoring register request for " + obj);
+      return;
+    }
 	
-	if (persistentState == null) {
-	  persistentState = findState ();
+    if (persistentState == null) {
+      persistentState = findState ();
 
-	  if (persistentState == null) {
-		persistentState = new PersistentState(getClassName ()+"_Persistent_State");
-		if (myExtraOutput || true)
-		  System.out.println (getName () + ".registerPersistentState - publishingState.");
-		publishAdd (persistentState);
-	  }
-	}
+      if (persistentState == null) {
+	persistentState = new PersistentState(getClassName ()+"_Persistent_State");
+	if (isDebugEnabled())
+	  debug (getName () + ".registerPersistentState - publishingState.");
+	publishAdd (persistentState);
+      }
+    }
 
-	persistentState.stuff.add (obj);
+    persistentState.stuff.add (obj);
   }
 
-  /** anything you added with register, you will be informed about here upon rehydration */
+  /** anything you added with register, you will be debugrmed about here upon rehydration */
   protected void rehydrateState (List stuff) {
-	if (myExtraOutput || true)
-	  System.out.println (getName () + ".rehydrate - got " + stuff.size () + " persistent items.");
+    if (isDebugEnabled())
+      debug (getName () + ".rehydrate - got " + stuff.size () + " persistent items.");
   }
   
   protected PersistentState findState () {
-	Collection stuff = blackboard.query (new UnaryPredicate () {
-		public boolean execute (Object obj) {
-		  boolean myState = (obj instanceof PersistentState);
-		  if (!myState) return false;
-		  PersistentState state = (PersistentState)obj;
-		  boolean match = state.name.startsWith (getClassName());
+    Collection stuff = blackboard.query (new UnaryPredicate () {
+	public boolean execute (Object obj) {
+	  boolean myState = (obj instanceof PersistentState);
+	  if (!myState) return false;
+	  PersistentState state = (PersistentState)obj;
+	  boolean match = state.name.startsWith (getClassName());
 		  
-		  System.out.println (getName () + "findState - found state!  Comparing state name " +
-							  state.name + " with " + getClassName() + 
-							  ((match) ? " MATCH! " : " no match"));
+	  debug (getName () + "findState - found state!  Comparing state name " +
+		 state.name + " with " + getClassName() + 
+		 ((match) ? " MATCH! " : " no match"));
 
-		  return match;
-		}
-	  }
-										 );
+	  return match;
+	}
+      }
+					 );
 
-	if (stuff.isEmpty ())
-	  return null;
-	else
-	  return (PersistentState) stuff.iterator().next();
+    if (stuff.isEmpty ())
+      return null;
+    else
+      return (PersistentState) stuff.iterator().next();
   }
   
   /**
@@ -573,10 +548,10 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
     if (copyOfTask == null)
       copyOfTask = UTILExpand.cloneTask (ldmf, taskToReplace);
 
-    if (myExtraOutput)
-      System.out.println (getName() + " replacing task " + 
-			  taskToReplace.getUID() + " in workflow with " + 
-			  copyOfTask.getUID());
+    if (isDebugEnabled())
+      debug (getName() + " replacing task " + 
+	     taskToReplace.getUID() + " in workflow with " + 
+	     copyOfTask.getUID());
 
     ((NewTask) copyOfTask).setWorkflow (tasksWorkflow);
     tasksWorkflow.addTask (copyOfTask);
@@ -596,12 +571,12 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
     return getBlackboardService().publishChange(o, null);
   }
 
-    /** @return the name of the cluster */
+  /** @return the name of the cluster */
   public String getClusterName () { return myClusterName; }
 
   /** utility function to get just the name of this class (no package qualification) */
   protected String getClassName () {
-      return getClassName (this);
+    return getClassName (this);
   }
 
   /** utility function to get just the name of the class of an object (no package) */
@@ -612,6 +587,57 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
     return classname;
   }
 
+  /** 
+   * rely upon load-time introspection to set these services - 
+   * don't worry about revokation.
+   */
+  public final void setLoggingService(LoggingService bs) {  
+    logger = bs; 
+  }
+
+  /**
+   * Get the logging service, for subclass use.
+   */
+  protected LoggingService getLoggingService() {  return logger; }
+
+  //
+  // specific "isEnabledFor(..)" shorthand methods:
+  //
+  protected boolean isInfoEnabled() { return logger.isInfoEnabled (); }
+  protected boolean isDebugEnabled()  { return logger.isDebugEnabled ();  }
+  protected boolean isWarnEnabled()  { return logger.isWarnEnabled ();  }
+  protected boolean isErrorEnabled() { return logger.isErrorEnabled (); }
+  protected boolean isFatalEnabled() { return logger.isFatalEnabled (); }
+
+  //
+  // specific "level" shorthand methods:
+  //
+
+  /**
+   * Equivalent to "log(info, ..)".
+   */
+  protected void info(String message) { logger.info (message); }
+
+  /**
+   * Equivalent to "log(debug, ..)".
+   */
+  protected void debug(String message) { logger.debug (message); }
+
+  /**
+   * Equivalent to "log(WARN, ..)".
+   */
+  protected void warn(String message) { logger.warn (message); }
+
+  /**
+   * Equivalent to "log(ERROR, ..)".
+   */
+  protected void error(String message) { logger.error (message); }
+
+  /**
+   * Equivalent to "log(FATAL, ..)".
+   */
+  protected void fatal(String message) { logger.fatal (message); }
+
   /** @return cluster name and plugin name */
   public String getName () { 
     if (myName == null)
@@ -621,10 +647,10 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 
   /** holds persistent state, labeled with name of plugin */
   private static class PersistentState implements Serializable {
-	public PersistentState (String name) {	  this.name =name;	}
+    public PersistentState (String name) {	  this.name =name;	}
 	  
-	String name;
-	List stuff  = new ArrayList();
+    String name;
+    List stuff  = new ArrayList();
   }
   
   protected Vector mySubscriptions;
@@ -635,17 +661,13 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 
   // .env vars
   protected ParamMap myParams;
-  protected boolean myExtraOutput;
-  protected boolean myExtraExtraOutput;
-  protected boolean myExtraFilterOutput;
-  protected boolean showParameters = "true".equals(System.getProperty("UTILPluginAdapter.showParameters","false"));
-
-  protected boolean showDebugOnFailure;
+  protected boolean showinfoOnFailure;
   protected boolean skipLowConfidence = true;
   protected double HIGH_CONFIDENCE = 0.99d;
   protected PersistentState persistentState;
   private ClusterIdentifier originalAgentID = null;
   protected String myName;
+  protected LoggingService logger;
 }
 
 

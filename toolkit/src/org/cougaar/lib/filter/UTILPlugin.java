@@ -57,8 +57,8 @@ public interface UTILPlugin {
   ParamMap getMyParams ();
 
   /**
-   * turns on debugging info if a failed pe is encountered
+   * turns on infoging debug if a failed pe is encountered
    *
    */
-  void showDebugIfFailure ();
+  // void showDebugIfFailure ();
 }

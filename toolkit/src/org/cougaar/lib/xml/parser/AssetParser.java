@@ -27,11 +27,14 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.w3c.dom.Node;
 
 import org.cougaar.lib.util.UTILAsset;
+import org.cougaar.util.log.*;
 
 /**
  * Creates an asset instance.
  */
 public class AssetParser{
+
+  private static Logger logger=LoggerFactory.getInstance().createLogger("AssetParser");
 
   public static Asset getAsset(LDMServesPlugin ldm, Node node){
     Asset asset = null;
@@ -40,19 +43,19 @@ public class AssetParser{
     try {
       bumperno = node.getAttributes().getNamedItem("id").getNodeValue();
     } catch (Exception e) {
-      System.err.println("\nGot exception processing Node <" + 
+      logger.error("\nGot exception processing Node <" + 
 			 node.getNodeName() + ">.  Missing id attribute.  It gives the asset a unique item id.");
     }
     try {
       data  = node.getFirstChild().getNodeValue();
     } catch(Exception e){
-      System.err.println("\nGot exception processing Node <" + 
+      logger.error("\nGot exception processing Node <" + 
 			 node.getNodeName() + ">.  Expecting prototype name to be in body of tag.");
     }
     try {
       asset = UTILAsset.createInstance(ldm, data, bumperno);
     } catch(RuntimeException e){
-      System.err.println("\nGot exception processing Node <" + 
+      logger.error("\nGot exception processing Node <" + 
 			 node.getNodeName() + ">.  Could not create instance of " + data + " with unique id " + bumperno);
     }
     return asset; 

@@ -30,14 +30,16 @@ import java.util.Map;
 import java.util.Enumeration;
 import java.util.HashMap;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * Filter for allocations.  Proscribes protocol for dealing with
  * changed allocations.
  */
 
 public class UTILAllocationCallback extends UTILFilterCallbackAdapter {
-  public UTILAllocationCallback (UTILAllocationListener listener) {
-    super (listener);
+  public UTILAllocationCallback (UTILAllocationListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   protected UnaryPredicate getPredicate () {
@@ -56,10 +58,10 @@ public class UTILAllocationCallback extends UTILFilterCallbackAdapter {
   public void reactToChangedFilter () {
     Map  seenAllocsHash = new HashMap ();
 
-    if (xxdebug)
-      System.out.println ("UTILAllocationCallback " + this + 
-			  " (listener = " + getClassName () + 
-			  ") entered.");
+    if (logger.isDebugEnabled())
+      logger.debug ("UTILAllocationCallback " + this + 
+		    " (listener = " + getClassName () + 
+		    ") entered.");
 
     Enumeration changedallocs = mySub.getChangedList();
 
@@ -70,10 +72,10 @@ public class UTILAllocationCallback extends UTILFilterCallbackAdapter {
       if (seenAllocsHash.get (alloc) == null) {
 	reactToChangedAlloc (alloc);
 	seenAllocsHash.put (alloc, alloc);
-      } else if (xxdebug) 
-	System.out.println ("UTILAllocationCallback : " + 
-			    "Duplicate changed alloc for task " + 
-			    alloc.getTask ().getUID () + " ignored.");
+      } else if (logger.isDebugEnabled()) 
+	logger.debug ("UTILAllocationCallback : " + 
+		      "Duplicate changed alloc for task " + 
+		      alloc.getTask ().getUID () + " ignored.");
     }
 
     seenAllocsHash = new HashMap ();
@@ -87,29 +89,29 @@ public class UTILAllocationCallback extends UTILFilterCallbackAdapter {
 	if (seenAllocsHash.get (alloc) == null) {
 	  ((UTILAllocationListener) myListener).handleRemovedAlloc(alloc);
 	  seenAllocsHash.put (alloc, alloc);
-	} else if (xxdebug) 
-	  System.out.println ("UTILAllocationCallback : " + 
-			      "Duplicate removed alloc for task " + 
-			      alloc.getTask ().getUID () + " ignored.");
+	} else if (logger.isDebugEnabled()) 
+	  logger.debug ("UTILAllocationCallback : " + 
+			"Duplicate removed alloc for task " + 
+			alloc.getTask ().getUID () + " ignored.");
       }
     }
 
 
-    if (xxdebug) {
+    if (logger.isDebugEnabled()) {
       if (i > 0 || j > 0)
-	System.out.println ("UTILAllocationCallback " + this + 
-			    " (listener = " + getClassName () + 
-			    " had " + i + 
-			    " changed and " + j + 
-			    " removed allocs");
+	logger.debug ("UTILAllocationCallback " + this + 
+		      " (listener = " + getClassName () + 
+		      " had " + i + 
+		      " changed and " + j + 
+		      " removed allocs");
 
       if (mySub.getAddedList().hasMoreElements ())
-	System.out.println ("UTILAllocationCallback : " + 
-			    "Allocations were added (ignored by callback).");
+	logger.debug ("UTILAllocationCallback : " + 
+		      "Allocations were added (ignored by callback).");
 
-      System.out.println ("UTILAllocationCallback " + this + 
-			  " (listener = " + getClassName () + 
-			  ") exited.");
+      logger.debug ("UTILAllocationCallback " + this + 
+		    " (listener = " + getClassName () + 
+		    ") exited.");
     }
   }
 

@@ -92,13 +92,13 @@ public abstract class UTILAllocatorPluginAdapter
   public void setupFilters () {
     super.setupFilters ();
 
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for generic Assets...");
+    if (isInfoEnabled())
+      info (getName () + " : Filtering for generic Assets...");
 
     addFilter (myAssetCallback    = createAssetCallback    ());
 
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for Allocations...");
+    if (isInfoEnabled())
+      info (getName () + " : Filtering for Allocations...");
 
     addFilter (myAllocCallback    = createAllocCallback    ());
   }
@@ -110,14 +110,10 @@ public abstract class UTILAllocatorPluginAdapter
    * @return a WorkflowCallback with the buffering thread as its listener
    */
   protected UTILFilterCallback createThreadCallback (UTILGenericListener bufferingThread) { 
-    if (myExtraOutput)
-      System.out.println (getName () + " Filtering for Generic Workflows...");
+    if (isInfoEnabled())
+      info (getName () + " Filtering for Generic Workflows...");
 
-    myWorkflowCallback = new UTILWorkflowCallback  (bufferingThread); 
-
-    if (myExtraExtraOutput)
-      myWorkflowCallback.setExtraExtraDebug(true);
-
+    myWorkflowCallback = new UTILWorkflowCallback  (bufferingThread, logger); 
     return myWorkflowCallback;
   } 
 
@@ -140,7 +136,7 @@ public abstract class UTILAllocatorPluginAdapter
    * </pre>
    */
   protected UTILAssetCallback createAssetCallback () { 
-    return new UTILAssetCallback  (this); 
+    return new UTILAssetCallback  (this, logger); 
   } 
 
   protected UTILAllocationCallback getAllocCallback    () { return myAllocCallback; }
@@ -149,9 +145,7 @@ public abstract class UTILAllocatorPluginAdapter
    * or different behaviour when triggered.
    */
   protected UTILAllocationCallback createAllocCallback () { 
-    UTILAllocationCallback allocCallback = new UTILAllocationCallback  (this); 
-    if (myExtraFilterOutput)
-      allocCallback.setExtraExtraDebug (true);
+    UTILAllocationCallback allocCallback = new UTILAllocationCallback  (this, logger); 
     return allocCallback;
   } 
 
@@ -277,15 +271,15 @@ public abstract class UTILAllocatorPluginAdapter
    * @see org.cougaar.lib.callback.UTILAllocationCallback#reactToChangedAlloc
    */
   public void publishRemovalOfAllocation (Allocation alloc) { 
-    if (myExtraOutput)
-      System.out.println (getName () + " : removing allocation for task " +
+    if (isInfoEnabled())
+      info (getName () + " : removing allocation for task " +
 			  alloc.getTask ().getUID ());
 
     try {
       blackboard.publishRemove (alloc); 
     } catch (Exception e) {
-      if (myExtraOutput)
-	System.out.println (getName () + " : publishRemovalOfAllocation - got reset claim exception, ignoring...");
+      if (isInfoEnabled())
+	info (getName () + " : publishRemovalOfAllocation - got reset claim exception, ignoring...");
     }
   }
 
@@ -336,12 +330,12 @@ public abstract class UTILAllocatorPluginAdapter
    */
   public boolean handleRescindedAlloc (Allocation alloc) {
     /*
-      if (myExtraOutput)
-      System.out.println(getName () + 
+      if (isInfoEnabled())
+      info(getName () + 
       " : handling rescinded allocation for task " +
       alloc.getTask ().getUID ());
-      if (myExtraOutput)
-      System.out.println (getName () + " : waiting " +
+      if (isInfoEnabled())
+      info (getName () + " : waiting " +
       delayBeforeAllocRemoval/1000 + 
       " seconds after removing alloc for task " +
       alloc.getTask ().getUID () + 
@@ -350,8 +344,8 @@ public abstract class UTILAllocatorPluginAdapter
       Thread.sleep (delayBeforeAllocRemoval);
       } catch (Exception e) {}
 
-      if (myExtraOutput)
-      System.out.println ("\t resuming at " + new Date ());
+      if (isInfoEnabled())
+      info ("\t resuming at " + new Date ());
     */
 
     return false;
@@ -383,8 +377,8 @@ public abstract class UTILAllocatorPluginAdapter
    */
   public void handleSuccessfulAlloc (Allocation alloc) {
     /*
-      if (myExtraExtraOutput)
-      System.out.println(getName () + 
+      if (isDebugEnabled())
+      info(getName () + 
       " : handling successful allocation for task " +
       alloc.getTask ().getUID () + 
       " by doing nothing.");
@@ -404,10 +398,10 @@ public abstract class UTILAllocatorPluginAdapter
    * </pre>
    */
   public void handleRemovedAlloc (Allocation alloc) {
-    if (myExtraOutput) {
+    if (isInfoEnabled()) {
       String unit = "Undefined";//(UTILPrepPhrase.hasPrepNamed(alloc.getTask (), Constants.Preposition.FOR)) ? 
       //("" + UTILPrepPhrase.getPrepNamed(alloc.getTask (), Constants.Preposition.FOR)) : "nonUnit";
-      System.out.println (getName () + ".handleRemovedAlloc : alloc was removed for task " + 
+      info (getName () + ".handleRemovedAlloc : alloc was removed for task " + 
 			  alloc.getTask ().getUID () + " w/ d.o. " +
 			  alloc.getTask ().getDirectObject () + " from " + unit);
     }

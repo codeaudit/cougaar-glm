@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.cougaar.lib.filter.UTILPlugin;
+import org.cougaar.util.log.*;
 
 /**
  * This class contains utility functions for creating
@@ -58,6 +59,7 @@ import org.cougaar.lib.filter.UTILPlugin;
 
 public class UTILAggregate {
   private static String myName = "UTILAggregate";
+  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILAggregate");
 
   private static boolean debug = false;
 
@@ -121,9 +123,9 @@ public class UTILAggregate {
       boolean isSuccess = !UTILAllocate.exceedsPreferences (parentTask, aspectValues);
 
       if (!isSuccess) {
-		creator.showDebugIfFailure ();
-		System.out.println ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
-		UTILExpand.showPlanElement (parentTask);
+	//creator.showDebugIfFailure ();
+	logger.warn ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
+	UTILExpand.showPlanElement (parentTask);
       }
 	  
       if (debug)
@@ -136,8 +138,8 @@ public class UTILAggregate {
 											   comp,
 											   estAR);
       if (debug)
-		System.out.println ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
-							" agg " + agg.getUID());
+	logger.debug ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
+		      " agg " + agg.getUID());
 	
       stuffToPublish.add (agg);
       comp.addAggregation(agg);
@@ -220,8 +222,8 @@ public class UTILAggregate {
       boolean isSuccess = !UTILAllocate.exceedsPreferences (parentTask, aspectValues);
 
       if (!isSuccess) {
-	creator.showDebugIfFailure ();
-	System.out.println ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
+	//creator.showDebugIfFailure ();
+	logger.warn ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
 	UTILExpand.showPlanElement (parentTask);
       }
 	  
@@ -242,7 +244,7 @@ public class UTILAggregate {
 					       comp,
 					       estAR);
       if (debug)
-	System.out.println ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
+	logger.debug ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
 			    " agg " + agg.getUID());
 	
       stuffToPublish.add (agg);
@@ -275,8 +277,8 @@ public class UTILAggregate {
 					     t,
 					     ldmf.newComposition (),
 					     failedAR);
-    if (creator != null)
-      creator.showDebugIfFailure ();
+    //    if (creator != null)
+    //      creator.showDebugIfFailure ();
 
     return agg;
   }

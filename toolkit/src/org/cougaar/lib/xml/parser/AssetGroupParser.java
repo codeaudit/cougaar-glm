@@ -33,11 +33,14 @@ import java.util.Vector;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.cougaar.util.log.*;
 
 /**
  * Creates an asset group -- primarily used in parsing test input files.
  */
 public class AssetGroupParser{
+
+  private static Logger logger=LoggerFactory.getInstance().createLogger("AssetGroupParser");
 
   public static AssetGroup getAssetGroup(LDMServesPlugin ldm, Node node){
     AssetGroup ag = null;
@@ -71,17 +74,17 @@ public class AssetGroupParser{
 	  assets.addElement(asset);
 	}
 	else if(!childname.equals("#text")){
-	  System.out.println ("AssetGroupParser - XML Syntax error : " + 
+	  logger.debug ("AssetGroupParser - XML Syntax error : " + 
 			      "expecting one of <asset>, <aggregateasset>, or <assetgroup> but got <" + childname + ">");
 	}
       }
       if (ldm.getFactory() == null) 
-	System.err.println("WARNING: LDM Factory is null in xmlparser!");
+	logger.error("WARNING: LDM Factory is null in xmlparser!");
       ag = UTILAsset.makeAssetGroup(ldm.getFactory(), id);
       ag.setAssets(assets);
     }
     catch(Exception e){
-      System.err.println(e.getMessage());
+      logger.error(e.getMessage());
       e.printStackTrace();
     }
 

@@ -33,14 +33,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.cougaar.util.log.Logger;
 
 /**
  * Filters for aggregations...
  */
 
 public class UTILAggregationCallback extends UTILFilterCallbackAdapter {
-  public UTILAggregationCallback (UTILAggregationListener listener) {
-    super (listener);
+  public UTILAggregationCallback (UTILAggregationListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   protected UnaryPredicate getPredicate () {
@@ -72,10 +73,10 @@ public class UTILAggregationCallback extends UTILFilterCallbackAdapter {
       if (seenAggsMap.get (agg) == null) {
 	reactToChangedAgg (agg);
 	seenAggsMap.put (agg, agg);
-      } else if (xxdebug) 
-	System.out.println ("UTILAggregationCallback : " + 
-			    "Duplicate changed aggregation for task " + 
-			    agg.getTask ().getUID () + " ignored.");
+      } else if (logger.isDebugEnabled()) 
+	logger.debug ("UTILAggregationCallback : " + 
+		      "Duplicate changed aggregation for task " + 
+		      agg.getTask ().getUID () + " ignored.");
     }
 
     seenAggsMap = new HashMap ();
@@ -84,19 +85,19 @@ public class UTILAggregationCallback extends UTILFilterCallbackAdapter {
       UTILAggregationListener listener = (UTILAggregationListener) myListener;
       while (removedAggs.hasMoreElements()) {
 	Aggregation agg = (Aggregation) removedAggs.nextElement();
-	if (xxdebug) 
-	  System.out.println ("UTILAggregationCallback " + this + 
-			      " found removed agg " + agg.getUID()); 
+	if (logger.isDebugEnabled()) 
+	  logger.debug ("UTILAggregationCallback " + this + 
+			" found removed agg " + agg.getUID()); 
 	if (seenAggsMap.get (agg) == null) {
-	  if (xxdebug) 
-	    System.out.println ("UTILAggregationCallback " + this + 
-				" telling plugin of agg " + agg.getUID()); 
+	  if (logger.isDebugEnabled()) 
+	    logger.debug ("UTILAggregationCallback " + this + 
+			  " telling plugin of agg " + agg.getUID()); 
 	  listener.handleRemovedAggregation(agg);
 	  seenAggsMap.put (agg, agg);
-	} else if (xxdebug) 
-	  System.out.println ("UTILAggregationCallback : " + 
-			      "Duplicate removed agg for task " + 
-			      agg.getTask ().getUID () + " ignored.");
+	} else if (logger.isDebugEnabled()) 
+	  logger.debug ("UTILAggregationCallback : " + 
+			"Duplicate removed agg for task " + 
+			agg.getTask ().getUID () + " ignored.");
       }
     }
   }

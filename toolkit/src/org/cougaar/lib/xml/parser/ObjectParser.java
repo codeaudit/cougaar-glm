@@ -34,6 +34,8 @@ import org.cougaar.core.domain.FactoryException;
 import org.cougaar.planning.ldm.measure.AbstractMeasure;
 import java.lang.reflect.Method;
 
+import org.cougaar.util.log.Logger;
+
 /**
  * Parses objects within prototypes or instances.
  *
@@ -42,7 +44,8 @@ import java.lang.reflect.Method;
 public class ObjectParser{
   
   static final String PG_STRING = "PG";
-
+  public static Logger logger;
+  public static void setLogger (Logger l) { logger = l; }
   public static Object getObject(LDMServesPlugin ldm, Node node){
     RootFactory ldmFactory = ldm.getFactory();
     Object obj = null;
@@ -60,33 +63,33 @@ public class ObjectParser{
 	// first assume that it is a property or capability
 	if(obj == null){
 	  try{
-	    // System.out.println ("object - " + className + " class " + Class.forName(className));
+	    // logger.debug ("object - " + className + " class " + Class.forName(className));
 	    obj = ldmFactory.createPropertyGroup(Class.forName(className));
-	    // System.out.println("** OBJECT PARSER CREATED : from create PG " + obj);
+	    // logger.debug("** OBJECT PARSER CREATED : from create PG " + obj);
 	  }
 	  catch(Exception e){
-	    // System.out.println ("exception " + e);
+	    // logger.debug ("exception " + e);
 	    obj = null;
 	  }
 	}
-	//  System.out.println ("object - " + className);
+	//  logger.debug ("object - " + className);
 	// now try to see if it is an asset
 	if(obj == null){
 	  try{
 	    obj = ldmFactory.createAsset(Class.forName(className));
-	    // System.out.println("** OBJECT PARSER CREATED create Asset: " + obj);
+	    // logger.debug("** OBJECT PARSER CREATED create Asset: " + obj);
 	  }
 	  catch(Exception e){
 	    obj = null;
 	  }      
 	}	
       } else {
-	//  System.out.println ("object - " + className);
+	//  logger.debug ("object - " + className);
 	// First try to see if it is an asset
 	if(obj == null){
 	  try{
 	    obj = ldmFactory.createAsset(Class.forName(className));
-	    //System.out.println("** OBJECT PARSER CREATED create Asset: " + obj + ":" + ((Asset)obj).getUID());
+	    //logger.debug("** OBJECT PARSER CREATED create Asset: " + obj + ":" + ((Asset)obj).getUID());
 	  }
 	  catch(Exception e){
 	    obj = null;
@@ -96,12 +99,12 @@ public class ObjectParser{
 	// now assume that it is a property or capability
 	if(obj == null){
 	  try{
-	    // System.out.println ("object - " + className + " class " + Class.forName(className));
+	    // logger.debug ("object - " + className + " class " + Class.forName(className));
 	    obj = ldmFactory.createPropertyGroup(Class.forName(className));
-	    // System.out.println("** OBJECT PARSER CREATED : from create PG " + obj);
+	    // logger.debug("** OBJECT PARSER CREATED : from create PG " + obj);
 	  }
 	  catch(Exception e){
-	    // System.out.println ("exception " + e);
+	    // logger.debug ("exception " + e);
 	    obj = null;
 	  }
 	}
@@ -114,7 +117,7 @@ public class ObjectParser{
 	  String method_name = ObjectParser.getMethodName(className);
 	  Method method = ldmFactory.getClass().getMethod(method_name, null);
 	  obj = method.invoke(ldmFactory, null);
-	  // System.out.println("*** OBJECT PARSER CREATED : from factory " + obj);
+	  // logger.debug("*** OBJECT PARSER CREATED : from factory " + obj);
 	}
 	catch(Exception e){
 	  try {
@@ -125,7 +128,7 @@ public class ObjectParser{
 		  Method method = af.getClass().getMethod(method_name, null);
 		  obj = method.invoke(af, null);
 	      }
-	      //System.out.println("*** OBJECT PARSER CREATED : from GLMFactory " + obj);
+	      //logger.debug("*** OBJECT PARSER CREATED : from GLMFactory " + obj);
 	    } 
 	  } catch (Exception e2) {
 	    obj = null;
@@ -140,12 +143,12 @@ public class ObjectParser{
 	  String first = className.substring (last+1,last+4);
 	  if (first.equals ("New"))
 	    className = className.substring (0, last+1) + className.substring (last+4, className.length());
-	  // System.out.println ("object - " + className);
+	  // logger.debug ("object - " + className);
 	  obj = ldmFactory.createPropertyGroup(className);
-	  // System.out.println("** OBJECT PARSER CREATED : from create PG 2 " + obj);
+	  // logger.debug("** OBJECT PARSER CREATED : from create PG 2 " + obj);
 	}
 	catch(Exception e){
-	  // System.out.println ("exception " + e);
+	  // logger.debug ("exception " + e);
 	  obj = null;
 	}
       }
@@ -154,7 +157,7 @@ public class ObjectParser{
       if(obj == null){
 	try{
 	  obj = Class.forName(className);
-	  // System.out.println("**** OBJECT PARSER CREATED : measure " + obj);
+	  // logger.debug("**** OBJECT PARSER CREATED : measure " + obj);
 	}
 	catch(Exception e){
 	  obj = null;
@@ -164,7 +167,7 @@ public class ObjectParser{
       if(obj == null){
 	// BOZO: need to throw exception here.
 	// perhaps use the new operator (?)
-	System.err.println("ObjectParser: Could not create: " + className);
+	logger.error("ObjectParser: Could not create: " + className);
       }
       
       for(int i = 0; i < nlength; i++){

@@ -27,6 +27,7 @@
 
 package org.cougaar.lib.util;
 import java.util.Random;
+import org.cougaar.util.log.Logger;
 
 public final class UTILRandom extends Random {
 
@@ -96,6 +97,8 @@ public final class UTILRandom extends Random {
 	my_instance = null;
     }
 
+  public static Logger logger; // someone should set me!
+
     /** 
      * TEST CODE 
      */
@@ -110,7 +113,7 @@ public final class UTILRandom extends Random {
 	counter[2] = 0;
 	counter[3] = 0;
 
-	System.out.println("::: Test for UTILRandom class :::");
+	logger.debug("::: Test for UTILRandom class :::");
 
 	// test several times to ensure 
 	// predictability after seeding
@@ -125,8 +128,8 @@ public final class UTILRandom extends Random {
 		    counter[1]++;
 	    }
 	    
-	    System.out.println("Number of HEADS: " + counter[0]);
-	    System.out.println("Number of TAILS: " + counter[1]);
+	    logger.debug("Number of HEADS: " + counter[0]);
+	    logger.debug("Number of TAILS: " + counter[1]);
 
 	    counter[0] = 0;
 	    counter[1] = 0;
@@ -134,7 +137,7 @@ public final class UTILRandom extends Random {
 	    counter[3] = 0;
 
 	    r = instanceOf(1);
-	    System.out.println("");
+	    logger.debug("");
 	}
 
 	r = UTILRandom.instanceOf(500);
@@ -144,11 +147,11 @@ public final class UTILRandom extends Random {
 	for(int i = 0; i < 5; i++){
 	    x = r.randomInt(1);
 	    if(x != 0)
-		System.out.println("failed");
+		logger.debug("failed");
 	    else
-		System.out.println("OK");
+		logger.debug("OK");
 	}
-	System.out.println("");
+	logger.debug("");
 	    
 
 	// TESTING RandomIint(int) Function
@@ -171,26 +174,26 @@ public final class UTILRandom extends Random {
 		    counter[3]++;
 		    break;
 		default:
-		    System.out.println("there is an error " + x);
-		    System.out.println("we should never be here");
+		    logger.debug("there is an error " + x);
+		    logger.debug("we should never be here");
 		    break;
 		}
 	    }
 
-	    System.out.println("Number of  0: " + counter[0]);
-	    System.out.println("Number of  1: " + counter[1]);
-	    System.out.println("Number of  2: " + counter[2]);
-	    System.out.println("Number of  3: " + counter[3]);
+	    logger.debug("Number of  0: " + counter[0]);
+	    logger.debug("Number of  1: " + counter[1]);
+	    logger.debug("Number of  2: " + counter[2]);
+	    logger.debug("Number of  3: " + counter[3]);
 	  
 	    // TESTING randomInt(int, int) Function
 	    counter[0] = 0;
 	    counter[1] = 0;
 	    counter[2] = 0;
 	    counter[3] = 0;
-	    System.out.println("");
+	    logger.debug("");
 
 	    r = UTILRandom.instanceOf(1000);
-	    System.out.println("");
+	    logger.debug("");
 	}
 
 	r = UTILRandom.instanceOf(1500);
@@ -200,11 +203,11 @@ public final class UTILRandom extends Random {
 	for(int i = 0; i < 5; i++){
 	    x = r.randomInt(4,4);
 	    if(x != 4)
-		System.out.println("failed");
+		logger.debug("failed");
 	    else
-		System.out.println("OK");
+		logger.debug("OK");
 	}
-	System.out.println("");
+	logger.debug("");
 	    
 	// TESTING RandomIint(int) Function
 	// test several times to ensure 
@@ -227,23 +230,23 @@ public final class UTILRandom extends Random {
 		    counter[3]++;
 		    break;
 		default:
-		    System.out.println("there is an error "+ x);
-		    System.out.println("we should never be here");
+		    logger.debug("there is an error "+ x);
+		    logger.debug("we should never be here");
 		    break;
 		}
 	    }
 
-	    System.out.println("Number of  100: " + counter[0]);
-	    System.out.println("Number of  101: " + counter[1]);
-	    System.out.println("Number of  102: " + counter[2]);
-	    System.out.println("Number of  103: " + counter[3]);
+	    logger.debug("Number of  100: " + counter[0]);
+	    logger.debug("Number of  101: " + counter[1]);
+	    logger.debug("Number of  102: " + counter[2]);
+	    logger.debug("Number of  103: " + counter[3]);
 	    
 	    // TESTING randomInt(int, int) Function
 	    counter[0] = 0;
 	    counter[1] = 0;
 	    counter[2] = 0;
 	    counter[3] = 0;
-	    System.out.println("");
+	    logger.debug("");
 	    
 	    r = UTILRandom.instanceOf(2000);
 	}

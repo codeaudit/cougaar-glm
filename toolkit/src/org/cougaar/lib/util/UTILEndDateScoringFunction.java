@@ -27,6 +27,7 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 
 import java.util.Calendar;
 import java.util.Date;
+import org.cougaar.util.log.*;
 
 /** 
  * Represents an <early, best, late> end date scoring function
@@ -35,6 +36,8 @@ import java.util.Date;
 
 public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction {
   private static boolean debug = false;
+  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILEndDateScoringFunction");
+
   public static void setDebug (boolean dbg) { debug = dbg; }
   
   public UTILEndDateScoringFunction(Date early, Date best, Date late,
@@ -81,18 +84,18 @@ public class UTILEndDateScoringFunction extends ScoringFunction.VScoringFunction
     setDebug (true);
     AspectValue av = new AspectValue (AspectType.END_TIME, 
 				      (double) beforeearly.getTime ());
-    System.out.println ("Score for before early " + sf.getScore (av));
+    logger.debug ("Score for before early " + sf.getScore (av));
 
     av = new AspectValue (AspectType.END_TIME, (double) early.getTime ());
-    System.out.println ("Score for early " + sf.getScore (av));
+    logger.debug ("Score for early " + sf.getScore (av));
 
     av = new AspectValue (AspectType.END_TIME, (double) best.getTime ());
-    System.out.println ("Score for best " + sf.getScore (av));
+    logger.debug ("Score for best " + sf.getScore (av));
 
     av = new AspectValue (AspectType.END_TIME, (double) late.getTime ());
-    System.out.println ("Score for late " + sf.getScore (av));
+    logger.debug ("Score for late " + sf.getScore (av));
 
     av = new AspectValue (AspectType.END_TIME, (double) afterlate.getTime ());
-    System.out.println ("Score for after late " + sf.getScore (av));
+    logger.debug ("Score for after late " + sf.getScore (av));
   }
 }

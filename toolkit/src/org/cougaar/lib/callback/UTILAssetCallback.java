@@ -26,6 +26,7 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.asset.Asset;
 
 import java.util.Enumeration;
+import org.cougaar.util.log.Logger;
 
 /**
  * Used to filter for new or changed generic assets.
@@ -35,8 +36,8 @@ import java.util.Enumeration;
  */
 
 public class UTILAssetCallback extends UTILFilterCallbackAdapter {
-  public UTILAssetCallback (UTILFilterCallbackListener listener) {
-    super (listener);
+  public UTILAssetCallback (UTILFilterCallbackListener listener, Logger logger) {
+    super (listener, logger);
   }
 
   protected UnaryPredicate getPredicate () {

@@ -110,7 +110,7 @@ public class UTILParamTable extends ParamTable {
 
     if(!hasfile){
       String newParam = "envFile={String}" + cluster.getAddress() + ".env.xml";
-      //System.out.println ("UTILParamTable.finalizeStuff() - Adding param " + newParam);
+      //logger.debug ("UTILParamTable.finalizeStuff() - Adding param " + newParam);
       paramCopy.add(newParam);
     }
 

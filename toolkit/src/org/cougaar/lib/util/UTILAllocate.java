@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2002 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Vector;
-
+import org.cougaar.util.log.*;
 /** 
  * This class contains utility functions for allocations.
  */
@@ -67,6 +67,7 @@ public class UTILAllocate {
   private static boolean debug = false;
   private static double ONE_DAY = 1000*60*60*24; // millis
   private static double ONE_OVER_ONE_DAY = 1.0d/ONE_DAY; // millis
+  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILAllocate");
 
   /**
    * Set to true to see debug output -- tie to myExtraExtraOutput?
@@ -201,6 +202,7 @@ public class UTILAllocate {
 
 
   /**
+   * <pre>
    * Creates an Allocation or FailedDisposition with an 
    * allocationResult w/ isSuccess=False or True, 
    * depending on whether any of the aspect values of the 
@@ -221,6 +223,7 @@ public class UTILAllocate {
    *
    * FailedDispositions will ALWAYS have isSuccess = FALSE.
    *
+   * </pre>
    * @param ldmf the RootFactory
    * @param plan the log plan
    * @param t the task to allocate
@@ -254,9 +257,9 @@ public class UTILAllocate {
       alloc = makeFailedDisposition (creator, ldmf, t, estAR);
 
       if (debug)
-	System.out.println ("\nMaking FailedDisposition : Task " + t +
-			    "\n\tAllocResult " + ARtoString (aspectarray,
-							     resultsarray));
+	logger.debug ("\nMaking FailedDisposition : Task " + t +
+		      "\n\tAllocResult " + ARtoString (aspectarray,
+						       resultsarray));
     }
     else {
       estAR = createAllocationResult (SUCCESS, 
@@ -270,14 +273,14 @@ public class UTILAllocate {
 				     estAR,
 				     assignedRole);
       if (debug) {
-	System.out.println ("\nMaking Allocation : Task " + t +
-			    "\n\tAsset " + asset + 
-			    "\n\tAllocResult " + ARtoString (aspectarray,
-							     resultsarray));
+	logger.debug ("\nMaking Allocation : Task " + t +
+		      "\n\tAsset " + asset + 
+		      "\n\tAllocResult " + ARtoString (aspectarray,
+						       resultsarray));
 	try {
-	  System.out.println ("\tScore " + scoreAgainstPreferences (t, estAR));
+	  logger.debug ("\tScore " + scoreAgainstPreferences (t, estAR));
 	} catch (NullPointerException npe) {
-	  System.out.println ("ALPINE Bug : can't take the score of an aspect immediately?");
+	  logger.debug ("ALPINE Bug : can't take the score of an aspect immediately?");
 	}
       }
     }
@@ -311,10 +314,10 @@ public class UTILAllocate {
   public static boolean exceedsPreferences (Task t, Date start, Date end, 
 					    double cost) {
     if (debug)
-      System.out.println ("Checking for task " + t.getUID () + 
-			  " against start " + start + 
-			  " end " + end + 
-			  " and cost " + cost);
+      logger.debug ("Checking for task " + t.getUID () + 
+		    " against start " + start + 
+		    " end " + end + 
+		    " and cost " + cost);
     return exceedsPreferences (t, getAspects (start, end, cost));
   }
 
@@ -330,9 +333,9 @@ public class UTILAllocate {
    */
   public static boolean exceedsPreferences (Task t, Date start, Date end) {
     if (debug)
-      System.out.println ("Checking for task " + t.getUID () + 
-			  " against start " + start + 
-			  " end " + end);
+      logger.debug ("Checking for task " + t.getUID () + 
+		    " against start " + start + 
+		    " end " + end);
     return exceedsPreferences (t, getAspectsFromDates (start, end));
   }
 
@@ -356,6 +359,7 @@ public class UTILAllocate {
   }
 
   /**
+   * <pre>
    * Check a task's preferences against given aspect values.
    *
    * Throws an informative exception if somehow the 
@@ -368,6 +372,7 @@ public class UTILAllocate {
    * If debug is set, warns to stdout if set of preferences types doesn't match set
    * of aspect values.
    *
+   * </pre>
    * @param t task to check
    * @param aspectTypes array of aspect types
    * @param aspectValues array of aspect values
@@ -400,13 +405,13 @@ public class UTILAllocate {
 	if (score > (ScoringFunction.HIGH_THRESHOLD - 0.000001d)) {
 	  prefExceeded = true;
 	  if (debug) {
-	    System.out.println ("UTILAllocate.exceedsPreferences - score " + score + 
-							" exceeds threshold " + ScoringFunction.HIGH_THRESHOLD + 
-							" for " + t.getUID ());
-		AspectValue lower = new AspectValue (aspectType, 0.0d);
-		AspectValue upper = new AspectValue (aspectType, 1000000000.0d);
+	    logger.debug ("UTILAllocate.exceedsPreferences - score " + score + 
+			  " exceeds threshold " + ScoringFunction.HIGH_THRESHOLD + 
+			  " for " + t.getUID ());
+	    AspectValue lower = new AspectValue (aspectType, 0.0d);
+	    AspectValue upper = new AspectValue (aspectType, 1000000000.0d);
 	    print (av, pref, score, pref.getScoringFunction().getDefinedRange (),
-			   pref.getScoringFunction().getValidRanges (lower, upper));
+		   pref.getScoringFunction().getValidRanges (lower, upper));
 	  }
 	}
       }
@@ -424,15 +429,15 @@ public class UTILAllocate {
 
     if (!prefExceeded && !map.isEmpty ()) {
       for (Iterator i = map.keySet ().iterator (); i.hasNext (); ) {
-	  // Report when there are preferences without matching aspect values.
-	  // It's a responsibility of the allocator to fill in aspect values for all prefs.
+	// Report when there are preferences without matching aspect values.
+	// It's a responsibility of the allocator to fill in aspect values for all prefs.
 
-	  System.out.println ("UTILAllocate.exceedsPreferences - Task " + t + 
-			      " from " + t.getSource () + 
-			      " has preference of aspect type " + (Integer) i.next () + 
-			      " but no value of this type found in list of reported values." + 
-			      "\nPerhaps missing an aspect value when calling makeAllocation?");
-	  UTILExpand.showPlanElement(t);
+	logger.debug ("UTILAllocate.exceedsPreferences - Task " + t + 
+		      " from " + t.getSource () + 
+		      " has preference of aspect type " + (Integer) i.next () + 
+		      " but no value of this type found in list of reported values." + 
+		      "\nPerhaps missing an aspect value when calling makeAllocation?");
+	UTILExpand.showPlanElement(t);
       }
     }
     return prefExceeded;
@@ -453,18 +458,19 @@ public class UTILAllocate {
    * @see #makeFailedDisposition (RootFactory, Task)
    */
   public static Disposition makeFailedDisposition(UTILPlugin creator,
-							 RootFactory ldmf, Task t,
-							 AllocationResult failedAR) {
+						  RootFactory ldmf, Task t,
+						  AllocationResult failedAR) {
     Disposition falloc    = 
       ldmf.createFailedDisposition(ldmf.getRealityPlan(), t, failedAR);
 
-    if (creator != null)
-      creator.showDebugIfFailure ();
+    //    if (creator != null)
+    //      creator.showDebugIfFailure ();
 
     return falloc;
   }
 
   /**
+   * <pre>
    * When you just can't allocate!
    *
    * This should be used when the preference thresholds are exceeded, or 
@@ -476,26 +482,28 @@ public class UTILAllocate {
    * but what aspect values made it fail.  This function does not let you specify
    * the aspect results.
    *
+   * </pre>
    * @param ldmf RootFactory for making the plan elements
    * @param t Task that failed to be allocated
    * @return FailedDisposition 
    * @see #makeFailedDisposition (RootFactory, Task, AllocationResult)
    */
   public static Disposition makeFailedDisposition(UTILPlugin creator,
-						      RootFactory ldmf, Task t) {
+						  RootFactory ldmf, Task t) {
     AllocationResult failedAR  = 
       ldmf.newAllocationResult(HIGHEST_CONFIDENCE, RESCINDMEPLEASE, 
 			       new int[1], new double[1]);
     Disposition falloc    = 
       ldmf.createFailedDisposition(ldmf.getRealityPlan(), t, failedAR);
 
-    if (creator != null)
-      creator.showDebugIfFailure ();
+    //    if (creator != null)
+    //      creator.showDebugIfFailure ();
 
     return falloc;
   }
 
   /**
+   * <pre>
    * Freeform allocation result creation.
    *
    * Protected because plugin should not need to call this.
@@ -503,6 +511,7 @@ public class UTILAllocate {
    * Workaround for COUGAAR bug (MB5.2) where asking for aspect values
    * will throw null pointer exception.
    *
+   * </pre>
    * @param isSuccess sets whether allocation obeyed preferences or not
    * @param ldmf RootFactory for making the plan elements
    * @param aspectarray  - array of aspect type IDs (ints from AspectType)
@@ -623,10 +632,10 @@ public class UTILAllocate {
   public static double scoreAgainstPreferences (Task t, Date start, Date end,
 						double cost) {
     if (debug)
-      System.out.println ("Scoring task " + t.getUID () + 
-			  " against start " + start + 
-			  " end " + end + 
-			  " and cost " + cost);
+      logger.debug ("Scoring task " + t.getUID () + 
+		    " against start " + start + 
+		    " end " + end + 
+		    " and cost " + cost);
     return scoreAgainstPreferences (t, getAspects (start, end, cost));
   }
 
@@ -643,9 +652,9 @@ public class UTILAllocate {
    */
   public static double scoreAgainstPreferences (Task t, Date start, Date end) {
     if (debug)
-      System.out.println ("Scoring task " + t.getUID () + 
-			  " against start " + start + 
-			  " end " + end);
+      logger.debug ("Scoring task " + t.getUID () + 
+		    " against start " + start + 
+		    " end " + end);
     return scoreAgainstPreferences (t, getAspectsFromDates (start, end));
   }
 
@@ -669,6 +678,7 @@ public class UTILAllocate {
   }
 
   /**
+   * <pre>
    * Score a task's preferences against given aspect values.
    *
    * Throws an informative exception if somehow the 
@@ -681,6 +691,7 @@ public class UTILAllocate {
    * Protects against COUGAAR bug : sometimes preference weight
    * gets lost... (ends up = 0).
    *
+   * </pre>
    * @param t task to check
    * @param aspectTypes array of aspect types
    * @param aspectValues array of aspect values
@@ -743,15 +754,15 @@ public class UTILAllocate {
 
     boolean need = !reportedResult.isSuccess ();
     if (debug && need) {
-      System.out.println ("UTILAllocate.isFailedPE - found failed task " +
-			  pe.getTask ().getUID () + "-" +  pe.getTask().getVerb());
+      logger.debug ("UTILAllocate.isFailedPE - found failed task " +
+		    pe.getTask ().getUID () + "-" +  pe.getTask().getVerb());
     }
     return need;
   }
 
   /**
-    * Is there a better place for this?
-    */
+   * Is there a better place for this?
+   */
   public static Vector enumToVector (Enumeration e) {
     Vector retval = new Vector ();
  
@@ -765,8 +776,8 @@ public class UTILAllocate {
   }
 
   /**
-    * Is there a better place for this?
-    */
+   * Is there a better place for this?
+   */
   public static Vector iterToVector (Iterator i) {
     Vector retval = new Vector ();
  
@@ -827,58 +838,58 @@ public class UTILAllocate {
   }
 
   protected static void print (AspectValue av, Preference pref, double score, 
-							   AspectScoreRange definedRange, Enumeration validRanges) {
+			       AspectScoreRange definedRange, Enumeration validRanges) {
     double prefval = pref.getScoringFunction().getBest ().getValue ();
     String prefstr = "" + prefval;
     String type = "" + av.getAspectType ();
     String value = "" + prefval;
-	boolean isDate = false;
+    boolean isDate = false;
     switch (av.getAspectType ()) {
     case AspectType.START_TIME: 
       type = "START_TIME";
       value   = "" + new Date ((long) av.getValue ());
       prefstr = "" + new Date ((long) prefval);
-	  isDate = true;
-	  break;
+      isDate = true;
+      break;
     case AspectType.END_TIME: 
       type = "END_TIME";
       value   = "" + new Date ((long) av.getValue ());
       prefstr = "" + new Date ((long) prefval);
-	  isDate = true;
-	  break;
+      isDate = true;
+      break;
     case AspectType.COST: 
       type = "COST";
       value   = "$" + (long) av.getValue ();
       prefstr = "$" + (long) prefval;
-	  break;
+      break;
     }
 
     if (score == ScoringFunction.HIGH_THRESHOLD) {
-      System.out.println ("Aspect " + type +
-			  "/" + value + " exceeds preference (best = " + 
-			  prefstr + ")");
-	  if ((av.getAspectType () == AspectType.START_TIME) || 
-		  (av.getAspectType () == AspectType.END_TIME)) {
-		System.out.println ("\tDifference (pref-aspect) " + (prefval - av.getValue())/60000 +
-							" minutes, valid ranges : ");
-	  }
-	  else
-		System.out.println ("\tDifference (pref-aspect) " + (prefval - av.getValue()) +
-							", valid ranges : ");
+      logger.debug ("Aspect " + type +
+		    "/" + value + " exceeds preference (best = " + 
+		    prefstr + ")");
+      if ((av.getAspectType () == AspectType.START_TIME) || 
+	  (av.getAspectType () == AspectType.END_TIME)) {
+	logger.debug ("\tDifference (pref-aspect) " + (prefval - av.getValue())/60000 +
+		      " minutes, valid ranges : ");
+      }
+      else
+	logger.debug ("\tDifference (pref-aspect) " + (prefval - av.getValue()) +
+		      ", valid ranges : ");
 
-	  for (; validRanges.hasMoreElements (); ) {
-		AspectScoreRange range = (AspectScoreRange) validRanges.nextElement();
-		AspectScorePoint start = range.getRangeStartPoint ();
-		AspectScorePoint end   = range.getRangeEndPoint ();
-		double startValue = start.getValue ();
-		double endValue   = end.getValue ();
+      for (; validRanges.hasMoreElements (); ) {
+	AspectScoreRange range = (AspectScoreRange) validRanges.nextElement();
+	AspectScorePoint start = range.getRangeStartPoint ();
+	AspectScorePoint end   = range.getRangeEndPoint ();
+	double startValue = start.getValue ();
+	double endValue   = end.getValue ();
 
-		if (isDate)
-		  System.out.print ("<" + new Date ((long) (startValue)) + "-" + new Date ((long) (endValue)) + "> "); 
-		else
-		  System.out.print ("<" + startValue + "-" + endValue + "> "); 
-	  }
-	  System.out.println ("");
+	if (isDate)
+	  logger.debug ("<" + new Date ((long) (startValue)) + "-" + new Date ((long) (endValue)) + "> "); 
+	else
+	  logger.debug ("<" + startValue + "-" + endValue + "> "); 
+      }
+      logger.debug ("");
     }
   }
 }

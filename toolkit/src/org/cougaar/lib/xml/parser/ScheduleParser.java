@@ -29,6 +29,7 @@ import org.cougaar.planning.ldm.plan.Schedule;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.cougaar.util.log.*;
 
 /**
  * Parses the schedule tag, which defines the initial role schedule 
@@ -50,7 +51,7 @@ public class ScheduleParser{
 	Date startDate = df.parse(start);
 	Date endDate = df.parse(end);
 	if (endDate.before (startDate))
-	  System.out.println ("Hey! in creating asset instance, start date " + startDate +
+	  logger.debug ("Hey! in creating asset instance, start date " + startDate +
 			      " is after " + endDate);
 	newSchedule = ldm.getFactory().newSimpleSchedule(startDate,endDate);
       }
@@ -62,5 +63,6 @@ public class ScheduleParser{
     return newSchedule;
   }   
 
+  private static Logger logger=LoggerFactory.getInstance().createLogger("ScheduleParser");
 }
 
