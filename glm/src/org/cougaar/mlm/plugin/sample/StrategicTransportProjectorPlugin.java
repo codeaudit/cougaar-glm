@@ -195,6 +195,16 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
           wakeAfterRealTime(delayReprocessMillis);
         }
       }
+      else if (drTask != null) { // it had a plan element - fix for bug #2376
+	  DeployPlan dp = getDeployPlan ();
+	  dp.detReqsTask = drTask;
+	  dp.expandedWorkflow = 
+	      (NewWorkflow) ((Expansion) drTask.getPlanElement()).getWorkflow();
+
+	  if (dp.expandedWorkflow == null) 
+	      logger.error ("??? No workflow found for d.r. task " + 
+			    drTask.getUID());
+      }
     }
 
   }        
