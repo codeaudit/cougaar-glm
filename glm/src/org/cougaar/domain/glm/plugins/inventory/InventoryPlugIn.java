@@ -89,7 +89,11 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
 	public boolean execute(Object o) {
 	    if (o instanceof Inventory) {
-		return true;    
+		InventoryPG invpg = 
+		    (InventoryPG)((Inventory)o).searchForPropertyGroup(InventoryPG.class);
+		if (invpg != null) {
+		    return true;    
+		}
 	    }
 	    return false;
 	}
