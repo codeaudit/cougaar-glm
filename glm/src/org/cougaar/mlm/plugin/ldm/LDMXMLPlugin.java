@@ -70,7 +70,6 @@ public class LDMXMLPlugin extends LDMEssentialPlugin
   
   private Properties globalParameters = new Properties();
   private String xmlfilename;
-  private File XMLFile;
   private Enumeration assets;
   private Document doc;
   private PlanningFactory theFactory = null;
@@ -152,9 +151,7 @@ public class LDMXMLPlugin extends LDMEssentialPlugin
   }
   
   Enumeration getAssets( Document doc ){
-    Properties pt = null;
     Node root = doc.getDocumentElement();
-    Enumeration a = null;
     if( root.getNodeName().equals( "clusterassets" )){
       //NodeList nlist = root.getChildNodes();
       //int nlength = nlist.getLength();

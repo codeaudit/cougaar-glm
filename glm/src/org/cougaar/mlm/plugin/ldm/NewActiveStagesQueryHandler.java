@@ -41,8 +41,6 @@ import org.cougaar.util.DBProperties;
 public class NewActiveStagesQueryHandler extends NewQueryHandler {
   private static final String QUERY_NAME = "ActiveStagesQuery";
 
-  private int minRequiredStage = 0;
-
   public NewActiveStagesQueryHandler(DBProperties adbp, NewOplanPlugin plugin) {
     super(adbp, plugin);
   }

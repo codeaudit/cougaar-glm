@@ -308,8 +308,8 @@ public abstract class QueryLDMPlugin extends LDMEssentialPlugin {
     url_ = getParm("Database");
     user_ = getParm("Username");
     password_= getParm("Password");
-    int colonIndex1 = url_.indexOf(':'); //WAN
-    int colonIndex2 = url_.indexOf(':', colonIndex1+1); //WAN
+//      int colonIndex1 = url_.indexOf(':'); //WAN
+//      int colonIndex2 = url_.indexOf(':', colonIndex1+1); //WAN
 
     //String dbtype = url_.substring(colonIndex1+1, colonIndex2); //delete later
     if (dbType == null) {
@@ -331,11 +331,11 @@ public abstract class QueryLDMPlugin extends LDMEssentialPlugin {
     password_= getParm("Password");
 
     // PAS MIK - COUGAAR Node scope for connection pools
-    int minPoolSize= Integer.parseInt(getParm("MIN_IN_POOL"));
-    int maxPoolSize= Integer.parseInt(getParm("MAX_IN_POOL"));
-    int timeout= Integer.parseInt(getParm("TIMEOUT"));
+//      int minPoolSize= Integer.parseInt(getParm("MIN_IN_POOL"));
+//      int maxPoolSize= Integer.parseInt(getParm("MAX_IN_POOL"));
+    //    int timeout= Integer.parseInt(getParm("TIMEOUT"));
     // String queryFile = "";
-    int nTries= Integer.parseInt(getParm("NUMBER_OF_TRIES"));
+    //    int nTries= Integer.parseInt(getParm("NUMBER_OF_TRIES"));
     //try {
     //GLMDebug.DEBUG(className_,"initialized driver");
   }

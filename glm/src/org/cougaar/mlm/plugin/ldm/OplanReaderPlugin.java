@@ -441,9 +441,6 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   private void requestOplans(Task glsTask) {
     dbp.put(AGENT_PARAMETER, orgId);
     
-    boolean oplanAdded = false; // Remember to publish it
-    boolean oplanChanged = false;
-    
     ContextOfOplanIds cIds = (ContextOfOplanIds) glsTask.getContext();
     // There should always be exactly one oplan
     String oplanId = (String) cIds.iterator().next();

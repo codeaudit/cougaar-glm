@@ -105,7 +105,7 @@ public class GLSInitServlet extends ComponentPlugin
   public static final String PUBLISHGLS = "publishgls";
   public static final String RESCINDGLS = "rescindgls";
 
-  private static final String PUBLISH_ON_SELF_ORG = "PublishOnSelfOrg";
+  //  private static final String PUBLISH_ON_SELF_ORG = "PublishOnSelfOrg";
 
   public static final String QUERY_FILE = "oplan.q";
   private static final String TIME_QUERY_NAME = "OplanTimeframeQuery";

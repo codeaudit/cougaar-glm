@@ -93,8 +93,8 @@ public class GLSClient extends JPanel {
   /** A text field for setting the CDay **/
   private JTextField cDayField = new JTextField(10); 
   
-  /** number of GLS tasks published **/
-  private int numGLS = 0;
+//    /** number of GLS tasks published **/
+//    private int numGLS = 0;
 
   private ButtonListener buttonListener = new ButtonListener();
 

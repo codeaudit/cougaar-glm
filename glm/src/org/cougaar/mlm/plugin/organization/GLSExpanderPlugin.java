@@ -72,8 +72,9 @@ import org.cougaar.util.UnaryPredicate;
  * 
  * Componentized in Cougaar 8.3 now extends ComponentPlugin instead of SimplePlugin.
  * Note the significant changes can be found in setupSubscriptions().
+ *
+ * @property org.cougaar.mlm.plugin.organization.GLSExpanderPlugin.persistEarly default false. When true, force a persist after this agent and all subordinates have received the GLS task. Used to avoid kill & restarts that rescind GLS task.
  **/
-
 public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
 
   protected EventService eventService;
@@ -965,7 +966,6 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
 
         AllocationResult artoreturn = new AllocationResult(rating, suc, keys, acc);
 
-        int aqll = auxqsummary.length;
         for (int aqt = 0; aqt < aql; aqt++) {
           String aqdata = auxqsummary[aqt];
           if ( (aqdata !=null) && (aqdata != UNDEFINED) ) {

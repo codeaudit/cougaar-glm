@@ -75,7 +75,6 @@ public class LDMXMLComponentPlugin
 
     private Properties globalParameters = new Properties();
     private String xmlfilename;
-    private File XMLFile;
     private Enumeration assets;
     //private XmlDocument doc;
     private Document doc;
@@ -148,9 +147,7 @@ public class LDMXMLComponentPlugin
     }
 	
     Enumeration getAssets( Document doc ){
-	Properties pt = null;
 	Node root = doc.getDocumentElement();
-	Enumeration a = null;
 	if( root.getNodeName().equals( "clusterassets" )){
 	    //NodeList nlist = root.getChildNodes();
 	    //int nlength = nlist.getLength();

@@ -249,7 +249,6 @@ implements LogicProvider, EnvelopeLogicProvider, RestartLogicProvider, MessageLo
       return;
     }
 
-    final UID objUID = obj.getUID();
     UniqueObject existingObj = 
       rootplan.findUniqueObject(obj.getUID());
     if (existingObj != null) {

@@ -80,7 +80,6 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
   }
   
   public Collection executeQueries(Statement statement) throws SQLException {
-    String oplanID = dbp.getProperty(OplanReaderPlugin.OPLAN_ID_PARAMETER);
     String query = dbp.getQuery(QUERY_NAME, dbp);
     String orgId = null;
     ResultSet rs = statement.executeQuery(query);

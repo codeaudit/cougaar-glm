@@ -42,8 +42,6 @@ public class OrgCodeActiveStagesQueryHandler extends NewActiveStagesQueryHandler
 
   private static final String QUERY_NAME = "ActiveStagesQuery";
 
-  private int minRequiredStage = 0;
-
   public OrgCodeActiveStagesQueryHandler(DBProperties adbp, NewOplanPlugin plugin) {
     super(adbp, plugin);
   }
