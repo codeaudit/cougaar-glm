@@ -506,6 +506,10 @@ public abstract class InventoryBG implements PGDelegate {
 	DueIn d = new DueIn(task, filled);
 //   	GLMDebug.DEBUG("addProjection()", "start="+start+"("+TimeUtils.dateString(start_time)+")"+
 //   	", end="+end+" ("+TimeUtils.dateString(end_time)+") Task:"+TaskUtils.taskDesc(task));	
+	
+	// Advance start time by one day to avoid double counting a projection that spans
+	// a single day
+	start += 1;
 	for (int i=start; i<= end; i++) {
 // 	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
 	    Vector v = (Vector)dueIns_.get(i);
