@@ -30,23 +30,38 @@ public class InventoryColorTable {
     //             new Color(153, 153, 255)); // light blue
     //    twoPut(UISimpleNamedSchedule.REQUESTED_DUE_OUT, 
     //             new Color(153, 255, 153)); // light green
-    twoPut(UISimpleNamedSchedule.DUE_IN, 
-                   new Color(0, 0, 150));  // blue
-    twoPut(UISimpleNamedSchedule.DUE_OUT, 
-                   new Color(0, 100, 0));     // green
-    twoPut(UISimpleNamedSchedule.PROJECTED_DUE_OUT, 
-                   new Color(255,180,0));     // orange
     twoPut(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
 		   new Color(160, 160, 255)); // light blue
+    twoPut(UISimpleNamedSchedule.DUE_IN, 
+                   new Color(0, 0, 150));  // blue
+    twoPut(InventoryShortfallChartDataModel.UNCONFIRMED_DUE_IN_SHORTFALL_LABEL,
+	           new Color(100,100,225));
+    twoPut(InventoryShortfallChartDataModel.CONFIRMED_DUE_IN_SHORTFALL_LABEL,
+	           new Color(40,40,200));
+
+    twoPut(UISimpleNamedSchedule.PROJECTED_DUE_IN, 
+	   //                new Color(0, 100, 100));     //light blue - green 
+	           new Color(150,0,150));
+    twoPut(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN, 
+	   //               new Color(100,220,220));     // light blue-green
+	           new Color(240,100,240));
+    twoPut(InventoryShortfallChartDataModel.PROJECTED_DUE_IN_SHORTFALL_LABEL,
+	           new Color(160, 40, 160));
+
+    twoPut(UISimpleNamedSchedule.DUE_OUT, 
+                   new Color(0, 100, 0));     // green
     twoPut(UISimpleNamedSchedule.REQUESTED_DUE_OUT, 
 		   new Color(120, 225, 120)); // light green
+    twoPut(InventoryShortfallChartDataModel.DUE_OUT_SHORTFALL_LABEL,
+	           new Color(20,140,20));
+
+    twoPut(UISimpleNamedSchedule.PROJECTED_DUE_OUT, 
+                   new Color(255,180,0));     // orange
     twoPut(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT, 
-                   new Color(255, 210, 120));     // light orange
-    twoPut(UISimpleNamedSchedule.PROJECTED_DUE_IN, 
-                   new Color(0, 100, 100));     //light blue - green 
-    twoPut(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN, 
-                   new Color(100,220,220));     // light blue-green
-    
+	           new Color(255, 210, 120));     // light orange
+    twoPut(InventoryShortfallChartDataModel.PROJECTED_DUE_OUT_SHORTFALL_LABEL,
+	           new Color(255,150,50));
+
     //    twoPut(UISimpleNamedSchedule.TOTAL, 
     //             new Color(0, 153, 0));     // forest green
     twoPut(UISimpleNamedSchedule.ALLOCATED, 
