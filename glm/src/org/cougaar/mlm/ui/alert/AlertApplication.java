@@ -45,7 +45,7 @@ public class AlertApplication extends JSplitPane
     implements AlertClusterSelector.Listener, ListSelectionListener
 {
     public static void main(String[] args) {
-        org.cougaar.core.node.Bootstrapper.launch(AlertApplication.class.getName(), args);
+        org.cougaar.bootstrap.Bootstrapper.launch(AlertApplication.class.getName(), args);
     }
 
     public static void launch(String[] args) {
