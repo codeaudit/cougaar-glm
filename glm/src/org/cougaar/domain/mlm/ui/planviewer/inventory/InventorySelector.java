@@ -25,15 +25,25 @@ import org.cougaar.domain.mlm.ui.planviewer.XMLClientConfiguration;
 import org.cougaar.domain.glm.execution.eg.ClusterInfo;
 
 public class InventorySelector implements ActionListener {
+
+    //Should match what's in the PSP_ALPInventory.java
+    final public static String ASSET = "ASSET";
+    final public static String ASSET_AND_CLASSTYPE =ASSET + ":" + "CLASS_TYPE:";
+    final public static String GET_ALL_CLASS_TYPES = "All";
+    final public static String[] ASSET_CLASS_TYPES = {GET_ALL_CLASS_TYPES,"Ammunition","BulkPOL","ClassISubsistence","ClassVIIIMedical","PackagedPOL","Consumable"};
+
   JPanel queryPanel;
 
   Vector clusterNames;
-  Hashtable clusterAndAssets;
 
   JComboBox clusterNameBox;
   JComboBox assetNameBox;
+  JComboBox classTypeBox;
   Hashtable clusterURLs;
+
   String clusterName; // set from code base if called as applet
+  String classType;
+
   String SET_ASSET = "Set Asset";
   String SET_CLUSTER = "Set Cluster";
   String SUBMIT = "Submit";
@@ -137,9 +147,11 @@ public class InventorySelector implements ActionListener {
     // create cluster list
     if (queryForClusters)
 	addClusterList();
-    //MWD addClusterList2 and updateClusterList2() work together
-    //to get all the clusters inventory at once and then just display.
-    //MWDaddClusterList2();
+
+    // create cluster list
+    if (queryForClusters)
+	addClassTypeList();
+
 
     // create inventory list
     assetNameBox = new JComboBox();
@@ -169,6 +181,7 @@ public class InventorySelector implements ActionListener {
     container.add("Center", queryPanel);
 
     updateInventoryBox();
+
   }
 
     /** Called by applet. If the applet is invoked with a URL
@@ -198,7 +211,8 @@ public class InventorySelector implements ActionListener {
       clusterURLs.put(clusterName, hostAndPort + "$" + clusterName + "/");
       // fetch asset list for this cluster and display it
       assetNameBoxInitted = true;
-      assetNames = getAssets(clusterName);
+      classType = GET_ALL_CLASS_TYPES;
+      assetNames = getAssets(clusterName,classType);
       if (assetNames != null) {
         for (int i = 0; i < assetNames.size(); i++)
           assetNameBox.addItem(assetNames.elementAt(i));
@@ -268,6 +282,9 @@ public class InventorySelector implements ActionListener {
     String command = e.getActionCommand();
     if (clusterNameBox != null)
       clusterName = (String)clusterNameBox.getSelectedItem();
+    if (classTypeBox != null)
+      classType = (String)classTypeBox.getSelectedItem();
+
     String assetName = (String)assetNameBox.getSelectedItem();
 
     // fetch assets for new cluster
@@ -276,7 +293,6 @@ public class InventorySelector implements ActionListener {
 	    new Thread(clusterName + "updateInventoryBox") {
                 public synchronized void run() {
                     updateInventoryBox();
-		    //MWD updateInventoryBox2();
 		}});
         return;
     }
@@ -297,48 +313,37 @@ public class InventorySelector implements ActionListener {
 	if (assetNameBox.getItemCount() != 0)
 	    assetNameBox.removeAllItems();
 	assetNameBoxInitted = true;
-	assetNames = getAssets(clusterName);
+	assetNames = getAssets(clusterName,classType);
 	if (assetNames != null)
 	    for (int i = 0; i < assetNames.size(); i++)
 		assetNameBox.addItem(assetNames.elementAt(i));
+					       
 	return;
     }
-
-    public void updateInventoryBox2() {
-	if (assetNameBox.getItemCount() != 0)
-	    assetNameBox.removeAllItems();
-	assetNameBoxInitted = true;
-	assetNames = (Vector)clusterAndAssets.get(clusterName);
-	if (assetNames != null)
-	    for (int i = 0; i < assetNames.size(); i++)
-		assetNameBox.addItem(assetNames.elementAt(i));
-	return;
-    }
-    
-    private void loadClusterNamesAndAssets(Vector vNames) {
-	clusterAndAssets = new Hashtable();
-	for(int i=0; i<vNames.size(); i++ ) {
-	    String currName = (String) vNames.elementAt(i);
-	    Vector clusterAssets = getAssets(currName);
-	    clusterAndAssets.put(currName, clusterAssets);
-	}
-    }
-
 
   /* Send request to the cluster to get the list of assets
      with scheduled content property groups.
      */
 
-  private Vector getAssets(String clusterName) {
+  private Vector getAssets(String clusterName, String aClassType) {
     String clusterURL = (String)clusterURLs.get(clusterName);
-    System.out.println("Submitting: ASSET to: " + clusterURL +
+    //When querying for all just ASSET
+    String queryStr=ASSET;
+
+    if(!(aClassType.equals(GET_ALL_CLASS_TYPES))) {
+	queryStr = (ASSET_AND_CLASSTYPE + aClassType);
+    }
+
+    System.out.println("Submitting: " + queryStr + " to: " + clusterURL +
                        " for: " + PSP_id);
     InputStream is = null;
     try {
       ConnectionHelper connection = 
         new ConnectionHelper(clusterURL,
                              XMLClientConfiguration.PSP_package, PSP_id);
-      connection.sendData("ASSET");
+
+      connection.sendData(queryStr);
+
       is = connection.getInputStream();
     } catch (Exception e) {
       displayErrorString(e.toString());
@@ -384,18 +389,15 @@ public class InventorySelector implements ActionListener {
 
   }
 
-    private void addClusterList2(){
-	clusterNames = getClusterNames();
-	loadClusterNamesAndAssets(clusterNames);
-	if(clusterNames.size() > 0) {
-	    for(int i=0; i<clusterNames.size(); i++) {
-		clusterNameBox.addItem(clusterNames.elementAt(i));
-	    }
-	    clusterName = (String)clusterNames.elementAt(0);
-	}
-	add("Display schedules from:", clusterNameBox, SET_CLUSTER);
-	loadClusterURLs();
-    }
+  private void addClassTypeList() {
+      classTypeBox = new JComboBox();
+      for(int i=0; i < ASSET_CLASS_TYPES.length; i++) {
+	  classTypeBox.addItem(ASSET_CLASS_TYPES[i]);
+      }
+      classTypeBox.setSelectedItem(GET_ALL_CLASS_TYPES);
+      classType = GET_ALL_CLASS_TYPES;
+      add("Display Assets of type:", classTypeBox, SET_CLUSTER);
+  }
 
 
 private void addClusterList() {
