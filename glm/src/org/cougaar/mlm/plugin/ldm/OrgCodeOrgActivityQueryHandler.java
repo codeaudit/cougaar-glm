@@ -180,7 +180,8 @@ public class OrgCodeOrgActivityQueryHandler extends NewOrgActivityQueryHandler {
         plugin.makeOrgActivity(new TimeSpan(start, end),
                                oiElements[ACTIVITY_INDEX].getStringObject(), 
                                oiElements[LOCATION_INDEX].getStringObject(),
-                               oiElements[OPTEMPO_INDEX].getStringObject());
+                               oiElements[OPTEMPO_INDEX].getStringObject(),
+                               null);
       timeSpanSet.add(orgActivity);
       minStart = end;
     }

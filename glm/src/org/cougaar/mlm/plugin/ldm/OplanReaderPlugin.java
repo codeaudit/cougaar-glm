@@ -42,6 +42,7 @@ import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UID;
+import org.cougaar.core.util.UniqueObject;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.oplan.Oplan;
@@ -57,6 +58,9 @@ import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Relationship;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.CSVUtility;
 import org.cougaar.util.DBProperties;
 import org.cougaar.util.TimeSpanSet;
@@ -116,10 +120,11 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       public OrgActivity makeOrgActivity(TimeSpan timeSpan,
                                          String activity, 
                                          String geoCode, 
-                                         String opTempo)
-      {
+                                         String opTempo,
+                                         String opCon) {
+ 
         return OplanReaderPlugin.this
-          .makeOrgActivity(timeSpan, activity, geoCode, opTempo);
+          .makeOrgActivity(timeSpan, activity, geoCode, opTempo, opCon);
       }
     };
 
@@ -143,6 +148,7 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   private Organization selfOrgAsset = null;
   private String orgId;
   private String orgCode;
+  private String adSuperior;
 
   /**
    * The predicate for the Socrates subscription
@@ -364,7 +370,15 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       selfOrgAsset = (Organization) e.nextElement();
       orgId = selfOrgAsset.getItemIdentificationPG().getItemIdentification();
       orgCode = selfOrgAsset.getMilitaryOrgPG().getUIC();
-
+      Collection myAdSuperiors = selfOrgAsset.getRelationshipSchedule()
+        .getMatchingRelationships(Constants.Role.SUPERIOR);
+      //.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
+      for (Iterator it = myAdSuperiors.iterator(); it.hasNext(); ) {
+        Relationship rel = (Relationship)it.next();
+        adSuperior = ((Asset)rel.getB()).getItemIdentificationPG().getNomenclature();
+        if (logger.isInfoEnabled())
+          logger.info(getAgentIdentifier() + "'s superior is: " +adSuperior);
+      }
       // Setup our other subscriptions now that we know ourself
       if (glsSubscription == null) {
         setupSubscriptions2();
@@ -379,7 +393,9 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       processOrgAssets(mySelfOrgs.getAddedList());
     } else {
       if (logger.isDebugEnabled())
-	logger.debug(getAgentIdentifier() + ".execute: selfOrgs sub is " + mySelfOrgs + ((mySelfOrgs != null) ? (" and not changed. It has " + mySelfOrgs.size() + " elements.") : " so must have done processOrgAssets."));
+	logger.debug(getAgentIdentifier() + ".execute: selfOrgs sub is " 
+                     + mySelfOrgs + ((mySelfOrgs != null) ? (" and not changed. It has " 
+                     + mySelfOrgs.size() + " elements.") : " so must have done processOrgAssets."));
     }
 
     if ((glsSubscription != null) && 
@@ -454,10 +470,13 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
     PrepositionalPhrase stagespp = glsTask.getPrepositionalPhrase(FOR_OPLAN_STAGES);
     SortedSet newStages = (SortedSet) stagespp.getIndirectObject();
     if (logger.isInfoEnabled())
-      logger.info(getAgentIdentifier() + ".requestOplans: GLS task lists OplanStages size: " + newStages.size() + ". My currentStages has : " + currentStages.size());
+      logger.info(getAgentIdentifier() + ".requestOplans: GLS task lists OplanStages size: " 
+                                       + newStages.size() 
+                                       + ". My currentStages has : " + currentStages.size());
     boolean currentStagesChanged = false;
     if (!newStages.containsAll(currentStages)) {
       // Some stages have been removed, we start all over
+      // this shouldn't ever happen
       for (Iterator j = currentActivities.iterator(); j.hasNext(); ) {
 	OrgActivity oa = (OrgActivity) j.next();
 	removedActivities.add(oa);
@@ -522,8 +541,7 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   // Update org activities. The supplied orgActivities override
   // currentActivities.
   private void updateOrgActivities(Oplan update,
-                                   Collection orgActivities)
-  {
+                                   Collection orgActivities) {
     if (logger.isDebugEnabled()) {
       logger.debug("updateOrgActivities with " + orgActivities.size() + " activities");
     }
@@ -534,7 +552,6 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
         logger.error("GLSInitServlet.updateOrgActivities(): can't find" + " referenced Oplan " + oplanID);
         return;
       }
-
       // We scan all activities for overlap with each of the new
       // activities. Were there is overlap, the existing activity is
       // trimmed to not exist for the timespan of the new activity.
@@ -552,26 +569,33 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
         }
         long newStartTime = orgActivity.getStartTime();
         long newEndTime = orgActivity.getEndTime();
+        //go thru current activities first then added, then changed
+        // to check for any overlapping timespans
         for (int k = 0; k < tsSets.length; k++) {
           TimeSpanSet tsSet = tsSets[k];
           Collection affectedActivities = tsSet.intersectingSet(orgActivity);
           for (Iterator j = affectedActivities.iterator(); j.hasNext(); ) {
+            //found an overlapping activity
             OrgActivity existingActivity = (OrgActivity) j.next();
             if (logger.isDebugEnabled()) {
               logger.debug("Fixing existing org activity " + existingActivity.getActivityType() +
                            " " + existingActivity.getTimeSpan());
             }
-            tsSet.remove(existingActivity); // Don't know where it
-                                            // will end up, but it
-                                            // can't be here anymore
+            tsSet.remove(existingActivity); // Don't know where it will end up,
+                                            // but it can't be here anymore
             // See if any part is still viable
             long existingStartTime = existingActivity.getStartTime();
             long existingEndTime = existingActivity.getEndTime();
+            //if the existingActivity came from the set of currentActivities
+            //  it should be removed from blackboard ultimately because
+            //  we will copy the info and make a new one for part and
+            //  the newly read OA will cover the other part.
             boolean existingActivityNeedsRemove = (tsSet == currentActivities);
             if (existingStartTime < newStartTime) {
-              TimeSpan newTimeSpan =
-                new TimeSpan(existingStartTime,
-                             newStartTime);
+              //the new orgactivity starts later than the existing one so
+              // there is a slice of the existing OA at the start 
+              // that is still valid.
+              TimeSpan newTimeSpan = new TimeSpan(existingStartTime, newStartTime);
               // Need new activity like the existingActivity
               OrgActivity newActivity = makeOrgActivity(newTimeSpan, existingActivity);
               if (logger.isDebugEnabled()) {
@@ -579,13 +603,15 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
                             + " " + newActivity.getTimeSpan());
               }
               addedActivities.add(newActivity);
-           }
+            }
+            //Now need to check if the new OA goes longer than the existing
             if (existingEndTime > newEndTime) { 
+              //the new orgactivity ends earlier than the existing one so
+              // there is a slice of the existing OA at the end 
+              // that is still valid.
               //if (existingEndTime < newEndTime) {
-              TimeSpan aNewTimeSpan =
-                new TimeSpan(newEndTime,
-                             existingEndTime);
-                // Need new activity like the existingActivity
+              TimeSpan aNewTimeSpan = new TimeSpan(newEndTime, existingEndTime);
+              // Need new activity like the existingActivity
               OrgActivity aNewActivity = makeOrgActivity(aNewTimeSpan, existingActivity);
               if (logger.isDebugEnabled()) {
                 logger.debug("New/Copied org activity is: "+ aNewActivity.getActivityType()
@@ -630,16 +656,35 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   private OrgActivity makeOrgActivity(TimeSpan timeSpan,
                                       String activity, 
                                       String geoCode, 
-                                      String opTempo) {
+                                      String opTempo,
+                                      String opCon) {
 
     OrgActivityImpl orgActivity = OplanFactory.newOrgActivity(orgId, myOplan.getUID());
+
     uidService.registerUniqueObject(orgActivity);
     orgActivity.setOwner(getAgentIdentifier());
     orgActivity.setTimeSpan(timeSpan);
     orgActivity.setActivityType(activity);
     orgActivity.setGeoLoc((GeolocLocation) locations.get(geoCode));
     orgActivity.setOpTempo(opTempo);
+    //At the moment - always get adCon from the org_relation table query
+    //  which means we can get it from the self org
+    orgActivity.setAdCon(adSuperior);
+    //If no opCon value was read from the database,
+    // set opCon to be same as adCon
+    // This should mean that this is either the Initial Stage
+    // or this agent is a UA agent - either way opCon will
+    // be the same as adCon for the moement.
 
+    if (opCon == null) {
+      orgActivity.setOpCon(adSuperior);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Setting opCon value to adCon value because opCon from DB is null");
+      }
+    }
+    else {
+      orgActivity.setOpCon(opCon);
+    }
     return orgActivity; 
   }
 
@@ -652,6 +697,8 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
     orgActivity.setActivityType(oldActivity.getActivityType());
     orgActivity.setOpTempo(oldActivity.getOpTempo());
     orgActivity.setGeoLoc(oldActivity.getGeoLoc());
+    orgActivity.setAdCon(oldActivity.getAdCon());
+    orgActivity.setOpCon(oldActivity.getOpCon());
     orgActivity.setOwner(getAgentIdentifier());
     uidService.registerUniqueObject(orgActivity);
     orgActivity.setTimeSpan(timeSpan);

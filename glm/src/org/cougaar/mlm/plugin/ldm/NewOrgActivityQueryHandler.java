@@ -48,6 +48,7 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
   public static final String ACTIVITY_PARAMETER = "activity";
   public static final String OPTEMPO_PARAMETER = "opTempo";
   public static final String LOCATION_PARAMETER = "location";
+  public static final String OPCON_PARAMETER = "opCon";
 
   protected static final String QUERY_NAME = "OrgActivityQuery";
 
@@ -61,10 +62,12 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
   protected static final int ACTIVITY_INDEX = 0;
   protected static final int LOCATION_INDEX = 1;
   protected static final int OPTEMPO_INDEX = 2;
+  protected static final int OPCON_INDEX = 3;
 
   protected String myActivityKey;
   protected String myOpTempoKey;
   protected String myLocationKey;
+  protected String myOpConKey;
 
   public NewOrgActivityQueryHandler(DBProperties adbp, NewOplanPlugin plugin)
     throws SQLException
@@ -73,6 +76,7 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
     myActivityKey = dbp.getProperty(ACTIVITY_PARAMETER);
     myOpTempoKey = dbp.getProperty(OPTEMPO_PARAMETER);
     myLocationKey = dbp.getProperty(LOCATION_PARAMETER);
+    myOpConKey = dbp.getProperty(OPCON_PARAMETER);
   }
   
   public Collection executeQueries(Statement statement) throws SQLException {
@@ -83,7 +87,9 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
     TimeSpanSet opTempoSchedule = new TimeSpanSet();
     TimeSpanSet activitySchedule = new TimeSpanSet();
     TimeSpanSet locationSchedule = new TimeSpanSet();
+    TimeSpanSet opConSchedule = new TimeSpanSet();
     TimeSpanSet schedule;
+    boolean haveOpCon = false;
     while (rs.next()) {
       String attribute_name = getString(rs, ATTRIBUTE_NAME);
       String attribute_value = getString(rs, ATTRIBUTE_VALUE);
@@ -99,9 +105,12 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
         schedule = activitySchedule;
       } else if (attribute_name.equals(myLocationKey)) {
         schedule = locationSchedule;
+      } else if (attribute_name.equals(myOpConKey)) {
+        haveOpCon = true;
+        schedule = opConSchedule;
       } else {
         if (logger.isErrorEnabled()) {
-          logger.error("OrgActivityQueryHandler.processRow(): unexpected text in ATTRIBUTE_NAME column - " + attribute_name);
+          logger.error("NewOrgActivityQueryHandler.processRow(): unexpected text in ATTRIBUTE_NAME column - " + attribute_name);
         }
         continue;
       }
@@ -112,12 +121,12 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
                            rs.getDouble(END_HOUR));
       if (schedule.intersectingSet(element).isEmpty()) {
         if (logger.isDebugEnabled()) {
-          logger.debug("OrgActivityQueryHandler: Adding " + element);
+          logger.debug("NewOrgActivityQueryHandler: Adding " + element);
         }
         schedule.add(element);
       } else {
         if (logger.isErrorEnabled()) {
-          logger.error("OrgActivityQueryHandler: found more than one "
+          logger.error("NewOrgActivityQueryHandler: found more than one "
                        + attribute_value + " during "
                        + formatDate(element.getStartTime())
                        + " - "
@@ -125,12 +134,17 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
         }
       }
     }
-    TimeSpanSet timeSpanSet = new TimeSpanSet();
-    OrgInfoElements[] oiElements = {
-      new OrgInfoElements(activitySchedule, "activity"),
-      new OrgInfoElements(locationSchedule, "location"),
-      new OrgInfoElements(opTempoSchedule, "opTempo")
-    };
+    //now each schedule has the set of values for each timespan for a given part of the OA
+    
+    TimeSpanSet timeSpanSet = new TimeSpanSet();    
+
+    //opConSchedule might be empty
+      OrgInfoElements[] oiElements = {
+        new OrgInfoElements(activitySchedule, "activity"),
+        new OrgInfoElements(locationSchedule, "location"),
+        new OrgInfoElements(opTempoSchedule, "opTempo"),
+        new OrgInfoElements(opConSchedule, "opCon")  
+      };
 
     long minStart = TimeSpan.MIN_VALUE;
     while (true) {
@@ -139,52 +153,77 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
       int missing = 0;
       int present = 0;
       // Step all iterators/elements
+      // Need to pull out the values from each type of OA element for each necessary timespan
       for (int i = 0; i < oiElements.length; i++) {
         OrgInfoElement element = oiElements[i].endsAfter(minStart);
         if (element == null) {
           missing++;
+          if (logger.isDebugEnabled()) {
+            logger.debug("NOAQH: missing = " +missing +" and haveOpCon value is: " +haveOpCon);
+          }
         } else {
           present++;
-          end = Math.min(end, element.getEndTime());
-          start = Math.max(start, element.getStartTime());
-        }
-      }
-      if (missing > 0) {
-        if (logger.isWarnEnabled() && present > 0) {
-          StringBuffer msg = new StringBuffer();
-          msg.append("NewOrgActivityQueryHandler: missing ");
-          boolean first = true;
-          for (int i = 0; i < oiElements.length; i++) {
-            if (oiElements[i].isFinished()) {
-              if (first) {
-                first = false;
-              } else {
-                msg.append(", ");
-              }
-              msg.append(oiElements[i].getType());
-            }
+          if (logger.isDebugEnabled()) {
+            logger.debug("NOAQH: Element is: " + element);
+            logger.debug("NOAQH: present = " +present );
           }
-          msg.append(" between ")
-            .append(formatDate(start))
-            .append(" - ")
-            .append(formatDate(end));
-          //logger.warn(msg.toString());
-        }
+          end = Math.min(end, element.getEndTime()); 
+          start = Math.max(start, element.getStartTime());
+          if (logger.isDebugEnabled()) {
+            logger.debug("end value is " + new Date(end));
+            logger.debug("start value is " + new Date(start));
+          }
+         }
+      }
+
+      if (missing > 1) {
+        //if the missing element is the OPCON its OK
         return timeSpanSet;
       }
+
+//       if (missing > 0 ) {
+//         if (logger.isWarnEnabled() && present > 0) {
+//           StringBuffer msg = new StringBuffer();
+//           msg.append("NewOrgActivityQueryHandler: missing ");
+//           boolean first = true;
+//           for (int i = 0; i < oiElements.length; i++) {
+//             if (oiElements[i].isFinished()) {
+//               if (first) {
+//                 first = false;
+//               } else {
+//                 msg.append(", ");
+//               }
+//               msg.append(oiElements[i].getType());
+//             }
+//           }
+//           msg.append(" between ")
+//             .append(formatDate(start))
+//             .append(" - ")
+//             .append(formatDate(end));
+//           logger.warn(msg.toString());
+//         }
+//         return timeSpanSet;
+//       }
+
       if (start > minStart && minStart > TimeSpan.MIN_VALUE) {
         if (logger.isInfoEnabled()) {
-          logger.info("OrgActivityQueryHandler: schedule gap between "
+          logger.info("NewOrgActivityQueryHandler: schedule gap between "
                       + formatDate(minStart)
                       + " - "
                       + formatDate(start));
         }
       }
+
+      String myOpCon = null;
+      if (haveOpCon) {
+        myOpCon = oiElements[OPCON_INDEX].getStringObject();
+      }
       OrgActivity orgActivity =
         plugin.makeOrgActivity(new TimeSpan(start, end),
                                oiElements[ACTIVITY_INDEX].getStringObject(), 
                                oiElements[LOCATION_INDEX].getStringObject(),
-                               oiElements[OPTEMPO_INDEX].getStringObject());
+                               oiElements[OPTEMPO_INDEX].getStringObject(),
+                               myOpCon);
       timeSpanSet.add(orgActivity);
       minStart = end;
     }
@@ -204,7 +243,7 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
     }
 
     public OrgInfoElement endsAfter(long start) {
-      while (current == null || current.getEndTime() <= start) {
+      while (current == null || current.getEndTime() <= start) { 
         if (iterator.hasNext()) {
           current = (OrgInfoElement) iterator.next();
         } else {

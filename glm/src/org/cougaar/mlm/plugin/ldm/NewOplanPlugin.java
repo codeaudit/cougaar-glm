@@ -39,5 +39,6 @@ public interface NewOplanPlugin {
   OrgActivity makeOrgActivity(TimeSpan timeSpan,
                               String activity, 
                               String geoCode, 
-                              String opTempo);
+                              String opTempo,
+                              String opCon);
 }
