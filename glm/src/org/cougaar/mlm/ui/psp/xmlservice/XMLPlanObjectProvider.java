@@ -38,8 +38,6 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.util.XMLizable;
 
-import  org.cougaar.core.util.XMLObjectProvider;
-
 import org.cougaar.mlm.ui.data.XMLUIPlanObject;
 import org.cougaar.mlm.ui.data.XMLUIPlanObjectConverter;
 
@@ -56,7 +54,7 @@ import org.w3c.dom.Element;
  * cluster to generate the XML which will be returned to the ui.
  */
 
-public class XMLPlanObjectProvider implements XMLObjectProvider {
+public class XMLPlanObjectProvider {
   protected ArrayList collection = new ArrayList();
   Document doc;
   Element root;
@@ -101,7 +99,7 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
   }
 
   //
-  // Pass-thru:   to comply with org.cougaar.core.util.XMLObjectProvider interface
+  // Pass-thru:
   public void addObject(Object obj) {
        addPlanObject(obj);
   }
