@@ -22,18 +22,18 @@ import java.util.Iterator;
 
 /**
  * An instance of an LDMPlugIn that reads a Cluster's startup policy
- * from an XML file (of the form *.ldm.xml).
+ * from an XML file.
  *
- * This PlugIn is invoked with one parameter, the name of the
- * .ldm.xml file to be parsed.  This file is currently looked for 
- * in the local directory.  Additional file search capabilities will
- * be added.  Example from a sample cluster.ini file:
+ * This PlugIn is invoked with one or more parameters, the names of the
+ * .ldm.xml files to be parsed.  The files are found using the cluster's
+ * ConfigFinder.  
+ *  Example from a sample cluster.ini file:
  * <PRE>
- * plugin=org.cougaar.domain.mlm.plugin.ldm.XMLPolicyPlugIn( policy.ldm.xml )
+ * plugin=org.cougaar.domain.mlm.plugin.ldm.XMLPolicyPlugIn( policy.ldm.xml, shippolicy.ldm.xml )
  * </PRE>
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: XMLPolicyPlugIn.java,v 1.2 2001-01-10 20:36:56 jwinston Exp $
+ * @version  $Id: XMLPolicyPlugIn.java,v 1.3 2001-01-10 20:55:56 jwinston Exp $
  */
 public class XMLPolicyPlugIn extends SimplePlugIn
 {
