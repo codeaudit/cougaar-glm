@@ -86,15 +86,11 @@ import org.cougaar.core.plugin.PluginBindingSite;
  * </pre>
  */
 public class GLMStimulatorPlugin extends UTILPluginAdapter
-    implements GLMOrganizationListener {
+  implements GLMOrganizationListener {
 
   /** Add the filter for all organizations... */
   public void setupFilters () {
     super.setupFilters ();
-
-    if (myExtraOutput)
-      System.out.println (getName () + " : Filtering for Organizations...");
-
     addFilter (myOrgCallback = createOrganizationCallback ());
   }
 
@@ -103,7 +99,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
 
   /** Create the filter for all organizations... */
   protected GLMOrganizationCallback createOrganizationCallback () { 
-    return new GLMOrganizationCallback(this); 
+    return new GLMOrganizationCallback(this, logger); 
   }
 
   /** get Organizations */
@@ -140,10 +136,10 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    * @see org.cougaar.glm.callback.GLMOrganizationListener
    */
   public void handleNewOrganization (Enumeration e) {
-	if (!reportedSeenOrgs && myGLMListener != null) {
-	  myGLMListener.indicateReady();
-	  reportedSeenOrgs = true;
-	}
+    if (!reportedSeenOrgs && myGLMListener != null) {
+      myGLMListener.indicateReady();
+      reportedSeenOrgs = true;
+    }
   }
 
   boolean reportedSeenOrgs = false;
@@ -163,21 +159,21 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    * @param pe the plan element to publish
    */
   protected void publishMyPlanElement(PlanElement pe) {
-    if (myExtraOutput)
-	  System.out.println (getName () + ".publishMyPlanElement : Publishing " + pe + 
-						  " of task " + pe.getTask ());
+    if (isInfoEnabled())
+      info (getName () + ".publishMyPlanElement : Publishing " + pe + 
+	    " of task " + pe.getTask ());
 
     // Order matters here!
     publishAdd(pe.getTask());
     Vector createdObjects;
     if (!AssetUtil.isPassenger(pe.getTask().getDirectObject ())) {
-      if (myExtraOutput) 
-		System.out.println ("not a passenger");
+      if (isInfoEnabled()) 
+	info ("not a passenger");
       createdObjects = AssetUtil.ExpandAsset (getLDMService().getLDM().getFactory (), pe.getTask ().getDirectObject ());
     }
     else {
-      if (myExtraOutput) 
-		System.out.println ("is a passenger");
+      if (isInfoEnabled()) 
+	info ("is a passenger");
       createdObjects = new Vector ();
       createdObjects.add (pe.getTask ().getDirectObject ());
     }
@@ -209,7 +205,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
 
     panel.add(button);
     panel.add(button2);
-	frame.getRootPane().setDefaultButton(button); // hitting return sends the tasks
+    frame.getRootPane().setDefaultButton(button); // hitting return sends the tasks
     panel.add(text);
 
     frame.getContentPane().add("Center", panel);
@@ -220,7 +216,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
 
   /** needed so internal class can find the xml task file */
   public ConfigFinder getFinder () {
-	return getConfigFinder();  
+    return getConfigFinder();  
   }
   
   /** 
@@ -246,20 +242,20 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
       String lnfName = e.getActionCommand();
 
       if (lnfName.equals("Send Tasks")){	  
-		// Get name of XML data file
-		if (getFinder().locateFile (text.getText()) == null) {
-		  label.setText("Couldn't find file. Check path, try again.");
-		  return;
-		}
+	// Get name of XML data file
+	if (getFinder().locateFile (text.getText()) == null) {
+	  label.setText("Couldn't find file. Check path, try again.");
+	  return;
+	}
 		
-		sendTasks (label, text.getText());
+	sendTasks (label, text.getText());
       } else {
-		rescindTasks (label);
+	rescindTasks (label);
       }
     }
-	public void indicateReady () {
-	  label.setText("Ready to send tasks.");
-	}
+    public void indicateReady () {
+      label.setText("Ready to send tasks.");
+    }
   }
 
   /**
@@ -280,42 +276,42 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    * @param xmlTaskFile - the file that is used to create the tasks
    */
   protected void sendTasks (JLabel label, String xmlTaskFile) {
-	Collection tasks = null;
-	tasksSent.clear();
-	if (!subordinatesHaveReported ()) {
-	  label.setText("No subordinates to task yet.  Wait until they report.");
-	} 
-	else {
-	  try {
-	    // Have to do this all within transaction boundary
+    Collection tasks = null;
+    tasksSent.clear();
+    if (!subordinatesHaveReported ()) {
+      label.setText("No subordinates to task yet.  Wait until they report.");
+    } 
+    else {
+      try {
+	// Have to do this all within transaction boundary
 	    
-	    // For some reason, every setXXX (e.g. setVerb) on a NewTask
-	    // fires off a changeReport, and these must be inside of a transaction,
-	    // apparently.  There is no way currently to temporarily turn off this feature.
-	    // GWFV 10/11/2000
+	// For some reason, every setXXX (e.g. setVerb) on a NewTask
+	// fires off a changeReport, and these must be inside of a transaction,
+	// apparently.  There is no way currently to temporarily turn off this feature.
+	// GWFV 10/11/2000
 
-		blackboard.openTransaction();
-		// Get the tasks out of the XML file
-		tasks = readXmlTasks(xmlTaskFile);
-		// First find the organizations that we will allocate to.
-		Collection supportedOrgs = getSupportedOrgs ();
-		if(supportedOrgs.isEmpty ()){
-		  label.setText("No task sent, since no subordinates have reported (yet).");
-		} else {
-		  allocateTasks (tasks, supportedOrgs);
-		  label.setText("Sent task(s) to " + 
-						((Organization) supportedOrgs.iterator ().next()).getItemIdentificationPG().getItemIdentification() + 
-						((supportedOrgs.size () > 1) ? ", etc. clusters" : " cluster"));
-		}
-	  } catch (Exception exc) {
-		System.err.println("Could not send tasks.");
-		System.err.println(exc.getMessage());
-		exc.printStackTrace();
-	  }
-	  finally{
-		blackboard.closeTransaction(false);
-	  }
-	} 
+	blackboard.openTransaction();
+	// Get the tasks out of the XML file
+	tasks = readXmlTasks(xmlTaskFile);
+	// First find the organizations that we will allocate to.
+	Collection supportedOrgs = getSupportedOrgs ();
+	if(supportedOrgs.isEmpty ()){
+	  label.setText("No task sent, since no subordinates have reported (yet).");
+	} else {
+	  allocateTasks (tasks, supportedOrgs);
+	  label.setText("Sent task(s) to " + 
+			((Organization) supportedOrgs.iterator ().next()).getItemIdentificationPG().getItemIdentification() + 
+			((supportedOrgs.size () > 1) ? ", etc. clusters" : " cluster"));
+	}
+      } catch (Exception exc) {
+	System.err.println("Could not send tasks.");
+	System.err.println(exc.getMessage());
+	exc.printStackTrace();
+      }
+      finally{
+	blackboard.closeTransaction(false);
+      }
+    } 
   }
 
   public static final Role SUPPORTING = Role.getRole("Supporting");
@@ -327,48 +323,48 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    */
 
   protected Collection getSupportedOrgs () {
-	Collection orgs = getOrgs();
-	Collection returnedOrgs = new HashSet ();
+    Collection orgs = getOrgs();
+    Collection returnedOrgs = new HashSet ();
 	
-	for (Iterator iter = orgs.iterator (); iter.hasNext ();) {
-	  Organization org = (Organization)iter.next();
-	  //Look in self orgs relationship schedule
-	  if (org.isSelf()){
-	    RelationshipSchedule schedule = org.getRelationshipSchedule();
+    for (Iterator iter = orgs.iterator (); iter.hasNext ();) {
+      Organization org = (Organization)iter.next();
+      //Look in self orgs relationship schedule
+      if (org.isSelf()){
+	RelationshipSchedule schedule = org.getRelationshipSchedule();
 
-	    Collection subordinates = org.getSubordinates(TimeSpan.MIN_VALUE,
-                                                          TimeSpan.MAX_VALUE);
-	    if (!subordinates.isEmpty()){
-	      for (Iterator it = subordinates.iterator(); it.hasNext();){
-		returnedOrgs.add(schedule.getOther((Relationship)it.next()));
-	      }
-	    }
-		//		returnedOrgs.addAll (subordinates);
-
-	    Collection supporting = 
-	      schedule.getMatchingRelationships(SUPPORTING);
-	    if (!supporting.isEmpty()){
-	      for (Iterator it = supporting.iterator(); it.hasNext();){
-		returnedOrgs.add(schedule.getOther((Relationship)it.next()));
-	      }
-	    }
-	    //		returnedOrgs.addAll (schedule.getOther(supporting);
-
-		//Assume providers use provider suffix
-	    Collection providers = 
-	      schedule.getMatchingRelationships(Constants.RelationshipType.PROVIDER_SUFFIX,
-						TimeSpan.MIN_VALUE,
-						TimeSpan.MAX_VALUE);
-
-	    if (!providers.isEmpty()){
-	      for (Iterator it = providers.iterator(); it.hasNext();){
-		returnedOrgs.add(schedule.getOther((Relationship)it.next()));
-	      }
-	    }
-	    //	    returnedOrgs.addAll (providers);
+	Collection subordinates = org.getSubordinates(TimeSpan.MIN_VALUE,
+						      TimeSpan.MAX_VALUE);
+	if (!subordinates.isEmpty()){
+	  for (Iterator it = subordinates.iterator(); it.hasNext();){
+	    returnedOrgs.add(schedule.getOther((Relationship)it.next()));
 	  }
 	}
-	return returnedOrgs;
+	//		returnedOrgs.addAll (subordinates);
+
+	Collection supporting = 
+	  schedule.getMatchingRelationships(SUPPORTING);
+	if (!supporting.isEmpty()){
+	  for (Iterator it = supporting.iterator(); it.hasNext();){
+	    returnedOrgs.add(schedule.getOther((Relationship)it.next()));
+	  }
+	}
+	//		returnedOrgs.addAll (schedule.getOther(supporting);
+
+	//Assume providers use provider suffix
+	Collection providers = 
+	  schedule.getMatchingRelationships(Constants.RelationshipType.PROVIDER_SUFFIX,
+					    TimeSpan.MIN_VALUE,
+					    TimeSpan.MAX_VALUE);
+
+	if (!providers.isEmpty()){
+	  for (Iterator it = providers.iterator(); it.hasNext();){
+	    returnedOrgs.add(schedule.getOther((Relationship)it.next()));
+	  }
+	}
+	//	    returnedOrgs.addAll (providers);
+      }
+    }
+    return returnedOrgs;
   }
 
   /**
@@ -378,17 +374,17 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    * @param supportedOrgs - the orgs to send them to
    */
   protected void allocateTasks (Collection tasks, Collection supportedOrgs) {
-	boolean sentOriginals = false;
+    boolean sentOriginals = false;
 	
-	for (Iterator iter = supportedOrgs.iterator(); iter.hasNext ();) {
-	  Organization supportedOrg = (Organization) iter.next();
-	  for (Iterator iter2 = tasks.iterator (); iter2.hasNext ();){
-		Task task = (Task)iter2.next();
-		Task actualTask = (sentOriginals) ? cloneTask(task) : task;
-		allocateToOrg (actualTask, supportedOrg);
-	  }
-	  sentOriginals = true;
-	}
+    for (Iterator iter = supportedOrgs.iterator(); iter.hasNext ();) {
+      Organization supportedOrg = (Organization) iter.next();
+      for (Iterator iter2 = tasks.iterator (); iter2.hasNext ();){
+	Task task = (Task)iter2.next();
+	Task actualTask = (sentOriginals) ? cloneTask(task) : task;
+	allocateToOrg (actualTask, supportedOrg);
+      }
+      sentOriginals = true;
+    }
   }
   
   /**
@@ -417,21 +413,21 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    * @param supportedOrg org to allocate to
    */
   protected void allocateToOrg (Task task, Organization supportedOrg) {
-	Allocation alloc = (Allocation) 
-	  UTILAllocate.makeAllocation (this,
-								   ldmf,
-								   ldmf.getRealityPlan(), 
-								   task,
-								   supportedOrg,
-								   UTILPreference.getReadyAt(task),
-								   UTILPreference.getBestDate(task),
-								   UTILAllocate.HIGHEST_CONFIDENCE,
-								   Constants.Role.TRANSPORTER);
-	if (myExtraOutput)
-	  System.out.println(getName () +" allocating to " + supportedOrg);
+    Allocation alloc = (Allocation) 
+      UTILAllocate.makeAllocation (this,
+				   ldmf,
+				   ldmf.getRealityPlan(), 
+				   task,
+				   supportedOrg,
+				   UTILPreference.getReadyAt(task),
+				   UTILPreference.getBestDate(task),
+				   UTILAllocate.HIGHEST_CONFIDENCE,
+				   Constants.Role.TRANSPORTER);
+    if (isInfoEnabled())
+      info(getName () +" allocating to " + supportedOrg);
 
-	publishMyPlanElement(alloc);
-	tasksSent.add (task);
+    publishMyPlanElement(alloc);
+    tasksSent.add (task);
   }
   
   /**
@@ -440,28 +436,28 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
    * @param label provides way to give feedback
    */
   protected void rescindTasks (JLabel label) {
-	if (tasksSent.size() == 0){
-	  label.setText("No tasks to Rescind.");
-	} else {
-	  try {
-		blackboard.openTransaction();
-		Iterator iter = tasksSent.iterator ();
-		Object removed = iter.next ();
-		iter.remove ();
+    if (tasksSent.size() == 0){
+      label.setText("No tasks to Rescind.");
+    } else {
+      try {
+	blackboard.openTransaction();
+	Iterator iter = tasksSent.iterator ();
+	Object removed = iter.next ();
+	iter.remove ();
 		
-		if (myExtraOutput)
-		  System.out.println ("GLMStimulatorPlugin - Removing " + removed);
-		publishRemove(removed);
-		tasksSent.remove(removed);
-		label.setText("Rescinded last task. " + tasksSent.size () + " left.");
-	  }catch (Exception exc) {
-		System.err.println(exc.getMessage());
-		exc.printStackTrace();
-	  }
-	  finally{
-		blackboard.closeTransaction(false);
-	  }
-	}
+	if (isInfoEnabled())
+	  info ("GLMStimulatorPlugin - Removing " + removed);
+	publishRemove(removed);
+	tasksSent.remove(removed);
+	label.setText("Rescinded last task. " + tasksSent.size () + " left.");
+      }catch (Exception exc) {
+	System.err.println(exc.getMessage());
+	exc.printStackTrace();
+      }
+      finally{
+	blackboard.closeTransaction(false);
+      }
+    }
   }
   
   /**
@@ -484,14 +480,13 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
     Collection tasks = null;
     try {
       GLMTaskParser tp = new GLMTaskParser(xmlTaskFile, ldmf, 
-										   ((PluginBindingSite) getBindingSite()).getAgentIdentifier(),
-										   getConfigFinder(),
-										   getLDMService().getLDM());
+					   ((PluginBindingSite) getBindingSite()).getAgentIdentifier(),
+					   getConfigFinder(),
+					   getLDMService().getLDM());
       tasks = UTILAllocate.enumToList (tp.getTasks());
     } 
     catch( Exception ex ) {
-      System.err.println(ex.getMessage());
-      ex.printStackTrace();
+      logger.error ("Got error reading xml file "  + xmlTaskFile, ex);
     }
     return tasks;
   }
