@@ -1483,9 +1483,7 @@ public class InventoryChart extends JPanel
 	    setSelectedIcon(new VertLegendIcon());
 	    setMargin (blankInsets);
 	    setBorderPainted (false);
-	    this.setToolTipText ("Show/Hide Legend");
-
-
+	    this.setToolTipText("Show/Hide Legend");
 	    this.setOpaque(true);
 	}
 
@@ -1515,7 +1513,7 @@ public class InventoryChart extends JPanel
 	    return (checkBoxUIClassID);
 	}
     }
-  static class VertLegendIcon implements Icon {
+    class VertLegendIcon implements Icon {
 	
 	public int getIconHeight() {
 	    return 16;
@@ -1539,7 +1537,7 @@ public class InventoryChart extends JPanel
     }
     
     
-  static class HorzLegendIcon implements Icon {
+    static class HorzLegendIcon implements Icon {
 	    
 	public int getIconHeight() {
 	    return 8;
