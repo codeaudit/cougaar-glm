@@ -29,7 +29,12 @@ import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.LDMService;
 import org.cougaar.core.society.UID;
 
+import org.cougaar.domain.planning.ldm.plan.AspectType;
+import org.cougaar.domain.planning.ldm.plan.AspectValue;
+import org.cougaar.domain.planning.ldm.plan.ContextOfUIDs;
+import org.cougaar.domain.planning.ldm.plan.Preference;
 import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.Verb;
@@ -39,6 +44,7 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.domain.mlm.plugin.UICoordinator;
 
 import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 
 /**
  * Publishes an AssessReadiness task to the logplan every time the button is pressed.
@@ -46,7 +52,7 @@ import org.cougaar.domain.glm.ldm.Constants;
  **/
 public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
 { 
-  /** frame for 1-button UI **/
+  /** frame for UI **/
   private JFrame frame;
 
   /** for feedback to user on whether root GLS was successful **/
@@ -56,9 +62,9 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   protected JButton rescindButton;
 
   protected RootFactory rootFactory;
+  private long rollupSpan = 10;
 
   private IncrementalSubscription assessReadinessSubscription;
-
   private static UnaryPredicate assessReadinessPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
@@ -74,6 +80,17 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   };
 
 
+  private IncrementalSubscription oplanSubscription;
+  private static UnaryPredicate oplanPredicate = new UnaryPredicate() {
+    public boolean execute(Object o) {
+      if (o instanceof Oplan) {
+	return true;
+      }
+      return false;
+    }
+  };
+
+
   // called by introspection
   public void setLDMService(LDMService service) {
     rootFactory = service.getFactory();
@@ -82,6 +99,8 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   protected void setupSubscriptions() 
   {	
     assessReadinessSubscription = (IncrementalSubscription) blackboard.subscribe(assessReadinessPredicate);
+    oplanSubscription = (IncrementalSubscription) blackboard.subscribe(oplanPredicate);
+
     // refill contributors Collection on rehydrate
     processAdds(assessReadinessSubscription.getCollection());
 
@@ -107,7 +126,26 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
 	processDeletes(deletes);
       }
     }
+    
+    if (oplanSubscription.hasChanged()) {
+      if (oplanSubscription.size() > 0) 
+	if (!arButton.isEnabled())
+	  arButton.setEnabled(true);
+      else
+	arButton.setEnabled(false);
+    }
+  }
 
+  private long getOplanStartTime() {
+    // Yes, I know there can be more than one Oplan. I'll deal with it if I have time
+    Oplan oplan = (Oplan) oplanSubscription.iterator().next();
+    return oplan.getCday().getTime();
+  }
+
+  private UID getOplanUID() {
+    // Yes, I know there can be more than one Oplan. I'll deal with it if I have time
+    Oplan oplan = (Oplan) oplanSubscription.iterator().next();
+    return oplan.getUID();
   }
 
   private void createGUI() {
@@ -115,6 +153,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     JPanel panel = new JPanel((LayoutManager) null);
     // Create the button
     arButton = new JButton("Publish AssessReadiness Task");
+    arButton.setEnabled(false);
     label = new JLabel("No AssessReadiness task have been published.");
     // Register a listener for the check box
     ARButtonListener myARListener = new ARButtonListener();
@@ -154,6 +193,18 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     blackboard.openTransaction();
     NewTask task = rootFactory.newTask();
     task.setVerb(Constants.Verb.AssessReadiness);
+    
+    Vector prefs = new Vector(2);
+    Preference p = rootFactory.newPreference(AspectType.START_TIME, 
+					     ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME, getOplanStartTime())));
+
+    prefs.add(p);
+    p = rootFactory.newPreference(AspectType.INTERVAL,
+				  ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.INTERVAL, rollupSpan)));
+    prefs.add(p);
+
+    task.setPreferences(prefs.elements());
+    task.setContext(new ContextOfUIDs(getOplanUID()));
     blackboard.publishAdd(task);
     blackboard.closeTransaction(false);
     updateLabel();
@@ -191,6 +242,23 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     for (Iterator it = deletes.iterator(); it.hasNext();) {
       Task t = (Task) it.next();
       updateLabel();
+    }
+  }
+
+  // found by introspection
+  public void setParameter(Object param) {
+    System.out.println("InjectAssessReadiness.setParameter()");
+    for (Iterator paramIt = ((Collection)param).iterator(); paramIt.hasNext();) {
+      String sParam = (String)paramIt.next();
+      int sep = sParam.indexOf('=');
+      if (sep > 0) {
+        String name=sParam.substring(0, sep).trim();
+        String val=sParam.substring(sep+1).trim();
+	if (name.equalsIgnoreCase("rollupspan"))
+	  rollupSpan = Long.parseLong(val);
+	else
+	  System.out.println("InjectAssessReadinessGUIPlugin.parseParameters() unexpected parameter " + sParam);
+      }
     }
   }
 }
