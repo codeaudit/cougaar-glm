@@ -76,7 +76,6 @@ import java.util.Hashtable;
  * Displays a DOM document in a tree control.
  *
  * @author  Andy Clark, IBM
- * @version
  */
 public class DOMTree
     extends JTree 

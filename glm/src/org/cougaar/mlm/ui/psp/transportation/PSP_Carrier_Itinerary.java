@@ -622,7 +622,7 @@ public class PSP_Carrier_Itinerary extends PSP_BaseAdapter implements PlanServic
 
   /**
    * Get default TOPS carrier itinerary.  
-   * @see #addDetailedItinerary()
+   * @see #addDetailedItinerary
    */
   protected static void addDefaultItinerary(
       MyPSPState myState,
