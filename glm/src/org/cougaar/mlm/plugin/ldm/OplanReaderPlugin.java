@@ -377,7 +377,9 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
 	logger.debug(getAgentIdentifier() + ".execute: selfOrgs sub is " + mySelfOrgs + ((mySelfOrgs != null) ? (" and not changed. It has " + mySelfOrgs.size() + " elements.") : " so must have done processOrgAssets."));
     }
 
-    if (glsSubscription != null && glsSubscription.hasChanged()) {
+    if ((glsSubscription != null) && 
+	(!glsSubscription.isEmpty()) &&
+	(glsSubscription.hasChanged())) {
       if (logger.isDebugEnabled())
 	logger.debug(getAgentIdentifier() + ".execute: have a changed glsSub - will do requestOplans");
       // It is very hard to process gls tasks incrementally because of
