@@ -41,6 +41,7 @@ import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.ldm.policy.ACRPolicy;
 import org.cougaar.domain.glm.plugins.TaskUtils;
 import org.cougaar.domain.glm.plugins.TimeUtils;
+import org.cougaar.domain.glm.plugins.MaintainedItem;
 
 /**
  * Watch for supply tasks for MEI consumers/sonsumed and estimate the
@@ -89,13 +90,13 @@ public class ConsumptionAssessorPlugIn extends SimplePlugIn {
    * consumer and consumed assets.
    **/
   private static class Bucket implements java.io.Serializable {
-    Asset consumer;
+    MaintainedItem consumer;
     Asset consumed;
     public Bucket(Task task) {
       consumer = getConsumer(task);
       consumed = getConsumed(task);
     }
-    public Bucket(Asset consumer, Asset consumed) {
+    public Bucket(MaintainedItem consumer, Asset consumed) {
       this.consumer = consumer;
       this.consumed = consumed;
     }
@@ -142,6 +143,15 @@ public class ConsumptionAssessorPlugIn extends SimplePlugIn {
           PrepositionalPhrase pp = (PrepositionalPhrase) e.nextElement();
           String prep = pp.getPreposition();
           if (prep.equals(Constants.Preposition.MAINTAINING)) {
+	    try {
+	      MaintainedItem item = (MaintainedItem)pp.getIndirectObject();
+	      if (!(item.getMaintainedItemType().equals("Inventory"))) {
+		  return true;
+	      }
+	    } catch (ClassCastException exc) {
+	      return false;
+	    }
+		  
             if (pp.getIndirectObject() instanceof Inventory) return false;
             maintainingOk = true;
           } else if (prep.equals(Constants.Preposition.FOR)) {
@@ -249,9 +259,7 @@ public class ConsumptionAssessorPlugIn extends SimplePlugIn {
           Double newFactor = (Double) alert.getAlertParameters()[FACTOR_PARAM].getParameter();
           ACRPolicy policy = (ACRPolicy) theLDMF.newPolicy(ACRPolicy.class.getName());
           try {
-            policy.setConsumerTypeIdentification(bucket.consumer
-                                                 .getTypeIdentificationPG()
-                                                 .getTypeIdentification());
+            policy.setConsumerTypeIdentification(bucket.consumer.getTypeIdentification());
             policy.setConsumedTypeIdentification(bucket.consumed
                                                  .getTypeIdentificationPG()
                                                  .getTypeIdentification());
@@ -315,8 +323,8 @@ public class ConsumptionAssessorPlugIn extends SimplePlugIn {
     }
   }
 
-  private static Asset getConsumer(Task task) {
-    return (Asset) task.getPrepositionalPhrase(Constants.Preposition.MAINTAINING)
+  private static MaintainedItem getConsumer(Task task) {
+    return (MaintainedItem) task.getPrepositionalPhrase(Constants.Preposition.MAINTAINING)
       .getIndirectObject();
   }
 
@@ -424,7 +432,7 @@ public class ConsumptionAssessorPlugIn extends SimplePlugIn {
     removeAlert(bucket);
     Double newFactor = new Double(newAdjustmentFactor);
     Object[] args = new Object[] {
-      bucket.consumer.getTypeIdentificationPG().getNomenclature(),
+      bucket.consumer.getNomenclature(),
       bucket.consumed.getTypeIdentificationPG().getNomenclature(),
       new Double(projectedRate),
       new Double(apparentRate),
