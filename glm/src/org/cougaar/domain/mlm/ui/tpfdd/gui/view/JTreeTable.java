@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/JTreeTable.java,v 1.2 2001-01-20 02:08:43 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/JTreeTable.java,v 1.3 2001-02-14 21:12:09 wseitz Exp $ */
 
 /*
    Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -336,6 +336,8 @@ public class JTreeTable extends JTable implements ActionListener, SwingUpdate
 			    query = new QueryData();
 			    String[] unitNames = { node.getUnitName() };
 			    query.setUnitNames(unitNames);
+			    int nodeTypes[] = { TaskNode.ITINERARY, TaskNode.ITINERARY_LEG };
+			    query.setNodeTypes(nodeTypes);
 			    int sourceType = node.getSourceType();
 			    
 			    if ( sourceType == TaskNode.CARRIER_TYPE ) {
@@ -348,8 +350,20 @@ public class JTreeTable extends JTable implements ActionListener, SwingUpdate
 				query.setCargoTypes(cargoTypes);
 				query.setCargoIncluded(true);
 			    }
-			    int nodeTypes[] = { TaskNode.ITINERARY, TaskNode.ITINERARY_LEG };
-			    query.setNodeTypes(nodeTypes);
+			    else if ( sourceType == TaskNode.ITINERARY_LEG || sourceType == TaskNode.ITINERARY) {
+				String[] cargoTypes = { node.getDirectObjectType() };
+				String[] cargoNames = { node.getDirectObjectName() };
+				query.setCargoNames(cargoNames);
+				query.setCargoTypes(cargoTypes);
+				query.setCargoIncluded(true);
+			    }
+			    else if (sourceType == TaskNode.BY_CARRIER_TYPE) {
+				query.setCargoIncluded(true);
+				//query.setCarrierIncluded(true);
+			    }
+			    else if (sourceType == TaskNode.BY_CARGO_TYPE) {
+				query.setCargoIncluded(true);
+			    }
 			    parentView.newView(true, source == getTPFDDAndLogPlanItem(), query, clusterCache, true);
 			}
 			else {
