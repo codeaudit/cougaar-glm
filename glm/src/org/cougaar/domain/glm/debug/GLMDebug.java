@@ -34,16 +34,23 @@ public class GLMDebug {
     private PrintStream outstream_ = System.err;
     private PrintWriter logstream_ = null;
     
-
+    public final static int   ERROR_LEVEL = 8;
+    public final static int CONCISE_LEVEL = 4;
+    public final static int   DEBUG_LEVEL = 2;
+    public final static int     LOG_LEVEL = 1;
+    private final static int   DFLT_LEVEL = 8;
+    private final static int    ALL_LEVEL = 0;
+    private final static int   NONE_LEVEL = 9;
+    
     /** Property name 'debug_messages'. Values true/false */
-    public final static String debug_messages_property_name  = "glm_debug_messages"; 
+    public final static String DEBUG_MESSAGES_PROP  = "glm_debug_messages"; 
     /** Property name 'output_stream'. Values error/standard */
     public final static String output_stream                 = "glm_output_stream"; 
     /** Property name 'log_file'.  Value <file name>.*/
     public final static String log_file                      = "glm_log_file";  
     
     private static GLMDebug debug_ = null;
-
+    private static String delayedSeparatorMessage = null;
 
     private GLMDebug()
     {
@@ -86,32 +93,49 @@ public class GLMDebug {
     }
 
     private final static int setDebugMessages () {
-	String val;
-	int result = 1000;
+        String val = null;
 	try {
-	    val = System.getProperty(debug_messages_property_name);
-	    if (val != null) {
-		//System.err.println("System property '"+debug_messages_property_name+"' = "+val);
-	        if (val.equals("true")) {
-		    result = 0;
-		} else {
-		    try {
-			result =  Integer.parseInt(val);
-		    } catch (Exception e) {
-			//
-		    }
-		}
-	    }
-	} catch (SecurityException se) {
-	    System.err.println(se.toString());
+            val = System.getProperty(DEBUG_MESSAGES_PROP);
+	    if (val == null) return DFLT_LEVEL;
+            if (val.equals("true"))    return     ALL_LEVEL;
+            if (val.equals("all"))     return     ALL_LEVEL;
+            if (val.equals("error"))   return   ERROR_LEVEL;
+            if (val.equals("debug"))   return   DEBUG_LEVEL;
+            if (val.equals("concise")) return CONCISE_LEVEL;
+            if (val.equals("log"))     return     LOG_LEVEL;
+            if (val.equals("none"))    return    NONE_LEVEL;
+            if (val.equals("false"))   return    DFLT_LEVEL;
+            return Integer.parseInt(val);
+
+	} catch (NumberFormatException nfe) {
+            System.err.println("Bad system property '"
+                               + DEBUG_MESSAGES_PROP
+                               + "' = "
+                               + val);
+ 	} catch (SecurityException se) {
 	    se.printStackTrace();
 	}
-	return result;
+	return DFLT_LEVEL;
     }
 
-    public final static  boolean printMessages()
+    public final static boolean printMessages()
     {
-	return (debug_messages_ < 1);
+	return (debug_messages_ <= DEBUG_LEVEL);
+    }
+
+    public final static boolean printDebug()
+    {
+	return (debug_messages_ <= DEBUG_LEVEL);
+    }
+
+    public final static boolean printError()
+    {
+	return (debug_messages_ <= ERROR_LEVEL);
+    }
+
+    public final static boolean printLogging()
+    {
+	return (debug_messages_ <= LOG_LEVEL);
     }
 
     public final static boolean printMessages(int p)
@@ -177,6 +201,10 @@ public class GLMDebug {
      * @param arg         string to print 
      * @param priority 
      */
+    public final static void DEBUG(int priority, String class_name, ClusterIdentifier cid, String arg) {
+        DEBUG(class_name, cid, arg, priority);
+    }
+
     public final static void DEBUG(String class_name, ClusterIdentifier cid, String arg, int priority)
     {    
 	if (debug_ == null)
@@ -213,8 +241,26 @@ public class GLMDebug {
     
     private static void outputLine(String hdr, String class_name, ClusterIdentifier cid, String arg) 
     {
+        if (delayedSeparatorMessage != null) {
+            debug_.getOutputStream().println();
+            debug_.getOutputStream().println(delayedSeparatorMessage);
+            debug_.getOutputStream().println();
+            delayedSeparatorMessage = null;
+        }
 	debug_.getOutputStream().println(hdr+" "+class_name +": (" +(cid != null ? cid.toString():"<>") + ") "+arg);
+    }
 
+    public static void setDelayedSeparator(String msg) {
+        delayedSeparatorMessage = msg;
+    }
+    
+    public static void clearDelayedSeparator(String msg) {
+        if (delayedSeparatorMessage == null) {
+            debug_.getOutputStream().println();
+            debug_.getOutputStream().println(msg);
+            debug_.getOutputStream().println();
+        }
+        delayedSeparatorMessage = null;
     }
     
     private final static void logToFile(String class_name, ClusterIdentifier cid, String arg)
