@@ -357,6 +357,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
     // Use the same domain name for all org assets now
     Organization org = (Organization)getFactory().createAsset("Organization");
     org.initRelationshipSchedule();
+    org.setLocal(false);
   	
     ((NewTypeIdentificationPG)org.getTypeIdentificationPG()).setTypeIdentification(UTC);
 
@@ -600,6 +601,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 
                 org = (Organization)getFactory().createAsset("Organization");
                 org.initRelationshipSchedule();
+                org.setLocal(false);
 
                 NewTypeIdentificationPG typeIdPG = 
                   (NewTypeIdentificationPG)org.getTypeIdentificationPG();
@@ -665,6 +667,8 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
           getFactory().newRelationship(Constants.Role.SELF, org, org,
                                        ETERNITY);  
         org.getRelationshipSchedule().add(selfRelationship);
+        org.setLocal(true);
+
         publish(org);
       	selfOrg = org;
       }

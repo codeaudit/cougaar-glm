@@ -349,7 +349,9 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
 
     // Use the same domain name for all org assets now
     Organization org = (Organization)getFactory().createAsset("Organization");
-  	
+    org.initRelationshipSchedule();  	
+    org.setLocal(false);
+
     ((NewTypeIdentificationPG)org.getTypeIdentificationPG()).setTypeIdentification(UTC);
 
     NewItemIdentificationPG itemIdProp = 
@@ -514,6 +516,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
 
                 org = (Organization)getFactory().createAsset("Organization");
                 org.initRelationshipSchedule();
+                org.setLocal(false);
 
                 NewTypeIdentificationPG typeIdPG = 
                   (NewTypeIdentificationPG)org.getTypeIdentificationPG();
@@ -589,9 +592,11 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
           getFactory().newRelationship(Constants.Role.SELF, org, org,
                                        ETERNITY);  
         org.getRelationshipSchedule().add(selfRelationship);
+        org.setLocal(true);
+
         publish(org);
       	selfOrg = org;
-      }
+      } 
 
       // Closing BufferedReader
       if (input != null)
