@@ -35,7 +35,6 @@ public class QueryRequestImpl
                           UnaryPredicate localPredicate,
                           ClusterIdentifier sourceCid,
                           ClusterIdentifier requestingCid) {
-    System.out.println(99);
     _requestPredicate = requestPredicate;
     _localPredicate = localPredicate;
     _sourceCid = sourceCid;
