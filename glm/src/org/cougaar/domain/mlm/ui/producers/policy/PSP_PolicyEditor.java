@@ -155,6 +155,7 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
     
     // enter subscription which causes policy editor
     // to be invoked and make its changes
+    psc.getServerPlugInSupport().openLogPlanTransaction();
     Subscription subscription = 
       psc.getServerPlugInSupport().subscribe(this, xmlPredicate);
     Collection container = 
@@ -167,6 +168,7 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
     }
     // unsubscribe, don't need this subscription any more
     psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+    psc.getServerPlugInSupport().closeLogPlanTransaction();
 
     Vector policies = convertToUIPolicyInfos(ldmPolicies.elements());
 
