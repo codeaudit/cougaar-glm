@@ -240,6 +240,9 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
     return size;
   }
 
+  private boolean noMonths;
+  private boolean noDays;
+  private boolean noAMPM;
   private boolean noHours;
   private boolean noMinutes;
   private boolean noSeconds;
@@ -275,10 +278,13 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
     }
     g.setFont(font);
     g.fillRect(0, 0, TOTAL_WIDTH, TOTAL_HEIGHT);
-    synchronized (calendar) {
-      noSeconds = theRate > 200.0;
-      noMinutes = theRate > 60.0 * 200.0;
-      noHours   = theRate > 60.0 * 60.0 * 200.0;
+    synchronized (calendar)  {
+      noSeconds = theRate >                                   120.0; // No more than 2 revs/sec
+      noMinutes = theRate >                            60.0 * 120.0; // No more than 2 revs/sec
+      noHours   = theRate >                     12.0 * 60.0 * 120.0; // No more than 2 revs/sec
+      noAMPM    = theRate >               2.0 * 12.0 * 60.0 * 120.0; // No more than 4 blinks/sec
+      noDays    = theRate >        30.0 * 2.0 * 12.0 * 60.0 * 120.0; // No more than 60 days/sec
+      noMonths  = theRate > 12.0 * 30.0 * 2.0 * 12.0 * 60.0 * 120.0; // No more than 24 months/sec
       if (noHours) {
         digitalClock = noHoursClockFormat.format(calendar.getTime());
       } else if (noMinutes) {
@@ -306,7 +312,7 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
       dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
       daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
       if (paintCalendar) drawCalendar(g);
-      drawClock(g);
+      if (!noAMPM) drawClock(g);
     }
   }
 
@@ -327,28 +333,35 @@ public class TimeGUI extends JPanel implements ActionListener, Runnable {
     
   private void drawCalendar(Graphics g) {
     g.setColor(Color.black);
-    String title = MONTH_NAMES[month] + " " + year;
+    String title;
+    if (noMonths) {
+      title = Integer.toString(year);
+    } else {
+      title = MONTH_NAMES[month] + " " + year;
+    }
     int tx = XM + (CALENDAR_WIDTH - fm.stringWidth(title)) / 2;
     g.drawString(title, tx, baseline);
-    for (int day = 1; day <= daysInMonth; day++) {
-      int ix = dayOfWeekOfFirstDay + day - 1;
-      int row = ix / 7;
-      int col = ix % 7;
-      int x = XM + COLUMN_WIDTH * col;
-      int y = YM + ROW_HEIGHT + ROW_HEIGHT * row;
-      String dayString = "  ";
-      if (day < 10) {
-        dayString = " " + day;
-      } else {
-        dayString = "" + day;
-      }
-      if (day == dayOfMonth) {
-        g.fillRect(x, y + 2, COLUMN_WIDTH, ROW_HEIGHT);
-        g.setColor(Color.white);
-        g.drawString(dayString, x, y + baseline);
-        g.setColor(Color.black);
-      } else {
-        g.drawString(dayString, x, y + baseline);
+    if (!noDays) {
+      for (int day = 1; day <= daysInMonth; day++) {
+        int ix = dayOfWeekOfFirstDay + day - 1;
+        int row = ix / 7;
+        int col = ix % 7;
+        int x = XM + COLUMN_WIDTH * col;
+        int y = YM + ROW_HEIGHT + ROW_HEIGHT * row;
+        String dayString = "  ";
+        if (day < 10) {
+          dayString = " " + day;
+        } else {
+          dayString = "" + day;
+        }
+        if (day == dayOfMonth) {
+          g.fillRect(x, y + 2, COLUMN_WIDTH, ROW_HEIGHT);
+          g.setColor(Color.white);
+          g.drawString(dayString, x, y + baseline);
+          g.setColor(Color.black);
+        } else {
+          g.drawString(dayString, x, y + baseline);
+        }
       }
     }
   }
