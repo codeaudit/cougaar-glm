@@ -835,6 +835,10 @@ public abstract class InventoryManager extends InventoryProcessor {
 		goalLevelMultiplier_ = multiplier;
 		changed = true;
 	    }
+	    if (pol.hasFillToCapacityRule()) {
+		inventoryPlugIn_.setFillToCapacity(supplyType_, pol.getFillToCapacity());
+		changed = true;
+	    }
             if (pol.hasSwitchoverRule()) {
                 ProjectionWeight newWeight =
                     new ProjectionWeightImpl(pol.getWithdrawSwitchoverDay(),

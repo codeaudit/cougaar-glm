@@ -62,9 +62,11 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
         Vector invBins = new Vector();
         UnaryPredicate dueOutPredicate;
 	ProjectionWeight projectionWeight;
+	boolean fillToCapacity;
         public InventoryTypeHashEntry(UnaryPredicate predicate, ProjectionWeight weight) {
             dueOutPredicate = predicate;
 	    projectionWeight = weight;
+	    fillToCapacity = false;
         }
     }
 
@@ -439,6 +441,29 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
      **/
     protected ProjectionWeight createProjectionWeight(String supplyType) {
 	return new ProjectionWeightImpl();
+    }
+
+    public boolean getFillToCapacity(String supplyType) {
+	InventoryTypeHashEntry entry = getInventoryTypeHashEntry(supplyType);
+        return entry.fillToCapacity;
+    }
+
+    /**
+     * Set the fillToCapacity for a class of supply. This becomes
+     * the default fillToCapacity for new Inventory Assets for the
+     * class of supply. The fillToCapacity of existing Inventory
+     * assets is updated to the new value (true/false). Override this if
+     * you don't want this behavior.
+     **/
+    public void setFillToCapacity(String supplyType, boolean fill_to_capacity) {
+	InventoryTypeHashEntry entry = getInventoryTypeHashEntry(supplyType);
+	entry.fillToCapacity = fill_to_capacity;
+	Enumeration e = entry.invBins.elements();
+	while (e.hasMoreElements()) {
+            Inventory inv = (Inventory) e.nextElement();
+	    NewInventoryPG invpg = (NewInventoryPG) inv.getInventoryPG();
+	    invpg.setFillToCapacity(fill_to_capacity);
+	}
     }
 
     public synchronized Inventory findOrMakeInventory(String supplytype, Asset resource) {

@@ -31,7 +31,7 @@ import org.cougaar.domain.planning.ldm.policy.StringRuleParameter;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: InventoryPolicy.java,v 1.1 2001-03-01 15:36:49 tomlinso Exp $
+ * @version  $Id: InventoryPolicy.java,v 1.2 2001-03-02 23:49:22 afedyk Exp $
  */
 
 public class InventoryPolicy extends Policy {
@@ -43,6 +43,7 @@ public class InventoryPolicy extends Policy {
     public static final String WithdrawSwitchoverDay = "WithdrawSwitchoverDay";
     public static final String RefillSwitchoverDay = "RefillSwitchoverDay";
     public static final String TurnOffProjections = "TurnOffProjections";
+    public static final String FillToCapacity = "FillToCapacity";
 
     public InventoryPolicy() {
 	super("DaysOnHandPolicy");
@@ -174,6 +175,26 @@ public class InventoryPolicy extends Policy {
 	} catch(RuleParameterIllegalValueException ex) {
 	    System.out.println(ex);
 	}
+    }
+
+    public boolean getFillToCapacity() {
+	BooleanRuleParameter param = (BooleanRuleParameter)
+	    Lookup(FillToCapacity);
+	return ((Boolean)(param.getValue())).booleanValue();
+    }
+
+    public void setFillToCapacity(boolean fill_to_capacity) {
+	BooleanRuleParameter param = (BooleanRuleParameter)
+	    Lookup(FillToCapacity);
+	try {
+	    param.setValue(new Boolean(fill_to_capacity));
+	}  catch(RuleParameterIllegalValueException ex) {
+	    System.out.println(ex);
+	}
+    }
+
+    public boolean hasFillToCapacityRule() {
+	return Lookup(FillToCapacity) != null;
     }
 
     public boolean hasSwitchoverRule() {
