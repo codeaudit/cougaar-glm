@@ -66,7 +66,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	recordCustomer(taskConsumerName(task));
     }
 
-    public String taskConsumerName(Task task){
+    private String taskConsumerName(Task task){
 	PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
 	if (pp == null) {
 	return "unknown consumer";
@@ -141,7 +141,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
     // Hashtable - keys asset id (nsn), elements array of levels 
     // filled in from file during initialization.  Used to create inventories as needed.
-    public Hashtable inventoryInitHash_ = new Hashtable();
+    protected Hashtable inventoryInitHash_ = new Hashtable();
 
     /** key is type id, value is an Inventory */
     // cleared in initInventories() and added to initInventories and publishInventories
@@ -655,7 +655,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     }
   }
 
-    void stashInventoryInformation(String type, Enumeration initInv){
+  private void stashInventoryInformation(String type, Enumeration initInv){
 	String line;
 	String item = null;
 	double capacity, level, erq, min_reorder;
