@@ -56,12 +56,21 @@ public class AlpineAspectType implements AspectType {
       public int getKey() { return DEMANDRATE; }
       public String getName() { return "DEMANDRATE"; }
       public AspectValue newAspectValue(Object o) { return AspectRate.create(DEMANDRATE,o); }
+      public AspectValue newAspectValue(long o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
+      public AspectValue newAspectValue(double o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
+      public AspectValue newAspectValue(float o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
+      public AspectValue newAspectValue(int o) { throw new IllegalArgumentException("Cannot make numeric DEMANDRATE AspectValues"); }
+
     };
   /** Start time of given Task **/
   public static final Factory DemandMultiplier = new Factory () { 
       public int getKey() { return DEMANDMULTIPLIER; }
       public String getName() { return "DEMANDMULTIPLIER"; }
       public AspectValue newAspectValue(Object o) { return FloatAspectValue.create(DEMANDMULTIPLIER,o); }
+      public AspectValue newAspectValue(long o) { return FloatAspectValue.create(DEMANDMULTIPLIER, (float) o); }
+      public AspectValue newAspectValue(double o) { return FloatAspectValue.create(DEMANDMULTIPLIER,(float) o); }
+      public AspectValue newAspectValue(float o) { return FloatAspectValue.create(DEMANDMULTIPLIER,o); }
+      public AspectValue newAspectValue(int o) { return FloatAspectValue.create(DEMANDMULTIPLIER, (float)o); }
     };
 
   static {
