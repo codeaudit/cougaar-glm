@@ -762,9 +762,9 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected boolean updateDaysOnHandPolicy(Enumeration policies) {
 	DaysOnHandPolicy pol;
 	boolean changed = false;
-	printDebug("updateDaysOnHandPolicy(), Days On Hand Policy for "+supplyType_+". DaysOnHand: "+daysOnHand_+
-		   ", Days Forward: "+daysForward_+", Days Backward: "+daysBackward_+", Window size: "+
-		   (daysForward_+daysBackward_));
+//  	printDebug("updateDaysOnHandPolicy(), Days On Hand Policy for "+supplyType_+". DaysOnHand: "+daysOnHand_+
+//  		   ", Days Forward: "+daysForward_+", Days Backward: "+daysBackward_+", Window size: "+
+//  		   (daysForward_+daysBackward_));
 	while (policies.hasMoreElements()) {
 	    pol = (DaysOnHandPolicy)policies.nextElement();
 	    int days = pol.getDaysOnHand();
