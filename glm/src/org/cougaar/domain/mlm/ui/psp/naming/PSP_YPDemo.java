@@ -137,7 +137,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         }
 
         String GETLINE = query_parameters.getInputLines()[0];
-        System.out.println("[PSP_ExternalQuery] GETLINE=" + GETLINE);
+        //System.out.println("[PSP_ExternalQuery] GETLINE=" + GETLINE);
         QueryObject qObject =null;
         if( session.getQueryObject() == null) {
              qObject = new QueryObject();
@@ -206,35 +206,11 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                 }}
           );
 
-          //
-          // Updating Session Attribute (Query) List
-          //
-          session.getQueryObject().setEntries(attributesMap);
+        //
+        // Updating Session Attribute (Query) List by replacing the attributesMap
+        //
+        session.getQueryObject().setEntries(attributesMap);
 
-
-        /**
-        // WHERE THE AgentRole SEARCH ATTRIBUTES GET COMPILED into Session.
-        int counter=0;
-        Set keys = attributesMap.keySet();
-        Object [] keysArray = keys.toArray();
-        for(int i=0; i< keysArray.length; i++) {
-             String key = (String)keysArray[i];
-             Vector attsVec = (Vector)attributesMap.get(key);
-             Object[] attArray = attsVec.toArray();
-             for(j=0; j< attArray.length; j++) {
-                  String eachAtt = (String)attArray[j];
-             }
-        **/
-
-        /**
-              String ar = (String)lst.get(i);
-              if( session.getQueryObject().getEntries().containsKey( ar.toString() ) == false) {
-                   counter ++;
-                   session.getQueryObject().getEntries().put( ar.toString(), ar);
-              }
-        **/
-
-        //}
         if( attributesMap.size() > 0 ) {
             session.addHeader("Found " + attributesMap.size() + " search attributes.");
         } else session.addHeader("No search attributes updated.");
@@ -283,8 +259,6 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                   Collection relations = rs.getMatchingRelationships(getAllPredicate() );
                   Object[] arr  = relations.toArray();
 
-                  //
-                  //
                   BasicAttributes attributes = new BasicAttributes();
                   session.add("<TABLE>");
                   for(int i=0; i< relations.size(); i++){
@@ -302,7 +276,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                   session.add("</TABLE>");
                   session.doPrepend();
 
-                  YPDemoJNDI.createLookupDirectory_andBindObject(
+                  YPDemoJNDI.createORLookupDirectory_andAttributeObject(
                                      "Agents", og.getItemIdentificationPG().getNomenclature(),
                                      "Roles",
                                      new AgentRole("http://www.ultralog.net"),
@@ -355,6 +329,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
           if( ind3 > -1) {
               //qObject.allRoles=true;
               session.addHeader("List everything (JNDI directories and contents).");
+              session.add("<I>Orange = Directories; Yellow = Objects; Pink = Attributes</I>");
               session.add( YPDemoJNDI.describeAllDirContexts( nservice ) );
               session.doPrepend();
           }
@@ -414,18 +389,17 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         out.println("<center><h1><Font color=GREEN>JNDI Yellow Pages Demonstration Viewer</font></h1></center>");
         out.println("<center><h2><Font color=GREEN SIZE=-1>Your browser view is currently with respect to Cluster = "
                                                 + cluster_id + "</font></h2></center>");
-        //out.println("<center><h2><Font color=RED><I>DRAFT VERSION: 17.AUGUST.2001</I></font></h2></center>");
 
         out.println("<P>");
-        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>To change your cluster view, select links below</FONT></I></P>");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>To change your agent view, select links below</FONT></I></P>");
         out.println(linksToOtherClusters(query_parameters, psc));
 
         // BUTTON 1 ------------------
 
-        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Get queryable attributes...' ");
-        out.println("to update query attributes selection for search.  You need to do this each time you update YP (e.g. 'Add/Update Yellow Pages...')");
-        out.println("as well as each time you change view (to new Agent).</P></FONT></I>");
-
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select \"Get queryable attributes...\" ");
+        out.println("to fetch query attributes from the YP.  Fetched attributes appear below the \"Search Yellow Pages...\" as check boxes.");
+        out.println("You need to do this each time you update YP (e.g. \"Add/Update Yellow Pages...\").");
+        out.println("Note, that unlike with \"Add/Update...\" below, this will get <und>all</und> the Role attributes entered in the YP at this moment.</P></FONT></I>");
         out.println("<div align=center>");
         out.println("<input type=submit name="+BUTTON_GET_YP_ATTRIBUTES +" value=\"Get queryable attributes from Yellow Pages\">");
         out.println("</div>");
@@ -436,10 +410,10 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         // BUTTON 2 ------------------
 
         out.println("<P>");
-        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Add/Update Yellow Pages...' to update <B>this</B> Cluster's JNDI entries.");
-        out.println("Note that updates are only with respect to current Cluster.");
-        out.println("To illustrate, why don't you navigate to each cluster and update the Yellow Pages");
-        out.println("with its attributes.  Query at each increment note the additions using 'Search Yellow Pages...'</P></FONT></I>");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select \"Add/Update Yellow Pages...\" to update <B>this</B> Cluster's JNDI entries.");
+        out.println("Note that only the Roles of the current agent (this view) will be added.");
+        out.println("You will need to \"Add/Update...\" individually for each agent you wish to add to the YP (use the agent links above to navigate to each agent in society).");
+        out.println("</P></FONT></I>");
         out.println("<div align=center>");
         out.println("<input type=submit name="+BUTTON_UPDATE_YP_ATTRIBUTES
                                               +" value=\"Add/Update Yellow Pages with attributes for this cluster (  "
@@ -451,14 +425,18 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
 
         // BUTTON 3 ------------------
 
-        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Search Yellow Pages...' to search from all JNDI entries");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select \"Search Yellow Pages...\" to search from all JNDI entries");
         out.println("Select <FONT COLOR=BLUE>CONTEXT NAME</FONT> and <FONT COLOR=MAGENTA>ATTRIBUTE</FONT> pairs below.");
-        out.println("To update list, choose 'Get queryable attributes...' above.");
+        out.println("To update list, choose \"Get queryable attributes...\" above.");
         out.println("</I></FONT></P>");
         out.println("<div align=center>");
         out.println("<input type=submit name="+BUTTON_SUBMIT_YP_SEARCH+" value=\"Search Yellow Pages\">");
         out.println("<P>");
         out.println("</P>");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select appropriate check boxes to constrain your search query.  When you have completed,");
+        out.println("select the \"Search Yellow Pages...\" button. Note that the checkbox \"DISPLAY_ALL/DISPLAY_ALL\" must be checked/un-checked as appropriate: ");
+        out.println("leaving this checked will return all attributes (uncheck it if you want to select using the other checkboxes).");
+        out.println("</I></FONT></P>");
         //
         // START ROLE CHECK BOXES
         //

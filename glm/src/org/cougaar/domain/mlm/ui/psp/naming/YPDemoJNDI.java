@@ -43,24 +43,33 @@ public class YPDemoJNDI
 {
 
     /**
-     *   createLookupDirectory_andBindObject() does the following:
+     *   createORLookupDirectory_andBindObject() does the following:
      *
-     *       0.) Expects Context of 'rootContextName' to exist.
+     *       0.) Looksup Context of 'rootContextName' else Creates
      *       1.) Looks up (or creates if doesn't exist) Context identified by 'rootContextName' beneath 'rootContextName'
-     *       2.) Binds 'bindingObject' of name 'objName' to Context.
+     *       2.) Binds or rebinds 'bindingObject' of name 'objName' to Context.
      *       3.) Attaches 'attributes' to 'bindingObject'
      *
      *   @return true if successful, else false
      */
-     public static boolean createLookupDirectory_andBindObject(
+     public static boolean createORLookupDirectory_andAttributeObject(
                                      String rootContextName, String subContextName,
                                      String objName, Object bindingObject, Attributes attributes,
                                      NamingService nservice )
      {
-          DirContext agents = null;
+          DirContext topDirC = null;
           try{
               DirContext dirc = (DirContext)nservice.getRootContext();
-              agents = (DirContext)dirc.lookup(rootContextName);
+              try{
+                    topDirC = (DirContext)dirc.createSubcontext(rootContextName);
+              } catch( NameAlreadyBoundException ex ) {
+                    //
+                    // catch NameAlreadyBoundException -  directory already exists
+                    // perform a lookup instead of creating new
+                    //
+                    topDirC = (DirContext)dirc.lookup(rootContextName);
+              }
+              //agents = (DirContext)dirc.lookup(rootContextName);
           } catch (NamingException ex) {
               //
               // hmmm, we gotta fail if can't find "Agents" subdirectory
@@ -73,17 +82,26 @@ public class YPDemoJNDI
           DirContext subKontext = null;
           try{
               try{
-                    subKontext = (DirContext)agents.createSubcontext(subContextName);
+                    subKontext = (DirContext)topDirC.createSubcontext(subContextName);
               } catch( NameAlreadyBoundException ex ) {
                     //
                     // catch NameAlreadyBoundException -  directory already exists
                     // perform a lookup instead of creating new
                     //
-                    subKontext = (DirContext)agents.lookup(subContextName);
+                    subKontext = (DirContext)topDirC.lookup(subContextName);
               }
-              System.out.println("Created Subdirectory=" + subKontext.getNameInNamespace());
-              System.out.println("Binding attributes, size=" + attributes.size() );
-              subKontext.bind(objName, bindingObject, attributes );
+              try{
+                  subKontext.bind(objName, bindingObject, attributes );
+              } catch ( NameAlreadyBoundException ex) {
+                  // Prevsious session may have created object and bound it with attributes.
+                  // Lookup this object, and merge attributes.
+                  Attributes attrs = subKontext.getAttributes(objName);
+                  NamingEnumeration nen = attrs.getAll();
+                  while(nen.hasMore()) {
+                       attributes.put((Attribute)nen.next());
+                  }
+                  subKontext.rebind(objName,bindingObject,attributes);
+              }
 
          } catch ( NamingException ex ) {
               //
@@ -94,6 +112,8 @@ public class YPDemoJNDI
          }
           return true;
      }
+
+
 
 
      //###########################################################################
@@ -233,6 +253,9 @@ public class YPDemoJNDI
      }
 
      //###########################################################################
+     //
+     // Private helper method used by collectObjects()
+     //
      private static void collectObjectTraversal( CompositeName tail, NamingEnumeration en,
                                  List returnList,  UnaryPredicate filterPred, NamingService nserve) throws NamingException
      {

@@ -48,36 +48,26 @@ public class DescribeObjectAsHTML {
           String result = new String();
           if( obj instanceof FDSURL) {
                  FDSURL furl = (FDSURL)obj;
-                 result = "<TD BGCOLOR=YELLOW><FONT COLOR=RED SIZE=-1>" + name + "</FONT>:" + furl.myURL + "</TD>";
+                 result = "<TD BGCOLOR=YELLOW><FONT COLOR=RED>" + name + "</FONT>:" + furl.myURL + "</TD>";
           }
           else if( obj instanceof AgentRole) {
                  AgentRole role = (AgentRole)obj;
-                 result = "<TD BGCOLOR=YELLOW><FONT COLOR=RED SIZE=-1>" + name + "</FONT>, namespace=" + role.namespace + "</TD>";
+                 result = "<TD BGCOLOR=YELLOW><FONT COLOR=RED>" + name + "</FONT>, namespace=" + role.namespace + "</TD>";
           }
           else if( obj instanceof NamingDirContext) {
                  NamingDirContext ndircontext = (NamingDirContext)obj;
-                 result = "<TD BGCOLOR=ORANGE><FONT SIZE=-1>" + name + "</FONT></TD>";
+                 result = "<TD BGCOLOR=ORANGE><FONT>" + name + "</FONT></TD>";
           }
           else if( obj instanceof Binding) {
                  Binding binding = (Binding)obj;
-                 result = "<TD BGCOLOR=YELLOW><FONT SIZE=-1>" + binding.getClassName() + "</FONT></TD>";
+                 result = "<TD BGCOLOR=YELLOW><FONT>" + binding.getClassName() + "</FONT></TD>";
           }
-          /**
-          else if( obj instanceof Role ) {
-                 Role role = (Role)obj;
-                 result = "<TD BGCOLOR=YELLOW><FONT SIZE=-1 COLOR=RED>" + role.getName() + "</FONT></TD>";
-          }
-          **/
           else if( obj instanceof Attribute ) {
                  Attribute att = (Attribute)obj;
-                 //try{
-                    result = "<TD BGCOLOR=YELLOW><FONT SIZE=-1 COLOR=RED>" + att.getID() + "</FONT></TD>";
-                 //} catch (NamingException ex){
-                 //   ex.printStackTrace();
-                // }
+                 result = "<TD BGCOLOR=PINK><FONT COLOR=BLACK>" + att.getID() + "</FONT></TD>";
           }
           else{
-                 result = "<TD BGCOLOR=YELLOW><FONT COLOR=RED SIZE=-1>" + name + "</font>:" + obj.getClass().toString() + "</TD>";
+                 result = "<TD BGCOLOR=YELLOW><FONT COLOR=RED>" + name + "</font>:" + obj.getClass().toString() + "</TD>";
           }
           return result;
      }
