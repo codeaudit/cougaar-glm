@@ -33,7 +33,7 @@ import java.util.Vector;
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.glm.debug.*;
 import org.cougaar.domain.glm.execution.common.InventoryReport;
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
@@ -872,7 +872,7 @@ public abstract class InventoryBG implements PGDelegate {
 		new_elements.add(qse);
 	    }
 	}
-	Schedule new_schedule = ALPFactory.newQuantitySchedule(new_elements.elements(), 
+	Schedule new_schedule = GLMFactory.newQuantitySchedule(new_elements.elements(), 
 							       PlanScheduleType.TOTAL_INVENTORY);
 
 	if (ScheduleUtils.isOffendingSchedule(new_schedule)) {
@@ -894,7 +894,7 @@ public abstract class InventoryBG implements PGDelegate {
 	qse = ScheduleUtils.buildQuantityScheduleElement(getDouble(myPG_.getInitialLevel()), start, end);
 	new_elements.add(qse);
 
-	Schedule new_schedule = ALPFactory.newQuantitySchedule(new_elements.elements(), 
+	Schedule new_schedule = GLMFactory.newQuantitySchedule(new_elements.elements(), 
 							       PlanScheduleType.TOTAL_INVENTORY);
 
 	if (ScheduleUtils.isOffendingSchedule(new_schedule)) {

@@ -140,7 +140,7 @@ public class UTILGSSAllocatorPlugIn
    * a FailedAllocation (see UTILAllocate.makeAllocation ()).
    *
    * TOPS does not create any allocations with 
-   * AllocationResults w/ isSuccess = false, but ALP will roll
+   * AllocationResults w/ isSuccess = false, but COUGAAR will roll
    * up the results of a workflow, and create an AllocResult
    * w/ isSuccess = False if it contains a FailedAllocation.
    *

@@ -51,7 +51,7 @@ sub usage {
     print"\t\t[-targetdir outputDiretory]\n";
     print"\t\t| [-cleanup]\n\n";
     print"\tThis script creates a set of Node files to be used together as an\n";
-    print"\tALP Society. The names of the new files are printed to STDOUT.\n";
+    print"\tCOUGAAR Society. The names of the new files are printed to STDOUT.\n";
     print"\n\tThe script creates a set of brigade Node files containing a set of\n";
     print"\tbattalions and an FSB plus a Node file containing a set of Division \n";
     print"\tlevel organizations. The number of brigade Node files created\n";

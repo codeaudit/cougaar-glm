@@ -28,14 +28,14 @@ import org.w3c.dom.Element;
 
 /**
  * The <code>PolicyProducer</code> class retrieves XML for all policy objects
- * from a target ALP cluster, parses the XML into Policies, and fires the
+ * from a target COUGAAR cluster, parses the XML into Policies, and fires the
  * policies to any registered consumers.
  *
  * @author  Nick Pioch, BBN Technologies
  * @version 1.0
  */
 
-public class PolicyProducer extends ThreadedALPProducer {
+public class PolicyProducer extends ThreadedMLMProducer {
 
   /**
    * A constructor for the PolicyProducer, with the target cluster as arg

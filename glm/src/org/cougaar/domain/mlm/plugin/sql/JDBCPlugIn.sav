@@ -30,7 +30,7 @@ import java.io.File;
 
 import java.sql.*;
 
-/** Provide a JDBC binding to an ALP cluster.
+/** Provide a JDBC binding to an COUGAAR cluster.
  * On one side, we present a normal plugin API.  On the other side,
  * we parse a "Query file" and talk to JDBC and a set of QueryHandler 
  * objects.
@@ -188,7 +188,7 @@ public class JDBCPlugIn extends EssentialPlugIn
 
     // other paths
     if (aipath != null) {
-      // $ALP_INSTALL/demo/queries/$base
+      // $COUGAAR_INSTALL/demo/queries/$base
       path = aipath+sep+"demo"+sep+"queries"+sep+base;
       if ((new File(path)).canRead()) return path;
     }

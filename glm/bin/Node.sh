@@ -1,24 +1,24 @@
 #!/bin/sh
 
 # Environment variables
-# ALP_INSTALL_PATH = the head of the alp install.
-# ALP3RDPARTY = a directory containing 3rd party jar files
+# COUGAAR_INSTALL_PATH = the head of the alp install.
+# COUGAAR3RDPARTY = a directory containing 3rd party jar files
 #
-# ALP bootstrapping classpath will be:
-#  $ALP_DEV_PATH	if defined
-#  $ALP_INSTALL_PATH/lib/core.jar
+# COUGAAR bootstrapping classpath will be:
+#  $COUGAAR_DEV_PATH	if defined
+#  $COUGAAR_INSTALL_PATH/lib/core.jar
 #
 # once running, jar files will be searched for in (in order):
-#  -Dalp.class.path 	like classpath
+#  -Dorg.cougaar.class.path 	like classpath
 #  $CLASSPATH		(alp bootstrapping path from above)
-#  $ALP_INSTALL_PATH/lib/*
-#  $ALP_INSTALL_PATH/plugins/*
-#  -Dalp.system.path=$ALP3RDPARTY
-#  $ALP_INSTALL_PATH/sys/*
+#  $COUGAAR_INSTALL_PATH/lib/*
+#  $COUGAAR_INSTALL_PATH/plugins/*
+#  -Dorg.cougaar.system.path=$COUGAAR3RDPARTY
+#  $COUGAAR_INSTALL_PATH/sys/*
 #
 
-source $ALP_INSTALL_PATH/bin/setlibpath.sh
-source $ALP_INSTALL_PATH/bin/setarguments.sh
+source $COUGAAR_INSTALL_PATH/bin/setlibpath.sh
+source $COUGAAR_INSTALL_PATH/bin/setarguments.sh
 
 node="$1"
 shift
@@ -52,10 +52,10 @@ if [ "$OS" = "Linux" ]; then
     #setenv JAVA_COMPILER javacomp
 fi
 
-#set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS -Dalp.message.isLogging=true -Djava.rmi.server.logCalls=true -Dsun.rmi.server.exceptionTrace=true -Dsun.rmi.transport.tcp.readTimeout=150000 "
+#set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS -Dorg.cougaar.core.message.isLogging=true -Djava.rmi.server.logCalls=true -Dsun.rmi.server.exceptionTrace=true -Dsun.rmi.transport.tcp.readTimeout=150000 "
 javaargs="$MYPROPERTIES $MYMEMORY -classpath $LIBPATHS"
 
-if [ "$ALP_DEV_PATH" != "" ]; then
+if [ "$COUGAAR_DEV_PATH" != "" ]; then
     echo java $javaargs org.cougaar.core.society.Node $args
 fi
 

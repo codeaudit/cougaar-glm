@@ -45,7 +45,7 @@ public class GSValueAccessor {
    * GSCapacityConstraint) we MUST return a Double, int, or other 
    * cast-to-Double-able object.
    * 
-   * Code modeled after ALP OrgRTDataPlugIn callSetMethod() method
+   * Code modeled after COUGAAR OrgRTDataPlugIn callSetMethod() method
    */
   private Object callGetMethod(Object o, String unitname) {
     if (o == null)

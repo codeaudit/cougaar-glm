@@ -14,7 +14,7 @@ var treeMenuBgColor    = "#ffffff";       // Color for menu frame background.
 var treeMenuFgColor    = "#000000";       // Color for menu item text.
 var treeMenuHiBg       = "#008080";       // Color for selected item background.
 var treeMenuHiFg       = "#ffffff";       // Color for selected item text.
-var treeMenuRoot       = "ALP Navi-Menu";     // Text for the menu root.
+var treeMenuRoot       = "COUGAAR Navi-Menu";     // Text for the menu root.
 var treeMenuFolders    = 0;               // Sets display of '+' and '-' icons.
 var treeMenuAltText    = true;            // Use menu item text for icon image ALT text.
 

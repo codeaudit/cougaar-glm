@@ -21,7 +21,7 @@ import org.cougaar.domain.planning.ldm.plan.Priority;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
 
-import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.asset.GLMAsset;
 import org.cougaar.domain.glm.ldm.asset.Container;
 import org.cougaar.domain.glm.ldm.asset.PropertyGroupFactory;
 

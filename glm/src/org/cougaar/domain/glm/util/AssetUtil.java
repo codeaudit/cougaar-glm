@@ -42,7 +42,7 @@ import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.util.TimeSpan;
 
 import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.asset.GLMAsset;
 import org.cougaar.domain.glm.ldm.asset.Ammunition;
 import org.cougaar.domain.glm.ldm.asset.CargoShip;
 import org.cougaar.domain.glm.ldm.asset.Consumable;
@@ -78,8 +78,8 @@ import java.util.*;
  * Assets.
  */
 
-public class GLMAsset extends UTILAsset {
-  private static String myName = "GLMAsset";
+public class AssetUtil extends UTILAsset {
+  private static String myName = "AssetUtil";
   private static final long BTWN_AVAIL_TOLERANCE = 3600000l;
   private static double MAX_CUBIC_FT = 1.0d;
   private static double MAX_SQ_FT = 1.0d;
@@ -334,7 +334,7 @@ public static boolean isPallet(Asset asset) {
 				      asset + "\"");
       }
       if (nom.equals ("TOPS_PALLET"))
-	  throw new UTILPlugInException("GLMAsset.isPallet - found TOPS_PALLET.  " + 
+	  throw new UTILPlugInException("AssetUtil.isPallet - found TOPS_PALLET.  " + 
 					"Please use PALLET from Container protos instead!");
       //!!!Hack for AEF...until we figure out the TypeIdentification/Nomenclature problem on AEF's end.
       if ( (nom.indexOf("463L") != -1))
@@ -385,7 +385,7 @@ public static boolean isPallet(Asset asset) {
     }
 
     MovabilityPG mpg = 
-      (MovabilityPG) ((ALPAsset)asset).getMovabilityPG();
+      (MovabilityPG) ((GLMAsset)asset).getMovabilityPG();
     if(mpg != null){
 	String code = mpg.getCargoCategoryCode();
 	if(code != null && CargoCategoryDecoder.isAmmo(code))
@@ -492,7 +492,7 @@ public static boolean isPallet(Asset asset) {
 	boolean tooBig = false;
 
         PhysicalPG ppg = 
-          (PhysicalPG) ((ALPAsset)subobject).getPhysicalPG();
+          (PhysicalPG) ((GLMAsset)subobject).getPhysicalPG();
 	if (ppg != null) {
 	  try {
 	    Volume vol  = ppg.getVolume();
@@ -502,7 +502,7 @@ public static boolean isPallet(Asset asset) {
 		(area.getSquareFeet () > MAX_SQ_FT))
 	      tooBig = true;
 	  } catch (Exception e) {
-	    System.out.println ("GLMAsset.ExpandAsset - ERROR : " +
+	    System.out.println ("AssetUtil.ExpandAsset - ERROR : " +
 				"aggregate asset\n\t" + aggregate + 
 				"\n\thas asset\n\t" +
 				subobject + 
@@ -530,7 +530,7 @@ public static boolean isPallet(Asset asset) {
 	  retval.addElement (asset);
       }
       else {
-	System.out.println ("GLMAsset.ExpandAsset - ERROR : " +
+	System.out.println ("AssetUtil.ExpandAsset - ERROR : " +
 			    "aggregate asset\n\t" + aggregate + 
 			    "\n\thas asset\n\t" +
 			    subobject + 
@@ -611,7 +611,7 @@ public static boolean isPallet(Asset asset) {
     private static Area getArea (Asset asset) {
 	PhysicalPG prop = null;
 	try{
-	  prop = (PhysicalPG) ((ALPAsset)asset).getPhysicalPG();
+	  prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG();
 	}
 	catch(Exception e){
 	    throw new UTILPlugInException("error getting physical property for asset :\"" +
@@ -687,7 +687,7 @@ public static boolean isPallet(Asset asset) {
 
     private static Volume getVolume (Asset asset) {
 	PhysicalPG prop = null;
-	try{ prop = (PhysicalPG) ((ALPAsset)asset).getPhysicalPG(); }
+	try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
 	catch(Exception e){
 	    throw new UTILPlugInException("error getting physical property for asset :\"" +
 					  asset + "\"");
@@ -745,7 +745,7 @@ public static boolean isPallet(Asset asset) {
 
     private static Mass getMass (Asset asset) {
 	PhysicalPG prop = null;
-	try{ prop = (PhysicalPG) ((ALPAsset)asset).getPhysicalPG(); }
+	try{ prop = (PhysicalPG) ((GLMAsset)asset).getPhysicalPG(); }
 	catch(Exception e){
 	    throw new UTILPlugInException("error getting physical property for asset :\"" +
 					  asset + "\"");
@@ -858,7 +858,7 @@ public static boolean isPallet(Asset asset) {
 
     if (most_recent_task == null) {
 
-//        System.err.println("GLMAsset.getCurrentPosition for asset " + 
+//        System.err.println("AssetUtil.getCurrentPosition for asset " + 
 //  			 a.getUID() + " at time " + time + 
 //  			 " found no previous tasks");
       return null;
@@ -1035,7 +1035,7 @@ public static boolean isPallet(Asset asset) {
      **/
     public static boolean isVehicle(Asset a){
       MovabilityPG mpg = 
-        (MovabilityPG) ((ALPAsset)a).getMovabilityPG();
+        (MovabilityPG) ((GLMAsset)a).getMovabilityPG();
       if(mpg == null)
 	return false;
       String code = mpg.getCargoCategoryCode();
@@ -1061,7 +1061,7 @@ public static boolean isPallet(Asset asset) {
      **/
     public static boolean isVehicleOrAircraft(Asset a){
       MovabilityPG mpg = 
-        (MovabilityPG) ((ALPAsset)a).getMovabilityPG();
+        (MovabilityPG) ((GLMAsset)a).getMovabilityPG();
       if(mpg == null)
 	return false;
       String code = mpg.getCargoCategoryCode();

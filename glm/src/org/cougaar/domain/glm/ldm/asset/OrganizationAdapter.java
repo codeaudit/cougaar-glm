@@ -33,7 +33,7 @@ import org.cougaar.util.TimeSpan;
 
 import org.cougaar.domain.glm.ldm.Constants;
 
-public abstract class OrganizationAdapter extends ALPAsset
+public abstract class OrganizationAdapter extends GLMAsset
   implements HasRelationships {
 
   public OrganizationAdapter() { 

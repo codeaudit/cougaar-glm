@@ -127,7 +127,7 @@ public class TPFDDShell extends JApplet implements ActionListener,
      */
     public String getAppletInfo()
     {
-	return "ALP Transportation Movement Visualization Tool (c) 1999-2000 Ascent Technology";
+	return "COUGAAR Transportation Movement Visualization Tool (c) 1999-2000 Ascent Technology";
     }
 
     private LogPlanView getlogPlanView()

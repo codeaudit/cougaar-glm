@@ -1,6 +1,6 @@
 @ECHO OFF
 
-CALL %ALP_INSTALL_PATH%\bin\setlibpath.bat
+CALL %COUGAAR_INSTALL_PATH%\bin\setlibpath.bat
 
 REM Set this to port you want to use for metrics voyager client
 set PORT=7999
@@ -33,8 +33,8 @@ set HOTCOLOR=0,255,0
 REM Color used for no recent activity
 set STATICCOLOR=255,255,255
 
-REM Need to define ALP_INSTALL_PATH, since it's used to look up IP addresses
-set MYPROPERTIES=-Dalp.install.path=%ALP_INSTALL_PATH%
+REM Need to define COUGAAR_INSTALL_PATH, since it's used to look up IP addresses
+set MYPROPERTIES=-Dorg.cougaar.install.path=%COUGAAR_INSTALL_PATH%
 
 set MYARGUMENTS=-port %PORT% -threshold %THRESHOLD% -filtersize %FILTERSIZE% -delay %DELAY% -debug %DEBUG% -test %TEST% -playback %PLAYBACK% -record %RECORD% -hotcolor %HOTCOLOR% -staticcolor %STATICCOLOR%
 

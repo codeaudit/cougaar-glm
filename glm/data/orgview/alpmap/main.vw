@@ -4,7 +4,7 @@
 
 ( 
   %name x y attr 
-  ('ALP Communities'  280 56)
+  ('COUGAAR Communities'  280 56)
   (AEF.VW  152 384  0 0)
   (AMC.VW  408 344  0 0)
   (DLA.VW  400 160  0 0)

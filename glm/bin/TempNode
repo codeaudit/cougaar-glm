@@ -1,8 +1,8 @@
 #!/bin/csh -f
 
-source $ALP_INSTALL_PATH/bin/setlibpath.csh
-set MYDOMAINS="-Dalp.domain.alp=org.cougaar.domain.glm.ALPDomain"
-set MYPROPERTIES="$MYDOMAINS -Dalp.install.path=$ALP_INSTALL_PATH -Duser.timezone=GMT"
+source $COUGAAR_INSTALL_PATH/bin/setlibpath.csh
+set MYDOMAINS="-Dorg.cougaar.domain.alp=org.cougaar.domain.glm.GLMDomain"
+set MYPROPERTIES="$MYDOMAINS -Dorg.cougaar.install.path=$COUGAAR_INSTALL_PATH -Duser.timezone=GMT"
 set MYMEMORY=""
 
 set node = $argv[1]
@@ -17,7 +17,7 @@ else
   set args="-n $node -c $rest"
 endif
 
-if ($?ALP_DEV_PATH) then
+if ($?COUGAAR_DEV_PATH) then
     echo java $MYPROPERTIES -classpath $LIBPATHS $MYCLASSES $args
 endif
 

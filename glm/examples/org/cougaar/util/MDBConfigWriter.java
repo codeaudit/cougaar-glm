@@ -16,7 +16,7 @@ import java.sql.*;
 import java.io.*;
 
 // ConfigWriter program : 
-// Read ALP Organization from database and create
+// Read COUGAAR Organization from database and create
 // <Node>.ini, <Cluster>.ini and <Cluster>-prototype-ini.dat files
 
 // Note that the file can be read from any JDBC driver for this schema, 

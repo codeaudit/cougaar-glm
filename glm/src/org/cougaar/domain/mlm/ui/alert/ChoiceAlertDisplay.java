@@ -135,7 +135,7 @@ public class ChoiceAlertDisplay extends AlertDisplay implements ActionListener {
 
   /**
    * handleChoice - Connect to the URL which is a concatenation
-   * of the ALP clusters host name (localhost), the port (5555), and the Alert
+   * of the COUGAAR clusters host name (localhost), the port (5555), and the Alert
    * PSP.  Starts AlertThread to handle the returned alerts.
    *
    * @param clusterName String specifying the selected cluster

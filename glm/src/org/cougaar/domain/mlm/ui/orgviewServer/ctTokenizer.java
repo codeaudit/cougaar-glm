@@ -16,7 +16,7 @@ import java.util.*;
 
 /**
  * Java CT tokenizer from jmapReader.java   9/1/99
- * Somewhat stripped down for AlpMap usage
+ * Somewhat stripped down for Map usage
  */
 
 public class ctTokenizer {

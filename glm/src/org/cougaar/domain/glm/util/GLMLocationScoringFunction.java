@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMLocationScoringFunction.java,v 1.2 2000-12-20 18:18:38 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMLocationScoringFunction.java,v 1.3 2001-03-29 21:51:22 mthome Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -35,7 +35,7 @@ import java.util.Enumeration;
 /** 
  * Represents a location scoring function - score gets worse (higher or lower?)
  * as straight-line distance from Lat, Lon increases.
- * ?We'd like this to be part of the ALP baseline...?
+ * ?We'd like this to be part of the COUGAAR baseline...?
  */
 
 public class GLMLocationScoringFunction extends ScoringFunction.PreferredValueScoringFunction {

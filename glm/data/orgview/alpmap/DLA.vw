@@ -4,7 +4,7 @@
 
 ( 
   %name x y attr 
-  ('ALP DLA  Community'  256 56)
+  ('COUGAAR DLA  Community'  256 56)
   (CSI  392 352  0 0)
   (DEPOT  192 296  0 0)
   (DLAHQ  248 136  0 0)

@@ -1,9 +1,9 @@
 #!/bin/csh -f
 
-source $ALP_INSTALL_PATH/bin/setlibpath.csh
+source $COUGAAR_INSTALL_PATH/bin/setlibpath.csh
 
 set MYCLASSES="ui.planviewer.stoplight.SupplyController"
-set MYPROPERTIES="-Dalp.install.path=$ALP_INSTALL_PATH"
+set MYPROPERTIES="-Dorg.cougaar.install.path=$COUGAAR_INSTALL_PATH"
 
 set osargs=""
 set os=`uname`

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskModel.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskModel.java,v 1.2 2001-03-29 21:51:31 mthome Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -175,7 +175,7 @@ public class TaskModel extends AbstractTreeTableModel implements TreeTableModel
 
 	if ( node == root ) {
 	    if ( column == 0 )
-		return "ALP Tasks";
+		return "COUGAAR Tasks";
 	    if ( column > 0 && column <= 5 )
 		return "";
 	}

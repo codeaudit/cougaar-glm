@@ -54,7 +54,7 @@ import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
 import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
 import org.cougaar.domain.glm.ldm.Constants;
 
-/** Composes inventory and capacity schedules from ALP log plan objects.
+/** Composes inventory and capacity schedules from COUGAAR log plan objects.
   Note that the getters return null if the schedule requested is null
   or empty.
   */
@@ -131,9 +131,9 @@ public class UIInventoryImpl {
   public Asset getAsset() {return this.asset;}
 
   protected Asset getInsideAsset() {
-      if((asset instanceof ALPAsset) &&
-	 (((ALPAsset) asset).getScheduledContentPG() != null))
-	  return ((ALPAsset)asset).getScheduledContentPG().getAsset();
+      if((asset instanceof GLMAsset) &&
+	 (((GLMAsset) asset).getScheduledContentPG() != null))
+	  return ((GLMAsset)asset).getScheduledContentPG().getAsset();
       else
 	  return this.asset;
   }
@@ -145,10 +145,10 @@ public class UIInventoryImpl {
   public void setAsset(Asset asset) {
     this.asset = asset;
     
-    if((asset instanceof ALPAsset) &&
-       (((ALPAsset) asset).getScheduledContentPG() != null)){
+    if((asset instanceof GLMAsset) &&
+       (((GLMAsset) asset).getScheduledContentPG() != null)){
 
-	Schedule s = ((ALPAsset)asset).getScheduledContentPG().getSchedule();
+	Schedule s = ((GLMAsset)asset).getScheduledContentPG().getSchedule();
 	if (s != null) {
 	    if (s.getScheduleType().equals(PlanScheduleType.TOTAL_CAPACITY)) {
 		if (s instanceof LaborSchedule)
@@ -194,15 +194,15 @@ public class UIInventoryImpl {
 
 //      /** total = onHand + dueOut
 //    private void setTotalSchedule() {
-//      Schedule onHandALPSchedule = getALPSchedule(onHandSchedule);
-//      Schedule dueOutALPSchedule = getALPSchedule(dueOutSchedule);
-//      Schedule total = ScheduleUtilities.addSchedules(onHandALPSchedule,
-//                                                      dueOutALPSchedule);
+//      Schedule onHandCSchedule = getCSchedule(onHandSchedule);
+//      Schedule dueOutCSchedule = getCSchedule(dueOutSchedule);
+//      Schedule total = ScheduleUtilities.addSchedules(onHandCSchedule,
+//                                                      dueOutCSchedule);
 //      if (debug)	{
 //  	System.out.println("Available Schedule");
-//  	printSchedule(onHandALPSchedule);
-//  	System.out.println("Allocated ALP Schedule");
-//  	printSchedule(dueOutALPSchedule);
+//  	printSchedule(onHandCSchedule);
+//  	System.out.println("Allocated COUGAAR Schedule");
+//  	printSchedule(dueOutCSchedule);
 //  	System.out.println("Total Schedule");
 //  	printSchedule(total);
 //      }
@@ -248,9 +248,9 @@ public class UIInventoryImpl {
     */
 
   public String getScheduleType() {
-      if((asset instanceof ALPAsset) &&
-	 (((ALPAsset) asset).getScheduledContentPG() != null)) {
-	  Schedule s = ((ALPAsset)asset).getScheduledContentPG().getSchedule();
+      if((asset instanceof GLMAsset) &&
+	 (((GLMAsset) asset).getScheduledContentPG() != null)) {
+	  Schedule s = ((GLMAsset)asset).getScheduledContentPG().getSchedule();
 	  if (s != null)
 	      return s.getScheduleType();
       }
@@ -307,12 +307,12 @@ public class UIInventoryImpl {
       return getSchedule(onHandSchedule);
   }
 
-  /** Take an ALP schedule and make it into a vector of UIQuantityScheduleElement
+  /** Take an COUGAAR schedule and make it into a vector of UIQuantityScheduleElement
     for serialization.
     */
-  static private Vector scheduleToVector(Schedule ALPSchedule) {
+  static private Vector scheduleToVector(Schedule CSchedule) {
     Vector s = new Vector();
-    Enumeration elements = ALPSchedule.getAllScheduleElements();
+    Enumeration elements = CSchedule.getAllScheduleElements();
     while (elements.hasMoreElements()) {
       QuantityScheduleElement scheduleElement = 
 	(QuantityScheduleElement)elements.nextElement();
@@ -715,15 +715,15 @@ public class UIInventoryImpl {
     public static Schedule makeNonOverlapping(TimeSpanSet inSchedule) {
 	// make an alp schedule so we can use the alp utilities
 	// to make it non-overlapping
-	Schedule tmpALPSchedule = getALPSchedule(inSchedule);
-	if (isOverlappingSchedule(tmpALPSchedule)) {
+	Schedule tmpCSchedule = getCSchedule(inSchedule);
+	if (isOverlappingSchedule(tmpCSchedule)) {
 	    if (debug)  System.out.println("UIInventoryImpl::makeNonOverlapping:IS OVERLAPPING");
-	    tmpALPSchedule =
-		ScheduleUtilities.computeNonOverlappingSchedule(tmpALPSchedule);
+	    tmpCSchedule =
+		ScheduleUtilities.computeNonOverlappingSchedule(tmpCSchedule);
 	} else if (debug) {
 	    System.out.println("UIInventoryImpl::makeNonOverlapping:is NOT Overlapping");
 	}
-	return tmpALPSchedule;
+	return tmpCSchedule;
     }
 
     /** Get the requested due in schedule.
@@ -895,8 +895,8 @@ public class UIInventoryImpl {
 	// to make it non-overlapping
 	if (schedule == null || schedule.size() == 0)
 	    return null;
-	Schedule tmpALPSchedule = getALPSchedule(schedule);
-	return scheduleToNonOverlapVector(tmpALPSchedule);
+	Schedule tmpCSchedule = getCSchedule(schedule);
+	return scheduleToNonOverlapVector(tmpCSchedule);
     }
 
     static private Vector scheduleToNonOverlapVector(Schedule schedule) {
@@ -1033,20 +1033,20 @@ public class UIInventoryImpl {
 
 
   /** Take a schedule of UIQuantityScheduleElements and
-    make it into an ALP schedule
+    make it into an COUGAAR schedule
     */
 
-  private static Schedule getALPSchedule(Collection mySchedule) {
+  private static Schedule getCSchedule(Collection mySchedule) {
     Vector scheduleElements = new Vector();
     for (Iterator it = mySchedule.iterator(); it.hasNext();) {
       UIQuantityScheduleElement s = (UIQuantityScheduleElement)it.next();
-      NewQuantityScheduleElement qse = ALPFactory.newQuantityScheduleElement();
+      NewQuantityScheduleElement qse = GLMFactory.newQuantityScheduleElement();
       qse.setStartTime(s.getStartTime());
       qse.setEndTime(s.getEndTime());
       qse.setQuantity(s.getQuantity());
       scheduleElements.addElement(qse);
     }
-    return ALPFactory.newQuantitySchedule(scheduleElements.elements(),
+    return GLMFactory.newQuantitySchedule(scheduleElements.elements(),
                                        PlanScheduleType.TOTAL_INVENTORY);
   }
 
@@ -1063,7 +1063,7 @@ public class UIInventoryImpl {
 //        return;
 //      }
 
-//      Schedule dueOut = getALPSchedule(dueOutSchedule);
+//      Schedule dueOut = getCSchedule(dueOutSchedule);
 //      Enumeration scheduleElements =
 //        ALPRequestedDueOutSchedule.getAllScheduleElements();
 //      if (!scheduleElements.hasMoreElements()) {

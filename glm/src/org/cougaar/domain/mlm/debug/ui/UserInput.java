@@ -138,7 +138,7 @@ public class UserInput implements ActionListener, Runnable {
     WindowListener windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) { e.getWindow().dispose(); }
     };
-    JFrame frame = new JFrame("ALP User Input");
+    JFrame frame = new JFrame("COUGAAR User Input");
     frame.setForeground(Color.black);
     frame.setBackground(Color.lightGray);
     frame.addWindowListener(windowListener);

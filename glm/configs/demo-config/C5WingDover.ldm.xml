@@ -44,8 +44,8 @@ This is only by convention and in fact the name of the prototype
 could be some nice English phrase like "5_ton_truck" which is easy
 to debug.
 
-However we were instructed by ALP to use the NSN number for this
-example to get the library accepted in the ALP contrib directory.
+However we were instructed by COUGAAR to use the NSN number for this
+example to get the library accepted in the COUGAAR contrib directory.
 
 To make things worse, the IBM parser does not allow the '/'
 character in XML atributes of Type ID.  This means that we had

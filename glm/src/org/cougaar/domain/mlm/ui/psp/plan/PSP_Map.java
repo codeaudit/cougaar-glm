@@ -27,18 +27,18 @@ import org.cougaar.domain.glm.ldm.oplan.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.ldm.policy.*;
 
-public class PSP_AlpMap extends PSP_BaseAdapter 
+public class PSP_Map extends PSP_BaseAdapter 
         implements PlanServiceProvider, UISubscriber
 {
     /** A zero-argument constructor is required for dynamically loaded PSPs,
         required by Class.newInstance()
         **/
-    public PSP_AlpMap()
+    public PSP_Map()
     {
        super();
     }
 
-    public PSP_AlpMap( String pkg, String id ) throws RuntimePSPException
+    public PSP_Map( String pkg, String id ) throws RuntimePSPException
     {
         setResourceLocation(pkg, id);
     }
@@ -96,12 +96,12 @@ public class PSP_AlpMap extends PSP_BaseAdapter
           Vector urls = new Vector();
           Vector names = new Vector();
           if (psc == null) {
-            out.println("PSP_AlpMap error:  psc is null ");
+            out.println("PSP_Map error:  psc is null ");
             return;
           }
           psc.getAllURLsAndNames(urls, names);
           if (names == null) {
-            out.println("PSP_AlpMap error:  getAllURLsAndNames returned null names ");
+            out.println("PSP_Map error:  getAllURLsAndNames returned null names ");
             return;
           }
           int sz = names.size();
@@ -116,10 +116,10 @@ public class PSP_AlpMap extends PSP_BaseAdapter
           int numTasks = ((CollectionSubscription)subscription).size();
           out.println("numtasks "+numTasks);
         } else {
-          out.println("PSP_AlpMap error: Parameter not found");
+          out.println("PSP_Map error: Parameter not found");
         }
       } catch (Exception e) {
-        out.println("PSP_AlpMap Exception: "+e);
+        out.println("PSP_Map Exception: "+e);
       }
     }
 

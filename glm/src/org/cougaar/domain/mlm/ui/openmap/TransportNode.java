@@ -27,7 +27,7 @@ class TransportNode extends OMGraphic
     implements TransportNetworkElement, Cloneable {
 
     /** The alp-ui node object.  This contains all the relevant
-     * information for a node, within the context of the ALP UI.
+     * information for a node, within the context of the COUGAAR UI.
      */ 
     protected UITxNode alpNode;
 

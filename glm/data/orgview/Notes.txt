@@ -11,14 +11,14 @@ the alpmap directory.
 
 
 
-To run the AlpMap applet, point your browser at 
+To run the Map applet, point your browser at 
 http://localhost:5550/jmap/Appjmap.html or simply localhost:5550.
 If your browser is not running on the same machine, replace 
 localhost with the appropriate hostname.
 
 
 
-The OrgView Server communicates with the AlpMap PSP at whatever 
+The OrgView Server communicates with the Map PSP at whatever 
 host and port are specified in the alpmap/nms.init file.  By 
 default this is localhost:5555.
 

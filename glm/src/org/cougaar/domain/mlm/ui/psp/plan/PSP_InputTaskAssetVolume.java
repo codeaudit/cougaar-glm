@@ -472,8 +472,8 @@ public class PSP_InputTaskAssetVolume extends PSP_BaseAdapter implements PlanSer
       }
       // have quantity and info
       PhysicalPG physPG =null;
-      if (dirObj instanceof ALPAsset &&
-          (physPG = ((ALPAsset)dirObj).getPhysicalPG()) != null) {
+      if (dirObj instanceof GLMAsset &&
+          (physPG = ((GLMAsset)dirObj).getPhysicalPG()) != null) {
         if (myState.key == myState.KEY_NONE) {
           // all assets in one big metrics
           if (DEBUG) {

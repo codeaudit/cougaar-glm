@@ -59,7 +59,7 @@ boolean go= true;
         clusters=new Vector();
         try {
   
-          URL url = new URL((String)arg + "/alpine/demo/ALPMAP.PSP?CLUSTERS");
+          URL url = new URL((String)arg + "/alpine/demo/MAP.PSP?CLUSTERS");
           URLConnection uc = url.openConnection();
           BufferedReader in = new BufferedReader(
             new InputStreamReader(uc.getInputStream()));

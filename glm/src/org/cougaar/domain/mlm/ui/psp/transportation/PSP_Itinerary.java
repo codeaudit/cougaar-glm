@@ -33,7 +33,7 @@ import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.ldm.policy.*;
 import org.cougaar.lib.util.UTILAsset;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.*;
-import org.cougaar.domain.glm.util.GLMAsset;
+import org.cougaar.domain.glm.util.AssetUtil;
 
 /** need this for tracing itineraries allocated to other clusters... **/
 import org.cougaar.domain.planning.ldm.plan.AllocationforCollections;
@@ -296,7 +296,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
           geoloc_name);
     }
 
-    NewGeolocLocation loc = ALPFactory.newGeolocLocation();
+    NewGeolocLocation loc = GLMFactory.newGeolocLocation();
     loc.setGeolocCode(geoloc_code);
     loc.setInstallationTypeCode(installation_code);
     loc.setCountryStateCode(state_code);
@@ -586,8 +586,8 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       a=((AggregateAsset)a).getAsset();
     }
 
-    if (GLMAsset.isPallet(a)){
-      AssetGroup ag = (AssetGroup) ((ALPAsset)a).getScheduledContentPG().getAsset();
+    if (AssetUtil.isPallet(a)){
+      AssetGroup ag = (AssetGroup) ((GLMAsset)a).getScheduledContentPG().getAsset();
       if(ag == null){
 	int[] ret = new int[1];
 	ret[0]=0;
@@ -626,7 +626,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       (a instanceof ClassVIIIMedical)?8:
       (a instanceof ClassIXRepairPart)?9:
       (a instanceof ClassXNonMilitaryItem)?10:
-      (((ALPAsset)a).hasPersonPG())?11:
+      (((GLMAsset)a).hasPersonPG())?11:
       0;
     return ret;
   }
@@ -808,8 +808,8 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
         return mode;
       }
     }
-    if (phys instanceof ALPAsset) {
-      ALPAsset pa = (ALPAsset) phys;
+    if (phys instanceof GLMAsset) {
+      GLMAsset pa = (GLMAsset) phys;
       // look at PGs
       if (pa.hasGroundVehiclePG()) {
         mode = UITaskItineraryElement.GROUND_MODE;
@@ -956,7 +956,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
         leg.setCarrierTypeNomenclature(
           carrierAsset.getTypeIdentificationPG().getTypeIdentification());
 	//	System.out.println ("Carrier asset " + carrierAsset);
-	//	if (!((ALPAsset)carrierAsset).hasPhysicalPG ())
+	//	if (!((GLMAsset)carrierAsset).hasPhysicalPG ())
 	//	    System.out.println ("!!! Not Physical Asset !!!");
       } catch (Exception eBadPhysTypeID) {
         System.err.println("PSP_Itinerary unable to get carrier TypeID: "+
@@ -1922,22 +1922,22 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
     UID myUID = transAsset.getUID();
     String myItemID = transAsset.getItemIdentificationPG().getItemIdentification();
     // Let's be paranoid
-    if (transAsset instanceof ALPAsset && 
-	((ALPAsset)transAsset).hasPhysicalPG() &&
-	((ALPAsset)transAsset).getPhysicalPG() != null &&
-	((ALPAsset)transAsset).getPhysicalPG().getMass() != null) {
-	tons += ((ALPAsset)transAsset).getPhysicalPG().getMass().getTons();
+    if (transAsset instanceof GLMAsset && 
+	((GLMAsset)transAsset).hasPhysicalPG() &&
+	((GLMAsset)transAsset).getPhysicalPG() != null &&
+	((GLMAsset)transAsset).getPhysicalPG().getMass() != null) {
+	tons += ((GLMAsset)transAsset).getPhysicalPG().getMass().getTons();
     }
     while (transAsset instanceof AggregateAsset) {
       AggregateAsset agg = (AggregateAsset)transAsset;
       quantity *= (int)agg.getQuantity();
       transAsset = agg.getAsset();
-      if (transAsset instanceof ALPAsset && 
-	  ((ALPAsset)transAsset).hasPhysicalPG() &&
-	  ((ALPAsset)transAsset).getPhysicalPG() != null &&
-	  ((ALPAsset)transAsset).getPhysicalPG().getMass() != null) {
+      if (transAsset instanceof GLMAsset && 
+	  ((GLMAsset)transAsset).hasPhysicalPG() &&
+	  ((GLMAsset)transAsset).getPhysicalPG() != null &&
+	  ((GLMAsset)transAsset).getPhysicalPG().getMass() != null) {
 	tons += quantity * 
-	  ((ALPAsset)transAsset).getPhysicalPG().getMass().getTons();
+	  ((GLMAsset)transAsset).getPhysicalPG().getMass().getTons();
       }
     } 
     tai.setQuantity(quantity);
@@ -2116,7 +2116,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
               Asset a = ((Allocation)pe).getAsset();
               if ((a instanceof PhysicalAsset) || (a instanceof Person)) {
 //                   ((a instanceof ALPAss) &&
-//                    (((ALPAsset)a).hasPersonPG()))) {
+//                    (((GLMAsset)a).hasPersonPG()))) {
                 Verb v = task.getVerb();
                 if ((Constants.Verb.Transport).equals(v) ||
                     (Constants.Verb.TransportationMission).equals(v) ||
@@ -2134,8 +2134,8 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
               Allocation alloc = (Allocation)pe;
               if (alloc.getAsset()  instanceof PhysicalAsset) 
                 return true;
-	      else if (alloc.getAsset() instanceof ALPAsset &&
-		       ((ALPAsset)alloc.getAsset()).hasPersonPG())
+	      else if (alloc.getAsset() instanceof GLMAsset &&
+		       ((GLMAsset)alloc.getAsset()).hasPersonPG())
 		return true;
             }
             */
@@ -2659,8 +2659,8 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 // 	    retval =
 // 	    retval = grabUnit(((AggregateAsset)asset).getAsset());
 // 	} else { 
-// 	    if (!((ALPAsset)asset).hasForUnitPG()) retval = null;
-// 	    else retval = ((ALPAsset)asset).getForUnitPG().getUnit();
+// 	    if (!((GLMAsset)asset).hasForUnitPG()) retval = null;
+// 	    else retval = ((GLMAsset)asset).getForUnitPG().getUnit();
 // 	}
 	return retval;
     }

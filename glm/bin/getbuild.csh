@@ -64,5 +64,5 @@ cp -r TOPS/data/PROTOTYPES configs/tops
 /bin/rm -f ${dir}/org.cougaar.install
 ln -s ${dir}/alp-2000${d} ${dir}/org.cougaar.install
 
-echo "The build is set up : Remember to set your ALP_INSTALL_PATH to "${dir}"/alp-2000${d}"
+echo "The build is set up : Remember to set your COUGAAR_INSTALL_PATH to "${dir}"/alp-2000${d}"
 

@@ -33,12 +33,12 @@ treeMenu.addItem(new TreeMenuItem("What's New", "../new.html", "mainFrame"));
 // AlpHTMLJSPalette submenu.
 
 var htmljsPal = new TreeMenu();
-htmljsPal.addItem(new TreeMenuItem("ALP Widgets"));
+htmljsPal.addItem(new TreeMenuItem("COUGAAR Widgets"));
 htmljsPal.addItem(new TreeMenuItem("References"));
 htmljsPal.addItem(new TreeMenuItem("Sites"));
 treeMenu.items[0].makeSubmenu(htmljsPal);
 
-// ALP HTML JS Palette COMPONENTS Code Examples sub-submenu.
+// COUGAAR HTML JS Palette COMPONENTS Code Examples sub-submenu.
 
 var htmljsPalComponents = new TreeMenu();
 htmljsPalComponents.addItem(new TreeMenuItem("Cluster Relationships Table", "/alpine/demo/CLUSTERS_R.PSP?MODE=1?HTML", "mainFrame", "menu_link_local.gif"));
@@ -68,7 +68,7 @@ htmljsPal.items[2].makeSubmenu(dhtml_sites);
 // Generic Java Applet submenu.
 
 var java_applet = new TreeMenu();
-java_applet.addItem(new TreeMenuItem("ALP Widgets"));
+java_applet.addItem(new TreeMenuItem("COUGAAR Widgets"));
 treeMenu.items[1].makeSubmenu(java_applet);
 
 // Scenario Palette submenu.
@@ -86,7 +86,7 @@ treeMenu.items[2].makeSubmenu(scene_pal);
          scene_pal.items[0].makeSubmenu(trans_scene_pal);
 
 
-// ALP Java Applet submenu.
+// COUGAAR Java Applet submenu.
 var alp_applet = new TreeMenu();
 alp_applet.addItem(new TreeMenuItem("Transportation Schedule", "/alpine/demo/schedulechartui.html", "mainFrame", "menu_link_java.gif"));
 alp_applet.addItem(new TreeMenuItem("3ID Assets", "/alpine/demo/aggregateassetchartui.html", "mainFrame", "menu_link_java.gif"));
@@ -96,7 +96,7 @@ alp_applet.addItem(new TreeMenuItem("Assets Transported", "/alpine/demo/drilldow
 alp_applet.addItem(new TreeMenuItem("Inventory", "/alpine/demo/inventorychart.html", "mainFrame", "menu_link_java.gif"));
 alp_applet.addItem(new TreeMenuItem("Supply", "/alpine/demo/supplystoplight.html", "mainFrame", "menu_link_java.gif"));
 alp_applet.addItem(new TreeMenuItem("Policy Editor", "/alpine/demo/Policy.html", "mainFrame", "menu_link_java.gif"));
-alp_applet.addItem(new TreeMenuItem("ALP Clusters", "/alpine/demo/AlpMapDemo/Appjmap.html", "mainFrame", "menu_link_java.gif"));
+alp_applet.addItem(new TreeMenuItem("COUGAAR Clusters", "/alpine/demo/MapDemo/Appjmap.html", "mainFrame", "menu_link_java.gif"));
 alp_applet.addItem(new TreeMenuItem("Spatial Index View", "/alpine/demo/GeoView.html", "mainFrame", "menu_link_java.gif"));
 alp_applet.addItem(new TreeMenuItem("Spatial Index View with sprites", "/alpine/demo/GeoView2.html", "mainFrame", "menu_link_java.gif"));
 

@@ -248,7 +248,7 @@ public class UTILBufferingThread implements Runnable {
    *
    * records last time tasks were dispatched
    *
-   * wraps processBufferedTasks call in ALP transaction
+   * wraps processBufferedTasks call in COUGAAR transaction
    *
    * calls UTILBufferingPlugIn.processTasks
    * @see UTILBufferingPlugIn#processTasks

@@ -26,7 +26,7 @@ To run the OrgView server, go to the directory that contains the
 Alpmap directory, open a Command prompt or xterm, and run 
 org.cougaar.domain.mlm.ui.orgviewServer.NetMapServer with an apppropriate classpath, e.g.
 
-  java -cp %ALP_INSTALL_PATH%\plugins\alpine.jar  org.cougaar.domain.mlm.ui.orgviewServer.NetMapServer
+  java -cp %COUGAAR_INSTALL_PATH%\plugins\alpine.jar  org.cougaar.domain.mlm.ui.orgviewServer.NetMapServer
 
 Leave the orgviewServer running;  you do not need to bring it down and
 up with the society.

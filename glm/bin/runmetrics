@@ -1,6 +1,6 @@
 #!/bin/csh
 
-source $ALP_INSTALL_PATH/bin/setlibpath.csh
+source $COUGAAR_INSTALL_PATH/bin/setlibpath.csh
 
 
 # Set this to port you want to use for metrics voyager client
@@ -35,7 +35,7 @@ set hotcolor="0,255,0"
 set staticcolor="255,255,255"
 
 #Need to refer to alp_install_path to find IP setting in alpreg.ini
-set props="-Dalp.install.path=$ALP_INSTALL_PATH"
+set props="-Dorg.cougaar.install.path=$COUGAAR_INSTALL_PATH"
 
 set args="-port $port -threshold $threshold -filtersize $filtersize -delay $delay -debug $debug -test $test -record $record -playback $playback -hotcolor $hotcolor -staticcolor $staticcolor"
 

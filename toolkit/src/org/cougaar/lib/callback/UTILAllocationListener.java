@@ -80,7 +80,7 @@ public interface UTILAllocationListener extends UTILFilterCallbackListener {
    * 
    * Called when needToRescind returns FALSE.
    *
-   * (This is the ALP notification mechanism.)
+   * (This is the COUGAAR notification mechanism.)
    *
    * @param alloc the allocation that needs to be updated.
    * @see #needToRescind

@@ -21,7 +21,7 @@ import org.cougaar.core.cluster.ClusterIdentifier;
  * this plugin is a point-test for (demo-time) clock advance functionality.
  * It can do two things:
  *  1. when it is passed an argument, it is a clock setter, advancing the
- *  ALP time by 10 minutes every 10 (realtime) seconds.
+ *  COUGAAR time by 10 minutes every 10 (realtime) seconds.
  *  2. otherwise it sets wake timers 30 minutes in advance of the current
  *  time each time it is waked, reporting on the current time each time 
  *  around.

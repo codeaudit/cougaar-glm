@@ -7,10 +7,10 @@
 ##           Water Transportation, and Quartermaster Handling).
 ##
 
-setenv ALP_DEV_PATH $ALP_INSTALL_PATH/lib/sra.jar
+setenv COUGAAR_DEV_PATH $COUGAAR_INSTALL_PATH/lib/sra.jar
 
 ## All listed are requisite
-setenv CLASSPATH ${ALP_INSTALL_PATH}/lib/core.jar:${ALP_INSTALL_PATH}/lib/glm.jar:${ALP_INSTALL_PATH}/lib/planserver.jar:${ALP_INSTALL_PATH}/lib/jcchart400K.jar:${ALP_INSTALL_PATH}/lib/xerces.jar:${ALP_DEV_PATH}
+setenv CLASSPATH ${COUGAAR_INSTALL_PATH}/lib/core.jar:${COUGAAR_INSTALL_PATH}/lib/glm.jar:${COUGAAR_INSTALL_PATH}/lib/planserver.jar:${COUGAAR_INSTALL_PATH}/lib/jcchart400K.jar:${COUGAAR_INSTALL_PATH}/lib/xerces.jar:${COUGAAR_DEV_PATH}
 
 set MYCLASSES="org.cougaar.domain.css.ui.ClusterDisplay"
 
@@ -21,7 +21,7 @@ if ("$os" == "Linux") then
   set osargs="-green"
 endif
 
-if ($?ALP_DEV_PATH) then
+if ($?COUGAAR_DEV_PATH) then
     echo java $osargs -classpath $CLASSPATH $MYCLASSES
 endif
 

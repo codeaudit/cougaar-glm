@@ -1,7 +1,7 @@
 @echo OFF
 
 REM calls setlibpath.bat which sets the path to the required jar files.
-CALL %ALP_INSTALL_PATH%\bin\setlibpath.bat
+CALL %COUGAAR_INSTALL_PATH%\bin\setlibpath.bat
 
 set MYCLASSES=org.cougaar.domain.mlm.ui.tpfdd.aggregation.Server
 set MYMEMORY= Xmx300m

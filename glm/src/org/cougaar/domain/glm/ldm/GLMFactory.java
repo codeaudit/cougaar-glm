@@ -34,15 +34,15 @@ import org.cougaar.domain.glm.ldm.asset.*;
  * FGI Domain package definition.
  **/
 
-public class ALPFactory implements org.cougaar.domain.planning.ldm.Factory {
-  public ALPFactory(LDMServesPlugIn ldm) {
+public class GLMFactory implements org.cougaar.domain.planning.ldm.Factory {
+  public GLMFactory(LDMServesPlugIn ldm) {
     RootFactory rf = ldm.getFactory();
     rf.addAssetFactory(new org.cougaar.domain.glm.ldm.asset.AssetFactory());
     rf.addPropertyGroupFactory(new org.cougaar.domain.glm.ldm.asset.PropertyGroupFactory());
   }
 
   //
-  // factory methods for  ALP LDM objects
+  // factory methods for  COUGAAR LDM objects
   // 
 
   /**@param c - Pass a valid string representation of the Capability

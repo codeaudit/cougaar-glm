@@ -40,7 +40,7 @@ public class InventorySelector implements ActionListener {
   boolean assetNameBoxInitted = false;
   Vector assetNames;
   String hostAndPort; // defaults to http://localhost:5555/
-  static final String PSP_id = "ALPINVENTORY.PSP";
+  static final String PSP_id = "INVENTORY.PSP";
   boolean isApplet;
   Container container;
   boolean doDisplayTable = false;

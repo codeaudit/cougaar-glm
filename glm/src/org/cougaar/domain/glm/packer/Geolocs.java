@@ -7,7 +7,7 @@ package org.cougaar.domain.glm.packer;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
@@ -19,7 +19,7 @@ import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
   */
 public abstract class Geolocs {
   public static GeolocLocation abuDhabi() {
-    NewGeolocLocation geoloc = ALPFactory.newGeolocLocation();
+    NewGeolocLocation geoloc = GLMFactory.newGeolocLocation();
     geoloc.setName("Abu Dahbi, UARE");
     geoloc.setCountryStateCode("Abu Dahbi, UARE");
     geoloc.setCountryStateName("Abu Dahbi, UARE");
@@ -32,7 +32,7 @@ public abstract class Geolocs {
   }
 
   public static GeolocLocation blueGrass() {
-    NewGeolocLocation geoloc = ALPFactory.newGeolocLocation();
+    NewGeolocLocation geoloc = GLMFactory.newGeolocLocation();
     geoloc.setName("Blue Grass Depot, KY");
     geoloc.setCountryStateCode("Blue Grass Depot, KY");
     geoloc.setCountryStateName("Blue Grass Depot, KY");
@@ -45,7 +45,7 @@ public abstract class Geolocs {
   }
 
   public static GeolocLocation asmara() {
-    NewGeolocLocation geoloc = ALPFactory.newGeolocLocation();
+    NewGeolocLocation geoloc = GLMFactory.newGeolocLocation();
     geoloc.setName("ASMARA");
     geoloc.setCountryStateCode("ER");
     geoloc.setCountryStateName("ERITREA");

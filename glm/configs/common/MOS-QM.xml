@@ -14,7 +14,7 @@
 -->
 
 <prototype name="MOS-QM">
-  <!-- <object class="org.cougaar.domain.glm.ldm.asset.ALPAsset"> -->
+  <!-- <object class="org.cougaar.domain.glm.ldm.asset.GLMAsset"> -->
   <object class="org.cougaar.domain.glm.ldm.asset.Capacity"> 
   <!-- <object class="org.cougaar.domain.planning.ldm.asset.Asset"> -->
 

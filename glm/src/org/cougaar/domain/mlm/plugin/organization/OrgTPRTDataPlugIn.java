@@ -57,7 +57,7 @@ import org.cougaar.util.EmptyEnumeration;
 
 
 import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 
 import org.cougaar.domain.glm.ldm.asset.AssignedPG;
 import org.cougaar.domain.glm.ldm.asset.AssignedPGImpl;
@@ -68,7 +68,7 @@ import org.cougaar.domain.glm.ldm.asset.NewLocationSchedulePG;
 import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.glm.ldm.asset.LocationSchedulePGImpl;
 
-import org.cougaar.domain.glm.ldm.plan.ALPRelationship;
+import org.cougaar.domain.glm.ldm.plan.GLMRelationship;
 
 // ADDED BY TOPS
 import org.cougaar.domain.glm.ldm.asset.Facility;
@@ -123,7 +123,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 
   private Vector organization_vector = new Vector();
   private Organization selfOrg;
-  private ALPFactory aldmf;
+  private GLMFactory aldmf;
 
   // Used only for testing remote RFS/RFD
   /*
@@ -144,7 +144,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
   */
 
   protected void setupSubscriptions() {
-    aldmf = (ALPFactory)getFactory("alp");
+    aldmf = (GLMFactory)getFactory("alp");
     getSubscriber().setShouldBePersisted(false);
 
     if (!didRehydrate()) {
@@ -222,12 +222,12 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
   protected void processOrganizations() {
     try {
       String cId = getClusterIdentifier().getAddress();
-      ParsePrototypeFile(cId, ALPRelationship.SELF);
+      ParsePrototypeFile(cId, GLMRelationship.SELF);
 
       String organizations[][] = null;
 
 	  // get the time phased relations from teh relationship file
-      Vector relationshipsVector = parseRelationshipFile(cId, ALPRelationship.SELF);
+      Vector relationshipsVector = parseRelationshipFile(cId, GLMRelationship.SELF);
 
 	  // Put the organizations for this cluster into array
 	  if (relationshipsVector != null) {
@@ -243,11 +243,11 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
       for (int j = 0; j < organizations.length; j++) {
         // 980723 EWD changed second condition to use index 1 instead of 0
 	if ((organizations[j][0] != null) && (organizations[j][1] != null)) {
-	  Class r_class = ALPRelationship.class;
+	  Class r_class = GLMRelationship.class;
 	  Field f = r_class.getField(organizations[j][0].toUpperCase());
-	  if ((ALPRelationship.SUPPORTING).equals(f.get(null))) {
+	  if ((GLMRelationship.SUPPORTING).equals(f.get(null))) {
             cloneMe(organizations[j][1], organizations[j][2], organizations[j][3], organizations[j][4]);
-	  } else if((ALPRelationship.SUPERIOR).equals(f.get(null))) {
+	  } else if((GLMRelationship.SUPERIOR).equals(f.get(null))) {
             createSuperior(organizations[j][1], organizations[j][3], organizations[j][4]);
 	  }
 	}
@@ -656,7 +656,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
       // set the available schedule
       ((NewRoleSchedule)org.getRoleSchedule()).setAvailableSchedule(availsched);
 
-      if (relationship.equals(ALPRelationship.SELF)) {
+      if (relationship.equals(GLMRelationship.SELF)) {
         Relationship selfRelationship = 
           getFactory().newRelationship(Constants.Role.SELF, org, org,
                                        ETERNITY);  
@@ -715,10 +715,10 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 				// element 0 is always Superior or Subordinate
 				relationshipsArray[0] = (String)tokenVector.elementAt(0);
 				// find out what type of relationship this is
-				Class r_class = ALPRelationship.class;
+				Class r_class = GLMRelationship.class;
 				Field f = r_class.getField(relationshipsArray[0].toUpperCase());
 
-				if ((ALPRelationship.SUPPORTING).equals(f.get(null))) {
+				if ((GLMRelationship.SUPPORTING).equals(f.get(null))) {
 
 					if (tokenVector.size() == 5) {
 						// element 1 is clientClusterName
@@ -736,7 +736,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 					}
 				}
 				else
-				if ((ALPRelationship.SUPERIOR).equals(f.get(null))) {
+				if ((GLMRelationship.SUPERIOR).equals(f.get(null))) {
 
 					if (tokenVector.size() == 4) {
 						// element 1 is subordinateClusterName
@@ -766,7 +766,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 				}
 
 				// we now have all tokens necessary from a single relationship statement
-				if (relationship.equals(ALPRelationship.SELF))
+				if (relationship.equals(GLMRelationship.SELF))
 					relationshipsVector.addElement(relationshipsArray);
 				/*
 				for (int i = 0; i < relationshipsArray.length; i++)
@@ -923,7 +923,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
     // look up a zero-arg factory method in the ldmf
     String newname = "new"+ifcname;
     
-    // try the ALP factory
+    // try the COUGAAR factory
     try {
       Class ldmfc = aldmf.getClass();
       Method fm = ldmfc.getMethod(newname,nullClassList);
@@ -1051,7 +1051,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 	    organization_array[2] = tokens.sval;
 	    // Only add to the organization_vector if
 	    // the relationship is SELF
-	    if (relationship.equals(ALPRelationship.SELF))
+	    if (relationship.equals(GLMRelationship.SELF))
 	      organization_vector.addElement(organization_array);
 	  } else {
 	    // Reached a left bracket "[", want to exit block
@@ -1143,7 +1143,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
     // and some java.util
     classes.put("Collection", Collection.class);
     classes.put("List", List.class);
-    // ALP-specific stuff will be looked for
+    // COUGAAR-specific stuff will be looked for
   }
 
   private Class findClass(String name) {

@@ -39,8 +39,8 @@ public class PropertyProviderPlugInExample
    * other LDM plugins to fill in additional information.
    **/
   public void fillProperties(Asset proto) {
-    if (proto instanceof ALPAsset) {
-      ALPAsset ap = (ALPAsset) proto;
+    if (proto instanceof GLMAsset) {
+      GLMAsset ap = (GLMAsset) proto;
 
       String aTypeName = ap.getTypeIdentificationPG().getTypeIdentification();
 

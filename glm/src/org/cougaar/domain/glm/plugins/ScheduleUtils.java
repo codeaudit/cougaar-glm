@@ -37,7 +37,7 @@ import org.cougaar.core.plugin.PlugInDelegate;
 
 import java.util.*;
 
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.asset.NewScheduledContentPG;
 import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
 import org.cougaar.domain.glm.ldm.asset.PropertyGroupFactory;
@@ -91,7 +91,7 @@ public class ScheduleUtils {
 	Vector sched_el = new Vector();
 	sched_el.addElement(nqse);
 
-	return ALPFactory.newQuantitySchedule(sched_el.elements(), 
+	return GLMFactory.newQuantitySchedule(sched_el.elements(), 
 					      PlanScheduleType.TOTAL_INVENTORY);
     }
 
@@ -107,7 +107,7 @@ public class ScheduleUtils {
 
     public static QuantityScheduleElement buildQuantityScheduleElement(double qty, long start, long end)
     {
-	NewQuantityScheduleElement e = ALPFactory.newQuantityScheduleElement();
+	NewQuantityScheduleElement e = GLMFactory.newQuantityScheduleElement();
 	e.setQuantity(qty);
 	e.setStartTime(start);
 	e.setEndTime(end);

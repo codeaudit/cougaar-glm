@@ -4,7 +4,7 @@
 
 ( 
   %name x y attr 
-  ('ALP Demonstration Society'  280 56)
+  ('COUGAAR Demonstration Society'  280 56)
   (TRANS.VW  208 184  0 0)
   (V3ID.VW  472 600  0 0)
   (V4ID.VW  568 600  0 0)

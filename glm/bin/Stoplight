@@ -1,6 +1,6 @@
 #!/bin/csh -f
 
-source $ALP_INSTALL_PATH/bin/setlibpath.csh
+source $COUGAAR_INSTALL_PATH/bin/setlibpath.csh
 
 set MYCLASSES="ui.planviewer.supply.SupplyController"
 

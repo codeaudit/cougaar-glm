@@ -41,9 +41,9 @@ public class SupplyStoplight extends JPanel implements ActionListener {
   static final int DEFAULTHEIGHT = 400; // used in setting scroll viewport size
   static final int HEIGHTPADDING = 5; // add to height of cells 
   StoplightModel dataModel;
-  Color colorRed = ThemeFactory.getALPRed();
-  Color colorYellow = ThemeFactory.getALPYellow();
-  Color colorGreen = ThemeFactory.getALPGreen();
+  Color colorRed = ThemeFactory.getCougaarRed();
+  Color colorYellow = ThemeFactory.getCougaarYellow();
+  Color colorGreen = ThemeFactory.getCougaarGreen();
   Color colorGray = Color.gray;
   Society society;
   EquipmentInfo equipmentInfo;
@@ -179,9 +179,9 @@ public class SupplyStoplight extends JPanel implements ActionListener {
     
     JPanel legendPanel = new JPanel();
     legendPanel.setLayout(new BoxLayout(legendPanel, BoxLayout.Y_AXIS));
-    legendPanel.add(createLabel(RED_LEGEND, ThemeFactory.getALPRed()));
-    legendPanel.add(createLabel(YELLOW_LEGEND, ThemeFactory.getALPYellow()));
-    legendPanel.add(createLabel(GREEN_LEGEND, ThemeFactory.getALPGreen()));
+    legendPanel.add(createLabel(RED_LEGEND, ThemeFactory.getCougaarRed()));
+    legendPanel.add(createLabel(YELLOW_LEGEND, ThemeFactory.getCougaarYellow()));
+    legendPanel.add(createLabel(GREEN_LEGEND, ThemeFactory.getCougaarGreen()));
     legendPanel.add(createLabel(GRAY_LEGEND, Color.gray));
     legendPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
 

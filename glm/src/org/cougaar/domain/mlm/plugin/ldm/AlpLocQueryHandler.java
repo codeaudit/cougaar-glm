@@ -29,7 +29,7 @@ import org.cougaar.domain.planning.ldm.measure.Longitude;
 
 import org.cougaar.util.Parameters;
 
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
@@ -60,7 +60,7 @@ public class AlpLocQueryHandler  extends SQLOplanQueryHandler {
                          " got " + rowData.length);
     }
 
-    NewGeolocLocation geoloc = ALPFactory.newGeolocLocation();
+    NewGeolocLocation geoloc = GLMFactory.newGeolocLocation();
     geoloc.setName((String) rowData[1]);
     geoloc.setGeolocCode((String) rowData[0]);
     geoloc.setIcaoCode((String) rowData[0]);

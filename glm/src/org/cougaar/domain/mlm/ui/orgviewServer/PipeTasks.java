@@ -61,7 +61,7 @@ int instance;
 //      plugin org.cougaar.domain.mlm.ui.orgviewServer.PipeTasks "http://haines:5555"
 
         state=1;
-        URL url = new URL((String)arg + "/alpine/demo/ALPMAP.PSP?CLUSTERS");
+        URL url = new URL((String)arg + "/alpine/demo/MAP.PSP?CLUSTERS");
         URLConnection uc = url.openConnection();
         state=2;
         BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
@@ -80,7 +80,7 @@ int instance;
 
           state=12;
           cluster = (String)e.nextElement();
-          url = new URL((String)arg + "/$" + cluster + "/alpine/demo/ALPMAP.PSP?TASKS");
+          url = new URL((String)arg + "/$" + cluster + "/alpine/demo/MAP.PSP?TASKS");
           state=13;
           uc = url.openConnection();
           state=14;
@@ -119,7 +119,7 @@ int instance;
 
 
 
-/*  The lines returned from PSP_AlpMap clusters are single word 
+/*  The lines returned from PSP_Map clusters are single word 
 entries.  This worked great except when the LogPlanServer 
 delivered some sort of error message.  The attempt here is to 
 filter out any crud that may appear.  

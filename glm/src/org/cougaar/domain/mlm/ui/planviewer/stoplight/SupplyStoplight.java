@@ -38,9 +38,9 @@ public class SupplyStoplight extends JPanel implements ActionListener {
   static final int DEFAULTHEIGHT = 400; // used in setting scroll viewport size
   static final int HEIGHTPADDING = 5; // add to height of cells 
   StoplightModel dataModel;
-  Color colorRed = ThemeFactory.getALPRed();
-  Color colorYellow = ThemeFactory.getALPYellow();
-  Color colorGreen = ThemeFactory.getALPGreen();
+  Color colorRed = ThemeFactory.getCougaarRed();
+  Color colorYellow = ThemeFactory.getCougaarYellow();
+  Color colorGreen = ThemeFactory.getCougaarGreen();
   Color colorGray = Color.gray;
   Society society;
   EquipmentInfo equipmentInfo;

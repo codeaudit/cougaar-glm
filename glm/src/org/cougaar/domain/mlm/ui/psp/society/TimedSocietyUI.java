@@ -92,7 +92,7 @@ public  class  TimedSocietyUI extends SocietyUI
            // PARAM: post data / arguments as string
            // PARAM: true if return object type is XMLizable (per Todd's ObjectStreamReader)
            //        false if return serialized object
-           Object myObj = timed2.fetchObject("http://localhost:5555/alpine/demo/ALPINVENTORY.PSP", "ASSET", false);
+           Object myObj = timed2.fetchObject("http://localhost:5555/alpine/demo/INVENTORY.PSP", "ASSET", false);
 
            System.out.println("RECEIVED: OBJECT: " + myObj.getClass().getName() );
 

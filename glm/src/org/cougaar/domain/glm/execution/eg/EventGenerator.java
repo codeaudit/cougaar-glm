@@ -970,7 +970,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
     }
     addPlugIns(System.getProperties()); // Add plugins specified as system properties
     final EventGenerator eventGenerator = new EventGenerator();
-    JFrame frame = new JFrame("ALP Event Generator");
+    JFrame frame = new JFrame("COUGAAR Event Generator");
     frame.setContentPane(eventGenerator.getGUI());
     frame.setJMenuBar(eventGenerator.getJMenuBar());
     eventGenerator.setTimeScript(timeScript);

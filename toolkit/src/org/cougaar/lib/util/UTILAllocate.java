@@ -489,7 +489,7 @@ public class UTILAllocate {
    *
    * Protected because plugin should not need to call this.
    *
-   * Workaround for ALP bug (MB5.2) where asking for aspect values
+   * Workaround for COUGAAR bug (MB5.2) where asking for aspect values
    * will throw null pointer exception.
    *
    * @param isSuccess sets whether allocation obeyed preferences or not
@@ -667,7 +667,7 @@ public class UTILAllocate {
    * will throw an exception.  This should never happen -- one
    * should only assign aspects against a task's preferences.
    *
-   * Protects against ALP bug : sometimes preference weight
+   * Protects against COUGAAR bug : sometimes preference weight
    * gets lost... (ends up = 0).
    *
    * @param t task to check

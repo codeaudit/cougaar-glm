@@ -32,7 +32,7 @@ import org.cougaar.lib.xml.parser.ParamParser;
  *
  * To find them there, add a system parameter like this to setarguments.csh:
  *
- * -Dalp.config.path=$ALP_INSTALL_PATH/plugins/TOPS/data;
+ * -Dorg.cougaar.config.path=$COUGAAR_INSTALL_PATH/plugins/TOPS/data;
  * 
  * NOTE : the trailing semi-colon is ABSOLUTELY necessary.
  *

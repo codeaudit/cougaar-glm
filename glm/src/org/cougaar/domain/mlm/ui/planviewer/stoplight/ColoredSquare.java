@@ -26,9 +26,9 @@ class ColoredSquare implements Icon {
 
   public ColoredSquare(String s) {
     if (s.equals(UIUnitStatus.YELLOW))
-      color = ThemeFactory.getALPYellow();
+      color = ThemeFactory.getCougaarYellow();
     else if (s.equals(UIUnitStatus.RED))
-      color = ThemeFactory.getALPRed();
+      color = ThemeFactory.getCougaarRed();
     else {
       color = Color.gray;
       colorName = UIUnitStatus.GRAY;

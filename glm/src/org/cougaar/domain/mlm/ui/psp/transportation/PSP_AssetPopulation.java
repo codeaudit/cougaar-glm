@@ -41,9 +41,9 @@ import java.lang.Integer;
 
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.Organization;
-import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.asset.GLMAsset;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
-import org.cougaar.domain.glm.util.GLMAsset;
+import org.cougaar.domain.glm.util.AssetUtil;
 
 public class PSP_AssetPopulation extends PSP_BaseAdapter
                               implements PlanServiceProvider, UISubscriber
@@ -84,8 +84,8 @@ public class PSP_AssetPopulation extends PSP_BaseAdapter
   private static UnaryPredicate interestingAsset() {
     return new UnaryPredicate() {
       public boolean execute(Object o) {
-        if (o instanceof ALPAsset) {
-	  ALPAsset a = (ALPAsset) o;
+        if (o instanceof GLMAsset) {
+	  GLMAsset a = (GLMAsset) o;
           return (a.hasPersonPG() || a.hasPhysicalPG());
         }
         return false;
@@ -123,7 +123,7 @@ public class PSP_AssetPopulation extends PSP_BaseAdapter
   {
     out.println ("<?xml version='1.0'?>");
 
-    GeolocLocation geoloc = GLMAsset.getOrgLocation(organization);
+    GeolocLocation geoloc = AssetUtil.getOrgLocation(organization);
     out.println("<Location geoloc=\"" + geoloc.getGeolocCode() + "\" " +
 				"lat=\"" + geoloc.getLatitude ().getDegrees () + "\" " +
 				"lon=\"" + geoloc.getLongitude ().getDegrees () +
@@ -158,7 +158,7 @@ public class PSP_AssetPopulation extends PSP_BaseAdapter
 
     Iterator iter = assets.iterator();
     while (iter.hasNext()) {
-	  ALPAsset asset = (ALPAsset) iter.next();
+	  GLMAsset asset = (GLMAsset) iter.next();
 	  String typeID = asset.getTypeIdentificationPG().getTypeIdentification();
 	  if (typeToQuantity.get(typeID) == null)
 	    typeToQuantity.put(typeID, new Integer(1));
@@ -181,7 +181,7 @@ public class PSP_AssetPopulation extends PSP_BaseAdapter
 
     Iterator iter = assets.iterator();
     while (iter.hasNext()) {
-	ALPAsset asset = (ALPAsset) iter.next();
+	GLMAsset asset = (GLMAsset) iter.next();
 	String typeID = asset.getTypeIdentificationPG().getTypeIdentification();
 	String name = asset.getTypeIdentificationPG().getNomenclature();
 	if (typeToName.get(typeID) == null)

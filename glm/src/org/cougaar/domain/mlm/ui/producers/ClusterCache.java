@@ -49,7 +49,7 @@ public class ClusterCache {
    * localhost.
    */
   public static void initCache(URL cb) {
-    System.out.println("Connecting to ALP logplan server");
+    System.out.println("Connecting to COUGAAR logplan server");
     ConnectionHelper conn = null;
     clusterNames = new Vector();
     clusterURLs = new Hashtable();
@@ -151,15 +151,15 @@ public class ClusterCache {
   }
   
   /**
-   * addProducerForCluster - add an ALPProducer
+   * addProducerForCluster - add an MLMProducer
    * N.B. - no specification for what the producer produces. Not very
    * useful in a multi-producer environment.
    *
    * @param clusterName String specifying the target cluster
-   * @param prod ALPProducer to be added
+   * @param prod MLMProducer to be added
    */
   public static void addProducerForCluster(String clusterName, 
-                                           ALPProducer prod) {
+                                           MLMProducer prod) {
     Vector prods = (Vector)clusterProducers.get(clusterName);
 
     if (prods == null) {
@@ -176,7 +176,7 @@ public class ClusterCache {
    * getClusterProducers - returns all producers for the specified cluster.
    *
    * @param clusterName String specifying the target cluster
-   * @return Vector of ALPProducers for the target cluster
+   * @return Vector of MLMProducers for the target cluster
    */
   public static Vector getClusterProducers(String clusterName) {
     Vector producers;
@@ -194,29 +194,29 @@ public class ClusterCache {
   }
   
   /**
-   * getClusterProducer - return ALPProducer with the specified name
+   * getClusterProducer - return MLMProducer with the specified name
    * Intended to allow full class name or just the in-package class name
    *
    * BOZO - implementation of above takes match if the class name of the 
-   * ALPProducer includes the specified className, i.e. ALPProducerSamantha
-   * could be returned if ALPProducerSam is specified. Doesn't seem important
+   * MLMProducer includes the specified className, i.e. MLMProducerSamantha
+   * could be returned if MLMProducerSam is specified. Doesn't seem important
    * to fix for now since no one's using the functionality.
    * 
    * Why do we want to match on the in-package class name anyway?
    *
    * @param clusterName String specifying the cluster
-   * @param className String specifying the class of the ALPProducer
-   * @return ALPProducer which matches the specified className. null if no
+   * @param className String specifying the class of the MLMProducer
+   * @return MLMProducer which matches the specified className. null if no
    * match found.
    */
-  public static ALPProducer getClusterProducer(String clusterName,
+  public static MLMProducer getClusterProducer(String clusterName,
                                                String className) {
     Vector prods = getClusterProducers(clusterName);
     // return first producer that matches classname
     if (prods!=null) {
       for (int i = 0; i<prods.size(); i++) {
         if (prods.get(i).getClass().getName().indexOf(className) > 0) {
-          return (ALPProducer)prods.get(i);
+          return (MLMProducer)prods.get(i);
         }
       }
     }
@@ -224,14 +224,14 @@ public class ClusterCache {
   }
   
   /**
-   * producerExits - returns true if an ALPProducer with the specified
+   * producerExits - returns true if an MLMProducer with the specified
    * class name exists.
    *
    * BOZO - uses getClusterProducer() so is prone to all the same problems.
    *
    * @param clusterName String specifying the target cluster
-   * @param className String specifying the ALPProducer class.
-   * @return boolean true if ALPProducer found, else false
+   * @param className String specifying the MLMProducer class.
+   * @return boolean true if MLMProducer found, else false
    */
   public static boolean producerExists(String clusterName, 
                                        String className) {

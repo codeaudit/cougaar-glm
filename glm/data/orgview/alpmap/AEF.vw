@@ -4,7 +4,7 @@
 
 ( 
   %name x y attr 
-  ('ALP AEF  Community'  256 56)
+  ('COUGAAR AEF  Community'  256 56)
   (N33FW  120 232  0 0)
   (N421FS  192 296  0 0)
   (JFACC   248 136  0 0)

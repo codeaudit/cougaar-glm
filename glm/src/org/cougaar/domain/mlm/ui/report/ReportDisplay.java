@@ -101,7 +101,7 @@ public class ReportDisplay extends JPanel implements ActionListener {
     WindowListener windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) { System.exit(0); }
     };
-    JFrame frame = new JFrame("ALP Reports");
+    JFrame frame = new JFrame("COUGAAR Reports");
     frame.setForeground(Color.black);
     frame.setBackground(Color.lightGray);
     frame.addWindowListener(windowListener);
@@ -358,7 +358,7 @@ public class ReportDisplay extends JPanel implements ActionListener {
 
   /**
    * submit - Connect to the URL which is a concatenation
-   * of the ALP clusters host name (localhost), the port (5555), and the 
+   * of the COUGAAR clusters host name (localhost), the port (5555), and the 
    * Report PSP.  Screen date added as a queryParameter. Parses HTML 
    * returned and displays the reports (text and date).
    *

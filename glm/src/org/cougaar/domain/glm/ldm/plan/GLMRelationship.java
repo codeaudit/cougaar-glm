@@ -13,11 +13,11 @@ package org.cougaar.domain.glm.ldm.plan;
 import org.cougaar.domain.glm.ldm.Constants;
 
 /**
- * ALPRelationship - the Relationship an Organization has.
+ * GLMRelationship - the Relationship an Organization has.
  **/
 
 
-public class ALPRelationship {
+public class GLMRelationship {
 
   public static final String SELF = Constants.Role.SELF.getName();
   public static final String SUPERIOR = Constants.Role.SUPERIOR.getName();
@@ -27,15 +27,15 @@ public class ALPRelationship {
   public static final String SUPPORTING = "Supporting";
 
   public static boolean isDirectObject(String alpRelationship) {
-    if (alpRelationship.equals(ALPRelationship.SUPPORTING) ||
-        alpRelationship.equals(ALPRelationship.SELF) ||
-        alpRelationship.equals(ALPRelationship.SUPERIOR)) {
+    if (alpRelationship.equals(GLMRelationship.SUPPORTING) ||
+        alpRelationship.equals(GLMRelationship.SELF) ||
+        alpRelationship.equals(GLMRelationship.SUPERIOR)) {
       return true;
-    } else if (alpRelationship.equals(ALPRelationship.SUPPORTED) ||
-               alpRelationship.equals(ALPRelationship.SUBORDINATE)) {
+    } else if (alpRelationship.equals(GLMRelationship.SUPPORTED) ||
+               alpRelationship.equals(GLMRelationship.SUBORDINATE)) {
       return false;
     } else {
-      System.err.println("ALPRelationship.isDirectObject: unrecognized relationship " +
+      System.err.println("GLMRelationship.isDirectObject: unrecognized relationship " +
                          alpRelationship);
       return false;
     }

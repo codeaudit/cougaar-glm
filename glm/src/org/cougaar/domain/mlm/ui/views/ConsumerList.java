@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A ConsumerList is simply a container for ALPConsumers,
- * which itself implements ALPConsumer in that it
+ * A ConsumerList is simply a container for MLMConsumers,
+ * which itself implements MLMConsumer in that it
  * has methods for firing updates/errors to all consumers in the list.
  *
  * @author  Nick Pioch, BBN Technologies
  * @version 1.0
  */
 
-public class ConsumerList implements ALPConsumer, Cloneable {
+public class ConsumerList implements MLMConsumer, Cloneable {
   
   private ArrayList consumers;
 
@@ -30,7 +30,7 @@ public class ConsumerList implements ALPConsumer, Cloneable {
     consumers = new ArrayList();
   }
 
-  public void add(ALPConsumer consumer) {
+  public void add(MLMConsumer consumer) {
     consumers.add(consumer);
   }
 
@@ -47,13 +47,13 @@ public class ConsumerList implements ALPConsumer, Cloneable {
 
   public void fireDataUpdate(Object []updateData, Object parent) {
     for (int i=0; i<consumers.size(); i++) {
-      ((ALPConsumer)consumers.get(i)).fireDataUpdate(updateData, parent);
+      ((MLMConsumer)consumers.get(i)).fireDataUpdate(updateData, parent);
     }
   }
 
   public void fireErrorReport(String errorText, Object parent) {
     for (int i=0; i<consumers.size(); i++) {
-      ((ALPConsumer)consumers.get(i)).fireErrorReport(errorText, parent);
+      ((MLMConsumer)consumers.get(i)).fireErrorReport(errorText, parent);
     }
   }
 

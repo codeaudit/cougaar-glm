@@ -21,10 +21,10 @@ import org.cougaar.domain.mlm.ui.planviewer.ScrollingTextLine;
 import org.cougaar.domain.mlm.ui.producers.ClusterCache;
 import org.cougaar.domain.mlm.ui.producers.PolicyProducer;
 import org.cougaar.domain.mlm.ui.producers.policy.UIPolicyInfo;
-import org.cougaar.domain.mlm.ui.views.ALPConsumer;
+import org.cougaar.domain.mlm.ui.views.MLMConsumer;
 
 /**
- * The <code>PolicyView</code> class demonstrates a typical ALPConsumer editor.
+ * The <code>PolicyView</code> class demonstrates a typical MLMConsumer editor.
  * It has a dropdown list for selecting the target cluster, selecting the
  * desired policy within that cluster, and a simple 2-column table of the
  * policy parameters for that policy.
@@ -36,7 +36,7 @@ import org.cougaar.domain.mlm.ui.views.ALPConsumer;
  */
 
 public class PolicyView extends JPanel 
-  implements ALPConsumer, PolicyClient, ActionListener {
+  implements MLMConsumer, PolicyClient, ActionListener {
     
   private PolicyDisplay myPolicyDisplay=null;
   private String myTargetCluster = null;
@@ -58,7 +58,7 @@ public class PolicyView extends JPanel
    * Do the one-time initializations, including component creation.  
    */
   private void init() {
-    // ALP-specific gui init
+    // COUGAAR-specific gui init
     // make a panel with refresh button and cluster pull-down list
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     JPanel panel1 = new JPanel();

@@ -142,7 +142,7 @@ public class UTILTimeoutBufferingThread extends UTILListeningBufferingThread {
    *
    * Records that there all "leftover" tasks have been handled.
    *
-   * wraps processLeftoverTasks call in ALP transaction
+   * wraps processLeftoverTasks call in COUGAAR transaction
    *
    * calls UTILBufferingPlugIn.processTasks
    * @see UTILBufferingPlugIn#processTasks

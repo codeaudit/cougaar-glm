@@ -15,7 +15,7 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.society.UniqueObject;
 import org.cougaar.core.society.UID;
 import org.cougaar.domain.planning.ldm.plan.Directive;
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.plan.DetailRequest;
 import org.cougaar.domain.glm.ldm.plan.DetailRequestAssignment;
 import org.cougaar.domain.glm.ldm.plan.DetailReplyAssignment;
@@ -39,7 +39,7 @@ public class DetailRequestLP
   extends LogPlanLogicProvider
   implements EnvelopeLogicProvider, RestartLogicProvider, MessageLogicProvider
 {
-  private transient ALPFactory _alpFactory=null;
+  private transient GLMFactory _alpFactory=null;
   
   private transient HashMap outstandingRequests = new HashMap(7);
 
@@ -48,9 +48,9 @@ public class DetailRequestLP
     super(logplan,cluster);
   }
 
-  private ALPFactory getALPFactory() {
+  private GLMFactory getGLMFactory() {
     if (_alpFactory==null) {
-      _alpFactory = (ALPFactory)cluster.getFactory("alp");
+      _alpFactory = (GLMFactory)cluster.getFactory("alp");
     }
     return _alpFactory;
   }
@@ -116,7 +116,7 @@ public class DetailRequestLP
         return false;
       }
     };
-    Enumeration enum = logplan.searchALPPlan(pred);
+    Enumeration enum = logplan.searchWhiteboard(pred);
     while (enum.hasMoreElements()) {
       DetailRequest ir = (DetailRequest) enum.nextElement();
       System.out.println("Resending " + ir);
@@ -134,7 +134,7 @@ public class DetailRequestLP
         return false;
       }
     };
-    Enumeration queryEnum = logplan.searchALPPlan(queryPred);
+    Enumeration queryEnum = logplan.searchWhiteboard(queryPred);
     while (queryEnum.hasMoreElements()) {
       QueryRequest ir = (QueryRequest) queryEnum.nextElement();
       System.out.println("Resending " + ir);
@@ -161,7 +161,7 @@ public class DetailRequestLP
     outstandingRequests.put(uid,uid);
 
     // create an DetailRequestAssignment directive
-    DetailRequestAssignment dra = getALPFactory().newDetailRequestAssignment(dr);
+    DetailRequestAssignment dra = getGLMFactory().newDetailRequestAssignment(dr);
     //System.out.println("DetailRequestLP: sending DetailRequestAssignment to " + dest);
     // Give the directive to the logplan for tranmission
     logplan.sendDirective(dra);
@@ -180,7 +180,7 @@ public class DetailRequestLP
     //System.out.println("UID: " + uid);
     try {
       UniqueObject uo = (UniqueObject)logplan.findUniqueObject(uid) ;
-      DetailReplyAssignment dra = getALPFactory().newDetailReplyAssignment(uo,
+      DetailReplyAssignment dra = getGLMFactory().newDetailReplyAssignment(uo,
 								      uid,
 						   cluster.getClusterIdentifier(),
 						   request.getRequestingCluster());
@@ -285,7 +285,7 @@ public class DetailRequestLP
     outstandingRequests.put(pred, pred);
 
     // create an QueryRequestAssignment directive
-    QueryRequestAssignment qra = getALPFactory().newQueryRequestAssignment(qr);
+    QueryRequestAssignment qra = getGLMFactory().newQueryRequestAssignment(qr);
     //System.out.println("DetailRequestLP: sending QueryRequestAssignment to " + qra.getDestination());
     // Give the directive to the logplan for tranmission
     logplan.sendDirective(qra);
@@ -311,7 +311,7 @@ public class DetailRequestLP
 	collection.add(e.nextElement());
       }
       
-      QueryReplyAssignment dra = getALPFactory().newQueryReplyAssignment(collection,
+      QueryReplyAssignment dra = getGLMFactory().newQueryReplyAssignment(collection,
                                                                          pred,
                                                                          request.getLocalQueryPredicate(),
                                                                          cluster.getClusterIdentifier(),

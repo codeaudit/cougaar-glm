@@ -4,7 +4,7 @@
 
 ( 
   %name x y attr 
-  ('ALP Transportation Community'  440 40)
+  ('COUGAAR Transportation Community'  440 40)
   (AMMODEPOTITO  840 344  0 0)
   (BEAUMONT  376 280  0 0)
   (C141WINGMCGUIRE  152 336  0 0)

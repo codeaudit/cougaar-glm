@@ -338,15 +338,15 @@ public class PSP_Carrier_Itinerary extends PSP_BaseAdapter implements PlanServic
     UITAssetInfo tai = new UITAssetInfo();
     int quantity = 1;
     double tons = 0.0;
-    if (transAsset instanceof ALPAsset &&((ALPAsset)transAsset).hasPhysicalPG()) {
-	tons += ((ALPAsset)transAsset).getPhysicalPG().getMass().getTons();
+    if (transAsset instanceof GLMAsset &&((GLMAsset)transAsset).hasPhysicalPG()) {
+	tons += ((GLMAsset)transAsset).getPhysicalPG().getMass().getTons();
     }
     while (transAsset instanceof AggregateAsset) {
       AggregateAsset agg = (AggregateAsset)transAsset;
       quantity *= (int)agg.getQuantity();
       transAsset = agg.getAsset();
-      if (transAsset instanceof ALPAsset && ((ALPAsset)transAsset).hasPhysicalPG()) {
-	  tons += quantity * ((ALPAsset)transAsset).getPhysicalPG().getMass().getTons();
+      if (transAsset instanceof GLMAsset && ((GLMAsset)transAsset).hasPhysicalPG()) {
+	  tons += quantity * ((GLMAsset)transAsset).getPhysicalPG().getMass().getTons();
       }
     } 
     tai.setQuantity(quantity);

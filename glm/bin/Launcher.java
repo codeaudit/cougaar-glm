@@ -25,7 +25,7 @@ import java.io.*;
  * and a classpath which contains only this class (and its inner classes).
  *
  * Example:
- * java -classpath launcher.jar -Dalp.install.path=http://draught/alp org.cougaar.launcher.Launcher admin
+ * java -classpath launcher.jar -Dorg.cougaar.install.path=http://draught/alp org.cougaar.launcher.Launcher admin
  */
 
 public class Launcher {

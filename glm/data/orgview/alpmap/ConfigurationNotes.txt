@@ -1,7 +1,7 @@
 
-Notes on AlpMap Configuration:
+Notes on Map Configuration:
 
-AlpMap configuration is mostly controlled by a bunch of ASCII 
+Map configuration is mostly controlled by a bunch of ASCII 
 files in the alpmap directory.  
 
 
@@ -19,7 +19,7 @@ i.nmdb
   database file from NetMap
 
 alpmap.mbx
-  a raw file of commands to be sent to the AlpMap client;
+  a raw file of commands to be sent to the Map client;
   You configure menus here.
 
 nms.init

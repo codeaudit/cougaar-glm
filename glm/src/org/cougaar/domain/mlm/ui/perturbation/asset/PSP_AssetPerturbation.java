@@ -537,7 +537,7 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
     newpp = ldmFactory.newPrepositionalPhrase();
     newpp.setPreposition(Constants.Preposition.FROM);
 
-    NewGeolocLocation loc = ALPFactory.newGeolocLocation();
+    NewGeolocLocation loc = GLMFactory.newGeolocLocation();
     loc.setGeolocCode("NNNN");
     loc.setLatitude (Latitude.newLatitude  (90.0d));
     loc.setLongitude(Longitude.newLongitude(0.0d));

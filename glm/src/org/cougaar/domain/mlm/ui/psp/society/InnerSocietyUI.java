@@ -27,7 +27,7 @@ public class  InnerSocietyUI
 {
   //private String _urlName  = new String("http://localhost:5555/");
   private static String _inventoryPathName = new String("/alpine/demo");
-  private static String _inventoryPspName  = new String("ALPINVENTORY.PSP");
+  private static String _inventoryPspName  = new String("INVENTORY.PSP");
 
 
     /**

@@ -32,7 +32,7 @@ import org.cougaar.util.TimeSpan;
 import java.text.NumberFormat;
 import java.util.*;
 
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.plan.*;
@@ -63,7 +63,7 @@ public class InventoryProcessor extends org.cougaar.domain.glm.plugins.BasicProc
 	inventoryPlugIn_ = plugin;
 	supplyType_ = type;
 
-	NewGeolocLocation newGeoloc = ALPFactory.newGeolocLocation();
+	NewGeolocLocation newGeoloc = GLMFactory.newGeolocLocation();
 	newGeoloc.setCountryStateCode("25");
 	newGeoloc.setCountryStateName("MASS");
 	newGeoloc.setGeolocCode(GEOLOC);
@@ -350,7 +350,7 @@ public class InventoryProcessor extends org.cougaar.domain.glm.plugins.BasicProc
 	return ldmFactory_.newPreference(AspectType.START_TIME, startSF);
     }
 
-    // convert ALP time to date since start of TPFDD
+    // convert COUGAAR time to date since start of TPFDD
 //     public int cDay(long start_time) {
 // 	return (int)((start_time/MSEC_PER_DAY) - startDay_);
 //     }

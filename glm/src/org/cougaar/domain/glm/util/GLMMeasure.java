@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMMeasure.java,v 1.2 2000-12-20 18:18:38 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMMeasure.java,v 1.3 2001-03-29 21:51:22 mthome Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -18,7 +18,7 @@ import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Distance;
 
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
@@ -118,7 +118,7 @@ public class GLMMeasure {
    * @return GeolocLocation initialized to input values
    * @deprecated
    */
-  public static GeolocLocation makeGeoloc(ALPFactory fac,
+  public static GeolocLocation makeGeoloc(GLMFactory fac,
 					  String code, 
 					  String name, 
 					  double longd, 
@@ -239,7 +239,7 @@ public class GLMMeasure {
       Organization nextorg = (Organization) orgse.next();
 
       double nextdistance = 9999.0d;
-      GeolocLocation orgloc = GLMAsset.getOrgLocation(nextorg);     
+      GeolocLocation orgloc = AssetUtil.getOrgLocation(nextorg);     
 
       // if string codes match, we don't have to look at distances...
       if (orgloc.getGeolocCode ().equals (loc.getGeolocCode ()))

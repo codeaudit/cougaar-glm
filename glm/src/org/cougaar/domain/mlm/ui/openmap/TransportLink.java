@@ -25,7 +25,7 @@ class TransportLink extends OMGraphic
     implements TransportNetworkElement, Cloneable {
 
     /** The alp-ui link object.  This contains all the relevant
-     * information for a link, within the context of the ALP UI.
+     * information for a link, within the context of the COUGAAR UI.
      */ 
     UITxLink alpLink;
     

@@ -19,9 +19,9 @@ import org.cougaar.domain.mlm.ui.views.ConsumerList;
 
 /**
  *
- * ThreadedALPProducer is exactly the same as ALPProducer except that it
+ * ThreadedMLMProducer is exactly the same as MLMProducer except that it
  * produces objects in its own thread.  start & refresh methods implemented by
- * running ALPProducer version of the method in a separate thread.
+ * running MLMProducer version of the method in a separate thread.
  *
  * subclasses responsible for implementing produceObjects
  *
@@ -34,13 +34,13 @@ import org.cougaar.domain.mlm.ui.views.ConsumerList;
  *
  */
 
-public abstract class ThreadedALPProducer extends ALPProducer {
+public abstract class ThreadedMLMProducer extends MLMProducer {
 
   /**
-   * Constructor for ALPProducer takes in a clusterID and adds
+   * Constructor for MLMProducer takes in a clusterID and adds
    * the producer with the producer cache for that cluster
    */
-  public ThreadedALPProducer(String name, String clusterName) {
+  public ThreadedMLMProducer(String name, String clusterName) {
     super(name, clusterName);
   }
 
@@ -69,7 +69,7 @@ public abstract class ThreadedALPProducer extends ALPProducer {
   }
 
   /**
-   * doStart - calls ALPProducer implemention of start. Called from within
+   * doStart - calls MLMProducer implemention of start. Called from within
    * StartThread.run().
    */
   protected void doStart() {
@@ -77,7 +77,7 @@ public abstract class ThreadedALPProducer extends ALPProducer {
   }
 
   /**
-   * doRefresh - calls ALPProducer implemention of refresh. Called from within
+   * doRefresh - calls MLMProducer implemention of refresh. Called from within
    * RefreshThread.run().
    */
   protected void doRefresh() {
@@ -104,26 +104,26 @@ public abstract class ThreadedALPProducer extends ALPProducer {
   protected void reportErrorToConsumers(String text) {
     SwingUtilities.invokeLater(new UpdateConsumers(this,
                                                    myConsumers,
-                                                   new ALPProducerError(text)));
+                                                   new MLMProducerError(text)));
   }
 
   private class UpdateConsumers implements Runnable {
 
     private boolean myProducerError = false;
-    private ALPProducerError myError = null;
+    private MLMProducerError myError = null;
     private Object []myUpdateData = null;
     private ConsumerList myConsumers;
-    private ALPProducer myProducer;
+    private MLMProducer myProducer;
     
-    public UpdateConsumers(ALPProducer producer, 
+    public UpdateConsumers(MLMProducer producer, 
                            ConsumerList consumers,
                            Object updateData) {
       myProducer = producer;
       myConsumers = (ConsumerList)consumers.clone();
 
-      if (updateData instanceof ALPProducerError) {
+      if (updateData instanceof MLMProducerError) {
         myProducerError = true; 
-        myError = (ALPProducerError)updateData;
+        myError = (MLMProducerError)updateData;
       } else {
         myUpdateData = ((ArrayList)updateData).toArray();
       }
@@ -140,10 +140,10 @@ public abstract class ThreadedALPProducer extends ALPProducer {
 
   //Convenience class so UpdateConsumer thread knows what kind of info
   // it's sending.
-  protected class ALPProducerError {
+  protected class MLMProducerError {
     private String myText;
 
-    public ALPProducerError(String text) {
+    public MLMProducerError(String text) {
       myText = (text);
     }
 

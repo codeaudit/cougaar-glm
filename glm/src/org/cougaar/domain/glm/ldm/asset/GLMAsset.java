@@ -20,13 +20,13 @@ import java.util.*;
 import java.beans.PropertyDescriptor;
 import java.beans.IndexedPropertyDescriptor;
 
-public abstract class ALPAsset
+public abstract class GLMAsset
   extends org.cougaar.domain.glm.ldm.asset.AssetSkeleton 
 {
-  protected ALPAsset() {
+  protected GLMAsset() {
     super();
   }
-  protected ALPAsset(ALPAsset prototype) {
+  protected GLMAsset(GLMAsset prototype) {
     super(prototype);
   }
 }

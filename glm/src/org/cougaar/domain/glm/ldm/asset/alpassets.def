@@ -19,14 +19,14 @@ propertydefs = alpprops.def, \
 ;; Basis for generating class definitions for Subclasses of Assets
 ;;
 
-[Inventory ALPAsset]
+[Inventory GLMAsset]
 slots=ScheduledContentPG, ReportSchedulePG
 
 
 [VolumetricInventory Inventory]
 slots = VolumetricStockagePG
 
-[Capacity ALPAsset]
+[Capacity GLMAsset]
 slots=ScheduledContentPG
 
 [Ammunition ClassVAmmunition]
@@ -112,12 +112,12 @@ slots=ScheduledContentPG, ContainPG
 
 [Convoy AssetGroup]
 
-[Deck ALPAsset]
+[Deck GLMAsset]
 slots=DeckPG
 
 [Explosive ClassVAmmunition]
 
-[Facility ALPAsset]
+[Facility GLMAsset]
 slots=FacilityPG
 
 [FightingShip Weapon]
@@ -138,7 +138,7 @@ slots=FoodPG, \
 
 [Manifest AssetGroup]
 
-[LightweightManifest ALPAsset]
+[LightweightManifest GLMAsset]
 slots=DetailKeyPG
 
 [MilitaryPerson Person]
@@ -172,11 +172,11 @@ slots=RepairabilityPG
 [PackagedPOL ClassIIIPOL]
 slots=PackagePG
 
-[Person ALPAsset]
+[Person GLMAsset]
 slots=PersonPG
 ;	PersonSustainmentPG
 
-[PhysicalAsset ALPAsset]
+[PhysicalAsset GLMAsset]
 slots = PhysicalPG
 
 [RailCar CargoVehicle]
@@ -231,7 +231,7 @@ slots=AirLinkPG
 ;TransportationNetwork.init=null
 ;TransportationNetwork.exact=true
 
-[TransportationLinkPoint ALPAsset]
+[TransportationLinkPoint GLMAsset]
 slots=PositionPG
 
 ;; by hand. Something like this would be nice:

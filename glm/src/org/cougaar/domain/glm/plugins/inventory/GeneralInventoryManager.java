@@ -31,7 +31,7 @@ import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.plan.*;
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.plugins.*;
 import org.cougaar.domain.glm.debug.*;
 import org.cougaar.domain.glm.ldm.asset.*;

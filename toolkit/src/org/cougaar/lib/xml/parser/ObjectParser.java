@@ -114,7 +114,7 @@ public class ObjectParser{
 		  Method method = af.getClass().getMethod(method_name, null);
 		  obj = method.invoke(af, null);
 	      }
-	      //System.out.println("*** OBJECT PARSER CREATED : from ALPFactory " + obj);
+	      //System.out.println("*** OBJECT PARSER CREATED : from GLMFactory " + obj);
 	    } 
 	  } catch (Exception e2) {
 	    obj = null;

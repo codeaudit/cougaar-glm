@@ -12,41 +12,41 @@ package org.cougaar.domain.glm.ldm;
 
 import java.util.*;
 
-import org.cougaar.core.cluster.ALPPlanServesLogicProvider;
+import org.cougaar.core.cluster.WhiteboardServesLogicProvider;
 import org.cougaar.core.cluster.ClusterServesLogicProvider;
 import org.cougaar.core.cluster.LogPlan;
 import org.cougaar.core.cluster.LogPlanServesLogicProvider;
-import org.cougaar.core.cluster.XPlanServesALPPlan;
+import org.cougaar.core.cluster.XPlanServesWhiteboard;
 import org.cougaar.domain.planning.ldm.Domain;
 import org.cougaar.domain.planning.ldm.Factory;
 import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
 import org.cougaar.domain.glm.ldm.lps.*;
 
 /**
- * ALP Domain package definition.
+ * COUGAAR Domain package definition.
  **/
 
-public class ALPDomain implements Domain {
-  public ALPDomain() { }
+public class GLMDomain implements Domain {
+  public GLMDomain() { }
 
   public void initialize() {
-    // register ALP Verbs, etc... maybe just put 'em in the factory or somesuch
+    // register COUGAAR Verbs, etc... maybe just put 'em in the factory or somesuch
     Constants.Role.init();      // Insure that our Role constants are initted
   }
 
   public Factory getFactory(LDMServesPlugIn ldm) {
-    return new ALPFactory(ldm);
+    return new GLMFactory(ldm);
   }
 
-  public XPlanServesALPPlan createXPlan(Collection existingXPlans) {
+  public XPlanServesWhiteboard createXPlan(Collection existingXPlans) {
     for (Iterator plans = existingXPlans.iterator(); plans.hasNext(); ) {
-      XPlanServesALPPlan xPlan = (XPlanServesALPPlan) plans.next();
+      XPlanServesWhiteboard xPlan = (XPlanServesWhiteboard) plans.next();
       if (xPlan instanceof LogPlan) return xPlan;
     }
     return new LogPlan();
   }
 
-  public Collection createLogicProviders(ALPPlanServesLogicProvider alpplan,
+  public Collection createLogicProviders(WhiteboardServesLogicProvider alpplan,
                                          ClusterServesLogicProvider cluster) {
     ArrayList l = new ArrayList(5); // don't let this be too small.
 

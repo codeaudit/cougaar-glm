@@ -558,7 +558,7 @@ public class LoadAllocatorPlugIn extends SimplePlugIn {
     cse.setStartTime(oplanStartTime);
     cse.setEndTime(oplanEndTime);
     cses.addElement(cse);
-    NewSchedule sched =  ALPFactory.newQuantitySchedule(cses.elements(),
+    NewSchedule sched =  GLMFactory.newQuantitySchedule(cses.elements(),
                                                         PlanScheduleType.ACTUAL_CAPACITY);
     // Create a NewScheduledContentPG for the container.
     //

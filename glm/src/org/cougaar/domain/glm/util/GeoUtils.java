@@ -31,8 +31,8 @@ public class GeoUtils {
 
 
   /**
-   * Compute great-circle distance (expressed as ALP Distance measure)
-   * between two points on globe (expressed as ALP Position)
+   * Compute great-circle distance (expressed as COUGAAR Distance measure)
+   * between two points on globe (expressed as COUGAAR Position)
    * @param Position of first point
    * @param Position of second point
    * @return Distance of great-circle distance between points

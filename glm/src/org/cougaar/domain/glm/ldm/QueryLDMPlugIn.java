@@ -237,7 +237,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	user_ = getParm("Username"); 
 	password_= getParm("Password");
 
-	// PAS MIK - ALP Node scope for connection pools
+	// PAS MIK - COUGAAR Node scope for connection pools
 	int minPoolSize= Integer.parseInt(getParm("MIN_IN_POOL"));
 	int maxPoolSize= Integer.parseInt(getParm("MAX_IN_POOL"));
 	int timeout= Integer.parseInt(getParm("TIMEOUT"));

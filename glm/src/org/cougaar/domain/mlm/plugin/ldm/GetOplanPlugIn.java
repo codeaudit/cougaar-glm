@@ -26,7 +26,7 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AssetGroup;
 import org.cougaar.core.cluster.ClusterIdentifier;
 
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.plan.QueryRequest;
 import org.cougaar.domain.glm.ldm.oplan.*;
 
@@ -40,7 +40,7 @@ public class GetOplanPlugIn extends SimplePlugIn {
   private String relation = null;
   
   private IncrementalSubscription orgActivities;
-  private ALPFactory alpFactory;
+  private GLMFactory alpFactory;
 
 
   private IncrementalSubscription oplanCoupons;
@@ -55,7 +55,7 @@ public class GetOplanPlugIn extends SimplePlugIn {
   };
 
   protected void setupSubscriptions() {
-    alpFactory = (ALPFactory)getFactory("alp");
+    alpFactory = (GLMFactory)getFactory("alp");
 
     oplanCoupons = (IncrementalSubscription)subscribe(oplanCouponPred);
   }

@@ -17,9 +17,9 @@ package org.cougaar.domain.mlm.ui.planviewer;
 
 public class XMLClientConfiguration {
 
-  public static final String debuggerTitle = "ALP Debugger";
+  public static final String debuggerTitle = "COUGAAR Debugger";
 
-  public static final String uiDataProviderTitle = "ALP UI Data Provider";
+  public static final String uiDataProviderTitle = "COUGAAR UI Data Provider";
 
   public static final String[] planObjectNames =
         { "PlanElement", "Task", "Asset", "Policy", "Aggregation", 

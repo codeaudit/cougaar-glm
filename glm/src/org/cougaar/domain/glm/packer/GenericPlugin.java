@@ -44,7 +44,7 @@ import org.cougaar.core.society.UID;
 import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.asset.GLMAsset;
 import org.cougaar.domain.glm.ldm.asset.Organization;
 
 /** Main class for the generic plugin.

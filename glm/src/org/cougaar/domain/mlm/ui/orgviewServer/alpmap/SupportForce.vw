@@ -4,7 +4,7 @@
 
 ( 
   %name x y attr 
-  ('ALP Support Force'  376 88)
+  ('COUGAAR Support Force'  376 88)
   (COSCOM  456 160  0 0)
   (DISCOM-3ID  400 264  0 0)
   (FORSCOM  624 160  0 0)

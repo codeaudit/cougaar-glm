@@ -46,7 +46,7 @@ import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.callback.GLMOrganizationCallback;
 import org.cougaar.domain.glm.callback.GLMOrganizationListener;
 import org.cougaar.domain.glm.parser.GLMTaskParser;
-import org.cougaar.domain.glm.util.GLMAsset;
+import org.cougaar.domain.glm.util.AssetUtil;
 
 import org.cougaar.lib.filter.UTILPlugInAdapter;
 
@@ -70,7 +70,7 @@ import org.cougaar.lib.util.UTILPreference;
  * Implements the org listener interface so it can get all
  * reported orgs.
  *
- * (This code evolved from a version in the ALP tree.)
+ * (This code evolved from a version in the COUGAAR tree.)
  * </pre>
  */
 public class GLMStimulatorPlugIn extends UTILPlugInAdapter
@@ -151,10 +151,10 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
     // Order matters here!
     publishAdd(pe.getTask());
     Vector createdObjects;
-    if (!GLMAsset.isPassenger(pe.getTask().getDirectObject ())) {
+    if (!AssetUtil.isPassenger(pe.getTask().getDirectObject ())) {
       if (myExtraOutput) 
 		System.out.println ("not a passenger");
-      createdObjects = GLMAsset.ExpandAsset (getFactory (), pe.getTask ().getDirectObject ());
+      createdObjects = AssetUtil.ExpandAsset (getFactory (), pe.getTask ().getDirectObject ());
     }
     else {
       if (myExtraOutput) 
@@ -453,7 +453,7 @@ public class GLMStimulatorPlugIn extends UTILPlugInAdapter
   }
 
   /**
-   * Parse the xml file and return the ALP tasks.
+   * Parse the xml file and return the COUGAAR tasks.
    *
    * @param  xmlTaskFile file defining tasks to stimulate cluster with
    * @return Collection of tasks defined in xml file

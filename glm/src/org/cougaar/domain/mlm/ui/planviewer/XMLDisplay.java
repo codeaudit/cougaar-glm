@@ -543,7 +543,7 @@ public class XMLDisplay implements ActionListener {
   }
 
   /*  Connect to the URL which is a concatenation
-      of the ALP clusters host name (localhost), the port (5555), and
+      of the COUGAAR clusters host name (localhost), the port (5555), and
       an "id" which allows the XML Plan Server
       to match up to our plan service provider (PSP)
       then, send the parameters which were collected from the user,

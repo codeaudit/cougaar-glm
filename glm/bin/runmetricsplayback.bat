@@ -1,6 +1,6 @@
 @ECHO OFF
 
-CALL %ALP_INSTALL_PATH%\bin\setlibpath.bat
+CALL %COUGAAR_INSTALL_PATH%\bin\setlibpath.bat
 
 REM Set this to port you want to use for metrics voyager client
 set PORT=7999

@@ -39,7 +39,7 @@ import java.io.File;
 import java.sql.*;
 
 /**
- * Provide a JDBC binding to an ALP cluster using MB5.0 interfaces.
+ * Provide a JDBC binding to an COUGAAR cluster using MB5.0 interfaces.
  * This class replaces the JDBCPlugIn.  Current use involves runtime
  * creation of LDMObjects at Cluster startup.  Future use will involve
  * dynamic, runtime creation of LDMObjects indirectly, via LDMFactory

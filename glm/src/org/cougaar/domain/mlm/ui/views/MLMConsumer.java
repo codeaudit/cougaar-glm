@@ -10,9 +10,9 @@
  
 package org.cougaar.domain.mlm.ui.views;
 
-import org.cougaar.domain.mlm.ui.producers.ALPProducer;
+import org.cougaar.domain.mlm.ui.producers.MLMProducer;
 
-public interface ALPConsumer {
+public interface MLMConsumer {
 
   // Simplified to only support bulk update.
   public void fireDataUpdate(Object []updateData, Object source);

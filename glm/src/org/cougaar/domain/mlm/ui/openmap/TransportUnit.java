@@ -30,7 +30,7 @@ class TransportUnit extends OMGraphic
     public static String cgmArchive;
     
     /**  the alp-ui unit object.  This contains all teh relevant
-     * information for a unit, within the context of the ALP-UI */
+     * information for a unit, within the context of the COUGAAR-UI */
     protected UIUnit alpUnit;
     
     protected float latitude;

@@ -36,18 +36,18 @@ import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedScheduleNames;
 
-public class PSP_ALPInventory
+public class PSP_Inventory
   extends PSP_BaseAdapter
   implements PlanServiceProvider, UISubscriber, UISimpleNamedScheduleNames
 {
   private String myID;
   public String desiredAssetName;
 
-  public PSP_ALPInventory() throws RuntimePSPException {
+  public PSP_Inventory() throws RuntimePSPException {
     super();
   }
 
-  public PSP_ALPInventory(String pkg, String id) throws RuntimePSPException {
+  public PSP_Inventory(String pkg, String id) throws RuntimePSPException {
     setResourceLocation(pkg, id);
   }
 
@@ -87,7 +87,7 @@ public class PSP_ALPInventory
 	inventory.addRequestedDueInSchedule((Allocation)o);
       }
     }
-    //MWD new code if there are no ALPAsset Inventories it's likely
+    //MWD new code if there are no GLMAsset Inventories it's likely
     //the Asset has not been set on this UIInventoryImpl.
     //There are just allocations in this InventoryPredicate returned
     //collection and hence if (o instanceof Asset) has been used.
@@ -227,7 +227,7 @@ public class PSP_ALPInventory
       Collection container = 
 	((CollectionSubscription)subscription).getCollection();
       for (Iterator i = container.iterator(); i.hasNext(); ) {
-	ALPAsset asset = (ALPAsset)(i.next());
+	GLMAsset asset = (GLMAsset)(i.next());
 	TypeIdentificationPG typeIdPG = 
 	  asset.getScheduledContentPG().getAsset().getTypeIdentificationPG();
 	String nomenclature = typeIdPG.getNomenclature();
@@ -281,7 +281,7 @@ public class PSP_ALPInventory
       Collection collection = 
 	((CollectionSubscription)subscription).getCollection();
       for (Iterator i = collection.iterator(); i.hasNext(); ) {
-	ALPAsset asset = (ALPAsset)(i.next());
+	GLMAsset asset = (GLMAsset)(i.next());
 	TypeIdentificationPG typeIdPG = 
 	  asset.getScheduledContentPG().getAsset().getTypeIdentificationPG();
 	String nomenclature = typeIdPG.getNomenclature();
@@ -467,9 +467,9 @@ class InventoryPredicate implements UnaryPredicate {
     */
 
   public boolean execute(Object o) {
-    if (o instanceof ALPAsset) {
+    if (o instanceof GLMAsset) {
 	// looking for Inventory Assets
-      ALPAsset asset = (ALPAsset)o;
+      GLMAsset asset = (GLMAsset)o;
       ScheduledContentPG scheduledContentPG = asset.getScheduledContentPG();
       if (scheduledContentPG == null)
 	return false;
@@ -496,7 +496,7 @@ class InventoryPredicate implements UnaryPredicate {
       boolean aMatch = assetMatch((Asset)directObject);
       /** MWD Debug
       if(aMatch) {
-	  System.out.println("PSP_ALPInventory::InventoryPredicate:Matching allocations task is with Verb: " + task.getVerb());
+	  System.out.println("PSP_Inventory::InventoryPredicate:Matching allocations task is with Verb: " + task.getVerb());
       }
       */
       return aMatch;
@@ -508,9 +508,9 @@ class InventoryPredicate implements UnaryPredicate {
 class AssetPredicate implements UnaryPredicate {
 
   public boolean execute(Object o) {
-    if (!(o instanceof ALPAsset))
+    if (!(o instanceof GLMAsset))
       return false;
-    ALPAsset asset = (ALPAsset)o;
+    GLMAsset asset = (GLMAsset)o;
     ScheduledContentPG scheduledContentPG = asset.getScheduledContentPG();
     if (scheduledContentPG == null)
       return false;
@@ -557,9 +557,9 @@ class AssetUIDPredicate implements UnaryPredicate {
   }
 
   public boolean execute(Object o) {
-    if (!(o instanceof ALPAsset))
+    if (!(o instanceof GLMAsset))
       return false;
-    ALPAsset asset = (ALPAsset)o;
+    GLMAsset asset = (GLMAsset)o;
     if (asset.getUID() == null)
       return false;
     if (!asset.getUID().toString().equals(desiredAssetUID))

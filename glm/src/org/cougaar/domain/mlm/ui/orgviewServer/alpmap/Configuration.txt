@@ -3,7 +3,7 @@ October 7, 1999.
 
 Notes on Configuration:
 
-AlpMap configuration is mostly controlled by a bunch of ASCII files
+Map configuration is mostly controlled by a bunch of ASCII files
 in the alpmap directory.  Remember that this is
 a work in progress and is subject to arbitrary changes.
 
@@ -21,7 +21,7 @@ i.nmdb
   database file from NetMap
 
 alpmap.mbx
-  a raw file of commands to be sent to the AlpMap client;
+  a raw file of commands to be sent to the Map client;
   You configure menus here.
 
 nms.init
@@ -52,7 +52,7 @@ In C:\ProgFiles Ted\Xitami\webpages\, delete or rename Jmap.zip
 In Explorer, right click on C:\ProgFiles Ted\Xitami\webpages\Jmap,
 select Add to Jmap.zip.
 From C:\ProgFiles Ted\Xitami\webpages, copy Jmap.zip to 
-D:\AlpMap\Dev\alpine\ui\orgviewServer\alpmap
+D:\Map\Dev\alpine\ui\orgviewServer\alpmap
 
 
 Ted

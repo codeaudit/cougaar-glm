@@ -22,7 +22,7 @@ import org.cougaar.domain.mlm.ui.orgviewServer.NmsPlugin;
  * .<pre>
  * Alp NetMap Server   (Java)  
  *
- * Initial version   ech 9/22/99  from server test program and PSP_AlpMap
+ * Initial version   ech 9/22/99  from server test program and PSP_Map
  * 11/19/99:  make cluster icon bigger
  * </pre>
  */

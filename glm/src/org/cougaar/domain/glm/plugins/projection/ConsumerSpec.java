@@ -32,7 +32,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.GLMFactory;
 import org.cougaar.domain.glm.ldm.plan.ObjectScheduleElement;
 import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
 import org.cougaar.domain.glm.ldm.plan.PlanScheduleElementType;
@@ -218,7 +218,7 @@ public abstract class ConsumerSpec implements Serializable {
 	    rate = getRate(resource, (Vector)ose.getObject());
 	    if (rate == null)
 		continue;
-// 	    rse = ALPFactory.newRateScheduleElement();
+// 	    rse = GLMFactory.newRateScheduleElement();
 	    rse = new ObjectScheduleElement();
 	    rse.setObject(rate);
 // 	    rse.setRate(rate);
@@ -227,7 +227,7 @@ public abstract class ConsumerSpec implements Serializable {
 	    consumption_rate_schedule.addElement(rse);
 	}
 	return newObjectSchedule(consumption_rate_schedule.elements());
-// 	return ALPFactory.newRateSchedule(consumption_rate_schedule.elements());
+// 	return GLMFactory.newRateSchedule(consumption_rate_schedule.elements());
     }
 
 }

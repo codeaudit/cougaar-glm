@@ -88,7 +88,7 @@ public class TransferableLP
         return false;
       }
     };
-    Enumeration enum = logplan.searchALPPlan(pred);
+    Enumeration enum = logplan.searchWhiteboard(pred);
     while (enum.hasMoreElements()) {
       TransferableTransfer tt = (TransferableTransfer) enum.nextElement();
       System.out.println("Resending " + tt);
@@ -105,7 +105,7 @@ public class TransferableLP
         return false;
       }
     };
-    for (enum = logplan.searchALPPlan(pred); enum.hasMoreElements(); ) {
+    for (enum = logplan.searchWhiteboard(pred); enum.hasMoreElements(); ) {
       Transferable transferable = (Transferable) enum.nextElement();
       NewTransferableVerification nav = ldmf.newTransferableVerification(transferable);
       nav.setSource(cluster.getClusterIdentifier());

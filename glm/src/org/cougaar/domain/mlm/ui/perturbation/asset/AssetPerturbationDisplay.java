@@ -112,7 +112,7 @@ public class AssetPerturbationDisplay extends JPanel {
     WindowListener windowListener = new WindowAdapter() {
       public void windowClosing(WindowEvent e) { System.exit(0); }
     };
-    JFrame frame = new JFrame("ALP Asset Perturbation");
+    JFrame frame = new JFrame("COUGAAR Asset Perturbation");
     frame.addWindowListener(windowListener);
 
     initializeLayout();
@@ -365,7 +365,7 @@ public class AssetPerturbationDisplay extends JPanel {
 
   /**
    * getAssets - Connect to the URL which is a concatenation
-   * of the ALP clusters host name (localhost), the port (5555), and the 
+   * of the COUGAAR clusters host name (localhost), the port (5555), and the 
    * AssetPerturbation PSP.  Parses HTML returned into AssetInfo objects and updates 
    * myAssetList with the new AssetInfos.
    *
@@ -472,7 +472,7 @@ public class AssetPerturbationDisplay extends JPanel {
 
   /**
    * getAssets - Connect to the URL which is a concatenation
-   * of the ALP clusters host name (localhost), the port (5555), and the 
+   * of the COUGAAR clusters host name (localhost), the port (5555), and the 
    * AssetPerturbation PSP.  Parses HTML returned into AssetInfo objects and updates 
    * myAssetList with the new AssetInfos.
    *

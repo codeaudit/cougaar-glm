@@ -91,7 +91,7 @@ import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.util.ShortDateFormat;
 
 // This should only be temporary...
-// We are breaking the ALP Code!
+// We are breaking the COUGAAR Code!
 import org.cougaar.domain.planning.ldm.plan.RoleScheduleImpl;
 
 import org.cougaar.util.UnaryPredicate;

@@ -4,7 +4,7 @@
 
 ( 
   %name x y attr 
-  ('ALP 3ID Community'  472 56)
+  ('COUGAAR 3ID Community'  472 56)
   (AVNBDE-3ID  544 240  0 0)
   (COSCOM  680 40  0 0)
   (DISCOM-3ID  40 264  0 0)

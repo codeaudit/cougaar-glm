@@ -16,11 +16,11 @@ import java.util.List;
 import org.cougaar.core.society.UID;
 
 import org.cougaar.domain.mlm.ui.producers.ClusterCache;
-import org.cougaar.domain.mlm.ui.views.ALPConsumer;
+import org.cougaar.domain.mlm.ui.views.MLMConsumer;
 import org.cougaar.domain.mlm.ui.views.ConsumerList;
 
 /**
- * ALPProducer is a lightweight abstract producer class.
+ * MLMProducer is a lightweight abstract producer class.
  * Each instance of a producer typically gets data from a single
  * target cluster.  Each producer has its own query run against
  * the UIData PSP in the produceObjects method.  It may also have
@@ -29,7 +29,7 @@ import org.cougaar.domain.mlm.ui.views.ConsumerList;
  *
  * Communication with views is through a listener registration similar
  * to awt/swing.  Views spawn producers as needed, register as a listener
- * of the producer by implementing the ALPConsumer interface and calling
+ * of the producer by implementing the MLMConsumer interface and calling
  * addConsumer, then call the producers's start method to get the data.
  *
  * 01/03/2000 - removed stop method.  Current implementation didn't work and
@@ -39,7 +39,7 @@ import org.cougaar.domain.mlm.ui.views.ConsumerList;
  * @version 1.0
  */
 
-public abstract class ALPProducer implements java.io.Serializable {
+public abstract class MLMProducer implements java.io.Serializable {
             
   /** 
    * Name of the producer
@@ -57,21 +57,21 @@ public abstract class ALPProducer implements java.io.Serializable {
   protected ArrayList myDataItems;
   
   /**
-   * The list of ALPConsumers to fire new/changed/removed data to
+   * The list of MLMConsumers to fire new/changed/removed data to
    */
   protected ConsumerList myConsumers;
   
-  // ALP-specific fields
+  // COUGAAR-specific fields
   protected String myTargetCluster = null;
   
   /**
-   * Constructor for ALPProducer takes in a clusterID and adds
+   * Constructor for MLMProducer takes in a clusterID and adds
    * the producer with the producer cache for that cluster
    *
    * @param name String specifying the name of the producer
    * @param clusterName String specifying the name of the target cluster.
    */
-  public ALPProducer(String name, String clusterName) {
+  public MLMProducer(String name, String clusterName) {
     myName = name;
     myTargetCluster = clusterName;
     myDataItems = new ArrayList();
@@ -84,9 +84,9 @@ public abstract class ALPProducer implements java.io.Serializable {
    * Register a new consumer with this producer.
    * Consumer immediately updated with all current data.
    *
-   * @param consumer ALPConsumer to add.
+   * @param consumer MLMConsumer to add.
    */
-  public void addConsumer(ALPConsumer consumer) {
+  public void addConsumer(MLMConsumer consumer) {
     myConsumers.add(consumer);
     synchronized(myDataItems) {
       if (myDataItems != null) {
@@ -100,7 +100,7 @@ public abstract class ALPProducer implements java.io.Serializable {
     
   /**
    * Starts the producer in current thread. 
-   * See ThreadedALPProducer for producer that runs in its own thread.
+   * See ThreadedMLMProducer for producer that runs in its own thread.
    */
   public void start() {
     updateDataItems();
@@ -155,7 +155,7 @@ public abstract class ALPProducer implements java.io.Serializable {
   }
 
   /**
-   * This is where the producer gets the ALP objects 
+   * This is where the producer gets the COUGAAR objects 
    *
    * @return Object [] - array of objects returned by the cluster
    */

@@ -50,7 +50,7 @@ boolean go= true;
       try {
 //      plugin org.cougaar.domain.mlm.ui.orgviewServer.PipeClusters "http://haines:5555"
 
-        URL url = new URL((String)arg + "/alpine/demo/ALPMAP.PSP?CLUSTERS");
+        URL url = new URL((String)arg + "/alpine/demo/MAP.PSP?CLUSTERS");
         URLConnection uc = url.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
   
@@ -72,7 +72,7 @@ boolean go= true;
           String cluster = (String)e.nextElement();
           try {
   
-            url = new URL((String)arg + "/$" + cluster + "/alpine/demo/ALPMAP.PSP?RELATIONS");
+            url = new URL((String)arg + "/$" + cluster + "/alpine/demo/MAP.PSP?RELATIONS");
   /*
             uc = url.openConnection();
             in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
