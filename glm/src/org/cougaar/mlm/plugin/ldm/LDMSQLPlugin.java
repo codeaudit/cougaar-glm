@@ -118,7 +118,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
   private static final String DEFAULT_DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
 
   DomainService domainService = null;
-  private PlanningFactory theFactory = null;
+  protected PlanningFactory theFactory = null;
 
   public LDMSQLPlugin() {}
 
@@ -171,7 +171,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
   // empty execute
   public void execute() {}
 
-    protected void initProperties() {
+  protected void initProperties() {
     // default package for QueryHandler
     globalParameters.put("Package", "org.cougaar.mlm.plugin.ldm");
     globalParameters.put("agent","'"+getMessageAddress()+"'");
@@ -179,7 +179,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
   }
 
   // retrieve and parse the arguments
-  private void grokArguments() {
+  protected void grokArguments() {
     // first, initialize the global table with some basics
     Vector pv = getParameters();
     if (pv == null) {
@@ -204,7 +204,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
   }
 
   // parse the query file
-  private void parseQueryFile() {
+  protected void parseQueryFile() {
       //System.out.println("LDMSQLPlugin, query file is: "+queryFile);
     try {
       BufferedReader in = new BufferedReader(new InputStreamReader(getConfigFinder().open(queryFile)));
@@ -333,7 +333,7 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
    * PeriodicQueries will get executed synchronously for the first
    * time here.
    **/
-  private void grokQueries() {
+  protected void grokQueries() {
     for (Enumeration e = queries.elements(); e.hasMoreElements();) {
       QueryHandler qh = (QueryHandler) e.nextElement();
       qh.start();

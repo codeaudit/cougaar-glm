@@ -60,7 +60,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
   private static final int LOCATION_INDEX = 1;
   private static final int OPTEMPO_INDEX = 2;
 
-  private static Calendar myCalendar = Calendar.getInstance();
+  private Calendar myCalendar = Calendar.getInstance();
 
   private long myLastModifiedTime = TimeSpan.MIN_VALUE;
   private long myMaxModifiedTime = TimeSpan.MIN_VALUE;
@@ -423,6 +423,17 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
         OrgActivity orgActivity = makeOrgActivity(orgInfo.getOrgName(),
                                                   start, end, activity, 
                                                   location, opTempo);
+        /** Debugging
+        if (orgActivity == null) {
+          System.out.println(orgInfo.getOrgName() + ": activity row count = " + orgInfo.getActivitySchedule().size() +
+                             " location row count = " + orgInfo.getLocationSchedule().size() +
+                             " opTempo row count = " + orgInfo.getOpTempoSchedule().size());
+
+          RuntimeException re = new RuntimeException();
+          re.printStackTrace();
+          throw re;
+        }
+        **/
         timeSpanSet.add(orgActivity);
 
         activity = endsAfter(end, activity, activityIterator);
@@ -468,6 +479,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                          " no activity for " + orgName + 
                          " from " + new Date(startTime) + 
                          " to " + new Date(endTime));
+      return null;
     }
 
     if ((location != null) &&
@@ -478,6 +490,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                          " no location for " + orgName + 
                          " from " + new Date(startTime) + 
                          " to " + new Date(endTime));
+      return null;
     }
     
     if ((opTempo != null) &&
@@ -488,6 +501,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                          " no optempo for " + orgName + 
                          " from " + new Date(startTime) + 
                          " to " + new Date(endTime));
+      return null;
     }
       
     return orgActivity; 
