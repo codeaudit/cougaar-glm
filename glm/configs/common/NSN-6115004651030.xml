@@ -4,10 +4,10 @@
       <value>
         <object class = "org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG">
           <field name="TypeIdentification" type = "String">
-            <value>GENERATOR</value>
+            <value>NSN/6115004651030</value>
           </field>
           <field name="Nomenclature" type = "String">
-            <value>NSN/6115004651030</value>
+            <value>GENERATOR</value>
           </field>
           <field name="AlternateTypeIdentification" type = "String">
             <value>null</value>
