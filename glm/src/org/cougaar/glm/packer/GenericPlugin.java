@@ -244,8 +244,6 @@ abstract public class GenericPlugin extends SimplePlugin  {
       getLoggingService().debug("GenericPlugin: After the while loop.");
     }
     
-    publishAdd(comp);
-    
     NewMPTask mpt = (NewMPTask)childTask;
     
     mpt.setPlan(plan);
