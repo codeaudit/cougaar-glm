@@ -25,6 +25,7 @@
  */
 package org.cougaar.mlm.plugin.organization;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -35,11 +36,30 @@ import org.cougaar.planning.plugin.asset.AssetDataPlugin;
 
 public class OrgDataPlugin extends AssetDataPlugin  {
 
+  private static Calendar myCalendar = Calendar.getInstance();
+
+  private static long DEFAULT_START_TIME = -1;
+  private static long DEFAULT_END_TIME = -1;
+
   static {
+    myCalendar.set(1990, 0, 1, 0, 0, 0);
+    DEFAULT_START_TIME = myCalendar.getTime().getTime();
+
+    myCalendar.set(2010, 0, 1, 0, 0, 0);
+    DEFAULT_END_TIME = myCalendar.getTime().getTime();   
+
     packages.add("org.cougaar.glm.ldm.asset");
     packages.add("org.cougaar.glm.ldm.plan");
     packages.add("org.cougaar.glm.ldm.oplan");
     packages.add("org.cougaar.glm.ldm.policy");
+  }
+
+  public long getDefaultStartTime() {
+    return DEFAULT_START_TIME;
+  }
+
+  public long getDefaultEndTime() {
+    return DEFAULT_END_TIME;
   }
 
   protected Verb getReportVerb(Collection roles) {
@@ -59,3 +79,5 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     return Constants.Verb.ReportForService;
   }
 }
+
+
