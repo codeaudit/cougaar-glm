@@ -343,9 +343,17 @@ public class UTILBufferingThread {
   protected void processBufferedTasks (List bufferedTasks) {
     // call plugin's processTasks function
     while (!bufferedTasks.isEmpty ()) {
-      List temp = new ArrayList ();
-      for (int i = 0; i < MAXSIZE && !bufferedTasks.isEmpty(); i++)
-	temp.add (bufferedTasks.remove(0));
+      List temp = new ArrayList ((int) MAXSIZE);
+      if (bufferedTasks.size () < MAXSIZE) {
+	temp.addAll (bufferedTasks);
+	bufferedTasks.clear();
+      }
+      else {
+	for (int i = 0; i < MAXSIZE; i++) {
+	  temp.add (bufferedTasks.get(i));
+	}
+	bufferedTasks.removeAll (temp);
+      }
 
       total += temp.size();
 
