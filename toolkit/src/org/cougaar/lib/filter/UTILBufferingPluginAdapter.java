@@ -84,7 +84,10 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   public void localSetup() {
     super.localSetup ();
 
-    wakeUp ();
+    // This is in setupSubscriptions -- no need to force to run again there....
+    //    wakeUp ();
+    if (logger.isDebugEnabled())
+      logger.debug("Skipping call to wakeUp");
 
     verify = new UTILVerify (logger);
     prefHelper = new UTILPreference (logger);
@@ -212,6 +215,9 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   public void resume  () {
     super.resume ();
 
+    if (isDebugEnabled())
+      debug("In resume about to call wakeUp");
+
     wakeUp ();
   } 
 
@@ -233,19 +239,18 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
 										   AgentIdentificationService.class,
 										   new ServiceRevokedListener() {
 										     public void serviceRevoked(ServiceRevokedEvent re) {
-										       error ("huh? Agent id service revoked?");
+										       debug ("Agent id service revoked.");
 										     }
 										   }
 										   );
+      qService.setAgentIdentificationService(agentIDService);
     }
-
-    qService.setAgentIdentificationService(agentIDService);
 
     // tell the world that we are busy
     qService.clearQuiescentState();
 
     if (isInfoEnabled())
-      info (getName () + " asking to be restarted in " + delayTime);
+      logger.info (getName () + " asking to be restarted in " + delayTime, new Throwable());
 
     if (currentAlarm != null)
       currentAlarm.cancel ();
@@ -296,7 +301,9 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
 
     super.execute ();
 
-    if (currentAlarm.hasExpired()) {
+    if (currentAlarm != null && currentAlarm.hasExpired()) {
+      if (isDebugEnabled())
+	debug("An alarm expired");
       bufferingThread.run();
 
       if (!bufferingThread.anyTasksLeft()) {
@@ -304,6 +311,8 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
 	if (isInfoEnabled())
 	  info (getName () + " now quiescent.");
 
+	//  FIXME: Could there be multiple alarms outstanding?
+	// Shouldnt I clear quiescence based on the alarm firing, not some task count?
 	qService.setQuiescentState();
       }
     }
