@@ -14,10 +14,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import com.ibm.xml.parser.Parser;
-import com.ibm.xml.parser.Stderr;
-import com.ibm.xml.parser.TXDocument;
-
 import org.cougaar.domain.mlm.ui.planviewer.ConnectionHelper;
 import org.cougaar.domain.mlm.ui.planviewer.XMLClientConfiguration;
 
@@ -142,25 +138,6 @@ public class QueryDriver
 		          reply = xmlconn.getResponse();
 
 
-              /**
-              // PARSE RESULT == VERIFY XML, COUNT NODES...
-              int nlLength=0;
-              try{
-                Parser p = new Parser("LogPlan");
-                TXDocument doc = p.readStream(new ByteArrayInputStream(reply));
-                // Get root element of document
-                Element root = doc.getDocumentElement();
-                // Count UITask/UIAsset nodes
-                NodeList nl = root.getElementsByTagName("UITask");
-                nlLength = nl.getLength();
-                nl = root.getElementsByTagName("UIAsset");
-                nlLength += nl.getLength();
-              } catch (Exception ex ) {
-                  System.out.println("XML ERROR.................................");
-                  ex.printStackTrace();
-              }
-              System.out.println("=========> RETURNED (nodelist length) =" + nlLength);
-              **/
               System.out.println("====================================================");
 
               //
