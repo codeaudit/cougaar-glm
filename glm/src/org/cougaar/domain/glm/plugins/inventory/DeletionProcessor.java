@@ -48,8 +48,13 @@ public class DeletionProcessor extends InventoryProcessor {
     /** Delete old reports when oldest becomes this old **/
     private static final long INVENTORY_REPORT_CUTOFF = 4 * TimeUtils.MSEC_PER_WEEK;
 
-    /** When pruning old reports, remove all older than this age. O disables pruning **/
-    private static final long INVENTORY_REPORT_PRUNE = 0L; // disabled TimeUtils.MSEC_PER_WEEK;
+    /** When pruning old reports, remove all older than this age. O
+        disables pruning. This should match the inventoryBG refill
+        task anticipation interval (current 14 days) to provide detail
+        during that interval. Mismatch is not harmful, but leads
+        excess inventory reports or missing detail.
+     **/
+    private static final long INVENTORY_REPORT_PRUNE = 2 * TimeUtils.MSEC_PER_WEEK;
 
     private static final boolean DEBUG = false;
 
@@ -198,7 +203,7 @@ public class DeletionProcessor extends InventoryProcessor {
             }
             if (INVENTORY_REPORT_PRUNE > 0L) {
                 InventoryReport oldestReport = invpg.getOldestInventoryReport();
-                if (false && oldestReport != null && oldestReport.theReportDate < inventoryReportCutoffTime) {
+                if (oldestReport != null && oldestReport.theReportDate < inventoryReportCutoffTime) {
                     if (DEBUG) printDebug(1000, "Pruning old inventoryReports: " + inventory);
                     invpg.pruneOldInventoryReports(inventoryReportPruneTime);
                     needPublishChange = true;
