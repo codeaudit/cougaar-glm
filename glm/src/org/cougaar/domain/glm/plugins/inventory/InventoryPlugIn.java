@@ -208,10 +208,15 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
     public String getAssetType(Inventory inventory) {
 	
-	Asset a = inventory.getScheduledContentPG().getAsset();
-	String type = a.getClass().getName();
-	type = type.substring(type.lastIndexOf('.')+1);
-	return type;
+// 	Asset a = inventory.getScheduledContentPG().getAsset();
+// 	String type = a.getClass().getName();
+// 	type = type.substring(type.lastIndexOf('.')+1);
+// 	return type;
+      InventoryPG invpg = 
+	(InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+      Asset a = invpg.getResource();
+      SupplyClassPG pg = (SupplyClassPG)a.searchForPropertyGroup(SupplyClassPG.class);
+      return pg.getSupplyType();
     }
 
     public Enumeration getInventoryBins(String assetType) {
