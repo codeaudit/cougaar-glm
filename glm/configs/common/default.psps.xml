@@ -270,4 +270,15 @@ Additional PSPs loaded by PSP Launcher
     <PSPName>alpine/execution/TASK_CONSTRAINTS.PSP</PSPName>
   </element>
 <!-- END Execution PSPs -->
+
+<!-- BEGIN DataGatherer PSPs -->
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.domain.mlm.ui.psp.transit.PSP_Hierarchy</Classname>
+    <PSPName>alpine/demo/NEW_HIERARCHY.PSP</PSPName>
+  </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.domain.mlm.ui.psp.transit.PSP_DataGatherer</Classname>
+    <PSPName>alpine/demo/DATA_GRABBER.PSP</PSPName>
+  </element>
+<!-- END DataGatherer PSPs -->
 </object>
