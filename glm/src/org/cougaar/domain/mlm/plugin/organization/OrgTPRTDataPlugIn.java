@@ -599,6 +599,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 		}
 
                 org = (Organization)getFactory().createAsset("Organization");
+                org.initRelationshipSchedule();
 
                 NewTypeIdentificationPG typeIdPG = 
                   (NewTypeIdentificationPG)org.getTypeIdentificationPG();
