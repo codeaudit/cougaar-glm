@@ -29,12 +29,14 @@ import org.cougaar.domain.planning.ldm.policy.StringRuleParameter;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: DaysOnHandPolicy.java,v 1.1 2000-12-15 20:18:02 mthome Exp $
+ * @version  $Id: DaysOnHandPolicy.java,v 1.2 2001-01-25 22:00:12 afedyk Exp $
  */
 
 public class DaysOnHandPolicy extends Policy {
     public static final String ResourceType = "ResourceType";
     public static final String DaysOnHand = "DaysOnHand";
+    public static final String DaysForward = "DaysForward";
+    public static final String DaysBackward = "DaysBackward";
 
     public DaysOnHandPolicy() {
 	super("DaysOnHandPolicy");
@@ -53,6 +55,22 @@ public class DaysOnHandPolicy extends Policy {
 	    System.out.println(ex);
 	}
 	Add(dbd);
+
+	IntegerRuleParameter frp = new IntegerRuleParameter(DaysForward, 0, 40);
+	try {
+	    frp.setValue(new Integer(15));
+	} catch (RuleParameterIllegalValueException ex) {
+	    System.out.println(ex);
+	}
+	Add(frp);
+
+	IntegerRuleParameter brp = new IntegerRuleParameter(DaysBackward, 0, 40);
+	try {
+	    brp.setValue(new Integer(15));
+	} catch (RuleParameterIllegalValueException ex) {
+	    System.out.println(ex);
+	}
+	Add(brp);
     }
 
     public String getResourceType() {
@@ -85,6 +103,47 @@ public class DaysOnHandPolicy extends Policy {
 	} catch(RuleParameterIllegalValueException ex) {
 	    System.out.println(ex);
 	}
+    }
+
+    public int getDaysForward() {
+	IntegerRuleParameter param = (IntegerRuleParameter)
+	    Lookup(DaysForward);
+	return ((Integer)(param.getValue())).intValue();
+    }
+
+    public void setDaysForward(int days) {
+	IntegerRuleParameter param = (IntegerRuleParameter)
+	    Lookup(DaysForward);
+	try {
+	    param.setValue(new Integer(days));
+	} catch(RuleParameterIllegalValueException ex) {
+	    System.out.println(ex);
+	}
+    }
+	
+    public int getDaysBackward() {
+	IntegerRuleParameter param = (IntegerRuleParameter)
+	    Lookup(DaysBackward);
+	return ((Integer)(param.getValue())).intValue();
+    } 
+
+    public void setDaysBackward(int days) {
+	IntegerRuleParameter param = (IntegerRuleParameter)
+	    Lookup(DaysBackward);
+	try {
+	    param.setValue(new Integer(days));
+	} catch(RuleParameterIllegalValueException ex) {
+	    System.out.println(ex);
+	}
+    }
+   
+    public int getWindowSize() {
+	IntegerRuleParameter param = (IntegerRuleParameter)
+	    Lookup(DaysForward);
+	int forward = ((Integer)(param.getValue())).intValue();
+	param = (IntegerRuleParameter)Lookup(DaysBackward);
+	int backward = ((Integer)(param.getValue())).intValue();
+	return forward + backward;
     }
 }
 	

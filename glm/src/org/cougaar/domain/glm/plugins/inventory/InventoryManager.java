@@ -48,8 +48,16 @@ public abstract class InventoryManager extends InventoryProcessor {
 
     public static final int               DONE = -1; 
 
-    /** PAS should be set by policy */
+    /**
+     *   daysOnHand_    keep enough inventory on hand to cove N days of demand
+     *   daysForward_   When calculating average daily demand, look N days forward
+     *                  from this day.
+     *   daysBackward_  When calculating average daily demand, look N days backward
+     *                  from this day.
+     */
     protected int daysOnHand_ = 3;
+    protected int daysForward_ = 15;
+    protected int daysBackward_ = 15;
 
     static class PolicyPredicate implements UnaryPredicate {
 	String type_;
@@ -754,17 +762,35 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected boolean updateDaysOnHandPolicy(Enumeration policies) {
 	DaysOnHandPolicy pol;
 	boolean changed = false;
+	printDebug("updateDaysOnHandPolicy(), Days On Hand Policy for "+supplyType_+". DaysOnHand: "+daysOnHand_+
+		   ", Days Forward: "+daysForward_+", Days Backward: "+daysBackward_+", Window size: "+
+		   (daysForward_+daysBackward_));
 	while (policies.hasMoreElements()) {
 	    pol = (DaysOnHandPolicy)policies.nextElement();
 	    int days = pol.getDaysOnHand();
-  	    printDebug("updateDaysOnHandPolicy(), DaysOnHandPolicy for "+supplyType_+" is : "+days);
-            if (days >= 0) {
-		printDebug("updateDaysOnHandPolicy(), Days On Hand Policy changed from : "+daysOnHand_+" to : "+days);
+            if ((days >= 0) && (days != daysOnHand_)) {
 		daysOnHand_ = days;
 		changed = true;
 	    }
+	    int forward = pol.getDaysForward();
+	    if ((forward >= 0) && (forward != daysForward_)) {
+		daysForward_ = forward;
+		changed = true;
+	    }
+	    int backward = pol.getDaysBackward();
+	    if ((backward >= 0) && (backward != daysBackward_)) {
+		daysBackward_ = backward;
+		changed = true;
+	    }
 	}
+	if (changed) {
+	    printDebug("updateDaysOnHandPolicy(), Days On Hand Policy CHANGED for "+supplyType_+". DaysOnHand: "+daysOnHand_+
+		       ", Days Forward: "+daysForward_+", Days Backward: "+daysBackward_+", Window size: "+
+		       (daysForward_+daysBackward_));
+	}		
 	return changed;
     }
 
 }
+
+
