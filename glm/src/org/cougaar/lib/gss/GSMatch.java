@@ -8,7 +8,7 @@
  * </copyright>
  */
 
-package com.bbn.tops.gss;
+package org.cougaar.lib.gss;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.plan.Task;
