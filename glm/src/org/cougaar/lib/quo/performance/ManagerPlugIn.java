@@ -43,7 +43,6 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     protected IncrementalSubscription allocations;   // My allocations
     protected IncrementalSubscription forceExecute;   // My allocations
 
-    
     protected int CPUCONSUME;
     protected int MESSAGESIZE;
     protected String FILENAME;
@@ -51,6 +50,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     protected int MYCOUNT=1;
     protected int  OUTSTANDING_MESSAGES;
     protected boolean DEBUG = false;
+    protected boolean LOG = false;
     protected int BURST_TIME=0;
     protected  String VERB;//="CODE1";
 
@@ -76,6 +76,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	MAXCOUNT=getParameterIntValue(p, "MAXCOUNT");
 	OUTSTANDING_MESSAGES =getParameterIntValue(p, "OUTSTANDING_MESSAGES");
 	DEBUG=getParameterBooleanValue(p, "DEBUG");
+	LOG=getParameterBooleanValue(p, "LOG");
 	BURST_TIME=getParameterIntValue(p, "BURST_TIME");
 	VERB=getParameterValue(p, "VERB");
     }
@@ -96,12 +97,11 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
      */
     protected void setupSubscriptions() {
 	parseParameter(); //read the plugIn arguments
-	for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
-	    System.out.println("enetring loop");
+	//for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
+	    debug(DEBUG, "ManagerPlugIn: setupSubscription  entering loop");
 	    addTask();
-	    
-	    sequenceNum++;
-	}
+	    //  sequenceNum++;
+	    //}
 	allocations = (IncrementalSubscription)subscribe(myAllocationPredicate);
     }
 
@@ -205,7 +205,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	    minDelta = Math.min(minDelta, delta);
 	int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
 	String msg=t.getVerb() +"=>"+taskCount+","+delta+","+ minDelta;
-	debug(DEBUG, FILENAME, fw, msg);
+	log(LOG, FILENAME, fw, msg);
 	count++;
     }
 

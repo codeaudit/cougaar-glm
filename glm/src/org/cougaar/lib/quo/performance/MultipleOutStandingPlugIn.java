@@ -50,6 +50,8 @@ public class MultipleOutStandingPlugIn extends CommonUtilPlugIn {
     protected int MYCOUNT=1;
     protected int  OUTSTANDING_MESSAGES;
     protected boolean DEBUG = false;
+    protected boolean LOG = false;
+
     protected int BURST_TIME=0;
     protected  String VERB;//="CODE1";
 
@@ -77,6 +79,7 @@ public class MultipleOutStandingPlugIn extends CommonUtilPlugIn {
 	MAXCOUNT=getParameterIntValue(p, "MAXCOUNT");
 	OUTSTANDING_MESSAGES =getParameterIntValue(p, "OUTSTANDING_MESSAGES");
 	DEBUG=getParameterBooleanValue(p, "DEBUG");
+	LOG=getParameterBooleanValue(p, "LOG");
 	BURST_TIME=getParameterIntValue(p, "BURST_TIME");
 	VERB=getParameterValue(p, "VERB");
     }
@@ -111,7 +114,7 @@ public class MultipleOutStandingPlugIn extends CommonUtilPlugIn {
      */
     protected void execute () {
 	wakeUpCount++;
-	debug(DEBUG, FILENAME, fw,""+ System.currentTimeMillis() + "   wakeUpcount: " + wakeUpCount+"------------------------");
+	debug(DEBUG,""+ System.currentTimeMillis() + "   wakeUpcount: " + wakeUpCount+"------------------------");
 	//publishRemove(t);
 	allocateChangedtasks(allocations.getChangedList()); // Process changed allocations
     }
@@ -215,7 +218,7 @@ public class MultipleOutStandingPlugIn extends CommonUtilPlugIn {
 	    minDelta = Math.min(minDelta, delta);
 	int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
 	String msg=t.getVerb() +"=>"+taskCount+","+delta+","+ minDelta + " TaskAllocationCount:" + taskAllocationCount;
-	debug(DEBUG, FILENAME, fw, msg);
+	log(LOG, FILENAME, fw, msg);
 	count++;
     }
 

@@ -48,6 +48,7 @@ public class OneTaskAddAndRescindPlugIn extends CommonUtilPlugIn {
     protected int MYCOUNT=1;
     protected int  OUTSTANDING_MESSAGES;
     protected boolean DEBUG = false;
+     protected boolean LOG = false;
     protected int BURST_TIME=0;
     protected  String VERB;//="CODE1";
 
@@ -75,6 +76,7 @@ public class OneTaskAddAndRescindPlugIn extends CommonUtilPlugIn {
 	MAXCOUNT=getParameterIntValue(p, "MAXCOUNT");
 	OUTSTANDING_MESSAGES =getParameterIntValue(p, "OUTSTANDING_MESSAGES");
 	DEBUG=getParameterBooleanValue(p, "DEBUG");
+	LOG=getParameterBooleanValue(p, "LOG");
 	BURST_TIME=getParameterIntValue(p, "BURST_TIME");
 	VERB=getParameterValue(p, "VERB");
     }
@@ -145,7 +147,7 @@ public class OneTaskAddAndRescindPlugIn extends CommonUtilPlugIn {
 	    taskAllocationCount++;
 	    
 	    int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
-	    debug(DEBUG, FILENAME, fw,"ManagerPlugIn:allocateChangedTasks ....taskAllocationCount.." + taskAllocationCount + " for task# " + taskCount);
+	    debug(DEBUG, "ManagerPlugIn:allocateChangedTasks ....taskAllocationCount.." + taskAllocationCount + " for task# " + taskCount);
 
 	    Allocation alloc = (Allocation)allo_enum.nextElement() ;
 	    est=null; rep=null;
@@ -216,7 +218,7 @@ public class OneTaskAddAndRescindPlugIn extends CommonUtilPlugIn {
 	    minDelta = Math.min(minDelta, delta);
 	int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
 	String msg=t.getVerb() +"=>"+taskCount+","+delta+","+ minDelta;
-	debug(DEBUG, FILENAME, fw, msg);
+	log(LOG, FILENAME, fw, msg);
 	count++;
     }
 

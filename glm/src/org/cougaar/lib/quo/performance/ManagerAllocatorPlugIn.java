@@ -61,7 +61,7 @@ public class ManagerAllocatorPlugIn extends  CommonUtilPlugIn {
  	Vector p = getParameters();
  	VERB=getParameterValue(p, "VERB");
 	DEPARTMENT=getParameterValue(p, "DEPARTMENT");
-  	System.out.println("ManagerAllocator ===" + DEPARTMENT);
+  	//System.out.println("ManagerAllocator ===" + DEPARTMENT);
       }
 
     public UnaryPredicate myAllocationPredicate = new UnaryPredicate() {

@@ -44,7 +44,7 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
 	    String s = (String)p.elementAt(i);
 	    if (s.indexOf(param) != -1){
 		 strParam = s.substring(s.indexOf("=")+1, s.length());
-		 System.out.println("CommonUtilPlugn::getParameterValue -- " + param + ": " + strParam);
+		 //debug(DEBUG, fw, "CommonUtilPlugn::getParameterValue -- " + param + ": " + strParam);
 	    }
 	}
 
@@ -93,24 +93,50 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
     
        
    
- public void debug(boolean DEBUG, String out, FileWriter fw, String message) {
-	 try {
-	     if (DEBUG) //default to stdout
-		 //System.out.println(formatMessage(message));
-		 System.out.println(message);
-	     
-	     if (out != null)
-		 {
-		     //System.out.println("CommonUtilPlugIn:debug -Writing to file " + out);
-		     fw = new FileWriter(out, true);
-		     fw.write(message+"\n");
-		     fw.close();
-		 }
-	 } catch (IOException ie) {
-	     ie.printStackTrace();
-	 }//catch
-     
- }
+    //  public void debug(boolean DEBUG, String out, FileWriter fw, String message) {
+//  	try {
+//  	    if (DEBUG) //default to stdout
+//  		//System.out.println(formatMessage(message));
+//  		System.out.println(message);
+	    
+//  	    if (out != null)
+//  		{
+//  		    //System.out.println("CommonUtilPlugIn:debug -Writing to file " + out);
+//  		    fw = new FileWriter(out, true);
+//  		    fw.write(message+"\n");
+//  		    fw.close();
+//  		}
+//  	} catch (IOException ie) {
+//  	    ie.printStackTrace();
+//  	}//catch
+//      }
+
+    public void debug(boolean DEBUG, String message) {
+	if (DEBUG) //default to stdout
+	    //System.out.println(formatMessage(message));
+	    System.out.println(message);
+    }
+
+    public void log(boolean LOG, String out, FileWriter fw, String message){
+	try {
+	    if (LOG) {//default to stdout
+		if (out != null)
+		    {
+			//System.out.println("CommonUtilPlugIn:debug -Writing to file " + out);
+			fw = new FileWriter(out, true);
+			fw.write(message+"\n");
+			fw.close();
+		    }
+		else
+		    System.out.println(message);
+	    }
+	} catch (IOException ie) {
+	    ie.printStackTrace();
+	}//catch
+	
+    }
+
+
 
     public String formatMessage(String msg[]){
 	String delimiter="'";
