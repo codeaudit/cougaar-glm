@@ -523,11 +523,14 @@ agency.doc=the agency or other major organization the asset is \
 	  USTC, CENTCOM.
 
 [MilitaryOrgPG]
+
+[MilitaryOrgPG]
 slots=String standard_name, \
       String UIC, \
       String UTC, \
       String SRC, \
       String echelon, \
+      String requested_echelon_of_support, \
       String hierarchy_2525, \
       boolean is_reserve, \
       Location home_location
@@ -535,13 +538,16 @@ UIC.doc=The UIC (Unit Identification Code) of the unit.
 UTC.doc=The Joint Unit Type Code, specifying the type of unit.
 SRC.doc=The Army SRC, specifying the type of Unit.
 echelon.doc=The numeric code specifying the echelon of the unit. \
-	08:Division, 07:Brigade, 06:Regiment, 05:Battalion, 04:Company. \
-	Codes are traditionally printed as two figures with a \
-	leading zero if necessary.
+        08:Division, 07:Brigade, 06:Regiment, 05:Battalion, 04:Company. \
+        Codes are traditionally printed as two figures with a \
+        leading zero if necessary.
+requested_echelon_of_support.doc=The requested \
+        echelon of support for the unit.  Should map to MilitaryEchelon constants -
+        BRIGADE, DIVISION, CORPS, THEATER, US-ARMY, JOINT
 hierarchy_2525.doc=The 2525A hierarchy designator, used to specify \
     the symbol for the organization on a map.
 home_location.doc=Location of the Org when it is not deployed. \
-	Should match AssignedPG.homeStation if defined.
+        Should match AssignedPG.homeStation if defined.
 
 [ManagedAssetPG]
 slots=long number_of_personnel
