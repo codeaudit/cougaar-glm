@@ -411,7 +411,7 @@ public class UIInventoryImpl {
 
     long elementStartTime=start_time;
     long elementEndTime;
-
+    
     while(elementStartTime < end_time) {
 	elementEndTime = elementStartTime + (TimeUtils.MSEC_PER_DAY-1);
 	if (elementEndTime > end_time)
@@ -432,6 +432,12 @@ public class UIInventoryImpl {
 	}
 	elementStartTime = elementEndTime + 1;
     }
+
+    if(schedule==null) {
+	System.out.println("UIInventoryImpl::getScheduleFromProjectionTask():WARNING Projection Task with no duration: " + TaskUtils.taskDesc(projectTask));
+	schedule=new Vector();
+    }
+
     return schedule;
   }
 
