@@ -80,7 +80,7 @@ public class GetOplanPlugIn extends SimplePlugIn {
 	  OplanCoupon ow = (OplanCoupon) addIterator.next();
 	  // We shouldn't run the plugin in the same cluster where
 	  // the oplan is published, but if we do, just ignore the coupon
-	  if (!ow.getOwner().equals(getCluster().getClusterIdentifier())) {
+	  if (!ow.getOwner().equals(getClusterIdentifier())) {
 	    requestOplan(ow);
 	  }
 	}
@@ -90,7 +90,7 @@ public class GetOplanPlugIn extends SimplePlugIn {
       if (changes != null) {
 	for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
 	  OplanCoupon ow = (OplanCoupon) changeIterator.next();
-	  if (!ow.getOwner().equals(getCluster().getClusterIdentifier())) {
+	  if (!ow.getOwner().equals(getClusterIdentifier())) {
 	    requestOplan(ow);
 	  }
 	}
@@ -99,7 +99,7 @@ public class GetOplanPlugIn extends SimplePlugIn {
       if (deletes != null) {
 	for (Iterator delIterator = deletes.iterator(); delIterator.hasNext();) {
 	  OplanCoupon ow = (OplanCoupon) delIterator.next();
-	  if (!ow.getOwner().equals(getCluster().getClusterIdentifier())) {
+	  if (!ow.getOwner().equals(getClusterIdentifier())) {
 	    removeOplan(ow);
 	  }
 	}

@@ -44,11 +44,12 @@ import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.glm.ldm.oplan.TimeSpan;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 
+
 /* Abstract base class for query handlers which are invoked on behalf of
  * SQLOplanPlugIn.
  */
 public abstract class SQLOplanQueryHandler extends QueryHandler {
-  protected SQLOplanPlugIn myPlugIn;
+  protected SQLOplanBase myPlugIn;
                
   /** Called on QueryHandler load to allow it to start any
    * threads or other once-only intialization.
@@ -70,10 +71,10 @@ public abstract class SQLOplanQueryHandler extends QueryHandler {
                             RootFactory aldmf,
                             Properties params,
                             BlackboardService sub) {
-    if (!(ldmplugin instanceof SQLOplanPlugIn)) {
-      throw new IllegalArgumentException("ldmplugin must be an SQLOplanPlugIn");
+    if (!(ldmplugin instanceof SQLOplanBase)) {
+      throw new IllegalArgumentException("ldmplugin must be an SQLOplanBase");
     } else {
-      myPlugIn = (SQLOplanPlugIn) ldmplugin;
+    myPlugIn = (SQLOplanBase) ldmplugin;
       super.initialize(ldmplugin, cid, comp, aldmf, params, sub);
     }
   }

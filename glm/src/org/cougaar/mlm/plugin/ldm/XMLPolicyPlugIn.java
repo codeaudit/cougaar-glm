@@ -69,7 +69,7 @@ public class XMLPolicyPlugIn extends SimplePlugIn
 	  //System.out.println("XMLPolicyPlugIn processing file: " + xmlfilename);
 	  globalParameters.put( "XMLFile", xmlfilename ); // Why are we doing this?
 	  policyCreator = new XMLPolicyCreator(xmlfilename, 
-                                               getCluster().getConfigFinder(),
+					       getConfigFinder(),
                                                theLDMF);
 	  Policy policies[] = policyCreator.getPolicies();
 

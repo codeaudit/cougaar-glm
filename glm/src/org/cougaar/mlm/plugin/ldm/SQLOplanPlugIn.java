@@ -64,7 +64,7 @@ import java.io.*;
  * a database.
  *
  **/
-public class SQLOplanPlugIn extends LDMSQLPlugIn {
+public class SQLOplanPlugIn extends LDMSQLPlugIn implements SQLOplanBase{
   public static final String OPLAN_ID_PARAMETER = "oplanid";
   /** frame for 1-button UI **/
   private JFrame frame;
