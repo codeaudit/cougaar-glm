@@ -94,6 +94,8 @@ import org.cougaar.domain.glm.ldm.asset.TransportationNode;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.NewPosition;
 
+import org.cougaar.core.component.StateObject;
+
 // END ADDED BY TOPS
 
 //Used in testing processing of remote RFS/RFD
@@ -104,7 +106,7 @@ import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.domain.planning.ldm.plan.RemotePlanElement;
 */
 
-public class OrgRTDataPlugIn extends SimplePlugIn  {
+public class OrgRTDataPlugIn extends SimplePlugIn implements StateObject {
   private static TrivialTimeSpan ETERNITY = 
     new TrivialTimeSpan(TimeSpan.MIN_VALUE,
                         TimeSpan.MAX_VALUE);
@@ -128,6 +130,9 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   private Vector organization_vector = new Vector();
   private Organization selfOrg;
   private GLMFactory aldmf;
+
+  /** for spawn support */
+  private String originalAgentID = null;
 
   // Used only for testing remote RFS/RFD
   /*
@@ -226,7 +231,11 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   protected void processOrganizations() {
     try {
       String cId = getClusterIdentifier().getAddress();
-      ParsePrototypeFile(cId, GLMRelationship.SELF);
+      String filename = cId + "-prototype-ini.dat";
+      if (didSpawn ())
+		filename = originalAgentID + "-prototype-ini.dat";
+
+      ParsePrototypeFile(filename, cId, GLMRelationship.SELF);
 
       // Put the organizations for this cluster into array
       String organizations[][] = new String[organization_vector.size()][3];
@@ -251,6 +260,9 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   
 
   protected void createSuperior(String sup) {
+
+	System.out.println ("OrgRTDataPlugIn.createSuperior - creating superior " + sup);
+	
     if ((sup == null) ||
         (sup.equals(""))) {
       System.err.println("OrgRTDataPlugIn@" + getClusterIdentifier() + " ignoring Superior specified as \"\"");
@@ -469,7 +481,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   /**
    * 
    */
-  protected void ParsePrototypeFile(String clusterId, String relationship) {
+  protected void ParsePrototypeFile(String filename, String clusterId, String relationship) {
 
     // Use the same domainname for all org assets now
     String uic = "";
@@ -479,7 +491,6 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
     Organization org = null;
     int newVal;
 
-    String filename = clusterId + "-prototype-ini.dat";
     BufferedReader input = null;
     Reader fileStream = null;
 
@@ -520,6 +531,8 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
                 tokens.nextToken();
 	      	uic = tokens.sval;
 
+		if (originalAgentID != null)
+		  uic = getClusterIdentifier().getAddress();
 		// This is a silly fix to a dumb bug
 		if (!uic.startsWith("UIC/")) {
 		  uic = "UIC/" + uic;
@@ -1149,6 +1162,44 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
       System.err.println("OrgRTDataPlugIn Error: org is null");
     }
     return newVal;
+  }
+
+  /**
+   * Implemented for StateObject
+   * <p>
+   * Get the current state of the Component that is sufficient to
+   * reload the Component from a ComponentDescription.
+   *
+   * @return null if this Component currently has no state
+   */
+  public Object getState() {
+    if (originalAgentID == null)
+	  return getClusterIdentifier().getAddress();
+    else 
+	  return originalAgentID;
+  }
+
+  /**
+   * Implemented for StateObject
+   * <p>
+   * Set-state is called by the parent Container if the state
+   * is non-null.
+   * <p>
+   * The state Object is whatever this StateComponent provided
+   * in it's <tt>getState()</tt> implementation.
+   * @param o the state saved before
+   */
+  public void setState(Object o) {
+	originalAgentID = (String) o;
+  }
+
+  /** 
+   * true iff originalAgentID is not null -- i.e. setState got called 
+   * @return true if this agent was spawned
+   */
+  protected boolean didSpawn () {
+	boolean val = (originalAgentID != null);
+	return val;
   }
 
   public static class HomeLocationScheduleElement extends TaggedLocationScheduleElement {
