@@ -12,11 +12,13 @@ package org.cougaar.domain.mlm.ui.psp.xmlservice;
 
 import java.beans.*;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Vector;
+
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.planning.ldm.asset.Asset;
@@ -24,6 +26,8 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.core.util.XMLizable;
 
 import com.ibm.xml.parser.TXDocument;
+
+import  org.cougaar.core.util.XMLObjectProvider;
 
 import org.cougaar.domain.mlm.ui.data.XMLUIPlanObject;
 import org.cougaar.domain.mlm.ui.data.XMLUIPlanObjectConverter;
@@ -37,7 +41,7 @@ import org.w3c.dom.Element;
  * cluster to generate the XML which will be returned to the ui.
  */
 
-public class XMLPlanObjectProvider {
+public class XMLPlanObjectProvider implements XMLObjectProvider {
   TXDocument doc;
   Element root;
   Class xmlPlanObjectClass;
@@ -47,6 +51,11 @@ public class XMLPlanObjectProvider {
   public XMLPlanObjectProvider() {
     // creates <?xml version="1.0"?>
     // creates <LogPlan>
+    reset();
+  }
+
+
+  public void  reset() {
     doc = new TXDocument();
     doc.setVersion("1.0");
     root = doc.createElement("LogPlan");
@@ -60,6 +69,7 @@ public class XMLPlanObjectProvider {
       System.out.println("Exception getting class for plan object: " + e);
     }
   }
+
 
   public XMLPlanObjectProvider(Vector requestedFields) {
     this();
@@ -103,14 +113,30 @@ public class XMLPlanObjectProvider {
     FileOutputStream fos = null;
     try {
       fos = new FileOutputStream(pathname);
-      PrintWriter pw = new PrintWriter(fos);
-      doc.print(pw);
+      writeDocument(fos);
     } catch (Exception e) {
-      System.out.println("Could not write to file:" + pathname + " exception: " + e);
+      e.printStackTrace();
     }
   }
 
+  public void writeDocument(OutputStream os) {
+    try {
+      PrintWriter pw = new PrintWriter(os);
+      doc.print(pw);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
   public TXDocument getDocument() {
+    // for debugging, also print it
+    //    printDocument();
+    return doc;
+  }
+
+
+  public Document getDocumentRef() {
     // for debugging, also print it
     //    printDocument();
     return doc;
