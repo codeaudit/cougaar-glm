@@ -510,10 +510,10 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
     //use the helper to publish the expansion and the wf subtasks all in one
     PluginHelper.publishAddExpansion(blackboard, exp);
 
-    maybeAddDetermineRequirementsTasks(task);
+    maybeAddDetermineRequirementsTasks(task, exp);
   }
 
-  private void maybeAddDetermineRequirementsTasks(Task task) {
+  private void maybeAddDetermineRequirementsTasks(Task task, Expansion exp) {
     SortedSet stages =
       (SortedSet) task
       .getPrepositionalPhrase(FOR_OPLAN_STAGES)
@@ -533,8 +533,6 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
       }
       return;
     }
-
-    Expansion exp = (Expansion) task.getPlanElement();
 
     if (logger.isDebugEnabled()) {
       logger.debug("Adding DR tasks");
