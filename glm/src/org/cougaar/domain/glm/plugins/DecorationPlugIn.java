@@ -235,6 +235,13 @@ public abstract class DecorationPlugIn extends SimplePlugIn {
     }
 
 
+    public void publishRemoveFromExpansion(Task subtask) {
+        NewWorkflow wf = (NewWorkflow) subtask.getWorkflow();
+        publishRemove(subtask);
+        if (wf == null) return; // Already removed
+        wf.removeTask(subtask);
+    }
+
     public void publishAddToExpansion(Task parent, Task subtask) {
 	// Publish new task
 	if (!publishAddObject(subtask)) {
@@ -252,6 +259,7 @@ public abstract class DecorationPlugIn extends SimplePlugIn {
 	    wf.setParentTask(parent);
 	    wf.setIsPropagatingToSubtasks(true);
 	    wf.addTask(subtask);
+            ((NewTask) subtask).setWorkflow(wf);
 	    // Build Expansion
 	    expansion = factory.createExpansion(parent.getPlan(), parent, wf, null);
 	    // Publish Expansion
@@ -262,6 +270,7 @@ public abstract class DecorationPlugIn extends SimplePlugIn {
 	    expansion =(Expansion)pe;
 	    wf = (NewWorkflow)expansion.getWorkflow();
 	    wf.addTask(subtask);
+            ((NewTask) subtask).setWorkflow(wf);
 	    publishChange(expansion);
 	}
 	else {
