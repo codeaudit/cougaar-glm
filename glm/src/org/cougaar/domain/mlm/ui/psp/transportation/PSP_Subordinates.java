@@ -14,6 +14,7 @@ import org.cougaar.core.cluster.Subscription;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.plan.Relationship;
 import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
+import org.cougaar.domain.planning.ldm.plan.Schedule;
 import org.cougaar.lib.planserver.PSPState;
 import org.cougaar.lib.planserver.PSP_BaseAdapter;
 import org.cougaar.lib.planserver.PlanServiceContext;
@@ -23,6 +24,7 @@ import org.cougaar.lib.planserver.UISubscriber;
 import org.cougaar.lib.planserver.RuntimePSPException;
 import org.cougaar.lib.planserver.HttpInput;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.MutableTimeSpan;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -182,37 +184,37 @@ public class PSP_Subordinates extends PSP_BaseAdapter
     }
   }
 
+  /** actually spits out the XML 
+   * Overridden in PSP_Hierarchy
+   * @see org.cougaar.domain.mlm.ui.psp.transportation.PSP_Hierarchy
+   * @param org the org to generate xml for
+   **/
   protected void generateXML (PrintStream out, MyPSPState myState, Organization org) {
-	RelationshipSchedule schedule = org.getRelationshipSchedule();
-		  
+	Collection subordinates = org.getSubordinates(new MutableTimeSpan());
 	String orgName = org.getItemIdentificationPG().getNomenclature();
+	RelationshipSchedule schedule = org.getRelationshipSchedule ();
+	
+	out.println("<org name=\""+ orgName+ "\" />");
 
-	if (DEBUG)
-	  System.out.println ("PSP_Subordinates.getMyRelationships - output : " + 
-						  "<org name=\""+ orgName+ "\"></org>");
-
-	out.println("<org name=\""+ orgName+ "\"></org>");
-
-	for (Iterator schedIter = schedule.listIterator(); schedIter.hasNext();) {
+	// Safe to iterate over subordinates because getSubordinates() returns
+	// a new Collection.
+	for (Iterator schedIter = subordinates.iterator(); schedIter.hasNext();) {
 	  Relationship relationship = (Relationship)schedIter.next();
+	  if (DEBUG)
+		System.out.println ("PSP_Subordinates.getMyRelationships - self " + 
+							orgName + 
+							"'s relationship : " + relationship);
+	  String subord =
+		((Asset)schedule.getOther(relationship)).getItemIdentificationPG().getNomenclature();
 
-	  if (((relationship.getRoleA().equals(Constants.Role.ADMINISTRATIVESUBORDINATE)) &&
-		   (relationship.getRoleB().equals(Constants.Role.ADMINISTRATIVESUPERIOR   )))){
-		if (DEBUG)
-		  System.out.println ("PSP_Subordinates.getMyRelationships - self " + 
-							  orgName + 
-							  "'s relationship : " + relationship);
-		String subord = 
-		  ((Asset)relationship.getA()).getItemIdentificationPG().getNomenclature();
-
-		if (DEBUG)
-		  System.out.println ("\tsubord is " + subord + ", subord's role is : " + relationship.getRoleA());
-		if (!orgName.equals (subord))
-		  recurseOnSubords (out, myState, subord);
-	  }
+	  if (DEBUG)
+		System.out.println ("\tsubord is " + subord + ", subord's role is : " + 
+							relationship.getRoleA());
+	  if (!orgName.equals (subord))
+		recurseOnSubords (out, myState, subord);
 	}
   }
-	
+
   /**
    * yuck -- this PSP calling other PSPs!
    *
