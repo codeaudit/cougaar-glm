@@ -1,52 +1,71 @@
 package org.cougaar.domain.glm.plugins.inventory;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.core.cluster.CollectionSubscription;
+import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.domain.glm.debug.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.plan.Agency;
+import org.cougaar.domain.glm.plugins.*;
 import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.*;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
-import org.cougaar.domain.planning.ldm.plan.ScheduleImpl;
+import org.cougaar.domain.planning.ldm.plan.Aggregation;
+import org.cougaar.domain.planning.ldm.plan.AllocationResult;
+import org.cougaar.domain.planning.ldm.plan.AspectType;
+import org.cougaar.domain.planning.ldm.plan.AspectValue;
+import org.cougaar.domain.planning.ldm.plan.Composition;
 import org.cougaar.domain.planning.ldm.plan.Expansion;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.domain.planning.ldm.plan.MPTask;
+import org.cougaar.domain.planning.ldm.plan.NewComposition;
+import org.cougaar.domain.planning.ldm.plan.NewMPTask;
 import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.NewWorkflow;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
+import org.cougaar.domain.planning.ldm.plan.Preference;
+import org.cougaar.domain.planning.ldm.plan.Schedule;
+import org.cougaar.domain.planning.ldm.plan.ScheduleImpl;
+import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
+import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
 import org.cougaar.domain.planning.ldm.plan.Workflow;
+import org.cougaar.util.Enumerator;
 import org.cougaar.util.UnaryPredicate;
-
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.GregorianCalendar;
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import org.cougaar.domain.glm.plugins.*;
-import org.cougaar.domain.glm.ldm.asset.*;
-import org.cougaar.domain.glm.debug.*;
-import org.cougaar.domain.glm.ldm.asset.*;
-import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.plan.Agency;
 
 public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
-  public static class InventoryItemInfo {
-    public double[] levels;
-    public GregorianCalendar reportBase;
-    public int reportStepKind;
+    public static class InventoryItemInfo {
+        public double[] levels;
+        public GregorianCalendar reportBase;
+        public int reportStepKind;
 
-    InventoryItemInfo(double[] levels, GregorianCalendar reportBase, int reportStepKind) {
-      this.levels = levels;
-      this.reportBase = reportBase;
-      this.reportStepKind = reportStepKind;
+        InventoryItemInfo(double[] levels, GregorianCalendar reportBase, int reportStepKind) {
+            this.levels = levels;
+            this.reportBase = reportBase;
+            this.reportStepKind = reportStepKind;
+        }
     }
-  }
 
-    /** Subscription for expandable support requests. */
-    private IncrementalSubscription        detReqSubscription_;
-    private IncrementalSubscription        MaintainInventorySubscription_;
+    /** Subscription for aggregatable support requests. **/
+    private IncrementalSubscription detReqSubscription_;
+
+    /** Subscription for the aggregated support request **/
+    private CollectionSubscription aggMILSubscription_;
+
+    /** The aggMIL task found/created during the current transaction **/
+    private Task aggMILTask_ = null;
 
     // Hashtable - keys asset id (nsn), elements array of levels 
     // filled in from file during initialization.  Used to create inventories as needed.
@@ -58,39 +77,41 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     private Hashtable inventoryTypeHash_ = new Hashtable();
     private Hashtable MILTaskHash_ = new Hashtable();
 
-    protected RootFactory                  ldmFactory_;
-
-    protected IncrementalSubscription inventorySubscription_ = null;
+//      protected CollectionSubscription inventorySubscription_ = null;
 
     public InventoryPlugIn() {
 	super();
     }
 
     public synchronized void execute() {
-	initInventories();
-	rememberMaintainInventoryTasks();
+        aggMILTask_ = null;
+        if (detReqSubscription_.hasChanged()) {
+            aggregateDetermineRequirementsTasks((NewMPTask) getDetermineRequirementsTask(),
+                                               detReqSubscription_.getAddedList());
+        }
 	super.execute();
     }
 
     protected void setupSubscriptions() {
 	super.setupSubscriptions();
-	ldmFactory_ = getDelegate().getLDM().getFactory();
-	inventorySubscription_ = (IncrementalSubscription) subscribe(new InventoryPredicate());
-	// Determing requirements task subscription 
-	detReqSubscription_ = (IncrementalSubscription)subscribe(new DetInvReqPredicate());
-	MaintainInventorySubscription_ = (IncrementalSubscription)subscribe(new MaintainInventoryPredicate());
+//  	inventorySubscription_ = (CollectionSubscription) subscribe(new InventoryPredicate());
+        aggMILSubscription_ = (CollectionSubscription) subscribe(new AggMILPredicate(), false);
+	// Determine requirements task subscription 
+	detReqSubscription_ = (IncrementalSubscription) subscribe(new DetInvReqPredicate());
+	addInventories(query(new InventoryPredicate()));
+	addMILTasks(query(new MILPredicate()));
     }
 
-    static class InventoryPredicate implements UnaryPredicate
-    {
-	String type_;
+    // Predicates
 
-	public InventoryPredicate() {}
-
+    /**
+       Passes Inventory assets that have a valied InventoryPG
+     **/
+    private static class InventoryPredicate implements UnaryPredicate {
 	public boolean execute(Object o) {
 	    if (o instanceof Inventory) {
 		InventoryPG invpg = 
-		    (InventoryPG)((Inventory)o).searchForPropertyGroup(InventoryPG.class);
+		    (InventoryPG) ((Inventory) o).searchForPropertyGroup(InventoryPG.class);
 		if (invpg != null) {
 		    return true;    
 		}
@@ -99,77 +120,198 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	}
     };
 
-    private void initInventories() {
-	inventoryHash_.clear();
-	inventoryTypeHash_.clear();
-	Enumeration list = inventorySubscription_.elements();
-	Inventory inventory;
-	String item;
-	while (list.hasMoreElements()) {
+    /**
+       Passes DetermineRequirements tasks of type MaintainInventory.
+     **/
+    private static class DetInvReqPredicate implements UnaryPredicate {
+	public boolean execute(Object o) {
+	    if (o instanceof Task) {
+		Task t = (Task) o;
+		if (t.getVerb().equals(Constants.Verb.DETERMINEREQUIREMENTS)) {
+		    return TaskUtils.isTaskOfType(t, "MaintainInventory");
+		}
+	    }
+	    return false;
+	}
+    }
+
+    /**
+       Selects the per-inventory MaintainInventory tasks.
+     **/
+    private static class MILPredicate implements UnaryPredicate {
+	public boolean execute(Object o) {
+	    if (o instanceof Task) {
+                Task t = (Task) o;
+                if (t.getVerb().equals(Constants.Verb.MAINTAININVENTORY)) {
+                    return t.getDirectObject() != null; // true if this is the agg task
+                }
+            }
+	    return false;
+	}
+    }
+
+    /**
+       Selects the aggregate MaintainInventory task
+     **/
+    private static class AggMILPredicate implements UnaryPredicate {
+	public boolean execute(Object o) {
+	    if (o instanceof Task) {
+		Task t = (Task) o;
+		if (t.getVerb().equals(Constants.Verb.MAINTAININVENTORY)) {
+                    return t.getDirectObject() == null; // true if this is not the agg task
+                }
+            }
+	    return false;
+	}
+    }
+
+    /**
+       Add some inventories to the inventoryHash_.
+     **/
+    private void addInventories(Collection inventories) {
+        for (Iterator i = inventories.iterator(); i.hasNext(); ) {
             // get current inventories with current qty
-            inventory = (Inventory)list.nextElement();
-	    item = getInventoryType(inventory);
+            Inventory inventory = (Inventory) i.next();
+	    String item = getInventoryType(inventory);
 	    inventoryHash_.put(item, inventory);
 	}
     }
 
-    private void rememberMaintainInventoryTasks() {
-	MILTaskHash_.clear();
-	Enumeration e = MaintainInventorySubscription_.elements();
-	Task task;
-	Inventory inventory;
-	while (e.hasMoreElements()) {
-	    task = (Task)e.nextElement();
-	    inventory = (Inventory)task.getDirectObject();
+    private void removeInventories(Enumeration inventories) {
+	while (inventories.hasMoreElements()) {
+            // get current inventories with current qty
+            Inventory inventory = (Inventory) inventories.nextElement();
+	    String item = getInventoryType(inventory);
+	    inventoryHash_.remove(item);
+	}
+    }
+
+    private void addMILTasks(Collection milTasks) {
+        for (Iterator i = milTasks.iterator(); i.hasNext(); ) {
+	    Task task = (Task) i.next();
+	    Inventory inventory = (Inventory) task.getDirectObject();
 	    MILTaskHash_.put(inventory, task);
 	}
     }
 
+    /**
+       Get _the_ aggregate MIL task. This is complicated because we
+       want to detect when the task has been deleted, but we only want
+       to create one of them. The lag between publishing a new task
+       and its appearance in the subscription poses a problem because,
+       typically, this method is called repeatedly in one transaction.
+       We store the task temporarily in a variable (aggMILTask_) to
+       prevent multiple creation, but clear the variable at the
+       beginning of each new transaction. If the task has not yet been
+       created, we try to create it by aggregating all the existing
+       per-oplan DetermineRequirements tasks into it. Subsequent
+       per-oplan tasks will be aggregated in as they arrive. There
+       will be no task if there are no DetermineRequirements tasks to
+       be aggregated.
+     **/
     public Task getDetermineRequirementsTask() {
-	Task milTask;
-	if (detReqSubscription_.isEmpty()) {
-	    milTask = null;
-// 	    GLMDebug.DEBUG("InventoryPlugIn", getClusterIdentifier(), 
-// 			      "getDetermineRequirementsTask(), NO DETERMINE REQUIREMENTS FOR INVENTORY TASK");
-	}
-	else {
-	    Enumeration e = detReqSubscription_.elements();
-	    milTask = (Task)e.nextElement();
-// 	    GLMDebug.DEBUG("InventoryPlugIn", getClusterIdentifier(), 
-// 			      "getDetermineRequirementsTask(), Task is  "+TaskUtils.taskDesc(milTask));
-	}
-	return milTask;
+        if (aggMILTask_ == null) {
+            if (!aggMILSubscription_.isEmpty()) {
+                aggMILTask_ = (Task) aggMILSubscription_.elements().nextElement();
+            } else if (!detReqSubscription_.isEmpty()) {
+                aggMILTask_ = createAggTask(detReqSubscription_.elements());
+                publishAdd(aggMILTask_);
+            }
+        }
+        return aggMILTask_;
     }
 
+    /**
+       Aggregate some DetermineRequirements tasks
+     **/
+    private void aggregateDetermineRequirementsTasks(NewMPTask mpTask, Enumeration e) {
+        if (!e.hasMoreElements()) return;
+        if (mpTask == null) return;
+        NewComposition composition = (NewComposition) mpTask.getComposition();
+        long minStartTime;
+        long maxEndTime;
+        try {
+            maxEndTime = TaskUtils.getEndTime(mpTask);
+        } catch (IllegalArgumentException iae) {
+            maxEndTime = Long.MIN_VALUE;
+        }
+        try {
+            minStartTime = TaskUtils.getStartTime(mpTask);
+        } catch (IllegalArgumentException iae) {
+            minStartTime = Long.MAX_VALUE;
+        }
+        while (e.hasMoreElements()) {
+            Task parent = (Task) e.nextElement();
+            if (parent.getPlanElement() != null) continue; // Already aggregated
+            minStartTime = Math.min(minStartTime, TaskUtils.getStartTime(parent));
+            maxEndTime = Math.max(maxEndTime, TaskUtils.getEndTime(parent));
+            if (parent.getPlanElement() != null) continue;
+            AllocationResult estAR =
+                PlugInHelper.createEstimatedAllocationResult(parent, theLDMF, 1.0, true);
+            Aggregation agg =
+                theLDMF.createAggregation(parent.getPlan(),
+                                          parent,
+                                          composition,
+                                          estAR);
+            publishAdd(agg);
+            composition.addAggregation(agg);
+        }
+        setStartTimePreference(mpTask, minStartTime);
+        setEndTimePreference(mpTask, maxEndTime);
+        mpTask.setParentTasks(new Enumerator (composition.getParentTasks()));
+    }
+
+    private void setStartTimePreference(NewTask mpTask, long newStartTime) {
+        ScoringFunction sf;
+        Preference pref;
+        sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME,
+                                                                   newStartTime));
+        pref = theLDMF.newPreference(AspectType.START_TIME, sf);
+        mpTask.setPreference(pref);
+//          mpTask.setCommitmentDate(new Date(newStartTime));
+
+    }
+
+    private void setEndTimePreference(NewTask mpTask, long newEndTime) {
+        ScoringFunction sf;
+        Preference pref;
+        sf = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME,
+                                                                   newEndTime));
+        pref = theLDMF.newPreference(AspectType.END_TIME, sf);
+        mpTask.setPreference(pref);
+    }
+
+    /**
+       Find or make the aggregated MIL task for an inventory. If the
+       MILTaskHash_ does not contain an existing task, create a new
+       one and link it to the determine requirements tasks.
+     **/
     public Task findOrMakeMILTask(Inventory inventory) {
 	// Creates the MaintainInventoryLevels Task for this item 
 	// if one does not already exist
-	NewTask milTask = (NewTask)MILTaskHash_.get(inventory);
+	NewTask milTask = (NewTask) MILTaskHash_.get(inventory);
 	if (milTask == null) {
-	    // Get Parent
-	    Task parent = getDetermineRequirementsTask();
-	    ScheduledContentPG scpg = inventory.getScheduledContentPG();
-	    if (parent != null) {
-		milTask = createMILTask(parent, inventory);
-		publishAddToExpansion(parent, milTask);
-		GLMDebug.DEBUG("InventoryPlugIn", "findOrMakeMILTask(), Created MaintainInventoryTask for "+
-				  AssetUtils.assetDesc(scpg.getAsset()));
-		MILTaskHash_.put(inventory, milTask);
-	    }
-// 	    else {
-// 		GLMDebug.ERROR("InventoryPlugIn", "findOrMakeMILTask(), CANNOT CREATE MILTASK, no parent, inventory: "+
-// 				  AssetUtils.assetDesc(scpg.getAsset()));	
-// 	    }
-	}
+            Task parent = getDetermineRequirementsTask();
+            if (parent == null) {
+                GLMDebug.ERROR("InventoryPlugIn",
+                               "findOrMakeMILTask(), CANNOT CREATE MILTASK, no parent, inventory: "
+                               + AssetUtils.assetDesc(inventory
+                                                      .getScheduledContentPG()
+                                                      .getAsset()));	
+                return null; // Can't make one
+            }
+            milTask = createMILTask(parent, inventory);
+            publishAddToExpansion(parent, milTask);
+            MILTaskHash_.put(inventory, milTask);
+        }
 	return milTask;
     }
 
-
     public synchronized Inventory findOrMakeInventory(String supplytype, String id) {
-	Asset resource = ldmFactory_.getPrototype(id);
+	Asset resource = theLDMF.getPrototype(id);
 	if (resource == null) {
 	    GLMDebug.DEBUG("InventoryPlugIn", "<"+supplytype+"> createInventory fail to get prototype for "+id);
-	    resource = ldmFactory_.createPrototype(supplytype, id);
+	    resource = theLDMF.createPrototype(supplytype, id);
 	}
 	if (resource == null) {
 	    GLMDebug.ERROR("InventoryPlugIn","<"+supplytype+"> createInventory fail to make prototype for "+id);
@@ -335,48 +477,38 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	GLMDebug.DEBUG("InventoryPlugIn", clusterId_, "stashInventory(), number of inventory bins: "+entries+"for "+type);
     }
 
-    // ********************************************************
-    //                                                        *
-    // INITIALIZATION Section                                 *
-    //                                                        *
-    // ********************************************************
-
-    static class DetInvReqPredicate implements UnaryPredicate
-    {
-
-	// Predicate defining expandable Determine Reqs. 
-	public boolean execute(Object o) {
-	    if (o instanceof Task) {
-		Task t = (Task)o;
-		if (t.getVerb().equals(Constants.Verb.DETERMINEREQUIREMENTS)) {
-		    return TaskUtils.isTaskOfType(t, "MaintainInventory");
-		}
-	    }
-	    return false;
-	}
-    }
-
-    static class MaintainInventoryPredicate implements UnaryPredicate
-    {
-
-	// Predicate defining expandable Determine Reqs. 
-	public boolean execute(Object o) {
-	    if (o instanceof Task) {
-		Task t = (Task)o;
-		if (t.getVerb().equals(Constants.Verb.MAINTAININVENTORY)) {
-		    return true;
-		}
-	    }
-	    return false;
-	}
-    }
-
+    /**
+       Create a MaintainInventory task for an inventory. This task is
+       the parent of all refill tasks for the inventory and is itself
+       a subtask of the aggregated determine requirements tasks.
+     **/
     private NewTask createMILTask(Task parent, Inventory inventory) {
-	NewTask subtask = getMyDelegate().getFactory().newTask();
+	NewTask subtask = theLDMF.newTask();
 	subtask.setDirectObject(inventory);
 	subtask.setParentTask(parent);
-	subtask.setSource(getMyDelegate().getClusterIdentifier());
 	subtask.setVerb(new Verb(Constants.Verb.MAINTAININVENTORY));
+        setStartTimePreference(subtask, TaskUtils.getStartTime(parent));
+        setEndTimePreference(subtask, TaskUtils.getEndTime(parent));
 	return subtask;
+    }
+
+    /**
+       Create the aggregated determine requrements task. This task is
+       the parent of all the per-inventory MaintainInventory tasks.
+       It, too, uses the MaintainInventory verb but with no direct
+       object. It is an MPTask that combines all the
+       DetermineRequirements tasks of type MaintainInventory. The
+       Composition of this MPTask is non-propagating so it is
+       rescinded only if all the parent tasks are rescinded.
+     **/
+    private NewMPTask createAggTask(Enumeration parents) {
+	NewMPTask mpTask = theLDMF.newMPTask();
+        NewComposition composition = theLDMF.newComposition();
+        composition.setIsPropagating(false);
+        mpTask.setComposition(composition);
+        composition.setCombinedTask(mpTask);
+	mpTask.setVerb(new Verb(Constants.Verb.MAINTAININVENTORY));
+        aggregateDetermineRequirementsTasks(mpTask, parents);
+	return mpTask;
     }
 }
