@@ -25,11 +25,6 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins;
 
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Inventory;
 import org.cougaar.glm.ldm.asset.Organization;
@@ -44,11 +39,17 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /** Provide methods to supply 'keys' uniquely describing published objects. */
 public class PublicationKey
 {
-
+   private static Logger logger = Logging.getLogger(PublicationKey.class);
     protected static String getKey(Object obj) 
     {
 	if (obj instanceof Expansion)
@@ -157,8 +158,10 @@ public class PublicationKey
 		if (indirect_obj instanceof GeolocLocation) {
 		    description = ((GeolocLocation)indirect_obj).getGeolocCode();
 		} else {
-		    GLMDebug.DEBUG("PublicationKey", null, preposition+" on "+taskDesc(task)+" geoloc:"+indirect_obj, 1);
-		}
+          if (logger.isDebugEnabled()) {
+            logger.debug(preposition + " on " + taskDesc(task) + " geoloc:" + indirect_obj);
+          }
+        }
 	    } else if (pp.equals(Constants.Preposition.FOR)) {
 		if (indirect_obj instanceof Organization) {
 		    description = ((Organization)indirect_obj).getItemIdentificationPG().getItemIdentification();
@@ -310,7 +313,9 @@ public class PublicationKey
     }
 
     private static void printError(String msg) {
-	GLMDebug.ERROR("PublicationKey",msg);
+      if (logger.isErrorEnabled()) {
+        logger.error("PublicationKey" + msg);
+      }
     }
 
     // utility functions

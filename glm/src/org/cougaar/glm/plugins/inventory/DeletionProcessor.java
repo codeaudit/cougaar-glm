@@ -26,12 +26,6 @@
 
 package org.cougaar.glm.plugins.inventory;
 
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.glm.execution.common.InventoryReport;
 import org.cougaar.glm.ldm.Constants;
@@ -47,11 +41,20 @@ import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DeletionProcessor extends InventoryProcessor {
     protected IncrementalSubscription tasks_;
     private Calendar tCalendar_ = Calendar.getInstance();
-
+    private static Logger logger = Logging.getLogger(DeletionProcessor.class);
     /** Delete old reports when oldest becomes this old **/
     private static final long INVENTORY_REPORT_CUTOFF = 8 * TimeUtils.MSEC_PER_WEEK;
 
@@ -149,28 +152,32 @@ public class DeletionProcessor extends InventoryProcessor {
     private void removeTasks(Enumeration tasks) {
         Map tMap = new HashMap();
         while (tasks.hasMoreElements()) {
-            Task task = (Task) tasks.nextElement();
-            if (!task.isDeleted()) { // Rescind requires no special handling
-                continue;
+          Task task = (Task) tasks.nextElement();
+          if (!task.isDeleted()) { // Rescind requires no special handling
+            continue;
+          }
+          Asset proto = (Asset) task.getDirectObject();
+          Inventory inventory = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
+          if (inventory == null) {
+            String typeID = proto.getTypeIdentificationPG().getTypeIdentification();
+            if (logger.isErrorEnabled()) {
+              logger.error("Inventory NOT found for " + typeID);
             }
-            Asset proto = (Asset) task.getDirectObject();
-	    Inventory inventory = inventoryPlugin_.findOrMakeInventory(supplyType_, proto);
-            if (inventory == null)  {
-		String typeID = proto.getTypeIdentificationPG().getTypeIdentification();
-		printError("Inventory NOT found for "+typeID);
-		continue;
-	    }
-            if (DEBUG) printDebug(1000, "Removing task from inventory: " + TaskUtils.taskDesc(task));
-            long et = TaskUtils.getEndTime(task);
-            et = TimeUtils.pushToEndOfDay(tCalendar_, et);
-            DeletionTimeRange dtr = (DeletionTimeRange) tMap.get(inventory);
-            if (dtr == null) {
-                dtr = new DeletionTimeRange(et);
-                tMap.put(inventory, dtr);
-            } else {
-                dtr.earliestTime = Math.min(dtr.earliestTime, et);
-                dtr.latestTime = Math.max(dtr.latestTime, et);
-            }
+            continue;
+          }
+          if (logger.isDebugEnabled()) {
+            logger.debug("Removing task from inventory: " + TaskUtils.taskDesc(task));
+          }
+          long et = TaskUtils.getEndTime(task);
+          et = TimeUtils.pushToEndOfDay(tCalendar_, et);
+          DeletionTimeRange dtr = (DeletionTimeRange) tMap.get(inventory);
+          if (dtr == null) {
+            dtr = new DeletionTimeRange(et);
+            tMap.put(inventory, dtr);
+          } else {
+            dtr.earliestTime = Math.min(dtr.earliestTime, et);
+            dtr.latestTime = Math.max(dtr.latestTime, et);
+          }
         }
         long inventoryReportCutoffTime = plugin_.currentTimeMillis() - INVENTORY_REPORT_CUTOFF;
         long inventoryReportPruneTime = plugin_.currentTimeMillis() - INVENTORY_REPORT_PRUNE;
@@ -193,27 +200,27 @@ public class DeletionProcessor extends InventoryProcessor {
             for (; et <= dtr.latestTime; et += TimeUtils.MSEC_PER_DAY) {
                 Iterator iter = schedule.getScheduleElementsWithTime(et).iterator();
                 if (iter.hasNext()) { // There should be exactly one element
-                    QuantityScheduleElement qse = (QuantityScheduleElement) iter.next();
-                    double q = qse.getQuantity();
-                    if (DEBUG) printDebug(1000,
-                               "Adding inventory report to "
-                               + inventory
-                               + " at "
-                               + new java.util.Date(et)
-                               + " level "
-                               + q);
-                    invpg.addInventoryReport(new InventoryReport(iid, et, et, q));
-                    needPublishChange = true;
+                  QuantityScheduleElement qse = (QuantityScheduleElement) iter.next();
+                  double q = qse.getQuantity();
+                  if (logger.isDebugEnabled()) {
+                    logger.debug("Adding inventory report to " + inventory + " at " + new Date(et) + " level " + q);
+                  }
+                  invpg.addInventoryReport(new InventoryReport(iid, et, et, q));
+                  needPublishChange = true;
                 } else {
-                    printError("No scheduled content");
+                  if (logger.isErrorEnabled()) {
+                    logger.error("No scheduled content");
+                  }
                 }
             }
             if (INVENTORY_REPORT_PRUNE > 0L) {
                 InventoryReport oldestReport = invpg.getOldestInventoryReport();
                 if (oldestReport != null && oldestReport.theReportDate < inventoryReportCutoffTime) {
-                    if (DEBUG) printDebug(1000, "Pruning old inventoryReports: " + inventory);
-                    invpg.pruneOldInventoryReports(inventoryReportPruneTime);
-                    needPublishChange = true;
+                  if (logger.isDebugEnabled()) {
+                    logger.debug("Pruning old inventoryReports: " + inventory);
+                  }
+                  invpg.pruneOldInventoryReports(inventoryReportPruneTime);
+                  needPublishChange = true;
                 }
                 if (needPublishChange) {
                     publishChangeAsset(inventory);

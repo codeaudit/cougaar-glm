@@ -25,20 +25,20 @@
  */
 package org.cougaar.mlm.construction;
 
-import java.util.GregorianCalendar;
-
-import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.asset.Inventory;
 import org.cougaar.glm.ldm.asset.InventoryBG;
 import org.cougaar.glm.ldm.asset.NewInventoryPG;
 import org.cougaar.glm.ldm.asset.NewReportSchedulePG;
 import org.cougaar.glm.ldm.asset.NewScheduledContentPG;
 import org.cougaar.glm.ldm.asset.ProjectionWeight;
+import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
 import org.cougaar.glm.ldm.plan.Agency;
 import org.cougaar.glm.plugins.inventory.InventoryPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+
+import java.util.GregorianCalendar;
 
 /** Plugin for Construction Inventory.  Contains methods to setup and create construction
  *  inventory.
@@ -69,34 +69,36 @@ public class ConstructionInventoryPlugin extends InventoryPlugin {
      */
     public Inventory createInventory(String supplytype, Asset resource) {
       String id = resource.getTypeIdentificationPG().getTypeIdentification();
-      GLMDebug.DEBUG("*****ConstructionInventoryPlugin:  createInventory()", "<"+supplytype+"> createInventory for "+id);
+      if (logger.isDebugEnabled()) {
+        logger.debug("*****ConstructionInventoryPlugin:  createInventory()" + "<" + supplytype + "> createInventory for " + id);
+      }
       GregorianCalendar reportBaseDate = null;
       int reportStepKind = 0;
       boolean success = false;
       InventoryBG bg = null;
-      NewInventoryPG invpg = (NewInventoryPG)org.cougaar.glm.ldm.asset.PropertyGroupFactory.newInventoryPG();
-      InventoryPlugin.InventoryItemInfo info = null;
-      double [] levels = null;
+      NewInventoryPG invpg = (NewInventoryPG) PropertyGroupFactory.newInventoryPG();
+      InventoryItemInfo info = null;
+      double[] levels = null;
 
-      info = (InventoryPlugin.InventoryItemInfo) inventoryInitHash_.get(id);
+      info = (InventoryItemInfo) inventoryInitHash_.get(id);
 
       invpg.setResource(resource);
       Agency agency = myOrganization_.getOrganizationPG().getAgency();
 
       if (inventoryInitHash_.isEmpty()) {
-        double [] temp_levels = {capacity, init_level, erq, min_reorder};
-        levels = (double [])temp_levels;
+        double[] temp_levels = {capacity, init_level, erq, min_reorder};
+        levels = (double[]) temp_levels;
       }
       if ((info != null) && (levels == null)) {
         //GLMDebug.DEBUG(className_, clusterId_,"*****ConstructionInventoryPlugin: info not null and levels null");
-        levels = (double[])info.levels;
+        levels = (double[]) info.levels;
       }
 
       // Try to initialize the inventory behavior group, if it fails this cluster
       // does not handle the item.
       if (levels != null) {
-        bg  = new ConstructionInventoryBG(invpg);
-        success = ((ConstructionInventoryBG)bg).initialize(levels);
+        bg = new ConstructionInventoryBG(invpg);
+        success = ((ConstructionInventoryBG) bg).initialize(levels);
         if (info != null) {
           if (info.reportBase != null) {
             reportBaseDate = info.reportBase;
@@ -106,14 +108,18 @@ public class ConstructionInventoryPlugin extends InventoryPlugin {
       }
 
       if (!success) {
-        GLMDebug.DEBUG("*****ConstructionInventoryPlugin", getMessageAddress(), "createInventory(), cannot create inventory for "+id);
+        if (logger.isDebugEnabled()) {
+          logger.debug("createInventory(), cannot create inventory for " + id);
+        }
         return null;
       }
 
       Inventory inventory = null;
-      inventory=(Inventory) theLDMF.createAsset("Inventory");
+      inventory = (Inventory) theLDMF.createAsset("Inventory");
       if (inventory == null) {
-        GLMDebug.DEBUG("*****ConstructionInventoryPlugin","<"+supplytype+"> createInventory - fail to create inventory for "+id);
+        if (logger.isDebugEnabled()) {
+          logger.debug("*****ConstructionInventoryPlugin" + "<" + supplytype + "> createInventory - fail to create inventory for " + id);
+        }
         return null;
       }
       invpg.setInvBG(bg);
@@ -123,18 +129,18 @@ public class ConstructionInventoryPlugin extends InventoryPlugin {
       invpg.resetInventory(inventory, time);
       invpg.clearContentSchedule(inventory);
 
-      NewTypeIdentificationPG ti = (NewTypeIdentificationPG)inventory.getTypeIdentificationPG();
+      NewTypeIdentificationPG ti = (NewTypeIdentificationPG) inventory.getTypeIdentificationPG();
       ti.setTypeIdentification("InventoryAsset");
       ti.setNomenclature("Inventory Asset");
 
       ((NewItemIdentificationPG) inventory.getItemIdentificationPG()).setItemIdentification("Inventory:" + id);
 
       NewScheduledContentPG scp;
-      scp = (NewScheduledContentPG)inventory.getScheduledContentPG();
+      scp = (NewScheduledContentPG) inventory.getScheduledContentPG();
       scp.setAsset(resource);
 
       if (reportBaseDate != null) {
-        NewReportSchedulePG nrsp = org.cougaar.glm.ldm.asset.PropertyGroupFactory.newReportSchedulePG();
+        NewReportSchedulePG nrsp = PropertyGroupFactory.newReportSchedulePG();
         nrsp.setBase(info.reportBase);
         nrsp.setStep(info.reportStepKind);
         inventory.setReportSchedulePG(nrsp);

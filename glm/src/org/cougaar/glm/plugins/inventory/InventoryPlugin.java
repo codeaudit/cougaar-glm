@@ -25,19 +25,8 @@
  */
 package org.cougaar.glm.plugins.inventory;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
-
 import org.cougaar.core.blackboard.CollectionSubscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Inventory;
 import org.cougaar.glm.ldm.asset.InventoryPG;
@@ -66,6 +55,16 @@ import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.Enumerator;
 import org.cougaar.util.UnaryPredicate;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 public abstract class InventoryPlugin extends GLMDecorationPlugin {
 
@@ -277,8 +276,10 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
         inventoryHash_.put(item, inventory);
 	String assetType = getAssetType(inventory);
 	if (assetType == null) {
-	    GLMDebug.ERROR("InventoryPlugin","addInventory failed to add "+item);
-	}
+      if (logger.isErrorEnabled()) {
+        logger.error("addInventory failed to add " + item);
+      }
+    }
 	else {
 	    getInventoryTypeHashEntry(assetType).invBins.add(inventory);
 	}
@@ -292,8 +293,10 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
         inventoryHash_.remove(item);
 	String assetType = getAssetType(inventory);
 	if (assetType == null) {
-	    GLMDebug.ERROR("InventoryPlugin","removeInventory failed to remove "+item);
-	}
+      if (logger.isErrorEnabled()) {
+        logger.error("removeInventory failed to remove " + item);
+      }
+    }
 	else {
 	    getInventoryTypeHashEntry(assetType).invBins.remove(inventory);
 	}
@@ -423,21 +426,19 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	if (milTask == null) {
             Task parent = getDetermineRequirementsTask();
             if (parent == null) {
-                /**
-                  This might happen just after the last determine
-                  requirements task is removed. Because of inertia,
-                  the inventory manager might still be trying to
-                  refill the inventory although, in fact the demand
-                  for that inventory is in the process of
-                  disappearing. The caller, getting a null return will
-                  simply abandon the attempt to do the refill.
-                 **/
-                GLMDebug.DEBUG("InventoryPlugin",
-                               "findOrMakeMILTask(), CANNOT CREATE MILTASK, no parent, inventory: "
-                               + AssetUtils.assetDesc(inventory
-                                                      .getScheduledContentPG()
-                                                      .getAsset()));	
-                return null; // Can't make one
+              /**
+               This might happen just after the last determine
+               requirements task is removed. Because of inertia,
+               the inventory manager might still be trying to
+               refill the inventory although, in fact the demand
+               for that inventory is in the process of
+               disappearing. The caller, getting a null return will
+               simply abandon the attempt to do the refill.
+               **/
+              if (logger.isDebugEnabled()) {
+                logger.debug("findOrMakeMILTask(), CANNOT CREATE MILTASK, no parent, inventory: " + AssetUtils.assetDesc(inventory.getScheduledContentPG().getAsset()));
+              }
+              return null; // Can't make one
             }
             milTask = createMILTask(parent, inventory);
             publishAddToExpansion(parent, milTask);
@@ -450,13 +451,17 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	if (id == null) return null;
 	Asset resource = theLDMF.getPrototype(id);
 	if (resource == null) {
-	    GLMDebug.DEBUG("InventoryPlugin", "<"+supplytype+"> createInventory fail to get prototype for "+id);
-	    resource = theLDMF.createPrototype(supplytype, id);
-	}
+      if (logger.isDebugEnabled()) {
+        logger.debug("<" + supplytype + "> createInventory fail to get prototype for " + id);
+      }
+      resource = theLDMF.createPrototype(supplytype, id);
+    }
 	if (resource == null) {
-	    GLMDebug.ERROR("InventoryPlugin","<"+supplytype+"> createInventory fail to make prototype for "+id);
-	    return null;
-	}
+      if (logger.isErrorEnabled()) {
+        logger.error("<" + supplytype + "> createInventory fail to make prototype for " + id);
+      }
+      return null;
+    }
 	return findOrMakeInventory(supplytype, resource);
     }
 
@@ -568,12 +573,13 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	if (inventory == null) {
 	    inventory = createInventory(supplytype, resource);
 	    if (inventory != null) {
-		addInventory(inventory, id);
-		getDelegate().publishAdd(inventory);
-		GLMDebug.DEBUG("InventoryPlugin", "findOrMakeInventory(), CREATED inventory bin for: "+
-				  AssetUtils.assetDesc(inventory.getScheduledContentPG().getAsset()));
-		findOrMakeMILTask(inventory);
-	    }
+          addInventory(inventory, id);
+          getDelegate().publishAdd(inventory);
+          if (logger.isDebugEnabled()) {
+            logger.debug("findOrMakeInventory(), CREATED inventory bin for: " + AssetUtils.assetDesc(inventory.getScheduledContentPG().getAsset()));
+          }
+          findOrMakeMILTask(inventory);
+        }
 	}
 	return inventory;
     }
@@ -589,10 +595,11 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	ScheduledContentPG scp = inventory.getScheduledContentPG();
 	Asset proto = scp.getAsset();
 	if (proto == null) {
-	    GLMDebug.DEBUG("InventoryPlugin", "getInventoryType failed to get asset for "+
-			      inventory.getScheduledContentPG().getAsset().getTypeIdentificationPG());
-	    return "";
-	}
+      if (logger.isDebugEnabled()) {
+        logger.debug("getInventoryType failed to get asset for " + inventory.getScheduledContentPG().getAsset().getTypeIdentificationPG());
+      }
+      return "";
+    }
 	return proto.getTypeIdentificationPG().getTypeIdentification();
     }
 
@@ -621,10 +628,11 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	String invFile = getInventoryFile(type);
 	Enumeration initialInv = FileUtils.readConfigFile(invFile, getConfigFinder());
 	if (initialInv != null) {
-	    stashInventoryInformation(type, initialInv);
-	    GLMDebug.DEBUG("InventoryPlugin", getMessageAddress(), 
-			      "initializeInventory(), Inventory file is "+invFile+" for "+type);
-	}
+      stashInventoryInformation(type, initialInv);
+      if (logger.isDebugEnabled()) {
+        logger.debug("initializeInventory(), Inventory file is " + invFile + " for " + type);
+      }
+    }
     }
 
     private String getInventoryFile(String type) {
@@ -671,43 +679,47 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
     }
   }
 
-  private void stashInventoryInformation(String type, Enumeration initInv){
-	String line;
-	String item = null;
-	double capacity, level, erq, min_reorder;
-        GregorianCalendar reportBaseDate;
-        int reportStepKind;
-	int entries = 0;
-	GLMDebug.DEBUG("InventoryPlugin",getMessageAddress(), "<"+type+"> Stashing inventories info...");
-	
-	while(initInv.hasMoreElements()) {
-	    line = (String) initInv.nextElement();
-	    // Find the fields in the line, values seperated by ','
-	    Vector fields = FileUtils.findFields(line, ',');
-	    if (fields.size() < 5)
-		continue;
-	    item = (String)fields.elementAt(0);
-	    capacity = Double.valueOf((String)fields.elementAt(1)).doubleValue();
-	    level = Double.valueOf((String)fields.elementAt(2)).doubleValue();
-	    erq = Double.valueOf((String)fields.elementAt(3)).doubleValue();
-	    min_reorder = Double.valueOf((String)fields.elementAt(4)).doubleValue();
-            if (fields.size() < 7) {
-              reportBaseDate = null;
-              reportStepKind = 0;
-
-            } else {
-              reportBaseDate = parseDate((String) fields.elementAt(5));
-              reportStepKind = Integer.parseInt((String) fields.elementAt(6));
-            }
-// 	    GLMDebug.DEBUG("InventoryPlugin", clusterId_, "collected info for inventory item:"+
-// 			      item+" capacity:"+capacity+" level:"+level +" erq:"+erq+" min reorder:"+ min_reorder);
-	    double[] levels = {capacity,level,erq,min_reorder};
-            
-	    inventoryInitHash_.put(item, new InventoryItemInfo(levels, reportBaseDate, reportStepKind));
-	    entries++;
-	}
-	GLMDebug.DEBUG("InventoryPlugin", clusterId_, "stashInventory(), number of inventory bins: "+entries+"for "+type);
+  private void stashInventoryInformation(String type, Enumeration initInv) {
+    String line;
+    String item = null;
+    double capacity, level, erq, min_reorder;
+    GregorianCalendar reportBaseDate;
+    int reportStepKind;
+    int entries = 0;
+    if (logger.isDebugEnabled()) {
+      logger.debug("<" + type + "> Stashing inventories info...");
     }
+
+    while (initInv.hasMoreElements()) {
+      line = (String) initInv.nextElement();
+      // Find the fields in the line, values seperated by ','
+      Vector fields = FileUtils.findFields(line, ',');
+      if (fields.size() < 5)
+        continue;
+      item = (String) fields.elementAt(0);
+      capacity = Double.valueOf((String) fields.elementAt(1)).doubleValue();
+      level = Double.valueOf((String) fields.elementAt(2)).doubleValue();
+      erq = Double.valueOf((String) fields.elementAt(3)).doubleValue();
+      min_reorder = Double.valueOf((String) fields.elementAt(4)).doubleValue();
+      if (fields.size() < 7) {
+        reportBaseDate = null;
+        reportStepKind = 0;
+
+      } else {
+        reportBaseDate = parseDate((String) fields.elementAt(5));
+        reportStepKind = Integer.parseInt((String) fields.elementAt(6));
+      }
+      // 	    GLMDebug.DEBUG("InventoryPlugin", clusterId_, "collected info for inventory item:"+
+      // 			      item+" capacity:"+capacity+" level:"+level +" erq:"+erq+" min reorder:"+ min_reorder);
+      double[] levels = {capacity, level, erq, min_reorder};
+
+      inventoryInitHash_.put(item, new InventoryItemInfo(levels, reportBaseDate, reportStepKind));
+      entries++;
+    }
+    if (logger.isDebugEnabled()) {
+      logger.debug("stashInventory(), number of inventory bins: " + entries + "for " + type);
+    }
+  }
 
     /**
        Create a MaintainInventory task for an inventory. This task is

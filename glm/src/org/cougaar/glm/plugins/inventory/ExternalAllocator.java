@@ -25,9 +25,6 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.inventory;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Inventory;
@@ -44,6 +41,11 @@ import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.util.AllocationResultHelper;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class ExternalAllocator extends InventoryProcessor {
 
@@ -54,6 +56,7 @@ public class ExternalAllocator extends InventoryProcessor {
     protected Role providerRole_;
     /** list of nsn's with no resupply point */
     protected Vector notified_ = new Vector();
+    private Logger logger = Logging.getLogger(ExternalAllocator.class);
 
     public ExternalAllocator(InventoryPlugin plugin, Organization org, String type, org.cougaar.planning.ldm.plan.Role role) {
 	super(plugin, org, type);
@@ -194,11 +197,14 @@ public class ExternalAllocator extends InventoryProcessor {
 	}
 	else {
 	    if (TaskUtils.isProjection(task)) {
-		printError("No "+providerRole_+", during "+TimeUtils.dateString(TaskUtils.getStartTime(task))+
-			   TimeUtils.dateString(TaskUtils.getEndTime(task)));
-	    } else {
-		printError("No "+providerRole_+", during "+TimeUtils.dateString(TaskUtils.getEndTime(task)));
-	    }
+          if (logger.isErrorEnabled()) {
+            logger.error("No " + providerRole_ + ", during " + TimeUtils.dateString(TaskUtils.getStartTime(task)) + TimeUtils.dateString(TaskUtils.getEndTime(task)));
+          }
+        } else {
+          if (logger.isErrorEnabled()) {
+            logger.error("No " + providerRole_ + ", during " + TimeUtils.dateString(TaskUtils.getEndTime(task)));
+          }
+        }
 	}
 	return null;
     }
@@ -209,10 +215,11 @@ public class ExternalAllocator extends InventoryProcessor {
 	if (provider == null) {
 	    // prevents same error message from being printed many times.
 	    if (!notified_.contains(itemId)) {
-		printDebug("allocateTask() <"+supplyType_+
-			   "> allocateRefillTask no best source for "+itemId);
-		notified_.addElement(itemId);
-	    }
+          if (logger.isDebugEnabled()) {
+            logger.debug("allocateTask() <" + supplyType_ + "> allocateRefillTask no best source for " + itemId);
+          }
+          notified_.addElement(itemId);
+        }
 	} else {
 // 	    printDebug("allocateRefillTask "+task+" to "+provider);
 	    AllocationResult ar =  new AllocationResultHelper(task, null).getAllocationResult(1.0);

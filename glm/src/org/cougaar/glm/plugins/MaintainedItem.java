@@ -25,10 +25,11 @@
  */
 package org.cougaar.glm.plugins;
 
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
 import java.io.Serializable;
 import java.util.HashMap;
-
-import org.cougaar.glm.debug.GLMDebug;
 /**
  * Trimmed down, representation of an asset
  **/
@@ -39,7 +40,7 @@ public class MaintainedItem implements Serializable {
   protected String itemIdentification = null;
   protected String nomenclature = null;
   private static HashMap cache = new HashMap();
-
+  private static Logger logger = Logging.getLogger(MaintainedItem.class);
  
   public MaintainedItem() {}
 
@@ -68,7 +69,9 @@ public class MaintainedItem implements Serializable {
 
   public static MaintainedItem findOrMakeMaintainedItem(String type, String typeId, String itemId, String nomen) {
     if (type == null || typeId == null) {
-      GLMDebug.ERROR("MaintainedItem", "Type and/or TypeIdentification cannot be null");
+      if (logger.isErrorEnabled()) {
+        logger.error("MaintainedItem" + "Type and/or TypeIdentification cannot be null");
+      }
       return null;
     }
     String key = type+typeId;

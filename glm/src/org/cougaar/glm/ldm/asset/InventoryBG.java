@@ -25,23 +25,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.ldm.asset;
 
-import java.io.IOException;
-import java.io.NotActiveException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.execution.common.InventoryReport;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.GLMFactory;
@@ -69,6 +53,23 @@ import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.planning.plugin.util.AllocationResultHelper;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
+import java.io.IOException;
+import java.io.NotActiveException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class InventoryBG implements PGDelegate {
 
@@ -114,6 +115,7 @@ public class InventoryBG implements PGDelegate {
     
   protected int    goalExceededCap=0;
   final static protected int GOAL_EXCEEDED_CAPACITY_DEBUG_THRESHOLD = 2;
+  private static Logger logger = Logging.getLogger(InventoryBG.class);
 
   public InventoryBG(InventoryPG  pg) {
     myPG_ = pg;
@@ -167,7 +169,9 @@ public class InventoryBG implements PGDelegate {
     if (!inventory.hasScheduledContentPG()) {
       Asset proto = inventory.getPrototype();
       String id = proto.getTypeIdentificationPG().getNomenclature();
-      GLMDebug.ERROR("InventoryBG", " initInventory - NO ScheduledContentPG on Inventory Object- "+id+ ", EXIT!");
+      if (logger.isErrorEnabled()) {
+        logger.error(" initInventory - NO ScheduledContentPG on Inventory Object- " + id + ", EXIT!");
+      }
       System.exit(1);
     }
 
@@ -445,16 +449,17 @@ public class InventoryBG implements PGDelegate {
       if (TaskUtils.isProjection(t)) {
 	double q = TaskUtils.getDailyQuantity(t);
 	if (q == 0.0 && w > 0.0) {
-	  GLMDebug.ERROR("InventoryBG", null, "Added refill projection having 0.0 quantity " + TaskUtils.taskDesc(t));
-	}
+      if (logger.isErrorEnabled()) {
+        logger.error("Added refill projection having 0.0 quantity " + TaskUtils.taskDesc(t));
+      }
+    }
 	projectedTotal += q * w * wf;
       } else {
-	if (wf < 1.0){
-	  GLMDebug.ERROR("InventoryBG", null,
-			 "Inv Day: " + day
-			 + " imputedDay: " + imputedDay
-			 + " Zero weighted supply task: "+TaskUtils.taskDesc(t));
-	}
+	if (wf < 1.0) {
+      if (logger.isErrorEnabled()) {
+        logger.error("Inv Day: " + day + " imputedDay: " + imputedDay + " Zero weighted supply task: " + TaskUtils.taskDesc(t));
+      }
+    }
 	actualTotal += TaskUtils.getRefillQuantity(t) * w * wf;
       }
       //              System.out.println("adjustTotals " + TimeUtils.dateString(convertDayToTime(day)) + ": " + getTotal());
@@ -474,14 +479,9 @@ public class InventoryBG implements PGDelegate {
     int day = convertTimeToDay(TaskUtils.getEndTime(request));
     if (day <  0) {
       day = 0;
-      GLMDebug.ERROR("InventoryBG",
-		     "addDueOut(), Request happens in the past.(Start Time "
-		     + TimeUtils.dateString(getStartTime())
-		     + ")"
-		     + "Task time:"
-		     + TimeUtils.dateString(TaskUtils.getEndTime(request))
-		     + ", Task: "
-		     + TaskUtils.taskDesc(request));
+      if (logger.isErrorEnabled()) {
+        logger.error("addDueOut(), Request happens in the past.(Start Time " + TimeUtils.dateString(getStartTime()) + ")" + "Task time:" + TimeUtils.dateString(TaskUtils.getEndTime(request)) + ", Task: " + TaskUtils.taskDesc(request));
+      }
     }
     PlanElement pe = request.getPlanElement();
     // If the request has just been rescinded, the plan element will be null.
@@ -761,8 +761,10 @@ public class InventoryBG implements PGDelegate {
       if (goal_level > capacity) {
 
 	if(goalExceededCap == GOAL_EXCEEDED_CAPACITY_DEBUG_THRESHOLD) {
-	  GLMDebug.ERROR("InventoryBG", "getGoalLevel()::WARNING the goal level is exceeding the capacity.   It is probable that you should up the capacity in the inv config file.");
-	}
+      if (logger.isErrorEnabled()) {
+        logger.error("getGoalLevel()::WARNING the goal level is exceeding the capacity.   It is probable that you should up the capacity in the inv config file.");
+      }
+    }
 
 	if(goalExceededCap <= GOAL_EXCEEDED_CAPACITY_DEBUG_THRESHOLD) {
 	  goalExceededCap++;
@@ -881,7 +883,9 @@ public class InventoryBG implements PGDelegate {
       addDueIn(d, day);
       addDueInByRequestDay(d);
     } else {
-      GLMDebug.ERROR("InventoryBG", "addDueIn() on day " + day + ", refillTime=" + TimeUtils.dateString(refillTime));
+      if (logger.isErrorEnabled()) {
+        logger.error("addDueIn() on day " + day + ", refillTime=" + TimeUtils.dateString(refillTime));
+      }
     }
     return totalFilled;
   }
@@ -922,7 +926,9 @@ public class InventoryBG implements PGDelegate {
       DueInList v = (DueInList) dueIns_.get(day);
       v.remove(refillTask);
     } catch (ArrayIndexOutOfBoundsException exception) {
-      GLMDebug.ERROR("InventoryBG", "removeDueIn, day "+day+": Refill not found. "+TaskUtils.taskDesc(refillTask));
+      if (logger.isErrorEnabled()) {
+        logger.error("removeDueIn, day " + day + ": Refill not found. " + TaskUtils.taskDesc(refillTask));
+      }
     }
     removeDueInByRequestDay(refillTask);
     return 0;
@@ -1017,7 +1023,9 @@ public class InventoryBG implements PGDelegate {
       return weight_.getProjectionWeight(task, imputedDay);
     }
     else {
-      GLMDebug.ERROR("InventoryBG", null, "getWeightingFactor(), Weighting Factor NOT set.");
+      if (logger.isErrorEnabled()) {
+        logger.error("getWeightingFactor(), Weighting Factor NOT set.");
+      }
       return 0.0;
     }
   }
@@ -1115,12 +1123,13 @@ public class InventoryBG implements PGDelegate {
       //  	    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), checking for overflow on "+
       //  			   (TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i)))+" Level: "+level_[i]+" capacity: "+capacity);
       if (Math.floor(level_[i] - capacity) > 1.0) {
-	//Put in printDebug statement because you put together the
-	// strings whether you print them or not which can get
-	// costly performance wise.
-	if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", cluster, "getFirstOverflow(), OVERFLOW on "+
-						 (TimeUtils.dateString(convertDayToTime(i))));
-	return new Integer(i);
+        //Put in printDebug statement because you put together the
+        // strings whether you print them or not which can get
+        // costly performance wise.
+        if (logger.isDebugEnabled()) {
+          logger.debug("getFirstOverflow(), OVERFLOW on " + (TimeUtils.dateString(convertDayToTime(i))));
+        }
+        return new Integer(i);
       }
     }
     return null;
@@ -1134,7 +1143,9 @@ public class InventoryBG implements PGDelegate {
       determineInventoryLevels();
     }
     if (level_ == null) {
-      if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), No DueOuts or DueIns, resetting schedule.");
+      if (logger.isDebugEnabled()) {
+        logger.debug("UpdateContentSchedule(), No DueOuts or DueIns, resetting schedule.");
+      }
       clearContentSchedule(inventory);
     } else {
       int days = level_.length;
@@ -1160,7 +1171,9 @@ public class InventoryBG implements PGDelegate {
 							   PlanScheduleType.TOTAL_INVENTORY);
 
     if (ScheduleUtils.isOffendingSchedule(new_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
+      if (logger.isErrorEnabled()) {
+        logger.error("UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
+      }
       printQuantityScheduleTimes(new_schedule);
     }
     ((NewScheduledContentPG)scp).setSchedule(new_schedule);
@@ -1175,7 +1188,9 @@ public class InventoryBG implements PGDelegate {
     Vector new_reorder_elements = new Vector();
     Vector new_goal_elements = new Vector();
     if (demandSchedule_ == null) {
-      if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateInventoryLevelsSchedule(), No Demand Schedule Set.");
+      if (logger.isDebugEnabled()) {
+        logger.debug("UpdateInventoryLevelsSchedule(), No Demand Schedule Set.");
+      }
       clearInventoryLevelsSchedule(inventory);
     }
     else {
@@ -1214,15 +1229,21 @@ public class InventoryBG implements PGDelegate {
 
 
     if (ScheduleUtils.isOffendingSchedule(new_av_demand_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "UpdateInventoryLevelschedule(),  CREATED BAD nDays SCHEDULE  ");
+      if (logger.isErrorEnabled()) {
+        logger.error("UpdateInventoryLevelschedule(),  CREATED BAD nDays SCHEDULE  ");
+      }
       printQuantityScheduleTimes(new_av_demand_schedule);
     }
     if (ScheduleUtils.isOffendingSchedule(new_reorder_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "UpdateInventoryLevelschedule(),  CREATED BAD reorder SCHEDULE  ");
+      if (logger.isErrorEnabled()) {
+        logger.error("UpdateInventoryLevelschedule(),  CREATED BAD reorder SCHEDULE  ");
+      }
       printQuantityScheduleTimes(new_reorder_schedule);
     }
     if (ScheduleUtils.isOffendingSchedule(new_goal_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "UpdateInventoryLevelschedule(),  CREATED BAD goal SCHEDULE  ");
+      if (logger.isErrorEnabled()) {
+        logger.error("UpdateInventoryLevelschedule(),  CREATED BAD goal SCHEDULE  ");
+      }
       printQuantityScheduleTimes(new_goal_schedule);
     }
     ((NewInventoryLevelsPG)ilp).setAverageDemandSchedule(new_av_demand_schedule);
@@ -1248,7 +1269,9 @@ public class InventoryBG implements PGDelegate {
     }
     Schedule sched = GLMFactory.newQuantitySchedule(quantity_schedule_elements.elements(), PlanScheduleType.TOTAL_INVENTORY);
     if (ScheduleUtils.isOffendingSchedule(sched)) {
-      GLMDebug.ERROR("InventoryBG", "UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
+      if (logger.isErrorEnabled()) {
+        logger.error("UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
+      }
     }
     NewDetailedScheduledContentPG newDetailedPG =  
       org.cougaar.glm.ldm.asset.PropertyGroupFactory.newDetailedScheduledContentPG();
@@ -1369,7 +1392,9 @@ public class InventoryBG implements PGDelegate {
 							   PlanScheduleType.TOTAL_INVENTORY);
 
     if (ScheduleUtils.isOffendingSchedule(new_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
+      if (logger.isErrorEnabled()) {
+        logger.error("UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
+      }
       printQuantityScheduleTimes(new_schedule);
     }
     ((NewScheduledContentPG)scp).setSchedule(new_schedule);
@@ -1406,15 +1431,21 @@ public class InventoryBG implements PGDelegate {
 				     PlanScheduleType.TOTAL_INVENTORY);
 
     if (ScheduleUtils.isOffendingSchedule(new_av_demand_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "clearInventoryLevelSchedule(),  CREATED BAD nDays SCHEDULE  ");
+      if (logger.isErrorEnabled()) {
+        logger.error("clearInventoryLevelSchedule(),  CREATED BAD nDays SCHEDULE  ");
+      }
       printQuantityScheduleTimes(new_av_demand_schedule);
     }
     if (ScheduleUtils.isOffendingSchedule(new_reorder_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "clearInventoryLevelSchedule(),  CREATED BAD reorder SCHEDULE  ");
+      if (logger.isErrorEnabled()) {
+        logger.error("clearInventoryLevelSchedule(),  CREATED BAD reorder SCHEDULE  ");
+      }
       printQuantityScheduleTimes(new_reorder_schedule);
     }
     if (ScheduleUtils.isOffendingSchedule(new_goal_schedule)) {
-      GLMDebug.ERROR("InventoryBG", "clearInventoryLevelSchedule(),  CREATED BAD goal SCHEDULE  ");
+      if (logger.isErrorEnabled()) {
+        logger.error("clearInventoryLevelSchedule(),  CREATED BAD goal SCHEDULE  ");
+      }
       printQuantityScheduleTimes(new_goal_schedule);
     }
     ((NewInventoryLevelsPG)ilp).setAverageDemandSchedule(new_av_demand_schedule);
@@ -1432,9 +1463,11 @@ public class InventoryBG implements PGDelegate {
     QuantityScheduleElement qse;
 
     while (elements.hasMoreElements()) {
-      qse = (QuantityScheduleElement)elements.nextElement();
-      if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "printQuantityScheduleTimes()    qty: "+qse.getQuantity()+
-					       " "+qse.getStartTime()+" to "+ qse.getEndTime());
+      qse = (QuantityScheduleElement) elements.nextElement();
+      if (logger.isDebugEnabled()) {
+        logger.debug("printQuantityScheduleTimes()    qty: " + qse.getQuantity() + " " + qse.getStartTime() + " to " +
+                     qse.getEndTime());
+      }
     }
     return 0;
   }
@@ -1449,16 +1482,16 @@ public class InventoryBG implements PGDelegate {
   public void addInventoryReport(InventoryReport newInventoryReport) {
     synchronized (this) {
       report_history.add(newInventoryReport);
-      if (latest_report == null
-	  || latest_report.theReportDate < newInventoryReport.theReportDate) {
-	latest_report = newInventoryReport;
+      if (latest_report == null || latest_report.theReportDate < newInventoryReport.theReportDate) {
+        latest_report = newInventoryReport;
       }
-      if (oldest_report == null
-	  || oldest_report.theReportDate > newInventoryReport.theReportDate) {
-	oldest_report = newInventoryReport;
+      if (oldest_report == null || oldest_report.theReportDate > newInventoryReport.theReportDate) {
+        oldest_report = newInventoryReport;
       }
     }
-    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "addInventoryReport(), Report added!!!!!!! : "+this.hashCode());
+    if (logger.isDebugEnabled()) {
+      logger.debug("addInventoryReport(), Report added!!!!!!! : " + this.hashCode());
+    }
   }
 
   /**
@@ -1564,15 +1597,16 @@ public class InventoryBG implements PGDelegate {
       java.util.Arrays.fill(ordered_list, Double.NaN);
       ordered_list[0] = getDouble(myPG_.getInitialLevel());
       for (int i = 0, n = reports.length; i < n; i++) {
-	long report_date = reports[i].theReportDate;
-	int day = convertTimeToDay(report_date);
-	// Last Report that was received before or on day 0 becomes initial value
-	if (day < 0) {
-	  day = 0;
-	}
-	ordered_list[day] = reports[i].theQuantity;
-	if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "getTimeOrderedReportedLevels(), Report day is "+day+
-						 "("+TimeUtils.dateString(report_date)+"), Value is: "+ordered_list[day]);
+        long report_date = reports[i].theReportDate;
+        int day = convertTimeToDay(report_date);
+        // Last Report that was received before or on day 0 becomes initial value
+        if (day < 0) {
+          day = 0;
+        }
+        ordered_list[day] = reports[i].theQuantity;
+        if (logger.isDebugEnabled()) {
+          logger.debug("getTimeOrderedReportedLevels(), Report day is " + day + "(" + TimeUtils.dateString(report_date) + "), Value is: " + ordered_list[day]);
+        }
       }
     }
     return ordered_list;
@@ -1623,7 +1657,9 @@ public class InventoryBG implements PGDelegate {
     } else if (measure instanceof Mass) {
       result = ((Mass)measure).getShortTons();
     } else {
-      GLMDebug.ERROR("InventoryBG", "getDouble(), Inventory cannot determine type of measure");
+      if (logger.isErrorEnabled()) {
+        logger.error("getDouble(), Inventory cannot determine type of measure");
+      }
     }
     return result;
   }	
@@ -1648,15 +1684,20 @@ public class InventoryBG implements PGDelegate {
 
 
   public int printInventoryLevels(Inventory inventory, MessageAddress clusterID) {
-    if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), Day 0 is "+TimeUtils.dateString(getStartTime()));
+    if (logger.isDebugEnabled()) {
+      logger.debug("printInventoryLevels(), Day 0 is " + TimeUtils.dateString(getStartTime()));
+    }
     if (level_ != null) {
       int size = level_.length;
       ScheduledContentPG scpg = inventory.getScheduledContentPG();
-      if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", clusterID, "printInventoryLevels(), for "+AssetUtils.assetDesc(scpg.getAsset()));
+      if (logger.isDebugEnabled()) {
+        logger.debug("printInventoryLevels(), for " + AssetUtils.assetDesc(scpg.getAsset()));
+      }
 
-      for (int i=0; i < size; i++) {
-	if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), day: "+
-						 TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i))+"("+i+") "+", level: "+level_[i]);
+      for (int i = 0; i < size; i++) {
+        if (logger.isDebugEnabled()) {
+          logger.debug("printInventoryLevels(), day: " + TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i)) + "(" + i + ") " + ", level: " + level_[i]);
+        }
       }
     }
     return 0;
