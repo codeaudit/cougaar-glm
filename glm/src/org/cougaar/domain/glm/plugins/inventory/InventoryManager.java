@@ -758,6 +758,20 @@ public abstract class InventoryManager extends InventoryProcessor {
 	return d;
     }
 
+   static protected Scalar newScalarFromOldToDouble(Scalar old, double newVal){
+       	if (old instanceof Volume) {
+	    return Volume.newGallons(newVal);
+	} else if (old instanceof Count) {
+	    return Count.newEaches(newVal);
+	} else if (old instanceof Mass) {
+	    return Mass.newShortTons(newVal);
+	}
+
+	String oldUnitName = old.getUnitName(old.getCommonUnit());
+	return (Scalar) AbstractMeasure.newMeasure(oldUnitName,(int) newVal);
+   }
+
+
     // ********************************************************
     // PRINT/DEBUG Section                                    * 
     // ********************************************************

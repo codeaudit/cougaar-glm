@@ -45,7 +45,7 @@ public abstract class GeneralInventoryManager extends InventoryManager {
     protected NewTask defaultSupplyTask = 
 	(NewTask)buildNewTask(null,Constants.Verb.SUPPLY,null);
 
-
+    public static final double GOAL_LEVEL_BOOST_CAPACITY_FACTOR=1.1;
 
 
     /** Constructor */
@@ -227,8 +227,27 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	    double goal_level= goalLevelMultiplier_*getReorderLevel(inventory,day);
 	    double capacity = convertScalarToDouble(invpg.getCapacity());
  	    printDebug("InventoryManager, getGoalLevel(), goal level: "+goal_level+", capacity: "+capacity);
+
 	    if (goal_level > capacity) {
-		goal_level = capacity;
+	        double newCapVal = 
+		    goal_level*GOAL_LEVEL_BOOST_CAPACITY_FACTOR;
+		Scalar newCapacity = 
+		    newScalarFromOldToDouble(invpg.getCapacity(),newCapVal);
+
+		TypeIdentificationPG typePG= 
+		    inventory.getScheduledContentPG().getAsset().getTypeIdentificationPG();
+
+		String assetName = typePG.getNomenclature();
+		String assetID = typePG.getTypeIdentification();
+
+		GLMDebug.DEBUG(className_, clusterId_, "GeneralInventoryManager::getGoalLevel():WARNING::GOAL LEVEL EXCEEDS CAPACITY on INVENTORY FOR ASSET: " + assetName + ":" + assetID + " - UPPING THE CAPACITY ABOVE THE GOAL LEVEL TO: " + newCapVal +".  Should adjust capacity in inv file or goal level (DaysOnHand file) accordingly.");
+
+		((NewInventoryPG)invpg).setCapacity(newCapacity);
+
+		// MWD took out below -- instead of truncating goal to below
+		// capacity now upping the capacity to be able to contain the 
+		// goal level (above) !!
+	        //goal_level = capacity;
 	    }
 	    return goal_level;
 	}
