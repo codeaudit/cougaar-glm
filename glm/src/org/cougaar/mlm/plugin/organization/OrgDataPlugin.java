@@ -21,7 +21,10 @@
 package org.cougaar.mlm.plugin.organization;
 
 import java.util.Collection;
+import java.util.Iterator;
+
 import org.cougaar.glm.ldm.Constants;
+import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.asset.AssetDataPluginBase;
 
@@ -35,15 +38,19 @@ public class OrgDataPlugin extends AssetDataPluginBase  {
   }
 
   protected Verb getReportVerb(Collection roles) {
-    // kludge - assuming that collection of roles never mixes subordinate with
+    // Assuming that collection of roles never mixes subordinate with
     // provider roles.
-    if (roles.contains(Constants.Role.SUBORDINATE) ||
-        roles.contains(Constants.Role.ADMINISTRATIVESUBORDINATE)) {
-      //System.out.println("Report for duty");
-      return Constants.Verb.ReportForDuty;
-    } else {
-      //System.out.println("Report for service");
-      return Constants.Verb.ReportForService;
-    }
+    for (Iterator iterator = roles.iterator(); iterator.hasNext();) {
+      Role role = (Role) iterator.next();
+
+      // Does this Role match SUPERIOR/SUBORDINATE RelationshipType
+      if ((role.getName().endsWith(Constants.RelationshipType.SUBORDINATE_SUFFIX)) &&
+	  (role.getConverse().getName().endsWith(Constants.RelationshipType.SUPERIOR_SUFFIX))) {
+	return Constants.Verb.ReportForDuty;
+      }
+    } 
+
+    // Didn't get a superior/subordinate match
+    return Constants.Verb.ReportForService;
   }
 }
