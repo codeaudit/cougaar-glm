@@ -41,7 +41,7 @@ public class UTILVerify{
    * See if the time between the START_TIME preference and END_TIME
    * preference (latest date) is at least as long as the given duration.
    * @param t task to verify
-   * @param d duration to use (in millis)
+   * @param durInMillis duration to use (in millis)
    * @return true if task has duration of at least as long as the 
    *         duration d, false otherwise.
    */
