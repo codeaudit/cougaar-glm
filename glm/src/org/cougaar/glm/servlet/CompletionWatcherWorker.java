@@ -181,12 +181,12 @@ public class CompletionWatcherWorker extends ServletWorker {
 	    if (hasEstimated) {
 	      highConfidence = (pe.getEstimatedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
 	      if (!highConfidence)
-		System.out.println ("CompletionWatcherWorker - Interested in task with low confidence estimated. " + task.getUID());
+		support.getLog ().debug ("CompletionWatcherWorker - Interested in task with low confidence estimated. " + task.getUID());
 	    }
 	    else if (hasReported) {
 	      highConfidence = (pe.getReportedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
 	      if (!highConfidence)
-		System.out.println ("CompletionWatcherWorker - Interested in task with low confidence reported. " + task.getUID());
+		support.getLog ().debug ("CompletionWatcherWorker - Interested in task with low confidence reported. " + task.getUID());
 	    }
 	    
 	    return (!highConfidence);

@@ -51,8 +51,8 @@ public class CompletionWatcherServletComponent extends BlackboardServletComponen
    */
   protected SimpleServletSupport makeServletSupport () {
     if (log.isInfoEnabled())
-      log.info ("Creating CompletionWatcherServletSupport");
-    System.out.println ("log is " + log);
+      log.info ("Creating CompletionWatcherServletSupport, log is " + log);
+
     // create a new "SimpleServletSupport" instance
     return 
       new CompletionWatcherSupport (
