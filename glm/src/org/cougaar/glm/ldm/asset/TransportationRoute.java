@@ -114,7 +114,7 @@ public class TransportationRoute extends TransportationGraph {
    * Sets the route to the nodes in the vector <code>newnodes</code>.
    * Also sets the source and destination to be the first and last
    * nodes in the vector, respectively.
-   * @param Vector of nodes that mark the route
+   * @param newnodes Vector of nodes that mark the route
    */
   public void addGraphByNodes(Vector newnodes) {
     // precondition
