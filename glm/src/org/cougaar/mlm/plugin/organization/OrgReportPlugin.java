@@ -38,15 +38,13 @@ import org.cougaar.glm.ldm.asset.Organization;
 /**
  * OrgReportPlugin manages REPORTFORDUTY and REPORTFORSERVICE relationships
  * Handles both expansion and allocation of these tasks.
- * @see org.cougaar.mlm.plugin.organization.AllocatorPluginImpl
  * @see org.cougaar.core.plugin.SimplifiedPlugin
  * @see org.cougaar.core.plugin.SimplifiedPluginTest
  */
-
 public class OrgReportPlugin extends AssetReportPlugin
 {
 
-    /**
+  /**
    * getTaskPredicate - returns task predicate for task subscription
    * Default implementation subscribes to all non-internal tasks. Derived classes
    * should probably implement a more specific version.
