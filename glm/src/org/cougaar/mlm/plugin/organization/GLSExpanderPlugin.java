@@ -20,46 +20,54 @@
  */
 
 package org.cougaar.mlm.plugin.organization;
-import java.util.Collection;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.component.ServiceRevokedListener;
-import org.cougaar.core.plugin.LDMService;
-import org.cougaar.glm.ldm.Constants;
-import org.cougaar.core.agent.ClusterIdentifier;
-import org.cougaar.core.component.ServiceRevokedEvent;
 
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import org.cougaar.core.agent.ClusterIdentifier;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscriber;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.blackboard.IncrementalSubscription;
+
+import org.cougaar.core.component.ServiceRevokedEvent;
+import org.cougaar.core.component.ServiceRevokedListener;
 
 import org.cougaar.core.domain.RootFactory;
-import org.cougaar.planning.ldm.plan.NewTask;
+
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.LDMService;
+
+import org.cougaar.core.plugin.util.PluginHelper;
+
+import org.cougaar.core.service.LoggingService;
+
+import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.asset.*;
+import org.cougaar.glm.ldm.oplan.*;
+import org.cougaar.glm.ldm.plan.*;
+
+import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.ContextOfUIDs;
+import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewPlanElement;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.glm.ldm.oplan.*;
-import org.cougaar.glm.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.*;
 
-import org.cougaar.core.plugin.util.PluginHelper;
-
-import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AbstractAsset;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPGImpl;
-import java.util.Enumeration;
-import java.util.Vector;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -198,7 +206,14 @@ public class GLSExpanderPlugin extends ComponentPlugin {
       Enumeration e = expandableTasks.getAddedList();
       while (e.hasMoreElements()) {
         Task task = (Task) e.nextElement();
-        expand(task);
+	if (task.getPlanElement () != null) {
+	  logger.warn ("GLSExpanderPlugin.execute - strange, task " +task.getUID() + 
+		       "\nhas already been expanded with p.e.:\n"+
+		       task.getPlanElement() + "\nSo skipping already expanded task.");
+	}
+	else {
+	  expand(task);
+	}
       }
     }
     if (myExpansions.hasChanged()) {
@@ -313,6 +328,14 @@ public class GLSExpanderPlugin extends ComponentPlugin {
     }
     return subtask;
   }
+
+  /** rely upon load-time introspection to set these services - don't worry about revokation. */
+  public final void setLoggingService (LoggingService logger) { this.logger = logger; }
+
+  /**
+   * Everybody needs a logger
+   **/
+  protected LoggingService logger;
 }
 
 
