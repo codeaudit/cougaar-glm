@@ -93,14 +93,6 @@ public class TimeSpan
     return startDate;
   }
      
-  /*
-   * @deprecated - use getEndDate
-   */   
-  public Date getThruDate() {
-     printWarning("getThruDate");
-    return getEndDate();
-  }
-
   public Date getEndDate() {
     return new Date(getEndTime());
   }
@@ -214,24 +206,6 @@ public class TimeSpan
      formatter.setTime(cday);
      formatter.add(formatter.DATE, delta);
      return (formatter.getTime());
-  }
-
-   /**
-    * TimeSpan "delta" to be removed.  This utility not needed.
-    * @deprecated getEndDate removes the need for Oplan
-    */
-   public static Date getThruTime(int delta, Oplan oplan) {
-     printWarning("getThruTime");
-     return getEndTime(delta, oplan);
-   }
- 
-   /**
-    * TimeSpan "delta" to be removed.  This utility not needed.
-    * @deprecated getEndDate removes the need for cDay
-    */
-  public static Date getThruTime(int delta, Date cday) {
-     printWarning("getThruTime");
-     return getEndTime(delta, cday);
   }
 
   private static void printWarning(String sMethodName) {
