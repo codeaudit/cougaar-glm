@@ -31,6 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Collection;
+import java.util.Iterator;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -95,6 +97,15 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
   private static final String HIDDEN_PROP =
     "org.cougaar.mlm.plugin.organization.GLSGUIInitPlugIn.hidden";
   private static final String HIDDEN_DFLT = "true";
+  private IncrementalSubscription sendGLSRootSubscription;
+
+  private static UnaryPredicate sendGLSRootPredicate = new UnaryPredicate() {
+	               public boolean execute(Object o) {
+		        	if (o instanceof java.lang.String)
+			                   return ((o.toString()).equalsIgnoreCase("sendGLSRoot"));
+					return false;   
+		                }
+	                };
 
   /** My private state **/
   private MyPrivateState myPrivateState;
@@ -114,6 +125,14 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
       return hidden;
     }
   };
+  
+  protected void sendPSP(OplanWrapper wrapper) {
+	if (selfOrgAsset == null) {
+		System.out.println("\n\nGLSGUIInitPlugIn HAVEN'T RECEIVED SELF ORG ASSET YET.  TRY AGAIN LATER\n\n");
+	} else {
+		doPublishRootGLS(selfOrgAsset, wrapper.oplan);
+	}
+  }
   
   protected void buttonPushed(OplanWrapper wrapper) {
     if (selfOrgAsset == null) {
@@ -145,6 +164,7 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
 
   protected void createSubscriptions() {
     myPrivateStateSubscription = RandomButtonPusher.subscribe(getDelegate(), MyPrivateState.class);
+    sendGLSRootSubscription = (IncrementalSubscription)subscribe(sendGLSRootPredicate);
   }
 
   protected void restorePrivateState() {
@@ -173,8 +193,33 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
     }
   }
   
-  public void publishRootGLS(Organization me, Oplan oplan) {
-    openTransaction();
+  	public void sendThePSP()
+	{
+		OplanWrapper wrapper = (OplanWrapper) oplanCombo.getSelectedItem();
+		if (wrapper != null) sendPSP(wrapper);
+	}
+
+	protected void additionalExecute()
+	{
+
+		Collection sendIt=sendGLSRootSubscription.getAddedCollection();
+		if (sendIt!=null && sendIt.size() > 0) {
+			for (Iterator iterator = sendIt.iterator();iterator.hasNext();) {
+				Object object = iterator.next();
+				getBlackboardService().publishRemove(object);
+			}
+			sendThePSP();
+		}
+
+	}
+  
+	public void publishRootGLS(Organization me, Oplan oplan) {
+		openTransaction();
+		doPublishRootGLS(me, oplan);
+		closeTransaction(false);
+	}
+
+private void doPublishRootGLS(Organization me, Oplan oplan) {    openTransaction();
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
@@ -249,6 +294,5 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
     
     publishAdd(task);
     System.out.println("\n" + formatDate(System.currentTimeMillis()) + " Send Task: " + task);
-    closeTransaction(false);
   }
 }

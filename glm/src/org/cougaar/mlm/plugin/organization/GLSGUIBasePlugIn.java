@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Collection;
 import javax.swing.*;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
@@ -81,6 +82,7 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
   private IncrementalSubscription myorgassets;
   private IncrementalSubscription oplanSubscription;
   private IncrementalSubscription taskSubscription;
+  protected boolean canSend=true;
 
   private static final String forRoot = "ForRoot".intern();
 
@@ -221,6 +223,7 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
   /* This will be called every time a new task matches the above predicate */
 
   public final void execute() {
+    additionalExecute();
     handlePrivateState();
 
     if (myorgassets.hasChanged()) {
@@ -263,6 +266,7 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
   protected abstract String getButtonText();
   protected abstract String getGLSLabelText(int nTasks);
   protected abstract void buttonPushed(OplanWrapper wrapper);
+  protected abstract void additionalExecute();
 
   private void handleMyOrgAssets(Enumeration e) {
     while (e.hasMoreElements()) {

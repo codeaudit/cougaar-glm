@@ -76,8 +76,25 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
   private IncrementalSubscription oplanSubscription;
 
   private IncrementalSubscription stateSubscription;
+  private IncrementalSubscription publishTheOplanSubscription;
+  
 
   private ArrayList contributors;
+  
+  private boolean readyToPublishOplan = false;
+  private boolean UTBPublishOplan()
+  {
+	if(!readyToPublishOplan) {
+		System.out.println("OPLAN CANNOT BE PUBLISHED AGAIN.");
+		return false;
+	}
+	else
+	{
+		readyToPublishOplan=false;
+		publishOplanFromInsideTx();
+		return true;
+	}
+  }  
 
   private ArrayList oplans = new ArrayList();
   private HashMap locations = new HashMap();
@@ -106,6 +123,14 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     public boolean execute(Object o) {
       return (o instanceof Oplan);
     }
+  };
+  
+  private static UnaryPredicate publishTheOplanPredicate = new UnaryPredicate() {
+     public boolean execute(Object o) {
+	if (o instanceof java.lang.String)
+            return (o.toString().equalsIgnoreCase("publishTheOplan"));
+	return false;
+     }
   };
 
   private static UnaryPredicate statePredicate = new UnaryPredicate() {
@@ -179,6 +204,14 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
 	  processChanges(changes);
 	}	
       }
+    }
+    Collection publishIt=publishTheOplanSubscription.getAddedCollection();
+    if (publishIt!=null && publishIt.size() > 0) {
+	for (Iterator iterator = publishIt.iterator();iterator.hasNext();) {
+		Object object = iterator.next();
+		getBlackboardService().publishRemove(object);
+	}
+	UTBPublishOplan();
     }
   }
 
@@ -307,6 +340,8 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     processOplanAdds(oplanSubscription.getCollection());
 
     createGUI();
+    readyToPublishOplan=true;
+    publishTheOplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(publishTheOplanPredicate);
 
     if (getBlackboardService().didRehydrate()) {
       checkForPrivateState(stateSubscription.elements());
@@ -434,10 +469,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     oplans.add(oplan);
   }
   */
-  private void publishOplan() {
-    // Need to make separate add/remove/modify lists
-		 getBlackboardService().openTransaction();
-
+  private void publishOplanObjects() {
     for (Iterator iterator = newObjects.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
@@ -466,8 +498,9 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     }
 
     getBlackboardService().publishChange(myPrivateState);
-    getBlackboardService().closeTransaction(false);
-
+  }
+  
+  private void publishOplanPostProcessing() {
     newObjects.clear();
     modifiedObjects.clear();
     removedObjects.clear();
@@ -475,6 +508,20 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     myPrivateState.unpublishedChanges = false;
 
     checkButtonEnable();
+  }
+  
+  private void publishOplan() {
+	// Need to make separate add/remove/modify lists
+	getBlackboardService().openTransaction();
+	publishOplanObjects();
+	getBlackboardService().closeTransaction(false);
+	publishOplanPostProcessing();
+  }
+
+  private void publishOplanFromInsideTx() {
+	// Need to make separate add/remove/modify lists
+	publishOplanObjects();
+	publishOplanPostProcessing();
   }
 
   private void refreshOplan() {

@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Collection;
 import javax.swing.*;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
@@ -70,6 +71,15 @@ public class GLSRescindPlugIn extends GLSGUIBasePlugIn {
   private static final String HIDDEN_DFLT = "true";
   private IncrementalSubscription myPrivateStateSubscription;
   private MyPrivateState myPrivateState = null;
+  private IncrementalSubscription rescindGLSRootSubscription;
+
+private static UnaryPredicate rescindGLSRootPredicate = new UnaryPredicate() {
+	                public boolean execute(Object o) {
+				if (o instanceof java.lang.String)
+ 		                   return ((o.toString()).equalsIgnoreCase("rescindGLSRoot"));
+				return false;   
+	                }
+	       };
 
   private static class MyPrivateState extends RandomButtonPusher {
     boolean hidden;
@@ -83,6 +93,16 @@ public class GLSRescindPlugIn extends GLSGUIBasePlugIn {
       return hidden;
     }
   };
+  
+  public void rescindPSP(OplanWrapper wrapper) {
+	if (wrapper.tasks.isEmpty())
+		return;
+	for (Iterator i = wrapper.tasks.iterator(); i.hasNext(); ) {
+		Task t = (Task) i.next();
+		publishRemove(t);
+		System.out.println("\n" + formatDate(System.currentTimeMillis()) + " Rescinded Task: " + t);
+	}
+}  
 
   public void buttonPushed(OplanWrapper wrapper) {
     if (wrapper.tasks.isEmpty())
@@ -119,7 +139,25 @@ public class GLSRescindPlugIn extends GLSGUIBasePlugIn {
 
   protected void createSubscriptions() {
     myPrivateStateSubscription = RandomButtonPusher.subscribe(getDelegate(), MyPrivateState.class);
+    rescindGLSRootSubscription = (IncrementalSubscription) getBlackboardService().subscribe(rescindGLSRootPredicate);
   }
+  
+  public void rescindThePSP() {
+	OplanWrapper wrapper = (OplanWrapper) oplanCombo.getSelectedItem();
+	if (wrapper != null) rescindPSP(wrapper);
+  }
+
+  protected void additionalExecute()
+  {
+	Collection rescindIt=rescindGLSRootSubscription.getAddedCollection();
+	if (rescindIt!=null && rescindIt.size() > 0) {
+		for (Iterator iterator = rescindIt.iterator();iterator.hasNext();) {
+			Object object = iterator.next();
+			getBlackboardService().publishRemove(object);
+		}
+		rescindThePSP();
+	}
+  }  
 
   protected void restorePrivateState() {
     handlePrivateState(myPrivateStateSubscription.elements());
