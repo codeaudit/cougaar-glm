@@ -132,7 +132,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                          orgActivity.getOpTempo() + " " + 
                          orgActivity.getActivityType() + " " + 
                          orgActivity.getTimeSpan().getStartDate() + " " +
-                         orgActivity.getTimeSpan().getThruDate() + " " + 
+                         orgActivity.getTimeSpan().getEndDate() + " " + 
                          new Date(orgActivity.getTimeSpan().getEndTime()) + " " + 
                          orgActivity.getGeoLoc());
     }
@@ -415,16 +415,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
   }
 
   private TimeSpan makeOplanTimeSpan(long startTime, long endTime) {
-    System.out.println(99);
-
     Date startDate = normalize(new Date(startTime));
-
-    Date thruDate = normalize(new Date(endTime));
-    // roll back to start of previous day. Wacky definition of thru date.
-    myCalendar.setTime(thruDate);
-    myCalendar.add(Calendar.DATE, -1);
-    thruDate = myCalendar.getTime();
-
+    Date endDate = normalize(new Date(endTime));
     Date cDate = normalize(myOplan.getCday());
     
     // Find cDate -> startDate
@@ -437,7 +429,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
     int endDelta = startDelta;
     for (myCalendar.setTime(startDate); 
-         myCalendar.getTime().getTime() < thruDate.getTime(); 
+         myCalendar.getTime().getTime() < endDate.getTime(); 
          endDelta++) {
       myCalendar.add(Calendar.DATE, 1);
     }
@@ -518,8 +510,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
   private class OrgInfoElement extends org.cougaar.domain.glm.ldm.oplan.TimeSpan {
     private Object myObject;
 
-    public OrgInfoElement(Object object, Date baseDate, int startDelta, int thruDelta) {
-      super(baseDate, startDelta, thruDelta);
+    public OrgInfoElement(Object object, Date baseDate, int startDelta, int endDelta) {
+      super(baseDate, startDelta, endDelta);
 
       myObject = object;
     }
