@@ -161,7 +161,7 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
                 filter.schedule = schedule;
             }
             verbMap.put(filter.verb, filter);
-            System.out.println("UniversalAllocatorPlugin adding " + filter);
+//             System.out.println("UniversalAllocatorPlugin adding " + filter);
             assetName.append('_');
             assetName.append(filter.verb);
         }
