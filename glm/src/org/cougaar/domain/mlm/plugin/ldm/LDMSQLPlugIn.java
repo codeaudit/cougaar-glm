@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -67,7 +67,7 @@ import java.sql.*;
  * methods.
  *
  * On one side, we present a normal plugin API.  On the other side,
- * we parse a "Query file" and talk to JDBC and a set of QueryHandler 
+ * we parse a "Query file" and talk to JDBC and a set of QueryHandler
  * objects.
  *
  * The plugin expects at least one PlugIn parameter
@@ -80,20 +80,20 @@ import java.sql.*;
  *
  * The query file is a description of one or more queries to execute
  * on behalf of the plugin.  Comment lines (lines starting with '#') and
- * empty lines are ignored.  Lines starting with '%' indicate the start 
- * of a "query section" and the rest of the line names the QueryHandler 
+ * empty lines are ignored.  Lines starting with '%' indicate the start
+ * of a "query section" and the rest of the line names the QueryHandler
  * class to use.  All other lines are of the form "parameter=value" where
  * the parameter values are made available to the current query.  Initial
- * parameter settings (before a '%' line) are considered global and are 
- * inherited by all following queries.  In addition, a special case 
+ * parameter settings (before a '%' line) are considered global and are
+ * inherited by all following queries.  In addition, a special case
  * pseudo-query of "%Global" allows additional entries into the global table.
  *
- * A QueryHandler (for now) names a java class to instantiate for the 
+ * A QueryHandler (for now) names a java class to instantiate for the
  * constructing an SQL expression and then parsing the rows of the results.
  * If the QueryHandler name does not include a '.' character, the parser
  * will prepend the value of the "Package" parameter (which defaults to
  * "org.cougaar.domain.mlm.plugin.sql") in order to resolve the class.
- * 
+ *
  * See QueryHandler for more information.
  *
  * Reserved QueryFile Parameters:
@@ -103,12 +103,12 @@ import java.sql.*;
  *  Database	JDBC database descriptor (used in getConnection)
  *  Username	JDBC Username (also "user")
  *  Password	JDBC Password (also "password")
- *  
+ *
  * Also support parameter substitutions in the sql query string.
- * If the QueryHandler returns 
+ * If the QueryHandler returns
  *   "select nsn, quantity from nsns where nsn = ':NSN'"
  * the JDBC plugin will substitute the value of parameter NSN
- * for the string :NSN.  A colon character may be escaped with 
+ * for the string :NSN.  A colon character may be escaped with
  * a backslash.
  */
 
@@ -116,11 +116,11 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 {
 
 
-		DomainService domainService = null;
-		private RootFactory theFactory = null;
-		
+  DomainService domainService = null;
+  private RootFactory theFactory = null;
+
   public LDMSQLPlugIn() {}
-	
+
   // the global parameters table (String -> object/String
   protected Properties globalParameters = new Properties();
   // list of query objects
@@ -128,29 +128,25 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   // the name of the file to look for.
   protected String queryFile;
   //WAN the type of database we are connecting to (Oracle, MySQL...)
-  protected int dbType; //WAN
-  protected static final int ORACLE=0; //WAN
-  protected static final int MYSQL=1; //WAN
-
-  protected static final String[] DBTYPES={"Oracle", "MySQL"}; //WAN
+  protected String dbType; //WAN
 
   protected void setupSubscriptions() {
     // let the super run to deal with the uninteresting stuff
     //super.setupSubscriptions();
-		
 
-				// get the domain service  	
-				if (theFactory == null) {
-						domainService = (DomainService) getBindingSite().getServiceBroker().getService(
-				 																					 this, DomainService.class,
-																								 new ServiceRevokedListener() {
-	 										     						 public void serviceRevoked(ServiceRevokedEvent re) {
-																						 theFactory = null;
-		 			                                 }
-																										 });
-				}
-				theFactory = domainService.getFactory();
-				
+
+				// get the domain service
+    if (theFactory == null) {
+      domainService = (DomainService) getBindingSite()
+	.getServiceBroker().getService(this, DomainService.class,
+				       new ServiceRevokedListener() {
+					   public void serviceRevoked(ServiceRevokedEvent re) {
+					     theFactory = null;
+					   }
+					 });
+    }
+    theFactory = domainService.getFactory();
+    
     try {
       //load an initial driver
       DBConnectionPool.registerDriver ("oracle.jdbc.driver.OracleDriver");
@@ -162,8 +158,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     // This could be a future site for maintaining a Container of created
     // LDMObjects for future updating.
     //if (!didRehydrate()) {	// Objects should already exist after rehydration
-    if (!getBlackboardService().didRehydrate()) {  
-				try {
+    if (!getBlackboardService().didRehydrate()) {
+      try {
 	// set up initial properties
 	initProperties();
 	// deal with the arguments.
@@ -180,7 +176,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
   // empty execute
   public void execute() {}
-  
+
   private void initProperties() {
     // default package for QueryHandler
     globalParameters.put("Package", "org.cougaar.domain.mlm.plugin.ldm");
@@ -213,18 +209,18 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
   // parse the query file
   private void parseQueryFile() {
-    try { 
-				BufferedReader in = new BufferedReader(new InputStreamReader(getConfigFinder().open(queryFile)));
+    try {
+      BufferedReader in = new BufferedReader(new InputStreamReader(getConfigFinder().open(queryFile)));
 				//BufferedReader in = new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(queryFile)));
       Properties pt = null;
       for (String line = in.readLine(); line != null; line=in.readLine()) {
-        
+
 	line = line.trim();     // ugly
 
 				// skip empty lines
 	if (line.length() == 0)
 	  continue;
-        
+
 	int len;
 				// handle continuation lines
 	while ((len = line.length()) > 0 && '\\' == line.charAt(len-1)) {
@@ -234,7 +230,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	char c = line.charAt(0);
 
 				// skip comments
-	if (c == '#') 
+	if (c == '#')
 	  continue;
 
 				// queryhandler section
@@ -257,7 +253,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	      cqh.initialize(this, // LDMEssentialPlugIn
 			     // this, // ldmservice
 			     getClusterIdentifier(),
-											 getCluster(),
+			     getCluster(),
 			     domainService.getFactory(),
 			     pt = (Properties)globalParameters.clone(),
 			     getBlackboardService());
@@ -279,14 +275,14 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
           //only process query if it is a default query or it is a query for the type of database that is being used
           if (queryType.equals("default")) {
             parseQueryParameter(((pt==null)?globalParameters:pt),
-			      line);
+				line);
           }
-          else if (queryType.equalsIgnoreCase(DBTYPES[dbType])){
+          else if (queryType.equalsIgnoreCase(dbType)){
             String startQuery = line.substring(0, dotIndex);
             String endQuery = line.substring(equalsIndex);
             String newLine = startQuery + " " +endQuery;
             parseQueryParameter(((pt==null)?globalParameters:pt),
-			      newLine);
+				newLine);
           }
           else //skip if this query does not match this database type and is not a default query (WAN)
             continue;
@@ -298,7 +294,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	}
       }
       in.close();
-      
+
     } catch (Exception e) {
       System.err.println("Error reading '"+queryFile+"': "+e);
       e.printStackTrace();
@@ -306,13 +302,10 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     }
   }
 
-  private static int stringToType(String str){ //WAN copied from DBConfig.java
-    for(int i=0;i<DBTYPES.length;i++){
-      if(str.equalsIgnoreCase(DBTYPES[i]))
-	return i;
-    }
-    System.err.println("Unknown database type: "+str);
-    return MYSQL;
+  private String getDBType(String databaseVal) {
+    int colonIndex1 = databaseVal.indexOf(':');
+    int colonIndex2 = databaseVal.indexOf(':', colonIndex1+1);
+    return databaseVal.substring(colonIndex1+1, colonIndex2);
   }
 
   private void parseQueryParameter(Properties table, String s) {
@@ -323,12 +316,11 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
     if (p.equalsIgnoreCase("database")) {//WAN added
       String realVal = Parameters.replaceParameters(v); //WAN added
-      int colonIndex1 = realVal.indexOf(':');
-      int colonIndex2 = realVal.indexOf(':', colonIndex1+1);
-      dbType = stringToType(realVal.substring(colonIndex1+1, colonIndex2));  //WAN added
+      dbType = getDBType(realVal); //WAN added
     }
     table.put(p,v);
   }
+
 
   /** sort queryhandlers into categories.
    * PeriodicQueries will get executed synchronously for the first
@@ -342,7 +334,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	prototypeProviders.addElement(qh);
       } else if (qh instanceof org.cougaar.domain.mlm.plugin.ldm.PropertyProvider) {
 	propertyProviders.addElement(qh);
-      } 
+      }
       // else it was just a PeriodicQuery.
     }
   }
@@ -369,7 +361,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 				// find the end of the var
 	int j;
 	for (j = i; j<l && Character.isLetterOrDigit(scs[j]); j++)
-	    ;
+	  ;
 				// j is now the index of the first non symbol char past the colon
 	String param = s.substring(i,j);
 	String value = qh.getParameter(param);
@@ -399,16 +391,13 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       if (dbname == null) {
 	throw new RuntimeException("No Connection parameter.");
       }
-      //WAN find the dbtype by using the value of the dbname
-      int colonIndex1 = dbname.indexOf(':'); //WAN
-      int colonIndex2 = dbname.indexOf(':', colonIndex1+1); //WAN
-
-      String dbtype = dbname.substring(colonIndex1+1, colonIndex2);
-      if (dbtype == null) {
+      //WAN find the dbtype by using the value of the dbname delete later
+      //String dbtype = getDBType(dbname); delete later
+      if (dbType == null) {
 	throw new RuntimeException("No Connection parameter. - No dbtype");
       }
 
-      String driver = Parameters.findParameter("driver."+dbtype);//WAN  must go directly to cougaar.rc now
+      String driver = Parameters.findParameter("driver."+dbType);//WAN  must go directly to cougaar.rc now
       if (driver != null) {
 	DBConnectionPool.registerDriver(driver);
       }
@@ -433,7 +422,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
         ResultSet rset = statement.executeQuery(sql);
         ResultSetMetaData md = rset.getMetaData();
         int ncols = md.getColumnCount();
-        
+
         Object row[] = new Object[ncols];
 
         while (rset.next()) {
@@ -457,7 +446,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
   private Vector prototypeProviders = new Vector();
   private Vector propertyProviders = new Vector();
-  
+
   //
   // LDMService
   //
@@ -472,16 +461,16 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     }
     return null;
   }
-  
+
   public Asset getPrototype(String typeid) {
     return getPrototype(typeid, null);
   }
-	
+
   public void fillProperties( Asset anAsset ) {
     for (Enumeration e = propertyProviders.elements(); e.hasMoreElements();){
       PropertyProvider pp = (PropertyProvider) e.nextElement();
       pp.provideProperties( anAsset );
     }
   }
-  
+
 }
