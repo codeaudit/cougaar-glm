@@ -20,6 +20,7 @@
 package org.cougaar.domain.glm.plugins;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
 import org.cougaar.domain.planning.ldm.LdmFactory;
@@ -37,7 +38,7 @@ import org.cougaar.domain.glm.ldm.asset.SupplyClassPG;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 /** Provides convenience methods. */
-public class TaskUtils {
+public class TaskUtils extends PlugInHelper {
     /** number of msec per day */
     // 86400000 msec/day = 1000msec/sec * 60sec/min *60min/hr * 24 hr/day
     public static final long MSEC_PER_DAY =  86400000;
@@ -249,21 +250,6 @@ public class TaskUtils {
 
 
     // TASK PREFERENCE UTILS
-    public static long getStartTime(Task task) {
-      double startTime = getPreferenceBestValue(task, AspectType.START_TIME);
-      if (startTime == Double.NaN) {
-        throw new IllegalArgumentException("Task has no START_TIME preference");
-      }
-      return (long) startTime;
-    }
-
-    public static long getEndTime(Task task) {
-      double endTime = getPreferenceBestValue(task, AspectType.END_TIME);
-      if (endTime == Double.NaN) {
-        throw new IllegalArgumentException("Task has no END_TIME preference");
-      }
-      return (long) endTime;
-    }
 
     public static double getQuantity(Task task) {
 	return getPreferenceBestValue(task, AspectType.QUANTITY);
@@ -281,24 +267,6 @@ public class TaskUtils {
         if (best == null)
             GLMDebug.ERROR("TaskUtils", "getRate(), Task is not Projection :"+taskDesc(task));
 	return best.getValue();
-    }
-
-    public static AspectValue getPreferenceBest(Task task, int aspect_type) {
-      if (task == null) throw new IllegalArgumentException("task cannot be null");
-        Preference task_pref = task.getPreference(aspect_type);
-	if (task_pref == null) {
-	    return null;
-	}
-        if (task_pref.getScoringFunction() == null) {
-	    return null;
-	}
-        return task_pref.getScoringFunction().getBest().getAspectValue();
-    }
-
-    public static double getPreferenceBestValue(Task task, int aspect_type) {
-	AspectValue best = getPreferenceBest(task, aspect_type);
-	if (best == null) return Double.NaN;
-        return best.getValue();
     }
 
     public static double getRefillQuantity(Task refillTask){
@@ -409,24 +377,6 @@ public class TaskUtils {
 
     public static double getQuantity(AllocationResult ar) {
 	return getARAspectValue(ar, AspectType.QUANTITY);
-    }
-
-    public static double getStartTime(AllocationResult ar) {
-	return getARAspectValue(ar, AspectType.START_TIME);
-    }
-
-    public static double getEndTime(AllocationResult ar) {
-	return getARAspectValue(ar, AspectType.END_TIME);
-    }
-
-    public static double getARAspectValue(AllocationResult ar, int type) {
-	AspectValue[] avs = ar.getAspectValueResults();
-	for (int ii = 0; ii < avs.length; ii++) {
-	    if (avs[ii].getAspectType() == type) {
-		return avs[ii].getValue();
-	    }
-	}
-	return Double.NaN;
     }
 
     public static String arDesc(AllocationResult ar) {
