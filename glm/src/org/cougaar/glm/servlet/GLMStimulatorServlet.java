@@ -84,6 +84,7 @@ public class GLMStimulatorServlet extends ServletBase {
   public static final String WAIT_AFTER      = "waitAfter";
   public static final String RESCIND_AFTER_COMPLETE = "rescindAfterComplete";
   public static final String USE_CONFIDENCE  = "useConfidence";
+  public static final String TASK_PARSER_CLASS  = "taskParserClass";
   public static final boolean DEBUG = false;
   public static boolean VERBOSE = false;
 
@@ -120,6 +121,14 @@ public class GLMStimulatorServlet extends ServletBase {
     out.print("Override \"FOR\" prepositional phrase value");
     out.print("</td><td>");
     out.print("<INPUT TYPE=\"text\" NAME=\"" + FOR_PREP + "\" SIZE=40>");
+    out.println("</td></tr>");
+
+    // get task parser class
+    out.println ("<tr><td>");
+    out.print("Task Parser Class (if you want to override default parser)");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + TASK_PARSER_CLASS + "\" "+
+	      "VALUE=\"org.cougaar.glm.parser.GLMTaskParser\" SIZE=40>");
     out.println("</td></tr>");
 
     // get number of batches to send 
@@ -175,6 +184,7 @@ public class GLMStimulatorServlet extends ServletBase {
     out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + USE_CONFIDENCE + "\" VALUE=\"true\">");
     out.println("</td></tr>");
     out.println ("</table><p>");
+
 
     // choose data format - html, xml, or java objects 
     out.print("<center>Show results as "+

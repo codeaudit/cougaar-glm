@@ -211,6 +211,8 @@ public class GLMStimulatorWorker
       rescindAfterComplete = eq (value, "true");
     } else if (eq (name, GLMStimulatorServlet.USE_CONFIDENCE)) {
       useConfidence = eq (value, "true");
+    } else if (eq (name, GLMStimulatorServlet.TASK_PARSER_CLASS)) {
+      taskParserClass = value;
     }
   }
 
@@ -382,16 +384,24 @@ public class GLMStimulatorWorker
   protected Collection readXmlTasks(String xmlTaskFile) {
     Collection tasks = null;
     try {
-      GLMTaskParser tp = new GLMTaskParser(xmlTaskFile,
-                                           support.getLDMF(),
-                                           support.getAgentIdentifier(),
-                                           support.getConfigFinder(),
-                                           support.getLDM(),
-					   support.getLog());
-      tasks = UTILAllocate.enumToList (tp.getTasks());
+      Class actualTaskParserClass = Class.forName (taskParserClass);
+      GLMTaskParser taskParser = (GLMTaskParser)actualTaskParserClass.newInstance();
+      taskParser.init(xmlTaskFile,
+                      support.getLDMF(),
+                      support.getAgentIdentifier(),
+                      support.getConfigFinder(),
+                      support.getLDM(),
+                      support.getLog());
+      tasks = UTILAllocate.enumToList (taskParser.getTasks());
+    }
+    catch( ClassNotFoundException cnfe ) {
+      support.getLog().error ("Could not find class <" + taskParserClass + ">", cnfe);
+    }
+    catch( InstantiationException iae ) {
+      support.getLog().error ("Could not make instance of <" + taskParserClass + ">.  Is there a no-arg constructor?", iae);
     }
     catch( Exception ex ) {
-      support.getLog().error ("Error parsing xml task file " + xmlTaskFile, ex);
+      support.getLog().error ("Error parsing xml task file " + xmlTaskFile + " with task parser " + taskParserClass, ex);
     }
     return tasks;
   }
@@ -559,6 +569,7 @@ public class GLMStimulatorWorker
   protected String forPrep = null;
 
   protected String inputFile = "                     ";
+  protected String taskParserClass;
 
   protected BlackboardServletSupport support;
 }
