@@ -57,6 +57,15 @@ import java.util.Vector;
 public class UTILExpanderPlugInAdapter extends UTILBufferingPlugInAdapter 
   implements UTILExpanderPlugIn {
 
+  protected boolean wantConfidence = false;
+
+  public void localSetup () {
+    super.localSetup ();
+    
+    try { wantConfidence = getMyParams().getBooleanParam ("SimpleExpanderWantConfidence"); }
+    catch (Exception e) {}
+  }
+
   /****************************************************************
    ** Setup Filters...
    **/
@@ -298,11 +307,6 @@ public class UTILExpanderPlugInAdapter extends UTILBufferingPlugInAdapter
    * @param t the task to be expanded.
    */
   public void handleTask(Task t) {
-    boolean wantConfidence = false;
-    
-    try { wantConfidence = getMyParams().getBooleanParam ("SimpleExpanderWantConfidence"); }
-    catch (Exception e) {}
-
     if (myExtraOutput)
       System.out.println (getName () + 
 			  ".handleTask : called on - " + t.getUID());
