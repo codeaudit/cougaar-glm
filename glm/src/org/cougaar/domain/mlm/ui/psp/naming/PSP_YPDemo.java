@@ -239,7 +239,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
 
         //}
         if( attributesMap.size() > 0 ) {
-            session.addHeader("Search attributes updated with " + attributesMap.size() + " search attributes.");
+            session.addHeader("Found " + attributesMap.size() + " search attributes.");
         } else session.addHeader("No search attributes updated.");
         session.doPrepend();
     }
@@ -314,22 +314,22 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                   // BIND ATTRIBUTES OBJ TO NAME
                   //
                   try{
-                              DirContext subKontext = null;
-                              try{
+                         DirContext subKontext = null;
+                         try{
                                   DirContext agents = (DirContext)dirc.lookup("Agents");
                                   subKontext = (DirContext)agents.createSubcontext(og.getItemIdentificationPG().getNomenclature());
-                              } catch( NameAlreadyBoundException ex ) {
+                          } catch( NameAlreadyBoundException ex ) {
                                       //
                                       // catch NameAlreadyBoundException -  directory already exists
                                       // perform a lookup instead of creating new
                                       //
                                       subKontext = (DirContext)dirc.lookup(og.getItemIdentificationPG().getNomenclature());
-                              }
-                              System.out.println("Created Subdirectory=" + subKontext.getNameInNamespace());
-                              //subKontext.bind("Roles", new AgentRole("http://www.ultralog.net")); //, new BasicAttributes("name", role.getName()));
+                          }
+                          System.out.println("Created Subdirectory=" + subKontext.getNameInNamespace());
+                          //subKontext.bind("Roles", new AgentRole("http://www.ultralog.net")); //, new BasicAttributes("name", role.getName()));
 
-                              System.out.println("BInding attributes, size=" + attributes.size() );
-                              subKontext.bind("Roles", new AgentRole("http://www.ultralog.net"), attributes );
+                          System.out.println("Binding attributes, size=" + attributes.size() );
+                          subKontext.bind("Roles", new AgentRole("http://www.ultralog.net"), attributes );
                     } catch( NamingException ex ){
                           // if already bound, ignore
                     }
@@ -370,7 +370,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                  idx0 = decodedpost.indexOf("{", idx0);
                  if(idx0 > -1) idx1 = decodedpost.indexOf("::",idx0);
                  else break;
-                 if(idx1 > -1) idx2 = decodedpost.indexOf(":=",idx0);
+                 if(idx1 > -1) idx2 = decodedpost.indexOf("}",idx0);
                  else break;
 
                  String name ="";
@@ -387,7 +387,6 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                  session.addHeader("List objects found by attribute at named context (Search): context=" + name  + ", attribute=" + attribute );
                  session.add( searchResults );
                  session.doPrepend();
-
                  //
                  // Add values to nameAttrs Hashtable
                  //
@@ -443,7 +442,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
 
         // BUTTON 1 ------------------
 
-        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Get queryiable attributes...' ");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Get queryable attributes...' ");
         out.println("to update query attributes selection for search.  You need to do this each time you update YP (e.g. 'Add/Update Yellow Pages...')");
         out.println("as well as each time you change view (to new Agent).</P></FONT></I>");
 
@@ -457,7 +456,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         // BUTTON 2 ------------------
 
         out.println("<P>");
-        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Add/Update Yellow Pages...' to update <FONT COLOR=RED>this</FONT> Cluster's JNDI entries.");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Add/Update Yellow Pages...' to update <B>this</B> Cluster's JNDI entries.");
         out.println("Note that updates are only with respect to current Cluster.");
         out.println("To illustrate, why don't you navigate to each cluster and update the Yellow Pages");
         out.println("with its attributes.  Query at each increment note the additions using 'Search Yellow Pages...'</P></FONT></I>");
@@ -472,7 +471,10 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
 
         // BUTTON 3 ------------------
 
-        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Search Yellow Pages...' to search from all JNDI entries</I></FONT></P>");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Search Yellow Pages...' to search from all JNDI entries");
+        out.println("Select context <FONT COLOR=BLUE>NAME</FONT> and <FONT COLOR=MAGENTA>ATTRIBUTE</FONT> pairs below.");
+        out.println("To update list, choose 'Get queryable attributes...' above.");
+        out.println("</I></FONT></P>");
         out.println("<div align=center>");
         out.println("<input type=submit name="+BUTTON_SUBMIT_YP_SEARCH+" value=\"Search Yellow Pages\">");
         out.println("<P>");
@@ -498,7 +500,9 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
              Vector v = (Vector)qObject.getEntries().get(name);
              for(int j=0; j<v.size(); j++) {
                  String attribute = (String)v.get(j);
-                  out.println("<input type=checkbox name={" + name + "::" + attribute + "} value=X checked><I>" + attribute + "</I>,");
+                  out.println("<input type=checkbox name={"
+                                            + name + "::" + attribute + "} value=X checked><I><FONT COLOR=BLUE>"
+                                            + name + "/</FONT><FONT COLOR=MAGENTA>"  + attribute + "</FONT></I>,");
              }
         }
         //
@@ -506,11 +510,9 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         //
         out.println("</div>");
 
-
         out.println("<P>");
         if( session.getTranscriptLength() > 0) {
-            out.println("<center><H2><FONT COLOR=GREEN>~~~~~~~~~~~~~~ Session Transcript ~~~~~~~~~~~~~~</FONT></H2></CENTER>");
-            out.println("<center><I><FONT COLOR=GREEN>~~~~~~~~~~~ most recent entry first! ~~~~~~~~~~</FONT></I></CENTER>");
+            out.println("<center><H2><FONT COLOR=GREEN><B>~~~~~~~~~~~~~~~~ Session Transcript (most recent first) ~~~~~~~~~~~~~~~~</B></FONT></H2></CENTER>");
             out.println("<PRE>");
             out.println(session.getTranscript());
             out.println("</PRE>");

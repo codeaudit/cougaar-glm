@@ -41,7 +41,6 @@ import org.cougaar.util.UnaryPredicate;
 //
 public class YPDemoJNDI
 {
-
      //###########################################################################
      //
      //
@@ -148,8 +147,6 @@ public class YPDemoJNDI
          List returnList = new ArrayList();
 
          try {
-               // Create the initial context
-               //Context ctx = new InitialContext(JNDIConfig.getEnvironment());
                Context ctx = nserve.getRootContext();
                CompositeName cn = new CompositeName("");
                collectObjectTraversal(  cn, ctx.listBindings(""), returnList, filterPred, nserve);
@@ -220,14 +217,18 @@ public class YPDemoJNDI
                      NamingEnumeration en2 = atts.getAll();
                      while( en2.hasMore()) {
                          Attribute a = (Attribute)en2.next();
-
                          Vector v = (Vector)returnMap.get(tail.toString());
                          if( v == null) {
                              v= new Vector();
                              returnMap.put(tail.toString(), v);
                          }
-                         if( v.contains(a.toString()) == false) v.add(a.toString());
-
+                         //
+                         // STRIP OFF ATTRIBUTE VALUE BEFORE PLACING
+                         // ATTRIBUTE NAME INTO ReturnMap.
+                         //
+                         // TO DO: SAVE VALUES SEPARATELY.
+                         //
+                         v.add(stripValue(a.toString()));
                          //returnList.add("{" + tail.toString() + "::" + a.toString() + "}");
                      }
                      /**
@@ -253,5 +254,14 @@ public class YPDemoJNDI
          }
      }
 
+
+    //###########################################################################
+    private static String stripValue(String attributeValue){
+         int idx = attributeValue.indexOf(":");
+         if( idx > -1 ) {
+             return attributeValue.substring(0,idx);
+         }
+         return attributeValue;
+    }
 }
 

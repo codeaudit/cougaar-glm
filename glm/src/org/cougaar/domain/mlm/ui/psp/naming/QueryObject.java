@@ -37,7 +37,7 @@ import java.util.Vector;
 public class QueryObject {
      public  QueryObject() {
           Vector v = new Vector();
-          v.add(GET_ALL + ": true" );
+          v.add(GET_ALL); // + ": true" );
           myEntries.put(GET_ALL, v);
      }
 
@@ -50,7 +50,7 @@ public class QueryObject {
      public void setEntries( Map entries) {
            // make sure Query Tag Entries included the "catch all" GET ALL!
            Vector v = new Vector();
-           v.add(QueryObject.GET_ALL + ": true" );
+           v.add(QueryObject.GET_ALL); // + ": true" );
            entries.put(QueryObject.GET_ALL,v);
            myEntries = entries;
     }
