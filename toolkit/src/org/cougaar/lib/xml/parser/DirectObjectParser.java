@@ -22,8 +22,8 @@
 package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.w3c.dom.NodeList;
 
 /**

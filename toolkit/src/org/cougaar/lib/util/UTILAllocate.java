@@ -21,27 +21,27 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.core.domain.RootFactory;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.plan.Allocation;
-import org.cougaar.domain.planning.ldm.plan.AllocationResult;
-import org.cougaar.domain.planning.ldm.plan.AspectScorePoint;
-import org.cougaar.domain.planning.ldm.plan.AspectScoreRange;
-import org.cougaar.domain.planning.ldm.plan.AspectType;
-import org.cougaar.domain.planning.ldm.plan.AspectValue;
-import org.cougaar.domain.planning.ldm.plan.AuxiliaryQueryType;
-import org.cougaar.domain.planning.ldm.plan.Disposition;
-import org.cougaar.domain.planning.ldm.plan.MPTask;
-import org.cougaar.domain.planning.ldm.plan.Plan;
-import org.cougaar.domain.planning.ldm.plan.PlanElement;
-import org.cougaar.domain.planning.ldm.plan.Preference;
-import org.cougaar.domain.planning.ldm.plan.Preposition;
-import org.cougaar.domain.planning.ldm.plan.Role;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
-import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
-import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectScorePoint;
+import org.cougaar.planning.ldm.plan.AspectScoreRange;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
+import org.cougaar.planning.ldm.plan.Disposition;
+import org.cougaar.planning.ldm.plan.MPTask;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Preposition;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
 
 import org.cougaar.lib.filter.UTILPlugIn;
 
@@ -342,8 +342,8 @@ public class UTILAllocate {
    * @param t task to check
    * @param aspectValues array of AspectValues
    * @return boolean -- true if exceeds any preference
-   * @see org.cougaar.domain.planning.ldm.plan.AspectType
-   * @see org.cougaar.domain.planning.ldm.plan.AspectValue
+   * @see org.cougaar.planning.ldm.plan.AspectType
+   * @see org.cougaar.planning.ldm.plan.AspectValue
    */
   public static boolean exceedsPreferences (Task t, AspectValue [] aspectValues) {
     int[] aspectarray = new int[aspectValues.length];
@@ -372,7 +372,7 @@ public class UTILAllocate {
    * @param aspectTypes array of aspect types
    * @param aspectValues array of aspect values
    * @return boolean -- true if any preference is exceeded
-   * @see org.cougaar.domain.planning.ldm.plan.AspectType
+   * @see org.cougaar.planning.ldm.plan.AspectType
    */
   public static boolean exceedsPreferences (Task t,
 					    int [] aspectTypes,
@@ -655,8 +655,8 @@ public class UTILAllocate {
    * @param t task to check
    * @param aspectValues array of AspectValues
    * @return double -- the score
-   * @see org.cougaar.domain.planning.ldm.plan.AspectType
-   * @see org.cougaar.domain.planning.ldm.plan.AspectValue
+   * @see org.cougaar.planning.ldm.plan.AspectType
+   * @see org.cougaar.planning.ldm.plan.AspectValue
    */
   public static double scoreAgainstPreferences (Task t, AspectValue [] aspectValues) {
     int[] aspectarray = new int[aspectValues.length];
@@ -685,9 +685,9 @@ public class UTILAllocate {
    * @param aspectTypes array of aspect types
    * @param aspectValues array of aspect values
    * @return double -- score of these aspect values against the task's preferences
-   * @see org.cougaar.domain.planning.ldm.plan.AspectType
-   * @see org.cougaar.domain.planning.ldm.plan.AspectValue
-   * @see org.cougaar.domain.planning.ldm.plan.Preference
+   * @see org.cougaar.planning.ldm.plan.AspectType
+   * @see org.cougaar.planning.ldm.plan.AspectValue
+   * @see org.cougaar.planning.ldm.plan.Preference
    */
   public static double scoreAgainstPreferences (Task t,
 						int [] aspectTypes,

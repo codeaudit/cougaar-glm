@@ -24,10 +24,10 @@ package org.cougaar.lib.xml.parser;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.lang.reflect.Method;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -96,11 +96,11 @@ public class FieldParser{
         }
       }
 
-      // assume that it is an org.cougaar.domain.planning.ldm.asset and set using addOtherPropertyGroup()
+      // assume that it is an org.cougaar.planning.ldm.asset and set using addOtherPropertyGroup()
       if(fieldSetter == null){ 
         try{
           setterName    = "addOtherPropertyGroup";
-          fieldClass    = FieldParser.getFieldClass("org.cougaar.domain.planning.ldm.asset.PropertyGroup");
+          fieldClass    = FieldParser.getFieldClass("org.cougaar.planning.ldm.asset.PropertyGroup");
           //fieldSetter = objClass.getMethod(setterName, fieldClass);
           fieldSetter   = FieldParser.getSetterMethod(objClass, setterName, fieldClass);
 
@@ -178,7 +178,7 @@ public class FieldParser{
   }
 
   static Hashtable seen_classmethods = new Hashtable();
-  static final Class PG_CLASS = org.cougaar.domain.planning.ldm.asset.PropertyGroup.class;
+  static final Class PG_CLASS = org.cougaar.planning.ldm.asset.PropertyGroup.class;
   /**
    * Wrapper arround the java.lang.Class functionality to allow to 
    * get a method on an object that is called with a superclass of its

@@ -21,13 +21,13 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Asset;
 
-import org.cougaar.domain.planning.ldm.plan.Aggregation;
-import org.cougaar.domain.planning.ldm.plan.AllocationResult;
-import org.cougaar.domain.planning.ldm.plan.PlanElement;
-import org.cougaar.domain.planning.ldm.plan.Task;
-import org.cougaar.domain.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Aggregation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 
 import org.cougaar.lib.callback.UTILAggregationCallback;
 import org.cougaar.lib.callback.UTILAggregationListener;
@@ -156,7 +156,7 @@ extends UTILBufferingPlugInAdapter implements UTILAggregatorPlugIn {
    *
    * @param t task to check for notification
    * @return boolean true if task is interesting
-   * @see org.cougaar.domain.planning.ldm.plan.Verb
+   * @see org.cougaar.planning.ldm.plan.Verb
    */
   public boolean interestingParentTask (Task t) { 
     return true; //(t.getVerb().equals(Constants.Verb.TRANSPORT));

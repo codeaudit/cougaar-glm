@@ -21,8 +21,8 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.domain.planning.ldm.plan.Allocation;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.Task;
 
 import org.cougaar.util.UnaryPredicate;
  

@@ -21,30 +21,30 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.RootFactory;
 
-import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.AssetGroup;
-import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
-import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AssetGroup;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 
-import org.cougaar.domain.planning.ldm.measure.Area;
-import org.cougaar.domain.planning.ldm.measure.Distance;
-import org.cougaar.domain.planning.ldm.measure.Mass;
-import org.cougaar.domain.planning.ldm.measure.Volume;
+import org.cougaar.planning.ldm.measure.Area;
+import org.cougaar.planning.ldm.measure.Distance;
+import org.cougaar.planning.ldm.measure.Mass;
+import org.cougaar.planning.ldm.measure.Volume;
 
-import org.cougaar.domain.planning.ldm.plan.Allocation;
-import org.cougaar.domain.planning.ldm.plan.PlanElement;
-import org.cougaar.domain.planning.ldm.plan.Preposition;
-import org.cougaar.domain.planning.ldm.plan.Role;
-import org.cougaar.domain.planning.ldm.plan.RoleSchedule;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
-import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preposition;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.Task;
 
 import java.util.*;
 
@@ -95,7 +95,7 @@ public class UTILAsset {
     try{
       NewTypeIdentificationPG p1 = null;
 
-      ag = (AssetGroup) root.createAsset(Class.forName ("org.cougaar.domain.planning.ldm.asset.AssetGroup"));
+      ag = (AssetGroup) root.createAsset(Class.forName ("org.cougaar.planning.ldm.asset.AssetGroup"));
 
       p1 = (NewTypeIdentificationPG)ag.getTypeIdentificationPG();
       p1.setTypeIdentification("ASSET_GROUP");

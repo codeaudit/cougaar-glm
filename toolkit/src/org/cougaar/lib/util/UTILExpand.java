@@ -21,30 +21,30 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.core.agent.ClusterIdentifier;
 
-import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.core.domain.RootFactory;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Asset;
 
-import org.cougaar.domain.planning.ldm.plan.AllocationResult;
-import org.cougaar.domain.planning.ldm.plan.AllocationResultAggregator;
-import org.cougaar.domain.planning.ldm.plan.AspectValue;
-import org.cougaar.domain.planning.ldm.plan.AspectType;
-import org.cougaar.domain.planning.ldm.plan.Expansion;
-import org.cougaar.domain.planning.ldm.plan.MPTask;
-import org.cougaar.domain.planning.ldm.plan.NewTask;
-import org.cougaar.domain.planning.ldm.plan.NewWorkflow;
-import org.cougaar.domain.planning.ldm.plan.Plan;
-import org.cougaar.domain.planning.ldm.plan.PlanElement;
-import org.cougaar.domain.planning.ldm.plan.Preference;
-import org.cougaar.domain.planning.ldm.plan.Task;
-import org.cougaar.domain.planning.ldm.plan.Verb;
-import org.cougaar.domain.planning.ldm.plan.Workflow;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.MPTask;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Workflow;
 
 import org.cougaar.core.plugin.PlugInDelegate;
 
-import org.cougaar.core.society.UID;
+import org.cougaar.core.util.UID;
 
 import org.cougaar.lib.filter.UTILPlugIn;
 import org.cougaar.lib.param.ParamTable;
@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.cougaar.core.blackboard.BlackboardService;
+import org.cougaar.core.service.BlackboardService;
 
 /** 
  * This class contains utility functions related to
@@ -256,7 +256,7 @@ public class UTILExpand {
    *        into an aggregate result.  
    * @param parent task of this workflow expansion
    * @return Workflow a workflow containing the subtasks
-   * @see org.cougaar.domain.planning.ldm.Plan.AllocationResultAggregator
+   * @see org.cougaar.planning.ldm.Plan.AllocationResultAggregator
    */
   public static Workflow makeWorkflow(RootFactory ldmf, List subtasks, 
 				      AllocationResultAggregator ara,

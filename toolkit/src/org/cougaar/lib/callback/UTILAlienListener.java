@@ -21,8 +21,8 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.core.cluster.ClusterIdentifier;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * Listener for use with the record/playback system.

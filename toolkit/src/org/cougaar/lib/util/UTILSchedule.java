@@ -21,11 +21,11 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.domain.planning.ldm.RootFactory;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
-import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
-import org.cougaar.domain.planning.ldm.plan.ScheduleImpl;
-import org.cougaar.domain.planning.ldm.plan.ScheduleElementImpl;
+import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.ScheduleImpl;
+import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
 import org.cougaar.util.TimeSpan;
 
 import java.util.Date;

@@ -23,8 +23,8 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.domain.planning.ldm.plan.ClusterObjectFactory;
-import org.cougaar.domain.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.ClusterObjectFactory;
+import org.cougaar.planning.ldm.plan.Verb;
 
 /**
  * Parses verbs in test task input files.

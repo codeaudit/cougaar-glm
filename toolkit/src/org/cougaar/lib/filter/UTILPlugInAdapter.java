@@ -21,20 +21,20 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.core.cluster.ClusterIdentifier;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 
-import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.core.domain.RootFactory;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Asset;
 
-import org.cougaar.domain.planning.ldm.plan.AllocationResult;
-import org.cougaar.domain.planning.ldm.plan.AuxiliaryQueryType;
-import org.cougaar.domain.planning.ldm.plan.NewTask;
-import org.cougaar.domain.planning.ldm.plan.NewWorkflow;
-import org.cougaar.domain.planning.ldm.plan.Plan;
-import org.cougaar.domain.planning.ldm.plan.PlanElement;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Task;
 
 import org.cougaar.core.plugin.PlugInAdapter;
 

@@ -23,8 +23,8 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.cluster.ClusterServesPlugIn;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
+import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugIn;
 
 /**
  * Parses the value portion of an object in an xml file.

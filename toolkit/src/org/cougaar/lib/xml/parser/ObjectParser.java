@@ -23,15 +23,15 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.cluster.ClusterServesPlugIn;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.RootFactory;
-import org.cougaar.domain.planning.ldm.Factory;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.RootFactory;
+import org.cougaar.core.domain.Factory;
+import org.cougaar.planning.ldm.asset.Asset;
 
-import org.cougaar.domain.planning.ldm.asset.PropertyGroup;
-import org.cougaar.domain.planning.ldm.FactoryException;
-import org.cougaar.domain.planning.ldm.measure.AbstractMeasure;
+import org.cougaar.planning.ldm.asset.PropertyGroup;
+import org.cougaar.core.domain.FactoryException;
+import org.cougaar.planning.ldm.measure.AbstractMeasure;
 import java.lang.reflect.Method;
 
 /**

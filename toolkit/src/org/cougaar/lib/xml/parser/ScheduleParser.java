@@ -23,8 +23,8 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.planning.ldm.plan.Schedule;
 
 import java.text.DateFormat;
 import java.util.Date;

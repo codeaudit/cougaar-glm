@@ -21,8 +21,8 @@
 
 package org.cougaar.lib.plugin;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
 
 import org.cougaar.core.plugin.LDMPlugInServesLDM;
 import org.cougaar.core.plugin.SimplePlugIn;

@@ -21,14 +21,14 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.core.domain.RootFactory;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
 
-import org.cougaar.domain.planning.ldm.plan.NewRoleSchedule;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.NewRoleSchedule;
+import org.cougaar.planning.ldm.plan.Schedule;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

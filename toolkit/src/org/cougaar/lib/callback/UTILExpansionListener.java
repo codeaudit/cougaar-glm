@@ -21,9 +21,9 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.domain.planning.ldm.plan.Expansion;
-import org.cougaar.domain.planning.ldm.plan.PlanElement;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Task;
 
 import java.util.List;
 
@@ -99,7 +99,7 @@ public interface UTILExpansionListener extends UTILFilterCallbackListener {
    *
    * @param expansion that failed
    * @param List of SubTaskResult objects, all of which have newly failed.
-   * @see org.cougaar.domain.planning.ldm.plan.SubTaskResult
+   * @see org.cougaar.planning.ldm.plan.SubTaskResult
    */
   void handleFailedExpansion(Expansion exp, List failedSubTasks);
 

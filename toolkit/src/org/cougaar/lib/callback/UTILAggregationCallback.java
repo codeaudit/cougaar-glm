@@ -21,9 +21,9 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.domain.planning.ldm.plan.Aggregation;
-import org.cougaar.domain.planning.ldm.plan.Composition;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Aggregation;
+import org.cougaar.planning.ldm.plan.Composition;
+import org.cougaar.planning.ldm.plan.Task;
 
 import org.cougaar.util.UnaryPredicate;
  

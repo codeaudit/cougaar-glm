@@ -22,7 +22,7 @@
 package org.cougaar.lib.callback;
 
 import java.util.Enumeration;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Asset;
 
 /**
  * Asset listener -- can be used with physicalAsset or asset callback.

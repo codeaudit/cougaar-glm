@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.util.UnaryPredicate;
 

@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.domain.planning.ldm.policy.Policy;
+import org.cougaar.planning.ldm.policy.Policy;
 
 import org.cougaar.util.UnaryPredicate;
 

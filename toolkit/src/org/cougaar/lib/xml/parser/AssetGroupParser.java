@@ -20,11 +20,11 @@
  */
 
 package org.cougaar.lib.xml.parser;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugIn;
 
-import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.AssetGroup;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AssetGroup;
 
 import org.cougaar.lib.util.UTILAsset;
 

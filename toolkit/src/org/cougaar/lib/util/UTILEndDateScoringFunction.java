@@ -21,9 +21,9 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.domain.planning.ldm.plan.AspectType;
-import org.cougaar.domain.planning.ldm.plan.AspectValue;
-import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
 
 import java.util.Calendar;
 import java.util.Date;

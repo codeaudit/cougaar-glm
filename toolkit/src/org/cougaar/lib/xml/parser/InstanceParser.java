@@ -21,12 +21,12 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.cougaar.core.cluster.ClusterServesPlugIn;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
+import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Schedule;
 
-import org.cougaar.domain.planning.ldm.plan.NewRoleSchedule;
+import org.cougaar.planning.ldm.plan.NewRoleSchedule;
 
 import org.cougaar.lib.util.UTILAsset;
 

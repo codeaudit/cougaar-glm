@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * Interface for listeners that check task consistency.

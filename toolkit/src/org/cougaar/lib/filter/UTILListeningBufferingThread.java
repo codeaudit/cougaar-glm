@@ -21,12 +21,12 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Task;
 
 
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.lib.callback.UTILGenericListener;
 

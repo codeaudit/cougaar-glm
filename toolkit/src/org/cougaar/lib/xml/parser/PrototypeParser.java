@@ -23,9 +23,9 @@ package org.cougaar.lib.xml.parser;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.core.cluster.ClusterServesPlugIn;
-import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.core.agent.ClusterServesPlugIn;
+import org.cougaar.core.domain.LDMServesPlugIn;
+import org.cougaar.planning.ldm.asset.Asset;
 
 /**
  * Parses prototype tags in an ldm.xml file.  Caches the prototype
