@@ -27,7 +27,11 @@ import java.awt.event.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.io.InputStream;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URL;
+import java.util.Date;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -62,7 +66,8 @@ public class QueryHelper implements ActionListener,
   public JFrame frame;
 
   InventoryExecutionTimeStatusHandler timeStatusHandler;
-
+  long submit_begin;
+  
   /* Called by application or applet; if its an applet, then
      use the container passed as an argument.
    */
@@ -71,6 +76,7 @@ public class QueryHelper implements ActionListener,
                      boolean isApplet, Container container,
                      boolean doDisplayTable,
 		     InventoryExecutionTimeStatusHandler aTimeStatusHandler) {
+    
     this.query = query;
     this.clusterURL = clusterURL;
     this.doDisplayTable = doDisplayTable;
@@ -86,10 +92,11 @@ public class QueryHelper implements ActionListener,
     doQuery();
   }
 
-  /** Called by an application when data is retrieved from a file.
+ /** Called by an application when data is retrieved from a file.
    */
 
   public QueryHelper(Query query) {
+    System.out.println("********* INSIDE QueryHelper(query alone)***********");
     this.query = query;
     assetName = query.getQueryToSend();
     int indx = assetName.indexOf(":");
@@ -97,7 +104,33 @@ public class QueryHelper implements ActionListener,
     createFrame(assetName);
     displayChart();
   }
-
+  
+  /** Called by an application when data is retrieved from a file.
+   *  With time assessment functionality
+   */
+  
+  public QueryHelper(Query query, String clusterURL, 
+                     boolean isApplet, Container container,
+                     boolean doDisplayTable,
+		     InventoryExecutionTimeStatusHandler aTimeStatusHandler, 
+		     long submit_time) {
+    
+    this.submit_begin = submit_time;
+    this.query = query;
+    this.clusterURL = clusterURL;
+    this.doDisplayTable = doDisplayTable;
+    this.isApplet = isApplet;
+    clusterName = clusterURL.substring(clusterURL.indexOf('$')+1, 
+				       clusterURL.length()-1);
+    assetName = query.getQueryToSend();
+    int indx = assetName.indexOf(":");
+    if (indx > -1) assetName = assetName.substring(indx+1);
+    createFrame(assetName+" at "+clusterName);
+    PSP_package = XMLClientConfiguration.PSP_package;
+    timeStatusHandler = aTimeStatusHandler;
+    doQuery();
+  }
+  
 
   // sets up a window for the inventory chart
 
@@ -204,17 +237,41 @@ public class QueryHelper implements ActionListener,
       //      container.validate();
       //    }
     
+    //System.out.println("*************DISPLAYING CHART************");
+    
+    
+
     if (chart != null) {
       container.setLayout(new BorderLayout());
       container.add(chart, BorderLayout.CENTER);
       chart.setBorder(new BevelBorder(BevelBorder.LOWERED));
       container.add(createButtonsPanel(), BorderLayout.SOUTH);
       container.validate();
+      
+      // capture assessment time and output log file
+      long submit_end = java.lang.System.currentTimeMillis();
+      /*
+      System.out.println("\n" + 
+			 "Total Submission Time: " + (submit_end - submit_begin) +
+			 " Milliseconds" + 
+			 "\n");
+      */
+      try {
+	//create new log file and write time assessment
+	String cip = System.getProperty("org.cougaar.install.path");
+	File logfile = new File(cip+"/Inventory.log");
+	FileWriter logwriter = new FileWriter(logfile);
+	logwriter.write("Total Submission Time For Last Inventory Query: " + (submit_end - submit_begin) + " Milliseconds");
+	logwriter.close();
+      }catch(IOException e) {
+	System.out.println("Error creating time assessment log file, message is: " + e.getMessage());
+      }
+      
     } else
       displayErrorString("No data received");
     
   }
-
+  
 
   private void updateChart() {
     JPanel chart = 
