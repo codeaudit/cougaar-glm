@@ -21,7 +21,7 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.plan.ItineraryElement;
 import org.cougaar.domain.planning.ldm.plan.Location;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
-import org.cougaar.util.XMLObjectFactory;
+import org.cougaar.core.util.XMLObjectFactory;
 
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;

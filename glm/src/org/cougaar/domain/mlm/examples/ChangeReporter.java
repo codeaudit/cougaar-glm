@@ -11,6 +11,7 @@
 package org.cougaar.domain.mlm.examples;
 
 import java.util.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.core.plugin.SimplePlugIn;

@@ -23,7 +23,7 @@ import org.cougaar.domain.glm.ldm.asset.TransportationRoute;
 
 public class UITaskItineraryElementOrg
     extends UITaskItineraryElement
-    implements org.cougaar.util.SelfPrinter, java.io.Serializable, java.lang.Cloneable
+    implements org.cougaar.core.util.SelfPrinter, java.io.Serializable, java.lang.Cloneable
 {
 
   public UITaskItineraryElementOrg() { super(); }
@@ -62,14 +62,14 @@ public class UITaskItineraryElementOrg
   //END ACCESSORS
   //############################################################
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     super.printContent(pr);
     pr.print(allocatedClusterName, "AllocatedClusterName");
     pr.print(allocatedTaskID, "AllocatedTaskID");
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

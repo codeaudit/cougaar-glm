@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
 import com.ibm.xml.parsers.*;

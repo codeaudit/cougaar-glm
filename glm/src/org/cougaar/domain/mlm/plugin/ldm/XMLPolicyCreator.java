@@ -12,6 +12,7 @@ package org.cougaar.domain.mlm.plugin.ldm;
 
 import org.cougaar.domain.planning.ldm.policy.*;
 import org.cougaar.domain.planning.ldm.RootFactory;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
 import java.io.InputStream;
@@ -36,7 +37,7 @@ import org.w3c.dom.NodeList;
 
 /** XMLPolicyCreator - creates policies from xml file
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: XMLPolicyCreator.java,v 1.1 2000-12-15 20:17:46 mthome Exp $
+ * @version $Id: XMLPolicyCreator.java,v 1.2 2001-01-03 14:33:14 mthome Exp $
  **/
 
 public class XMLPolicyCreator {

@@ -16,7 +16,7 @@ import org.cougaar.domain.planning.ldm.plan.Verb;
 
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
-public class UIItineraryElement implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+public class UIItineraryElement implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
   protected Verb verbRole;
   protected GeolocLocation startLocation;
@@ -112,7 +112,7 @@ public class UIItineraryElement implements org.cougaar.util.SelfPrinter, java.io
     return interpolatedInfo;
   }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(verbRole, "VerbRole");
     // pr.print(startLocation.getGeolocCode(), "StartLocation");
     // pr.print(endLocation.getGeolocCode(), "EndLocation");
@@ -130,7 +130,7 @@ public class UIItineraryElement implements org.cougaar.util.SelfPrinter, java.io
       UIPrinter pr = new UIPrinter(baout);
       pr.printSelfPrinter(this, "toString");
       return baout.toString();
-      //return org.cougaar.util.PrettyStringPrinter.toString(this);
+      //return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

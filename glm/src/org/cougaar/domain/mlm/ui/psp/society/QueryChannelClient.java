@@ -93,8 +93,8 @@ public class QueryChannelClient {
          InputStream in = uc.getInputStream();
 
          org.w3c.dom.Element root =
-               org.cougaar.util.XMLObjectFactory.readXMLRoot(in);
-         Object obj = org.cougaar.util.XMLObjectFactory.parseObject(null, root);
+               org.cougaar.core.util.XMLObjectFactory.readXMLRoot(in);
+         Object obj = org.cougaar.core.util.XMLObjectFactory.parseObject(null, root);
 
          //ObjectInputStream objIn = new ObjectInputStream(in);
          //Object obj = null;
@@ -148,9 +148,9 @@ public class QueryChannelClient {
          if( useXMLForMilOrg == true )
          {
              org.w3c.dom.Element root =
-                  org.cougaar.util.XMLObjectFactory.readXMLRoot(in);
+                  org.cougaar.core.util.XMLObjectFactory.readXMLRoot(in);
              if( root != null )
-                  obj = org.cougaar.util.XMLObjectFactory.parseObject(null, root);
+                  obj = org.cougaar.core.util.XMLObjectFactory.parseObject(null, root);
              else throw new RuntimeException("NULL XML ROOT");
          } else {
             ObjectInputStream objIn = new ObjectInputStream(in);

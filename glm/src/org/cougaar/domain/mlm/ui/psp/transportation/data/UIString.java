@@ -10,7 +10,7 @@
  
 package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
-public class UIString implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+public class UIString implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
   protected String STR;
 
@@ -33,12 +33,12 @@ public class UIString implements org.cougaar.util.SelfPrinter, java.io.Serializa
   public String getString() { return STR; }
   public void setSTR(String s) {STR = s;}
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(STR, "STR");
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

@@ -11,8 +11,8 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
 import org.cougaar.domain.planning.ldm.plan.Verb;
 
-import org.cougaar.util.PrettyStringPrinter;
-import org.cougaar.util.SelfPrinter;
+import org.cougaar.core.util.PrettyStringPrinter;
+import org.cougaar.core.util.SelfPrinter;
 
 import java.util.Collection;
 import java.util.Date;

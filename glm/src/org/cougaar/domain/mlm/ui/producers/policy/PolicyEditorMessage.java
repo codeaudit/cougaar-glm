@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.ParsePosition;
 import java.util.Vector;
 
-import org.cougaar.util.AbstractPrinter;
+import org.cougaar.core.util.AbstractPrinter;
 
 public class PolicyEditorMessage {
 

@@ -10,7 +10,7 @@
  
 package org.cougaar.domain.mlm.ui.psp.plan;
 
-public class UIOrgRelationship implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+public class UIOrgRelationship implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
   private String targetOrganizationCID;     // TARGET: the "TO" Cluster
   private String providerOrganizationCID;   // PROVIDER: the "FROM" Cluster
@@ -70,7 +70,7 @@ public class UIOrgRelationship implements org.cougaar.util.SelfPrinter, java.io.
     this.relationship = relationship;
   }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(targetOrganizationCID, "TargetOrganizationCID");
     pr.print(providerOrganizationCID, "ProviderOrganizationCID");
     pr.print(targetOrganizationUID, "TargetOrganizationUID");
@@ -79,7 +79,7 @@ public class UIOrgRelationship implements org.cougaar.util.SelfPrinter, java.io.
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 */

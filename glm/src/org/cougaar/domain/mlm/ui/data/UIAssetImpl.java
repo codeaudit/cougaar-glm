@@ -23,6 +23,7 @@ import org.cougaar.domain.planning.ldm.plan.RoleSchedule;
 import org.cougaar.domain.planning.ldm.plan.Schedule;
 import org.cougaar.core.society.UID;
 import org.cougaar.domain.planning.ldm.asset.AssetIntrospection;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
 public class UIAssetImpl implements UIAsset, XMLUIPlanObject {

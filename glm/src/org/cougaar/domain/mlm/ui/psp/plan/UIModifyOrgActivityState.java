@@ -17,7 +17,7 @@ import org.cougaar.domain.planning.ldm.Factory;
 import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.util.ShortDateFormat;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.XMLObjectFactory;
+import org.cougaar.core.util.XMLObjectFactory;
 
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
@@ -25,7 +25,7 @@ import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
 
 import org.w3c.dom.Element;
 
-public class UIModifyOrgActivityState implements org.cougaar.util.SelfPrinter {
+public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrinter {
 
   public static void main(String[] args) {
     UIModifyOrgActivityState moa = new UIModifyOrgActivityState();
@@ -77,11 +77,11 @@ public class UIModifyOrgActivityState implements org.cougaar.util.SelfPrinter {
    * Write instance to XML String
    */
   public String toXMLString() {
-    //FIXME return org.cougaar.util.XMLPrinter.toString(this);
+    //FIXME return org.cougaar.core.util.XMLPrinter.toString(this);
     java.io.ByteArrayOutputStream baout =
       new java.io.ByteArrayOutputStream();
-    org.cougaar.util.XMLPrinter pr = new org.cougaar.util.XMLPrinter(baout);
-    pr.printObject((org.cougaar.util.SelfPrinter)this);
+    org.cougaar.core.util.XMLPrinter pr = new org.cougaar.core.util.XMLPrinter(baout);
+    pr.printObject((org.cougaar.core.util.SelfPrinter)this);
     return baout.toString();
   }
 
@@ -143,7 +143,7 @@ public class UIModifyOrgActivityState implements org.cougaar.util.SelfPrinter {
     return ((s != null) ? s.trim() : "");
   }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(pressedButton, "PressedButton");
     pr.print(orgIdLabel, "OrgIdLabel");
     pr.print(typeText, "TypeText");
@@ -156,7 +156,7 @@ public class UIModifyOrgActivityState implements org.cougaar.util.SelfPrinter {
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   public void drawOrgActivity(OrgActivity orgAct, Oplan oplan) 

@@ -13,7 +13,7 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 import java.util.*;
 
 public class UITAssetInfo implements 
-   org.cougaar.util.SelfPrinter, java.io.Serializable, java.lang.Cloneable {
+   org.cougaar.core.util.SelfPrinter, java.io.Serializable, java.lang.Cloneable {
 
   // The Asset Classes:
 
@@ -80,7 +80,7 @@ public class UITAssetInfo implements
   public int[] getAssetClasses(){return AssetClasses;}
   public void setAssetClasses(int[] ac){AssetClasses = ac;}
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(uid, "UID");
     pr.print(TypeNomenclature, "TypeNomenclature");
     pr.print(TypeID, "TypeID");
@@ -90,7 +90,7 @@ public class UITAssetInfo implements
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

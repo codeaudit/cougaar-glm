@@ -22,6 +22,7 @@ import org.cougaar.domain.planning.ldm.measure.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.core.society.UID;
 import org.cougaar.lib.planserver.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
 import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
@@ -252,7 +253,7 @@ public class PSP_InputTaskAssetVolume extends PSP_BaseAdapter implements PlanSer
   /** AssetMetrics class for calculating metrics **/
 
   protected static class AssetMetrics 
-    implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+    implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
     private AssetMetrics() {}
     public AssetMetrics(String xidentifier) {
@@ -420,7 +421,7 @@ public class PSP_InputTaskAssetVolume extends PSP_BaseAdapter implements PlanSer
       addFootprintArea(physPG.getFootprintArea(), quantity);
     }
 
-    public void printContent(org.cougaar.util.AsciiPrinter pr) {
+    public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
       pr.print(identifier, "Identifier");
       pr.print(counter, "Counter");
       // mass
@@ -436,7 +437,7 @@ public class PSP_InputTaskAssetVolume extends PSP_BaseAdapter implements PlanSer
     }
 
     public String toString() {
-      return org.cougaar.util.PrettyStringPrinter.toString(this);
+      return org.cougaar.core.util.PrettyStringPrinter.toString(this);
     }
   }
 

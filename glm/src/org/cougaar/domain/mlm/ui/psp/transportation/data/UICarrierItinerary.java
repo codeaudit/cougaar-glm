@@ -56,7 +56,7 @@ public class UICarrierItinerary extends UIItinerary
   // END ACCESSORS
   //#############################################################
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     super.printContent(pr);
     pr.print(CarrierUID, "CarrierUID");
     pr.print(CarrierTypeNomenclature, "CarrierTypeNomenclature");
@@ -64,7 +64,7 @@ public class UICarrierItinerary extends UIItinerary
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

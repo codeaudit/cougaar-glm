@@ -10,7 +10,7 @@
  
 package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
-import org.cougaar.util.PrettyStringPrinter;
+import org.cougaar.core.util.PrettyStringPrinter;
 import java.util.*;
 
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
@@ -98,7 +98,7 @@ public class UITaskItinerary
   // END ACCESSORS
   //############################################################
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     super.printContent(pr);
     //pr.print(toRequiredLocation, "ToRequiredLocation");
     //pr.print(fromRequiredLocation, "FromRequiredLocation");

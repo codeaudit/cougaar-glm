@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
-public class UIUnit implements  org.cougaar.util.SelfPrinter, java.io.Serializable
+public class UIUnit implements  org.cougaar.core.util.SelfPrinter, java.io.Serializable
 {
      /**
        * Location of Unit
@@ -45,14 +45,14 @@ public class UIUnit implements  org.cougaar.util.SelfPrinter, java.io.Serializab
          this.ms2525IconName = name;
      }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(location, "Location");
     pr.print(ms2525IconName, "Ms2525IconName");
     pr.print(selfAssetUID, "SelfAssetUID");
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

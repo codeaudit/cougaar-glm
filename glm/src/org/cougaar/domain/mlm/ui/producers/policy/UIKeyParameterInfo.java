@@ -13,8 +13,8 @@ package org.cougaar.domain.mlm.ui.producers.policy;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.cougaar.util.AsciiPrinter;
-import org.cougaar.util.SelfPrinter;
+import org.cougaar.core.util.AsciiPrinter;
+import org.cougaar.core.util.SelfPrinter;
 
 public class UIKeyParameterInfo extends UIPolicyParameterInfo 
   implements SelfPrinter, java.io.Serializable {

@@ -10,6 +10,7 @@
 
 package org.cougaar.domain.glm.ldm.plan;
 import java.io.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
 /** Abstract Representation of a personal skill or capability.

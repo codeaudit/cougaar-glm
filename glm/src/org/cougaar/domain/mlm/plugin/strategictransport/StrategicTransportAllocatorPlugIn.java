@@ -36,6 +36,7 @@ import org.cougaar.domain.planning.ldm.plan.AspectScorePoint;
 import org.cougaar.domain.planning.ldm.plan.Role;
 import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
 
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 import java.util.*;
 import org.cougaar.domain.planning.ldm.asset.Asset;

@@ -16,7 +16,7 @@ import java.util.Vector;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AssetIntrospection;
-import org.cougaar.util.PropertyNameValue;
+import org.cougaar.core.util.PropertyNameValue;
 import org.cougaar.util.UnaryPredicate;
 
 /**

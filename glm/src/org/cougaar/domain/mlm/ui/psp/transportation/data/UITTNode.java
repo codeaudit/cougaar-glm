@@ -13,7 +13,7 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 import java.util.*;
 
 public class UITTNode 
-    implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+    implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
     public UITTNode(String u) {
        url = u;
@@ -49,7 +49,7 @@ public class UITTNode
          }
     }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(url, "Url");
     pr.print(value, "Value");
     pr.print(children, "Children");
@@ -57,7 +57,7 @@ public class UITTNode
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

@@ -21,7 +21,7 @@ import java.util.Vector;
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.util.XMLizable;
+import org.cougaar.core.util.XMLizable;
 
 import com.ibm.xml.parser.TXDocument;
 

@@ -60,6 +60,7 @@ import org.cougaar.domain.planning.ldm.plan.TaskImpl;
 import org.cougaar.util.UnaryPredicate;
 
 import java.util.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
 public class MCCAllocatorPlugIn extends SimplePlugIn

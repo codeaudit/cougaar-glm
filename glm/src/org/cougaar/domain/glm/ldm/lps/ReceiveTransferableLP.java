@@ -25,6 +25,7 @@ import org.cougaar.domain.planning.ldm.plan.TransferableVerification;
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.oplan.OplanContributor;
 import java.util.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 import org.cougaar.core.society.UID;
 
@@ -33,7 +34,7 @@ import org.cougaar.core.society.UID;
 /**
   * ReceiveTransferableLP Adds or modifies transferables to cluster
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: ReceiveTransferableLP.java,v 1.1 2000-12-20 18:18:12 mthome Exp $
+  * @version $Id: ReceiveTransferableLP.java,v 1.2 2001-01-03 14:33:13 mthome Exp $
   **/
 
 public class ReceiveTransferableLP extends LogPlanLogicProvider implements MessageLogicProvider

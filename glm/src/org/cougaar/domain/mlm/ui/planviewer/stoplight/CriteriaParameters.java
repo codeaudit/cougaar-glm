@@ -10,8 +10,8 @@
  
 package org.cougaar.domain.mlm.ui.planviewer.stoplight;
 
-import org.cougaar.util.AsciiPrinter;
-import org.cougaar.util.SelfPrinter;
+import org.cougaar.core.util.AsciiPrinter;
+import org.cougaar.core.util.SelfPrinter;
 
 public class CriteriaParameters implements SelfPrinter {
   String perCentOperation;

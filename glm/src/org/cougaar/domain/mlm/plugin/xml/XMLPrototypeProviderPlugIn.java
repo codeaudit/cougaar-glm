@@ -14,6 +14,7 @@ package org.cougaar.domain.mlm.plugin.xml;
 import org.cougaar.core.plugin.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 import org.w3c.dom.*;
 import org.cougaar.lib.xml.parser.*;

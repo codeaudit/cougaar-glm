@@ -40,13 +40,13 @@ public class UICarrierItineraryElement extends UIItineraryElement
     public int getCarrierActivity() { return CarrierActivity; }
     // END ACTIVITY INFORMATION
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     super.printContent(pr);
     pr.print(CarrierActivity, "CarrierActivity");
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.ui.psp.plan;
 
 import java.util.Vector;
 
-public class HashElem implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+public class HashElem implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
   private String key;
   private Vector values;
@@ -29,13 +29,13 @@ public class HashElem implements org.cougaar.util.SelfPrinter, java.io.Serializa
     values = v;
   }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(key, "Key");
     pr.print(values, "Values");
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
 }

@@ -16,7 +16,7 @@ import org.cougaar.domain.glm.ldm.plan.NewCasRep;
 
 import org.cougaar.core.society.UID;
 
-import org.cougaar.util.XMLizable;
+import org.cougaar.core.util.XMLizable;
 
 import java.lang.String;
 import java.util.Vector;
@@ -25,10 +25,10 @@ import java.io.*;
 import java.io.Serializable;
 import java.util.Enumeration;
 import org.cougaar.domain.planning.ldm.plan.Transferable;
-import org.cougaar.util.XMLizable;
+import org.cougaar.core.util.XMLizable;
 import org.cougaar.domain.planning.ldm.asset.*;
  
-import org.cougaar.util.XMLize;
+import org.cougaar.core.util.XMLize;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

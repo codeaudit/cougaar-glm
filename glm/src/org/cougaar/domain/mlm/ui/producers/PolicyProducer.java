@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.cougaar.core.society.UID;
-import org.cougaar.util.XMLObjectFactory;
+import org.cougaar.core.util.XMLObjectFactory;
 
 import org.cougaar.domain.mlm.ui.planviewer.ConnectionHelper;
 import org.cougaar.domain.mlm.ui.planviewer.XMLClientConfiguration;

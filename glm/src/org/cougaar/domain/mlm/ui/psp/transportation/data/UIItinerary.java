@@ -18,7 +18,7 @@ import org.cougaar.domain.planning.ldm.plan.ScheduleElementType;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 
-public class UIItinerary implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+public class UIItinerary implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
   private long allocOID;
   private String assetUID;
@@ -140,7 +140,7 @@ public class UIItinerary implements org.cougaar.util.SelfPrinter, java.io.Serial
     this.annotation = annotation;
   }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     pr.print(allocOID, "AllocOID");
     pr.print(assetUID, "AssetUID");
     pr.print(allocTaskUID, "AllocTaskUID");

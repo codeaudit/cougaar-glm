@@ -21,7 +21,7 @@ import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
-import org.cougaar.util.AbstractPrinter;
+import org.cougaar.core.util.AbstractPrinter;
 import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.UnaryPredicate;
 

@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import org.cougaar.domain.planning.ldm.policy.RangeRuleParameterEntry;
 import org.cougaar.domain.planning.ldm.policy.RuleParameter;
 
-import org.cougaar.util.AsciiPrinter;
-import org.cougaar.util.SelfPrinter;
+import org.cougaar.core.util.AsciiPrinter;
+import org.cougaar.core.util.SelfPrinter;
 
 public class UIRangeEntryInfo implements SelfPrinter, java.io.Serializable {
 

@@ -18,6 +18,7 @@ import org.cougaar.domain.planning.ldm.plan.ScheduleImpl;
 import org.cougaar.domain.glm.ldm.plan.LaborSchedule;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElementType;
 import org.cougaar.domain.planning.ldm.plan.ScheduleType;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 import java.util.*;
 

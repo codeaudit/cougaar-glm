@@ -11,8 +11,8 @@
 package org.cougaar.domain.mlm.ui.producers.policy;
 
 import org.cougaar.domain.planning.ldm.policy.RuleParameter;
-import org.cougaar.util.AsciiPrinter;
-import org.cougaar.util.SelfPrinter;
+import org.cougaar.core.util.AsciiPrinter;
+import org.cougaar.core.util.SelfPrinter;
 
 public class UIBoundedParameterInfo extends UIPolicyParameterInfo 
   implements SelfPrinter, java.io.Serializable {

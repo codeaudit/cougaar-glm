@@ -21,6 +21,7 @@ import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
 import com.ibm.xml.parsers.*;

@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.cougaar.core.society.UID;
-import org.cougaar.util.AsciiPrinter;
-import org.cougaar.util.SelfPrinter;
+import org.cougaar.core.util.AsciiPrinter;
+import org.cougaar.core.util.SelfPrinter;
 
 public class UIPolicyInfo implements SelfPrinter, java.io.Serializable {
   private ArrayList myParameters = new ArrayList();
@@ -142,7 +142,7 @@ public class UIPolicyInfo implements SelfPrinter, java.io.Serializable {
 
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
 }

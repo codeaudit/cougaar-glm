@@ -12,11 +12,11 @@ package org.cougaar.domain.glm.ldm.oplan;
 import java.lang.*;
 
 import org.cougaar.domain.planning.ldm.plan.Transferable;
-import org.cougaar.util.XMLizable;
+import org.cougaar.core.util.XMLizable;
 import org.cougaar.core.society.UID;
 import org.cougaar.core.society.OwnedUniqueObject;
 import org.cougaar.core.society.UniqueObject;
-import org.cougaar.util.XMLize;
+import org.cougaar.core.util.XMLize;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.beans.PropertyChangeListener;

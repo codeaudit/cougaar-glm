@@ -18,7 +18,7 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AssetIntrospection;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.policy.Policy;
-import org.cougaar.util.PropertyNameValue;
+import org.cougaar.core.util.PropertyNameValue;
 import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.domain.mlm.ui.data.*;

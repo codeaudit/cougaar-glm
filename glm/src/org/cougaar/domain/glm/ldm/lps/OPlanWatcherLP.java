@@ -32,6 +32,7 @@ import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 
 import java.util.*;
+import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 import org.cougaar.core.society.UID;
 

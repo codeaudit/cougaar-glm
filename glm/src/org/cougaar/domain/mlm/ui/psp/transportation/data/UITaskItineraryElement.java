@@ -155,7 +155,7 @@ public abstract class UITaskItineraryElement
   //END ACCESSORS
   //############################################################
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     super.printContent(pr);
     pr.print(taskUID, "taskUID");
     pr.print(TransportationMode, "TransportationMode");
@@ -168,7 +168,7 @@ public abstract class UITaskItineraryElement
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

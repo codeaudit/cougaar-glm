@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
 public class UIOrgItineraryElement 
   extends UIItineraryElement
-  implements org.cougaar.util.SelfPrinter, java.io.Serializable {
+  implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
 
   private String oplanActivity;
   private String oplanOptempo;
@@ -35,14 +35,14 @@ public class UIOrgItineraryElement
     this.oplanOptempo = oplanOptempo;
   }
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     super.printContent(pr);
     pr.print(oplanActivity, "OplanActivity");
     pr.print(oplanOptempo, "OplanOptempo");
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/

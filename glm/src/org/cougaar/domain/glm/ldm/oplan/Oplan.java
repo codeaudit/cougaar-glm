@@ -37,10 +37,10 @@ import org.cougaar.domain.planning.ldm.plan.Transferable;
 import org.cougaar.core.society.UID;
 import org.cougaar.core.society.UniqueObject;
 import org.cougaar.core.society.OwnedUniqueObject;
-import org.cougaar.util.XMLizable;
+import org.cougaar.core.util.XMLizable;
 import org.cougaar.domain.planning.ldm.policy.Policy;
  
-import org.cougaar.util.XMLize;
+import org.cougaar.core.util.XMLize;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

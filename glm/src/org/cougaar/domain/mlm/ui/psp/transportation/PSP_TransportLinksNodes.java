@@ -24,7 +24,7 @@ import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.measure.Speed;
 import org.cougaar.core.society.UID;
 import org.cougaar.lib.planserver.*;
-import org.cougaar.util.AbstractPrinter;
+import org.cougaar.core.util.AbstractPrinter;
 import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.UnaryPredicate;
 

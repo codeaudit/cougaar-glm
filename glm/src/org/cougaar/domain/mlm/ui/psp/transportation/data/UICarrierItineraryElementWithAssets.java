@@ -39,13 +39,13 @@ public class UICarrierItineraryElementWithAssets
   }
   // END ACTIVITY INFORMATION
 
-  public void printContent(org.cougaar.util.AsciiPrinter pr) {
+  public void printContent(org.cougaar.core.util.AsciiPrinter pr) {
     super.printContent(pr);
     pr.print(UITAssetInfoVector, "UITAssetInfoVector");
   }
 
   public String toString() {
-    return org.cougaar.util.PrettyStringPrinter.toString(this);
+    return org.cougaar.core.util.PrettyStringPrinter.toString(this);
   }
 
   /** set 3/29/00 **/
