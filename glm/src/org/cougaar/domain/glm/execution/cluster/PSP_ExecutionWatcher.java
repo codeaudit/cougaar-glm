@@ -44,6 +44,7 @@ import org.cougaar.domain.glm.ldm.asset.ReportSchedulePG;
 import org.cougaar.domain.glm.execution.common.*;
 import org.cougaar.domain.glm.plugins.TaskUtils;
 import org.cougaar.domain.glm.plugins.AssetUtils;
+import org.cougaar.domain.glm.plugins.MaintainedItem;
 
 /**
  * Watches the logplan for Inventory assets with an
@@ -258,8 +259,8 @@ public class PSP_ExecutionWatcher
       }
       if (isLocal) {
         pp = task.getPrepositionalPhrase(Constants.Preposition.MAINTAINING);
-        Asset asset = (Asset) pp.getIndirectObject();
-        if (asset instanceof Inventory) continue;
+	MaintainedItem itemID = (MaintainedItem)pp.getIndirectObject();
+	if (itemID.getMaintainedItemType().equals("Inventory")) continue;
         if (kind == Change.REMOVE) {
           FailureConsumptionRate.Rescind fcrr =
             new FailureConsumptionRate.Rescind(task.getUID());
@@ -287,8 +288,8 @@ public class PSP_ExecutionWatcher
                                          rateValue,
                                          rateUnits,
                                          multiplier,
-                                         asset.getTypeIdentificationPG().getTypeIdentification(),
-                                         asset.getTypeIdentificationPG().getNomenclature());
+                                         itemID.getTypeIdentification(),
+                                         itemID.getNomenclature());
             failureConsumptionRates.add(fcr);
           }
         }
