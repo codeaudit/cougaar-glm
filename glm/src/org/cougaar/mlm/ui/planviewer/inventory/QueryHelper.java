@@ -167,15 +167,16 @@ public class QueryHelper implements ActionListener,
 
     try {
       ConnectionHelper connection = 
-        new ConnectionHelper(clusterURL, PSP_package, PSP_id);
+	new ConnectionHelper( clusterURL, PSP_id); //PSP_package, PSP_id);
+
       connection.sendData(request);
       is = connection.getInputStream();
     } catch (Exception e) {
       displayErrorString(e.toString());
     }
-
+    
     query.readReply(is);
-
+    
   }
 
 
