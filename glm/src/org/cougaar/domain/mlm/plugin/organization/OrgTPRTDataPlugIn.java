@@ -37,8 +37,11 @@ import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.ClusterPG;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPGImpl;
+import org.cougaar.domain.planning.ldm.asset.LocationSchedulePG;
+import org.cougaar.domain.planning.ldm.asset.LocationSchedulePGImpl;
 import org.cougaar.domain.planning.ldm.asset.NewClusterPG;
 import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.domain.planning.ldm.asset.NewLocationSchedulePG;
 import org.cougaar.domain.planning.ldm.asset.NewPropertyGroup;
 import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.asset.PropertyGroup;
@@ -75,9 +78,6 @@ import org.cougaar.domain.glm.ldm.asset.AssignedPGImpl;
 import org.cougaar.domain.glm.ldm.asset.NewAssignedPG;
 import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.ldm.asset.OrganizationAdapter;
-import org.cougaar.domain.glm.ldm.asset.NewLocationSchedulePG;
-import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
-import org.cougaar.domain.glm.ldm.asset.LocationSchedulePGImpl;
 
 import org.cougaar.domain.glm.ldm.plan.GLMRelationship;
 

@@ -32,7 +32,6 @@ import java.util.Vector;
 
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.Organization;
-import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.debug.GLMDebug;
 import org.cougaar.domain.glm.plugins.ClusterOPlan;

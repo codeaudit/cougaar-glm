@@ -27,9 +27,9 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
 import org.cougaar.domain.planning.ldm.asset.AssetGroup;
+import org.cougaar.domain.planning.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
 
-import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.glm.ldm.asset.MilitaryOrgPG;
 //import org.cougaar.domain.glm.plugins.TaskUtils;
 

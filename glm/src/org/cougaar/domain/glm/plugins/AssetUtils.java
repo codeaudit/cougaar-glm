@@ -21,6 +21,7 @@ package org.cougaar.domain.glm.plugins;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.domain.planning.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.plan.Relationship;
 import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
@@ -34,7 +35,6 @@ import org.cougaar.util.TimeSpan;
 import java.util.*;
 
 import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
 import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.ldm.asset.SupplyClassPG;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
