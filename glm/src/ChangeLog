@@ -1,3 +1,28 @@
+2001-03-01  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* InventoryPolicy -- et. al.
+	Add policy-based ProjectionWeight creation.
+
+	New class InventoryPolicy replaces DaysOnHandPolicy and includes
+	all the RuleParameters from the latter plus optional
+	RuleParameters setting the RefillSwitchoverDay and
+	WithdrawSwitchoverDay values for ProjectionWeight creation.
+	
+	The InventoryPlugIn now maintains the default ProjectionWeight for
+	a class of supply. The default ProjectionWeight is created as
+	needed using the createProjectionWeight method. This method may be
+	overridden to provide a particular default. The former projection
+	weight creation has been retained by overriding this method.
+	
+	A new setProjectionWeight method allows the default to be reset.
+	This is used when an InventoryPolicy is encountered that specifies
+	new switchover days. This method may also be overridden to ignore
+	the policy-based projection weights.
+	
+	The default default projection weight (that's two defaults) is
+	implemented by a new ProjectionWeightImpl class. Which may also be
+	used to create fixed switchover day based projection weights.
+
 2001-02-27  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* UIInventoryImpl
