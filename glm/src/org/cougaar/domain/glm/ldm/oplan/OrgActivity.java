@@ -59,12 +59,17 @@ public class OrgActivity extends OwnedUniqueObject
   
   //ActivityTypes
   public static final String DEPLOYMENT = "Deployment";
-  public static final String RECEPTION = "Reception";
+  public static final String DEPLOYMENT_PREPO = "Deployment-Prepo";
+  public static final String EMPLOYMENT_CSS = "Employment-CSS";
   public static final String DEFENSIVE = "Employment-Defensive";
   public static final String OFFENSIVE = "Employment-Offensive";
-  public static final String EMPLOYMENT_CSS = "Employment-CSS";
-  public static final String STAND_DOWN = "Stand-down";
+  public static final String HOME = "Home";
+  public static final String STAND_DOWN = "Stand-Down";
   public static final String REDEPLOYMENT = "Redeployment";
+  public static final String RSOI = "RSOI";
+
+  // Not in the official set
+  public static final String RECEPTION = "Reception";
   public static final String RETROGRADE = "Retrograde";
 
   //Optempo
