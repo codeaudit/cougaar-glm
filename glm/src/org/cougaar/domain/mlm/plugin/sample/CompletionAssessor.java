@@ -43,7 +43,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
 
 /**
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: CompletionAssessor.java,v 1.2 2001-04-05 19:27:54 mthome Exp $
+ * @version      $Id: CompletionAssessor.java,v 1.3 2001-08-17 15:56:18 tomlinso Exp $
  */
 
 public class CompletionAssessor extends SimplePlugIn
@@ -677,6 +677,11 @@ public class CompletionAssessor extends SimplePlugIn
     frame.pack();
     UICoordinator.setBounds(frame);
     frame.setVisible(true);
+  }
+
+  public void unload() {
+    super.unload();
+    frame.dispose();
   }
 
   private void setUndisposedEnabled(boolean v) {

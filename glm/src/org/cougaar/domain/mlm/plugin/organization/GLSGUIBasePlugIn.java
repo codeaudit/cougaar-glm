@@ -41,7 +41,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * subclasses to allow labels to be updated.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIBasePlugIn.java,v 1.4 2001-05-18 14:55:15 tomlinso Exp $
+ * @version      $Id: GLSGUIBasePlugIn.java,v 1.5 2001-08-17 15:56:16 tomlinso Exp $
  * */
 
 public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
@@ -50,7 +50,7 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
   private static boolean exitOnClose = System.getProperty(EXIT_ON_CLOSE_PROP, "false").equals("true");
 
   /** frame for 1-button UI **/
-  static JFrame frame;
+  private JFrame frame;
 
   /** for knowing when we get our self org asset **/
   protected Organization selfOrgAsset = null;
@@ -175,6 +175,10 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
     frame.setVisible(true);
   }
 
+  public void unload() {
+    super.unload();
+    frame.dispose();
+  }
   /**
    * Overrides the setupSubscriptions() in the SimplifiedPlugIn.
    * Should be further overridden in subclasses which must call
