@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/UnitHierarchy.java,v 1.3 2001-01-20 02:08:43 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/UnitHierarchy.java,v 1.4 2001-04-16 20:29:36 bkrisler Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -48,17 +48,9 @@ import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 
-// modern xerces references
-//import org.apache.xerces.parsers.SAXParser;
-//import org.xml.sax.helpers.DefaultHandler;
-//import org.xml.sax.Attributes;
-
-// old IBM XML jar references
-import com.ibm.xml.parsers.SAXParser;
-import org.xml.sax.AttributeList;
-import org.xml.sax.HandlerBase;
-import org.xml.sax.Parser;
-import org.xml.sax.helpers.ParserFactory;
+import org.apache.xerces.parsers.SAXParser;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.Attributes;
 
 public class UnitHierarchy implements TreeModel
 {
@@ -265,14 +257,9 @@ public class UnitHierarchy implements TreeModel
       String response = new String (helper.getResponse());
       if (debug)
 		System.out.println ("got response " + response);
-      // modern xerces jar
-      //	  SAXParser parser = new SAXParser();
-      // old IBM XML jar
-      Parser parser = ParserFactory.makeParser("com.ibm.xml.parsers.SAXParser");
-      // modern xerces jar
-      //	  parser.setContentHandler (new ClusterNameHandler());
-      // old IBM XML jar
-      parser.setDocumentHandler (new ClusterNameHandler(orgToSuperior));
+      
+      SAXParser parser = new SAXParser();
+      parser.setContentHandler (new ClusterNameHandler(orgToSuperior));
       parser.parse (new InputSource (new StringReader (response)));
     }
     catch ( IOException e ) {
@@ -303,19 +290,20 @@ public class UnitHierarchy implements TreeModel
    * </pre>
    * @see org.cougaar.domain.mlm.ui.psp.transportation.PSP_Hierarchy
    **/
+
   // for modern Xerces jar
-  //  private class ClusterNameHandler extends DefaultHandler {
+  private class ClusterNameHandler extends DefaultHandler {
   // for old (June 1999) IBM XML jar
-  public static class ClusterNameHandler extends HandlerBase {
+    //public static class ClusterNameHandler extends HandlerBase {
     Map orgToSuperior;
 	String superior;
     public ClusterNameHandler(Map m){
       orgToSuperior=m;
     }
 	// for modern Xerces jar
-	//    public void startElement (String uri, String local, String name, Attributes atts) throws SAXException {
+    public void startElement (String uri, String local, String name, Attributes atts) throws SAXException {
 	// for old (June 1999) IBM XML jar
-    public void startElement (String name, AttributeList atts) {
+    //public void startElement (String name, AttributeList atts) {
 	  if (name.equals ("org"))
 		superior = atts.getValue ("name");
 	  else if (name.equals ("subord"))
