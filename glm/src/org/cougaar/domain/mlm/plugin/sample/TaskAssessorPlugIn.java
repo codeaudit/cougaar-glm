@@ -52,7 +52,7 @@ import org.cougaar.util.UnaryPredicate;
  * displays a summary.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version $Id: TaskAssessorPlugIn.java,v 1.3 2001-08-22 20:27:42 mthome Exp $ */
+ */
 
 public class TaskAssessorPlugIn extends SimplePlugIn
 {
@@ -218,14 +218,13 @@ public class TaskAssessorPlugIn extends SimplePlugIn
     }
   }
 
-  /* CCV2 execute method */
-  /* This will be called every time a task matches the above predicate */
-  /* Note: Failed Tasks only come through on the changed list. 
-     Since Tasks are changed by other PlugIns after we see them
-     here, we need to keep track of the ones we've seen so we don't 
-     act on them more than once.
-   */
-  public synchronized void execute() {
+  /** This will be called every time a task matches the above predicate
+   * Note: Failed Tasks only come through on the changed list. 
+   * Since Tasks are changed by other PlugIns after we see them
+   * here, we need to keep track of the ones we've seen so we don't 
+   * act on them more than once.
+   **/
+  public void execute() {
     checkAdd(myalloc.getAddedList());
     checkChange(myalloc.getChangedList());
     checkRemove(myalloc.getRemovedList());

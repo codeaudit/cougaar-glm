@@ -35,7 +35,7 @@ import java.util.Enumeration;
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-08-22 20:28:06 mthome Exp $
+ *
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
   

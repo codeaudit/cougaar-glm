@@ -31,7 +31,7 @@ import org.cougaar.domain.planning.ldm.policy.StringRuleParameter;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: InventoryPolicy.java,v 1.3 2001-05-16 21:40:20 afedyk Exp $
+ *
  */
 
 public class InventoryPolicy extends Policy {

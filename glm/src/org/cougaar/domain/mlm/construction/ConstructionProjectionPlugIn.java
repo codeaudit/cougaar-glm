@@ -28,7 +28,7 @@ import java.util.Vector;
 /*
  * Construction (ClassIV) Projection Plugin 
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: ConstructionProjectionPlugIn.java,v 1.3 2001-08-22 20:27:31 mthome Exp $
+ *
  **/
 
 public class ConstructionProjectionPlugIn extends GLMDecorationPlugIn {

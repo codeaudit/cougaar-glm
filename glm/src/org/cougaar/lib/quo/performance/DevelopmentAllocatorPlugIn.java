@@ -37,7 +37,7 @@ import org.cougaar.core.plugin.Annotation;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.2 2001-08-22 20:28:06 mthome Exp $
+ *
  **/
 public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

@@ -49,7 +49,7 @@ import org.w3c.dom.NodeList;
  * PropagationPlugIn propagates Transferables based on xml files in parameter list
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.10 2001-08-22 20:27:35 mthome Exp $
+ *
  */
 
 public class PropagationPlugIn extends SimplePlugIn

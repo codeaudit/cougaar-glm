@@ -23,8 +23,8 @@ import java.io.Serializable;
 
 
 /** Incoming data for each transport task.
- * @author Benjamin Lubin; last modified by $Author: mthome $
- * @version $Revision: 1.3 $; Last modified on $Date: 2001-08-22 20:28:02 $
+ * @author Benjamin Lubin; last modified by $Author: gvidaver $
+ *
  * @since 11/14/00
  */
 public abstract class TransitData implements Serializable, Comparable{

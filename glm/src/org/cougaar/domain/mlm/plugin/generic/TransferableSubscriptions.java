@@ -30,7 +30,7 @@ import org.cougaar.core.cluster.IncrementalSubscription;
  * destinaton
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: TransferableSubscriptions.java,v 1.3 2001-08-22 20:27:35 mthome Exp $
+ *
  */
 
 public class TransferableSubscriptions {

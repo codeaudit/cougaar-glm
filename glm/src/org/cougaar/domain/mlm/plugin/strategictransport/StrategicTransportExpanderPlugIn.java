@@ -65,7 +65,7 @@ import org.cougaar.util.UnaryPredicate;
  * of Tasks through a Workflow.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: StrategicTransportExpanderPlugIn.java,v 1.4 2001-08-22 20:27:42 mthome Exp $
+ *
  *
  */
 

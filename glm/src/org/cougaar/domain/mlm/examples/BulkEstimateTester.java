@@ -51,7 +51,7 @@ import org.cougaar.util.UnaryPredicate;
  * The bulkestimate tester
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: BulkEstimateTester.java,v 1.4 2001-08-22 20:27:34 mthome Exp $
+ *
  */
 
 public class BulkEstimateTester extends SimplePlugIn

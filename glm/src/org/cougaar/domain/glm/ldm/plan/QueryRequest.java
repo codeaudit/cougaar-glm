@@ -30,7 +30,7 @@ import org.cougaar.util.UnaryPredicate;
   * 
   *
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: QueryRequest.java,v 1.4 2001-08-22 20:27:27 mthome Exp $
+  *
   */
 public interface QueryRequest {
   

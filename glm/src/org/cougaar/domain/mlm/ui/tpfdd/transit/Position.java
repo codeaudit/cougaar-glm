@@ -22,8 +22,8 @@ package org.cougaar.domain.mlm.ui.tpfdd.transit;
 import java.io.Serializable;
 
 /** Position of an object 
- * @author Benjamin Lubin; last modified by $Author: mthome $
- * @version $Revision: 1.3 $; Last modified on $Date: 2001-08-22 20:28:02 $
+ * @author Benjamin Lubin; last modified by $Author: gvidaver $
+ *
  * @since 11/14/00
  */
 public interface Position extends Serializable{

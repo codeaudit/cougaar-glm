@@ -30,7 +30,7 @@ import org.cougaar.core.society.UID;
  * support.
  * 
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: OplanContributor.java,v 1.3 2001-08-22 20:27:23 mthome Exp $
+ *
  */
 
 public interface OplanContributor extends Transferable {

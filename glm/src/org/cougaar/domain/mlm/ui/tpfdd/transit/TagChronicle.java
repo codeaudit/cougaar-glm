@@ -25,8 +25,8 @@ import java.io.Serializable;
 /**
  * Holds a Chronicle of data about the location of some String indexed property
  *
- * @author Benjamin Lubin; last modified by $Author: mthome $
- * @version $Revision: 1.3 $; Last modified on $Date: 2001-08-22 20:28:02 $
+ * @author Benjamin Lubin; last modified by $Author: gvidaver $
+ *
  * @since 11/15/00
  */
 public class TagChronicle extends Chronicle{

@@ -25,7 +25,7 @@ package org.cougaar.domain.glm.ldm.plan;
  * Capability - the Capability an Asset has.
  *
  *  @author  ALPINE <alpine-software@bbn.com>
- *  @version $Id: Capability.java,v 1.3 2001-08-22 20:27:24 mthome Exp $
+ *
  */
 
 public interface Capability { 

@@ -34,7 +34,7 @@ import java.util.Enumeration;
    All other beaninfo is defaulted.
 
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: OplanBeanInfo.java,v 1.3 2001-08-22 20:27:23 mthome Exp $
+ *
 
 */
 public class OplanBeanInfo extends SimpleBeanInfo {

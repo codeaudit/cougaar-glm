@@ -78,7 +78,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * with the OPLAN object.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIInitPlugIn.java,v 1.6 2001-09-07 18:02:39 tomlinso Exp $
+ *
  *
  */
 

@@ -32,7 +32,7 @@ import java.util.Date;
  * A CapacityScheduleElement is an encapsulation of temporal relationships
  * and a capacity over that time interval.
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: CapacityScheduleElementImpl.java,v 1.3 2001-08-22 20:27:24 mthome Exp $
+ *
  **/
 
 public class CapacityScheduleElementImpl extends ScheduleElementImpl

@@ -33,7 +33,7 @@ import java.io.Serializable;
 
 /** Implementation of Capability.  
  * @author ALPINE <alpine-software@bbn.com>
- * @version $Id: CapabilityImpl.java,v 1.3 2001-08-22 20:27:24 mthome Exp $
+ *
  */
 	
 public final class CapabilityImpl 

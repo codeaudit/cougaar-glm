@@ -47,7 +47,7 @@ import org.w3c.dom.Text;
 
 /** XMLPolicyCreator - creates policies from xml file
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: XMLPolicyCreator.java,v 1.9 2001-08-22 20:27:39 mthome Exp $
+ *
  **/
 
 public class XMLPolicyCreator {

@@ -43,7 +43,7 @@ import org.cougaar.core.society.UID;
 /**
   * ReceiveTransferableLP Adds or modifies transferables to cluster
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: ReceiveTransferableLP.java,v 1.5 2001-08-22 20:27:22 mthome Exp $
+  *
   **/
 
 public class ReceiveTransferableLP extends LogPlanLogicProvider implements MessageLogicProvider

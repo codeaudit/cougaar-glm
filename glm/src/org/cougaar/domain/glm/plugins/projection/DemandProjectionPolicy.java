@@ -29,7 +29,7 @@ import org.cougaar.domain.planning.ldm.policy.StringRuleParameter;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: DemandProjectionPolicy.java,v 1.1 2000-12-15 20:18:02 mthome Exp $
+ *
  */
 
 public class DemandProjectionPolicy extends Policy {

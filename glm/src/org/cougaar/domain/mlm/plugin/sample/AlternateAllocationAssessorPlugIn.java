@@ -52,7 +52,7 @@ import org.cougaar.util.UnaryPredicate;
  * failed allocations in it's collection
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: AlternateAllocationAssessorPlugIn.java,v 1.3 2001-08-22 20:27:41 mthome Exp $
+ *
  */
 
 public class AlternateAllocationAssessorPlugIn extends SimplePlugIn

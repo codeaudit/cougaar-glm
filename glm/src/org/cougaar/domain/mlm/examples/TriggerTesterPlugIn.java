@@ -60,7 +60,7 @@ import org.cougaar.util.UnaryPredicate;
  * for certain planelements and marks them as stale.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: TriggerTesterPlugIn.java,v 1.4 2001-08-22 20:27:34 mthome Exp $
+ *
  */
 
 public class TriggerTesterPlugIn extends SimplePlugIn

@@ -28,8 +28,8 @@ import org.cougaar.domain.mlm.ui.tpfdd.transit.UnitChronicle.UnitTally;
 /**
  * Holds a Chronicle of data about the location of a unit's arrival deviation
  *
- * @author Benjamin Lubin; last modified by $Author: mthome $
- * @version $Revision: 1.3 $; Last modified on $Date: 2001-08-22 20:28:01 $
+ * @author Benjamin Lubin; last modified by $Author: gvidaver $
+ *
  * @since 12/02/00
  */
 public class ArrivalDeviationChronicle extends UnitChronicle{

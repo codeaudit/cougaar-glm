@@ -30,7 +30,7 @@ import org.cougaar.core.cluster.ClusterIdentifier;
   * 
   *
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: DetailRequest.java,v 1.3 2001-08-22 20:27:25 mthome Exp $
+  *
   */
 public interface DetailRequest {
   

@@ -45,7 +45,7 @@ import java.util.*;
 
 /** ExpanderPlugIn that takes Determine Requirements of Type construction tasks and expands them into predefined construction tasks. 
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: DTConstructionExpanderPlugIn.java,v 1.3 2001-08-22 20:27:31 mthome Exp $
+  *
   **/
 
 

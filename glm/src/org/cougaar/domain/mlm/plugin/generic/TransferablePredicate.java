@@ -32,7 +32,7 @@ import java.util.Enumeration;
  * 
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: TransferablePredicate.java,v 1.4 2001-08-22 20:27:35 mthome Exp $
+ *
  */
 
 public class TransferablePredicate implements UnaryPredicate {

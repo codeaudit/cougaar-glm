@@ -76,7 +76,7 @@ import org.cougaar.domain.glm.plugins.GLMDecorationPlugIn;
  * Construction (ClassIV) plugin that takes construction tasks and 
  * creates GenerateProjection tasks.
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: ConstructionGenerateDemandProjector.java,v 1.3 2001-08-22 20:27:31 mthome Exp $
+ *
  **/
 
 public class ConstructionGenerateDemandProjector extends BasicProcessor {

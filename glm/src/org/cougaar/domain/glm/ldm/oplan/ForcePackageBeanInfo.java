@@ -38,7 +38,7 @@ import java.util.Enumeration;
  * ForcePackageBeanInfo
  * 
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: ForcePackageBeanInfo.java,v 1.3 2001-08-22 20:27:23 mthome Exp $
+ *
  */
 public class ForcePackageBeanInfo extends SimpleBeanInfo {
 

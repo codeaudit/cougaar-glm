@@ -36,7 +36,7 @@ import org.cougaar.util.UnaryPredicate;
  * The GSLRescindPlugIn will rescind the ?? task
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: AlertReaderPlugIn.java,v 1.3 2001-08-22 20:27:41 mthome Exp $
+ *
  */
 
 public class AlertReaderPlugIn extends SimplePlugIn

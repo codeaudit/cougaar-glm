@@ -44,7 +44,7 @@ import java.util.Iterator;
  * </PRE>
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: XMLPolicyPlugIn.java,v 1.6 2001-08-22 20:27:39 mthome Exp $
+ *
  */
 public class XMLPolicyPlugIn extends SimplePlugIn
 {

@@ -30,7 +30,7 @@ import org.cougaar.domain.planning.ldm.policy.StringRuleParameter;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: DaysOnHandPolicy.java,v 1.4 2001-02-07 17:42:17 afedyk Exp $
+ *
  */
 
 public class DaysOnHandPolicy extends Policy {

@@ -31,7 +31,7 @@ import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 /**
  * This COUGAAR PlugIn creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugIn.java,v 1.2 2001-08-22 20:28:06 mthome Exp $
+ *
  */
 public class ProgrammerLDMPlugIn extends SimplePlugIn {
   /**

@@ -58,7 +58,7 @@ import org.cougaar.domain.glm.plugins.projection.ConsumerSpec;
 /*
  * Construction (ClassIV) Demand Spec for producing inventory demand 
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: ConstructionDemandSpec.java,v 1.2 2001-04-10 17:39:07 bdepass Exp $
+ *
  **/
 public class ConstructionDemandSpec extends ConsumerSpec {
 

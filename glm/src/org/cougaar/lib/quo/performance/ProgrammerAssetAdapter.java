@@ -28,7 +28,7 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
  * This COUGAAR Asset class serves as a base class for the ProgrammerAsset class.
  * The ProgrammerAsset class is generated using the AssetWriter utility
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerAssetAdapter.java,v 1.2 2001-08-22 20:28:06 mthome Exp $
+ *
  */
 public class ProgrammerAssetAdapter extends Asset {
     //private org.cougaar.lib.quo.performance.Schedule schedule = new Schedule();

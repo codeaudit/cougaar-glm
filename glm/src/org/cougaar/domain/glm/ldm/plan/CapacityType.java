@@ -27,7 +27,7 @@ package org.cougaar.domain.glm.ldm.plan;
  * However, MOS/43M etc can also be used for Capacity type
  *
  *  @author  ALPINE <alpine-software@bbn.com>
- *  @version $Id: CapacityType.java,v 1.3 2001-08-22 20:27:24 mthome Exp $
+ *
  */
 
 public interface CapacityType { 

@@ -41,7 +41,7 @@ import java.lang.Math;
  * Hyperbolic arc tangent  (log  (1+x) - log (1-x))/2
  *
  * @author alpine-software@bbn.com
- * @version $Id: MoreMath.java,v 1.3 2001-08-22 20:27:34 mthome Exp $
+ *
  * @since jdk1.1
  * */
 

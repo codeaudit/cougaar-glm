@@ -27,7 +27,7 @@ import org.cougaar.domain.planning.ldm.plan.*;
  * A QuantityScheduleElement is a subclass of ScheduleElement which provides
  * a slot for a quantity (double)
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: QuantityScheduleElement.java,v 1.3 2001-08-22 20:27:27 mthome Exp $
+ *
  **/
 
 public interface QuantityScheduleElement 

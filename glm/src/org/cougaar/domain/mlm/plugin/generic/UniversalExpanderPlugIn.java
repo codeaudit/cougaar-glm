@@ -46,7 +46,7 @@ import java.sql.DriverManager;
   * The PlugIn will access a database that contains information about how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugIn.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: UniversalExpanderPlugIn.java,v 1.4 2001-08-22 20:27:36 mthome Exp $
+  *
   **/
 
 public class UniversalExpanderPlugIn extends SimplePlugIn {

@@ -35,7 +35,7 @@ import org.cougaar.domain.glm.plugins.projection.GenerateSupplyDemandExpander;
 /**
  * Construction Decorator Stub
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: ConstructionProjectionDecorator.java,v 1.3 2001-08-22 20:27:31 mthome Exp $
+ *
  **/
 
 public class ConstructionProjectionDecorator extends PlugInDecorator {

@@ -28,7 +28,7 @@ import org.cougaar.domain.planning.ldm.policy.*;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: ShipPolicy.java,v 1.3 2001-08-22 20:27:27 mthome Exp $
+ *
  */
 
 public class ShipPolicy extends Policy {

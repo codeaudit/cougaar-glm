@@ -54,7 +54,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
 
 /**
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: CompletionAssessor.java,v 1.4 2001-08-22 20:27:41 mthome Exp $
+ *
  */
 
 public class CompletionAssessor extends SimplePlugIn

@@ -53,7 +53,7 @@ import org.cougaar.domain.glm.ldm.asset.Organization;
  * an Report if one is added/modified/deleted.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version $Id: SupportingUnitAssessorPlugIn.java,v 1.4 2001-08-22 20:27:35 mthome Exp $ */
+ */
 
 public class SupportingUnitAssessorPlugIn extends SimplePlugIn {
 

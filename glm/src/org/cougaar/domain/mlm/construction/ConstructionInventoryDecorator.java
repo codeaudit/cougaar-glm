@@ -33,7 +33,7 @@ import java.util.*;
 
  /** Establishes necessary processes for Construction Inventory.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: ConstructionInventoryDecorator.java,v 1.3 2001-08-22 20:27:31 mthome Exp $
+  *
   **/
  public class ConstructionInventoryDecorator extends  PlugInDecorator {
     private static final String            CLASSNAME = "ConstructionInventoryDecorator";

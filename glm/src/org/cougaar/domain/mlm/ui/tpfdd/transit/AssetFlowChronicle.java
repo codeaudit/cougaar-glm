@@ -30,8 +30,8 @@ import org.cougaar.domain.mlm.ui.tpfdd.transit.Chronicle.Frame;
 /**
  * Holds a Chronicle of data about the flow of a Assets
  *
- * @author Benjamin Lubin; last modified by $Author: mthome $
- * @version $Revision: 1.3 $; Last modified on $Date: 2001-08-22 20:28:02 $
+ * @author Benjamin Lubin; last modified by $Author: gvidaver $
+ *
  * @since 12/01/00
  */
 public class AssetFlowChronicle extends AssetClassChronicle{

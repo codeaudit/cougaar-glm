@@ -52,7 +52,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * subclasses to allow labels to be updated.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIBasePlugIn.java,v 1.7 2001-08-24 17:08:35 gvidaver Exp $
+ *
  * */
 
 public abstract class GLSGUIBasePlugIn extends SimplePlugIn {

@@ -34,7 +34,7 @@ import java.util.Enumeration;
    All other beaninfo is defaulted.
 
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: OrgRelationBeanInfo.java,v 1.3 2001-08-22 20:27:23 mthome Exp $
+ *
 
 */
 

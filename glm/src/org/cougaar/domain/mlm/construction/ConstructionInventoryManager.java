@@ -44,7 +44,7 @@ import org.cougaar.domain.glm.ldm.asset.*;
 /** Allocate SUPPLY tasks for construction supplies to local construction inventory
  *  (if there is any) or to the closest supplier.
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: ConstructionInventoryManager.java,v 1.4 2001-08-22 20:27:31 mthome Exp $
+ *
  **/
 public class ConstructionInventoryManager extends GeneralInventoryManager {
 
