@@ -111,10 +111,10 @@ public abstract class InventoryBG implements PGDelegate {
 	level_ = null;
 
 	initializeTime(inventory, today);
-//    	GLMDebug.DEBUG("InventoryBG", null, " resetInventory():"+inventory+
-//  		       " Start Time: "+TimeUtils.dateString(getStartTime())+", Today: "+
-//    		       TimeUtils.dateString(today_)+"("+getToday()+")"+", 1st day of demand "+
-//    		       TimeUtils.dateString(firstDayOfDemand_), 0);
+//      	GLMDebug.DEBUG("InventoryBG", null, " resetInventory():"+inventory+
+//    		       " Start Time: "+TimeUtils.dateString(getStartTime())+", Today: "+
+//      		       TimeUtils.dateString(today_)+"("+getToday()+")"+", 1st day of demand "+
+//      		       TimeUtils.dateString(firstDayOfDemand_), 1000);
 	if (!inventory.hasScheduledContentPG()) {
 	    Asset proto = inventory.getPrototype();
 	    String id = proto.getTypeIdentificationPG().getNomenclature();
@@ -130,49 +130,68 @@ public abstract class InventoryBG implements PGDelegate {
 	return 0;
     }
 
+    /**
+       Try to do a reasonable job setting the startTime_ and
+       firstDayOfDemand_ variables. If there is demand, then the start
+       time is set 14 days before the earliest demand. If there is no
+       demand, but there are inventory reports, the start time is set
+       the time of the earliest inventory report. Otherwise, the start
+       time is not set, but getStartTime() will return today. If there
+       is no demand the firstDayOfDemand is set to 14 days after the
+       start time (which defaults to today, if it has not been set).
+       Otherwise, it is set to the time of the earliest demand. In all
+       cases, both the start time and the first day of demand are
+       pushed to the end of the day in which they fall.
+     **/
     private void initializeTime(Inventory inventory, long today) {
 	try {
 	    // Today is AlpTime, i.e. now
-	today_ = TimeUtils.pushToEndOfDay(calendar_, today);
-	Enumeration role_sched = inventory.getRoleSchedule().getRoleScheduleElements();
-	long start_time = -1L;
-        // StartTime_ is 14 days before earliest demand, Day 0 for this inventory.
-        // firstDayOfDemand is the day on which the IM receives its first request.
-        while (role_sched.hasMoreElements()) {
-            PlanElement pe = (PlanElement)role_sched.nextElement();
-            Task dueOut = pe.getTask();
-            long time = TaskUtils.getStartTime(dueOut);
-            if (time <= 0L) continue;
-            if (start_time == -1L || time < start_time) {
-                start_time = time;
+            today_ = TimeUtils.pushToEndOfDay(calendar_, today);
+            Enumeration role_sched = inventory.getRoleSchedule().getRoleScheduleElements();
+            long earliest_demand = Long.MAX_VALUE;
+            // StartTime_ is day 0 for this inventory. It is set to the
+            // earliest of 14 days before earliest demand or day of oldest
+            // inventory report.
+            // firstDayOfDemand is the day on which the IM receives its first request.
+            while (role_sched.hasMoreElements()) {
+                PlanElement pe = (PlanElement)role_sched.nextElement();
+                Task dueOut = pe.getTask();
+                try {
+                    long time = TaskUtils.getStartTime(dueOut);
+                    earliest_demand = Math.min(time, earliest_demand);
+                } catch (RuntimeException re) {
+                    continue;   // No start time, probably
+                }
             }
-        }
-        if (start_time != -1L) {
-	    firstDayOfDemand_ = TimeUtils.pushToEndOfDay(calendar_, start_time);
-	    setStartTime(TimeUtils.pushToEndOfDay(calendar_, start_time - (14*TimeUtils.MSEC_PER_DAY)));
-        } else {
-	    // No Demand, Start is today and firstDayOfDemand is sometime in the future
-	    // if InventoryManager runs before any requests are recieved 14 days allows
-	    // plenty of order and ship time to bring inventories up to safety levels.
-	    //  don't actually set start time -- use default
-//  	    setStartTime(TimeUtils.pushToEndOfDay(calendar_, today_));
-	    firstDayOfDemand_ = TimeUtils.addNDays(today_, 14);;
-	}
+            InventoryReport oldest = getOldestInventoryReport();
+            long start_time = Long.MAX_VALUE;
+            if (earliest_demand != Long.MAX_VALUE) {
+                start_time = earliest_demand - 14 * TimeUtils.MSEC_PER_DAY;
+            }
+            if (oldest != null) {
+                start_time = Math.min(start_time, oldest.theReportDate);
+            }
+            if (start_time != Long.MAX_VALUE) {
+                setStartTime(TimeUtils.pushToEndOfDay(calendar_, start_time));
+            }
+            if (earliest_demand == Long.MAX_VALUE) {
+                earliest_demand = getStartTime() + 14 * TimeUtils.MSEC_PER_DAY;
+            }
+            firstDayOfDemand_ = TimeUtils.pushToEndOfDay(calendar_, earliest_demand);
         } catch (RuntimeException re) {
           System.err.print(re + ": today=" + today + ", today_ = " + today_);
           throw re;
         }
     }
 
-  private void setStartTime(long newStartTime) {
-      if (newStartTime <= 0L) {
-        throw new IllegalArgumentException("Bogus newStartTime: " + newStartTime);
-      }
-      if(startTimeNeverSet || (startTime_>newStartTime)) {
-      startTime_ = newStartTime;
-      }
-      startTimeNeverSet = false;
-  }
+    private void setStartTime(long newStartTime) {
+        System.out.println("setStartTime " + TimeUtils.dateString(newStartTime));
+        if (newStartTime <= 0L) {
+            throw new IllegalArgumentException("Bogus newStartTime: " + newStartTime);
+        }
+        startTime_ = newStartTime;
+        startTimeNeverSet = false;
+    }
 
     public long getStartTime() {
         if (startTimeNeverSet){
