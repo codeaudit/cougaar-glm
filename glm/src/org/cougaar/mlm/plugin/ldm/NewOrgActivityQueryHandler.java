@@ -116,8 +116,8 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
       OrgInfoElement element =
         new OrgInfoElement(attribute_value, 
                            plugin.getCDay().getTime(), 
-                           rs.getDouble(START_HOUR),
-                           rs.getDouble(END_HOUR));
+                           (long) rs.getDouble(START_HOUR),
+                           (long) rs.getDouble(END_HOUR));
       if (schedule.intersectingSet(element).isEmpty()) {
         if (logger.isDebugEnabled()) {
           logger.debug("NewOrgActivityQueryHandler: Adding " + element);
@@ -265,9 +265,9 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
     private Object myObject;
     private TimeSpan timeSpan;
 
-    public OrgInfoElement(Object object, long baseTime, double startDelta, double endDelta) {
-      long startTime = baseTime + (long) (startDelta * 3600000.0);    //milliseconds per hour
-      long endTime = baseTime + (long) (endDelta * 3600000.0);
+    public OrgInfoElement(Object object, long baseTime, long startDelta, long endDelta) {
+      long startTime = baseTime + (startDelta * 3600000);    //milliseconds per hour
+      long endTime = baseTime + (endDelta * 3600000);
       timeSpan = new TimeSpan(startTime, endTime);
       myObject = object;
     }
