@@ -96,7 +96,7 @@ public class QueryHelper implements ActionListener,
 
   private void createFrame(String title) {
     frame = new JFrame(title);
-    frame.setSize(800, 400);
+    frame.setSize(800, 500);
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     frame.setLocation(screenSize.width/2 - 800/2,
                       screenSize.height/2 - 400/2);
@@ -371,7 +371,7 @@ public class QueryHelper implements ActionListener,
 	
 
     public static void main(String args[]) {
-	windowOnInventory(InventoryChart.getMockInventory());
+      windowOnInventory(InventoryChart.getMockInventory());
     }
 }
 
