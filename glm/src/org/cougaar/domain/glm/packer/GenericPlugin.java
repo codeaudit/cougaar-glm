@@ -61,6 +61,7 @@ import org.cougaar.domain.glm.ldm.asset.Organization;
   */
 abstract public class GenericPlugin extends SimplePlugIn  {
   public static final boolean DEBUG = false;
+  public static final boolean debugExecute = true;
 
   
   public boolean publishAddTest(Object o) {
@@ -320,7 +321,7 @@ abstract public class GenericPlugin extends SimplePlugIn  {
   protected void execute() {
     // now we handle updates to our plan elements
     if (_myPlanElements != null) {
-      PlugInHelper.updateAllocationResult(_myPlanElements);
+      updateAllocationResult(_myPlanElements);
     } else if (DEBUG) {
       System.out.println("HTC GenericPlugin: _myPlanElements subscription is missing!");
     }
@@ -470,6 +471,10 @@ abstract public class GenericPlugin extends SimplePlugIn  {
 
   protected Collection tasksForPred(UnaryPredicate up) {
     return query(up);
+  }
+
+  protected void updateAllocationResult(IncrementalSubscription planElements) {
+    PlugInHelper.updateAllocationResult(planElements);
   }
 
 }

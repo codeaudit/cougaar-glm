@@ -6,17 +6,20 @@ package org.cougaar.domain.glm.packer;
 
 import java.util.*;
 
+import org.cougaar.core.cluster.IncrementalSubscription;
+
+import org.cougaar.core.plugin.util.PlugInHelper;
+
+import org.cougaar.domain.planning.ldm.plan.AllocationResult;
 import org.cougaar.domain.planning.ldm.plan.AllocationResultDistributor;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
+import org.cougaar.domain.planning.ldm.plan.AspectValue;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
 
 import org.cougaar.util.Sortings;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.asset.Ammunition;
 
 /**
  * Packer - handles packing supply requests
@@ -88,6 +91,8 @@ public abstract class Packer extends GenericPlugin {
                            task.getPlanElement() + ".\n" +
                            "Is the UniversalAllocator also handling Supply tasks in this node?");
       } else {
+        System.out.println("Packer: Got a new task - " + task.getUID() + 
+                           " from " + task.getSource());
         tasks.add(task);
       }
     }
@@ -114,6 +119,13 @@ public abstract class Packer extends GenericPlugin {
       System.out.println("Packer.processChangedTasks - ignoring " +
                          "changed tasks");
     }
+
+    while (changedTasks.hasMoreElements()) {
+        Task task = (Task)changedTasks.nextElement();
+        
+        System.out.println("Packer: Got a changed task - " + task.getUID() + 
+                           " from " + task.getSource());
+    }
   }
 
   /**
@@ -123,10 +135,17 @@ public abstract class Packer extends GenericPlugin {
    *
    * @param changedTasks Enumeration of removed ammo supply tasks. Ignored.
    */
-  public void processRemovedTasks(Enumeration changedTasks) {
+  public void processRemovedTasks(Enumeration removedTasks) {
     if (DEBUG) {
-      System.out.println("Packer.processChangedTasks - ignoring " +
-                         "changed tasks");
+      System.out.println("Packer.processRemovedTasks - ignoring " +
+                         "removed tasks");
+    }
+
+    while (removedTasks.hasMoreElements()) {
+      Task task = (Task)removedTasks.nextElement();
+      
+      System.out.println("Packer: Got a removed task - " + task.getUID() + 
+                         " from " + task.getSource());
     }
   }
     
@@ -185,6 +204,52 @@ public abstract class Packer extends GenericPlugin {
 	     
     // indicate that the action succeeded.
     return success;
+  }
+
+
+  protected void updateAllocationResult(IncrementalSubscription planElements) {
+    // Make sure that quantity preferences get returned on the allocation
+    // results. Transport thread may not have filled them in.
+    Enumeration changedPEs = planElements.getChangedList();
+    while (changedPEs.hasMoreElements()) {
+      PlanElement pe = (PlanElement)changedPEs.nextElement();
+      
+      if (PlugInHelper.updatePlanElement(pe)) {
+        boolean needToCorrectQuantity = false;
+        
+        AllocationResult estimatedAR = pe.getEstimatedResult();
+        double prefValue = 
+          pe.getTask().getPreference(AspectType.QUANTITY).getScoringFunction().getBest().getAspectValue().getValue();
+        
+        AspectValue[] aspectValues = estimatedAR.getAspectValueResults();
+        
+        for (int i = 0; i < aspectValues.length; i++) {
+          if (aspectValues[i].getAspectType() == AspectType.QUANTITY) {
+            if (aspectValues[i].getValue() != prefValue) {
+              // set the quantity to be the preference quantity
+              aspectValues[i].setValue(prefValue); 
+              needToCorrectQuantity = true;
+            }
+            break;
+          }
+        }
+        if (needToCorrectQuantity) {
+	  if (DEBUG) {
+            System.out.println("GenericPlugin.execute - fixing quantity on estimated AR of pe " + pe.getUID());
+	  } 
+
+          AllocationResult correctedAR = 
+            new AllocationResult(estimatedAR.getConfidenceRating(),
+                                 estimatedAR.isSuccess(),
+                                 aspectValues);
+
+          pe.setEstimatedResult(correctedAR);          
+        }
+        
+        
+        publishChange(pe);
+      }
+    }
   }
 
   /**
