@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/TaskParser.java,v 1.3 2001-02-16 00:48:27 gvidaver Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/TaskParser.java,v 1.4 2001-02-16 22:06:54 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -164,7 +164,7 @@ public class TaskParser{
 	  else if (childname.equals("FromTask")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.FROMTASK);
-	    Asset AEF = new AbstractAsset();
+	    Asset AEF = ldmf.createInstance (task.getDirectObject ());
 	    try {
 	      NewTypeIdentificationPG typeId = (NewTypeIdentificationPG)AEF.getTypeIdentificationPG();
 	      typeId.setTypeIdentification(child.getFirstChild().getNodeValue());
