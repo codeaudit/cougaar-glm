@@ -31,39 +31,37 @@ public class TimeSpan
 {
 
   private Date startDate;
-  private Date thruDate;
+  private Date endDate;
         
   public TimeSpan() {}
 
-  public TimeSpan(Date startDate, Date thruDate) {
+  public TimeSpan(Date startDate, Date endDate) {
     this.startDate = internDate(startDate);
-    this.thruDate = internDate(thruDate);
+    this.endDate = internDate(endDate);
   }
 
   public boolean equals(Object o) {
     if (o instanceof TimeSpan) {
       TimeSpan ots = (TimeSpan) o;
       return getStartDate().equals(ots.getStartDate()) &&
-        getThruDate().equals(ots.getThruDate());
+        getEndDate().equals(ots.getEndDate());
     } 
     return false;
   }
 
   /**
-   * startDelta and thruDelta are the DAY offsets from baseDate
-   * for the startDate and thruDate, respectively.
+   * startDelta and endDelta are the DAY offsets from baseDate
+   * for the startDate and endDate, respectively.
    */
-  public TimeSpan(Date baseDate, int startDelta, int thruDelta) {
+  public TimeSpan(Date baseDate, int startDelta, int endDelta) {
     Calendar formatter = Calendar.getInstance();
     formatter.setTime(baseDate);
     formatter.add(formatter.DATE, startDelta);
     this.startDate = internDate(formatter.getTime());
 
     formatter.setTime(baseDate);
-    // MSB/JEB : 12-2-99 ThruDate means through the end of the day
-    // NKG : 02/01/01 no it doesn't. Use getEndTime for that.
-    formatter.add(formatter.DATE, thruDelta);
-    this.thruDate = internDate(formatter.getTime());
+    formatter.add(formatter.DATE, endDelta);
+    this.endDate = internDate(formatter.getTime());
 
     this.cDate = internDate(baseDate); // to be removed
   }
@@ -72,30 +70,43 @@ public class TimeSpan
     this.startDate = internDate(startDate);
   }
 
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
+  }
+
+  /*
+   * @deprecated - use setEndDate
+   */
   public void setThruDate(Date thruDate) {
-    this.thruDate = internDate(thruDate);
+    printWarning("setThruDate");
+    setEndDate(thruDate);
   }
 
   public Date getStartDate() {
     return startDate;
   }
-        
+     
+  /*
+   * @deprecated - use getEndDate
+   */   
   public Date getThruDate() {
-    return thruDate;
+     printWarning("getThruDate");
+    return getEndDate();
+  }
+
+  public Date getEndDate() {
+    return new Date(getEndTime());
   }
 
   public long getStartTime() {
     return startDate.getTime();
   }
   public long getEndTime() {
-    // Add a day of millis, since thruDate is defined to be start of last day
-    // and EndTime should be start of next day (i.e. EndTime - EPSILON puts you
-    // in the last day.)
-    return thruDate.getTime()+(24*60*60*1000);
+    return endDate.getTime();
   }
 
   public Object clone() {
-    TimeSpan ts = new TimeSpan(startDate, thruDate);
+    TimeSpan ts = new TimeSpan(startDate, endDate);
     ts.cDate = cDate; // to be removed
     return ts;
   }
@@ -118,11 +129,11 @@ public class TimeSpan
     * @see #TimeSpan(Date,Date)
     * @deprecated cDate not needed
     */
-   public TimeSpan(Date cDate, Date startDate, Date thruDate) {
+   public TimeSpan(Date cDate, Date startDate, Date endDate) {
      printWarning("TimeSpan");
      this.cDate = internDate(cDate);
      this.startDate = internDate(startDate);
-     this.thruDate = internDate(thruDate);
+     this.endDate = internDate(endDate);
    }
  
    /**
@@ -138,15 +149,23 @@ public class TimeSpan
    }
  
    /**
-    * @see #setThruDate
-    * @deprecated Using setThruDate removes the need for cDate
+    * @see #setEndDate
+    * @deprecated Using setEndDate removes the need for cDate
     */
-   public void setThruDelta(int thruDelta) {
-     printWarning("setThruDelta");
+   public void setEndDelta(int endDelta) {
+     printWarning("setEndDelta");
      Calendar formatter = Calendar.getInstance();
      formatter.setTime(cDate);
-     formatter.add(formatter.DATE, thruDelta);
-     this.thruDate = internDate(formatter.getTime());
+     formatter.add(formatter.DATE, endDelta);
+     this.endDate = internDate(formatter.getTime());
+   }
+
+   /**
+    * @see #setThruDate
+    * @deprecated Using setEndDate removes the need for cDate
+    */
+   public void setThruDelta(int thruDelta) {
+     setEndDelta(thruDelta);
    }
  
    /**
@@ -175,7 +194,7 @@ public class TimeSpan
  
    /**
     * TimeSpan "delta" to be removed.  This utility not needed.
-    * @deprecated getThruDate removes the need for Oplan
+    * @deprecated getEndDate removes the need for Oplan
     */
    public static Date getEndTime(int delta, Oplan oplan) {
      printWarning("getEndTime");
@@ -187,7 +206,7 @@ public class TimeSpan
  
    /**
     * TimeSpan "delta" to be removed.  This utility not needed.
-    * @deprecated getThruDate removes the need for cDay
+    * @deprecated getEndDate removes the need for cDay
     */
   public static Date getEndTime(int delta, Date cday) {
      printWarning("getEndTime");
@@ -195,6 +214,24 @@ public class TimeSpan
      formatter.setTime(cday);
      formatter.add(formatter.DATE, delta);
      return (formatter.getTime());
+  }
+
+   /**
+    * TimeSpan "delta" to be removed.  This utility not needed.
+    * @deprecated getEndDate removes the need for Oplan
+    */
+   public static Date getThruTime(int delta, Oplan oplan) {
+     printWarning("getThruTime");
+     return getEndTime(delta, oplan);
+   }
+ 
+   /**
+    * TimeSpan "delta" to be removed.  This utility not needed.
+    * @deprecated getEndDate removes the need for cDay
+    */
+  public static Date getThruTime(int delta, Date cday) {
+     printWarning("getThruTime");
+     return getEndTime(delta, cday);
   }
 
   private static void printWarning(String sMethodName) {
@@ -213,3 +250,12 @@ public class TimeSpan
   }
 
 }
+
+
+
+
+
+
+
+
+
