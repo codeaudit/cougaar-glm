@@ -68,6 +68,11 @@ public abstract class OrganizationAdapter extends GLMAsset {
     return getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.SELF).size() > 0;
   }
 
+  /**
+   * getSuperiors - returns superior relationships.
+   * Performs a 2 stage search, returns all SUPERIOR relationships if they 
+   * exist, if none exist returns all ADMINISTRATIVESUPERIOR relationships.
+   */
   public Collection getSuperiors(long startTime, long endTime) {
     Collection superiors = 
       getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.SUPERIOR,
@@ -88,6 +93,11 @@ public abstract class OrganizationAdapter extends GLMAsset {
     return getSuperiors(timeSpan.getStartTime(), timeSpan.getEndTime());
   }
 
+  /**
+   * getSubordinates - returns subordinate relationships.
+   * Performs a 2 stage search, returns all SUBORDINATE relationships if they 
+   * exist, if none exist returns all ADMINISTRATIVESUBORDINATE relationships.
+   */
   public Collection getSubordinates(long startTime, long endTime) {
     Collection subordinates = 
       getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.SUBORDINATE,
