@@ -33,12 +33,14 @@ import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.domain.glm.plugins.TaskUtils;
 import org.cougaar.domain.glm.plugins.TimeUtils;
+import org.cougaar.core.naming.Glob;
 
 // Simple plugin that says 'yes' to any task fed to it
 // Optionally, if arguments are given, will only allocate tasks with given verbs
 public class UniversalAllocatorPlugIn extends SimplePlugIn {
     private static class Filter {
         public Verb verb;
+        public Glob glob;
         public Schedule schedule; // The schedule of failing periods (if any)
         public String toString() {
             if (schedule == null) return verb.toString();
@@ -109,7 +111,15 @@ public class UniversalAllocatorPlugIn extends SimplePlugIn {
             boolean defaultIsFailure = param.startsWith("-");
             if (defaultIsFailure) param = param.substring(1);
             StringTokenizer tokens = new StringTokenizer(param, ";");
-            filter.verb = Verb.getVerb(tokens.nextToken());
+            String verbPattern = tokens.nextToken();
+            int slashPos = verbPattern.indexOf('/');
+            if (slashPos >= 0) {
+                filter.verb = Verb.getVerb(verbPattern.substring(0, slashPos));
+                filter.glob = Glob.parse(verbPattern.substring(slashPos + 1));
+            } else {
+                filter.verb = Verb.getVerb(verbPattern);
+                filter.glob = null;
+            }
             while (tokens.hasMoreTokens()) {
                 String token = tokens.nextToken();
                 String sub;
@@ -165,7 +175,17 @@ public class UniversalAllocatorPlugIn extends SimplePlugIn {
      **/
     private boolean isInterestingTask(Task task) 
     {
-        return verbMap.size() == 0 || verbMap.get(task.getVerb()) != null;
+        if (verbMap.size() == 0) return true;
+        Filter filter = (Filter) verbMap.get(task.getVerb());
+        if (filter == null) return false;
+        if (filter.glob == null) return true;
+        if (filter.glob.match(task.toString())) {
+//              System.out.println("Match " + task.toString());
+            return true;
+        } else {
+//              System.out.println("No match " + task.toString());
+            return false;
+        }
     }
 
     public void execute() 
