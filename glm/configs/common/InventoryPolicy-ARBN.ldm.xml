@@ -30,7 +30,7 @@
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="TurnOffProjections">
@@ -65,7 +65,7 @@
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="TurnOffProjections">
@@ -106,6 +106,10 @@
     <RuleParam name="TurnOffProjections">
         <Boolean value="false">
         </Boolean>
+    </RuleParam>
+    <RuleParam name="FillToCapacity">
+        <Boolean value="true">
+	</Boolean>
     </RuleParam>
   </Policy>
 

@@ -26,7 +26,7 @@
 	</Double>
     </RuleParam>
     <RuleParam name="WithdrawSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
@@ -61,11 +61,11 @@
 	</Double>
     </RuleParam>
     <RuleParam name="WithdrawSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="TurnOffProjections">
@@ -131,7 +131,7 @@
 	</Double>
     </RuleParam>
     <RuleParam name="WithdrawSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
@@ -166,7 +166,7 @@
 	</Double>
     </RuleParam>
     <RuleParam name="WithdrawSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
@@ -201,7 +201,7 @@
 	</Double>
     </RuleParam>
     <RuleParam name="WithdrawSwitchoverDay">
-        <Integer value="30" min="0" max="300">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
