@@ -33,9 +33,12 @@ import org.cougaar.core.naming.*;
 import org.cougaar.lib.planserver.server.FDSURL;
 import org.cougaar.util.UnaryPredicate;
 
-/**
- * YPDemoJNDI  - A helper class encapsulating JNDI access
- */
+//###########################################################################
+//###########################################################################
+//###########################################################################
+//
+// YPDemoJNDI  - A helper class encapsulating JNDI access
+//
 public class YPDemoJNDI
 {
 
@@ -156,27 +159,27 @@ public class YPDemoJNDI
      }
 
     //###########################################################################
-    // Returns list of Name : Attribute Strings.
-     public static List collectAttributes( NamingService nserve, UnaryPredicate filterPred  )
+    // Returns Map, Key= Name : Value= Vector of Attribute Strings.
+     public static Map collectAttributes( NamingService nserve, UnaryPredicate filterPred  )
      {
-         List returnList = new ArrayList();
+         Map returnMap = new Hashtable();
 
          try {
                // Create the initial context
                //Context ctx = new InitialContext(JNDIConfig.getEnvironment());
                Context ctx = nserve.getRootContext();
                CompositeName cn = new CompositeName("");
-               collectAttributeTraversal(  cn, ctx.listBindings(""), returnList, filterPred, nserve);
+               collectAttributeTraversal(  cn, ctx.listBindings(""), returnMap, filterPred, nserve);
          } catch (NamingException e) {
                System.err.println("[collectObjects()] Exception: " + e);
                e.printStackTrace();
          }
-         return returnList;
+         return returnMap;
      }
 
      //###########################################################################
      private static void collectAttributeTraversal( CompositeName tail, NamingEnumeration en,
-                                 List returnList,  UnaryPredicate filterPred, NamingService nserve) throws NamingException
+                                 Map returnMap,  UnaryPredicate filterPred, NamingService nserve) throws NamingException
      {
          while( en.hasMoreElements() ) {
              Object obj = en.nextElement();
@@ -192,7 +195,15 @@ public class YPDemoJNDI
                      NamingEnumeration en2 = atts.getAll();
                      while( en2.hasMore()) {
                          Attribute a = (Attribute)en2.next();
-                         returnList.add("{" + tail.toString() + "::" + a.toString() + "}");
+
+                         Vector v = (Vector)returnMap.get(tail.toString());
+                         if( v == null) {
+                             v= new Vector();
+                             returnMap.put(tail.toString(), v);
+                         }
+                         v.add(a.toString());
+
+                         //returnList.add("{" + tail.toString() + "::" + a.toString() + "}");
                      }
                      /**
                      for(int i=0; i< atts.size(); i++) {
@@ -211,7 +222,7 @@ public class YPDemoJNDI
                       Context ctx = nserve.getRootContext();
                       CompositeName t = new CompositeName(tail.toString());
                       t.add(bind.getName());
-                      collectAttributeTraversal(t, ctx.listBindings(t.toString()), returnList, filterPred, nserve);
+                      collectAttributeTraversal(t, ctx.listBindings(t.toString()), returnMap, filterPred, nserve);
                  }
              }
          }

@@ -66,7 +66,7 @@ import org.cougaar.domain.planning.ldm.plan.Relationship;
 //###########################################################################
 //###########################################################################
 //
-// Main Demonstration PSP class
+// Main JNDI Demonstration PSP
 //
 public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
 {
@@ -199,7 +199,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
           **/
 
         // Returns list of Name : Attribute Strings.
-        List lst = YPDemoJNDI.collectAttributes(nservice, new UnaryPredicate() {
+        Map attributesMap = YPDemoJNDI.collectAttributes(nservice, new UnaryPredicate() {
                  public boolean execute(Object o) {
                         if( o instanceof Binding ){
                                 Binding b = (Binding)o;
@@ -209,17 +209,32 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                 }}
           );
 
+          session.getQueryObject().setEntries(attributesMap);
+        /**
         // WHERE THE AgentRole SEARCH ATTRIBUTES GET COMPILED into Session.
         int counter=0;
-        for(int i=0; i< lst.size(); i++) {
+        Set keys = attributesMap.keySet();
+        Object [] keysArray = keys.toArray();
+        for(int i=0; i< keysArray.length; i++) {
+             String key = (String)keysArray[i];
+             Vector attsVec = (Vector)attributesMap.get(key);
+             Object[] attArray = attsVec.toArray();
+             for(j=0; j< attArray.length; j++) {
+                  String eachAtt = (String)attArray[j];
+             }
+        **/
+
+        /**
               String ar = (String)lst.get(i);
               if( session.getQueryObject().getEntries().containsKey( ar.toString() ) == false) {
                    counter ++;
                    session.getQueryObject().getEntries().put( ar.toString(), ar);
               }
-        }
-        if( lst.size() > 0 ) {
-            session.addHeader("Search attributes updated with " + counter + " new search attributes.");
+        **/
+
+        //}
+        if( attributesMap.size() > 0 ) {
+            session.addHeader("Search attributes updated with " + attributesMap.size() + " search attributes.");
         } else session.addHeader("No search attributes updated.");
         session.doPrepend();
     }
@@ -358,7 +373,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
        String tag3 = qObject.GET_ALL_NAMES;
        int ind3 = decodedpost.indexOf(tag3);
        if( ind3 > -1) {
-           System.out.println("[processFormPOST] case: qObject.GET_ALL_NAMES");
+           //System.out.println("[processFormPOST] case: qObject.GET_ALL_NAMES");
            //qObject.allRoles=true;
            session.addHeader("List all JNDI directories and contents.");
            NamingService nservice = psc.getServerPlugInSupport().getNamingService();
@@ -518,8 +533,6 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
        String val  =  GETLINE.substring(ivalue0 + open.length(), ivalue1);
        return val.trim();
    }
-
-
 
 
    /**

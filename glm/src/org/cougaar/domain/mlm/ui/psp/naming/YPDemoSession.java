@@ -49,10 +49,13 @@ public class YPDemoSession
      public void setQueryObject(QueryObject qo) { qobject = qo; }
 
 
-     // append entry to session transcript
+     //
+     // 'Add' = 'Append' String entry to session transcript
      public void add(String entry){
           buffer.append(entry);
      }
+     //
+     // 'AddHeader' = 'Format' + 'Append' String entry to session transcript
      public void addHeader(String entry){
           add(createHeaderToSessionTranscript(entry) );
      }

@@ -24,6 +24,7 @@ package org.cougaar.domain.mlm.ui.psp.naming;
 
 import java.util.Map;
 import java.util.Hashtable;
+import java.util.Vector;
 
 
 //###########################################################################
@@ -35,16 +36,20 @@ import java.util.Hashtable;
 //
 public class QueryObject {
      public  QueryObject() {
-          myEntries.put(GET_ALL_NAMES, GET_ALL_NAMES);
+          Vector v = new Vector();
+          v.add(GET_ALL_NAMES);
+          myEntries.put(GET_ALL_NAMES, v);
      }
 
      public final static String GET_ALL_NAMES = "GET_ALL_NAMES";
      public final static String GET_ALL_ATTRIBUTES = "GET_ALL_ATTRIBUTES";
 
      //public boolean allRoles = true;
-     private Map myEntries = new Hashtable(); // new ArrayList();
+     private Map myEntries = new Hashtable(); // Values = vectors of Attributes, Keys = Names
 
      public Map getEntries() { return myEntries; }
+     public void setEntries( Map entries) { myEntries = entries; }
+
 }
 
 

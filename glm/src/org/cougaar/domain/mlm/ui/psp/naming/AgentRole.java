@@ -21,11 +21,9 @@
 package org.cougaar.domain.mlm.ui.psp.naming;
 
 
-
 //###########################################################################
 //###########################################################################
 //###########################################################################
-//
 // AgentRoles are bound in JNDI to represent Agent role attribute sets.
 //
 public class AgentRole {
