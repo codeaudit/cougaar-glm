@@ -88,7 +88,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
     MyPSPState myState = new MyPSPState(this, query_parameters, psc);
     myState.configure(query_parameters);
 
-    System.out.println("PSP_Itinerary Invoked..." + myState.mode);
+    System.out.println("WILL: PSP_Itinerary Invoked..." + myState.mode);
 
     if (myState.mode == null) {
       displayUsage(myState, out);
@@ -2546,23 +2546,52 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
     return true;
   }
 
-  private static String getForUnit(Task task) {
-    PrepositionalPhrase prepFor = 
-      task.getPrepositionalPhrase(Constants.Preposition.FOR);
-    if (prepFor != null) {
-      Object indObj = prepFor.getIndirectObject();
-      if (indObj instanceof String) {
-        return ((String)indObj).trim();
-      } 
-      else if (indObj instanceof Asset) {
-        String s =
-          ((Asset)indObj).getTypeIdentificationPG().getTypeIdentification();
-        if (s != null)
-          return s.trim();
-      }
+    private static String getForUnit(Task task) {
+	String unit = grabUnit((Asset)task.getDirectObject());
+	if (unit != null) unit = unit.trim();
+	return unit;
     }
-    return null;
-  }
+    // returns null if two units are included in task
+    private static String grabUnit(Asset asset) {
+	String retval = null;
+	String tempval = null;
+	if (asset instanceof AssetGroup) {
+	    Vector assetList = ((AssetGroup)asset).getAssets();
+	    for (int i = 0; i < assetList.size(); i++) {
+		tempval = grabUnit((Asset)assetList.elementAt(i));
+		if (tempval == null || (retval != null &&
+					!(tempval.equals(retval))))
+		    return null;
+		retval = tempval;
+	    }
+	} else if (asset instanceof AggregateAsset) {
+	    retval = grabUnit(((AggregateAsset)asset).getAsset());
+	} else {
+	    retval = ((ALPAsset)asset).getForUnitPG().getUnit();
+	}
+	return retval;
+    }
+
+
+//       PrepositionalPhrase prepFor = 
+// 	  task.getPrepositionalPhrase(Constants.Preposition.FOR);
+//       if (prepFor != null) {
+// 	  Object indObj = prepFor.getIndirectObject();
+// 	  if (indObj instanceof String) {
+// 	      System.out.println("returning: "+((String)indObj).trim());
+// 	      return ((String)indObj).trim();
+// 	  } 
+// 	  else if (indObj instanceof Asset) {
+// 	      String s =
+// 		  ((Asset)indObj).getTypeIdentificationPG().getTypeIdentification();
+// 	      if (s != null)
+// 		  System.out.println("returning: "+s.trim());
+// 	      return s.trim();
+// 	  }
+//       }
+//       System.out.println("returning: null");
+//       return null;
+//   }
 
   /** Return a UITaskItinerary for a task generated in 'GSS' mode **/
   private static UITaskItinerary generateGSSTaskItinerary(Task task, 
