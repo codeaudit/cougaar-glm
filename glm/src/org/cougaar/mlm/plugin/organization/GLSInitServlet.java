@@ -233,8 +233,6 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
       if ((selfOrgAsset != null) &&
           (Boolean.valueOf((String) globalParameters.get(PUBLISH_ON_SELF_ORG)).booleanValue())) {
-        System.out.println("GLSInitServlet: " + PUBLISH_ON_SELF_ORG + " = " + 
-                       globalParameters.get(PUBLISH_ON_SELF_ORG));
         //just publish oplan coupon here
         publishOplanCoupon();
         //publishOplanAndGLS();
@@ -331,7 +329,7 @@ public class GLSInitServlet extends LDMSQLPlugin {
 
     myPrivateState.oplanCouponExists = true;
     getBlackboardService().publishChange(myPrivateState);    
-    System.out.println("GLSInitServlet, globalParameters are: "+globalParameters);
+    //System.out.println("GLSInitServlet, globalParameters are: "+globalParameters);
   }
   
   private String parseOplanID(String queryFile) {
