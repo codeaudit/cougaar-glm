@@ -30,7 +30,6 @@ import org.cougaar.lib.util.UTILAllocate;
 
 import org.cougaar.core.mts.MessageAddress;
 
-import org.cougaar.core.node.Communications;
 //import org.cougaar.core.node.NameServer;
 //import org.cougaar.core.mts.MessageTransportServer;
 
