@@ -13,6 +13,7 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
+import java.util.HashMap;
 import javax.swing.plaf.ButtonUI;
 
 public class InventoryLegend extends JPanel {
@@ -23,9 +24,13 @@ public class InventoryLegend extends JPanel {
     Vector panels;
     JPanel demandSupplyPanel=null;
 
+    ChartDataView inventoryView=null;
+    HashMap       dueInViews;
+    HashMap       dueOutViews;
+    ChartDataView shortfallView=null;;
 
-    
-    final static Border defaultBorder=BorderFactory.createEmptyBorder(0,3,0,3);
+        
+    final static Border emptyBorder=BorderFactory.createEmptyBorder(0,3,0,3);
 
     final static String checkBoxUIClassID=(new JCheckBox()).getUIClassID();
 
@@ -40,10 +45,19 @@ public class InventoryLegend extends JPanel {
 
     final static String SUPPLY_TITLE="Resupply";
     final static String DEMAND_TITLE="Demand";
+
+    /**
+     **
     final static String ACTUAL_DEMAND_TITLE="   Actual ";
     final static String PROJECTED_DEMAND_TITLE="   Projected ";
     final static String ACTUAL_SUPPLY_TITLE=ACTUAL_DEMAND_TITLE;
     final static String PROJECTED_SUPPLY_TITLE=PROJECTED_DEMAND_TITLE;
+    **/
+    
+    final static String ACTUAL_DEMAND_TITLE=   "Demand   Actual  ";
+    final static String PROJECTED_DEMAND_TITLE="Demand   Projected  ";
+    final static String ACTUAL_SUPPLY_TITLE=   "Resupply Actual  ";
+    final static String PROJECTED_SUPPLY_TITLE="Resupply Projected  ";
 
     final static String RECEIVED_LABEL="Received";
     final static String REQUESTED_LABEL="Requested ";
@@ -61,7 +75,11 @@ public class InventoryLegend extends JPanel {
 	insets = new Insets(0, 0, 0, 0);
 	panels = new Vector();
 
-	setBorder(defaultBorder);
+	dueInViews = new HashMap();
+	dueOutViews = new HashMap();
+
+
+	setBorder(emptyBorder);
 	initializeDataView(chart);
 
 	/****  MWD code for old display
@@ -82,13 +100,20 @@ public class InventoryLegend extends JPanel {
 	while (i.hasNext()) {
 	    ChartDataView chartDataView=(ChartDataView)i.next();
 	    String name = chartDataView.getName();
+	    if(name.equals(InventoryChart.INVENTORY_LEGEND)) {
+		inventoryView = chartDataView;
+	    }
+	    else if(name.equals(InventoryChart.SHORTFALL_LEGEND)) {
+		shortfallView = chartDataView;
+	    }
+	    
 	    if(name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND) ||
 	       (name.equals(InventoryChart.ACTUAL_INVENTORY_LEGEND)) ||
 	       (name.equals(InventoryChart.REQUESTED_INACTIVE_INVENTORY_LEGEND)) ||
 	       (name.equals(InventoryChart.ACTUAL_INACTIVE_INVENTORY_LEGEND))||
 	       (name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) ||
 	       (name.equals(InventoryChart.ACTUAL_SUPPLY_LEGEND))) {
-
+		
 		addDemandSupplyDataView(chartDataView);
 	    }
 	    else {
@@ -179,6 +204,13 @@ public class InventoryLegend extends JPanel {
 		if(seriesName.equals(InventoryChartDataModel.REQUESTED_DUE_IN_LABEL) ||
 		   seriesName.equals(InventoryChartDataModel.REQUESTED_PROJECTED_DUE_IN_LABEL) ||
 		   seriesName.equals(InventoryChartDataModel.UNCONFIRMED_DUE_IN_LABEL)) { 
+
+		    /****
+		     **
+		     **  MWD remove original spacing for Demand higher label
+		     **  to make room for new projected due Ins.
+		     **
+
 		    component = createLabel(SUPPLY_TITLE);
 		    demandSupplyPanel.add(component, 
 				 new GridBagConstraints(TITLES_GRIDX, titleY++, 1, 1, 0.0, 0.0,
@@ -221,6 +253,11 @@ public class InventoryLegend extends JPanel {
 		    }		    
 		    
 		    if(name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) {
+
+
+		    ****
+		    **/
+
 			if(seriesName.equals(InventoryChartDataModel.REQUESTED_DUE_IN_LABEL)){
 			    component = createLabel(ACTUAL_SUPPLY_TITLE);
 			}
@@ -233,7 +270,7 @@ public class InventoryLegend extends JPanel {
 								     GridBagConstraints.WEST, 
 								     GridBagConstraints.NONE, 
 								     insets, 0, 0));
-		    }
+			// }
 		}
 		else {
 		    //if there is demand erase the NONE_LABEL
@@ -289,6 +326,9 @@ public class InventoryLegend extends JPanel {
 					    j,series);
 
 	    // Skip over Demand label
+	    /**
+	     * MWD getting rid of demand label
+	     * don't skip over nothin.
 	    if(!skippedSupplyLabel) {
 		//System.out.println("Skipping Supply for " + name + " series: " + seriesName);
 		if((name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) ||
@@ -297,7 +337,8 @@ public class InventoryLegend extends JPanel {
 		}
 		skippedSupplyLabel=true;
 	    }
-
+	    **
+	    */
 	    
 	    demandSupplyPanel.add(button, 
 				  new GridBagConstraints(gridX, y++, 1, 1, 0.0, 0.0,
@@ -305,10 +346,17 @@ public class InventoryLegend extends JPanel {
 							 GridBagConstraints.NONE, 
 							 insets, 0, 0));
 	    // Skip over Demand label
+	    /**
+	     * MWD getting rid of demand label
+	     * don't skip over nothin.
+
 	    if(!skippedDemandLabel) {
 		y++;
 		skippedDemandLabel=true;
 	    }
+
+	    *
+	    */
 	}
     }
 
@@ -325,7 +373,7 @@ protected void addOtherDataView(ChartDataView chartDataView) {
 
 	JPanel newPanel = new JPanel();
 	newPanel.setLayout(new GridBagLayout());
-	newPanel.setBorder(defaultBorder);
+	newPanel.setBorder(emptyBorder);
 	
 
 	// add checkbtn or label for the view
@@ -523,7 +571,7 @@ protected void addOtherDataView(ChartDataView chartDataView) {
 	    setSelectedIcon(new CircleIcon(aSeries.getStyle().getSymbolColor(),aDiameter,false));
 
 	    //setOpaque(true);
-	    setBorderPainted(false);
+	    setBorderPainted(false); //for no border
 	    setHorizontalAlignment(LEFT);
 	    
 	    //MWD remove
@@ -538,8 +586,9 @@ protected void addOtherDataView(ChartDataView chartDataView) {
 		boolean ImSelected = (e.getStateChange()==e.SELECTED);
 
 		dm.setSeriesVisible(seriesIndex,ImSelected);
-		dm.getAssociatedInactiveModel().setSeriesVisible(seriesIndex,
-								 ImSelected);
+		if(dm.getAssociatedInactiveModel() != null) 
+		    dm.getAssociatedInactiveModel().setSeriesVisible(seriesIndex,
+								     ImSelected);
 	    }
 	}
 
@@ -572,5 +621,29 @@ protected void addOtherDataView(ChartDataView chartDataView) {
 
     }
 
+    public class LinePanel extends JPanel {
+
+	public final static int HORIZ_ORIENT=0;
+	public final static int VERT_ORIENT=1;
+
+	private final static int DEFAULT_THICKNESS=2;
+
+	public LinePanel(int orientation, int thickness) {
+	    super();
+	    Dimension maxSize;
+	    if(orientation == HORIZ_ORIENT)
+		maxSize = new Dimension(Integer.MAX_VALUE,thickness);
+	    else
+		maxSize = new Dimension(thickness,Integer.MAX_VALUE);
+	    
+	    setMaximumSize(maxSize);
+	    setBackground(Color.black);
+	}
+
+	public LinePanel(int orientation) {
+	    this(orientation, DEFAULT_THICKNESS);
+	}
+
+    }	
 
 }
