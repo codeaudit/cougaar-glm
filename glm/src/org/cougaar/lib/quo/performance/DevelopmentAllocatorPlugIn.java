@@ -28,7 +28,7 @@ import java.io.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.10 2002-01-21 21:08:47 psharma Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.11 2002-01-23 22:13:28 psharma Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 {
@@ -52,7 +52,7 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
     private int wakeUpCount, taskAllocationCount;
     private AspectValue allocAspectVal;
     double allocNum = 0;
-
+    private int expectedSeqNum = 1;
     /**
      * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
      */
@@ -128,7 +128,7 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 	    taskAllocationCount++;
 
 	    task = (Task)task_enum.nextElement();
-
+	    
 	    //debug(DEBUG, FILENAME, fw, "DevelopmentAllocatorPlugIn: Got task from blackboard.." 
 	    //+ task.getPreferredValue(AspectType._ASPECT_COUNT ) + " with verb " + task.getVerb());
 	    startTime = new Date();
@@ -167,31 +167,48 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 	    // Create an estimate that reports that we did just what we  were asked to do
 	    allocNum =  task.getPreferredValue(AspectType._ASPECT_COUNT );
 	    // debug(DEBUG, FILENAME, fw,"DevelopmentAllocator:allocateTask" + allocNum + " received");
-	    int []aspect_types = {AspectType._ASPECT_COUNT};
-	    double []results = {allocNum};
-	    AllocationResult estAR =  theLDMF.newAllocationResult(1.0, onTime,aspect_types, results  );
-
-	    ChangeReport cr = null;
-	    if (MESSAGESIZE != -1)
-		cr = new MyChangeReport(alterMessageSize(MESSAGESIZE));
-	    else 
-		cr = new MyChangeReport(alterMessageSize(0));
-
-	    PlanElement pe = task.getPlanElement(); //Allocation  planElement
-	    if (pe == null) {
-		pe = theLDMF.createAllocation(task.getPlan(), task,
-					      asset, estAR, Role.ASSIGNED);
-		publishAdd(pe);
-	    } else {
-		pe.setEstimatedResult(estAR);
-		publishChange(pe, Collections.singleton(cr));
+	    if (expectedSeqNum > allocNum){
+		debug(DEBUG, "Warning out of sequence task: expectedSeqNum::receivedSeNum::" +
+		      expectedSeqNum +":"+allocNum);
+		
 	    }
-	    publishRemove(task);
-	    printTheChange(task);
-	    allocated = true;
-	    breakFromLoop(count, MAXCOUNT);
-	}
+	    else {
+	       if (expectedSeqNum < allocNum){
+		   debug(DEBUG,"Skipped a  task: expectedSeqNum::receivedSeNum::" +
+			 expectedSeqNum +":"+allocNum);
+	       }
+	      if (expectedSeqNum== allocNum){
+		 debug( DEBUG,"expectedSeqNum == receivedSeNum::" +
+				      expectedSeqNum +":"+allocNum);
+	      }
+	       int []aspect_types = {AspectType._ASPECT_COUNT};
+	       double []results = {allocNum};
+	       AllocationResult estAR =  
+		    theLDMF.newAllocationResult(1.0, onTime,aspect_types, results  );
 
+		ChangeReport cr = null;
+		if (MESSAGESIZE != -1)
+		    cr = new MyChangeReport(alterMessageSize(MESSAGESIZE));
+		else 
+		    cr = new MyChangeReport(alterMessageSize(0));
+
+		PlanElement pe = task.getPlanElement(); //Allocation  planElement
+		if (pe == null) {
+		    pe = theLDMF.createAllocation(task.getPlan(), task,
+						  asset, estAR, Role.ASSIGNED);
+		    publishAdd(pe);
+		} else {
+		    pe.setEstimatedResult(estAR);
+		    publishChange(pe, Collections.singleton(cr));
+		}
+		publishRemove(task);
+		printTheChange(task);
+		expectedSeqNum=(int)allocNum+1; //updating seq num
+		breakFromLoop(count, MAXCOUNT);
+	    }
+	    allocated = true;
+	}
+       
 	return end;
     }
 

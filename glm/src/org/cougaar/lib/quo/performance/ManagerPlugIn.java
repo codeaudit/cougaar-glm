@@ -136,26 +136,36 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     protected void  allocateChangedtasks(Enumeration allo_enum){
 	AllocationResult est, rep;
 	double val=0;
+	Task task = null;
 	//double arr[] = null;
 	//double received = 0;
 	while (allo_enum.hasMoreElements()) {
 	    Allocation alloc = (Allocation)allo_enum.nextElement() ;
-	    est=null; rep=null;
+	    est=null; rep=null; task=null;
+	    task = alloc.getTask();
 	    est = alloc.getEstimatedResult();
 	    rep = alloc.getReportedResult();
 	    if (rep!=null){
 		//arr =rep.getResult();
 		//received = arr[0];
 		//debug(DEBUG, FILENAME, fw,"ManagerPlugIn:allocateChangedTasks ........" + received);
-		receivedTask= (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
-		assert(expectedTask, receivedTask);
-		printTheChange(receivedTask);
-		debug(DEBUG, t.getVerb() + "=>expectedTask:received::" + expectedTask + ":"+ receivedTask);
-		waitFor(BURST_TIME);
-		for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
-		    //addTask();sequenceNum++; 
-		    changeTasks(t);
+		receivedTask= (int)rep.getValue(AspectType._ASPECT_COUNT);
+		if (receivedTask != expectedTask){
+		    System.out.println("ERROR: expectedtask != receivedTask::"+
+				       expectedTask + ":" +receivedTask);
 		}
+		else {
+		    printTheChange(receivedTask);
+		    debug(DEBUG, task.getVerb() +
+		     "=>expectedTask:received::" + expectedTask + ":"+ receivedTask);
+		    waitFor(BURST_TIME);
+		
+		    for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
+			//addTask();sequenceNum++; 
+			//changeTasks(alloc.getTask());
+			changeTasks();
+		    }
+		}//else
 	    }
 	    breakFromLoop(count, MAXCOUNT);
 	}
@@ -190,7 +200,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	return new_task;
     }
 
-    protected void   changeTasks(Task t){
+    protected void   changeTasks(){
 	if(CPUCONSUME != -1)  //i.e. cpuconsume passed to plugin as a arg
 	    consumeCPU(CPUCONSUME);
 	startTime = new Date();
@@ -216,12 +226,6 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	count++;
     }
 
-	protected void assert( int expectedTask, int receivedTask){
-	    if (expectedTask != receivedTask){
-		System.out.println("ERROR!!!!! expectedTask is different from receivedTask");
-		
-	    }
-	}
 
    }
 
