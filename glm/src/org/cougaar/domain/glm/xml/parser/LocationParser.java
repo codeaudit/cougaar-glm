@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/LocationParser.java,v 1.2 2000-12-20 18:18:39 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/LocationParser.java,v 1.3 2001-02-16 23:55:57 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -33,6 +33,7 @@ public class LocationParser{
     double    latitude   = Double.NaN;
     double    longitude  = Double.NaN;
     String    geoloc     = null;
+    String    name       = null;
 
     for(int i = 0; i < nlength; i++){
       Node    child      = nlist.item(i);
@@ -40,27 +41,34 @@ public class LocationParser{
       
       if(child.getNodeType() == Node.ELEMENT_NODE){
 	
-	if(childname.equals("geoloc")){
-	  Node data = child.getFirstChild();
-	  geoloc = data.getNodeValue();
+		if(childname.equals("geoloc")){
+		  Node data = child.getFirstChild();
+		  geoloc = data.getNodeValue();
+		}
+		else if(childname.equals("latitude")){
+		  Node data = child.getFirstChild();
+		  Double d = new Double(data.getNodeValue());
+		  latitude = d.doubleValue();
+		}
+		else if(childname.equals("longitude")){
+		  Node data = child.getFirstChild();
+		  Double d = new Double(data.getNodeValue());
+		  longitude = d.doubleValue();
+		}
+		else if(childname.equals("name")){
+		  Node data = child.getFirstChild();
+		  name = data.getNodeValue();
+		}
+	  }
 	}
-	else if(childname.equals("latitude")){
-	  Node data = child.getFirstChild();
-	  Double d = new Double(data.getNodeValue());
-	  latitude = d.doubleValue();
-	}
-	else if(childname.equals("longitude")){
-	  Node data = child.getFirstChild();
-	  Double d = new Double(data.getNodeValue());
-	  longitude = d.doubleValue();
-	}
-      }
-    }
+	
+	  
     
     NewGeolocLocation loc = af.newGeolocLocation();
     loc.setGeolocCode(geoloc);
     loc.setLatitude(Latitude.newLatitude(latitude));
     loc.setLongitude(Longitude.newLongitude(longitude));
+    loc.setName(name);
     return loc;
   }
 }
