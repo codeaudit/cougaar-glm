@@ -680,7 +680,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
           printInfo("  publish change the parent task: "+ptask.getUID());
         }
         publishRemove(ppe);
-	publishChange(ptask);
+	//publishChange(ptask); // fix for bug #2329
       } else {
         if (logger.isInfoEnabled()) {
           printInfo("   no wf parent planElement");
