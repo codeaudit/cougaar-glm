@@ -1,7 +1,0 @@
-"GLSInitPlugIn"                              0   0 380  80
-"GLSRescindPlugIn"                           0  80 380  80
-"OplanPlugIn"                                0 160 380  80
-"AllocationAssessorPlugIn for <3ID>"         0 240 380 400
-"MCCTriggerCreatorPlugIn"                  380   0 380  80
-"PolicyPlugIn"                             380  80 380 110
-"AllocationAssessorPlugIn for <3-69-ARBN>" 380 240 380 400
