@@ -692,6 +692,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 		try {
 			StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(getCluster().getConfigFinder().open(filename))));
 			st.eolIsSignificant(true);
+	        st.commentChar('#');
 			int count = 1;
 			st.nextToken();
 			while (st.ttype != StreamTokenizer.TT_EOF) {
@@ -747,7 +748,15 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 						relationshipsArray[4] = (String)tokenVector.elementAt(3);
 					}
 					else
-					if (tokenVector.size() > 4) {
+					if (tokenVector.size() == 5) {
+						// element 1 is subordinateClusterName
+						relationshipsArray[1] = (String)tokenVector.elementAt(1);
+						// element 3 is startDate
+						relationshipsArray[3] = (String)tokenVector.elementAt(3);
+						// element 4 is endDate
+						relationshipsArray[4] = (String)tokenVector.elementAt(4);
+					}
+					else {
 						System.out.println("Line " + count + ": extra information, using default start and end times for all relations");
 						return null;
 					}
@@ -760,10 +769,10 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 				// we now have all tokens necessary from a single relationship statement
 				if (relationship.equals(ALPRelationship.SELF))
 					relationshipsVector.addElement(relationshipsArray);
-					/*
+				/*
 				for (int i = 0; i < relationshipsArray.length; i++)
 					System.out.println("OrgTPRTDataPlugIn:"+ " obtained token: " + "*"+relationshipsArray[i]+"*");
-					*/
+				*/
 
 				// advance to the next line
 				st.nextToken();
