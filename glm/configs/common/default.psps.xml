@@ -108,6 +108,10 @@ Additional PSPs loaded by PSP Launcher
     <PSPName>alpine/demo/OPLAN_EDIT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_AddOplan</Classname>
+    <PSPName>alpine/demo/ADD_OPLAN.PSP</PSPName>
+  </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Closure</Classname>
     <PSPName>alpine/demo/CLOSURE_PLAN.PSP</PSPName>
   </element>
