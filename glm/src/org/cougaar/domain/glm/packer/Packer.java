@@ -81,7 +81,15 @@ public abstract class Packer extends GenericPlugin {
     ArrayList tasks = new ArrayList();
 
     while (newTasks.hasMoreElements()) {
-      tasks.add(newTasks.nextElement());
+      Task task = (Task)newTasks.nextElement();
+      if (task.getPlanElement() != null) {
+        System.err.println("Packer: Unable to pack - " + task.getUID() + 
+                           " - task already has a PlanElement - " + 
+                           task.getPlanElement() + ".\n" +
+                           "Is the UniversalAllocator also handling Supply tasks in this node?");
+      } else {
+        tasks.add(task);
+      }
     }
 
     if (tasks.size() == 0) {

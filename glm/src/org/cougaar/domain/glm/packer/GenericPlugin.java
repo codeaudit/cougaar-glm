@@ -129,7 +129,7 @@ abstract public class GenericPlugin extends SimplePlugIn  {
     if (parentTask.getPlan() == null) {
       throw (new RuntimeException("Unable to find plan for expansion - parentTask is " + parentTask.getUID()));
     }
-    
+
     NewWorkflow workflow = getFactory().newWorkflow();
     workflow.setIsPropagatingToSubtasks(true);
     workflow.setParentTask(parentTask);
@@ -149,12 +149,16 @@ abstract public class GenericPlugin extends SimplePlugIn  {
     if (!publishAdd(workflow)) {
       System.err.println("Error publishing workflow - " + workflow);
     }
+
     
     Expansion expan = getFactory().createExpansion(parentTask.getPlan(), 
                                                    parentTask, workflow, 
                                                    null);
     if (!publishAdd(expan)) {
-      System.err.println("Error publishing expansion - " + expan.getUID());
+      System.err.println("Error publishing expansion - " + expan.getUID() + ".\n" +
+                         "Task: " + expan.getTask().getUID() + 
+                         " task commit date: " + expan.getTask().getCommitmentDate() +
+                         " task plan element: " + expan.getTask().getPlanElement());
     }
 
     return;
