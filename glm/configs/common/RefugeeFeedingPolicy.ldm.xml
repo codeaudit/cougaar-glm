@@ -54,41 +54,6 @@
 	</RangeValue>
       </RangeSet>
     </RuleParam>
- 
-    <RuleParam name="Breakfast">
-      <RangeSet value="">
-      </RangeSet>
-    </RuleParam>
-    <RuleParam name="Lunch">
-      <RangeSet value="">
-      </RangeSet>
-    </RuleParam>
-    <RuleParam name="Dinner">
-      <RangeSet value="">
-      </RangeSet>
-    </RuleParam>
-    <RuleParam name="BottledWater">
-      <RangeSet value="Water">
-        <RangeValue min="0"  max="180">
-	   <String value="3"/>
-	</RangeValue>
-      </RangeSet>
-    </RuleParam>
-    <RuleParam name="WaterUOI">
-      	<String value ="Liter">
-	</String>
-    </RuleParam>   
- <RuleParam name="DemandEnhancements">
-  <Boolean value="false"> </Boolean>
-    </RuleParam>   
- <RuleParam name="Enhancements">
-      <KeySet value="">
-          </KeySet>
-    </RuleParam>
-<RuleParam name="A-RationCapability">
-  <RangeSet value="">
-  </RangeSet>
-    </RuleParam>
 </Policy>
 </Policies>
 
