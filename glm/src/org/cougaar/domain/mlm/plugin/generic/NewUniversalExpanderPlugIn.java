@@ -44,12 +44,18 @@ import java.sql.DriverManager;
 
 
 /** ExpanderPlugIn that takes arguments of verbs to determine what kinds
-  * of tasks we would like to expand.
+  * of tasks we would like to expand. The plugin also takes an argument that 
+  * specifies whether the expansion should be flat 'flat=true' e.g. expand the parent by 
+  * creating a workflow of subtasks that are leaf tasks - tasks in between the parent
+  * and the leaves will not be explicitly spelled out in the expansion, although some
+  * of the timing information will be accumulated. If the argument is 'flat=false',
+  * a workflow/expansion will be created for each level of expansion.  The default
+  * (if no 'flat=' argument is specified) is flat=true.
   * The PlugIn will access a database that contains information about 
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugIn.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.3 2001-10-03 21:15:34 bdepass Exp $
+  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.4 2001-10-03 21:29:48 bdepass Exp $
   **/
 
 public class NewUniversalExpanderPlugIn extends ComponentPlugin {
