@@ -352,6 +352,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
         }
 
         statement.close();
+      } catch (SQLException sqe) {
+        System.err.println("executeQuery failed: " + sql);
       } finally {
         conn.close();
       }
