@@ -683,8 +683,8 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
     //  which means we can get it from the self org
 
     if (adSuperior == null) {
-      if (logger.isErrorEnabled()) {
-        logger.error("Missing the AdministrativeSuperior value needed for the OrgActivity!");
+      if (logger.isDebugEnabled()) {
+        logger.debug("Missing the AdministrativeSuperior value needed for the OrgActivity!");
       }
     }
     orgActivity.setAdCon(adSuperior);
