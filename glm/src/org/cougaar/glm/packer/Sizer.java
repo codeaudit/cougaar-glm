@@ -209,7 +209,7 @@ class Sizer {
       Mass massPerEach = assetToBePacked.getPhysicalPG().getMass();
       double taskWeight = task.getPreferredValue(AspectType.QUANTITY) *
 	massPerEach.getShortTons();
-      if (Logging.defaultLogger().debugEnabled()) {
+      if (Logging.defaultLogger().isDebugEnabled()) {
 	Logging.defaultLogger().debug("Sizer.getTaskMass: Quantity: " + 
 				      task.getPreferredValue(AspectType.QUANTITY) + 
 				      " * massPerEach: " + massPerEach.getShortTons() +
