@@ -8,77 +8,88 @@
  * </copyright>
  */
 package org.cougaar.domain.mlm.plugin.ldm;
+
+import org.cougaar.util.*;
 import java.sql.*;
 
-public class LDMConnectionDriver {
-
-   private String driver;
-   private String url;
-   private String user;
-   private String password;
-   private LDMConnectionPool pool;
-   private String queryFile;
-   private boolean wrkStatus = true;
+/** @deprecated use DBConnectionPool. **/
+public class LDMConnectionDriver 
+{
+  private String driver;
+  private String url;
+  private String user;
+  private String password;
+  private LDMConnectionPool pool;
+  private String queryFile;
+  private boolean wrkStatus = true;
    
-   public LDMConnectionDriver(String driver, 
-						 String url, 
-						 String user, 
-						 String password,
-						 int minPoolSize,
-						 int maxPoolSize,
-						 int timeout,
-						 String queryFile,
-						 int nTries)
-						 throws ClassNotFoundException, InstantiationException,
-						 IllegalAccessException, SQLException
-					 
+  /** 
+   * @param driver JDBC driver.
+   * @param url
+   * @param user
+   * @param password
+   * @param minPoolSize ignored
+   * @param maxPoolSize ignored
+   * @param timeout ignored
+   * @param queryFile ignored
+   * @param ntries passed to LDMConnectionPool
+   * @deprecated use DBConnectionPool directly.
+   **/
+  public LDMConnectionDriver(String driver, 
+                             String url, 
+                             String user, 
+                             String password,
+                             int minPoolSize,
+                             int maxPoolSize,
+                             int timeout,
+                             String queryFile,
+                             int nTries)
+    throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException
   {
-   this.url = url;
-   this.user = user;
-   this.password = password;
-   this.driver = driver;
+    this.url = url;
+    this.user = user;
+    this.password = password;
+    this.driver = driver;
    
-   // Driver
-   Driver d = (Driver)Class.forName(driver).newInstance(); 
-   DriverManager.registerDriver(d);  
-   DriverManager.setLoginTimeout((timeout==0)?1:timeout);
-
-   pool = new LDMConnectionPool(url, user, password, minPoolSize, maxPoolSize, timeout, nTries);  
+    try {
+      DBConnectionPool.registerDriver(driver);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    pool = new LDMConnectionPool(url, user, password, minPoolSize, maxPoolSize, timeout, nTries);  
    
-}
+  }
 
-public boolean isWorking()
-{
-   return wrkStatus;
-}
+  public boolean isWorking()
+  {
+    return wrkStatus;
+  }
 
-public String getDBName()
-{
-   return url;
-}
+  public String getDBName()
+  {
+    return url;
+  }
 
-public String getQueryFile() 
-{
-   return queryFile;
-}
+  public String getQueryFile() 
+  {
+    return queryFile;
+  }
 
-public Connection connect()
-{
-   Connection conn;
+  public Connection connect()
+  {
+    Connection conn;
    
-   conn = pool.getConnection();
-   if (conn == null)
+    conn = pool.getConnection();
+    if (conn == null)
       wrkStatus = false;
 
-   return (conn);
+    return (conn);
    
-}
+  }
 
-public synchronized void closeAllConnections()
-{
-   pool.closeAll();
-
-}// closeAllConnections
+  public synchronized void closeAllConnections()
+  {
+  }// closeAllConnections
 
 
 }// LDMConnectionDriver

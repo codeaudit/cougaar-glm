@@ -12,209 +12,82 @@ import java.sql.*;
 import java.util.*;
 import org.cougaar.util.*;
 
+/** Backward-Compatability adapter to new DBConnectionPool functionality.
+ * @deprecated Use DBConnectionPool
+ **/
 public class LDMConnectionPool
 {
-
-  private Vector connectionPool;
   private String url;
   private String user;
   private String password;
-  private int maxPoolSize;
-  private int minPoolSize;
-  private int timeout;
   private int nTries;
 
-  /************************************************************************************
-   *
-   * Method: LDMConnection Pool
-   *
-   * Description: This method serves as a constructor for the LDMConnectionPool class.
-   *              
-   *
-   * Inputs:		url		- url for the database
-   *				user	- user to login to the database as
-   *			password	- password to login to the database
-   *		    minSize		- The minimum size of the pool?
-   *			maxSize		- The maximum size of the database pool
-   *			timeout		- Specifies the time to reap unused or dead database 
-   *						  connections.
-   *			nTries		- The number of times to retry a database connection before
-   *						  deeming that the connection is not accessible.
-   * Outputs:	None
-   ***********************************************************************************/
+  /**
+   * This method serves as a constructor for the LDMConnectionPool class.
+   * @param url url for the database.
+   * @param user user to login to the database as.
+   * @param password password to login to the database.
+   * @param minSize ignored.
+   * @param maxSize ignored.
+   * @param timeout ignored.
+   * @param nTries The number of times to retry a database connection before 
+   * deeming that the connection is not accessible.
+   **/
   public LDMConnectionPool (String url, String user, String password, int minSize, int maxSize, int timeout, int nTries) 
   {
 
     this.url = url;
     this.user = user;
     this.password = password;
-    this.timeout = timeout;
     this.nTries = nTries;   
-    minPoolSize = minSize;
-    maxPoolSize = maxSize;
-    connectionPool = new Vector(maxPoolSize);
+  }
 
-  }// LDMConnectionPool
-
-  /*********************************************************************************/
-  /*
-   * Method: removeStaleConnections
-   *
-   * Description: This method is called to remove any stale database connections
-   *
-   * Inputs:	   None
-   * Outputs:	   The JConnection class or null if a database connection can not
-   *			   be retrieved.
-   *********************************************************************************/
   public synchronized void removeStaleConnections() 
   {
-
-    long stale = System.currentTimeMillis() - timeout;
-    Enumeration conns = connectionPool.elements();
-	  
-    // Loop Through the Pool to see if there are any stale connections
-    while((conns != null) && (conns.hasMoreElements())) 
-      {	  
-        LDMConnection conn = (LDMConnection)conns.nextElement();
-		  
-        if ((conn.isAvailable()) && (stale > conn.getStartTime()))
-          removeConnection(conn);
-         
-      }// while loop
-  }// removeStaleConnections
+  }
    
-  /*********************************************************************************/
-  /*
-   * Method: getConnection
-   *
-   * Description: This method is used to retrieve a connection for a given data
-   *			   source.
-   *
-   * Inputs:	   None
-   * Outputs:	   The JConnection class or null if a database connection can not
-   *			   be retrieved.
-   *********************************************************************************/
+  /** @deprecated Use DBConnectionPool.getConnection instead. **/
   public synchronized Connection getConnection() 
   {
-    Connection c = null;
-    Connection con = null;
-    LDMConnection jcon = null;
-	
-    try 
-      {
-        // Check all of the connections to see if one is available
-        for (int i = 0; i < connectionPool.size(); i++) 
-          {
-            jcon = (LDMConnection)connectionPool.elementAt(i);          
-			 
-            // Check to see if the connection can be leased.
-            if (jcon.lease())
-              {
-                return jcon;
-              }// if the connection can be leased.
-
-          }//for loop
-	
-        // Since no connection was found, a new one has to be created.
-
-        if ((maxPoolSize <= 0) ||
-            (connectionPool.size() < maxPoolSize))
-          {
-		     				   	  
-            // Try to access the database
-            // Keep on Trying until the nTries is reached.
-            int tries = 1;
-            while ((con == null) && (tries <= nTries))
-              {		     		        
-                try 
-                  {
-                    con = DriverManager.getConnection(url, user, password);
-                  } catch (SQLException e)
-                    {
-                      System.out.println("The connection failed on attempt " + tries);
-                      tries++;
-                    }//	
-		  			 
-              }//while loop	     
-
-		  
-            // If a connection was successful then
-            // add the connection to the pool.
-            if (con != null)
-              {
-		    		     
-                jcon = new LDMConnection(con, this);
-                connectionPool.addElement(jcon);
-                jcon.lease();
-              }				  		 		  
-          }// if maxPoolSize
-       
-      } catch(Exception e)
-        {
-          c = null;
-        }// try exception block
-    return (jcon);
-  }// getConnection
+    Exception savedException = null;
+    for (int tries = 0; tries<nTries; tries++) {
+      try {
+        return DBConnectionPool.getConnection(url, user, password);
+      } catch (SQLException e) {
+        savedException = e;
+      } catch (RuntimeException e) {
+        savedException = e;
+      }
+      try {
+        Thread.sleep(1*1000L);     // sleep for a sec and try again.
+      } catch (InterruptedException e) {}
+    }
+    if (savedException != null) {
+      System.err.println("LDMConnectionPool.getConnection() caught ("+nTries+"): "+savedException);
+      savedException.printStackTrace();
+    }
+    return null;
+  }
    
-  /***********************************************************************************
-   *
-   * Method: closeAll
-   *
-   * Description:	This method is used to close all the database connections in the 
-   *				vector
-   *
-   * Inputs:		None
-   *
-   * Outputs:		None
-   ***********************************************************************************/
   public synchronized void closeAll()
   {
-    Enumeration conns = connectionPool.elements();
+  }
    
-    while((conns != null) && (conns.hasMoreElements())) 
-      {
-        LDMConnection conn = (LDMConnection)conns.nextElement();
-        removeConnection(conn);
-      }// while loop
-
-  }// closeAll
-   
-  /***********************************************************************************
-   *
-   * Method: removeConnection
-   *
-   * Description:	This method is used to remove a specific connection.
-   *
-   * Inputs:		None
-   *
-   * Outputs:		None
-   ***********************************************************************************/
-  private synchronized void removeConnection(LDMConnection conn) 
+  private synchronized void removeConnection(Connection conn) 
   {
-    connectionPool.removeElement(conn);
     try {
-      conn.getConnection().close();
-    } catch (SQLException sqle) {
-      System.out.println("Exception closing connection!!!");
+      conn.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
    
-  /***********************************************************************************
-   *
-   * Method: expireLease
-   *
-   * Description:	This method is used to expire a given database connection.  When
-   *				this method is called, the database connection is deemed expired,
-   *				but continues to stay open.
-   *
-   * Inputs:		None
-   *
-   * Outputs:		None
-   ***********************************************************************************/
-  protected synchronized void expireLease(LDMConnection conn)
+  protected synchronized void expireLease(Connection conn)
   {
-    conn.expireLease();
-  }// expireLease
-
-
-}// LDMConnectionPool
+    try {
+      conn.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+}
