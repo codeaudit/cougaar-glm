@@ -26,9 +26,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Provides wrappers around the query routines.  
@@ -72,7 +70,9 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     public Asset getPrototype(String aTypeName, Class anAssetClassHint) {
 	if (!canHandle(aTypeName, anAssetClassHint)) return null;
 	// check if thought it could handle it, but previously failed
-	if (cannotHandle_.contains(aTypeName)) return null;
+	if (cannotHandle_.contains(aTypeName)) {
+          return null;
+        }
 	Asset asset = makePrototype(aTypeName, anAssetClassHint);
 	if (asset == null) {
 	    cannotHandle_.add(aTypeName);
@@ -274,6 +274,12 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
             }
             result.add((Object[])row.clone());
           }
+          /*
+          if ((ncols*result.size())>100) {
+            System.err.println("Excessively large query ("+(ncols*result.size())+"): ");
+            Thread.dumpStack();
+          }
+          */
           statement.close();
         } catch (java.sql.SQLException sqle) {
           GLMDebug.ERROR(className_,"executeQuery failed: "+sqle);
@@ -286,7 +292,57 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	return result;
     }
 
-    protected Connection getConnection() throws SQLException {
+  public static interface RowHandler {
+    /** Called by executeQuery per row.
+     * @return true iff the query is done (bail out early)
+     **/
+    void execute(ResultSetMetaData md, ResultSet rs) throws SQLException;
+  }
+
+  public static class QueryComplete extends RuntimeException { }
+
+  /** Less expensive variation on executeQuery(String) **/
+  public void executeQuery(String query, RowHandler rh) {
+    Connection conn = null;
+    Statement statement = null;
+    try {
+      conn = getConnection();
+      statement = conn.createStatement();
+      ResultSet rs = statement.executeQuery(query);
+      /*
+      try {
+        rs.setFetchDirection(ResultSet.FETCH_FORWARD);
+        rs.setFetchSize(1000);
+      } catch (AbstractMethodError re) {
+        // System.err.println("Driver is not JDBC 2.0 compatible");
+      }
+      */
+
+      ResultSetMetaData md = rs.getMetaData();
+      try {
+        while (rs.next()) {
+          rh.execute(md,rs);
+        }
+      } catch (QueryComplete qc) {
+        // early exit.
+      }
+      //statement.close(); // close it in finally clause
+    } catch (java.sql.SQLException sqle) {
+      GLMDebug.ERROR(className_,"executeQuery failed: "+sqle);
+      sqle.printStackTrace();
+    } finally {
+      if (statement != null) {
+        try {
+          statement.close();
+        } catch (SQLException squeal) {}
+      }
+      if (conn != null)
+        releaseConnection(conn);
+    }
+  }
+
+
+  protected Connection getConnection() throws SQLException {
       return DBConnectionPool.getConnection(url_, user_, password_);
     }
 
@@ -297,6 +353,4 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	    GLMDebug.ERROR(className_,"releaseConnection "+sqle);
 	}
     }
-
-
 }
