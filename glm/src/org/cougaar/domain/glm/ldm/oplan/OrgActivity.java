@@ -9,26 +9,31 @@
  */
 package org.cougaar.domain.glm.ldm.oplan;
 
-import org.cougaar.domain.planning.ldm.plan.Transferable;
-import org.cougaar.core.society.OwnedUniqueObject;
-import org.cougaar.core.society.UID;
-import org.cougaar.core.society.UniqueObject;
-import org.cougaar.core.util.XMLizable;
-import org.cougaar.core.util.XMLize;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.HashMap;
-import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
-import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.cougaar.domain.planning.ldm.plan.TaggedLocationScheduleElement;
-import org.cougaar.domain.planning.ldm.plan.LocationScheduleElementImpl;
-import org.cougaar.domain.planning.ldm.plan.LocationScheduleElement;
+import org.cougaar.core.society.OwnedUniqueObject;
+import org.cougaar.core.society.UID;
+import org.cougaar.core.society.UniqueObject;
+
+import org.cougaar.core.util.XMLizable;
+import org.cougaar.core.util.XMLize;
+
 import org.cougaar.domain.planning.ldm.plan.Location;
+import org.cougaar.domain.planning.ldm.plan.LocationScheduleElement;
+import org.cougaar.domain.planning.ldm.plan.LocationScheduleElementImpl;
+import org.cougaar.domain.planning.ldm.plan.TaggedLocationScheduleElement;
+import org.cougaar.domain.planning.ldm.plan.Transferable;
+
+
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 
 /**
  * OrgActivity
@@ -41,7 +46,7 @@ import org.cougaar.domain.planning.ldm.plan.Location;
  * Subordinate clusters should not modify (set) OrgActivity information.
  **/
 public class OrgActivity extends OwnedUniqueObject
-  implements OplanContributor, Transferable, XMLizable, UniqueObject, Serializable, Cloneable
+  implements OplanContributor,  org.cougaar.util.TimeSpan, Transferable, XMLizable, UniqueObject, Serializable, Cloneable
 {	
   private String activityName;
   private String activityType;
@@ -51,6 +56,8 @@ public class OrgActivity extends OwnedUniqueObject
   private HashMap oaHashMap = new HashMap(5);
   private String orgID;
   private UID oplanUID;
+  
+  //ActivityTypes
   public static final String DEPLOYMENT = "Deployment";
   public static final String RECEPTION = "Reception";
   public static final String DEFENSIVE = "Employment-Defensive";
@@ -58,6 +65,11 @@ public class OrgActivity extends OwnedUniqueObject
   public static final String STAND_DOWN = "Employment-Standdown";
   public static final String REDEPLOYMENT = "Re-Deployment";
   public static final String RETROGRADE = "Retrograde";
+
+  //Optempo
+  public static final String HIGH_OPTEMPO = "High";
+  public static final String MEDIUM_OPTEMPO = "Medium";
+  public static final String LOW_OPTEMPO = "Low";
 
   public OrgActivity(String orgID, UID oplanUID) 
   {	
@@ -133,6 +145,7 @@ public class OrgActivity extends OwnedUniqueObject
 
   public void setOpTempo(String opTempo) 
   {
+    // BOZO - check against valid range
     this.opTempo = unique(opTempo);
   }//setOpTempo
 	
@@ -197,6 +210,14 @@ public class OrgActivity extends OwnedUniqueObject
     return(theTimeSpan);
   }//getTimeSpan
 	
+  public long getStartTime() {
+    return theTimeSpan.getStartTime();
+  }
+
+  public long getEndTime() {
+    return theTimeSpan.getEndTime();
+  }
+
   public void setAll(Transferable other) 
   {
 	    

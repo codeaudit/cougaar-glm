@@ -26,10 +26,12 @@
 	
 package org.cougaar.domain.glm.ldm.oplan;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.Vector;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import org.cougaar.core.cluster.Subscriber;
 import org.cougaar.domain.planning.ldm.plan.Transferable;
@@ -212,6 +214,12 @@ public class Oplan extends OwnedUniqueObject
   // orgacts
   public void addOrgActivity(OrgActivity o) {
     orgacts.addElement(o);
+  }
+
+  // orgacts
+  public void setOrgActivities(Collection orgActivities) {
+    orgacts.clear();
+    orgacts.addAll(orgActivities);
   }
 
   Vector getOrgActivitiesV() { return orgacts; }

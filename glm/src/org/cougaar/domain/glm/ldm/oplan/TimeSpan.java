@@ -58,9 +58,13 @@ public class TimeSpan
     formatter.setTime(baseDate);
     formatter.add(formatter.DATE, startDelta);
     this.startDate = internDate(formatter.getTime());
+
     formatter.setTime(baseDate);
-    formatter.add(formatter.DATE, thruDelta + 1); // MSB/JEB : 12-2-99 ThruDate means through the end of the day
+    // MSB/JEB : 12-2-99 ThruDate means through the end of the day
+    // NKG : 02/01/01 no it doesn't. Use getEndTime for that.
+    formatter.add(formatter.DATE, thruDelta);
     this.thruDate = internDate(formatter.getTime());
+
     this.cDate = internDate(baseDate); // to be removed
   }
 
@@ -84,8 +88,9 @@ public class TimeSpan
     return startDate.getTime();
   }
   public long getEndTime() {
-    // Add a day of millis, since thruDate is defined to be 24 
-    // hours earlier than EndTime.
+    // Add a day of millis, since thruDate is defined to be start of last day
+    // and EndTime should be start of next day (i.e. EndTime - EPSILON puts you
+    // in the last day.)
     return thruDate.getTime()+(24*60*60*1000);
   }
 
