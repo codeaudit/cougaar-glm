@@ -1,3 +1,15 @@
+2002-03-04  Noelle Givler  <ngivler@bbn.com>
+
+	* alpprops.def 
+	Added ContentsPG. Please use with care. Consider using Manifests if
+	contents list is extensive.
+	PhysicalPG now time phased.
+
+	* org.cougaar.domain.glm.packer
+	Enhancements suggested by the Gorman/Braddock exercise. Milvan on the
+	Transport task now has ContentsPG. PhysicalPG for the period of time
+	of the Transport task shows the loaded weight.
+
 2002-02-20  Michael Thome  <mthome@bbn.com>
 
 	* Removed LDMQueryPlugin
