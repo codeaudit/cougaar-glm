@@ -90,7 +90,7 @@ public class GenericBufferedTablePlugin extends GenericTablePlugin {
         // allocate to sink for now
         do {
           Task theTask = (Task) eTasks.nextElement();
-          if (theTask.getPlanElement() == null) {
+          if (getTaskPlanElement(theTask, allocationsSub[i]) == null) {
             AllocationResult allocation_result = 
               computeAllocationResult(theTask);
             Allocation allocation = 
@@ -109,6 +109,8 @@ public class GenericBufferedTablePlugin extends GenericTablePlugin {
         TaskInfo[] toTasks = ((ExpandCommandInfo)c).expandTasks;
         do {
           Task theTask = (Task) eTasks.nextElement();
+	  // Need a sub to expansions to do this....
+	  //          if (getTaskPlanElement(theTask, allocationsSub[i]) == null) {
           if (theTask.getPlanElement() == null) {
             for (int j = 0; j < toTasks.length; j++) {
               doExpansion(toTasks[j], theTask);
@@ -143,7 +145,7 @@ public class GenericBufferedTablePlugin extends GenericTablePlugin {
         Organization capableOrg = null;
         do {
           Task theTask = (Task) eTasks.nextElement();
-          PlanElement pe = theTask.getPlanElement();
+          PlanElement pe = getTaskPlanElement(theTask, allocationsSub[i]);
           if ((pe instanceof Allocation) &&
               (((Allocation)pe).getAsset() == sink_asset)) {
             // find capable org
@@ -168,6 +170,7 @@ public class GenericBufferedTablePlugin extends GenericTablePlugin {
         do {
           Task theTask = (Task) eTasks.nextElement();
           if (theTask.getPlanElement() == null) {
+	    //          if (getTaskPlanElement(theTask, allocationsSub[i]) == null) {
             for (int j = 0; j < toTasks.length; j++) {
               doExpansion(toTasks[j], theTask);
             }

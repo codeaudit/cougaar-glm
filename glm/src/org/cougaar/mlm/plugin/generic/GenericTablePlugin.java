@@ -182,6 +182,7 @@ public class GenericTablePlugin extends SimplePlugin {
 
 
   public synchronized void execute() {
+    boolean checkUnallocated = false;
     if (organizationSub.hasChanged()) {
       Organization selfOrg = null;
 
@@ -196,7 +197,6 @@ public class GenericTablePlugin extends SimplePlugin {
 	
       if (selfOrg != null) {
 	Collection changeReports = organizationSub.getChangeReports(selfOrg);
-	boolean checkUnallocated = false;
 	if ((changeReports != AnonymousChangeReport.SET) &&
 	    (changeReports != null)) {
 	  for (Iterator reportIterator = changeReports.iterator();
@@ -214,7 +214,7 @@ public class GenericTablePlugin extends SimplePlugin {
 	      if (c.type_id == CommandInfo.TYPE_ALLOCATE) {
 		if (logger.isDebugEnabled())
 		  logger.debug(getAgentIdentifier() + " had RelatSched change on self org, so re-alloc all allocatable tasks.");
-		allocate((AllocateCommandInfo) c, tasksSub[i]);
+		allocate((AllocateCommandInfo) c, tasksSub[i], i);
 	      }
 	    }
 	  }
@@ -226,15 +226,24 @@ public class GenericTablePlugin extends SimplePlugin {
       if (tasksSub[i].hasChanged()) {
 	CommandInfo c = allCommands[i];
 	if (c.type_id == CommandInfo.TYPE_ALLOCATE) {
-	  if (logger.isDebugEnabled())
-	    logger.debug(getAgentIdentifier() + " has changed task supposed to allocate - will alloc all added");
-	  allocate((AllocateCommandInfo) c, tasksSub[i].getAddedCollection());
+	  // If the above block already called allocate on all the tasksSubs,
+	  // then don't call it again.
+	  if (! checkUnallocated) {
+	    if (logger.isDebugEnabled())
+	      logger.debug(getAgentIdentifier() + " has changed task supposed to allocate - will alloc all added");
+	    allocate((AllocateCommandInfo) c, tasksSub[i].getAddedCollection(), i);
+	  }
 	} else if (c.type_id == CommandInfo.TYPE_EXPAND) {
 	  // expand
 	  TaskInfo[] toTasks = ((ExpandCommandInfo)c).expandTasks;
 	  for (Iterator iterator = tasksSub[i].getAddedCollection().iterator();
 	       iterator.hasNext();) {
 	    Task task = (Task) iterator.next();
+	    // FIXME FIXME FIXME FIXME: Expansions won't
+	    // Be in this sub on expansions!
+	    // Need new sub to expansions of these tasks,
+	    // And pass in that collection instead
+	    //	    if (getTaskPlanElement(task, allocationsSub[i]) == null) {
 	    if (task.getPlanElement() == null) {
 	      for (int j = 0; j < toTasks.length; j++) {
 		if (logger.isDebugEnabled())
@@ -451,8 +460,8 @@ public class GenericTablePlugin extends SimplePlugin {
 	// That is, it is more correct to only require .isEqual, but try to only minimally rock-the-boat for now
 	if (repar.isEqual(estar)) {
 	  // Turn this down from Warn to DEBUG after ensuring we dont see this with the ReceiveNotificationLP change in place.
-	  if (logger.isInfoEnabled())
-	    logger.info(getAgentIdentifier() + " NOT pubChanging AllocResult due to RepAR.isEqual(EstAR) but not ==. For PE: " + pe + ". Rep was != Est. Rep: " + repar);
+	  if (logger.isDebugEnabled())
+	    logger.debug(getAgentIdentifier() + " NOT pubChanging AllocResult due to RepAR.isEqual(EstAR) but not ==. For PE: " + pe + ". Rep was != Est. Rep: " + repar);
 	} else {
 	  publishChange(pe);
 	}
@@ -678,12 +687,103 @@ public class GenericTablePlugin extends SimplePlugin {
     return true;
   }
 
-  protected void allocate(AllocateCommandInfo commandInfo, Collection tasks) {
+  // Search a single collection of allocations for one that allocates the given task
+  protected PlanElement getTaskPlanElement(Task t, Collection allocs) {
+    PlanElement tpe = null;
+    Collection bPEs = null;
+    if (logger.isInfoEnabled()) {
+      tpe = t.getPlanElement();
+      final Task pt = t;
+      bPEs = query(new UnaryPredicate() {
+	  public boolean execute (Object o) {
+	    if (o instanceof Allocation) {
+	      Allocation a = (Allocation)o;
+	      return (a.getTask() == pt);
+	    }
+	    return false;
+	  }
+	});
+    }
+
+    Iterator iter = allocs.iterator();
+    while (iter.hasNext()) {
+      PlanElement pe = (PlanElement)iter.next();
+      if (pe.getTask().equals(t)) {
+	if (logger.isInfoEnabled()) {
+	  boolean bboardHasPE = true;
+	  boolean bboardHasTPE = true;
+
+	  if (bPEs != null) {
+	    bboardHasPE = bPEs.contains(pe);
+	    bboardHasTPE = bPEs.contains(tpe);
+	    bPEs.remove(pe);
+	    bPEs.remove(tpe);
+	    if (! bPEs.isEmpty()) {
+	      logger.info("Blackboard has " + bPEs.size() + " Allocs of the task other than the one on GTPI sub or pointed to by the task: " + t);
+
+	      Iterator biter = bPEs.iterator();
+	      while (biter.hasNext()) {
+		Allocation ba = (Allocation)biter.next();
+		logger.info("GTPI found BBoard Alloc " + ba.getUID() + ":" + ba);
+	      }
+	    }
+	  }
+
+	  if (tpe == null) {
+	    logger.info("GTPI found Alloc on sub " + (bboardHasPE ? "also on blackboard" : "BUT NOT on blackboard") + " but task has NONE. Task: " + t + ", Sub Alloc: " + pe.getUID() + ":" + pe);
+	  } else if (tpe != pe) {
+	    boolean there = allocs.contains(tpe);
+	    // Does removed list contain the task's pe?
+	    boolean onRemoved = ((IncrementalSubscription)allocs).getRemovedCollection().contains(tpe);
+	    
+	    logger.info("GTPI found one Alloc on sub for task, but task lists another" + (there ? " that is ALSO on the sub" : " that is NOT on the sub") + (onRemoved ? ", and IS on the Sub's Removed list" : "") + ". My Sub's Alloc " + (bboardHasPE ? "IS" : "is NOT") + "on the blackboard. The Task's PE " + (bboardHasTPE ? "IS" : "is NOT") + "on the blackboard. Task: " + t + ", Tasks pe: " + tpe.getUID() + ":" + tpe + ", Sub's PE: " + pe.getUID() + ":" + pe);
+	  } else {
+	    // Task and sub match
+	    if (!bboardHasPE)
+	      logger.info("GTPI found Alloc on sub also on Task, but it's not on the BBoard! Task: " + t + ", PE: " + pe.getUID() + ":" + pe);
+	  }
+
+	  // Does removed list contain this pe?
+	  boolean onRemoved = ((IncrementalSubscription)allocs).getRemovedCollection().contains(pe);
+	  if (onRemoved) {
+	    logger.info("GTPI found alloc of task on sub, but the alloc is also on my Removed list! " + (bboardHasPE ? "Blackboard has the alloc!" : "(Blackboard also doesn't have the alloc.)") + " Task: " + t + ", found PE: " + pe.getUID() + ":" + pe);
+	  }
+	} // end of Info logging
+	return pe;
+      } // end of block to handle found PE
+    } // end of while loop over subscription
+
+    // Found no Alloc on sub - will allocate the task
+
+    if (logger.isInfoEnabled()) {
+      if (tpe != null) {
+	boolean tPBB = (bPEs != null && bPEs.contains(tpe));
+	boolean onRemoved = ((IncrementalSubscription)allocs).getRemovedCollection().contains(tpe);
+	logger.info("No Alloc on GTPIs sub for a task, but the task lists a PE" + (onRemoved ? " which is on my sub's removed list" : "") + (tPBB ? " which IS on the blackboard" : " which is NOT on the blackboard") + ". Task: " + t + ", Task's PE: " + tpe.getUID() + ":" + tpe);
+      } 
+
+      // Found no PE on sub
+      if (bPEs != null && !bPEs.isEmpty()) {
+	logger.info("No Alloc on GTPIs sub for a task, but blackboard has " + bPEs.size() + " allocs for the task: " + t);
+	// Print out the PEs we did find!
+	Iterator biter = bPEs.iterator();
+	while (biter.hasNext()) {
+	  Allocation ba = (Allocation)biter.next();
+	  logger.info("GTPI found BBoard Alloc " + ba.getUID() + ":" + ba);
+	}
+      }
+
+    } // end of info logging
+
+    return null;
+  }
+
+  protected void allocate(AllocateCommandInfo commandInfo, Collection tasks, int subNum) {
     Organization capableOrg = null;
     for (Iterator iterator = tasks.iterator();
 	 iterator.hasNext();) {
       Task task = (Task) iterator.next();
-      if (task.getPlanElement() == null) {
+      if (getTaskPlanElement(task, allocationsSub[subNum]) == null) {
 	if (capableOrg == null) {
 	  capableOrg = 
 	    findCapableOrganization(commandInfo);
@@ -697,7 +797,10 @@ public class GenericTablePlugin extends SimplePlugin {
 	  }
 	}
 	doAllocation(capableOrg, task);
-      }		
+      } else {
+	// sub has PE for this task
+	
+      }
     }
   }
 
