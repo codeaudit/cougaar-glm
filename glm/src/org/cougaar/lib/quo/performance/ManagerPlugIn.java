@@ -17,9 +17,9 @@
  *  TORTIOUS CONDUCT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  *  PERFORMANCE OF THE COUGAAR SOFTWARE.
  * </copyright>
- *
  *  THIS SOFTWARE IS MODIFIED FOR TESTING QUO_ULTRALLOG INTEGRATION
  */
+
 package org.cougaar.lib.quo.performance;
 //package org.cougaar.lib.quo;
 
@@ -28,6 +28,7 @@ import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 import java.util.*;
+import java.io.*;
 
 /**
  * This COUGAAR PlugIn creates and publishes "CODE" tasks and if allocationResult is a success
@@ -41,11 +42,15 @@ public class ManagerPlugIn extends SimplePlugIn {
   protected IncrementalSubscription allocations;   // My allocations
   protected int CPUCONSUME=-1;
   protected int MESSAGESIZE=-1;
+    protected String FILENAME="stdout";
+    protected int MAXCOUNT=-1;
+
   private Date startTime;
   private Task t;
   private double start_month;
     private  int count = 0;
     private long minDelta=0;
+    private FileWriter fw;
   /**
    * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
    */
@@ -61,6 +66,17 @@ public class ManagerPlugIn extends SimplePlugIn {
 	s = s.substring(s.indexOf("=")+1, s.length());
 	MESSAGESIZE = Integer.parseInt(s);
       }
+
+      if (s.indexOf("FILE") != -1){
+	 FILENAME = s.substring(s.indexOf("=")+1, s.length());
+	 System.out.println("FILENAME:  " + FILENAME);
+      }
+      if (s.indexOf("MAXCOUNT") != -1){
+	s = s.substring(s.indexOf("=")+1, s.length());
+	MAXCOUNT = Integer.parseInt(s);
+
+	 System.out.println("MAXCOUNT:  " + MAXCOUNT);
+      }
     }
   }
 
@@ -68,11 +84,11 @@ public class ManagerPlugIn extends SimplePlugIn {
    * Using setupSubscriptions to create the initial CODE tasks
    */
   protected void setupSubscriptions() {
-    // Create a task to code the next killer app
+      // Create a task to code the next killer app
     //modified to create a lots of tasks if allocation is a success
-    parseParameter(); //read the plugIn arguments
-    addTask();
-    allocations = (IncrementalSubscription)subscribe(new myAllocationPredicate());
+      parseParameter(); //read the plugIn arguments
+      addTask();
+      allocations = (IncrementalSubscription)subscribe(new myAllocationPredicate());
   }
 
 
@@ -82,10 +98,13 @@ public class ManagerPlugIn extends SimplePlugIn {
   protected void execute () {
     //System.out.println("ManagerPlugIn::execute()");
     allocateChangedtasks(); // Process changed allocations
+    
+   
 
   }
 
   protected void addTask() {
+      //publish the Asset
     what_to_code = theLDMF.createPrototype("AbstractAsset", "The Next Killer App");
     NewItemIdentificationPG iipg = 
       (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
@@ -145,34 +164,61 @@ public class ManagerPlugIn extends SimplePlugIn {
     }
 
     protected void  allocateChangedtasks(){
-      AllocationResult est, rep;
-      Enumeration allo_enum = allocations.getChangedList();
-      while (allo_enum.hasMoreElements()) {
-	Allocation alloc = (Allocation)allo_enum.nextElement() ;
-	est=null; rep=null;
-	est = alloc.getEstimatedResult();
-	rep = alloc.getReportedResult();
-	if (rep!=null){
-	  Date endTime = new Date();
-	  long delta = endTime.getTime() - startTime.getTime();
-	  count++;
-	  if (count == 1)
-	      minDelta = delta;
-	  else
-	      minDelta = Math.min(minDelta, delta);
-	  System.out.println(count+":"+delta+":"+minDelta);
-	  //publishRemove(t);
-	  //allocations.clear();
-	    try {
-  	    Thread.sleep(1000);
-  	  } catch (InterruptedException e) {
-  	    System.out.println(e);
-  	  }
-	  changeTasks();
+	AllocationResult est, rep;
+	Enumeration allo_enum = allocations.getChangedList();
+     
+	while (allo_enum.hasMoreElements()) {
+	    Allocation alloc = (Allocation)allo_enum.nextElement() ;
+	    est=null; rep=null;
+	    est = alloc.getEstimatedResult();
+	    rep = alloc.getReportedResult();
+	    if (rep!=null){
+		Date endTime = new Date();
+		long delta = endTime.getTime() - startTime.getTime();
+		count++;
+		if (count == 1)
+		    minDelta = delta;
+		else
+		    minDelta = Math.min(minDelta, delta);
+		debug(count, delta, minDelta);
+		  
+		//System.out.println(count+","+delta+","+minDelta);
+		//publishRemove(t);
+		//allocations.clear();
+		try {
+		    Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		    System.out.println(e);
+		}
+		changeTasks();
+	    }
+	    if ( (count == MAXCOUNT) & (MAXCOUNT != -1)) 
+		// break;
+		System.exit(1); 
 	}
-      }
     }
     
+   
+
+    /**
+     * Writes the data to the specified FILENAME
+     */
+    private void debug(int count, long delta, long minDelta){
+	//creates a file handle based on the arguments after parsing
+        try {
+	    if (FILENAME.equals("stdout")){
+		//fw = new FileWriter(FileDescriptor.out); //not working!!!!!!!
+		System.out.println(count+","+delta+","+minDelta);
+	    }
+	    else{
+		fw = new FileWriter(FILENAME, true);
+		fw.write(count +","+delta+"," +minDelta+ "\n");
+		fw.close();
+	    }
+	}catch (IOException ie) {
+	    ie.printStackTrace();
+	}
+    }
   /**
    * consume CPU cycles by the argument passed as  parameter
    */
