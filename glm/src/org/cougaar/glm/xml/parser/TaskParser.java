@@ -95,7 +95,9 @@ public class TaskParser{
 	}
         if(child.getNodeType() == Node.ELEMENT_NODE){
 
-	  if(childname.equals("verb")){
+	  if (handleTag (task, prep_phrases, ldm, ldmf, child)){
+          }
+          else if(childname.equals("verb")){
 	    Verb verb = verbParser.getVerb(child);
 	    task.setVerb(verb);
 	    if (logger.isDebugEnabled()) logger.debug ("TaskParser - on task " + task.getUID () + " set verb to " + verb);
@@ -129,6 +131,7 @@ public class TaskParser{
 	    newpp.setIndirectObject(getStuff(ldm, child));
 	    prep_phrases.addElement(newpp);
 	  }
+          /*
 	  else if(childname.equals("maintaining")){
 	    // same as with
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
@@ -136,6 +139,7 @@ public class TaskParser{
 	    newpp.setIndirectObject(getMaintainingObject(ldm, child));
 	    prep_phrases.addElement(newpp);
 	  }
+          */
 	  else if(childname.equals("for")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.FOR);
@@ -241,6 +245,18 @@ public class TaskParser{
     return task;
   }
 
+  /**
+   * Does nothing by default - override to handle your own new tags
+   *
+   * @return false by default
+   */
+  protected boolean handleTag (NewTask task, Vector prep_phrases,
+                               LDMServesPlugin ldm,
+                               PlanningFactory ldmf,
+                               Node child) {
+     return false;
+  }
+
   private Object getStuff(LDMServesPlugin ldm, Node node){
     Object object = null;
     
@@ -269,6 +285,7 @@ public class TaskParser{
     return object;
   }
 
+  /*
   private static Object getMaintainingObject(LDMServesPlugin ldm, Node node){
     String type = null, typeID = null, itemID = "maintainedItem", nomen = null;
 
@@ -285,13 +302,16 @@ public class TaskParser{
 	  typeID = getTagContents (child);
 	else if (childname.equals("nomen"))
 	  nomen = getTagContents (child);
+	else if (childname.equals("itemID"))
+	  itemID = getTagContents (child);
       }
     }
 
     return new MaintainedItem (type, typeID, itemID, nomen);
   }
+  */
 
-  private static String getTagContents(Node node){
+  protected String getTagContents(Node node){
     Asset asset = null;
     Node data = node.getFirstChild();
     return data.getNodeValue();
