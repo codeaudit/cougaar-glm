@@ -913,7 +913,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
    **/
   public static void main(String[] args) {
     if ("true".equals(System.getProperty("org.cougaar.useBootstrapper", "true"))) {
-      org.cougaar.core.node.Bootstrapper.launch(EventGenerator.class.getName(), args);
+      org.cougaar.bootstrap.Bootstrapper.launch(EventGenerator.class.getName(), args);
     } else {
       launch(args);
     }
