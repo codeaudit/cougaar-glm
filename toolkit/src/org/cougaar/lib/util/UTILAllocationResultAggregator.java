@@ -81,7 +81,7 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
     acc[CUSTOMER_SATISFACTION] = AspectValue.newAspectValue(CUSTOMER_SATISFACTION,1.0); // start at best
     acc[READINESS] = AspectValue.newAspectValue(READINESS,1.0);
     acc[POD_DATE] = AspectValue.newAspectValue(POD_DATE,0L);
-    acc[POD] = AspectValue.newAspectValue(POD,UNDEFINED_POD);
+    acc[POD] = UNDEFINED_POD;
 
     int count = 0;
     boolean suc = true;
