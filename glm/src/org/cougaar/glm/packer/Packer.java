@@ -174,9 +174,11 @@ public abstract class Packer extends GenericPlugin {
     while (changedTasks.hasMoreElements()) {
         Task task = (Task)changedTasks.nextElement();
         
-        getLoggingService().error("Packer - ignoring changed task - " + 
-                                 task.getUID() + 
-                                 " from " + task.getSource());
+	if (getLoggingService().isDebugEnabled()) {
+	  getLoggingService().debug("Packer - ignoring changed task - " + 
+				    task.getUID() + 
+				    " from " + task.getSource());
+	}
         
     }
   }
@@ -189,11 +191,6 @@ public abstract class Packer extends GenericPlugin {
    * @param changedTasks Enumeration of removed ammo supply tasks. Ignored.
    */
   public void processRemovedTasks(Enumeration removedTasks) {
-    if (getLoggingService().isDebugEnabled()) {
-      getLoggingService().debug("Packer.processRemovedTasks - ignoring " +
-                                "removed tasks");
-    }
-
     boolean anyRemoved = false;
 
     while (removedTasks.hasMoreElements()) {
