@@ -117,23 +117,23 @@
 	</String>
     </RuleParam>
     <RuleParam name="DaysOnHand">
-	<Integer value="2" min="-1" max="90"> 
+	<Integer value="3" min="-1" max="90"> 
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysForward">
-        <Integer value="5" min="0" max="30">
+        <Integer value="10" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="DaysBackward">
-        <Integer value="5" min="0" max="30">
+        <Integer value="10" min="0" max="30">
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
-        <Double value="2" min="1.0" max="30">
+        <Double value="10" min="1.0" max="30">
 	</Double>
     </RuleParam>
     <RuleParam name="WithdrawSwitchoverDay">
-        <Integer value="100" min="0" max="300">
+        <Integer value="30" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
@@ -164,11 +164,11 @@
 	</Integer>
     </RuleParam>
     <RuleParam name="GoalLevelMultiplier">
-        <Double value="2" min="1.0" max="30">
+        <Double value="2.5" min="1.0" max="30">
 	</Double>
     </RuleParam>
     <RuleParam name="WithdrawSwitchoverDay">
-        <Integer value="100" min="0" max="300">
+        <Integer value="30" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
