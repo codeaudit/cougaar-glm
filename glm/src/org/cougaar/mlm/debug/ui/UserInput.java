@@ -114,10 +114,9 @@ public class UserInput implements ActionListener, Runnable {
 
 
   /** Initialize values used by user input thread.
-    @param UIPlugin this plugin
-    @param UIDisplay the main display object
+    @param uiPlugin this plugin
+    @param uiDisplay the main display object
    */
-
   public UserInput(UIPlugin uiPlugin, UIDisplay uiDisplay, PluginDelegate delegate) {
     this.uiPlugin = uiPlugin;
     this.uiDisplay = uiDisplay;

@@ -60,7 +60,7 @@ public class ObjectScheduleElement extends ScheduleElementImpl
 		
   // NewObjectScheduleElement interface implementations
 	
-  /** @param anObject Set object of the schedule element */
+  /** @param obj Set object of the schedule element */
   public void setObject(Object obj) {
     object = obj;
   }

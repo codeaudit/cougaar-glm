@@ -195,7 +195,6 @@ public abstract class ConsumerSpec implements Serializable {
 
     /**
      * @param resource consumed resource
-     * @param demand_spec demand spec for the consumer
      * @return schedule quantity schedule of the daily rate of consumption
      *          of the given resource.
      **/

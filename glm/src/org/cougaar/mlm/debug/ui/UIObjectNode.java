@@ -39,7 +39,7 @@ public class UIObjectNode extends UITreeNode {
   String prefix;
 
   /** Create a tree node for the Object.
-    @param Object s for which to create tree node
+    @param obj for which to create tree node
    */
   public UIObjectNode(Object obj, String prefix) {
     super(obj);

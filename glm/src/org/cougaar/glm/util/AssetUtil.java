@@ -808,7 +808,7 @@ public class AssetUtil extends UTILAsset {
    * helper function, gets the total square feet footprint of an asset
    * ( regardless of whether it's
    * an Asset, AssetGroup, AggregateAsset, or whatever)
-   * @param a the asset
+   * @param asset the asset
    * @return double the area of the asset in sqr. ft.
    */
   public double totalSquareFeet(Asset asset) {
@@ -824,7 +824,7 @@ public class AssetUtil extends UTILAsset {
    * helper function, gets the total volume of an asset
    * ( regardless of whether it's
    * an Asset, AssetGroup, AggregateAsset, or whatever)
-   * @param a the asset
+   * @param asset the asset
    * @return double the volume of the asset in cubic meters
    */
   public double totalCubicMeters(Asset asset) {
@@ -840,7 +840,7 @@ public class AssetUtil extends UTILAsset {
    * helper function, gets the total mass of an asset
    * ( regardless of whether it's
    * an Asset, AssetGroup, AggregateAsset, or whatever)
-   * @param a the asset
+   * @param asset the asset
    * @return double the mass of the asset in cubic meters
    */
   public double totalTons(Asset asset) {

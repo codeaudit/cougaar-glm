@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/callback/GLMOrganizationListener.java,v 1.2 2003-01-23 19:53:17 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/callback/GLMOrganizationListener.java,v 1.3 2004-02-06 20:13:11 ahelsing Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -34,13 +34,13 @@ import org.cougaar.lib.callback.UTILFilterCallbackListener;
 public interface GLMOrganizationListener extends UTILFilterCallbackListener {
   /**
    * Place to handle new organizations.
-   * @param Enumeration e -- new organizations found in the container
+   * @param  e -- new organizations found in the container
    */
   void handleNewOrganization     (Enumeration e);
 
   /**
    * Place to handle changed organizations.
-   * @param Enumeration e -- changed organizations found in the container
+   * @param  e -- changed organizations found in the container
    */
   void handleChangedOrganization (Enumeration e);
 }

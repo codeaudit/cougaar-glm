@@ -71,7 +71,7 @@ public class TaskUtils extends PluginHelper {
     return demandFormat;
   }
 
-  /** @param task
+  /** @param t
    *  @param type type identification string
    *  @return true if the task's OFTYPE preposition's indirect object is 
    *  an asset with nomeclature equal to 'type'.*/

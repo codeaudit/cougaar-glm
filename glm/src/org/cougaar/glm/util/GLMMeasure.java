@@ -194,8 +194,7 @@ public class GLMMeasure {
    * What we really want to know is if the port is a POE or POD; is there a 
    * better way?  Should we just create a list of all ports and find the
    * closest each time we need one?
-   * @param p Organization to be tested
-   * @return true if is an ammo port
+   * @return true if is a foreign port
    */
   public boolean isForeignLoc(GeolocLocation org_loc) {
     boolean foreign_org = true;
@@ -223,9 +222,8 @@ public class GLMMeasure {
    * given a geoloclocation and set of possible orgs, suggest
    * the best (closest) org.
    *
-   * @param t Task representing cargo to be moved
-   * @param ports Vector of possible orgs
-   * @param String cluster ident. for logger.isDebugEnabled()()ging purposes
+   * @param orgs Set of possible orgs
+   * @param clusterName cluster ident. for logger.isDebugEnabled()ging purposes
    * @return Organization object indicating best org
    */
   public Organization bestOrg(GeolocLocation loc, Set orgs, String clusterName) {

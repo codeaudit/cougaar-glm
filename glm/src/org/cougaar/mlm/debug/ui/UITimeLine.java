@@ -40,13 +40,17 @@ public class UITimeLine {
     Optionally determine timeline divisions: years, days or hours.
     @param startDate the date corresponding to the first division on the timeline
     @param stopDate the date corresponding to the last division on the timeline
-    @param intervalUnits years, days, or hours, or unspecified
     */
-
   public UITimeLine(Date startDate, Date stopDate) {
     initTimeLine(startDate, stopDate, false, 0);
   }
 
+  /** Create a timeline with the minimum and maximum times.
+    Optionally determine timeline divisions: years, days or hours.
+    @param startDate the date corresponding to the first division on the timeline
+    @param stopDate the date corresponding to the last division on the timeline
+    @param intervalUnits years, days, or hours, or unspecified
+    */
   public UITimeLine(Date startDate, Date stopDate, int intervalUnits) {
     initTimeLine(startDate, stopDate, true, intervalUnits);
   }

@@ -241,7 +241,7 @@ public class Oplan extends OwnedUniqueObject
 	
   /**     
    * Sets the enemyForceType
-   * @param forceType See constants above for valid values.
+   * @param enemyForceType See constants above for valid values.
    */		
   public void setEnemyForceType(String enemyForceType) 
   {
@@ -371,8 +371,7 @@ public class Oplan extends OwnedUniqueObject
   /**     
    * Sets the oplan UID.  This should not be called by any
    * subordinate clusters.
-   * @param UID The unique id of the Oplan.
-   * 
+   * @param uid The unique id of the Oplan.
    */ 	       	
     public void setOplanUID(UID uid) 
     {
@@ -566,7 +565,7 @@ public class Oplan extends OwnedUniqueObject
   /**     
    * Determines if the given oplan is the same as
    * the current oplan.
-   * @param other Oplan to compare it to.
+   * @param o Oplan to compare it to.
    * @return boolean true - same
    *				   false - not same
    */    

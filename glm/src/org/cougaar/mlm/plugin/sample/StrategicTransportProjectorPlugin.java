@@ -127,8 +127,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   protected boolean createAssetGroups = true;
 
 
-//   /** delay re-processing DetermineRequirement Tasks by specified millis **/
-//   protected long delayReprocessMillis;
+  //   /** delay re-processing DetermineRequirement Tasks by specified millis **/
+  //   protected long delayReprocessMillis;
 
 
   /** Defaults optionally set by parameters. **/
@@ -307,7 +307,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       Organization org = (Organization)eSelfOrgs.nextElement();
       if (this.selfOrg != null) {
         printError(
-           "Expecting only one \"SELF\" Organization! ignoring " + org);
+		   "Expecting only one \"SELF\" Organization! ignoring " + org);
         continue;
       }
       this.selfOrg = org;
@@ -358,21 +358,21 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   }
 
 
-//   protected void watchDueDetermineRequirementsTasks() {
-//     if ((unhandledDetermineRequirementsTask != null) &&
-//         (unhandledDetermineRequirementsTask.isDue())) {
-//       if (logger.isInfoEnabled()) {
-//         printInfo("watchDueDetermineRequirementsTask - resubmitting dr task");
-//       }
-//       handleDetermineRequirementsTask(unhandledDetermineRequirementsTask.task);
-//     }
-//     else if (logger.isInfoEnabled ()) {
-//         printDebug("watchDueDetermineRequirementsTask - ignoring call to watch due, since unhandled d.r. is " +
-//                 unhandledDetermineRequirementsTask + 
-//                 ((unhandledDetermineRequirementsTask == null) ? "" : " or isDue is " + 
-//                  unhandledDetermineRequirementsTask.isDue ()));
-//     }
-//   }
+  //   protected void watchDueDetermineRequirementsTasks() {
+  //     if ((unhandledDetermineRequirementsTask != null) &&
+  //         (unhandledDetermineRequirementsTask.isDue())) {
+  //       if (logger.isInfoEnabled()) {
+  //         printInfo("watchDueDetermineRequirementsTask - resubmitting dr task");
+  //       }
+  //       handleDetermineRequirementsTask(unhandledDetermineRequirementsTask.task);
+  //     }
+  //     else if (logger.isInfoEnabled ()) {
+  //         printDebug("watchDueDetermineRequirementsTask - ignoring call to watch due, since unhandled d.r. is " +
+  //                 unhandledDetermineRequirementsTask + 
+  //                 ((unhandledDetermineRequirementsTask == null) ? "" : " or isDue is " + 
+  //                  unhandledDetermineRequirementsTask.isDue ()));
+  //     }
+  //   }
   
   protected Task getDetermineRequirementsTask() {
     Iterator i = drTasksSub.iterator();
@@ -412,25 +412,25 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     replaceDeployPlan(selfOrgAct);
 
     if (didRehydrate ()) {
-        printInfo(">>> Enter Rehydrate Handling of SelfOrg");
-	if (getDetermineRequirementsTask() != null) {
-	  int count = 0;
-          if (getDetermineRequirementsTask().getPlanElement () != null) {
-	    Expansion exp = (Expansion) getDetermineRequirementsTask().getPlanElement ();
-	    for (Enumeration enum = exp.getWorkflow().getTasks(); enum.hasMoreElements();) {
-		Task subtask = (Task)enum.nextElement();
-		if (subtask.getVerb().equals(Constants.Verb.TRANSPORT)){ // defensive, should always be TRANSPORT
-		    count++;
-		}
+      printInfo(">>> Enter Rehydrate Handling of SelfOrg");
+      if (getDetermineRequirementsTask() != null) {
+	int count = 0;
+	if (getDetermineRequirementsTask().getPlanElement () != null) {
+	  Expansion exp = (Expansion) getDetermineRequirementsTask().getPlanElement ();
+	  for (Enumeration enum = exp.getWorkflow().getTasks(); enum.hasMoreElements();) {
+	    Task subtask = (Task)enum.nextElement();
+	    if (subtask.getVerb().equals(Constants.Verb.TRANSPORT)){ // defensive, should always be TRANSPORT
+	      count++;
 	    }
 	  }
+	}
 
-	  if (count < 2)  // note: causes (re)-expand if planElement is null.
-		updateDetermineRequirementsTask(); // (re)-expand the dr task
-       }
-       printInfo(">>> Exit Rehydrate Handling of SelfOrg");
+	if (count < 2)  // note: causes (re)-expand if planElement is null.
+	  updateDetermineRequirementsTask(); // (re)-expand the dr task
+      }
+      printInfo(">>> Exit Rehydrate Handling of SelfOrg");
     } else {
-	updateDetermineRequirementsTask(); // (re)-expand the dr task
+      updateDetermineRequirementsTask(); // (re)-expand the dr task
     }
 
 
@@ -601,7 +601,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
         if (subT.getDirectObject() == assetForTrans) {
           if (logger.isInfoEnabled()) {
             printInfo("  Will remove Task: " + subT +
-                       " with DO: " + assetForTrans);
+		      " with DO: " + assetForTrans);
           }
           workflowRemoveTasks.add(subT);
           publishRemoveTasks.add(subT);
@@ -747,8 +747,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       if (oldDP != null) {
         if (logger.isInfoEnabled()) {
           printInfo("Replace Deployment Plan!\n"+
-                     "OLD:\n"+oldDP+"\n"+
-                     "NEW:\n"+newDP);
+		    "OLD:\n"+oldDP+"\n"+
+		    "NEW:\n"+newDP);
         }
       }
       setDeployPlan(newDP);
@@ -786,7 +786,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
 
   protected void setDefaults(Enumeration eParams) {
-//     delayReprocessMillis = 0;
+    //     delayReprocessMillis = 0;
     defaultAdjustDurationDays = -2;
     while (eParams.hasMoreElements()) {
       String sParam = (String)eParams.nextElement();
@@ -805,7 +805,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
           createAssetGroups = (val.equalsIgnoreCase("true"));
         } else if (name.equalsIgnoreCase("delayMillis")) {
           try {
-//             delayReprocessMillis = Long.parseLong(val);
+	    //             delayReprocessMillis = Long.parseLong(val);
           } catch (Exception e) {
             printError("Invalid long for "+sParam);
           }
@@ -819,9 +819,9 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
         } else if (name.equalsIgnoreCase("OffsetDays") || name.equalsIgnoreCase("OffsetDay")) {
           offsetDays = Integer.parseInt(val);
         } else if (name.equalsIgnoreCase("OriginFile")) {
-            if (!val.equalsIgnoreCase("HOME") && !val.equalsIgnoreCase("NONE")) {
-              originFile = val;
-            }
+	  if (!val.equalsIgnoreCase("HOME") && !val.equalsIgnoreCase("NONE")) {
+	    originFile = val;
+	  }
         } else {
           printError("Unknown parameter: "+name+"="+val);
         }
@@ -859,8 +859,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * @param assetsEnum Enumeration of assets for transport
    */
   protected void expandDetermineRequirements(
-      DeployPlan dp, Task drTask, 
-      Enumeration assetsEnum) {
+					     DeployPlan dp, Task drTask, 
+					     Enumeration assetsEnum) {
     if (logger.isDebugEnabled()) {
       printDebug("Expand task: "+drTask+" with DP: "+ dp);
     }
@@ -933,7 +933,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       try {
         NewTypeIdentificationPG typeIdPG = 
           (NewTypeIdentificationPG)theLDMF.createPropertyGroup(
-             TypeIdentificationPGImpl.class);
+							       TypeIdentificationPGImpl.class);
         typeIdPG.setTypeIdentification("trans_group");
         typeIdPG.setNomenclature("strat-proj-plugin_asset_group");
         ag.setTypeIdentificationPG(typeIdPG);
@@ -994,8 +994,8 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       try {
         PlanningFactory ldmfactory = getFactory();
         Asset strans_proto = ldmfactory.createPrototype(
-           Class.forName( "org.cougaar.planning.ldm.asset.AbstractAsset" ),
-           "StrategicTransportation" );
+							Class.forName( "org.cougaar.planning.ldm.asset.AbstractAsset" ),
+							"StrategicTransportation" );
         strans = (AbstractAsset)ldmfactory.createInstance( strans_proto );
       } catch (Exception exc) {
         printError("Unable to create abstract strategictransport\n"+exc);
@@ -1007,9 +1007,9 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
     // Kludge - add "PREPO" prepositional phrase if we aren't using the Org's from loc
     if ((dp.fromPrepoLoc != null) &&  !isPersonAsset) {
-        pp = theLDMF.newPrepositionalPhrase();
-        pp.setPreposition("PREPO");
-        prepphrases.add(pp);
+      pp = theLDMF.newPrepositionalPhrase();
+      pp.setPreposition("PREPO");
+      prepphrases.add(pp);
     }
 
 
@@ -1025,9 +1025,9 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       startAV = AspectValue.newAspectValue(AspectType.START_TIME, dp.prepoStartTime.getTime());
     }
     ScoringFunction startSF = 
-     ScoringFunction.createNearOrAbove(startAV, 0);
+      ScoringFunction.createNearOrAbove(startAV, 0);
     Preference startPref = 
-     theLDMF.newPreference(AspectType.START_TIME, startSF);
+      theLDMF.newPreference(AspectType.START_TIME, startSF);
     prefs.addElement(startPref);
 
 
@@ -1051,7 +1051,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
 
     ScoringFunction endSF = 
       ScoringFunction.createStrictlyBetweenWithBestValues(
-          earlyEndAV, bestEndAV, lateEndAV);
+							  earlyEndAV, bestEndAV, lateEndAV);
     Preference endPref = theLDMF.newPreference(AspectType.END_TIME, endSF);
     prefs.addElement(endPref);
 
@@ -1154,10 +1154,10 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
         PluginHelper.createEstimatedAllocationResult(drTask, theLDMF, 1.0, true);
       PlanElement pe = 
         theLDMF.createExpansion(
-          drTask.getPlan(),
-          drTask,
-          wf,
-          estimatedResult);
+				drTask.getPlan(),
+				drTask,
+				wf,
+				estimatedResult);
       publishAdd(pe);
 
 
@@ -1292,23 +1292,23 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   }
 
 
-//   private void reprocessDetermineRequirementsTask(Task drTask) {
-//     if (delayReprocessMillis > 0) {
-//       // delay specified millis before re-adding task
-//       if (logger.isInfoEnabled()) {
-//         printInfo("  delay re-add drTask: "+drTask);
-//       }
-//       unhandledDetermineRequirementsTask = new WaitingTask(delayReprocessMillis,
-//                                                            drTask);
-//       wakeAfterRealTime(delayReprocessMillis);
-//     } else {
-//       // handle task immediately
-//       if (logger.isInfoEnabled()) {
-//         printInfo("  immediate re-add drTask: "+drTask);
-//       }
-//       handleDetermineRequirementsTask(drTask);
-//     }
-//   }
+  //   private void reprocessDetermineRequirementsTask(Task drTask) {
+  //     if (delayReprocessMillis > 0) {
+  //       // delay specified millis before re-adding task
+  //       if (logger.isInfoEnabled()) {
+  //         printInfo("  delay re-add drTask: "+drTask);
+  //       }
+  //       unhandledDetermineRequirementsTask = new WaitingTask(delayReprocessMillis,
+  //                                                            drTask);
+  //       wakeAfterRealTime(delayReprocessMillis);
+  //     } else {
+  //       // handle task immediately
+  //       if (logger.isInfoEnabled()) {
+  //         printInfo("  immediate re-add drTask: "+drTask);
+  //       }
+  //       handleDetermineRequirementsTask(drTask);
+  //     }
+  //   }
 
 
   /**
@@ -1322,13 +1322,13 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    **/
   protected static UnaryPredicate newSelfOrgPred() {
     return new UnaryPredicate() {
-      public boolean execute(Object o) {
-        if (o instanceof Organization) {
-          return ((Organization)o).isSelf();
-        }
-        return false;
-      }
-    };
+	public boolean execute(Object o) {
+	  if (o instanceof Organization) {
+	    return ((Organization)o).isSelf();
+	  }
+	  return false;
+	}
+      };
   }
 
 
@@ -1337,12 +1337,12 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    **/
   protected static UnaryPredicate newOrgDeployActsPred() {
     return new UnaryPredicate() {
-      public boolean execute(Object o) {
-        return 
-          ((o instanceof OrgActivity) &&
-            "Deployment".equals(((OrgActivity)o).getActivityType()));
-      }
-    };
+	public boolean execute(Object o) {
+	  return 
+	    ((o instanceof OrgActivity) &&
+	     "Deployment".equals(((OrgActivity)o).getActivityType()));
+	}
+      };
   }
 
 
@@ -1353,56 +1353,56 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    **/
   protected static UnaryPredicate newDRTasksPred() {
     return new UnaryPredicate() {
-      public boolean execute(Object o) {
-        if (o instanceof Task) {
-          Task t = (Task) o;
-          if (Constants.Verb.DetermineRequirements.equals(t.getVerb())) {
-            return (ExpanderHelper.isOfType(t, Constants.Preposition.OFTYPE,
-                     "StrategicTransportation"));
-          }
-        }
-        return false;
-      }
-    };
+	public boolean execute(Object o) {
+	  if (o instanceof Task) {
+	    Task t = (Task) o;
+	    if (Constants.Verb.DetermineRequirements.equals(t.getVerb())) {
+	      return (ExpanderHelper.isOfType(t, Constants.Preposition.OFTYPE,
+					      "StrategicTransportation"));
+	    }
+	  }
+	  return false;
+	}
+      };
   }
         
   protected static UnaryPredicate newTransPersonPred() {
     return new UnaryPredicate() {
-      public boolean execute(Object o) {
-        while (o instanceof AggregateAsset)
-          o = ((AggregateAsset)o).getAsset();
-        return (o instanceof Person);
-      }
-    };
+	public boolean execute(Object o) {
+	  while (o instanceof AggregateAsset)
+	    o = ((AggregateAsset)o).getAsset();
+	  return (o instanceof Person);
+	}
+      };
   }
 
-    /**
-     * See bug 2998 in bugzilla.
-     *
-     * In order to not strat trans move Level2MEIs we filter out equipment with the 
-     * cargo cat code of "000" which means phantom equipment.  The
-     * phantom equipment corresponds to Level2MEIs.   The cargo cat code is put
-     * onto the Level2MEIs retroactively after they have been made that is the
-     * reason for the DynamicUnaryPredicate.
-     */
+  /**
+   * See bug 2998 in bugzilla.
+   *
+   * In order to not strat trans move Level2MEIs we filter out equipment with the 
+   * cargo cat code of "000" which means phantom equipment.  The
+   * phantom equipment corresponds to Level2MEIs.   The cargo cat code is put
+   * onto the Level2MEIs retroactively after they have been made that is the
+   * reason for the DynamicUnaryPredicate.
+   */
   protected static DynamicUnaryPredicate newTransEquipmentPred() {
     return new DynamicUnaryPredicate() {
-      public boolean execute(Object o) {
-        while (o instanceof AggregateAsset)
-          o = ((AggregateAsset)o).getAsset();
-        if(o instanceof ClassVIIMajorEndItem) {
+	public boolean execute(Object o) {
+	  while (o instanceof AggregateAsset)
+	    o = ((AggregateAsset)o).getAsset();
+	  if(o instanceof ClassVIIMajorEndItem) {
             ClassVIIMajorEndItem asset = (ClassVIIMajorEndItem) o;
             MovabilityPG moveProp = asset.getMovabilityPG();
             if((moveProp != null) &&
                (moveProp.getCargoCategoryCode() != null) &&
                (moveProp.getCargoCategoryCode().equals("000"))) {
-                return false;
+	      return false;
             }
             return true;
-        }
-        return false;
-      }
-    };
+	  }
+	  return false;
+	}
+      };
   }
   /**
    * Pred for failed allocations of a expanded DetermineRequirements tasks we
@@ -1410,25 +1410,25 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    **/
   protected static UnaryPredicate newFailedDRAllocPred() {
     return new UnaryPredicate() {
-      protected UnaryPredicate myDRTaskPred = newDRTasksPred();
-      public boolean execute(Object o) {
-        if (o instanceof Allocation) {
-          AllocationResult ar = ((Allocation)o).getReportedResult();
-          if ((ar != null) && (!(ar.isSuccess()))) {
-            Task tFailed = ((Allocation)o).getTask();
-            Workflow wf;
-            if ((tFailed != null) &&
-                !(tFailed instanceof MPTask) &&
-                (wf = tFailed.getWorkflow()) != null // all these tasks are part of a WF
-                ) {
-              Task tParent = wf.getParentTask();
-              return myDRTaskPred.execute(tParent);
-            }
-          }
-        } 
-        return false;
-      }
-    };
+	protected UnaryPredicate myDRTaskPred = newDRTasksPred();
+	public boolean execute(Object o) {
+	  if (o instanceof Allocation) {
+	    AllocationResult ar = ((Allocation)o).getReportedResult();
+	    if ((ar != null) && (!(ar.isSuccess()))) {
+	      Task tFailed = ((Allocation)o).getTask();
+	      Workflow wf;
+	      if ((tFailed != null) &&
+		  !(tFailed instanceof MPTask) &&
+		  (wf = tFailed.getWorkflow()) != null // all these tasks are part of a WF
+		  ) {
+		Task tParent = wf.getParentTask();
+		return myDRTaskPred.execute(tParent);
+	      }
+	    }
+	  } 
+	  return false;
+	}
+      };
   }
 
 
@@ -1438,14 +1438,14 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    **/
   protected static UnaryPredicate newExpansionsPred() {
     return new UnaryPredicate() {
-      protected UnaryPredicate myTaskPred = newDRTasksPred();
-      public boolean execute(Object o) {
-        if (o instanceof Expansion) {
-          return myTaskPred.execute(((Expansion) o).getTask());
-        } 
-        return false;
-      }
-    };
+	protected UnaryPredicate myTaskPred = newDRTasksPred();
+	public boolean execute(Object o) {
+	  if (o instanceof Expansion) {
+	    return myTaskPred.execute(((Expansion) o).getTask());
+	  } 
+	  return false;
+	}
+      };
   }
 
 
@@ -1514,7 +1514,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
      * Caller should check this class with isValid() afterwards.
      * <p>
      * @param org Organization for the org's deployment
-     * @param orgDeployAct OrgActivity of type "Deploy"
+     * @param orgAct OrgActivity of type "Deploy"
      * @param adjustDurationDays Time needed to do task
      */
     public DeployPlan(Organization org, 
@@ -1525,7 +1525,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       if ((org == null) || 
           (orgAct == null)) {
         System.err.println("BAD DeployPlan parameter(s)! org = " + org + 
-                             " orgAct = " + orgAct);
+			   " orgAct = " + orgAct);
         return;
       }
 

@@ -72,22 +72,6 @@ public class UIBarGraph extends JComponent {
   private static double MIN_TICK_SPACING = 14.0;
   private boolean haveData = false;
 
-  /** Creates a vertical bar graph with the specified information.
-    Takes a two dimensional array of values, and uses a different color
-    bar to display each set of values.  The legend String array should
-    have an entry for each set of values; these strings are displayed to the
-    left of the bar graph next to a line of the appropriate color.
-    @param numberOfXIntervals number of intervals on x-axis
-    @param xLegend string to display underneath x-axis
-    @param xLabels strings to display beneath the x-axis tick marks
-    @param numberOfYIntervals number of intervals on y-axis
-    @param yLegend string to display to the left of y-axis
-    @param yLabels strings to display to the left of the y-axis tick marks
-    @param legend strings to display with bar graph colors
-    @param values values of sets of vertical bars
-    @param contiguous true to make vertical bars contiguous
-    */
-
   public UIBarGraph() {
   }
 
@@ -109,7 +93,6 @@ public class UIBarGraph extends JComponent {
     @param legend strings to display with bar graph colors
     @param values values of sets of vertical bars
     */
-
   public synchronized void setParameters(int numberOfXIntervals, 
 				  String xLegend, String xLabels[],
 				  int numberOfYIntervals, 

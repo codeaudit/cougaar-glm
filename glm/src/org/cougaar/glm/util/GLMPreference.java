@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.7 2003-12-09 17:55:14 rtomlinson Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/util/GLMPreference.java,v 1.8 2004-02-06 20:13:11 ahelsing Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
@@ -95,7 +95,7 @@ public class GLMPreference extends UTILPreference {
   /**
    * Returns the POD Date from task object, null if POD date not a pref on this task
    *
-   * @param  Task t - the Task with the pref
+   * @param  t - the Task with the pref
    * @return Date point of departure date for task, null if no POD date pref
    */
 
@@ -130,7 +130,7 @@ public class GLMPreference extends UTILPreference {
   /**
    * Returns the POD location from task object, null if POD not a pref on this task
    *
-   * @param  Task t - the Task with the pref
+   * @param  t - the Task with the pref
    * @return Date point of departure for task, null if no POD pref
    */
 

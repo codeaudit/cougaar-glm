@@ -30,7 +30,7 @@ public class UIStringNode extends UITreeNode {
   String s;
 
   /** Create a tree node for the string.
-    @param String s for which to create tree node
+    @param s String for which to create tree node
    */
   public UIStringNode(String s) {
     super(s);

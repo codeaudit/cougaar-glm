@@ -97,11 +97,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
   }
 
   /** Create Demand Task 
-   * @param parent_task
-   * @param resource 
-   * @param consumer
-   * @param end end time
-   * @param qty quantity of resource requested
+   * @param  quantity of resource requested
    * @return 'demand' task for given resource
    */
   protected abstract Task newDemandTask(Task parent_task, Asset resource, 
@@ -109,11 +105,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
 					double quantity);
 
   /** Create Projection Task 
-   * @param parent_task
-   * @param resource 
-   * @param consumer
-   * @param end end time
-   * @param Rate of consumption over time period
+   * @param rate of consumption over time period
    * @return 'demand' task for given resource
    */
   protected abstract Task newProjectionTask(Task parent_task, Asset resource, 
@@ -277,9 +269,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
 
   /** 
    * Create PROJECTSUPPLY tasks representing the demand.
-   * @param task parent task (GenerateDemand)
-   * @param Vector of ScheduledContentProperties
-   *        (critical parts w/ rate schedule) demands
+   * @param parent_task parent task (GenerateDemand)
    * @return Vector of PROJECTSUPPLY tasks */
   public Vector createDemandTasks(Task parent_task, Asset resource, 
 				  Schedule rate_schedule, double multiplier) {
@@ -294,9 +284,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
 
   /** 
    * Create SUPPLY tasks representing the demand.
-   * @param task parent task (GenerateDemand)
-   * @param Vector of ScheduledContentProperties
-   *        (critical parts w/ rate schedule) demands
+   * @param parent_task parent task (GenerateDemand)
    * @return Vector of SUPPLY tasks */
   protected Vector createPeriodicDemandTasks (Task parent_task, Asset resource, 
 					      Schedule rate_schedule) {
@@ -331,9 +319,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
 
   /** 
    * Create PROJECTSUPPLY tasks representing the demand.
-   * @param task parent task (GenerateDemand)
-   * @param Vector of ScheduledContentProperties
-   *        (critical parts w/ rate schedule) demands
+   * @param parent_task parent task (GenerateDemand)
    * @return Vector of POJECTSUPPLY tasks */
   protected Vector createConstantParameterDemandTasks(Task parent_task, 
 						      Asset resource, 

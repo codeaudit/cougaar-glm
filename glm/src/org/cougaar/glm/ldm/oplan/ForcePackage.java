@@ -84,7 +84,7 @@ public class ForcePackage
 
   /**     
    * Sets the time span for the given ForcePackage
-   * @param timeSpan The timeSpan for the ForcePackage.
+   * @param theTimeSpan The timeSpan for the ForcePackage.
    */    
   public void setTimeSpan(TimeSpan theTimeSpan) 
   {

@@ -98,7 +98,7 @@ public class GLMFactory implements Factory {
 
   /** Create a capacity schedule. This schedule has a container of
    * CapacityScheduleElements.
-   * @param Enumeration{CapacityScheduleElement}
+   * @param capacityElements Enumeration{CapacityScheduleElement}
    * @see org.cougaar.glm.ldm.plan.CapacityScheduleElement
    **/
   public static NewSchedule newCapacitySchedule(Enumeration capacityElements) {
@@ -205,7 +205,7 @@ public class GLMFactory implements Factory {
 
   /** Create a quantity range schedule.  This schedule has a container 
    * of QuantityRangeScheduleElements.
-   * @param Enumeration{QuantityRangeScheduleElement}
+   * @param qtyRangeElements Enumeration{QuantityRangeScheduleElement}
    * @param scheduleType  Pass in the type of Schedule
    * @see org.cougaar.planning.ldm.plan.ScheduleType
    * @see org.cougaar.glm.ldm.plan.QuantityRangeScheduleElement
@@ -229,7 +229,7 @@ public class GLMFactory implements Factory {
 
   /** Create a rate schedule. This schedule has a container of
    * RateScheduleElements.
-   * @param Enumeration{RateScheduleElement}
+   * @param rateElements Enumeration{RateScheduleElement}
    * @see org.cougaar.glm.ldm.plan.RateScheduleElement
    **/
   public static NewSchedule newRateSchedule(Enumeration rateElements) {

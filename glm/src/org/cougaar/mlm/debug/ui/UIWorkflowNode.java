@@ -45,7 +45,7 @@ public class UIWorkflowNode extends UITreeNode {
   }
 
   /** The Workflow is always a parent (of tasks and constraints).
-    @param return false
+    @return false
    */
   public boolean isLeaf() {
     return false;
@@ -53,7 +53,6 @@ public class UIWorkflowNode extends UITreeNode {
 
   /** Children are tasks and constraints.
    */
-
   public synchronized void loadChildren() {
     Enumeration tasks = workflow.getTasks();
     int i = 0;

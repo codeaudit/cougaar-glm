@@ -107,10 +107,7 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
   }
 
   /** Create SUPPLY Task w/  prep phrases
-   * @param parent_task
    * @param direct_object requested item (consumed part)
-   * @param consumer
-   * @param start start time
    * @param end end time
    * @param qty quantity of item requested
    * @return supply task for given asset.
@@ -191,8 +188,7 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 
   /** Create FOR, TO, MAINTAIN, and OFTYPE prepositional phrases
    *  for use by the subclasses.
-   * @param maintain the consumer the task support
-   * @param resource
+   * @param consumer the consumer the task support
    * @param time - used to find the OPlan and the geoloc for the TO preposition
    * @return Vector of PrepostionalPhrases
    * @see #createDemandTasks

@@ -60,7 +60,6 @@ import org.cougaar.util.UnaryPredicate;
     serveUserInterfaceComponent which gets a reference to the component,
     used later to obtain cluster object factories and cluster collections.
     */
-
 public class UIPlugin extends SimplePlugin
   implements UISubscriber {
 
@@ -72,16 +71,6 @@ public class UIPlugin extends SimplePlugin
   private Hashtable subscribers = new Hashtable();
   private Vector clusters = new Vector(10); // clusters we know about
   private Vector assets = new Vector(10); // assets we know about
-
-  /** Called during intialization to pass a reference to UIComponent.
-    Implements a method defined in UserInterfacePlugin.
-    Passes a reference to the UIComponent which this plugin, plugs in to.
-    This is called after the start method is called.
-    All methods that get information from the cluster wait
-    until this method has been called.
-    @param uiComponent user interface component to interact with
-    @return the state of the plugin
-    */
 
   protected void setupSubscriptions() {
     getSubscriber().setShouldBePersisted(false);
@@ -224,8 +213,6 @@ public class UIPlugin extends SimplePlugin
     Carefully opens a transaction and then calls the lowlevel routine
     rawSubscribe.
     */
-  
-
   void subscribe(UISubscriber uiSubscriber, UnaryPredicate predicate) {
     openTransaction();
     rawSubscribe(uiSubscriber, predicate);
@@ -235,7 +222,6 @@ public class UIPlugin extends SimplePlugin
   /** do the work of subscribe() above.  It is up to the caller to
    * be careful of transaction issues.
    **/
-
   void rawSubscribe(UISubscriber uiSubscriber, UnaryPredicate predicate) {
     IncrementalSubscription container = (IncrementalSubscription)subscribe(predicate);
     // record the container and the interested subscriber
@@ -250,7 +236,6 @@ public class UIPlugin extends SimplePlugin
     Synchronized to prevent execute from running before subscribe
     "records" the subscriber and their subscription.
     */
-
   public void execute()
   {
     //System.out.println("Execute called");

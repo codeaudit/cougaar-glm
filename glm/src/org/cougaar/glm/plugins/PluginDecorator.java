@@ -34,8 +34,8 @@ public abstract class PluginDecorator {
     /** 
      *  Customizes the given plugin with one or more BasicProcessor 
      *  depending on information from the organizational asset 
-     *  this cluster represents.
-     *  @param plugin to be configured
+     *  this agent represents.
+     *  @param cluster being represented
      */
     public abstract void decoratePlugin(Organization cluster);
     

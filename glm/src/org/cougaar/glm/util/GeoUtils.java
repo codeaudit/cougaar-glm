@@ -45,8 +45,8 @@ public class GeoUtils {
   /**
    * Compute great-circle distance (expressed as COUGAAR Distance measure)
    * between two points on globe (expressed as COUGAAR Position)
-   * @param Position of first point
-   * @param Position of second point
+   * @param position1 of first point
+   * @param position2 of second point
    * @return Distance of great-circle distance between points
    */
   public static Distance DistanceBetweenPositions(Position position1,
@@ -66,10 +66,10 @@ public class GeoUtils {
   /**
    * Compute great-circle distance in KM between two points on globe
    * expressed as latitude and longitude.
-   * @param double latitude of first point (degrees)
-   * @param double longitude of first point (degrees)
-   * @param double latitude of second point (degrees)
-   * @param double longitude of second point (degrees)
+   * @param latitude1 of first point (degrees)
+   * @param longitude1 of first point (degrees)
+   * @param latitude2 of second point (degrees)
+   * @param longitude2 of second point (degrees)
    * @return double great-circle distance between two points
    */
   public static double DistanceBetweenPositions(double latitude1,

@@ -186,7 +186,7 @@ public abstract class Packer extends GenericPlugin {
    * Called within GenericPlugin.execute.
    * **** Tasks are currently ignored ****
    *
-   * @param changedTasks Enumeration of removed ammo supply tasks. Ignored.
+   * @param removedTasks Enumeration of removed ammo supply tasks. Ignored.
    */
   public void processRemovedTasks(Enumeration removedTasks) {
     boolean anyRemoved = false;
@@ -251,7 +251,6 @@ public abstract class Packer extends GenericPlugin {
     * doPacking - packs specified set of supply tasks.
     * Assumes that it's called within an open/close transaction.
     *
-    * @param ac AggregationClosure creates the transport tasks
     * @param tasks ArrayList with the tasks which should be packed
     * @param sortfun BinaryPredicate to be used in sorting the tasks
     * @param prefagg PreferenceAggregator for setting the start/end times on the

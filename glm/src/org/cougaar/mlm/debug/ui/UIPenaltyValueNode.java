@@ -25,18 +25,15 @@ import org.cougaar.planning.ldm.plan.AllocationResult;
 
 /** A tree node for a penalty value.
   */
-
 public class UIPenaltyValueNode extends UITreeNode {
   //PenaltyValue penaltyValue;
-	AllocationResult allocationresult;
+  AllocationResult allocationresult;
   String prefix;
 
   /** Create a tree node for the PenaltyValue.
-  Overrides the UITreeNode loadChildren, toString and isLeaf
-  methods to dynamically display the PenaltyValue which has no children.
-  @param penaltyValue penalty value for which to create tree node
+   * Overrides the UITreeNode loadChildren, toString and isLeaf
+   * methods to dynamically display the PenaltyValue which has no children.
    */
-
   public UIPenaltyValueNode(AllocationResult allocationresult, String prefix) {
     super(allocationresult);
     this.allocationresult = allocationresult;

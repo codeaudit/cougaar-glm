@@ -33,7 +33,7 @@ public class UIClusterAssetNode extends UITreeNode {
   Organization org;
 
   /** Create a tree node for the cluster asset.
-    @param ClusterAsset clusterAsset for which to create the node
+    @param org for which to create the node
    */
   public UIClusterAssetNode(Organization org) {
     super(org);

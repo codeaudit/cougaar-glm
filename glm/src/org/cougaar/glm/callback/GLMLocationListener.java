@@ -33,21 +33,21 @@ import org.cougaar.lib.callback.UTILFilterCallbackListener;
 public interface GLMLocationListener extends UTILFilterCallbackListener {
 
   /** 
-   * Defines assets you find interesting. 
-   * @param a Asset to check for interest
+   * Defines locations you find interesting. 
+   * @param location to check for interest
    * @return boolean true if asset is interesting
    */
   boolean interestingLocation (TransportationNode location);
 
   /**
-   * Place to handle updated assets.
-   * @param newLocations new assets found in the container
+   * Place to handle updated locations
+   * @param e new assets found in the container
    */
   void handleNewLocations     (Enumeration e);
 
   /**
    * Place to handle changed assets.
-   * @param newLocations changed assets found in the container
+   * @param e changed assets found in the container
    */
   void handleChangedLocations (Enumeration e);
 }
