@@ -55,8 +55,7 @@ import org.cougaar.lib.callback.UTILFilterCallback;
 import org.cougaar.lib.callback.UTILRehydrateReactor;
 import org.cougaar.lib.param.ParamMap;
 import org.cougaar.lib.param.Param;
-import org.cougaar.lib.util.UTILExpand;
-import org.cougaar.lib.util.UTILParamTable;
+import org.cougaar.lib.util.*;
 import org.cougaar.lib.xml.parser.ParamParser;
 
 import org.cougaar.util.StateModelException;
@@ -121,7 +120,8 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   protected final void setupSubscriptions() {
     if (blackboard.didRehydrate ())
       justRehydrated ();
-	
+
+    paramParser = new ParamParser();
     getEnvData();
     setInstanceVariables ();
 
@@ -297,7 +297,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
       debug (getName () + " - creating param table, identifier was " + ident);
       for (Iterator i = envParams.iterator(); i.hasNext();) {
 	String runtimeParam = (String)i.next();
-	Param p = ParamParser.getParam(runtimeParam);
+	Param p = paramParser.getParam(runtimeParam);
 	if(p != null){
 	  String name = p.getName();
 	  debug("UTILPluginAdapter.createParamTable() - got param name " + name
@@ -305,7 +305,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 	}
       }
     }
-    return new UTILParamTable (envParams, ident);
+    return new UTILParamTable (envParams, ident, logger);
   }
 
 
@@ -546,7 +546,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
     tasksWorkflow.removeTask (taskToReplace);
     
     if (copyOfTask == null)
-      copyOfTask = UTILExpand.cloneTask (ldmf, taskToReplace);
+      copyOfTask = expandHelper.cloneTask (ldmf, taskToReplace);
 
     if (isDebugEnabled())
       debug (getName() + " replacing task " + 
@@ -593,6 +593,14 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    */
   public final void setLoggingService(LoggingService bs) {  
     logger = bs; 
+
+    assetHelper = new UTILAsset (logger);
+    prepHelper = new UTILPrepPhrase (logger);
+    prefHelper = new UTILPreference (logger);
+    aggregateHelper = new UTILAggregate (logger);
+    allocHelper = new UTILAllocate   (logger);
+    expandHelper = new UTILExpand     (logger);
+    verifyHelper = new UTILVerify     (logger);
   }
 
   /**
@@ -661,6 +669,7 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 
   // .env vars
   protected ParamMap myParams;
+  protected ParamParser paramParser;
   protected boolean showinfoOnFailure;
   protected boolean skipLowConfidence = true;
   protected double HIGH_CONFIDENCE = 0.99d;
@@ -668,8 +677,12 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
   private ClusterIdentifier originalAgentID = null;
   protected String myName;
   protected LoggingService logger;
+
+  protected UTILAsset assetHelper;
+  protected UTILAggregate aggregateHelper;
+  protected UTILPreference prefHelper;
+  protected UTILPrepPhrase prepHelper;
+  protected UTILAllocate allocHelper;
+  protected UTILExpand expandHelper;
+  protected UTILVerify verifyHelper;
 }
-
-
-
-
