@@ -204,8 +204,8 @@ public class UTILGSSAllocatorPlugin
    * Does nothing by default.
    *
    * @param alloc the allocation that should be rescinded
-   * @see UTILPluginAdapter#updateAllocationResult
-   * @see UTILAllocationListener#updateAllocationResult
+   * @see org.cougaar.lib.filter.UTILPluginAdapter#updateAllocationResult
+   * @see org.cougaar.lib.callback.UTILAllocationListener#updateAllocationResult
    * @see org.cougaar.lib.callback.UTILAllocationCallback#reactToChangedAlloc
    * @see #needToRescind
    */
@@ -249,8 +249,8 @@ public class UTILGSSAllocatorPlugin
    * Does nothing by default.
    *
    * @param alloc the allocation that was successful
-   * @see UTILPluginAdapter#updateAllocationResult
-   * @see UTILAllocationListener#updateAllocationResult
+   * @see org.cougaar.lib.filter.UTILPluginAdapter#updateAllocationResult
+   * @see org.cougaar.lib.callback.UTILAllocationListener#updateAllocationResult
    * @see org.cougaar.lib.callback.UTILAllocationCallback#reactToChangedAlloc
    * @see #needToRescind
    */

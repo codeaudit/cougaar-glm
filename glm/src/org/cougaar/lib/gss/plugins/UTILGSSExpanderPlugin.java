@@ -58,7 +58,7 @@ import org.cougaar.lib.filter.UTILExpanderPlugin;
  * <UL>
  * <LI>getSubtasks()
  * </UL>
- * @see org.cougaar.lib.plugin.plugins.UTILSimpleExpanderPlugin
+ * @see org.cougaar.lib.filter.UTILExpanderPluginAdapter
  */
 public abstract class UTILGSSExpanderPlugin
   extends UTILGSSBufferingPluginAdapter implements UTILExpanderPlugin {
@@ -172,7 +172,7 @@ public abstract class UTILGSSExpanderPlugin
    *
    * Default does nothing.
    *
-   * @see wantToChangeExpansion
+   * @see #wantToChangeExpansion
    * @param expansion to change
    */
   public void changeExpansion(Expansion exp) {}
@@ -180,7 +180,7 @@ public abstract class UTILGSSExpanderPlugin
   /**
    * publish the change
    *
-   * @see wantToChangeExpansion
+   * @see #wantToChangeExpansion
    * @param expansion to change
    */
   public void publishChangedExpansion(Expansion exp) {
@@ -193,7 +193,7 @@ public abstract class UTILGSSExpanderPlugin
    * Updates and publishes allocation result of expansion.
    *
    * @param exp Expansion that has changed.
-   * @see UTILPluginAdapter#updateAllocationResult
+   * @see org.cougaar.lib.filter.UTILPluginAdapter#updateAllocationResult
    */
   public void reportChangedExpansion(Expansion exp) { 
       if (myExtraExtraOutput)

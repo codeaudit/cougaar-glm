@@ -205,9 +205,9 @@ public abstract class UTILGSSBufferingPluginAdapter
    * This plugin is NOT a workflow listener.
    *
    * @return UTILTimeoutBufferingThread with this as the BufferingPlugin
-   * @see UTILTimeoutBufferingPlugin
-   * @see UTILTimeoutBufferingThread
-   * @see UTILListeningBufferingThread
+   * @see org.cougaar.lib.filter.UTILTimeoutBufferingPlugin
+   * @see org.cougaar.lib.filter.UTILTimeoutBufferingThread
+   * @see org.cougaar.lib.filter.UTILListeningBufferingThread
    */
   protected UTILBufferingThread createBufferingThread () {
     return new 
@@ -222,7 +222,7 @@ public abstract class UTILGSSBufferingPluginAdapter
   /**
    * Implemented for UTILGSSBufferingPlugin interface
    *
-   * @see mil.darpa.log.UTIL.filterPlugins.UTILGSSBufferingPlugin
+   * @see org.cougaar.lib.gss.plugins.UTILGSSBufferingPlugin
    */
   public boolean interestingTask(Task task){
     boolean interested = scheduler.interestingTask (task);
@@ -258,7 +258,6 @@ public abstract class UTILGSSBufferingPluginAdapter
    * specific filters and so this call would return a restricted set of
    * assets. 
    *
-   * @see UTILPlugin#getOrganizationAssets ()
    * @return Enumeration of ALL assets found in container
    */
   protected final Iterator getAssets() {
