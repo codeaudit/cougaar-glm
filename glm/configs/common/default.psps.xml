@@ -36,11 +36,6 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.lib.planserver.psp.PSP_PlanView</Classname>
     <PSPName>alpine/demo/TASKS.PSP</PSPName>
   </element>
-  <!-- New version of TASKS.PSP from HEAD -->
-  <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.lib.planserver.psp.PSP_New_PlanView</Classname>
-    <PSPName>alpine/demo/NEW_TASKS.PSP</PSPName>
-  </element>
   <!-- Other core PSP: -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.lib.planserver.psp.PSP_ClusterMetrics</Classname>
