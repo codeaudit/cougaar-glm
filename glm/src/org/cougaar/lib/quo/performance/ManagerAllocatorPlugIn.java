@@ -12,63 +12,19 @@ package org.cougaar.lib.quo.performance;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.cluster.IncrementalSubscription;
-import java.util.*;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.glm.ldm.asset.Organization;
-import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
-import org.cougaar.lib.quo.performance.assets.*;
+import org.cougaar.domain.planning.ldm.plan.Allocation;
+import org.cougaar.domain.planning.ldm.plan.AllocationResult;
+import org.cougaar.domain.planning.ldm.plan.Role;
+import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.domain.planning.ldm.asset.Asset;
 
-/**
- * A predicate that matches all "CODE" tasks
- */
-class myTaskPredicate implements UnaryPredicate{
-    public boolean execute(Object o) {
-	boolean ret = false;
-	if (o instanceof Task) {
-	    Task t = (Task)o;
-	    ret = t.getVerb().equals(Verb.getVerb("CODE"));
-	}
-	return ret;
-    }
-}
-
-/**
- * A predicate that matches all organizations that can
- * fulfill the SoftwareDevelopment role
- */
-class myProgrammersPredicate implements UnaryPredicate{
-    public boolean execute(Object o) {
-	boolean ret = false;
-	if (o instanceof Organization) {
-	    Organization org = (Organization)o;
-	    OrganizationPG orgPG = org.getOrganizationPG();
-	    ret = orgPG.inRoles(Role.getRole("SoftwareDevelopment"));
-	}
-	return ret;
-    }
-}
-
-/**
- * A predicate that matches allocations of "CODE" tasks
- */
-class myAllocationPredicate implements UnaryPredicate{
-  public boolean execute(Object o) {
-    boolean ret = false;
-    if (o instanceof Allocation) {
-      Task t = ((Allocation)o).getTask();
-      ret = (t != null) && (t.getVerb().equals(Verb.getVerb("CODE")));
-    }
-    return ret;
-  }
-}
+import java.util.Enumeration;
 
 /**
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.1 2001-08-16 11:01:51 psharma Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2001-08-16 14:33:06 psharma Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
   
