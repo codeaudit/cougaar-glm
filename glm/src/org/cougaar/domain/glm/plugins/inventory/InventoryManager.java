@@ -49,15 +49,17 @@ public abstract class InventoryManager extends InventoryProcessor {
     public static final int               DONE = -1; 
 
     /**
-     *   daysOnHand_    keep enough inventory on hand to cove N days of demand
+     *   daysOnHand_    keep enough inventory on hand to cover N days of demand
      *   daysForward_   When calculating average daily demand, look N days forward
      *                  from this day.
      *   daysBackward_  When calculating average daily demand, look N days backward
      *                  from this day.
+     *   goalLevelMultiplier_     Multiplier for safety level which yields goal level
      */
     protected int daysOnHand_ = 3;
     protected int daysForward_ = 15;
     protected int daysBackward_ = 15;
+    protected double goalLevelMultiplier_ = 2.0;
 
     static class PolicyPredicate implements UnaryPredicate {
 	String type_;
@@ -782,11 +784,16 @@ public abstract class InventoryManager extends InventoryProcessor {
 		daysBackward_ = backward;
 		changed = true;
 	    }
+	    double multiplier = pol.getGoalLevelMultiplier();
+	    if ((multiplier > 1.0) && (multiplier != goalLevelMultiplier_)) {
+		goalLevelMultiplier_ = multiplier;
+		changed = true;
+	    }
 	}
 	if (changed) {
 	    printDebug("updateDaysOnHandPolicy(), Days On Hand Policy CHANGED for "+supplyType_+". DaysOnHand: "+daysOnHand_+
 		       ", Days Forward: "+daysForward_+", Days Backward: "+daysBackward_+", Window size: "+
-		       (daysForward_+daysBackward_));
+		       (daysForward_+daysBackward_)+", goal level multiplier: "+goalLevelMultiplier_);
 	}		
 	return changed;
     }

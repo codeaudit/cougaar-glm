@@ -218,8 +218,22 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	return day;
     }
 
-    protected abstract double getGoalLevel(Inventory inventory, int day);
-
+    // If we have to refill the inventory on a given day -- how
+    //  high do we fill it?
+    protected double getGoalLevel(Inventory inventory, int day) {
+	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	if(invpg.getFillToCapacity()) {
+	    return convertScalarToDouble(invpg.getCapacity());
+	} else {
+	    double goal_level= goalLevelMultiplier_*getReorderLevel(inventory,day);
+	    double capacity = convertScalarToDouble(invpg.getCapacity());
+ 	    printDebug("InventoryManager, getGoalLevel(), goal level: "+goal_level+", capacity: "+capacity);
+	    if (goal_level > capacity) {
+		goal_level = capacity;
+	    }
+	    return goal_level;
+	}
+    }
 
     // Refill has already failed for this day, try again?  Give up?
     protected abstract int getPolicyForNextReorderDay(Task refill, int day, Inventory inv);

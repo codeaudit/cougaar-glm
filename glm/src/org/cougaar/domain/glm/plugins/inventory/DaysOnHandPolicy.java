@@ -20,6 +20,7 @@
 package org.cougaar.domain.glm.plugins.inventory;
 
 import org.cougaar.domain.planning.ldm.policy.IntegerRuleParameter;
+import org.cougaar.domain.planning.ldm.policy.DoubleRuleParameter;
 import org.cougaar.domain.planning.ldm.policy.Policy;
 import org.cougaar.domain.planning.ldm.policy.RuleParameter;
 import org.cougaar.domain.planning.ldm.policy.RuleParameterIllegalValueException;
@@ -29,7 +30,7 @@ import org.cougaar.domain.planning.ldm.policy.StringRuleParameter;
  * The PolicyPlugIn
  *
  * @author   ALPINE <alpine-software@bbn.com>
- * @version  $Id: DaysOnHandPolicy.java,v 1.2 2001-01-25 22:00:12 afedyk Exp $
+ * @version  $Id: DaysOnHandPolicy.java,v 1.3 2001-02-05 17:18:15 afedyk Exp $
  */
 
 public class DaysOnHandPolicy extends Policy {
@@ -37,6 +38,7 @@ public class DaysOnHandPolicy extends Policy {
     public static final String DaysOnHand = "DaysOnHand";
     public static final String DaysForward = "DaysForward";
     public static final String DaysBackward = "DaysBackward";
+    public static final String GoalLevelMultiplier = "GoalLevelMultiplier";
 
     public DaysOnHandPolicy() {
 	super("DaysOnHandPolicy");
@@ -71,6 +73,15 @@ public class DaysOnHandPolicy extends Policy {
 	    System.out.println(ex);
 	}
 	Add(brp);
+
+	DoubleRuleParameter drp = new DoubleRuleParameter(GoalLevelMultiplier, 1.0, 30.0);
+	try {
+	    drp.setValue(new Double(2.0));
+	} catch (RuleParameterIllegalValueException ex) {
+	    System.out.println(ex);
+	}
+	System.out.println("Added "+GoalLevelMultiplier+": "+drp);
+	Add(drp);
     }
 
     public String getResourceType() {
@@ -145,5 +156,23 @@ public class DaysOnHandPolicy extends Policy {
 	int backward = ((Integer)(param.getValue())).intValue();
 	return forward + backward;
     }
+
+    public double getGoalLevelMultiplier() {
+	DoubleRuleParameter param = (DoubleRuleParameter)
+	    Lookup(GoalLevelMultiplier);
+	return ((Double)(param.getValue())).doubleValue();
+    }
+
+    public void setGoalLevelMultiplier(double multiplier) {
+	DoubleRuleParameter param = (DoubleRuleParameter)
+	    Lookup(GoalLevelMultiplier);
+	try {
+	    param.setValue(new Double(multiplier));
+	} catch(RuleParameterIllegalValueException ex) {
+	    System.out.println(ex);
+	}
+    }
 }
 	
+
+
