@@ -1,0 +1,30 @@
+<?xml version="1.0"  encoding="US-ASCII"?>
+<!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
+<Policies>
+<Policy name="AirForceFeedingPolicy" type="mil.darpa.log.alpine.blackjack.policy.FeedingPolicy">
+    <RuleParam name="Breakfast">
+      <RangeSet value="">
+	<RangeValue min="0"  max="2"    value="MRE" />
+	<RangeValue min="3"  max="9"    value="UGR-HS" />
+	<RangeValue min="10" max="29"   value="UGR-HS" />
+	<RangeValue min="30" max="180"  value="UGR-A" />
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="Lunch">
+      <RangeSet value="">
+	<RangeValue min="0"  max="2"    value="MRE" />
+	<RangeValue min="3"  max="9"    value="MRE" />
+	<RangeValue min="10" max="29"   value="UGR-HS" />
+	<RangeValue min="30" max="180"  value="UGR-A" />
+      </RangeSet>
+    </RuleParam>
+    <RuleParam name="Dinner">
+      <RangeSet value="">
+	<RangeValue min="0"  max="2"    value="MRE" />
+	<RangeValue min="3"  max="9"    value="UGR-HS" />
+	<RangeValue min="10" max="29"   value="UGR-HS" />
+	<RangeValue min="30" max="180"  value="UGR-A" />
+      </RangeSet>
+    </RuleParam>
+ </Policy>
+</Policies>
