@@ -96,7 +96,20 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   private UIDService uidService;
   private PlanningFactory theFactory;
 
-  private static class MyStages extends TreeSet {
+  private static class MyStages {
+    private TreeSet myStages;
+
+    public MyStages() {
+      myStages = new TreeSet();
+    }
+
+    public TreeSet getStages() {
+      return myStages;
+    }
+
+    public void setStages(TreeSet stages) {
+      myStages = stages;
+    }
   }
 
   private MyStages currentStages;
@@ -493,9 +506,9 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
     if (logger.isInfoEnabled())
       logger.info(getAgentIdentifier() + ".requestOplans: GLS task lists OplanStages size: " 
                                        + newStages.size() 
-                                       + ". My currentStages has : " + currentStages.size());
+                                       + ". My currentStages has : " + currentStages.getStages().size());
     boolean currentStagesChanged = false;
-    if (!newStages.containsAll(currentStages)) {
+    if (!newStages.containsAll(currentStages.getStages())) {
       // Some stages have been removed, we start all over
       // this shouldn't ever happen
       for (Iterator j = currentActivities.iterator(); j.hasNext(); ) {
@@ -503,7 +516,7 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
 	removedActivities.add(oa);
 	j.remove();
       }
-      currentStages.clear();
+      currentStages.getStages().clear();
       currentStagesChanged = true;
     }
     
@@ -511,7 +524,7 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       logger.info(getAgentIdentifier() + ".requestOplans: OrgActivities to remove: " + removedActivities.size());
     
     SortedSet addedStages = new TreeSet(newStages);
-    addedStages.removeAll(currentStages); // Leaves only the added stages
+    addedStages.removeAll(currentStages.getStages()); // Leaves only the added stages
     for (Iterator j = addedStages.iterator(); j.hasNext(); ) {
       OplanStage stage = (OplanStage) j.next();
       dbp.put(OPLAN_STAGE_PARAMETER, String.valueOf(stage.getNumber()));
@@ -521,12 +534,13 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
         } catch (Exception e) {
           logger.error("Error running org activity query", e);
         }
-        currentStagesChanged |= currentStages.add(stage);
+        currentStagesChanged = 
+	  ((currentStages.getStages().add(stage)) || currentStagesChanged); 
     }
     
     if (currentStagesChanged) {
       blackboard.publishChange(currentStages);
-      if (currentStages.isEmpty()) {
+      if (currentStages.getStages().isEmpty()) {
 	myOplan.setMaxActiveStage(-1); // No stages are active
       } else {
 	OplanStage maxActiveStage = (OplanStage) newStages.last();
