@@ -851,9 +851,23 @@ public class UIInventoryImpl {
     if (asset instanceof Inventory) {
       Inventory inv = (Inventory) asset;
       InventoryPG invpg = inv.getInventoryPG();
-      long invStart = invpg.getStartTime();
-      int imputedDay = (int) ((time - invStart) / TimeUtils.MSEC_PER_DAY);
-      return invpg.getProjectionWeight().getProjectionWeight(task, imputedDay) < 0.5;
+      /* Keeping the units straight is tricky. There are two time
+         origins: time zero is the origin of the Java time standard
+         (January 1970). Inventory start is an arbitrary day boundary
+         time before interesting things happen to the inventory.
+         day0 is the day (since time 0) of the start time of the inventory.
+         today is measured since the start time of the inventory.
+         (day0 + today) is today since time 0
+         day is the day (since time 0) of the task.
+         imputedDay should be the days between today and the day of the task.
+         imputedDay = day - (day0 + today)
+      */
+      int today = invpg.getToday(); // Days since starttime
+      int day0 = (int) (invpg.getStartTime() / TimeUtils.MSEC_PER_DAY);
+      int day = (int) (time / TimeUtils.MSEC_PER_DAY);
+      int imputedDay = day - (day0 + today);
+      double weight = invpg.getProjectionWeight().getProjectionWeight(task, imputedDay);
+      return weight < 0.5;
     }
     return false;
   }
