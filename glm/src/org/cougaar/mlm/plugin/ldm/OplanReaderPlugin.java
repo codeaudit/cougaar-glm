@@ -59,6 +59,7 @@ import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Relationship;
+import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.CSVUtility;
@@ -379,17 +380,28 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
   }
 
   private String getMySuperior() {
-    String mySuperior = null;
-    Collection myAdSuperiors = selfOrgAsset.getRelationshipSchedule()
-      .getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
-    //  .getMatchingRelationships(Constants.Role.SUPERIOR);
-    for (Iterator it = myAdSuperiors.iterator(); it.hasNext(); ) {
-      Relationship rel = (Relationship)it.next();
-      mySuperior = ((Asset)rel.getB()).getItemIdentificationPG().getNomenclature();
-      if (logger.isInfoEnabled())
-        logger.info(getAgentIdentifier() + "'s superior is: " +mySuperior);
+    String superior = null;
+    RelationshipSchedule relationshipSchedule = 
+      selfOrgAsset.getRelationshipSchedule();
+    Collection adSuperiors = 
+      relationshipSchedule.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
+
+    if (adSuperiors.size() > 1) {
+      logger.warn(getAgentIdentifier() + 
+		  " has multiple administrative superiors " + adSuperiors +
+		  ". Using the first one.");
     }
-    return mySuperior;
+
+    for (Iterator it = adSuperiors.iterator(); it.hasNext(); ) {
+      Relationship rel = (Relationship)it.next();
+      superior = ((Asset)relationshipSchedule.getOther(rel)).getItemIdentificationPG().getItemIdentification();
+      if (logger.isInfoEnabled()) {
+        logger.info(getAgentIdentifier() + 
+		    "'s admininistrative superior is: " + superior);
+      }
+      break;
+    }
+    return superior;
   }
 
   public synchronized void execute() {    
