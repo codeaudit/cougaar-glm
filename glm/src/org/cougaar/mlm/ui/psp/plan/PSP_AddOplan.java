@@ -245,7 +245,7 @@ public class PSP_AddOplan
       out.flush();
       return;
     } finally {
-      pi.closeTransaction(false);
+      pi.closeTransactionDontReset();
     }
 
     // success

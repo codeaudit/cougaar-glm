@@ -741,7 +741,7 @@ public class CompletionAssessor extends SimplePlugin
     changeAll();
     openTransaction();
     publishChange(myPrivateState);
-    closeTransaction(false);
+    closeTransactionDontReset();
   }
 
   /**

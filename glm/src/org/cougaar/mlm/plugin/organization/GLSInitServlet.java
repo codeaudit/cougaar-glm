@@ -507,7 +507,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 	// Need to make separate add/remove/modify lists
 	getBlackboardService().openTransaction();
 	publishOplanObjects();
-	getBlackboardService().closeTransaction(false);
+	getBlackboardService().closeTransactionDontReset();
 	publishOplanPostProcessing();
   }
 
@@ -599,7 +599,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     Oplan oplan = findOplanById(oplanID);
     System.out.println("publishRootGLS() oplan " + oplan);
     doPublishRootGLS(oplan);
-    closeTransaction(false);
+    closeTransactionDontReset();
   }
 
 
@@ -614,7 +614,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 	publishRemove(t);
       }
     }
-    closeTransaction(false);
+    closeTransactionDontReset();
   }
 
   private void doPublishRootGLS(Oplan oplan) {    

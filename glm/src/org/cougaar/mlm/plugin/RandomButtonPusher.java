@@ -113,7 +113,7 @@ public class RandomButtonPusher implements java.io.Serializable {
   private void publishChange() {
     plugInDelegate.openTransaction();
     plugInDelegate.publishChange(this);
-    plugInDelegate.closeTransaction(false);
+    plugInDelegate.closeTransactionDontReset();
   }
 
   private void setEnabled(boolean newEnabled) {

@@ -216,7 +216,7 @@ public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
 	public void publishRootGLS(Organization me, Oplan oplan) {
 		openTransaction();
 		doPublishRootGLS(me, oplan);
-		closeTransaction(false);
+		closeTransactionDontReset();
 	}
 
 private void doPublishRootGLS(Organization me, Oplan oplan) {    

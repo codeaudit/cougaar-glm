@@ -1,3 +1,38 @@
+2002-05-28  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/ui/psp/plan/PSP_AddOplan.java: 
+	* org/cougaar/mlm/plugin/sample/CompletionAssessor.java: 
+	* org/cougaar/mlm/plugin/sample/AddAssetsGUIPlugin.java: 
+	* org/cougaar/mlm/plugin/perturbation/Perturbation.java: 
+	* org/cougaar/mlm/plugin/organization/GLSRescindPlugin.java: 
+	* org/cougaar/mlm/plugin/organization/GLSInitServlet.java: 
+	* org/cougaar/mlm/plugin/organization/GLSGUIInitPlugin.java: 
+	* org/cougaar/mlm/plugin/ldm/SQLOplanPlugin.java: 
+	* org/cougaar/mlm/plugin/ldm/OPlanPlugin.java: 
+	* org/cougaar/mlm/plugin/assessor/InjectAssessReadinessGUIPlugin.java: 
+	* org/cougaar/mlm/plugin/RandomButtonPusher.java: 
+	* org/cougaar/glm/servlet/GLMStimulatorWorker.java: 
+	* org/cougaar/glm/plugins/tools/GLMTestingStimulatorPlugin.java:
+	* org/cougaar/glm/plugins/tools/GLMStimulatorPlugin.java: 
+	* org/cougaar/mlm/debug/ui/UIPlugin.java:
+	Use closeTransactionDontReset instead of closeTransaction(false);
+
+2002-05-16  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/generic/GenericTablePlugin.java:
+	Fix bug where estimated allocation results were never being
+	update. Reason was that the task predicate was testing for the
+	existence of a plan element -- a basic no-no since subscriptions
+	should generally only test immutable aspects of objects. This case
+	was particularly egregious because the plan element predicate used
+	the task predicate to determine if it belonged. Naturally, by the
+	time the planelement existed, the task predicate always returned
+	false.
+
+	* org/cougaar/mlm/plugin/generic/GenericBufferedTablePlugin.java:
+	Change deprecated use of closeTransaction(boolean) to
+	closeTransactionDontReset()
+
 2002-04-02  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/glm/servlet/GLMStimulatorWorker.java: 

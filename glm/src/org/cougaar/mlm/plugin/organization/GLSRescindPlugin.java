@@ -114,7 +114,7 @@ private static UnaryPredicate rescindGLSRootPredicate = new UnaryPredicate() {
       publishRemove(t);
       System.out.println("\n" + formatDate(System.currentTimeMillis()) + " Rescinded Task: " + t);
     }
-    closeTransaction(false);
+    closeTransactionDontReset();
   }
 
   protected boolean isPrivateStateOk() {

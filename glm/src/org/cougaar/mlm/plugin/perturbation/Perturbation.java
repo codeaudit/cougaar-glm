@@ -618,7 +618,7 @@ public class Perturbation implements Runnable
              "item_id " + getItemId() + " of Cluster with UIC " + getUIC() );
       objectSubscriber_.openTransaction();
       status = objectSubscriber_.publishRemove( asset );
-      objectSubscriber_.closeTransaction(false);
+      objectSubscriber_.closeTransactionDontReset();
 		 
       return status;      
    }

@@ -261,7 +261,7 @@ public class OPlanPlugin extends SimplePlugin
     }
 
     publishChange(myPrivateState);
-    closeTransaction(false);
+    closeTransactionDontReset();
     checkButtonEnable();
   }
 

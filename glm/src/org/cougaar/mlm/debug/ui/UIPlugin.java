@@ -235,7 +235,7 @@ public class UIPlugin extends SimplePlugin
   void subscribe(UISubscriber uiSubscriber, UnaryPredicate predicate) {
     openTransaction();
     rawSubscribe(uiSubscriber, predicate);
-    closeTransaction(false);
+    closeTransactionDontReset();
   }
   
   /** do the work of subscribe() above.  It is up to the caller to

@@ -245,7 +245,7 @@ public class GLMTestingStimulatorPlugin extends GLMStimulatorPlugin
 	exc.printStackTrace();
       }
       finally{
-	blackboard.closeTransaction(false);
+	blackboard.closeTransactionDontReset();
       }
     } 
   }

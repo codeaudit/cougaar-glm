@@ -229,7 +229,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     task.setPreferences(prefs.elements());
     task.setContext(new ContextOfUIDs(getOplanUID()));
     blackboard.publishAdd(task);
-    blackboard.closeTransaction(false);
+    blackboard.closeTransactionDontReset();
     updateLabel();
   }
 
@@ -247,7 +247,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
       Task task = (Task) taskIt.next();
       blackboard.publishRemove(task);
     }
-    blackboard.closeTransaction(false);
+    blackboard.closeTransactionDontReset();
     updateLabel();
   }
 

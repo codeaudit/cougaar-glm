@@ -310,7 +310,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
 	exc.printStackTrace();
       }
       finally{
-	blackboard.closeTransaction(false);
+	blackboard.closeTransactionDontReset();
       }
     } 
   }
@@ -455,7 +455,7 @@ public class GLMStimulatorPlugin extends UTILPluginAdapter
 	logger.error ("exception ", exc);
       }
       finally{
-	blackboard.closeTransaction(false);
+	blackboard.closeTransactionDontReset();
       }
     }
   }

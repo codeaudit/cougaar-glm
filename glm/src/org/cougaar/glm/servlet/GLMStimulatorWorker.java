@@ -230,7 +230,7 @@ public class GLMStimulatorWorker
         System.err.println(exc.getMessage());
         exc.printStackTrace();
       } finally{
-        support.getBlackboardService().closeTransaction(false);
+        support.getBlackboardService().closeTransactionDontReset();
       }
     }
   }
@@ -352,7 +352,7 @@ public class GLMStimulatorWorker
     }
     finally{
       if (withinTransaction)
-        support.getBlackboardService().closeTransaction(false);
+        support.getBlackboardService().closeTransactionDontReset();
     }
   }
 
@@ -420,7 +420,7 @@ public class GLMStimulatorWorker
       support.getLog().error ("Could not publish tasks.", exc);
     }
     finally{
-      support.getBlackboardService().closeTransaction(false);
+      support.getBlackboardService().closeTransactionDontReset();
     }
   }
 

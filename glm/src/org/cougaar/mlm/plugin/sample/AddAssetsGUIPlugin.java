@@ -249,7 +249,7 @@ public final class AddAssetsGUIPlugin extends SimplePlugin {
         System.err.println("Could not add asset: "+exc);
         setStatus("Unable to add Asset Type");
       }
-      closeTransaction(false);
+      closeTransactionDontReset();
     }
   }
 
@@ -291,7 +291,7 @@ public final class AddAssetsGUIPlugin extends SimplePlugin {
       System.err.println("Could not remove asset of name: "+prototypeName);
       setStatus("Unable to remove \""+prototypeName+"\n Asset");
     }
-    closeTransaction(false);
+    closeTransactionDontReset();
   }
 
   /** An ActionListener that listens to the buttons. */

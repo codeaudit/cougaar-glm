@@ -514,7 +514,7 @@ public class SQLOplanPlugin extends LDMSQLPlugin implements SQLOplanBase{
 	// Need to make separate add/remove/modify lists
 	getBlackboardService().openTransaction();
 	publishOplanObjects();
-	getBlackboardService().closeTransaction(false);
+	getBlackboardService().closeTransactionDontReset();
 	publishOplanPostProcessing();
   }
 
