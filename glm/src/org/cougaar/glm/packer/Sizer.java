@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
 
 import org.cougaar.planning.ldm.measure.Mass;
@@ -63,6 +64,8 @@ class Sizer {
   static public final int MAX_UNIT = 1;
   
   
+  private static Logger logger = Logging.getLogger(Sizer.class);
+
   /**
     * How much of the quantity remains in the current task
     */
@@ -96,7 +99,7 @@ class Sizer {
 
     if ((quantityType < MIN_UNIT) ||
 	(quantityType > MAX_UNIT)) {
-      _gp.getLoggingService().error("Sizer: invalid quantity unit specified - " +
+      logger.error("Sizer: invalid quantity unit specified - " +
 				  quantityType + 
 				  " - assuming TONS.");
       _quantityType = TONS;
@@ -122,9 +125,9 @@ class Sizer {
 	_remainder = taskMass.getShortTons();
 
 	if (_expansionQueue != null) {
-	  _gp.getLoggingService().error ("Sizer.provide : ERROR - Expansion queue is not null - we will drop tasks :");
+	  logger.error ("Sizer.provide : ERROR - Expansion queue is not null - we will drop tasks :");
 	  for (Iterator iter = _expansionQueue.iterator(); iter.hasNext(); )
-	    _gp.getLoggingService().error ("\t" + ((Task)iter.next()).getUID());
+	    logger.error ("\t" + ((Task)iter.next()).getUID());
 	}
         _expansionQueue = new ArrayList();
       } else {
@@ -148,7 +151,7 @@ class Sizer {
       _expansionQueue.add(0, ret);
       _remainder = _remainder - requestedAmt;
       if (_remainder == 0.0)
-	_gp.getLoggingService().error ("Sizer.provide : ERROR - We will drop task " + ret.getUID());
+	logger.error ("Sizer.provide : ERROR - We will drop task " + ret.getUID());
     }
     return ret;
   }
@@ -254,11 +257,13 @@ class Sizer {
 	double taskWeight = task.getPreferredValue(AspectType.QUANTITY) *
 	  massPerEach.getShortTons();
 	return new Mass(taskWeight, Mass.SHORT_TONS);
-      } else {
-	Logging.defaultLogger().warn("Sizer.getTaskMass: asset - " + 
+      } else  {
+	if (logger.isDebugEnabled()) {
+	  logger.debug("Sizer.getTaskMass: asset - " + 
 				     assetToBePacked + 
 				     " - does not have a PhysicalPG. " +
 				     "Assuming QUANTITY preference is in stort tons.");
+	}
 	return new Mass(task.getPreferredValue(AspectType.QUANTITY), 
 			Mass.SHORT_TONS);
       }
@@ -268,7 +273,7 @@ class Sizer {
 		      Mass.SHORT_TONS);
 
     default:
-      Logging.defaultLogger().error("Sizer: invalid quantity unit specified - " +
+      logger.error("Sizer: invalid quantity unit specified - " +
 				    quantityUnit + 
 				    " - assuming TONS.");
       return new Mass(task.getPreferredValue(AspectType.QUANTITY), 

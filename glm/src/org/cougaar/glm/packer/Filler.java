@@ -148,8 +148,8 @@ class Filler {
   }
 
   public double handleUnplanned (Task unplanned) {
-    if (_gp.getLoggingService().isWarnEnabled()) 
-      _gp.getLoggingService().warn("Filler.handleUnplanned - replanning " + unplanned.getUID());
+    if (_gp.getLoggingService().isDebugEnabled()) 
+      _gp.getLoggingService().debug("Filler.handleUnplanned - replanning " + unplanned.getUID());
     List agglist = new ArrayList ();
     agglist.add (unplanned);
     double loadedQuantity = createMPTask(agglist);
@@ -224,7 +224,7 @@ class Filler {
       // Add field with recipient
       if (receiver == null) {
         receiverID = UNKNOWN;
-	_gp.getLoggingService().error ("Filler.addContentsInfo - Task " + task.getUID() + " had no FOR prep.");
+	_gp.getLoggingService().error("Filler.addContentsInfo - Task " + task.getUID() + " had no FOR prep.");
       }
       else if (receiver instanceof String) {
 	receiverID = (String) receiver;
