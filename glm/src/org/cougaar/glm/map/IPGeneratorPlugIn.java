@@ -33,7 +33,6 @@ import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.core.node.Communications;
 //import org.cougaar.core.node.NameServer;
 //import org.cougaar.core.mts.MessageTransportServer;
-import org.cougaar.lib.planserver.server.NameService;
 
 
 import java.util.Enumeration;
