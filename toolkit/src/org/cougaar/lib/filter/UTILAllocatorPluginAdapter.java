@@ -281,24 +281,6 @@ public abstract class UTILAllocatorPluginAdapter
 
   /**
    * <pre>
-   * Here is where subclasses can deal with tasks that were marked
-   * in a previous cycle as tasks to handle later.
-   *
-   * Initially only used with rescinding allocations.
-   *
-   * Default is to do nothing.
-   * </pre>
-   */
-  protected void dealWithDelayedTasks (Vector nextCycleTasks) {
-    for (int i = 0; i < nextCycleTasks.size (); i++) {
-      Task taskToChange = (Task) nextCycleTasks.elementAt(i);
-
-      replaceTaskInWorkflow (taskToChange);
-    }
-  }
-
-  /**
-   * <pre>
    * Implemented for UTILAllocationListener
    *
    * Defines re-allocation of a rescinded task.  

@@ -495,51 +495,6 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin {
       return (PersistentState) stuff.iterator().next();
   }
   
-  /**
-   * Replaces a task in a workflow with a copy of itself.
-   *
-   * This fixes a problem with rescinded allocations, where 
-   * rescinded allocations would appear twice in a container...
-   *
-   * Chris Allen of TASC told me to do this.
-   *
-   * @param taskToReplace -- task to replace in workflow
-   */
-  protected void replaceTaskInWorkflow (Task taskToReplace) {
-    replaceTaskInWorkflow (taskToReplace, null);
-  }
-
-  /**
-   * Replaces a task in a workflow with a copy of itself.
-   *
-   * This fixes a problem with rescinded allocations, where 
-   * rescinded allocations would appear twice in a container...
-   *
-   * Chris Allen of TASC told me to do this.
-   *
-   * @param taskToReplace -- task to replace in workflow
-   * @param copyOfTask    -- optional task to replace it with
-   */
-  protected void replaceTaskInWorkflow (Task taskToReplace, Task copyOfTask) {
-    NewWorkflow tasksWorkflow = (NewWorkflow) taskToReplace.getWorkflow ();
-    tasksWorkflow.removeTask (taskToReplace);
-    
-    if (copyOfTask == null)
-      copyOfTask = expandHelper.cloneTask (ldmf, taskToReplace);
-
-    if (isDebugEnabled())
-      debug (getName() + " replacing task " + 
-	     taskToReplace.getUID() + " in workflow with " + 
-	     copyOfTask.getUID());
-
-    ((NewTask) copyOfTask).setWorkflow (tasksWorkflow);
-    tasksWorkflow.addTask (copyOfTask);
-
-    publishChange (tasksWorkflow);
-    publishAdd    (copyOfTask);
-    publishRemove (taskToReplace);
-  }
-
   protected final void publishAdd(Object o) {
     getBlackboardService().publishAdd(o);
   }
