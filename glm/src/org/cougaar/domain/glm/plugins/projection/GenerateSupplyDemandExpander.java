@@ -212,8 +212,17 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 	GeolocLocation geoloc = getGeolocLocation(parent_task, time);
 	if (geoloc != null) {
 	    pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO, geoloc));
-//  	    printDebug("demandTaskPrepPhrases(), GeolocLocation is "+geoloc+" for "+TaskUtils.shortTaskDesc(parent_task));
+//    	    printDebug("demandTaskPrepPhrases(), GeolocLocation is "+geoloc+" for "+TaskUtils.shortTaskDesc(parent_task));
 	}
+	else { // Try to use HomeLocation
+	    try {
+//    		printDebug("demandTaskPrepPhrases(), Using HomeLocation for transport");
+		geoloc = (GeolocLocation)myOrganization_.getMilitaryOrgPG().getHomeLocation();
+		pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO, geoloc));
+	    } catch (NullPointerException npe) {
+		printError("demandTaskPrepPhrases(), Unable to find Location for Transport");
+	    }
+	}  
 
 	if (consumer != null) {
 	    pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, consumer));
