@@ -41,7 +41,7 @@
     </RuleParam>
   </Policy>
 
- <Policy name="ClassVIIIMedicalOnHandPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
+ <Policy name="ClassVIIIMedicalInventoryPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
     <RuleParam name="ResourceType">
       	<String value ="ClassVIIIMedical">
 	</String>
@@ -76,7 +76,7 @@
     </RuleParam>
   </Policy>
 
- <Policy name="AmmunitionOnHandPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
+ <Policy name="AmmunitionInventoryPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
     <RuleParam name="ResourceType">
       	<String value ="Ammunition">
 	</String>

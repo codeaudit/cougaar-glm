@@ -4,7 +4,7 @@
 
 <Policies>
 
- <Policy name="BulkPOLOnHandPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
+ <Policy name="BulkPOLInventoryPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
     <RuleParam name="ResourceType">
       	<String value ="BulkPOL">
 	</String>
@@ -39,7 +39,7 @@
     </RuleParam>
   </Policy>
 
- <Policy name="PackagedPOLOnHandPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
+ <Policy name="PackagedPOLInventoryPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
     <RuleParam name="ResourceType">
       	<String value ="PackagedPOL">
 	</String>
