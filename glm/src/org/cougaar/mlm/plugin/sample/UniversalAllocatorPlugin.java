@@ -22,6 +22,8 @@
 package org.cougaar.mlm.plugin.sample;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.AllocationResultHelper;
@@ -33,7 +35,6 @@ import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.glm.plugins.TaskUtils;
 import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.core.naming.Glob;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 
@@ -42,7 +43,7 @@ import org.cougaar.core.logging.LoggingServiceWithPrefix;
 public class UniversalAllocatorPlugin extends SimplePlugin {
     private static class Filter {
         public Verb verb;
-        public Glob glob;
+        public Pattern regex;
         public Schedule schedule; // The schedule of failing periods (if any)
         public String toString() {
             if (schedule == null) return verb.toString();
@@ -127,10 +128,10 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
             int slashPos = verbPattern.indexOf('/');
             if (slashPos >= 0) {
                 filter.verb = Verb.getVerb(verbPattern.substring(0, slashPos));
-                filter.glob = Glob.parse(verbPattern.substring(slashPos + 1));
+                filter.regex = Pattern.compile(verbPattern.substring(slashPos + 1));
             } else {
                 filter.verb = Verb.getVerb(verbPattern);
-                filter.glob = null;
+                filter.regex = null;
             }
             while (tokens.hasMoreTokens()) {
                 String token = tokens.nextToken();
@@ -190,12 +191,14 @@ public class UniversalAllocatorPlugin extends SimplePlugin {
         if (verbMap.size() == 0) return true;
         Filter filter = (Filter) verbMap.get(task.getVerb());
         if (filter == null) return false;
-        if (filter.glob == null) return true;
-        if (filter.glob.match(task.toString())) {
-//              System.out.println("Match " + task.toString());
+        if (filter.regex == null) return true;
+        String input = task.toString();
+        Matcher m = filter.regex.matcher(input);
+        if (m.matches()) {
+//              System.out.println("Match " + input);
             return true;
         } else {
-//              System.out.println("No match " + task.toString());
+//              System.out.println("No match " + input);
             return false;
         }
     }
