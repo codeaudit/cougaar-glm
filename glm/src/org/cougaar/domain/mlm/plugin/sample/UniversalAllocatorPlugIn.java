@@ -187,21 +187,29 @@ public class UniversalAllocatorPlugIn extends SimplePlugIn {
     }
 
     private void changeTasks(Enumeration e) {
-	while (e.hasMoreElements()) {
-            Task task = (Task)e.nextElement();
-
-            if (!isInterestingTask(task))
-                continue;
-
-            print("change", task);
-            AllocationResult ar = computeAllocationResult(task);
-            Allocation allocation = (Allocation) task.getPlanElement();
-            AllocationResult estAR = allocation.getEstimatedResult();
+      // NEEDS TO BE FIXED!!
+      // all task changes are not necessarily allocationresult changes
+      // allocation result updates should be done as a result of a subscription
+      // for this plugins planelements!!!!
+      while (e.hasMoreElements()) {
+        Task task = (Task)e.nextElement();
+        
+        if (!isInterestingTask(task))
+          continue;
+        
+        print("change", task);
+        AllocationResult ar = computeAllocationResult(task);
+        Allocation allocation = (Allocation) task.getPlanElement();
+        if (allocation != null) {
+          AllocationResult estAR = allocation.getEstimatedResult();
+          if (estAR != null) {
             if (!ar.isEqual(estAR)) {
-                allocation.setEstimatedResult(ar);
-                publishChange(allocation);
+              allocation.setEstimatedResult(ar);
+              publishChange(allocation);
             }
+          }
         }
+      }
     }
 
     private void removeTasks(Enumeration e) {
