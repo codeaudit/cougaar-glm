@@ -1,7 +1,5 @@
-#Database=jdbc:oracle:thin:@amp-test2:1521:dart8i
-#Database=jdbc:oracle:thin:@4.22.165.3:1521:alp
-#Database=jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
-Database=jdbc:oracle:thin:@eiger.alpine.bbn.com:1521:alp
+Database=jdbc:oracle:thin:@${org.cougaar.database:eiger.alpine.bbn.com:1521:alp}
+
 headerQuery=select commodity, nsn, nomenclature, ui, ssc, price, icc, alt, plt, pcm, boq, diq, iaq, nso, qfd, rop, owrmrp, weight, cube, aac, slq from header where NSN = :nsns
 assetsQuery=select nsn, ric, purpose, condition, iaq from assets where NSN = :nsns
 nomen=select nomenclature from header where NSN = :nsns	
