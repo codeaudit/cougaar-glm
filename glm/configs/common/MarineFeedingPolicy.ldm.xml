@@ -18,18 +18,18 @@
         <RangeValue min="10"  max="29">
 	  <RuleParam name="Meals">
       	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="NSN/TRATIONBRKXXX" />
+	      <KeyValue key="Breakfast" value="NSN/897TRATIONBRK" />
 	      <KeyValue key="Lunch" value="NSN/8970001491094" />
-	      <KeyValue key="Dinner" value="NSN/TRATIONLDXXXX" />
+	      <KeyValue key="Dinner" value="NSN/897TRATIONLDX" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
         <RangeValue min="30"  max="225">
 	  <RuleParam name="Meals">
       	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="NSN/BRATIONBRKXXX" />
+	      <KeyValue key="Breakfast" value="NSN/897BRATIONBRK" />
 	      <KeyValue key="Lunch" value="NSN/8970001491094" />
-	      <KeyValue key="Dinner" value="NSN/BRATIONLDXXXX" />
+	      <KeyValue key="Dinner" value="NSN/897BRATIONLDX" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
