@@ -198,7 +198,6 @@ public class OrgReportPlugIn extends SimplePlugIn
   }
 
   private void allocateRemote(Task task) {
-    System.out.println(99);
     Organization reportingOrg = (Organization)task.getDirectObject();
       
     AllocationResult newEstimatedResult = 
