@@ -13,7 +13,7 @@ package org.cougaar.domain.mlm.ui.psp.plan;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.ConnectionException;
+import java.net.ConnectException;
 import java.util.*;
 
 import org.cougaar.core.cluster.*;
@@ -23,7 +23,9 @@ import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
-import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.*;
+import org.cougaar.domain.glm.ldm.*;
+import org.cougaar.domain.glm.*;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.oplan.*;
 import org.cougaar.domain.glm.ldm.plan.*;
@@ -295,7 +297,7 @@ public class PSP_ClusterRelationships extends PSP_BaseAdapter
           InputStream is;
           try {
             is = myConnection.getInputStream();
-          } catch (ConnectionException ce) {
+          } catch (ConnectException ce) {
             // too many connections?  sleep and try once more
             try {
               Thread.sleep(5000);
@@ -303,12 +305,12 @@ public class PSP_ClusterRelationships extends PSP_BaseAdapter
             }
             try {
               is = myConnection.getInputStream();
-            } catch (ConnectionException anotherCE) {
+            } catch (ConnectException anotherCE) {
               // give up!
               throw new RuntimeException(
                 "Unable to contact host "+myURL+": "+
                 anotherCE);
-              anotherCE.printStackTrace();
+//                anotherCE.printStackTrace();
             }
           }
 
