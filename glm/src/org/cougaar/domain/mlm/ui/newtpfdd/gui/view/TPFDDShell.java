@@ -768,10 +768,12 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	String ccHost = getDocumentBase().getHost();
 	if ( ccHost == null || ccHost.length() == 0 )
 	    ccHost = "localhost";
-        String realHost = getclusterCache().clientGuiSetHost(ccHost);
+	    String realHost = getclusterCache().clientGuiSetHost(ccHost);
+		// String demandHost = getclusterCache().clientGuiSetDemandHost(ccHost);
         machineText.setText(realHost);
 	// true = cold (newly produced, purging old ones) producer
-	getclusterCache().getLogPlanProducer("Aggregation", true);
+		//	getclusterCache().getLogPlanProducer("Aggregation", true);
+	getclusterCache().getProducer("Aggregation", true);
 	// fill out the unit hierarchy shell to help user see overview and make new filter requests;
 	// we get it from the server to retain flexibility.
 	QueryData hierarchyQuery = new QueryData();

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.3 2001-02-23 17:28:43 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/newtpfdd/gui/view/Attic/ClientPlanElementProvider.java,v 1.4 2001-02-24 21:47:40 gvidaver Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -136,9 +136,10 @@ public class ClientPlanElementProvider extends PlanElementProvider
     public void request(String name, String psp, QueryData query)
     {
 	ThreadedProducer producer = null;
-	if ( psp.equals(PSPClientConfig.UIDataPSP_id) )
-	    producer = clusterCache.getLogPlanProducer(name, false);
-	else {
+	if ( psp.equals(PSPClientConfig.UIDataPSP_id) ) {
+  	  //	    producer = clusterCache.getLogPlanProducer(name, false);
+	  producer = (ThreadedProducer) clusterCache.getProducer(name, false);
+	} else {
 	    OutputHandler.out("CPEP:request Error: bad PSP name: " + psp);
 	    return;
 	}
