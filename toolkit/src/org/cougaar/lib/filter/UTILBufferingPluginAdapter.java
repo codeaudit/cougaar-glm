@@ -197,7 +197,7 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    * needed to unlock the subscriber in the nested class   
    * public version of a protected method
    */
-  public void endTransaction()   { blackboard.closeTransaction(false);  }
+  public void endTransaction()   { blackboard.closeTransactionDontReset();  }
 
   /**
    * Implemented for UTILBufferingPlugin
