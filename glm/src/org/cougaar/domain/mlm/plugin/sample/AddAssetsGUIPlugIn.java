@@ -50,6 +50,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import java.io.FileInputStream;
+
 import java.text.SimpleDateFormat;
 
 import java.awt.event.ActionListener;
@@ -97,8 +99,9 @@ import org.cougaar.domain.planning.ldm.plan.RoleScheduleImpl;
 import org.cougaar.util.UnaryPredicate;
 
 import org.w3c.dom.*;
-
-import com.ibm.xml.parsers.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.apache.xerces.parsers.DOMParser;
 
 public final class AddAssetsGUIPlugIn extends SimplePlugIn {
 
@@ -416,7 +419,7 @@ public final class AddAssetsGUIPlugIn extends SimplePlugIn {
   private Vector readInitialPrototypeNames(String xmlFileString) {
     DOMParser parser = new DOMParser();
     try {
-      parser.parse( xmlFileString );
+      parser.parse( new InputSource(new FileInputStream(xmlFileString)) );
     } catch ( java.io.IOException ioe ) {
       ioe.printStackTrace();
       return null;
