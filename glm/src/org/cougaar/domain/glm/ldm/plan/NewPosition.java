@@ -21,15 +21,14 @@
  
 package org.cougaar.domain.glm.ldm.plan;
  
+import org.cougaar.domain.planning.ldm.plan.NewLatLonPoint;
+
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
  
- 
-public interface NewPosition extends Position {
-	
-	/** @param latitude - set the Latitude representing this position */
-	void setLatitude(Latitude latitude);
-	
-	/** @param longitude - set the Longitude representing this position */
-	void setLongitude(Longitude longitude);
+
+public interface NewPosition 
+  extends Position, NewLatLonPoint {
+
+  // marker interface
 }
