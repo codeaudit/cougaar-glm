@@ -110,6 +110,8 @@ public class UTILBufferingCallback extends UTILFilterCallbackAdapter {
 	logger.info ("UTILBufferingCallback : Notifying " + myListener + 
 		     " about " + i + 
 		     " tasks");
+      if (logger.isInfEnabled())
+	logger.info("mySub had added or changed tasks - regardless of whether they are wellformed, we are waking up the listener");
       ((UTILGenericListener) myListener).wakeUp();
     }
 
@@ -132,17 +134,25 @@ public class UTILBufferingCallback extends UTILFilterCallbackAdapter {
       logger.info ("UTILBufferingCallback.reactToRehydrate - Notifying " + myListener + 
 		   " about " + contents.size () + " previously buffered tasks.");
 
+    // Only want to call wakeUp if some tasks still match
+    boolean workToBeDone = false;
     for (Iterator iter = contents.iterator (); iter.hasNext ();) {
       Task t = (Task) iter.next();
-	  
+      
       if (isWellFormed (t)) {
+	workToBeDone = true; // Will need to have plugin wake up later
 	((UTILGenericListener) myListener).handleTask (t);
 	if (logger.isDebugEnabled())
 	  logger.debug ("UTILBufferingCallback.reactToRehydrate - Notifying " + myListener + 
 			" about " + t.getUID());
       }
     }
-    ((UTILGenericListener) myListener).wakeUp();
+
+    if (workToBeDone) {
+      if (logger.isDebugEnabled())
+	logger.debug("UTILBufCal.react: asking listener to wake up?");
+      ((UTILGenericListener) myListener).wakeUp();
+    }
   }  
 
 

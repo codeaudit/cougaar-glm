@@ -128,17 +128,25 @@ public class UTILWorkflowCallback extends UTILBufferingCallback implements UTILR
       logger.info ("UTILWorkflowCallback.reactToRehydrate - Notifying " + myListener + 
 		   " about " + contents.size () + " previously buffered tasks.");
 
+    // Only want to call wakeUp if some tasks still match
+    boolean workToBeDone = false;
     for (Iterator iter = contents.iterator (); iter.hasNext ();) {
       Task t = (Task) iter.next();
 	  
       if (isWellFormed (t)) {
+	workToBeDone = true; // Will need to have plugin wake up later
 	((UTILGenericListener) myListener).handleTask (t);
 	if (logger.isDebugEnabled())
 	  logger.debug ("UTILWorkflowCallback.reactToRehydrate - Notifying " + myListener + 
 			" about " + t.getUID());
       }
     }
-    ((UTILGenericListener) myListener).wakeUp();
+
+    if (workToBeDone) {
+      if (logger.isDebugEnabled())
+	logger.debug("UTILWorkflwCallback.react asking " + myListener + " to wakeUp");
+      ((UTILGenericListener) myListener).wakeUp();
+    }
   }  
 
   /**
