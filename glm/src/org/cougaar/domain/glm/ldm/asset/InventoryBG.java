@@ -131,6 +131,7 @@ public class InventoryBG implements PGDelegate {
   // GLK temp changed void to int
   public int resetInventory(Inventory inventory, long today) {
     needInitializeInventoryLevels = true;
+
     if (!isStartTimeSet) {// Only do this check once
       Scalar ignore = getScalar(0.0);// Insure we know how to manage this type
     }
@@ -929,10 +930,19 @@ public class InventoryBG implements PGDelegate {
     if (dueIns_.size() > size) size = dueIns_.size();
     if (dueOut_.size() > size) size = dueOut_.size();
     if (reported_levels.length > size) size = reported_levels.length;
+
     if (level_ == null || level_.length < size) {
-      level_ = new double[size];
+      double []replacementLevel = new double[size];
+
+      //Don't lose info that's already been computed.
+      if (level_ != null) {
+        System.arraycopy(level_, 0, replacementLevel, 0, level_.length);
+      } 
+
+      level_ = replacementLevel;      
       computeDemandSchedule();
     }
+
     /* Note that there is always at least one item in
        reported_levels so dirtyDay_ will always end up being
        greater than zero */
@@ -969,7 +979,9 @@ public class InventoryBG implements PGDelegate {
   }
 
   public Scalar getProjected(int day) {
-    if (!isDueOutValid(day)) return null;
+    if (!isDueOutValid(day))  {
+      return null;
+    }
     DueOutList dueOuts = (DueOutList) dueOut_.get(day);
     return getScalar(dueOuts.getProjectedTotal());
   }
@@ -1621,6 +1633,7 @@ public class InventoryBG implements PGDelegate {
       int size = level_.length;
       ScheduledContentPG scpg = inventory.getScheduledContentPG();
       if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", clusterID, "printInventoryLevels(), for "+AssetUtils.assetDesc(scpg.getAsset()));
+
       for (int i=0; i < size; i++) {
 	if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG()", clusterID, "printInventoryLevels(), day: "+
 						 TimeUtils.dateString(TimeUtils.addNDays(getStartTime(), i))+"("+i+") "+", level: "+level_[i]);
@@ -1628,6 +1641,4 @@ public class InventoryBG implements PGDelegate {
     }
     return 0;
   }
-
-
 }
