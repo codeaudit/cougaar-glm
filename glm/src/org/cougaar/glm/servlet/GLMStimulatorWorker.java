@@ -225,13 +225,13 @@ public class GLMStimulatorWorker
    * Main work done here. <p>
    *
    * Sends the first batch of tasks, and keeps sending until totalBatches have been
-   * sent.  If should wait for completion, waits until notified by handleSuccessfulPlanElement (). <p>
+   * sent.  If should wait for completion, waits until notified by blackboardChanged (). <p>
    *
    * Will wait <b>interval</b> milliseconds between batches if there are
    * more than one batches to send.
    *
    * @see #getSettings
-   * @see #handleSuccessfulPlanElement
+   * @see #blackboardChanged
    * @return an "XMLable" result.
    */
   protected XMLable getResult() {
@@ -303,10 +303,12 @@ public class GLMStimulatorWorker
   /**
    * Publishes the tasks created by readXmlTasks. <p>
    *
-   * If we wait, makes a subscription for each published task.
+   * For each task, adds to sentTasks map of task to its send time. 
+   * sentTasks is used later by blackboardChanged to determine how long the
+   * task took to complete.
    *
    * @see #readXmlTasks
-   * @see #handleSuccessfulPlanElement
+   * @see #blackboardChanged
    * @param withinTransaction - true when called from handleSuccessfulPlanElement
    *                            this avoids having nested transactions
    */
