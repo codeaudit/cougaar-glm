@@ -120,7 +120,7 @@ public class ClusterCache
 	if (clusterNameProp != null)
 	  rootCluster = clusterNameProp;
 	if (debug) 
-	  System.out.println ("root cluster now " + rootCluster);
+	  System.out.println ("ClusterCache.ctor - root cluster now " + rootCluster);
 	String defaultHostNameProp = System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.defaultHostName");
 	if (defaultHostNameProp != null) {
 	  defaultHostName = defaultHostNameProp;
@@ -131,7 +131,7 @@ public class ClusterCache
 	if (debug && noHostPrompt) 
 	  System.out.println ("ClusterCache.ctor - skipping host dialog, connecting directly to " + defaultHostName);
 	if (debug) {
-	  System.out.println ("ClusterCache.ctor - root cluster " + clusterNameProp);
+	  System.out.println ("ClusterCache.ctor - root cluster property " + clusterNameProp + " - if null means use default");
 	  System.out.println ("ClusterCache.ctor - default host " + defaultHostName);
 	  System.out.println ("ClusterCache.ctor - noHostPrompt " + noHostPrompt);
 	}
