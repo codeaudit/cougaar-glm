@@ -56,7 +56,7 @@ public class InventoryQuery implements Query {
   }
 
   public String getPSP_id() {
-    return "GLMINVENTORY.PSP";
+    return "inventory";
   }
 
   public void readReply(InputStream is) {
@@ -83,6 +83,7 @@ public class InventoryQuery implements Query {
   }
 
   public JPanel createChart(String title, InventoryExecutionTimeStatusHandler timeHandler) {
+
     if (inventory != null) {
       inventoryChart = new InventoryChart(title, inventory, timeHandler);
       return inventoryChart;
