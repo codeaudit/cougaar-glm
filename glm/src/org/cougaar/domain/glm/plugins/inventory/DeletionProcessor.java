@@ -125,6 +125,7 @@ public class DeletionProcessor extends InventoryProcessor {
         Map tMap = new HashMap();
         while (tasks.hasMoreElements()) {
             Task task = (Task) tasks.nextElement();
+            if (!task.isDeleted()) continue; // Rescind requires no special handling
             Asset proto = (Asset) task.getDirectObject();
 	    Inventory inventory = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
             if (inventory == null)  {
