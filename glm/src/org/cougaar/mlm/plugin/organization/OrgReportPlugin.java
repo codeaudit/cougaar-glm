@@ -69,10 +69,8 @@ public class OrgReportPlugin extends AssetReportPlugin
       public boolean execute(Object o) {
 	if (o instanceof Task) {
           Task task = (Task) o;
-	  if (((task.getVerb().equals(Constants.Verb.REPORTFORDUTY)) ||
-               (task.getVerb().equals(Constants.Verb.REPORTFORSERVICE))) &&
-              (task.getWorkflow() == null) &&
-              (task.getPlanElement() == null)) {
+	  if ((task.getVerb().equals(Constants.Verb.REPORTFORDUTY)) ||
+              (task.getVerb().equals(Constants.Verb.REPORTFORSERVICE))) {
 	    return true;
           }
 	}
