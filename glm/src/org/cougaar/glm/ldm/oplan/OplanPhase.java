@@ -20,11 +20,11 @@
  */
 package org.cougaar.glm.ldm.oplan;
 
-public static class Phase implements Comparable, java.io.Serializable {
+public class OplanPhase implements Comparable, java.io.Serializable {
   private int number;
   private String name;
 
-  public Phase(int number, String name) {
+  public OplanPhase(int number, String name) {
     this.number = number;
     this.name = name;
   }
@@ -38,7 +38,7 @@ public static class Phase implements Comparable, java.io.Serializable {
   }
 
   public int compareTo(Object o) {
-    Phase that = (Phase) o;
+    OplanPhase that = (OplanPhase) o;
     int diff = this.number = that.number;
     if (diff != 0) return diff;
     return this.name.compareTo(that.name);
