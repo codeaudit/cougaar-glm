@@ -61,7 +61,6 @@ public abstract class DecorationPlugIn extends SimplePlugIn {
     protected String                       className_;
     protected Hashtable                    myParams_ = new Hashtable();
     public int transCount_=0;
-    protected Vector                       subscriptionVector_=new Vector();
     protected Vector                       plugInSubscriptions_ = new Vector();
     protected Hashtable                    processorSubscriptions_ = new Hashtable();
     protected boolean                      invoke_;
@@ -201,6 +200,20 @@ public abstract class DecorationPlugIn extends SimplePlugIn {
 //  	    System.out.println("####### Seeing old consumer: "+consumer+" at supplier: "+
 //  			       myOrganization_.getClusterPG().getClusterIdentifier().toString());
 	}
+    }
+
+    /* Called when MaintainInventory tasks are rescinded. */
+    public void clearRecordedCustomers() {
+        allConsumersSeen_ = false;
+        selfConsumer = 0;
+        seenConsumers_.clear();
+        System.out.println("####### Removing seen consumers: at supplier: "+
+                           myOrganization_.getClusterPG().getClusterIdentifier().toString());
+        if (customerAlarm_ != null) {
+            /* Cancel current alarm */
+            customerAlarm_.cancel();
+            customerAlarm_ = null;
+        }
     }
 
     public boolean hasSeenAllConsumers() {
