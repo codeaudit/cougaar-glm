@@ -356,16 +356,22 @@ public class QueryHelper implements ActionListener,
 	}
     }
 
-    public static void main(String args[]) {
+    public static void windowOnInventory(UISimpleInventory inventory) {
 	ThemeFactory.establishMetalTheme();
 	InventoryQuery iq = 
-	    new InventoryQuery(InventoryChart.getMockInventory());
+	    new InventoryQuery(inventory);
 	QueryHelper qh = new QueryHelper(iq);
 
 	qh.frame.addWindowListener(new WindowAdapter() {
 	    public void windowClosing(WindowEvent e) {
 		System.exit(0);
 	    }});
+
+    }
+	
+
+    public static void main(String args[]) {
+	windowOnInventory(InventoryChart.getMockInventory());
     }
 }
 
