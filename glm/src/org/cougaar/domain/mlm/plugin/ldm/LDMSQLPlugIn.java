@@ -115,6 +115,7 @@ import java.sql.*;
 public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 {
 
+  private static final String DEFAULT_DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
 
   DomainService domainService = null;
   private RootFactory theFactory = null;
@@ -147,13 +148,6 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     }
     theFactory = domainService.getFactory();
     
-    try {
-      //load an initial driver
-      DBConnectionPool.registerDriver ("oracle.jdbc.driver.OracleDriver");
-    } catch (Exception er) {
-      throw new RuntimeException(this.toString()+": Couldn't register the Oracle JDBC driver: "+er);
-    }
-
     // set up the subscription
     // This could be a future site for maintaining a Container of created
     // LDMObjects for future updating.
@@ -407,6 +401,10 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       String driver = Parameters.findParameter("driver."+dbType);//WAN  must go directly to cougaar.rc now
       if (driver != null) {
 	DBConnectionPool.registerDriver(driver);
+      } else {
+        System.err.println("No Driver parameter specified for " + dbType +
+                           " - using default driver - " + DEFAULT_DB_DRIVER);
+        DBConnectionPool.registerDriver(DEFAULT_DB_DRIVER);
       }
 
       // do Param substitution
