@@ -43,6 +43,7 @@ public class GLSClient extends JPanel {
   GLSClient glsClient; // for reference by inner classes
 
   /** optional connection fields **/
+  private JTextField protocolField = new JTextField(10);
   private JTextField hostField = new JTextField(10);
   private JTextField portField = new JTextField(10);
   private JTextField agentField = new JTextField(10);
@@ -92,7 +93,29 @@ public class GLSClient extends JPanel {
    */
 
   public GLSClient(String host, String port, String agent) {
+//      super(null);
+//      hostField.setText(host);
+//      portField.setText(port);
+//      agentField.setText(agent);
+//      init(true);
+    this("http", host, port, agent);
+  }
+
+  /**
+   * A GUI panel that can be enclosed in a frame or internal frame.
+   * GUI that contacts servlets in society to publish oplan
+   * and send and rescind GLS tasks.
+   * Specify default host, port and agent; 
+   * these are displayed in text fields, so the user can edit them.
+   * This constructs a url of the form: protocol://host:port/$agent
+   * @param protocol http or https
+   * @param host host name
+   * @param port port number as a string
+   * @param agent agentname
+   */
+  public GLSClient(String protocol, String host, String port, String agent) {
     super(null);
+    protocolField.setText(protocol);
     hostField.setText(host);
     portField.setText(port);
     agentField.setText(agent);
@@ -198,17 +221,30 @@ public class GLSClient extends JPanel {
     JPanel buttons = new JPanel(new GridBagLayout());
     int x = 0;
     int y = 0;
-    buttons.add(new JLabel("Host"),
+    buttons.add(new JLabel("Protocol"),
                 new GridBagConstraints(x++, y, 1, 1, 0.0, 0.0,
                                        GridBagConstraints.WEST,
                                        GridBagConstraints.NONE,
                                        new Insets(5, 5, 5, 5),
                                        0, 0));
-    buttons.add(hostField,
+    buttons.add(protocolField,
                 new GridBagConstraints(x, y++, 1, 1, 1.0, 0.0,
                                        GridBagConstraints.CENTER,
                                        GridBagConstraints.HORIZONTAL,
                                        new Insets(5, 5, 5, 5),
+                                       0, 0));
+    x = 0;
+    buttons.add(new JLabel("Host"),
+                new GridBagConstraints(x++, y, 1, 1, 0.0, 0.0,
+                                       GridBagConstraints.WEST,
+                                       GridBagConstraints.NONE,
+                                       new Insets(0, 5, 5, 5),
+                                       0, 0));
+    buttons.add(hostField,
+                new GridBagConstraints(x, y++, 1, 1, 1.0, 0.0,
+                                       GridBagConstraints.CENTER,
+                                       GridBagConstraints.HORIZONTAL,
+                                       new Insets(0, 5, 5, 5),
                                        0, 0));
     x = 0;
     buttons.add(new JLabel("Port"),
@@ -349,7 +385,8 @@ public class GLSClient extends JPanel {
     if (agentURL != null)
       urlString.append(agentURL);
     else {
-      urlString.append("http://");
+      urlString.append(protocolField.getText());
+      urlString.append("://");
       urlString.append(hostField.getText());
       urlString.append(':');
       urlString.append(portField.getText());
