@@ -19,7 +19,7 @@ package org.cougaar.domain.mlm.plugin.perturbation;
   
   import org.cougaar.domain.glm.ldm.oplan.Oplan;
   
-  import org.cougaar.core.plugin.SimplifiedPlugIn;
+  import org.cougaar.core.plugin.SimplePlugIn;
   
   import org.cougaar.util.UnaryPredicate;
   
@@ -36,7 +36,7 @@ package org.cougaar.domain.mlm.plugin.perturbation;
   * @author  Raython Systems Company/J. Beasley
   *
   */
-public class PerturbationPlugIn extends SimplifiedPlugIn 
+public class PerturbationPlugIn extends SimplePlugIn
 /**
   * The PerturbationPlugIn class subscribes for all cluster
   * assets, initiates the reading of the Perturbation data 

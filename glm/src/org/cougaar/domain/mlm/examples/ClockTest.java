@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.examples;
 
-import org.cougaar.core.plugin.SimplifiedFatPlugIn;
+import org.cougaar.core.plugin.SimplePlugIn;
 import java.util.Date;
 import java.util.Vector;
 import org.cougaar.core.cluster.ClusterServesPlugIn;
@@ -40,11 +40,15 @@ import org.cougaar.core.cluster.ClusterIdentifier;
  *   plugin = org.cougaar.domain.mlm.examples.ClockTest
  **/
 
-public class ClockTest extends SimplifiedFatPlugIn
+public class ClockTest extends SimplePlugIn
 {
   ClusterServesPlugIn cluster = null;
   ClusterIdentifier cid = null;
   
+  public ClockTest() {
+    setThreadingChoice(SINGLE_THREAD);
+  }
+
   // "initialization" method
   public void setupSubscriptions() {
     cluster = getCluster();

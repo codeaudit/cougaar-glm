@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -51,7 +51,7 @@ public class UICoordinator {
    **/
   private static void doFileLayout(String filename) throws IOException {
 
-    InputStream fs = ConfigFileFinder.open(filename);
+    InputStream fs = ConfigFinder.getInstance().open(filename);
     BufferedReader reader = new BufferedReader(new InputStreamReader(fs));
     try {
       StreamTokenizer tokens = new StreamTokenizer(reader);

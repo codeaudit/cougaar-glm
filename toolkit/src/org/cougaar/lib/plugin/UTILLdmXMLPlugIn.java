@@ -16,7 +16,7 @@ import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
 import org.cougaar.core.plugin.LDMPlugInServesLDM;
 import org.cougaar.core.plugin.SimplePlugIn;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.param.Param;
@@ -120,11 +120,11 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
    * the file.
    *
    * Need to provide an entity resolver to the parser.
-   * The entity resolver is just a wrapper of the ConfigFileFinder.
+   * The entity resolver is just a wrapper of the ConfigFinder.
    *
    * @see #getFileName
    * @see org.cougaar.lib.plugin.UTILEntityResolver#resolveEntity
-   * @see org.cougaar.util.ConfigFileFinder#open
+   * @see org.cougaar.util.ConfigFinder#open
    * @return document that we can query for assets
    */
   protected Document getParsedDocument () {
@@ -134,7 +134,7 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
       String dfile = getFileName ();
       DOMParser parser = new DOMParser();
       try {
-	  InputStream inputStream = ConfigFileFinder.open(dfile);
+	  InputStream inputStream = ConfigFinder.getInstance().open(dfile);
 
 	  parser.setExpandEntityReferences(true);
 	  parser.setNodeExpansion(DOMParser.FULL); 

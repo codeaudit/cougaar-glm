@@ -10,7 +10,7 @@
 
 package org.cougaar.lib.plugin;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -21,7 +21,7 @@ import org.xml.sax.InputSource;
  * Wraps config file finder and uses it to resolve (find) xml entities.
  *
  * Need to provide an entity resolver to the parser.
- * The entity resolver is just a wrapper of the configFileFinder.
+ * The entity resolver is just a wrapper of the configFinder.
  * The resolver is expected to resolve a systemID, where:
  *
  * systemID is of the form : file:/ferris/bueller/day
@@ -54,12 +54,10 @@ public class UTILEntityResolver implements EntityResolver {
 
     // return a special input source
     try {
-      return new InputSource(ConfigFileFinder.open(fileName));
+      return new InputSource(ConfigFinder.getInstance().open(fileName));
     } catch (Exception e) {
       System.err.println(e.getMessage());
       System.err.println ("UTILLdmXMLPlugIn.getParsedDocument - Could not find on config path");
-//        System.err.println ("UTILLdmXMLPlugIn.getParsedDocument - Could not find on config path : "
-//                            + ConfigFileFinder.configPath);
       e.printStackTrace();
       return null;
     }

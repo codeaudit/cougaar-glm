@@ -51,7 +51,7 @@ import java.util.Vector;
 
 public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
   public final void load(Object object) throws StateModelException {
-    chooseThreadingModel(SINGLE_THREAD);
+    setThreadingChoice(SINGLE_THREAD);
     super.load(object);
     getEnvData();
   }

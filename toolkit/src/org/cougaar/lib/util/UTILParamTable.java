@@ -11,7 +11,7 @@
 package org.cougaar.lib.util;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 import java.io.File;
 
@@ -24,7 +24,7 @@ import org.cougaar.lib.xml.parser.ParamParser;
 
 /**
  * This is a convenience class for the UTIL plugins.  This class
- * uses the ConfigFileFinder to find the param files.
+ * uses the ConfigFinder to find the param files.
  *
  * Generally the files are expected to be in the data directory, e.g.
  *
@@ -54,7 +54,7 @@ import org.cougaar.lib.xml.parser.ParamParser;
  * config file finder path.
  *
  */
-public class UTILParamTable extends ParamTable{
+public class UTILParamTable extends ParamTable {
 
   /**
    * Convenience constructor.  The default name of the parameter file

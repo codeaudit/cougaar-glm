@@ -48,7 +48,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 /**
  * This Data Management PlugIn class reads a .ini file and creates a Cluster'
@@ -251,7 +251,7 @@ public final class DMPIClusterStartup extends SimplePlugIn
   private Vector parseDataFile()  {
     Vector myParsedData = null;
     try {
-      BufferedReader in = new BufferedReader( new InputStreamReader( ConfigFileFinder.open(getFileName()) ) );
+      BufferedReader in = new BufferedReader( new InputStreamReader( ConfigFinder.getInstance().open(getFileName()) ) );
       while( in.ready() ) {
         String sCheck = in.readLine();
         int locateUic = sCheck.indexOf( getKey() );

@@ -10,7 +10,7 @@
 
 package org.cougaar.lib.param;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 import java.io.File;
 import java.io.InputStream;
@@ -51,7 +51,7 @@ public class ParamTable{
    * call our addParam() method.
    *
    * Need to provide an entity resolver to the parser.
-   * The entity resolver is just a wrapper of the configFileFinder.
+   * The entity resolver is just a wrapper of the configFinder.
    * The resolver is expected to resolve a systemID, where:
    *
    * systemID is of the form : file:/ferris/bueller/day
@@ -108,7 +108,7 @@ public class ParamTable{
 
     String pfile = envDir + envFile;
     try {
-	InputStream inputStream = ConfigFileFinder.open(pfile);
+	InputStream inputStream = ConfigFinder.getInstance().open(pfile);
 
 	// must specify which parser to use.
 	Parser parser = ParserFactory.makeParser("com.ibm.xml.parsers.SAXParser");
@@ -119,7 +119,7 @@ public class ParamTable{
     catch(Exception e){
       System.err.println(e.getMessage());
       e.printStackTrace();
-//        System.out.println ("Config path is " + ConfigFileFinder.configPath);
+//        System.out.println ("Config path is " + ConfigFinder.configPath);
     }
 
     // add environment parameters, replacing any from file

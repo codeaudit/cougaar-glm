@@ -18,7 +18,7 @@ import java.util.Vector;
 import java.util.StringTokenizer;
 import java.util.Hashtable;
 
-import org.cougaar.util.ConfigFileFinder;
+import org.cougaar.util.ConfigFinder;
 
 import com.ibm.xml.parser.Parser;
 
@@ -99,7 +99,7 @@ public class PerturbationReader
   public void readPerturbationData()
   {
     try {
-      doc = ConfigFileFinder.parseXMLConfigFile(xmlfilename_);
+      doc = ConfigFinder.getInstance().parseXMLConfigFile(xmlfilename_);
       parseFileData(doc);
     } catch ( Exception e ) {
       e.printStackTrace();

@@ -18,8 +18,6 @@ import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Workflow;
 
-import org.cougaar.core.plugin.SingleThreadedPlugIn;
-
 import java.util.Enumeration;
 
 /**
