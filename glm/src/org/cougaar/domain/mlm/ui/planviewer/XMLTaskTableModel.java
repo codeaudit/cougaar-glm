@@ -10,7 +10,8 @@
  
 package org.cougaar.domain.mlm.ui.planviewer;
 
-import com.ibm.xml.parser.TXElement;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class XMLTaskTableModel extends XMLTableModel {
   private String[] taskHeaders = {"source", "destination", "verb", "ID", "parentTask", "priority", "DirectObject Type", "DirectObject ID", "To", "From", "For", "OfType" };
@@ -31,27 +32,27 @@ public class XMLTaskTableModel extends XMLTableModel {
     return false;
   }
 
-  private String getPreposition(TXElement child, String s) {
-    TXElement[] prepPhrases = child.searchChildrenAll("prepositionalPhrases");
-    for (int i = 0; i < prepPhrases.length; i++) {
-      TXElement[] prepNode = prepPhrases[i].searchChildrenAll("preposition");
-      if ((prepNode == null) || (prepNode.length <= 0)) {
+  private String getPreposition(Element child, String s) {
+    NodeList prepPhrases = child.getElementsByTagName("prepositionalPhrases");
+    for (int i = 0; i < prepPhrases.getLength(); i++) {
+      NodeList prepNode = ((Element)prepPhrases.item(i)).getElementsByTagName("preposition");
+      if ((prepNode == null) || (prepNode.getLength() <= 0)) {
         continue;
       }
-      TXElement node = prepNode[0];
+      Element node = (Element) prepNode.item(0);
       String preposition = node.getFirstChild().getNodeValue();
       if (preposition.equals(s)) {
         if (s.equals("To") || s.equals("From")) {
           String[] nodeNames = { "indirectObject", "name" };
-          return getValueOfNode(prepPhrases[i], nodeNames, 0);
+          return getValueOfNode((Element)prepPhrases.item(i), nodeNames, 0);
         }
         if (s.equals("For")) {
           String[] nodeNames = { "indirectObject", "ItemIdentificationPG_item_identification" };
-          return getValueOfNode(prepPhrases[i], nodeNames, 0);
+          return getValueOfNode((Element)prepPhrases.item(i), nodeNames, 0);
         }
         if (s.equals("OfType")) {
           String[] nodeNames = { "indirectObject", "TypeIdentificationPG_type_identification" };
-          return getValueOfNode(prepPhrases[i], nodeNames, 0);
+          return getValueOfNode((Element)prepPhrases.item(i), nodeNames, 0);
         }
       }
     }
@@ -59,7 +60,7 @@ public class XMLTaskTableModel extends XMLTableModel {
   }
 
   public Object getValueAt(int row, int col) {
-    TXElement child = children[row];
+    Element child = (Element)children.item(row);
     String header = headers[col];
     if (isPreposition(header))
       return getPreposition(child, header);
