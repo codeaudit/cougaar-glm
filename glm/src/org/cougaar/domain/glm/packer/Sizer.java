@@ -32,9 +32,6 @@ import org.cougaar.domain.planning.ldm.RootFactory;
 class Sizer {
   static public final String TRUE = "True";
 
-  static int SUPPLY_TONS = 0;
-  static int SUPPLY_REQUESTS = 0;
-
   /**
     * How much of the quantity remains in the current task
     */
@@ -78,14 +75,9 @@ class Sizer {
     // to see if the _curTask has anything left in it...
     if (_remainder == 0.0) {
       if ((_curTask = getNextTask()) != null) {
-        SUPPLY_REQUESTS++;
         _remainder = _curTask.getPreferredValue(AspectType.QUANTITY);
-        SUPPLY_TONS += _remainder;
         _expansionQueue = new ArrayList();
       } else {
-        System.out.println("Packer - number of supply requests: " + SUPPLY_REQUESTS +
-                           ", aggregated requested supply: " + 
-                           SUPPLY_TONS + " tons.");
         return null;
       }
     }

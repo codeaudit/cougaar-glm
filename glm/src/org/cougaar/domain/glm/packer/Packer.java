@@ -26,6 +26,11 @@ import org.cougaar.util.UnaryPredicate;
  * 
  */
 public abstract class Packer extends GenericPlugin {
+  private int ADD_TASKS = 0;
+  private int MODIFIED_TASKS = 0;
+  private int REMOVE_TASKS = 0;
+  private int ADD_TONS = 0;
+  private int REMOVE_TONS = 0;
 
   /**
    * Packer - constructor 
@@ -93,6 +98,9 @@ public abstract class Packer extends GenericPlugin {
       } else {
         System.out.println("Packer: Got a new task - " + task.getUID() + 
                            " from " + task.getSource());
+
+        ADD_TASKS++;
+        ADD_TONS += task.getPreferredValue(AspectType.QUANTITY);
         tasks.add(task);
       }
     }
@@ -101,7 +109,10 @@ public abstract class Packer extends GenericPlugin {
       return;
     }
 
-   
+    System.out.println("Packer - number of added SUPPLY tasks: " + ADD_TASKS +
+                       ", aggregated quantity from added SUPPLY tasks: " + 
+                       ADD_TONS + " tons.");
+
     doPacking(getAggregationClosure(tasks), tasks,
               getSortFunction(), getPreferenceAggregator(),
               getAllocationResultDistributor());
@@ -115,16 +126,13 @@ public abstract class Packer extends GenericPlugin {
    * @param changedTasks Enumeration of changed ammo supply tasks. Ignored.
    */
   public void processChangedTasks(Enumeration changedTasks) {
-    if (DEBUG) {
-      System.out.println("Packer.processChangedTasks - ignoring " +
-                         "changed tasks");
-    }
-
     while (changedTasks.hasMoreElements()) {
         Task task = (Task)changedTasks.nextElement();
         
-        System.out.println("Packer: Got a changed task - " + task.getUID() + 
+        System.err.println("ERROR: Packer - ignoring changed task - " + 
+                           task.getUID() + 
                            " from " + task.getSource());
+        
     }
   }
 
@@ -146,6 +154,14 @@ public abstract class Packer extends GenericPlugin {
       
       System.out.println("Packer: Got a removed task - " + task.getUID() + 
                          " from " + task.getSource());
+
+      REMOVE_TASKS++;
+      REMOVE_TONS += task.getPreferredValue(AspectType.QUANTITY);
+
+      System.out.println("Packer - number of removed SUPPLY tasks: " + 
+                         REMOVE_TASKS +
+                         ", aggregated quantity from removed SUPPLY tasks: " + 
+                         REMOVE_TONS + " tons.");
     }
   }
     
