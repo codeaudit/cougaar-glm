@@ -394,7 +394,7 @@ protected void addOtherDataView(ChartDataView chartDataView) {
     }
     
 
-    class CircleIcon implements Icon {
+    static class CircleIcon implements Icon {
 	public Color color;
 	public int diameter;
 	public boolean drawEmpty;
