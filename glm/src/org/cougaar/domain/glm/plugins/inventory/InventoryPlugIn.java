@@ -334,6 +334,10 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 		GLMDebug.DEBUG("InventoryPlugIn", "findOrMakeInventory(), CREATED inventory bin for: "+
 				  AssetUtils.assetDesc(inventory.getScheduledContentPG().getAsset()));
 		findOrMakeMILTask(inventory);
+		Vector invBinsOfType = (Vector)inventoryTypeHash_.get(supplytype);
+		if (invBinsOfType != null) {
+		    invBinsOfType.add(inventory);
+		}   
 	    }
 	}
 	return inventory;
