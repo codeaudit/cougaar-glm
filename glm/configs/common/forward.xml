@@ -30,4 +30,10 @@
   <TransferablePropagation class="mil.darpa.log.alpine.blackjack.policy.SubsistencePolicy">
 	<role> AdministrativeSubordinate </role> 
   </TransferablePropagation>
+  <TransferablePropagation class="mil.darpa.log.alpine.blackjack.policy.BasicLoadPolicy">
+	<role> Subordinate </role> 
+  </TransferablePropagation>
+  <TransferablePropagation class="mil.darpa.log.alpine.blackjack.policy.BasicLoadPolicy">
+	<role> AdministrativeSubordinate </role> 
+  </TransferablePropagation>
 </Propagations>
