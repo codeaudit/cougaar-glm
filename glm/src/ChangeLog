@@ -1,3 +1,26 @@
+2001-10-11  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/asset/alpprops.def (Repository):
+	Add method to InventoryPG
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java (Repository):
+	Add setDueoutFilled method to mediate changes to the filled flag
+	of a dueout. This is necessary so that the changed can be
+	incorporated into the state of the inventory.
+
+	* org/cougaar/domain/mlm/plugin/sample/UniversalAllocatorPlugIn.java (Repository):
+	Add additional syntax allowing more precise specification of tasks
+	to be allocated. In particular, if the verb is followed by a
+	slash, the remainder of the text up to a semicolon (or the end of
+	the parameter) is interpreted as a glob-style matching pattern
+	that is applied to the toString() of the task being matched. A
+	match requires that both the verb and string must match in order
+	for the task to be allocated.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java (Repository):
+	Mark failed dueouts as "not filled" otherwise we continue to count
+	them and fail additional dueouts needlessly.
+
 2001-09-27  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/domain/mlm/plugin/organization/OrgDataPlugIn.java (Repository):
