@@ -245,7 +245,7 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
     qService.clearQuiescentState();
 
     if (isInfoEnabled())
-      logger.info (getName () + " asking to be restarted in " + delayTime, new Throwable());
+      logger.info (getName () + " asking to be restarted in " + delayTime); //, new Throwable());
 
     if (currentAlarm != null)
       currentAlarm.cancel ();
