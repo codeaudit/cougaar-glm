@@ -367,11 +367,13 @@ public class UIInventoryImpl {
     */
   static private Vector scheduleToVector(Schedule CSchedule) {
     Vector s = new Vector();
-    Enumeration elements = CSchedule.getAllScheduleElements();
-    while (elements.hasMoreElements()) {
-      QuantityScheduleElement scheduleElement = 
-	(QuantityScheduleElement)elements.nextElement();
-      s.addElement(new UIQuantityScheduleElement(scheduleElement));
+    if(CSchedule != null) {
+	Enumeration elements = CSchedule.getAllScheduleElements();
+	while (elements.hasMoreElements()) {
+	    QuantityScheduleElement scheduleElement = 
+		(QuantityScheduleElement)elements.nextElement();
+	    s.addElement(new UIQuantityScheduleElement(scheduleElement));
+	}
     }
     return s;
   }
@@ -1224,13 +1226,15 @@ public class UIInventoryImpl {
   }
 
    static private boolean isOverlappingSchedule(Schedule aSchedule) {
-       Enumeration enum = aSchedule.getAllScheduleElements();
-       if(!enum.hasMoreElements()) return false; 
-       long last_time = aSchedule.getStartTime()-1;
-       while (enum.hasMoreElements()) {
-	   ScheduleElement element = (ScheduleElement)enum.nextElement();
-	   if (element.getStartTime() <= last_time) return true;
-	   last_time = element.getEndTime();
+       if(aSchedule != null) {
+	   Enumeration enum = aSchedule.getAllScheduleElements();
+	   if(!enum.hasMoreElements()) return false; 
+	   long last_time = aSchedule.getStartTime()-1;
+	   while (enum.hasMoreElements()) {
+	       ScheduleElement element = (ScheduleElement)enum.nextElement();
+	       if (element.getStartTime() <= last_time) return true;
+	       last_time = element.getEndTime();
+	   }
        }
        return false;
    }
