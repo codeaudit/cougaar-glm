@@ -1,6 +1,3 @@
-package org.cougaar.mlm.ui.psp.naming;
-
-import org.cougaar.core.service.NamingService;
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -21,6 +18,9 @@ import org.cougaar.core.service.NamingService;
  *  PERFORMANCE OF THE COUGAAR SOFTWARE.
  * </copyright>
  */
+package org.cougaar.mlm.ui.psp.naming;
+
+import org.cougaar.core.service.NamingService;
 
 import java.io.PrintStream;
 
@@ -41,11 +41,12 @@ import org.cougaar.util.UnaryPredicate;
  * Purpose is less to encapsulate funky html generation and more
  * to enforce "standard" represetnation of objects (in HTML)
  *
- * @return HTML string description generated.
  */
-
 public class DescribeObjectAsHTML {
 
+  /**
+   * @return HTML string description generated.
+   */
      public static String describeWithinTableColumn( String name, Object obj) {
           String result = new String();
           if( obj instanceof FDSURL) {

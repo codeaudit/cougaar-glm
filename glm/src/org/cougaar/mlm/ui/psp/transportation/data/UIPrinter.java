@@ -23,7 +23,7 @@ import org.cougaar.glm.ldm.plan.Position;
 import org.cougaar.glm.ldm.plan.NamedPosition;
 
 /**
- * @see AbstractPrinter
+ * @see org.cougaar.core.util.AbstractPrinter
  */
 public class UIPrinter extends PrettyStringPrinter {
 

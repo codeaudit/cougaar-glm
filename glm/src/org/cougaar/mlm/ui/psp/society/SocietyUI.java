@@ -411,6 +411,11 @@ public  class  SocietyUI {
     }
   }
 
+  protected final static int USE_PSP_MODE =1;
+  protected final static int USE_ORG_SERVER_MODE =2;
+  protected final static int TRY_ORG_SERVER_FIRST_ELSE_PSP =3;
+  protected static int defaultMode = TRY_ORG_SERVER_FIRST_ELSE_PSP;
+
   /**
    * Returns all Organziation relationships related to the named Org UID.
    *
@@ -428,10 +433,6 @@ public  class  SocietyUI {
    *
    * @return Vector of UIOrgRelationship
    **/
-  protected final static int USE_PSP_MODE =1;
-  protected final static int USE_ORG_SERVER_MODE =2;
-  protected final static int TRY_ORG_SERVER_FIRST_ELSE_PSP =3;
-  protected static int defaultMode = TRY_ORG_SERVER_FIRST_ELSE_PSP;
   public static Vector getOrganizationRelationships(
       String host_cluster_URL, String OrganizationUID) {
     Vector v = null;

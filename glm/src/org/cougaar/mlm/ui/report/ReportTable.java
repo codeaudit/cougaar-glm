@@ -62,7 +62,7 @@ public class ReportTable extends JTable {
    * element of rows should be a vector with 2 elements - date and text.
    * Column info taken from ReportTableColumnModel.
    * 
-   * @see javax.swing.table.DefaultTableModel.setDataVector.
+   * @see javax.swing.table.DefaultTableModel#setDataVector
    * 
    * @param rows Vector of row vectors.
    */

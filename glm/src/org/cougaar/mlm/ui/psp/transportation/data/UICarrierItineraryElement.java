@@ -32,15 +32,15 @@ public class UICarrierItineraryElement extends UIItineraryElement
     //#############################################################
     // START ATTRIBUTES
     /**
-        * @return : Activity of this carrier on this leg (UICarrierItineraryElement).
-        *       1 : Loading Cargo
-        *       2 : Carrying Cargo
-        *       3 : Unloading Cargo
-        *       4 : Refueling
-        *       5 : Waiting for Port availability
-        *       6 : Waiting for Cargo
-        *       7 : Unassigned
-        **/
+     * Activity of this carrier on this leg (UICarrierItineraryElement).
+     *       1 : Loading Cargo
+     *       2 : Carrying Cargo
+     *       3 : Unloading Cargo
+     *       4 : Refueling
+     *       5 : Waiting for Port availability
+     *       6 : Waiting for Cargo
+     *       7 : Unassigned
+     **/
     public int CarrierActivity;
 
     // END ATTRIBUTES

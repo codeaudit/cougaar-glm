@@ -131,7 +131,6 @@ public class DOMTree
      * DOM tree model.
      *
      * @author  Andy Clark, IBM
-     * @version
      */
     static class Model 
         extends DefaultTreeModel

@@ -66,10 +66,10 @@ public abstract class UITaskItineraryElement
   public final static int NONE_MODE = 9;
 
   /** 
-   * @see SEA_MODE
-   * @see AIR_MODE
-   * @see GROUND_MODE
-   * @see NONE_MODE
+   * @see #SEA_MODE
+   * @see #AIR_MODE
+   * @see #GROUND_MODE
+   * @see #NONE_MODE
    **/
   public int TransportationMode;
 

@@ -25,9 +25,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /**
- * @JDScrollBox.java
  * @version 2.1 January 15th 1999
- * @author: John Donohue
+ * @author John Donohue
  *
  * This Java example is provided "as is".  This code is
  * not supported, but I will try to answer questions as

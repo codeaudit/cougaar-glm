@@ -28,9 +28,8 @@ import java.net.*;
 import java.util.*;
 
 /**
- * @JDScrollingImagemap.java
  * @version 3.1 January 16 1999
- * @author: John Donohue
+ * @author John Donohue
  *
  *  This Java example is provided "as is".  This code is
  * not supported, but I will try to answer questions as

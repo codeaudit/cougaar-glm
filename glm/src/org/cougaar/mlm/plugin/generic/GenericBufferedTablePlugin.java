@@ -55,7 +55,7 @@ import org.cougaar.core.plugin.util.*;
  * special checks for subscription added/all.
  * <p>
  * @see GenericTablePlugin for XML input usage
- * @see org.cougaar.mlm.plugin.sample.UniversalAllocator for sink info
+ * @see org.cougaar.mlm.plugin.sample.UniversalAllocatorPlugin for sink info
  */
 public class GenericBufferedTablePlugin extends GenericTablePlugin {
 
