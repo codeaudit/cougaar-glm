@@ -142,7 +142,9 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       if (command.equals(AssetPerturbationMessage.QUERY_COMMAND)) {
         listAssets(out, psc, psu);
       } else if (command.equals(AssetPerturbationMessage.MODIFY_COMMAND)) {
+        psc.getServerPlugInSupport().openLogPlanTransaction();
         modifyAsset(postData, parsePosition, out, psc, psu);
+        psc.getServerPlugInSupport().closeLogPlanTransaction();
       } else {
         throw new RuntimePSPException("Unrecognized command - " + postData);
       }
