@@ -174,27 +174,27 @@ public class UTILAggregate {
    */
 
   public static List makeAggregation(UTILPlugin creator,
-									 RootFactory ldmf,
-									 Plan realityPlan,
-									 Vector parentTasks, 
-									 Verb whatVerb,
-									 Vector prepPhrases,
-									 Vector directObjects,
-									 Vector preferences,
-									 ClusterIdentifier sourceClusterID,
-									 Map taskToAspectValues,
-									 double confidence) {
+				     RootFactory ldmf,
+				     Plan realityPlan,
+				     Vector parentTasks, 
+				     Verb whatVerb,
+				     Vector prepPhrases,
+				     Vector directObjects,
+				     Vector preferences,
+				     ClusterIdentifier sourceClusterID,
+				     Map taskToAspectValues,
+				     double confidence) {
     List stuffToPublish = new ArrayList ();
 
     NewMPTask mptask = UTILAggregate.makeMPSubTask(ldmf,
-												   realityPlan,
-												   parentTasks.elements(),
-												   whatVerb,
-												   prepPhrases.elements(),
-												   UTILAsset.makeAssetGroup(ldmf, directObjects),
-												   preferences.elements(),
-												   Priority.UNDEFINED,
-												   sourceClusterID);
+						   realityPlan,
+						   parentTasks.elements(),
+						   whatVerb,
+						   prepPhrases.elements(),
+						   UTILAsset.makeAssetGroup(ldmf, directObjects),
+						   preferences.elements(),
+						   Priority.UNDEFINED,
+						   sourceClusterID);
     // create the new composition
     NewComposition comp = ldmf.newComposition ();
     comp.setCombinedTask(mptask);
@@ -207,36 +207,49 @@ public class UTILAggregate {
     stuffToPublish.add (mptask);
     stuffToPublish.add (comp);
 
+    AllocationResult lastAR = null;
+    AspectValue []   lastAV = null;
     // create aggregations for each parent task
     for (Iterator i = parentTasks.iterator(); i.hasNext();){
       Task parentTask = (Task)i.next();
-	  // get the aspect values specific to this task
-	  AspectValue [] aspectValues = (AspectValue []) taskToAspectValues.get (parentTask);
+      // get the aspect values specific to this task
+      AspectValue [] aspectValues = (AspectValue []) taskToAspectValues.get (parentTask);
+	
       if (debug)
-		UTILAllocate.setDebug (true); // will show comparison of prefs to aspect value
+	UTILAllocate.setDebug (true); // will show comparison of prefs to aspect value
       boolean isSuccess = !UTILAllocate.exceedsPreferences (parentTask, aspectValues);
 
       if (!isSuccess) {
-		creator.showDebugIfFailure ();
-		System.out.println ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
-		UTILExpand.showPlanElement (parentTask);
+	creator.showDebugIfFailure ();
+	System.out.println ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
+	UTILExpand.showPlanElement (parentTask);
       }
 	  
       if (debug)
-		UTILAllocate.setDebug (false);
-      AllocationResult estAR = ldmf.newAVAllocationResult(confidence,
-														  isSuccess,
-														  aspectValues);
+	UTILAllocate.setDebug (false);
+
+      AllocationResult estAR;
+
+      if (aspectValues == lastAV)
+	estAR = lastAR; // avoid creating a new allocation result if we have the same aspect value array
+      else
+	estAR = ldmf.newAVAllocationResult(confidence,
+					   isSuccess,
+					   aspectValues);
+
       Aggregation agg = ldmf.createAggregation(parentTask.getPlan(),
-											   parentTask,
-											   comp,
-											   estAR);
+					       parentTask,
+					       comp,
+					       estAR);
       if (debug)
-		System.out.println ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
-							" agg " + agg.getUID());
+	System.out.println ("UTILAggregate.makeAggregation - Making aggregation for task " + parentTask.getUID () + 
+			    " agg " + agg.getUID());
 	
       stuffToPublish.add (agg);
       comp.addAggregation(agg);
+
+      lastAV = aspectValues;
+      lastAR = estAR;
     }
 
     return stuffToPublish;
