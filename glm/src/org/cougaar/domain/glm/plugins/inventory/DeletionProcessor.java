@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.glm.debug.GLMDebug;
 import org.cougaar.domain.glm.execution.common.InventoryReport;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.Inventory;
@@ -49,8 +48,8 @@ public class DeletionProcessor extends InventoryProcessor {
     /** Delete old reports when oldest becomes this old **/
     private static final long INVENTORY_REPORT_CUTOFF = 4 * TimeUtils.MSEC_PER_WEEK;
 
-    /** When pruning old reports, remove all older than this age **/
-    private static final long INVENTORY_REPORT_PRUNE = TimeUtils.MSEC_PER_WEEK;
+    /** When pruning old reports, remove all older than this age. O disables pruning **/
+    private static final long INVENTORY_REPORT_PRUNE = 0L; // disabled TimeUtils.MSEC_PER_WEEK;
 
     public DeletionProcessor(InventoryPlugIn plugin, Organization org, String type) {
         super(plugin, org, type);
@@ -97,9 +96,20 @@ public class DeletionProcessor extends InventoryProcessor {
  
     public void update() {
 	super.update(); // set up dates
-	if (inventoryPlugIn_.getDetermineRequirementsTask() != null) {
-	    removeTasks(tasks_.getRemovedList());
-	}
+        removeTasks(tasks_.getRemovedList());
+    }
+
+    /**
+     * Keep track of the range of times for which tasks have been
+     * deleted from an inventory. Inventory reports are created to
+     * prop up the inventory over that time range.
+     **/
+    private static class DeletionTimeRange {
+        long earliestTime;
+        long latestTime;
+        DeletionTimeRange(long t) {
+            earliestTime = latestTime = t;
+        }
     }
 
     /**
@@ -118,59 +128,82 @@ public class DeletionProcessor extends InventoryProcessor {
      * are pruned as a debugging aid. Otherwise, we might not see any
      * bad effects.
      *
-     * Inventory reports are pruned whenever the oldest report is more
-     * than one week old.
+     * Inventory reports may be pruned. When enabled and the oldest
+     * report is older than INVENTORY_REPORT_PRUNE the inventories
+     * older than INVENTORY_REPORT_CUTOFF are removed.
      **/
     private void removeTasks(Enumeration tasks) {
         Map tMap = new HashMap();
         while (tasks.hasMoreElements()) {
             Task task = (Task) tasks.nextElement();
-            if (!task.isDeleted()) continue; // Rescind requires no special handling
+            if (!task.isDeleted()) { // Rescind requires no special handling
+                continue;
+            }
             Asset proto = (Asset) task.getDirectObject();
 	    Inventory inventory = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
             if (inventory == null)  {
 		String typeID = proto.getTypeIdentificationPG().getTypeIdentification();
-		GLMDebug.ERROR("WithdrawAllocator", clusterId_, "Inventory NOT found for "+typeID);
+		printError("Inventory NOT found for "+typeID);
 		continue;
 	    }
-            System.out.println("Removing task from inventory: " + TaskUtils.taskDesc(task));
+            printDebug(1000, "Removing task from inventory: " + TaskUtils.taskDesc(task));
             long et = TaskUtils.getEndTime(task);
             et = TimeUtils.pushToEndOfDay(tCalendar_, et);
-            Long latest = (Long) tMap.get(inventory);
-            if (latest == null || latest.longValue() < et) {
-                tMap.put(inventory, new Long(et));
+            DeletionTimeRange dtr = (DeletionTimeRange) tMap.get(inventory);
+            if (dtr == null) {
+                dtr = new DeletionTimeRange(et);
+                tMap.put(inventory, dtr);
+            } else {
+                dtr.earliestTime = Math.min(dtr.earliestTime, et);
+                dtr.latestTime = Math.max(dtr.latestTime, et);
             }
         }
         long inventoryReportCutoffTime = plugin_.currentTimeMillis() - INVENTORY_REPORT_CUTOFF;
         long inventoryReportPruneTime = plugin_.currentTimeMillis() - INVENTORY_REPORT_PRUNE;
         for (Iterator keys = tMap.keySet().iterator(); keys.hasNext(); ) {
+            boolean needPublishChange = false;
             Inventory inventory = (Inventory) keys.next();
             InventoryPG invpg =
                 (InventoryPG) inventory.searchForPropertyGroup(InventoryPG.class);
-            long et = ((Long) tMap.get(inventory)).longValue();
+            DeletionTimeRange dtr = (DeletionTimeRange) tMap.get(inventory);
             Schedule schedule =
                 inventory.getScheduledContentPG().getSchedule();
-            Iterator iter = schedule.getScheduleElementsWithTime(et).iterator();
-            if (iter.hasNext()) { // There should be exactly one element
-                QuantityScheduleElement qse = (QuantityScheduleElement) iter.next();
-                double q = qse.getQuantity();
-                System.out.println("Adding inventory report to "
-                                   + inventory
-                                   + " at "
-                                   + new java.util.Date(et)
-                                   + " level "
-                                   + q);
-                ItemIdentificationPG iipg = inventory.getItemIdentificationPG();
-                String iid = iipg.getItemIdentification();
-                invpg.addInventoryReport(new InventoryReport(iid, et, et, q));
+            ItemIdentificationPG iipg = inventory.getItemIdentificationPG();
+            String iid = iipg.getItemIdentification();
+            long et;
+            if (true) {
+                et = dtr.earliestTime;
             } else {
-                System.err.println("No scheduled content");
+                et = dtr.latestTime;
             }
-            InventoryReport oldestReport = invpg.getOldestInventoryReport();
-            if (oldestReport != null && oldestReport.theReportDate < inventoryReportCutoffTime) {
-                System.out.println("Pruning old inventoryReports: " + inventory);
-                invpg.pruneOldInventoryReports(inventoryReportPruneTime);
-                publishChangeAsset(inventory);
+            for (; et <= dtr.latestTime; et += TimeUtils.MSEC_PER_DAY) {
+                Iterator iter = schedule.getScheduleElementsWithTime(et).iterator();
+                if (iter.hasNext()) { // There should be exactly one element
+                    QuantityScheduleElement qse = (QuantityScheduleElement) iter.next();
+                    double q = qse.getQuantity();
+                    printDebug(1000,
+                               "Adding inventory report to "
+                               + inventory
+                               + " at "
+                               + new java.util.Date(et)
+                               + " level "
+                               + q);
+                    invpg.addInventoryReport(new InventoryReport(iid, et, et, q));
+                    needPublishChange = true;
+                } else {
+                    printError("No scheduled content");
+                }
+            }
+            if (INVENTORY_REPORT_PRUNE > 0L) {
+                InventoryReport oldestReport = invpg.getOldestInventoryReport();
+                if (false && oldestReport != null && oldestReport.theReportDate < inventoryReportCutoffTime) {
+                    printDebug(1000, "Pruning old inventoryReports: " + inventory);
+                    invpg.pruneOldInventoryReports(inventoryReportPruneTime);
+                    needPublishChange = true;
+                }
+                if (needPublishChange) {
+                    publishChangeAsset(inventory);
+                }
             }
         }
     }
