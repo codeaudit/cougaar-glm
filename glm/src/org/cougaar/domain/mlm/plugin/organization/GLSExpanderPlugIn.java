@@ -9,9 +9,14 @@
  */
 
 package org.cougaar.domain.mlm.plugin.organization;
-
+import java.util.Collection;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.component.ServiceRevokedListener;
+//import org.cougaar.domain.mlm.plugin.ldm.LDMService;
+import org.cougaar.core.plugin.LDMService;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.core.component.ServiceRevokedEvent;
 
 import org.cougaar.core.cluster.Subscriber;
 import org.cougaar.core.cluster.Subscription;
@@ -37,7 +42,6 @@ import org.cougaar.domain.glm.ldm.oplan.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.ldm.asset.*;
 
-import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.plugin.util.PlugInHelper;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
@@ -47,8 +51,8 @@ import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPGImpl;
 import java.util.Enumeration;
 import java.util.Vector;
 
-
 import org.cougaar.util.UnaryPredicate;
+
 
 /**
  * The GLSExpanderPlugIn will take the intial GetLogSupport task received by
@@ -56,12 +60,14 @@ import org.cougaar.util.UnaryPredicate;
  * 
  * Current functionality (MB3.0) allows only for pass-through
  * of Tasks through a Workflow.
+ * 
+ * Revised to extend the stripped ComponentPlugin instead of SimplePlugIn.
  **/
 
-public class GLSExpanderPlugIn extends SimplePlugIn {
+public class GLSExpanderPlugIn extends ComponentPlugin {
   /** Subscription to hold collection of input tasks **/
   private IncrementalSubscription expandableTasks;
-
+ 
   /** Subscription to the Expansions I create */
   private IncrementalSubscription myExpansions;
 
@@ -76,39 +82,59 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
   /**
    * Parameters are the types of determinerequirements to generate.
    **/
-  String[] myParams = null;
-
-  //Override the setupSubscriptions() in the SimplePlugIn.
-  protected void setupSubscriptions() {
-    Vector params = getParameters();
-    myParams = (String[]) params.toArray(new String[params.size()]);
-
-    mySelfOrgs = (IncrementalSubscription) subscribe(selfOrgAssetPred);
-
-    if (didRehydrate()) {
-      processOrgAssets(mySelfOrgs.elements()); // May already be there
+    String[] myParams = null;
+    RootFactory theLDMF = null;
+    
+    //Override the setupSubscriptions() in ComponentPlugin
+    protected void setupSubscriptions() {
+	//        System.out.println("setupSubscriptions: "+this.getBindingSite().getAgentIdentifier());
+	LDMService ldmService = null;
+        if (theLDMF == null) {
+	    ldmService = (LDMService) getBindingSite().getServiceBroker().getService(this, LDMService.class,
+        new ServiceRevokedListener() {
+          public void serviceRevoked(ServiceRevokedEvent re) {
+                theLDMF = null;
+          }
+        });
+	}
+	theLDMF = ldmService.getFactory();
+	
+	Collection params = getParameters();
+        if (params != null) {
+  	  myParams = (String[]) params.toArray(new String[params.size()]);
+        } else {
+	    myParams = new String[0];
+        }
+	
+	// subscribe to the blackboard
+	mySelfOrgs = (IncrementalSubscription) blackboard.subscribe(selfOrgAssetPred);
+	
+	
+	if (blackboard.didRehydrate()) {
+	    processOrgAssets(mySelfOrgs.elements()); // May already be there
+	}
     }
-  }
+    
 
   private void setupSubscriptions2() {
     /** Predicate for finding input GLS Task. It must be a GLS FOR us **/
     final UnaryPredicate myTaskPred = new UnaryPredicate() {
-      public boolean execute(Object o) {
-        if (o instanceof Task) {
-          Task task = (Task) o;
-          Verb verb = task.getVerb();
-          if (verb.equals(Constants.Verb.GetLogSupport)) {
-            PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
-            if (pp != null) {
-              return pp.getIndirectObject().equals(selfOrgAsset);
-            }
-          }
-        }
-        return false;
-      }
-    };
-    expandableTasks = (IncrementalSubscription) subscribe(myTaskPred);
-
+	public boolean execute(Object o) {
+	  if (o instanceof Task) {
+	    Task task = (Task) o;
+	    Verb verb = task.getVerb();
+	    if (verb.equals(Constants.Verb.GetLogSupport)) {
+	      PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
+	      if (pp != null) {
+		return pp.getIndirectObject().equals(selfOrgAsset);
+	      }
+	    }
+	  }
+	  return false;
+	}
+      };
+    expandableTasks = (IncrementalSubscription) blackboard.subscribe(myTaskPred);
+    
     /** Predicate for watching our expansions **/
     final UnaryPredicate myExpansionPred = new UnaryPredicate() {
       public boolean execute(Object o) {
@@ -117,12 +143,12 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
           return myTaskPred.execute(exp.getTask());
         }
         return false;
-      }
+    }
     };
-    myExpansions = (IncrementalSubscription) subscribe(myExpansionPred);
+    myExpansions = (IncrementalSubscription) blackboard.subscribe(myExpansionPred);
   }
-
-  /**
+    
+    /**
    * The predicate for the Socrates subscription
    **/
   private static UnaryPredicate selfOrgAssetPred = new UnaryPredicate() {
@@ -139,13 +165,17 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
    * Plugin execute method is called every time one of our
    * subscriptions has something to do
    **/
-  public synchronized void execute() {
+  protected void execute() {
+
     if (mySelfOrgs.hasChanged()) {
-      processOrgAssets(mySelfOrgs.getAddedList());
+      //processOrgAssets(mySelfOrgs.getAddedList());
+      processOrgAssets(mySelfOrgs.getChangedList());
     }
 
-    if (expandableTasks == null) return; // Still waiting for ourself
-      
+    if (expandableTasks == null) 
+	{
+	  return; // Still waiting for ourself
+	}
     if (expandableTasks.hasChanged()) {
       Enumeration e = expandableTasks.getAddedList();
       while (e.hasMoreElements()) {
@@ -181,7 +211,7 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
     }
     Expansion exp = PlugInHelper.wireExpansion(task, subtasks, theLDMF);
     //use the helper to publish the expansion and the wf subtasks all in one
-    PlugInHelper.publishAddExpansion(getSubscriber(), exp);
+    PlugInHelper.publishAddExpansion(blackboard.getSubscriber(), exp);
   }
 
   /**
@@ -196,15 +226,15 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
     Vector prepphrases = new Vector();
 
     // The following is removed because we should depend on the context, instead
-//      // get the existing prep phrase(s) - propagate "with OPlan" phrase only
-//      Enumeration origpp = task.getPrepositionalPhrases();
-//      while (origpp.hasMoreElements()) {
-//        PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
-//        if ((theorigpp.getPreposition().equals(Constants.Preposition.WITH)) &&
-//            (theorigpp.getIndirectObject() instanceof Oplan)) {	
-//          prepphrases.addElement(theorigpp);
-//        }
-//      }
+    //      // get the existing prep phrase(s) - propagate "with OPlan" phrase only
+    //      Enumeration origpp = task.getPrepositionalPhrases();
+    //      while (origpp.hasMoreElements()) {
+    //        PrepositionalPhrase theorigpp = (PrepositionalPhrase) origpp.nextElement();
+    //        if ((theorigpp.getPreposition().equals(Constants.Preposition.WITH)) &&
+    //            (theorigpp.getIndirectObject() instanceof Oplan)) {	
+    //          prepphrases.addElement(theorigpp);
+    //        }
+    //      }
     // make the "subordinates" abstract asset and add a prep phrase with it
     Asset subasset_proto = theLDMF.createPrototype(Asset.class, "Subordinates");
     Asset subasset = theLDMF.createInstance(subasset_proto);
@@ -214,7 +244,7 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
     prepphrases.addElement(newpp);
     subtask.setPrepositionalPhrases(prepphrases.elements());
     return subtask;
-  }
+  } 
 
   /**
    * Creates a DETERMINEREQUIREMENTS task of the specified type
@@ -248,7 +278,7 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
   private NewTask createTask(Task task) {
     NewTask subtask = theLDMF.newTask();
     subtask.setParentTask(task);
-    subtask.setSource(this.getCluster().getClusterIdentifier());
+    subtask.setSource(this.getBindingSite().getAgentIdentifier());
     if (task.getDirectObject() != null) {
       subtask.setDirectObject(theLDMF.cloneInstance(task.getDirectObject()));
     } else {
@@ -259,7 +289,6 @@ public class GLSExpanderPlugIn extends SimplePlugIn {
     subtask.setPreferences(task.getPreferences());
     ContextOfUIDs context = (ContextOfUIDs) task.getContext();
     if (context == null) {
-      System.err.println(getClass() + " missing context in " + task);
     } else {
       //RAY      subtask.setContext(context);
     }
