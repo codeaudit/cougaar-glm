@@ -78,7 +78,7 @@ public class LDMXMLPlugIn extends LDMEssentialPlugIn
     private File XMLFile;
     private Enumeration assets;
     private Document doc;
-    private RootFactory theFactory;
+    private RootFactory theFactory = null;
 		DomainService domainService = null;
 		PrototypeRegistryService protregService = null;    
 
