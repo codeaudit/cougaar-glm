@@ -61,7 +61,7 @@ public class InventoryChart
     static final int CDAY_MIN=-5;
 
     //PER_25,50,75,HORIZ_STRIPE,VERT_STRIPE,DIAG_HATCHED,CROSS_HATCHED,etc
-    static final int INACTIVE_SERIES_PATTERN=JCFillStyle.VERT_STRIPE;
+    static final int INACTIVE_SERIES_PATTERN=JCFillStyle.STRIPE_45;
 
     Vector removeableViews = new Vector();
     int viewIndex = 0;
