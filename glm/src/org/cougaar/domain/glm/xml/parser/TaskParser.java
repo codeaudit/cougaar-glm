@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/TaskParser.java,v 1.2 2000-12-20 18:18:39 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/TaskParser.java,v 1.3 2001-02-16 00:48:27 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -41,6 +41,7 @@ import org.cougaar.lib.xml.parser.VerbParser;
  * Copyright (c) 1999 BBN Technologies 
  */
 public class TaskParser{
+  private static String PREPO="PREPO";
 
   public static Task getTask(LDMServesPlugIn ldm,
 			     ClusterServesPlugIn cluster, 
@@ -78,21 +79,18 @@ public class TaskParser{
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.FROM);
 	    newpp.setIndirectObject(LocationParser.getLocation(ldm, child));
-	    //task.setPrepositionalPhrase(newpp);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("to")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.TO);
 	    newpp.setIndirectObject(LocationParser.getLocation(ldm, child));
-	    //task.setPrepositionalPhrase(newpp);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("with")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.WITH);
 	    newpp.setIndirectObject(getStuff(ldm, child));
-	    //task.setPrepositionalPhrase(newpp);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("using")){
@@ -100,24 +98,19 @@ public class TaskParser{
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.USING);
 	    newpp.setIndirectObject(getStuff(ldm, child));
-	    //task.setPrepositionalPhrase(newpp);
 	    prep_phrases.addElement(newpp);
 	  }
-          /*
-	  else if(childname.equals("via")){
-	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
-	    newpp.setPreposition(Constants.Preposition.VIA);
-	    newpp.setIndirectObject(NetworkParser.getRouteSet(ldm, child));
-	    //task.setPrepositionalPhrase(newpp);
-	    prep_phrases.addElement(newpp);
-	  }
-          */
 	  else if(childname.equals("for")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.FOR);
 	    String forunit = getForUnit(child);
 	    newpp.setIndirectObject(forunit);
-	    //task.setPrepositionalPhrase(newpp);
+	    prep_phrases.addElement(newpp);
+	  }
+	  else if(childname.toUpperCase().equals(PREPO)){
+	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
+	    newpp.setPreposition(PREPO);
+	    newpp.setIndirectObject(PREPO);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("readyat")){
@@ -126,7 +119,6 @@ public class TaskParser{
 	    Date readyat = DateParser.getDate(child);
 	    Schedule sched = ldmf.newSimpleSchedule(readyat, readyat);
 	    newpp.setIndirectObject(sched);
-	    //task.setPrepositionalPhrase(newpp);
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.equals("startdate")){
@@ -172,7 +164,6 @@ public class TaskParser{
 	  else if (childname.equals("FromTask")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.FROMTASK);
-	    //	    newpp.setPreposition(AirforceGrammar.FROMTASK);
 	    Asset AEF = new AbstractAsset();
 	    try {
 	      NewTypeIdentificationPG typeId = (NewTypeIdentificationPG)AEF.getTypeIdentificationPG();
@@ -182,7 +173,6 @@ public class TaskParser{
 	      System.err.println("problem creating the AbstractAsset for FromTask");
 	    }
 	    newpp.setIndirectObject(AEF);
-	    //task.setPrepositionalPhrase(newpp);
 	    prep_phrases.addElement(newpp);
 	  }
 	}
