@@ -1,5 +1,11 @@
 2002-06-13  Ray Tomlinson  <RTomlinson@bbn.com>
 
+	* org/cougaar/mlm/plugin/organization/GLSInitServlet.java:
+	Add ability to "push the buttons" from other plugins by publishing
+	a request object. Allows for starting a society with needing a
+	servlet. Used by the GLMCompletionSocietyPlugin to push the
+	buttons when quiescence is attained.
+
 	* org/cougaar/glm/plugin/completion/GLMCompletionSocietyPlugin.java:
 	Add ability to send oplan and publish gls.
 

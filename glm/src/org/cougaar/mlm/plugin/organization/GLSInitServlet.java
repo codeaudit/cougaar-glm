@@ -87,6 +87,21 @@ import java.io.*;
  **/
 public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 
+  public static final String SENDOPLAN = "sendoplan";
+  public static final String UPDATEOPLAN = "updateoplan";
+  public static final String PUBLISHGLS = "publishgls";
+  public static final String RESCINDGLS = "rescindgls";
+    
+  /**
+   * For making direct request on this plugin (not via servlet).
+   **/
+  public static class Request implements Serializable {
+    private String command;
+    public Request(String command) {
+      this.command = command;
+    }
+  }
+
   private IncrementalSubscription oplanSubscription;
 
   private IncrementalSubscription glsSubscription;
@@ -94,6 +109,8 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
   private IncrementalSubscription stateSubscription;
 
   private IncrementalSubscription myorgassets;
+
+  private IncrementalSubscription requestSubscription;
 
   /** for knowing when we get our self org asset **/
   private Organization selfOrgAsset = null;
@@ -156,6 +173,12 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
   private static UnaryPredicate statePredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
       return (o instanceof MyPrivateState);
+    }
+  };
+  
+  private static UnaryPredicate requestPredicate = new UnaryPredicate() {
+    public boolean execute(Object o) {
+      return (o instanceof Request);
     }
   };
   
@@ -230,6 +253,10 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       doNotify = true;
     }
 
+    if (requestSubscription.hasChanged()) {
+      processRequests(requestSubscription.getAddedCollection());
+    }
+
     for (Iterator it = contributors.iterator(); it.hasNext();) {
       IncrementalSubscription is = (IncrementalSubscription) it.next();
       
@@ -255,6 +282,19 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       }
     }
 
+  }
+
+  private void processRequests(Collection newRequests) {
+    for (Iterator i = newRequests.iterator(); i.hasNext(); ) {
+      Request request = (Request) i.next();
+      if (request.command.equals("sendoplan")) {
+        publishOplanObjects();
+        publishOplanPostProcessing();
+      } else if (request.command.equals("publishgls")) {
+	publishAllRootGLS();
+      }
+      publishRemove(request);
+    }
   }
 
   /** finds the published oplan using its ID as a key
@@ -392,6 +432,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     glsSubscription = (IncrementalSubscription) getBlackboardService().subscribe(glsPredicate);
 
     myorgassets = (IncrementalSubscription) subscribe(orgAssetPred);
+    requestSubscription = (IncrementalSubscription) subscribe(requestPredicate);
 
     contributors = new ArrayList(13);
     // refill contributors Collection on rehydrate
@@ -594,6 +635,13 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     }
   }
 
+  private void publishAllRootGLS() {
+    for (Iterator i = oplanSubscription.iterator(); i.hasNext(); ) {
+      Oplan oplan = (Oplan) i.next();
+      doPublishRootGLS(oplan);
+    }
+  }
+
   public void publishRootGLS(String oplanID) {
     openTransaction();
     Oplan oplan = findOplanById(oplanID);
@@ -708,17 +756,17 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 	out.close();
       } catch (java.io.IOException ie) { ie.printStackTrace(); }
 
-      if (command.equals("sendoplan")) {
+      if (command.equals(SENDOPLAN)) {
 	publishOplan();
       }
-      if (command.equals("updateoplan")) {
+      if (command.equals(UPDATEOPLAN)) {
 	refreshOplan();
       }
-      if (command.equals("publishgls")) {
+      if (command.equals(PUBLISHGLS)) {
 	//System.out.println("oplanID is " + request.getParameter("oplanID"));
 	publishRootGLS(request.getParameter("oplanID"));
       }
-      if (command.equals("rescindgls")) {
+      if (command.equals(RESCINDGLS)) {
 	//System.out.println("oplanID is " + request.getParameter("oplanID"));
 	rescindRootGLS(request.getParameter("oplanID"));
       }
