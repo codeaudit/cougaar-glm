@@ -248,6 +248,18 @@ public abstract class BasicProcessor {
 	return wf;
     }
 
+    /**
+       The goal of this code is to replace any existing expansion of
+       the parent into the new set of subtasks, but to do so in a way
+       that maximizes the reuse of existing subtasks of the parent.
+       This is done by putting all the existing subtasks into a
+       hashtable using a key characterizing the ways that the subtask
+       cannot be changed (verb, etc.). Then the new tasks are matched
+       against the old. Where matches are found the existing task is
+       adjusted to match. IF a new task cannot be matched, it is added
+       to the expansion. After matching is completed, any old tasks
+       that were not matched are removed from the expansion.
+     **/
     protected void publishExpansion(Task parent, Vector tasks) {
 	if (tasks.isEmpty() ) {
 	    printError("publishExpansion - no tasks"+TaskUtils.taskDesc(parent));
@@ -342,10 +354,11 @@ public abstract class BasicProcessor {
 	    while (key_list.hasMoreElements()) {
 		key = (String)key_list.nextElement();
 		PublishedTask ipo = (PublishedTask) published_tasks.get(key);
-		task = ipo.getTask();
+		NewTask newTask = (NewTask) ipo.getTask();
 		//  		printDebug("ipo.getTask(): " + TaskUtils.taskDesc(task));
 		if (ipo.getPublished()) {
-		    newTasks.addElement(task);
+		    newTasks.addElement(newTask);
+                    newTask.setWorkflow(nwf);
 		}
 	    }
 	    nwf.setTasks(newTasks.elements());
