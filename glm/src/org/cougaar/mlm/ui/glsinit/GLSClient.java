@@ -173,7 +173,8 @@ public class GLSClient extends JPanel {
     } catch (ClassNotFoundException e) {
       System.err.println("Not using secure User Authentication: " + securityUIClass);
     } catch (ExceptionInInitializerError e) {
-      System.err.println("Unable to use secure User Authentication: " + securityUIClass + ". " + e);
+      System.err.println("Unable to use secure User Authentication: " + securityUIClass + ". ");
+      e.printStackTrace();
     } catch (LinkageError e) {
       System.err.println("Not using secure User Authentication: " + securityUIClass);
     }
@@ -182,7 +183,8 @@ public class GLSClient extends JPanel {
       try {
 	cls.newInstance();
       } catch (Exception e) {
-	System.err.println("Error using secure User Authentication (" + securityUIClass + "): " + e);
+	System.err.println("Error using secure User Authentication (" + securityUIClass + ")");
+	e.printStackTrace();
       }
     }
   }
