@@ -78,8 +78,8 @@ import org.cougaar.domain.glm.plugins.TaskUtils;
 
 public class ReadinessAssessorPlugin extends ComponentPlugin {
 
-  private long rollupSpan = 10;
-  private StringBuffer debugStart = new StringBuffer();
+  protected long rollupSpan = 10;
+  protected StringBuffer debugStart = new StringBuffer();
   private PhasedAggregated allocationAggregator = new PhasedAggregated();
 
   private IncrementalSubscription readinessTaskSub;
@@ -263,7 +263,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
   /**
    * @return an collection of AspectValue[] - part of a phased AllocationResult
    */
-  private ArrayList calcResults(Task parentTask, HashMap tree, long start, long end) {
+  protected ArrayList calcResults(Task parentTask, HashMap tree, long start, long end) {
     ArrayList in = new ArrayList(13);
 
     // Collection of AspectValue[] for entire Agent
@@ -352,7 +352,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
    * @param oldList min of previous phased results
    * @param newList new phased result to merge in
    **/
-  private void merge(ArrayList oldList, ArrayList newList) {
+  protected void merge(ArrayList oldList, ArrayList newList) {
     // sure hope these cover the same time span!
 
     if (oldList.size() != newList.size()) {
@@ -386,7 +386,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
    * @param runningTotalList running total each phase of phased results
    * @param newList new phased result to add to total
    **/
-  private void mergeAdd(ArrayList runningTotalList, ArrayList newList) {
+  protected void mergeAdd(ArrayList runningTotalList, ArrayList newList) {
     // sure hope these cover the same time span!
 
     if (runningTotalList.size() != newList.size()) {
@@ -415,7 +415,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
   /**
    * divide each qty by the number of items added together to produce the qty.
    **/
-  private void averageResults(ArrayList results, int denominator) {
+  protected void averageResults(ArrayList results, int denominator) {
 
     // not much point in doing this if denominator is 0
     if (denominator == 0)
@@ -427,7 +427,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     }
   }
 
-  private static final long MILLISPERDAY = 1000*60*60*24;
+  protected static final long MILLISPERDAY = 1000*60*60*24;
 
   /**
    *  assign a rate value to each day covered by the allocation result ranges
@@ -502,14 +502,14 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     return schedule;
   }
 
-  private boolean inRange(long startTime, long endTime, RateScheduleElement rse) {
+  protected boolean inRange(long startTime, long endTime, RateScheduleElement rse) {
     if ((rse.date < startTime) || (rse.date >= endTime)) 
       return false;
     return true;
   }
 
   /** find the average readiness of the RateScheduleElements in the collection **/
-  private double average (Collection rses) {
+  protected double average (Collection rses) {
     // wipe out existing numbers
     int weight = 0;
     double runningTotal = 0;
@@ -525,7 +525,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     return runningTotal/weight;
   }
 
-  private AspectValue[] newReadinessAspectArray(long startTime, long endTime, double readiness) {
+  protected AspectValue[] newReadinessAspectArray(long startTime, long endTime, double readiness) {
     AspectValue[] values = new AspectValue[3];
     values[0] = new AspectValue(AspectType.START_TIME, startTime);
     values[1] = new AspectValue(AspectType.END_TIME, endTime);
@@ -596,7 +596,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     return rollup;
   }
 
-  private void publishAllocationResult(Task task, List phasedResults) {
+  protected void publishAllocationResult(Task task, List phasedResults) {
     AspectValue[] rollup = calcRollup(phasedResults);
     AllocationResult ar = rootFactory.newAVPhasedAllocationResult(1, true, 
 								  rollup,
@@ -615,7 +615,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     }
   }
 
-  private void publishAddToExpansion(Task parent, Task subtask) {
+  protected void publishAddToExpansion(Task parent, Task subtask) {
         // Publish new task
 //      if (!blackboard.publishAdd(subtask)) {
 //        System.err.println("ReadinessAssessorPlugin.publishAddToExpansion fail to publish task" +TaskUtils.taskDesc(subtask));
@@ -698,7 +698,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
   }
 
 
-  private class RateScheduleElement {
+  protected class RateScheduleElement {
     public long date;
     public double readiness;
     
