@@ -11,7 +11,8 @@
 package org.cougaar.domain.mlm.plugin.ldm;
 
 
-import org.cougaar.core.plugin.SimplePlugIn;
+//import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.PropertyProvider;
 import org.cougaar.core.plugin.PrototypeProvider;
 //import org.cougaar.core.plugin.LDMPlugInServesLDM;
@@ -29,11 +30,11 @@ import org.cougaar.util.UnaryPredicate;
  */
 
 public abstract class LDMEssentialPlugIn
-  extends SimplePlugIn
+  extends ComponentPlugin
   implements PropertyProvider, PrototypeProvider
 {
   // For maintaining container of Assets added by this LDMPlugIn
-  Subscriber subscriber;
+  Subscriber subscriber; 
 
   public LDMEssentialPlugIn() {}
 	
