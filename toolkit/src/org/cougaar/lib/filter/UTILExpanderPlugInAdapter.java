@@ -103,7 +103,7 @@ public class UTILExpanderPlugInAdapter extends UTILBufferingPlugInAdapter
    */
   public void handleIllFormedTask (Task t) {
     reportIllFormedTask(t);
-    publishAdd (UTILExpand.makeFailedExpansion (null, ldmf, t));
+    blackboard.publishAdd (UTILExpand.makeFailedExpansion (null, ldmf, t));
   }
 
   /**
@@ -283,6 +283,9 @@ public class UTILExpanderPlugInAdapter extends UTILBufferingPlugInAdapter
    * @see UTILBufferingPlugIn
    */
   public void processTasks (List tasks) {
+    if (myExtraOutput)
+      System.out.println (getName () + 
+			  ".processTasks - processing " + tasks.size() + " tasks.");
     for (int i = 0; i < tasks.size (); i++)
       handleTask ((Task) tasks.get (i));
   }
@@ -300,8 +303,12 @@ public class UTILExpanderPlugInAdapter extends UTILBufferingPlugInAdapter
     try { wantConfidence = getMyParams().getBooleanParam ("SimpleExpanderWantConfidence"); }
     catch (Exception e) {}
 
+    if (myExtraOutput)
+      System.out.println (getName () + 
+			  ".handleTask : called on - " + t.getUID());
+
     UTILExpand.handleTask(ldmf, 
-			 getDelegate(), 
+			 getBlackboardService(), 
 			 getName(),
 			 wantConfidence, 
 			 myExtraOutput,

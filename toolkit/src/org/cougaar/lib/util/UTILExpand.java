@@ -59,6 +59,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.cougaar.core.blackboard.BlackboardService;
+
 /** 
  * This class contains utility functions related to
  * subtasks and expansions.
@@ -546,79 +548,10 @@ public class UTILExpand {
   public static void handleTask(RootFactory ldmf, PlugInDelegate plugin, String pluginName,
 				boolean wantConfidence, boolean myExtraOutput,
 				Task t, List subtasks) {
-    if (subtasks.isEmpty ()) {
-      throw new UTILPlugInException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
-    }
-
-    // WARNING: The following MPTask code is somewhat GlobalSea specific.
-    // However, in general if we try to create expansions containing
-    // MPTasks, we crash, so this is a slightly better solution for now.
-    if (myExtraOutput){
-      System.out.println(pluginName + 
-			 ".handleTask: Subtask(s) created for " +
-			 ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
-			 t.getUID());
-    }
-
-    Workflow wf = null;
-
-    if (t instanceof MPTask) {
-      // Handling for the special case in which the subtasks of 
-      // an expanded MPTask are ALL also MPTasks.
-      Iterator sub_t_i = subtasks.iterator();
-      boolean contains_mptasks = false;
-      while (sub_t_i.hasNext()) {
-	if (sub_t_i.next() instanceof MPTask)
-	 contains_mptasks = true;
-	else if (contains_mptasks == true)
-	  throw new UTILPlugInException(pluginName +
-					".handleTask : ERROR: Found expansion with mixed Task and MPTask children.");
-      } // while
-      
-      if (contains_mptasks)
-	wf = makeWorkflow(ldmf, subtasks, t /*parent*/);
-    } 
-
-    // General case
-    // If we haven't created a workflow yet, we want the "normal" case
-
-    if (wf == null) {
-      wf = UTILExpand.makeWorkflow (ldmf, subtasks, t);
-    } 
-
-    /*
-    if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Workflow created.");
-    }
-    */
-
-    Expansion exp = null;
-    if(wantConfidence){
-      exp = UTILExpand.makeExpansionWithConfidence (ldmf, wf);
-    }
-    else{
-      exp = UTILExpand.makeExpansion (ldmf, wf);
-    }
-
-    if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Expansion created. (" +
-			 exp.getUID() + ")");
-    }
-    
-    for (Iterator i = subtasks.iterator (); i.hasNext ();) {
-      plugin.publishAdd (i.next());
-    }
-	//	plugin.publishAdd(wf); // Mike Thome says never publish the workflow
-    plugin.publishAdd(exp);
-
-    if (myExtraOutput){
-      System.out.println(pluginName + ".handleTask: Expansion published. Workflow has " + 
-			 UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
-    }
-
+	handleTask (ldmf, plugin.getBlackboardService (), pluginName, wantConfidence, myExtraOutput, t, subtasks);
   }
-
-  public static Expansion handleTaskPrime(RootFactory ldmf, PlugInDelegate plugin, String pluginName,
+  
+  public static void handleTask(RootFactory ldmf, BlackboardService blackboard, String pluginName,
 				boolean wantConfidence, boolean myExtraOutput,
 				Task t, List subtasks) {
     if (subtasks.isEmpty ()) {
@@ -681,9 +614,96 @@ public class UTILExpand {
     }
     
     for (Iterator i = subtasks.iterator (); i.hasNext ();) {
-      plugin.publishAdd (i.next());
+      blackboard.publishAdd (i.next());
     }
-    plugin.publishAdd(exp);
+	//	plugin.publishAdd(wf); // Mike Thome says never publish the workflow
+    blackboard.publishAdd(exp);
+
+    if (myExtraOutput){
+      System.out.println(pluginName + ".handleTask: Expansion published. Workflow has " + 
+			 UTILAllocate.enumToList(exp.getWorkflow ().getTasks()).size () + " subtasks." );
+    }
+
+  }
+
+  /** 
+   * who uses this anymore anyway?  TOPS?
+   */
+  public static Expansion handleTaskPrime(RootFactory ldmf, PlugInDelegate plugin, String pluginName,
+				boolean wantConfidence, boolean myExtraOutput,
+										  Task t, List subtasks) {
+	return handleTaskPrime (ldmf, plugin.getBlackboardService(), pluginName, wantConfidence, myExtraOutput, t, subtasks);
+  }
+  
+  /** 
+   * who uses this anymore anyway?   TOPS?
+   */
+  public static Expansion handleTaskPrime(RootFactory ldmf, BlackboardService blackboard, String pluginName,
+				boolean wantConfidence, boolean myExtraOutput,
+				Task t, List subtasks) {
+    if (subtasks.isEmpty ()) {
+      throw new UTILPlugInException(pluginName+".handleTask - WARNING : getSubtasks returned empty vector!");
+    }
+
+    // WARNING: The following MPTask code is somewhat GlobalSea specific.
+    // However, in general if we try to create expansions containing
+    // MPTasks, we crash, so this is a slightly better solution for now.
+    if (myExtraOutput){
+      System.out.println(pluginName + 
+			 ".handleTask: Subtask(s) created for " +
+			 ((t instanceof MPTask)?"MPT":"t") + "ask :" + 
+			 t.getUID());
+    }
+
+    Workflow wf = null;
+
+    if (t instanceof MPTask) {
+      // Handling for the special case in which the subtasks of 
+      // an expanded MPTask are ALL also MPTasks.
+      Iterator sub_t_i = subtasks.iterator();
+      boolean contains_mptasks = false;
+      while (sub_t_i.hasNext()) {
+	if (sub_t_i.next() instanceof MPTask)
+	 contains_mptasks = true;
+	else if (contains_mptasks == true)
+	  throw new UTILPlugInException(pluginName +
+					".handleTask : ERROR: Found expansion with mixed Task and MPTask children.");
+      } // while
+      
+      if (contains_mptasks)
+	wf = makeWorkflow(ldmf, subtasks, t /*parent*/);
+    } 
+
+    // General case
+    // If we haven't created a workflow yet, we want the "normal" case
+
+    if (wf == null) {
+      wf = UTILExpand.makeWorkflow (ldmf, subtasks, t);
+    } 
+
+    /*
+    if (myExtraOutput){
+      System.out.println(pluginName + ".handleTask: Workflow created.");
+    }
+    */
+
+    Expansion exp = null;
+    if(wantConfidence){
+      exp = UTILExpand.makeExpansionWithConfidence (ldmf, wf);
+    }
+    else{
+      exp = UTILExpand.makeExpansion (ldmf, wf);
+    }
+
+    if (myExtraOutput){
+      System.out.println(pluginName + ".handleTask: Expansion created. (" +
+			 exp.getUID() + ")");
+    }
+    
+    for (Iterator i = subtasks.iterator (); i.hasNext ();) {
+      blackboard.publishAdd (i.next());
+    }
+    blackboard.publishAdd(exp);
 
     if (myExtraOutput){
       System.out.println(pluginName + ".handleTask: Expansion published. Workflow has " + 

@@ -183,7 +183,7 @@ public abstract class UTILBufferingPlugInAdapter extends UTILPlugInAdapter
    * needed to lock the subscriber in the nested class   
    * public version of a protected method
    */
-  public void startTransaction() { openTransaction(); }
+  public void startTransaction() { blackboard.openTransaction(); }
 
   /** 
    * Implemented for UTILBufferingPlugIn
@@ -191,7 +191,7 @@ public abstract class UTILBufferingPlugInAdapter extends UTILPlugInAdapter
    * needed to unlock the subscriber in the nested class   
    * public version of a protected method
    */
-  public void endTransaction()   { closeTransaction(false);  }
+  public void endTransaction()   { blackboard.closeTransaction(false);  }
 
   /**
    * Implemented for UTILBufferingPlugIn

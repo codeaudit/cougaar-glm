@@ -160,7 +160,7 @@ extends UTILBufferingPlugInAdapter implements UTILAllocatorPlugIn{
    */
   public void handleIllFormedTask (Task t) {
     reportIllFormedTask(t);
-    publishAdd (UTILAllocate.makeFailedDisposition (null, ldmf, t));
+    blackboard.publishAdd (UTILAllocate.makeFailedDisposition (null, ldmf, t));
   }
 
   /**
@@ -264,7 +264,7 @@ extends UTILBufferingPlugInAdapter implements UTILAllocatorPlugIn{
 			  alloc.getTask ().getUID ());
 
     try {
-      publishRemove (alloc); 
+      blackboard.publishRemove (alloc); 
     } catch (Exception e) {
       if (myExtraOutput)
 	System.out.println (getName () + " : publishRemovalOfAllocation - got reset claim exception, ignoring...");

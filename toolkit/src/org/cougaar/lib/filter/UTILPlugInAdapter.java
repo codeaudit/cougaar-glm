@@ -53,6 +53,9 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Iterator;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.LDMService;
+
 /**
  * Implementation of UTILPlugIn interface.
  * 
@@ -62,48 +65,40 @@ import java.util.Iterator;
  * thread is started.
  */
 
-public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
-  public final void load(Object object) throws StateModelException {
-	setThreadingChoice(SINGLE_THREAD);
-	//	getBindingSite().setThreadingChoice(SINGLE_THREAD);
-    super.load(object);
-    getEnvData();
-  }
-
+public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
   /**
    * This method is called before cycle is ever called to
    * set up safe transactions for container subscriptions.
    *
    * setupFilters () is wrapped in an open/closeTransaction block.
    */
-  protected final void prerun() {
+  protected final void setupSubscriptions() {
+    getEnvData();
     setInstanceVariables ();
 
     preFilterSetup ();
 
-    try {
-      openTransaction();
-      setupFilters ();
-    } catch (Exception e){
-      synchronized (System.err) {
-        System.err.println(myClusterName + ".prerun () : Caught" + e);
-        e.printStackTrace();
-      }
-    } finally {
-      closeTransaction(false);
-    }
+	setupFilters ();
 
     localSetup();
   }
   
+  private LDMService ldmService = null;
+  public final void setLDMService(LDMService s) {
+    ldmService = s;
+  }
+  protected final LDMService getLDMService() {
+    return ldmService;
+  }
+
   /**
    * set instance variables here that don't depend on 
    * env var parameters.
    */
   private void setInstanceVariables () {
-    ldmf = getLDM().getFactory();
+    ldmf = getLDMService().getFactory();
     myClusterName = getClusterIdentifier().getAddress();
-    realityPlan = ldmf.getRealityPlan();
+	realityPlan = ldmf.getRealityPlan();
     mySubscriptions = new Vector ();
   }
 
@@ -176,7 +171,7 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
   public void removeFilter  (UTILFilterCallback callbackObj) {
     synchronized (mySubscriptions) {
       mySubscriptions.removeElement (callbackObj);
-      unsubscribe(callbackObj.getSubscription ());
+	  blackboard.unsubscribe(callbackObj.getSubscription ());
     }
   }
 
@@ -189,7 +184,7 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
     if (myExtraFilterOutput) 
       System.out.println (getName () + " : Subscribing to " + pred);
 
-    return (IncrementalSubscription) subscribe (pred); 
+    return (IncrementalSubscription) blackboard.subscribe (pred); 
   }
 
   /**
@@ -202,7 +197,7 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
     if (myExtraFilterOutput) 
       System.out.println (getName () + " : Subscribing to " + pred);
 
-    return (IncrementalSubscription) subscribe (pred, specialContainer); 
+    return (IncrementalSubscription) blackboard.subscribe (pred, specialContainer); 
   }
 
   /** 
@@ -213,7 +208,11 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
   public void getEnvData () {
 
     // Don't care to clone the vector?
-    Vector myP = getParameters();
+    Vector myP;
+	if (getParameters () != null)
+	  myP = new Vector (getParameters());
+	else
+	  myP = new Vector ();
 
     // create the parameter table
     myParams = createParamTable (myP, getClusterIdentifier());
@@ -350,7 +349,7 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
 	    }
 	  }
 	}
-	publishChange(cpe);
+	blackboard.publishChange(cpe);
       }
     }
     else if (!cpe.getTask().getSource ().equals (getClusterIdentifier())) {
@@ -383,10 +382,9 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
    * Directs the filterCallback with the changed subscription
    * to react to the change in some way.
    */
-  protected void cycle() {
+  protected void execute() {
     if (myExtraFilterOutput)
       System.out.println (getName () + " : cycle called (a subscription changed)");
-    openTransaction();
 
     synchronized (mySubscriptions) {
       for (int i = 0; i < mySubscriptions.size ();  i++) {
@@ -401,7 +399,6 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
         }
       }
     }
-    closeTransaction();
   }
 
   /**
@@ -447,6 +444,16 @@ public class UTILPlugInAdapter extends PlugInAdapter implements UTILPlugIn {
     publishChange (tasksWorkflow);
     publishAdd    (copyOfTask);
     publishRemove (taskToReplace);
+  }
+
+  protected final boolean publishAdd(Object o) {
+    return getBlackboardService().publishAdd(o);
+  }
+  protected final boolean publishRemove(Object o) {
+    return getBlackboardService().publishRemove(o);
+  }
+  protected final boolean publishChange(Object o) {
+    return getBlackboardService().publishChange(o, null);
   }
 
     /** @return the name of the cluster */
