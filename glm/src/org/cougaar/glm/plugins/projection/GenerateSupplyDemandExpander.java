@@ -25,12 +25,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.plugins.projection;
 
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.glm.debug.GLMDebug;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
@@ -49,12 +44,19 @@ import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /** Specifies how to create SUPPLY demand tasks for demand projection.
  **/
 public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
+   private static Logger logger = Logging.getLogger(GenerateSupplyDemandExpander.class);
 
-  /** 
+  /**
    * @see ProjectionTasksPredicate
    **/
   public GenerateSupplyDemandExpander(GLMDecorationPlugin pi, Organization org, Vector types) {
@@ -98,9 +100,10 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 		      }
 		    }	
 		  } else {
-		    GLMDebug.ERROR("GenerateSupplyDemandExpander", 
-				   "ProjectionTasksPredicate unrec OFTYPE :"+obj);
-		  }
+            if (logger.isErrorEnabled()) {
+              logger.error("ProjectionTasksPredicate unrec OFTYPE :" + obj);
+            }
+          }
 		}
 	      }
 	    }
@@ -227,7 +230,9 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 	geoloc = (GeolocLocation)myOrganization_.getMilitaryOrgPG().getHomeLocation();
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO, geoloc));
       } catch (NullPointerException npe) {
-	printError("demandTaskPrepPhrases(), Unable to find Location for Transport");
+        if (logger.isErrorEnabled()) {
+          logger.error("demandTaskPrepPhrases(), Unable to find Location for Transport");
+        }
       }
     }  
 

@@ -25,11 +25,6 @@
  */
 package org.cougaar.glm.plugins.projection;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
@@ -51,6 +46,13 @@ import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Projects demand for assets consumed by some consumer.
@@ -74,6 +76,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
   protected Vector                       resourceTypes_;
   /** Table used for Diff-Based replanning of ProjectSupply tasks */
   protected Hashtable                    publishedProjectionTable_;
+  private static Logger logger = Logging.getLogger(GenerateDemandExpander.class);
 
   public GenerateDemandExpander(DecorationPlugin pi, Organization org,
 				Vector types, UnaryPredicate pred) {
@@ -217,10 +220,11 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
       task = (Task)tasks.nextElement();
       int num_demand_tasks = createResourceConsumptionTasks(task);
       if (num_demand_tasks == 0) {
-	printDebug( "processTask: demands, but no demand tasks "+
-		    TaskUtils.taskDesc(task));
-	is_failed = true;
-	continue;
+        if (logger.isDebugEnabled()) {
+          logger.debug("processTask: demands, but no demand tasks " + TaskUtils.taskDesc(task));
+        }
+        is_failed = true;
+        continue;
       }
       //  	    printDebug("processTask: expand "+TaskUtils.taskDesc(task)+
       //  		       " into "+num_demand_tasks+" tasks.");
@@ -278,13 +282,18 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
    * @return Vector of PROJECTSUPPLY tasks */
   public Vector createDemandTasks(Task parent_task, Asset resource, 
 				  Schedule rate_schedule, double multiplier) {
-    if (rate_schedule.isEmpty()) return new Vector(0);
+    if (rate_schedule.isEmpty())
+      return new Vector(0);
     if (createSupplyTasksForType(parent_task)) {
-      printDebug(3, "createDemandTasks(), creating supply tasks for  "+TaskUtils.getTaskItemName(parent_task));
-      return createPeriodicDemandTasks(parent_task,resource, rate_schedule);
+      if (logger.isDebugEnabled()) {
+        logger.debug("createDemandTasks(), creating supply tasks for  " + TaskUtils.getTaskItemName(parent_task));
+      }
+      return createPeriodicDemandTasks(parent_task, resource, rate_schedule);
     }
-    printDebug(3, "createDemandTasks(), creating projection tasks for  "+TaskUtils.getTaskItemName(parent_task));
-    return createConstantParameterDemandTasks(parent_task,resource, rate_schedule, multiplier);
+    if (logger.isDebugEnabled()) {
+      logger.debug("createDemandTasks(), creating projection tasks for  " + TaskUtils.getTaskItemName(parent_task));
+    }
+    return createConstantParameterDemandTasks(parent_task, resource, rate_schedule, multiplier);
   }
 
   /** 
@@ -295,29 +304,29 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
 					      Schedule rate_schedule) {
     Vector supply_tasks = new Vector();
 
-    Asset consumer = (Asset)parent_task.getDirectObject();
+    Asset consumer = (Asset) parent_task.getDirectObject();
     int aggregation_period = getAggregationPeriod(resource.getTypeIdentificationPG().getTypeIdentification());
-    long aggregation_time = aggregation_period*MSEC_PER_DAY;
-	
+    long aggregation_time = aggregation_period * MSEC_PER_DAY;
+
     int num_tasks = 0;
     Task task;
     double qty;
     long sched_end = rate_schedule.getEndTime();
     long task_end = rate_schedule.getStartTime();
     while (task_end < sched_end) {
-      qty = getTotalDemand(rate_schedule, task_end, task_end+aggregation_time);
+      qty = getTotalDemand(rate_schedule, task_end, task_end + aggregation_time);
       if (qty > 0) {
-	task = newDemandTask(parent_task, resource, consumer, 
-			     task_end, qty);
-	if (task != null) {
-	  supply_tasks.addElement(task);
-	  num_tasks ++;
-	}
+        task = newDemandTask(parent_task, resource, consumer, task_end, qty);
+        if (task != null) {
+          supply_tasks.addElement(task);
+          num_tasks++;
+        }
       }
       task_end += aggregation_time;
     }
-    printDebug(2,"Created "+num_tasks+" "+AssetUtils.assetDesc(resource)+
-	       " demand tasks for consumer: "+AssetUtils.assetDesc(consumer));
+    if (logger.isDebugEnabled()) {
+      logger.debug("Created " + num_tasks + " " + AssetUtils.assetDesc(resource) + " demand tasks for consumer: " + AssetUtils.assetDesc(consumer));
+    }
     return supply_tasks;
   }
 
@@ -344,28 +353,28 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
     Enumeration elements = rate_schedule.getAllScheduleElements();
     while (elements.hasMoreElements()) {
       // 	    rse = (RateScheduleElement)elements.nextElement();
-      rse = (ObjectScheduleElement)elements.nextElement();
+      rse = (ObjectScheduleElement) elements.nextElement();
       task_start = rse.getStartTime();
       task_end = rse.getEndTime();
       if (task_end < now) {
-	// Don't do anything with tasks in the past
-	continue;
+        // Don't do anything with tasks in the past
+        continue;
       }
       // 	    rate = rse.getRate();
-      rate = (Rate)rse.getObject();
+      rate = (Rate) rse.getObject();
       // old
       // 	    rate = (rse.getQuantity() * ((task_end - qse.getStartTime())/MSEC_PER_DAY);
       if (rate != null) {
-	task = newProjectionTask(parent_task, resource, consumer, 
-				 task_start, task_end, rate, multiplier);
-	if (task != null) {
-	  projection_tasks.addElement(task);
-	  num_tasks ++;
-	}
+        task = newProjectionTask(parent_task, resource, consumer, task_start, task_end, rate, multiplier);
+        if (task != null) {
+          projection_tasks.addElement(task);
+          num_tasks++;
+        }
       }
     }
-    printDebug(2,"Created "+num_tasks+" "+AssetUtils.assetDesc(resource)+
-	       " demand tasks for consumer: "+AssetUtils.assetDesc(consumer));
+    if (logger.isDebugEnabled()) {
+      logger.debug("Created " + num_tasks + " " + AssetUtils.assetDesc(resource) + " demand tasks for consumer: " + AssetUtils.assetDesc(consumer));
+    }
     return projection_tasks;
   }
 
@@ -408,7 +417,9 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
       } else if (rate instanceof TimeRate) {
 	total_demand = ((TimeRate)rate).getHoursPerDay()*duration;
       } else {
-	printError("getTotalDemand(), Unknown Rate type found : "+rate);
+        if (logger.isErrorEnabled()) {
+          logger.error("getTotalDemand(), Unknown Rate type found : " + rate);
+        }
       }
       // 	    total_demand += rate.getPerDay()*duration;
     }
@@ -420,9 +431,11 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
   protected void updateGenerateDemandExpansion() {
     // check allocation results
     if (ownPESubscription_.elements().hasMoreElements()) {
-      printLog("updateGenerateDemandExpansion() has elements() added = "+
-	       ownPESubscription_.getAddedList().hasMoreElements()+" changed = "+
-	       ownPESubscription_.getChangedList().hasMoreElements() );
+      if (logger.isDebugEnabled()) {
+        logger.debug("updateGenerateDemandExpansion() has elements() added = " +
+                     ownPESubscription_.getAddedList().hasMoreElements()+" changed = "+
+                     ownPESubscription_.getChangedList().hasMoreElements() );
+      }
     }
     updateExpansionResult(ownPESubscription_.elements());
   }
@@ -434,7 +447,9 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
   protected ConsumerSpec getDemandSpec(Task task) {
     PrepositionalPhrase pp = task.getPrepositionalPhrase("DemandSpec");
     if (pp == null) {
-      printError("getDemandSpec badly formed task, no demand spec "+task);
+      if (logger.isErrorEnabled()) {
+        logger.error("getDemandSpec badly formed task, no demand spec " + task);
+      }
       return null;
     }
     return (ConsumerSpec)pp.getIndirectObject();
@@ -462,9 +477,11 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
     if (pp != null) {
       Object obj = pp.getIndirectObject();
       if (obj instanceof String) {
-	Boolean bool = (Boolean)plugin_.getParam((String)obj+create_supply_tasks_param);
-	result = (bool != null && bool.booleanValue());
-	printDebug("createSupplyTasksForType(), Create Supply tasks for "+(String)obj+", "+bool);
+        Boolean bool = (Boolean) plugin_.getParam((String) obj + create_supply_tasks_param);
+        result = (bool != null && bool.booleanValue());
+        if (logger.isDebugEnabled()) {
+          logger.debug("createSupplyTasksForType(), Create Supply tasks for " + (String) obj + ", " + bool);
+        }
       }
     }
     return result;
