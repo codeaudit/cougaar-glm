@@ -66,7 +66,10 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
 
     expand = new UTILExpand (logger);
 
-    try { wantConfidence = getMyParams().getBooleanParam ("SimpleExpanderWantConfidence"); }
+    try { 
+      if (getMyParams().hasParam ("SimpleExpanderWantConfidence")) 
+	wantConfidence = getMyParams().getBooleanParam ("SimpleExpanderWantConfidence"); 
+    }
     catch (Exception e) {}
   }
 

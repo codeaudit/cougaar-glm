@@ -69,20 +69,20 @@ public class UTILBufferingThread implements Runnable {
     ParamMap myParams = myPlugin.getMyParams ();
 
     try {
-      MINSIZE = myParams.getLongParam("MinSize");
-    } catch (Exception e) {
-      MINSIZE = 1;
-    }
-    try {
-      MAXSIZE = myParams.getLongParam("MaxSize");
-    } catch (Exception e) {
-      MAXSIZE = 1;
-    }
-    try {
-      MAXTIME = myParams.getLongParam("MaxTime") * 1000;
-    } catch (Exception e) {
-      MAXTIME = 1000;
-    }
+      if (myParams.hasParam("MinSize"))
+	MINSIZE = myParams.getLongParam("MinSize");
+      else
+	MINSIZE = 1;
+      if (myParams.hasParam("MaxSize"))
+	MAXSIZE = myParams.getLongParam("MaxSize");
+      else
+	MAXSIZE = 1;
+      if (myParams.hasParam("MaxTime"))
+	MAXTIME = myParams.getLongParam("MaxTime") * 1000;
+      else
+	MAXTIME = 1000;
+    } catch (Exception e) { logger.error ("error",e); }
+
     if (logger.isInfoEnabled()) {
       logger.info (this + " - Buffering thread params : MaxSize " + MAXSIZE +
 		   " MinSize " + MINSIZE +

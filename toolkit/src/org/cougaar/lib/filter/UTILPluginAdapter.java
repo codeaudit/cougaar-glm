@@ -318,10 +318,17 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
    * </pre>
    */
   public void localSetup () {
-    try {skipLowConfidence = getMyParams().getBooleanParam("skipLowConfidence");}
-    catch (Exception e) {skipLowConfidence = true;}
-    try {HIGH_CONFIDENCE = getMyParams().getFloatParam("HIGH_CONFIDENCE");}
-    catch (Exception e) {HIGH_CONFIDENCE = 0.99d;}
+    try {
+      if (getMyParams().hasParam ("skipLowConfidence"))
+	skipLowConfidence = getMyParams().getBooleanParam("skipLowConfidence");
+      else 
+	skipLowConfidence = true;
+
+      if (getMyParams().hasParam("HIGH_CONFIDENCE"))
+	HIGH_CONFIDENCE = getMyParams().getFloatParam("HIGH_CONFIDENCE");
+      else
+	HIGH_CONFIDENCE = 0.99d;
+    } catch (Exception e) {}
   }
 
   /** 
