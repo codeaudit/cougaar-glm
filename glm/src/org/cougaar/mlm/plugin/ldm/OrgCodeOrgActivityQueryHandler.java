@@ -96,23 +96,23 @@ public class OrgCodeOrgActivityQueryHandler extends NewOrgActivityQueryHandler {
         schedule = locationSchedule;
       } else {
         if (logger.isErrorEnabled()) {
-          logger.error("OrgActivityQueryHandler.processRow(): unexpected text in ATTRIBUTE_NAME column - " + attribute_name);
+          logger.error("OrgCodeOrgActivityQueryHandler.processRow(): unexpected text in ATTRIBUTE_NAME column - " + attribute_name);
         }
         continue;
       }
       OrgInfoElement element =
         new OrgInfoElement(attribute_value, 
                            plugin.getCDay().getTime(), 
-                           rs.getDouble(START_HOUR),
-                           rs.getDouble(END_HOUR));
+                           (long) rs.getDouble(START_HOUR),
+                           (long) rs.getDouble(END_HOUR));
       if (schedule.intersectingSet(element).isEmpty()) {
         if (logger.isDebugEnabled()) {
-          logger.debug("OrgActivityQueryHandler: Adding " + element);
+          logger.debug("OrgCodeOrgActivityQueryHandler: Adding " + element);
         }
         schedule.add(element);
       } else {
         if (logger.isErrorEnabled()) {
-          logger.error("OrgActivityQueryHandler: found more than one "
+          logger.error("OrgCodeOrgActivityQueryHandler: found more than one "
                        + attribute_value + " during "
                        + formatDate(element.getStartTime())
                        + " - "
