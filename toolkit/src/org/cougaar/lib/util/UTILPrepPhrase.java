@@ -50,10 +50,7 @@ import java.util.Vector;
 public class UTILPrepPhrase {
   private static String myName = "UTILPrepPhrase";
 
-  public UTILPrepPhrase (Logger log) { 
-    logger = log; 
-    //    alloc  = new UTILAllocate (log);
-  }
+  public UTILPrepPhrase (Logger ignoredLog) {}
 
   /**
    * Utility method for extracting the indirect object from a 
@@ -234,8 +231,5 @@ public class UTILPrepPhrase {
     npp.setIndirectObject(o);
     return npp;
   }
-
-  protected Logger logger;
-  //  protected UTILAllocate alloc;
 }
 
