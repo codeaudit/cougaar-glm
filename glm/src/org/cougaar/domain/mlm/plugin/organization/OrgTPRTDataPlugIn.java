@@ -356,6 +356,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
 
     // Use the same domain name for all org assets now
     Organization org = (Organization)getFactory().createAsset("Organization");
+    org.initRelationshipSchedule();
   	
     ((NewTypeIdentificationPG)org.getTypeIdentificationPG()).setTypeIdentification(UTC);
 
