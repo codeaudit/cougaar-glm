@@ -1039,7 +1039,18 @@ public static boolean isPallet(Asset asset) {
       if(mpg == null)
 	return false;
       String code = mpg.getCargoCategoryCode();
-      return CargoCategoryDecoder.isRORO(code);
+
+	  boolean retval = false;
+	  
+	  try {
+		retval = CargoCategoryDecoder.isRORO(code);
+	  } catch (NullPointerException npe) {
+		throw new UTILRuntimeException("GMLAsset.isVehicle - asset has movability PG but " + 
+									   "cargo category code is NOT set.\nMovability PG was :" + mpg + 
+									   "\nAsset was " + a);
+	  }
+	  
+      return retval;
     }
 
     /**
