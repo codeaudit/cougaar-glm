@@ -129,7 +129,7 @@ public abstract class DecorationPlugIn extends SimplePlugIn {
 	selfOrganizations_ = (IncrementalSubscription)subscribe( orgsPredicate_);
 	monitorPlugInSubscription(selfOrganizations_);	
 
-	if(didRehydrate()) {
+	if (didRehydrate()) {
 	    reconfigure();	    
 	}
 
