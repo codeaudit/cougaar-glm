@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.3 2002-03-04 18:33:17 gvidaver Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.4 2002-03-14 23:06:09 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -130,8 +130,7 @@ public class TaskParser{
 	  else if(childname.equals("oftype")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
 	    newpp.setPreposition(Constants.Preposition.OFTYPE);
-	    String oftype = getTagContents(child);
-	    newpp.setIndirectObject(oftype);
+	    newpp.setIndirectObject(getStuff(ldm,child));
 	    prep_phrases.addElement(newpp);
 	  }
 	  else if(childname.toUpperCase().equals(PREPO)){
@@ -221,28 +220,28 @@ public class TaskParser{
   private static Object getStuff(LDMServesPlugin ldm, Node node){
     Object object = null;
     
-    if(node.getNodeName().equals("with") ||
-       node.getNodeName().equals("using")){
-      NodeList  nlist    = node.getChildNodes();      
-      int       nlength  = nlist.getLength();
+    NodeList  nlist    = node.getChildNodes();      
+    int       nlength  = nlist.getLength();
 
-      for(int i = 0; i < nlength; i++){
-	Node    child       = nlist.item(i);
-	String  childname   = child.getNodeName();
-        if(child.getNodeType() == Node.ELEMENT_NODE){
+    for(int i = 0; i < nlength; i++){
+      Node    child       = nlist.item(i);
+      String  childname   = child.getNodeName();
 
-	  if(childname.equals("asset")){
-            object = AssetParser.getAsset(ldm, child);
-          }
-        } else if (child.getNodeType() == Node.TEXT_NODE) {
-	  String data = child.getNodeValue().trim();
-	  if(data.length() != 0){
-	    object = data;
-	  }
-
+      if(child.getNodeType() == Node.ELEMENT_NODE){
+	if(childname.equals("asset")){
+	  // object = AssetParser.getAsset(ldm, child);
+	  object = DirectObjectParser.getDirectObject(ldm, node);
+	  break;
+	}
+      } else if (child.getNodeType() == Node.TEXT_NODE) {
+	String data = child.getNodeValue().trim();
+	if(data.length() != 0){
+	  object = data;
+	  break;
 	}
       }
     }
+
     return object;
   }
 

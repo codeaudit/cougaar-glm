@@ -32,7 +32,6 @@ import org.cougaar.core.blackboard.SubscriptionWatcher;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
-//import org.cougaar.planning.servlet.data.Failure;
 import org.cougaar.planning.servlet.data.xml.*;
 import org.cougaar.planning.servlet.ServletBase;
 import org.cougaar.planning.servlet.ServletWorker;
