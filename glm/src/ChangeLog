@@ -1,3 +1,17 @@
+2001-09-13  Todd Wright <twright@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/plan/Position.java:
+	Modified to extend core's new LatLonPoint.  Also modified
+        the corresponding "NewPosition" and "PositionImpl".
+
+2001-09-13  Todd Wright <twright@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/asset/alpprops.def:
+	Removed LocationSchedulePG, now in core.
+
+	* several GLM, UIFramework, TOPS, GLMTrans classes:
+	Fixed import statements to match the moved LocationSchedulePG.
+
 2001-09-07  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/domain/mlm/plugin/organization/GLSRescindPlugIn.java:
