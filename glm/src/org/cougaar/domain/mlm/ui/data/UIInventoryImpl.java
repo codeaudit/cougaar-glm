@@ -498,35 +498,36 @@ public class UIInventoryImpl {
 		  if (debug) {
 		      System.out.println("Adding projected due in schedule from allocation: " + 
 					 allocation.getUID());
-
+		      
 		      for(int i=0; i<schedule.size(); i++) 
 			  printQuantityScheduleElement((UIQuantityScheduleElement)schedule.elementAt(i));
 		  }
 		  projectedDueInSchedule.addAll(schedule);
-	      }
+	      }		  		  
 	  }
 	  else {
 	      UIQuantityScheduleElement se = 
 		  getScheduleElementFromTask(allocation.getTask(), true);
 	      if(se != null) {
-		  if (debug) {
+		  //		  if (debug) {
+		  if(debug) {
 		      System.out.println("Adding unconfirmed due in schedule from allocation: " + 
 					 allocation.getUID());
 		      printQuantityScheduleElement(se);
 		  }
-		  unconfirmedDueInSchedule.add(schedule);
+		  unconfirmedDueInSchedule.add(se);
 	      }
 	  }
       } else if (allocation.getReportedResult().isSuccess()) {
-	  UIQuantityScheduleElement schedule = 
+	  UIQuantityScheduleElement se = 
 	      getScheduleFromAllocation(allocation.getReportedResult(), true);
-	  if (schedule != null) {
+	  if (se != null) {
 	      if (debug) {
 		  System.out.println("Adding due in schedule from allocation: " + 
 				     allocation.getUID());
-		  printQuantityScheduleElement(schedule);
+		  printQuantityScheduleElement(se);
 	      }
-	      dueInSchedule.add(schedule);
+	      dueInSchedule.add(se);
 	  }
       }
   }
