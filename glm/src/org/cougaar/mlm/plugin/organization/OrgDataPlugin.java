@@ -26,9 +26,9 @@ import java.util.Iterator;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.plugin.asset.AssetDataPluginBase;
+import org.cougaar.planning.plugin.asset.AssetDataPlugin;
 
-public class OrgDataPlugin extends AssetDataPluginBase  {
+public class OrgDataPlugin extends AssetDataPlugin  {
 
   static {
     packages.add("org.cougaar.glm.ldm.asset");
