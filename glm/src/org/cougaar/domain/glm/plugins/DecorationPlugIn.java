@@ -243,6 +243,7 @@ public abstract class DecorationPlugIn extends SimplePlugIn {
 	PlanElement pe = parent.getPlanElement();
 	Expansion expansion;
 	NewWorkflow wf;
+        ((NewTask) subtask).setParentTask(parent);
 	// Task has not been expanded, create an expansion
 	if (pe == null) {
 	    RootFactory factory = getMyDelegate().getFactory();
