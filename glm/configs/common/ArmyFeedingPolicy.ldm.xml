@@ -8,28 +8,28 @@
       <RangeSet value="">
         <RangeValue min="0"  max="20">
 	  <RuleParam name="Meals">
-      	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="MRE" />
-	      <KeyValue key="Lunch" value="MRE" />
-	      <KeyValue key="Dinner" value="MRE" />
+          <KeySet value="">
+	      <KeyValue key="Breakfast" value="NSN/8970001491094" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/8970001491094" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
         <RangeValue min="21"  max="60">
 	  <RuleParam name="Meals">
-      	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="UGR-HS" />
-	      <KeyValue key="Lunch" value="MRE" />
-	      <KeyValue key="Dinner" value="MRE" />
+          <KeySet value="">
+	      <KeyValue key="Breakfast" value="NSN/UGRHSBRKXXXXX" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/8970001491094" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
         <RangeValue min="61"  max="225">
 	  <RuleParam name="Meals">
-      	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="UGR-A" />
-	      <KeyValue key="Lunch" value="MRE" />
-	      <KeyValue key="Dinner" value="UGR-HS" />
+          <KeySet value="">
+	      <KeyValue key="Breakfast" value="NSN/UGRABRKXXXXXX" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/UGRHSLDXXXXXX" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
@@ -76,6 +76,157 @@
 	</RangeValue>
       </RangeSet>
     </RuleParam>
+
+   <RuleParam name="Rules">
+	<RangeSet value="">
+	  <RangeValue min="-1" max="-1">
+	   <RuleParam name="Rule1">
+		<RangeSet value="">
+		<RangeValue min="-1" max="-1">
+			 <RuleParam name="Condition">
+          <KeySet value="">
+	      <KeyValue key="OrgActivity" value="Employment_CSS"/>
+	      <KeyValue key="OPTEMPO" value="HIGH"/>
+    	    </KeySet>
+  	 </RuleParam>
+</RangeValue>
+<RangeValue min="-1" max="-1">
+ <RuleParam name="Action">
+          <KeySet value="">
+	      <KeyValue key="Breakfast" value="NSN/8970001491094" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/8970001491094" />
+    	    </KeySet>
+  	 </RuleParam>
+			</RangeValue>
+		</RangeSet>
+    </RuleParam>
+	   </RangeValue>
+	  <RangeValue min="-1" max="-1">
+	   <RuleParam name="Rule2">
+		<RangeSet value="">
+		<RangeValue min="-1" max="-1">
+			 <RuleParam name="Condition">
+          <KeySet value="">
+	      <KeyValue key="OrgActivity" value="Defensive"/>
+	      <KeyValue key="OPTEMPO" value="HIGH"/>
+    	    </KeySet>
+  	 </RuleParam>
+</RangeValue>
+<RangeValue min="-1" max="-1">
+ <RuleParam name="Action">
+          <KeySet value="">
+	      <KeyValue key="Breakfast" value="NSN/8970001491094" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/8970001491094" />
+    	    </KeySet>
+  	 </RuleParam>
+			</RangeValue>
+		</RangeSet>
+    </RuleParam>
+	   </RangeValue>
+	  <RangeValue min="-1" max="-1">
+	   <RuleParam name="Rule3">
+		<RangeSet value="">
+		<RangeValue min="-1" max="-1">
+			 <RuleParam name="Condition">
+          <KeySet value="">
+	      <KeyValue key="OrgActivity" value="Employment-Offensive"/>
+	      <KeyValue key="OPTEMPO" value="HIGH"/>
+    	    </KeySet>
+  	 </RuleParam>
+</RangeValue>
+<RangeValue min="-1" max="-1">
+ <RuleParam name="Action">
+          <KeySet value="">
+	      <KeyValue key="Breakfast" value="NSN/8970001491094" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/8970001491094" />
+    	    </KeySet>
+  	 </RuleParam>
+			</RangeValue>
+		</RangeSet>
+    </RuleParam>
+	   </RangeValue>
+	  <RangeValue min="-1" max="-1">
+	   <RuleParam name="Rule4">
+		<RangeSet value="">
+		<RangeValue min="-1" max="-1">
+			 <RuleParam name="Condition">
+          <KeySet value="">
+	      <KeyValue key="OrgActivity" value="Deployment"/>
+    	    </KeySet>
+  	 </RuleParam>
+</RangeValue>
+<RangeValue min="-1" max="-1">
+ <RuleParam name="Action">
+          <KeySet value="">
+    	    </KeySet>
+  	 </RuleParam>
+			</RangeValue>
+		</RangeSet>
+    </RuleParam>
+	   </RangeValue>
+	  <RangeValue min="-1" max="-1">
+	   <RuleParam name="Rule5">
+		<RangeSet value="">
+		<RangeValue min="-1" max="-1">
+			 <RuleParam name="Condition">
+          <KeySet value="">
+	      <KeyValue key="OrgActivity" value="Redeployment"/>
+    	    </KeySet>
+  	 </RuleParam>
+</RangeValue>
+<RangeValue min="-1" max="-1">
+ <RuleParam name="Action">
+          <KeySet value="">
+    	    </KeySet>
+  	 </RuleParam>
+			</RangeValue>
+		</RangeSet>
+    </RuleParam>
+	   </RangeValue>
+	  <RangeValue min="-1" max="-1">
+	   <RuleParam name="Rule6">
+		<RangeSet value="">
+		<RangeValue min="-1" max="-1">
+			 <RuleParam name="Condition">
+          <KeySet value="">
+	      <KeyValue key="OrgActivity" value="Home"/>
+    	    </KeySet>
+  	 </RuleParam>
+</RangeValue>
+<RangeValue min="-1" max="-1">
+ <RuleParam name="Action">
+          <KeySet value="">
+    	    </KeySet>
+  	 </RuleParam>
+			</RangeValue>
+		</RangeSet>
+    </RuleParam>
+	   </RangeValue>
+	  <RangeValue min="-1" max="-1">
+	   <RuleParam name="Rule7">
+		<RangeSet value="">
+		<RangeValue min="-1" max="-1">
+			 <RuleParam name="Condition">
+          <KeySet value="">
+	      <KeyValue key="OrgActivity" value="Deployment_prepo"/>
+    	    </KeySet>
+  	 </RuleParam>
+</RangeValue>
+<RangeValue min="-1" max="-1">
+ <RuleParam name="Action">
+          <KeySet value="">
+    	    </KeySet>
+  	 </RuleParam>
+			</RangeValue>
+		</RangeSet>
+    </RuleParam>
+	   </RangeValue>
+	 </RangeSet>
+	</RuleParam>
+
 </Policy>
 </Policies>
 
