@@ -19,5 +19,23 @@
     <adapter>org.cougaar.lib.uiframework.ui.orgui.OrgSubAdapter</adapter>
   </glquery>
 
+  <!-- this is for querying a cluster about its demand -->
+  <glquery>
+    <keyname>QUERY_DEMAND</keyname>
+    <predicate>
+      <instanceof>org.cougaar.domain.planning.ldm.plan.Task</instanceof>
+    </predicate>
+    <adapter>mil.darpa.log.alpine.blackjack.assessui.society.DemandQueryAdapter</adapter>
+  </glquery>
+
+  <!-- this is for querying a cluster about its inventory -->
+  <glquery>
+    <keyname>QUERY_INVENTORY</keyname>
+    <predicate>
+      <instanceof>org.cougaar.domain.planning.ldm.asset.Asset</instanceof>
+    </predicate>
+    <adapter>mil.darpa.log.alpine.blackjack.assessui.society.InventoryQueryAdapter</adapter>
+  </glquery>
+
 </xml>
 
