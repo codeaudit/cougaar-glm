@@ -236,37 +236,37 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
     protected int createResourceConsumptionTasks(Task parent_task) {
 	Asset resource;
 	Schedule rate_schedule;
-	Vector resource_demand;
-//  	Vector consumer_demand = new Vector();
-
+        Vector resource_demand = new Vector();
 	ConsumerSpec demand_spec = getDemandSpec(parent_task);
-		    
 	int num_parts = 0;
-	int num_tasks = 0;
+        int total_tasks = 0;
 	Enumeration consumed_resources = demand_spec.getConsumed();
+
 	while (consumed_resources.hasMoreElements()) {
 	    resource = (Asset)consumed_resources.nextElement();
 	    rate_schedule = demand_spec.buildConsumptionRateSchedule(resource);
             Double mult = demand_spec.getMultiplier(resource);
-	    resource_demand = createDemandTasks(parent_task, resource, rate_schedule,
-                                                mult.doubleValue());
-	    int size = resource_demand.size();
-	    num_tasks += size;
-	    num_parts ++;
-	    if (size > 0) {
-		Task t = (Task)resource_demand.get(0);
-		if (t.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
-		    publishChangeProjection(parent_task, resource, resource_demand.elements());
-		}
-		else {
-		    publishExpansion(parent_task, resource_demand);
-		}
-	    }
+            Vector theseTasks = createDemandTasks(parent_task, resource, rate_schedule,
+                                                  mult.doubleValue());
+            if (theseTasks.size() > 0) {
+                Task t = (Task) theseTasks.get(0);
+                if (t.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
+                    publishChangeProjection(parent_task, resource, theseTasks.elements());
+                    total_tasks += theseTasks.size();
+                } else {
+                    resource_demand.addAll(theseTasks);
+                }
+            }
+	    num_parts++;
+        }
+        int num_tasks = resource_demand.size();
+        if (num_tasks > 0) {
+            publishExpansion(parent_task, resource_demand);
+            total_tasks += num_tasks;
 	}
 //  	printDebug(3, "createResourceConsumptionTasks for "+demand_spec.getConsumedType()+ 
 //  		   " for "+num_parts+" resources.");
-	return num_tasks;
-//  	return consumer_demand;
+	return total_tasks;
     }
 
    /** 
