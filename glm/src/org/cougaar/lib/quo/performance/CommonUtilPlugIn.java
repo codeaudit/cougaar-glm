@@ -137,19 +137,9 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
    
 	
     public void breakFromLoop(int count, int MAXCOUNT){
-	if ( (count == MAXCOUNT) & (MAXCOUNT != -1)) 
+	if ( (count == MAXCOUNT+1) & (MAXCOUNT != -1)) 
 	    // break;
 	    System.exit(1); 
     }
 
-    protected String getMsgStr(int count, long delta, long minDelta) {
-	if (count == 1)
-	    minDelta = delta;
-	else
-	    minDelta = Math.min(minDelta, delta);
-	String msg=count+","+delta+","+ minDelta;
-	return msg;
-    }
-
- 
-}
+   }

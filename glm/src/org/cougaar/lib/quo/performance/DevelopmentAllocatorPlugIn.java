@@ -28,7 +28,7 @@ import java.io.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.6 2001-11-01 16:57:24 psharma Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.7 2001-11-08 16:51:25 psharma Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 {
@@ -45,7 +45,7 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
     protected boolean DEBUG = false;
 
     protected Date startTime;
-    private  int count = 0;
+    private  int count = 1;
     private long minDelta=0;
     private FileWriter fw;
 
@@ -185,11 +185,14 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
     protected void printTheChange(){
 	Date endTime = new Date();
 	long delta = endTime.getTime() - startTime.getTime();
-	debug(DEBUG, FILENAME, fw, getMsgStr(count++, delta, minDelta));
-    
+	if (count == 1)
+	    minDelta = delta;
+	else
+	    minDelta = Math.min(minDelta, delta);
+	String msg=count+","+delta+","+ minDelta;
+	debug(DEBUG, FILENAME, fw, msg);
+	count++;
     }
-   
- 
 }
 
 

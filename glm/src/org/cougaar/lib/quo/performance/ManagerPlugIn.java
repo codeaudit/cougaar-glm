@@ -59,8 +59,8 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     private int  sequenceNum=1;
     private AspectValue aspectVal;
 
-    private  int count = 0;
-    private long minDelta=0;
+    private  int count = 1;
+    private long minDelta;
   
     private FileWriter fw;
     private double lastReceived=0;
@@ -134,7 +134,6 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	    est=null; rep=null;
 	    est = alloc.getEstimatedResult();
 	    rep = alloc.getReportedResult();
-	   
 	    if (rep!=null){
 		arr =rep.getResult();
 		received = arr[0];
@@ -195,13 +194,16 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     protected void printTheChange(){
 	Date endTime = new Date();
 	long delta = endTime.getTime() - startTime.getTime();
-	debug(DEBUG, FILENAME, fw, getMsgStr(count++, delta, minDelta));
-    
+	if (count == 1)
+	    minDelta = delta;
+	else
+	    minDelta = Math.min(minDelta, delta);
+	String msg=count+","+delta+","+ minDelta;
+	debug(DEBUG, FILENAME, fw, msg);
+	count++;
     }
 
-    
-   
-}
+   }
 
 
 
