@@ -38,9 +38,6 @@ public class InventoryLegend extends JPanel {
     final static int INVENTORY_GRIDX = 0;
 
     final static int SUPPLY_TITLE_GRIDY=1;
-    final static int DEMAND_TITLE_GRIDY=2;
-    final static int ACTUAL_DEMAND_TITLE_GRIDY=3;
-    final static int PROJECTED_DEMAND_TITLE_GRIDY=4;
 
 //      final static String SUPPLY_TITLE="Resupply";
 //      final static String DEMAND_TITLE =           "Demand";
@@ -48,6 +45,8 @@ public class InventoryLegend extends JPanel {
     final static String PROJECTED_DEMAND_TITLE = "Projected Demand ";
     final static String ACTUAL_SUPPLY_TITLE    = "Actual Resupply ";
     final static String PROJECTED_SUPPLY_TITLE = "Projected Resupply ";
+
+
 
     final static String RECEIVED_LABEL  = "Received";
     final static String REQUESTED_LABEL = "Requested ";
@@ -139,6 +138,8 @@ public class InventoryLegend extends JPanel {
 	   (name.equals(InventoryChart.ACTUAL_INACTIVE_INVENTORY_LEGEND))) {
 	    return;
 	}
+
+	System.out.println("addDemandSupplyDataView::Working on |" + name + "|");
 
 	if((name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND)) ||
 	   (name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)))
@@ -284,6 +285,8 @@ public class InventoryLegend extends JPanel {
 //  	JPanel newPanel = new JPanel();
 //  	newPanel.setLayout(new GridBagLayout());
 //  	newPanel.setBorder(defaultBorder);
+
+	System.out.println("addOtherDataView::Working on |" + name + "|");
 	
 	initDemandSupplyPanel();
 
@@ -294,6 +297,14 @@ public class InventoryLegend extends JPanel {
 	} else {
 	    component = createLabel(name);
 	}
+
+	if(name.equals(InventoryChart.INVENTORY_LEGEND)) {
+            extraGridX = INVENTORY_GRIDX;
+	}
+	else if(name.equals(InventoryChart.SHORTFALL_LEGEND)){ 
+            extraGridX = SHORTFALL_GRIDX;
+	}
+
 	demandSupplyPanel.add(component,
 	    new GridBagConstraints(extraGridX, y++, 1, 1, 0.0, 0.0,
 				   GridBagConstraints.WEST, 
@@ -324,11 +335,8 @@ public class InventoryLegend extends JPanel {
 						insets, 0, 0));
 	}
 
-        if (extraGridX == INVENTORY_GRIDX) {
-            extraGridX = SHORTFALL_GRIDX;
-        } else {
-            extraGridX++;
-        }
+	extraGridX++;
+
 
 //  	panels.add(newPanel);
     }
