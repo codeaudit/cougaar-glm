@@ -29,6 +29,7 @@ import javax.swing.border.Border;
 import javax.swing.*;
 
 import java.util.ArrayList;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -361,7 +362,6 @@ public class GLSClient extends JPanel {
       URL url;
       URLConnection urlConnection;
       try {
-        //        System.out.println("ButtonListener: contacting: " + urlString);
 	url = new URL(urlString.toString());
         if (url == null)
           return;
@@ -446,9 +446,22 @@ public class GLSClient extends JPanel {
       try {
   	BufferedReader in = 
           new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+
+        // check for errors and discard any associated text
+        int responseCode = 
+          ((HttpURLConnection) urlConnection).getResponseCode();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+          String inputLine;
+          while ((inputLine = in.readLine()) != null) {
+          }
+          in.close();
+          throw new RuntimeException("Unable to contact: " +
+                                     urlConnection.getURL().getHost() + " " +
+                                     urlConnection.getURL().getPort());
+        }
+
   	String inputLine;
   	while ((inputLine = in.readLine()) != null) {
-          //          System.out.println("GLSClientReceived: " + inputLine);
 	  if (inputLine.indexOf("oplan") > 0)
             addOplan(inputLine);
 	  else if (inputLine.indexOf("GLS") > 0)
@@ -458,12 +471,26 @@ public class GLSClient extends JPanel {
       } catch (java.io.IOException e) {
 	connectButton.setEnabled(true);
 	JOptionPane.showMessageDialog(glsClient,
-                                      "Could not read from servlet.",
+                                      "Could not read from servlet at: " +
+                                      urlConnection.getURL().getHost() + " " +
+                                      urlConnection.getURL().getPort(),
                                       "Bad Connection",
                                       JOptionPane.ERROR_MESSAGE);
         oplanButton.setEnabled(false);
         getRootPane().setDefaultButton(connectButton);
 	return null;
+      } catch (RuntimeException re) {
+        connectButton.setEnabled(true);
+        JOptionPane.showMessageDialog(glsClient,
+                                     "Could not contact servlet at: " +
+                                      urlConnection.getURL().getHost() + " " +
+                                      urlConnection.getURL().getPort() +
+                        " ; servlet may not be initialized; retry later.",
+                                     "Initialization Not Complete",
+                                     JOptionPane.ERROR_MESSAGE);
+        oplanButton.setEnabled(false);
+        getRootPane().setDefaultButton(connectButton);
+        return null;
       } catch (Exception e) {
 	e.printStackTrace();
 	return null;
