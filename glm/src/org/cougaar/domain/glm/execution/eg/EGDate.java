@@ -11,6 +11,7 @@ package org.cougaar.domain.glm.execution.eg;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.text.TimeZone;
 
 /**
  * Extend java.util.Date to modify the toString method. Used as table
@@ -21,6 +22,9 @@ public class EGDate extends Date {
     new SimpleDateFormat("MM/dd/yyyy HH:mm");
 
   private static Date fdate = new Date();
+  static {
+    format.setTimeZone(TimeZone.getTimeZone("GMT"));
+  }
 
   public EGDate(long millis) {
     super(millis);
