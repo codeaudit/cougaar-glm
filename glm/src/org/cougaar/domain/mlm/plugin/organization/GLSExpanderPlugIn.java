@@ -57,19 +57,17 @@ import org.cougaar.util.UnaryPredicate;
  * The GLSExpanderPlugIn will take the intial GetLogSupport task received by
  * a cluster and expand it into getlogsupport for subordinates.
  * 
- * Current functionality (MB3.0) allows only for pass-through
- * of Tasks through a Workflow.
- * 
- * Revised to extend the stripped ComponentPlugin instead of SimplePlugIn.
+ * Componentized in Cougaar 8.3 now extends ComponentPlugin instead of SimplePlugIn.
+ * Note the significant changes can be found in setupSubscriptions().
  **/
 
 public class GLSExpanderPlugIn extends ComponentPlugin {
   /** Subscription to hold collection of input tasks **/
   private IncrementalSubscription expandableTasks;
-
+  
   /** Subscription to the Expansions I create */
   private IncrementalSubscription myExpansions;
-
+  
   /**
    * The Socrates subscription
    **/
@@ -81,57 +79,64 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
   /**
    * Parameters are the types of determinerequirements to generate.
    **/
-    String[] myParams = null;
-    RootFactory theLDMF = null;
+  String[] myParams = null;
+  RootFactory theLDMF = null;
     
-    //Override the setupSubscriptions() in ComponentPlugin
-    protected void setupSubscriptions() {
-	//        System.out.println("setupSubscriptions: "+this.getBindingSite().getAgentIdentifier());
-	LDMService ldmService = null;
-        if (theLDMF == null) {
-	    ldmService = (LDMService) getBindingSite().getServiceBroker().getService(this, LDMService.class,
-        new ServiceRevokedListener() {
-          public void serviceRevoked(ServiceRevokedEvent re) {
-                theLDMF = null;
-          }
-        });
-	}
-	theLDMF = ldmService.getFactory();
-	
-	Collection params = getParameters();
-        if (params != null) {
-  	  myParams = (String[]) params.toArray(new String[params.size()]);
-        } else {
-	    myParams = new String[0];
+  /**
+   * Override the setupSubscriptions() in ComponentPlugin
+   * Get an LDMService for factory calls
+   * Use the blackboard service inherited from ComponentPlugin
+   **/
+  protected void setupSubscriptions() {
+    //        System.out.println("setupSubscriptions: "+this.getBindingSite().getAgentIdentifier());
+    //get the LDM service to access the object factories from my bindingsite's servicebroker
+    LDMService ldmService = null;
+    if (theLDMF == null) {
+      ldmService = (LDMService) getBindingSite().getServiceBroker().getService(this, LDMService.class,
+                                                                               new ServiceRevokedListener() {
+        public void serviceRevoked(ServiceRevokedEvent re) {
+          theLDMF = null;
         }
-	
-	// subscribe to the blackboard
-	mySelfOrgs = (IncrementalSubscription) blackboard.subscribe(selfOrgAssetPred);
-	
-	
-	if (blackboard.didRehydrate()) {
-	    processOrgAssets(mySelfOrgs.elements()); // May already be there
-	}
+      });
     }
+    //use the service
+    theLDMF = ldmService.getFactory();
+    
+    Collection params = getParameters();
+    if (params != null) {
+      myParams = (String[]) params.toArray(new String[params.size()]);
+    } else {
+      myParams = new String[0];
+    }
+	
+    // subscribe using the blackboardservice - blackboard variable(representing the service)
+    //is inherited from ComponentPlugin
+    mySelfOrgs = (IncrementalSubscription) blackboard.subscribe(selfOrgAssetPred);
+    
+	
+    if (blackboard.didRehydrate()) {
+      processOrgAssets(mySelfOrgs.elements()); // May already be there
+    }
+  }
     
 
   private void setupSubscriptions2() {
     /** Predicate for finding input GLS Task. It must be a GLS FOR us **/
     final UnaryPredicate myTaskPred = new UnaryPredicate() {
-	public boolean execute(Object o) {
-	  if (o instanceof Task) {
-	    Task task = (Task) o;
-	    Verb verb = task.getVerb();
-	    if (verb.equals(Constants.Verb.GetLogSupport)) {
-	      PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
-	      if (pp != null) {
-		return pp.getIndirectObject().equals(selfOrgAsset);
-	      }
-	    }
-	  }
-	  return false;
-	}
-      };
+      public boolean execute(Object o) {
+        if (o instanceof Task) {
+          Task task = (Task) o;
+          Verb verb = task.getVerb();
+          if (verb.equals(Constants.Verb.GetLogSupport)) {
+            PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
+            if (pp != null) {
+              return pp.getIndirectObject().equals(selfOrgAsset);
+            }
+          }
+        }
+        return false;
+      }
+    };
     expandableTasks = (IncrementalSubscription) blackboard.subscribe(myTaskPred);
     
     /** Predicate for watching our expansions **/
@@ -142,12 +147,12 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
           return myTaskPred.execute(exp.getTask());
         }
         return false;
-    }
+      }
     };
     myExpansions = (IncrementalSubscription) blackboard.subscribe(myExpansionPred);
   }
    
-    /**
+  /**
    * The predicate for the Socrates subscription
    **/
   private static UnaryPredicate selfOrgAssetPred = new UnaryPredicate() {
@@ -171,9 +176,9 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
     }
 
     if (expandableTasks == null) 
-	{
-	  return; // Still waiting for ourself
-	}
+      {
+        return; // Still waiting for ourself
+      }
     if (expandableTasks.hasChanged()) {
       Enumeration e = expandableTasks.getAddedList();
       while (e.hasMoreElements()) {
@@ -199,6 +204,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
   /**
    * Expand a task into a GLS for subordinates plus
    * DETERMINEREQUIREMENTS for all types specified by params.
+   * @param task The Task to expand.
    **/
   public void expand(Task task) {
     Vector subtasks = new Vector();
@@ -215,6 +221,8 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
   /**
    * Create the for subordinates task resulting from the given
    * parent Task.
+   * @param task  Parent task to be used in creating an expanded gls task
+   * @return NewTask the new expanded task.
    **/
   private NewTask createForSubordinatesTask(Task task) {
     // Create copy of parent Task
@@ -237,6 +245,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
 
   /**
    * Creates a DETERMINEREQUIREMENTS task of the specified type
+   * @return Task The DetermineRequirements task
    **/
   public Task createDetermineRequirementsTask(Task task, String ofTypePreposition) {
     NewTask subtask = createTask(task);
@@ -264,6 +273,11 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
     return subtask;
   }
 
+  /**
+   * Create a subtask of the parent
+   * @param task the Parent
+   * @return Newtask the newly created subtask
+   **/
   private NewTask createTask(Task task) {
     NewTask subtask = theLDMF.newTask();
     subtask.setParentTask(task);
@@ -284,3 +298,5 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
     return subtask;
   }
 }
+
+
