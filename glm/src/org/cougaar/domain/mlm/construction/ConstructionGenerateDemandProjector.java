@@ -257,9 +257,11 @@ public class ConstructionGenerateDemandProjector extends BasicProcessor {
 	//Collection subtasks = new ArrayList();
       
         try {
-            // Load the Oracle JDBC driver
-            Class.forName ("oracle.jdbc.driver.OracleDriver");
-
+            String rawdb = Parameters.replaceParameters("${construction.database}");
+            int colonIndex1 = rawdb.indexOf(':');
+            int colonIndex2 = rawdb.indexOf(':', colonIndex1+1);
+            String dbType = rawdb.substring(colonIndex1+1, colonIndex2);  
+            Class.forName(Parameters.findParameter("driver."+dbType));
             Connection conn = null;
             ResultSet rset = null;
 
@@ -270,14 +272,13 @@ public class ConstructionGenerateDemandProjector extends BasicProcessor {
                 // You can use either the fully specified SQL*net syntax or a short cut
                 // syntax as <host>:<port>:<sid>.  The example uses the short cut syntax.
                 //get the db info out of the cougaarrc file
-                String rawdb = "${construction.database}";
                 String dbinfo = Parameters.replaceParameters(rawdb);
                 String rawuser = "${construction.user}";
                 String dbuser = Parameters.replaceParameters(rawuser);
                 String rawpasswd = "${construction.password}";
                 String dbpasswd = Parameters.replaceParameters(rawpasswd);
 
-                conn = DriverManager.getConnection ("jdbc:oracle:thin:@" + dbinfo, dbuser, dbpasswd );
+		conn = DriverManager.getConnection (dbinfo, dbuser, dbpasswd );
 
                 String parentverb = task.getVerb().toString();
                 // Create a Statement
