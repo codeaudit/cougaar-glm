@@ -360,9 +360,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
 	getLoggingService().error(e.getMessage(), e);
 	test = false;
       }
-      finally {
-	return test;
-      }
+      return test;
   }
 
   /**
