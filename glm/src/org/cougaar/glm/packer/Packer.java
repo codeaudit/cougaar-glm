@@ -42,6 +42,7 @@ public abstract class Packer extends GenericPlugin {
   }
 
 
+
   /**
    * getSortFunction - returns comparator to be used in sorting the tasks to be 
    * packed. Default implementation sorts on end time.
@@ -93,14 +94,16 @@ public abstract class Packer extends GenericPlugin {
     while (newTasks.hasMoreElements()) {
       Task task = (Task)newTasks.nextElement();
       if (task.getPlanElement() != null) {
-        System.err.println("Packer: Unable to pack - " + task.getUID() + 
-                           " - task already has a PlanElement - " + 
-                           task.getPlanElement() + ".\n" +
-                           "Is the UniversalAllocator also handling Supply tasks in this node?");
+        getLoggingService().warn("Packer: Unable to pack - " + task.getUID() + 
+                                 " - task already has a PlanElement - " + 
+                                 task.getPlanElement() + ".\n" +
+                                 "Is the UniversalAllocator also handling Supply tasks in this node?");
       } else {
-        System.out.println("Packer: Got a new task - " + task.getUID() + 
-                           " from " + task.getSource());
-
+        if (getLoggingService().isInfoEnabled()) {
+          getLoggingService().info("Packer: Got a new task - " + 
+                                   task.getUID() + 
+                                   " from " + task.getSource());
+        }
         ADD_TASKS++;
         ADD_TONS += task.getPreferredValue(AspectType.QUANTITY);
         tasks.add(task);
@@ -111,10 +114,12 @@ public abstract class Packer extends GenericPlugin {
       return;
     }
 
-    System.out.println("Packer - number of added SUPPLY tasks: " + ADD_TASKS +
-                       ", aggregated quantity from added SUPPLY tasks: " + 
-                       ADD_TONS + " tons.");
-
+    if (getLoggingService().isInfoEnabled()) {
+      getLoggingService().info("Packer - number of added SUPPLY tasks: " + 
+                               ADD_TASKS +
+                               ", aggregated quantity from added SUPPLY tasks: " + 
+                               ADD_TONS + " tons.");
+    }
     doPacking(tasks, getSortFunction(), getPreferenceAggregator(),
               getAllocationResultDistributor());
   }
@@ -130,9 +135,9 @@ public abstract class Packer extends GenericPlugin {
     while (changedTasks.hasMoreElements()) {
         Task task = (Task)changedTasks.nextElement();
         
-        System.err.println("ERROR: Packer - ignoring changed task - " + 
-                           task.getUID() + 
-                           " from " + task.getSource());
+        getLoggingService().warn("ERROR: Packer - ignoring changed task - " + 
+                                 task.getUID() + 
+                                 " from " + task.getSource());
         
     }
   }
@@ -145,24 +150,29 @@ public abstract class Packer extends GenericPlugin {
    * @param changedTasks Enumeration of removed ammo supply tasks. Ignored.
    */
   public void processRemovedTasks(Enumeration removedTasks) {
-    if (DEBUG) {
-      System.out.println("Packer.processRemovedTasks - ignoring " +
-                         "removed tasks");
+    if (getLoggingService().isDebugEnabled()) {
+      getLoggingService().debug("Packer.processRemovedTasks - ignoring " +
+                                "removed tasks");
     }
 
     while (removedTasks.hasMoreElements()) {
       Task task = (Task)removedTasks.nextElement();
       
-      System.out.println("Packer: Got a removed task - " + task.getUID() + 
-                         " from " + task.getSource());
+      if (getLoggingService().isInfoEnabled()) {
+        getLoggingService().info("Packer: Got a removed task - " + 
+                               task.getUID() + 
+                               " from " + task.getSource());
+      }
 
       REMOVE_TASKS++;
       REMOVE_TONS += task.getPreferredValue(AspectType.QUANTITY);
 
-      System.out.println("Packer - number of removed SUPPLY tasks: " + 
-                         REMOVE_TASKS +
-                         ", aggregated quantity from removed SUPPLY tasks: " + 
-                         REMOVE_TONS + " tons.");
+      if (getLoggingService().isInfoEnabled()) {
+        getLoggingService().info("Packer - number of removed SUPPLY tasks: " + 
+                               REMOVE_TASKS +
+                               ", aggregated quantity from removed SUPPLY tasks: " + 
+                               REMOVE_TONS + " tons.");
+      }
     }
   }
     
@@ -194,8 +204,8 @@ public abstract class Packer extends GenericPlugin {
         packList = (ArrayList)Sortings.sort(packList, sortfun);
       }
       
-      if (DEBUG) {
-        System.out.println("Packer: about to build the sizer in doPacking.");
+      if (getLoggingService().isDebugEnabled()) {
+        getLoggingService().debug("Packer: about to build the sizer in doPacking.");
       }
       
       AggregationClosure ac = getAggregationClosure(packList);
@@ -203,15 +213,15 @@ public abstract class Packer extends GenericPlugin {
       // now we set the double wheel going...
       Sizer sz = new Sizer(packList, this);
       
-      if (DEBUG) {
-        System.out.println("Packer: about to build the filler in doPacking.");
+      if (getLoggingService().isDebugEnabled()) {
+        getLoggingService().debug("Packer: about to build the filler in doPacking.");
       }
       
       
       Filler fil = new Filler(sz, this, ac, ard, prefagg);
       
-      if (DEBUG) {
-        System.out.println("Packer: about to run the wheelz in doPacking.");
+      if (getLoggingService().isDebugEnabled()) {
+        getLoggingService().debug("Packer: about to run the wheelz in doPacking.");
       }
       
       
@@ -219,6 +229,11 @@ public abstract class Packer extends GenericPlugin {
     }
   }
 
+
+  protected void setupSubscriptions() {
+    super.setupSubscriptions();
+    ProportionalDistributor.DEFAULT_PROPORTIONAL_DISTRIBUTOR.setLoggingService(getLoggingService());
+  }
 
   protected void updateAllocationResult(IncrementalSubscription planElements) {
     // Make sure that quantity preferences get returned on the allocation
@@ -247,8 +262,8 @@ public abstract class Packer extends GenericPlugin {
           }
         }
         if (needToCorrectQuantity) {
-	  if (DEBUG) {
-            System.out.println("GenericPlugin.execute - fixing quantity on estimated AR of pe " + pe.getUID());
+	  if (getLoggingService().isDebugEnabled()) {
+            getLoggingService().debug("Packer.updateAllocationResult - fixing quantity on estimated AR of pe " + pe.getUID());
 	  } 
 
           AllocationResult correctedAR = 
@@ -318,6 +333,7 @@ public abstract class Packer extends GenericPlugin {
 
   protected abstract Collection groupByAggregationClosure(Collection tasks);
 }
+
 
 
 

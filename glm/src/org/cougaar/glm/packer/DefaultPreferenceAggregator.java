@@ -112,10 +112,6 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
    */
   private Preference makeEndPreference(double endDate, RootFactory rootFactory) {
 
-    if (GenericPlugin.DEBUG) {
-      System.out.println("Aggregated end date - " + new Date((long)endDate));
-    }
-
     AspectValue earliest = 
       new AspectValue(AspectType.END_TIME, endDate + EARLIEST_INCREMENT);
 

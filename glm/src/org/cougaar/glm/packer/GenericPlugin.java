@@ -34,8 +34,11 @@ import org.cougaar.planning.ldm.plan.Task;
 
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.core.logging.LoggingControlService;
 
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logger;
 
 /** Main class for the generic plugin.
   *    real work is done by processAddTask, processChangeTask, processRemoveTasks
@@ -50,13 +53,15 @@ import org.cougaar.util.UnaryPredicate;
   * </ol>
   */
 abstract public class GenericPlugin extends SimplePlugin  {
-  public static final boolean DEBUG = false;
-  public static final boolean debugExecute = true;
+  public static final int DEFAULT_LOGGING_LEVEL = Logger.INFO;
+  public static final String DEBUG_STRING = "debug";
+  public static final String INFO_STRING = "info";
+  public static final String WARN_STRING = "warn";
+  public static final String ERROR_STRING = "error";
+  public static final String FATAL_STRING = "fatal";
 
-  
-  public boolean publishAddTest(Object o) {
-    return super.publishAdd(o);
-  }
+  private LoggingService myLoggingService;
+
 
   /**
     * This new Preposition is used to tag tasks that are created through
@@ -65,16 +70,16 @@ abstract public class GenericPlugin extends SimplePlugin  {
   public static String INTERNAL = "INTERNAL";
 
   // The subscriptions for this plugin...
-  private IncrementalSubscription _myPlanElements;
+  private IncrementalSubscription myPlanElements;
 
-  private IncrementalSubscription _allTasks;
+  private IncrementalSubscription myAllTasks;
 
   /**
     * Predicate that finds all Tasks, <em>except</em> those explicitly
     * tagged as INTERNAL.  (These are created by the Sizer.)
     * @see Sizer
     */
-  private UnaryPredicate allTaskPred = new UnaryPredicate() {
+  private UnaryPredicate myAllTaskPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
 	if (((Task)o).getPrepositionalPhrase(INTERNAL) == null) {
@@ -97,19 +102,25 @@ abstract public class GenericPlugin extends SimplePlugin  {
     try {
       cls = Class.forName(classname);
     } catch (Exception e) {
-      System.err.println("GenericPlugin: Class " + classname + " not found.");
+      getLoggingService().error("GenericPlugin: Class " + classname + " not found.", e);
       return null;
     }
     if (cls != null) {
       try {
         retval = cls.newInstance();
       } catch (Exception e) {
-        System.err.println("GenericPlugin: Error creating instance of " + classname);
+        getLoggingService().error("GenericPlugin: Unable to create instance of " + classname,
+                                  e);
         return null;
       }
     }
     return retval;
   }
+
+  public LoggingService getLoggingService() {
+    return myLoggingService;
+  }
+
   /**
    *
    *
@@ -133,12 +144,12 @@ abstract public class GenericPlugin extends SimplePlugin  {
       workflow.addTask(subTask);
 
       if (!publishAdd(subTask)) {
-	System.err.println("Error publishing task - " + subTask.getUID());
+	getLoggingService().error("Error publishing task - " + subTask.getUID());
       }
     }
 
     if (!publishAdd(workflow)) {
-      System.err.println("Error publishing workflow - " + workflow);
+      getLoggingService().error("Error publishing workflow - " + workflow);
     }
 
     
@@ -146,7 +157,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
                                                    parentTask, workflow, 
                                                    null);
     if (!publishAdd(expan)) {
-      System.err.println("Error publishing expansion - " + expan.getUID() + ".\n" +
+      getLoggingService().error("Error publishing expansion - " + expan.getUID() + ".\n" +
                          "Task: " + expan.getTask().getUID() + 
                          " task commit date: " + expan.getTask().getCommitmentDate() +
                          " task plan element: " + expan.getTask().getPlanElement());
@@ -169,8 +180,8 @@ abstract public class GenericPlugin extends SimplePlugin  {
       parentTasks.add((Task)tasksToAgg.next());
     }
     
-    if (DEBUG) {
-      System.out.println("GenericPlugin: Top of create Aggregation.");
+    if (getLoggingService().isDebugEnabled()) {
+      getLoggingService().debug("GenericPlugin: Top of create Aggregation.");
     }
     
     // Create Composition
@@ -179,8 +190,8 @@ abstract public class GenericPlugin extends SimplePlugin  {
     comp.setCombinedTask(childTask); 
     comp.setDistributor(distributor);
     
-    if (DEBUG) {
-      System.out.println("GenericPlugin: Created comp.");
+    if (getLoggingService().isDebugEnabled()) {
+      getLoggingService().debug("GenericPlugin: Created comp.");
     }
     
     Iterator taskIterator = parentTasks.iterator();
@@ -194,25 +205,25 @@ abstract public class GenericPlugin extends SimplePlugin  {
           plan = getFactory().getRealityPlan();
           
           if (plan == null ) {
-            System.err.println("GenericPlugin: Unable to find plan for aggregation.");
+            getLoggingService().error("GenericPlugin: Unable to find plan for aggregation.");
             return false;
           }
         }
       }
       
-      if (DEBUG) {
-        System.out.println("GenericPlugin: Top of while loop.");
+      if (getLoggingService().isDebugEnabled()) {
+        getLoggingService().debug("GenericPlugin: Top of while loop.");
       }
       
       Aggregation aggregation = 
         getFactory().createAggregation(plan, parentTask, comp, null);
       
-      if (DEBUG) {
-        System.out.println("GenericPlugin: built the aggregation.");
+      if (getLoggingService().isDebugEnabled()) {
+        getLoggingService().debug("GenericPlugin: built the aggregation.");
       }
       
       if (!publishAdd(aggregation)) {
-        System.err.println("Error publishing aggregation - " + 
+        getLoggingService().error("Error publishing aggregation - " + 
                            aggregation.getUID());
       }
       
@@ -224,12 +235,12 @@ abstract public class GenericPlugin extends SimplePlugin  {
       
     }
 
-    if (DEBUG) {
-      System.out.println("GenericPlugin: After the while loop.");
+    if (getLoggingService().isDebugEnabled()) {
+      getLoggingService().debug("GenericPlugin: After the while loop.");
     }
     
     if (!publishAdd(comp)) {
-      System.err.println("Error publishing composition " + 
+      getLoggingService().error("Error publishing composition " + 
                          comp);
     }
     
@@ -241,7 +252,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
     mpt.setParentTasks(new Vector(parentTasks).elements());
     
     if (!publishAdd(childTask)) {
-      System.err.println("Error publishing mpt - " + mpt.getUID());
+      getLoggingService().error("Error publishing mpt - " + mpt.getUID());
     }
     
     return true;
@@ -253,17 +264,17 @@ abstract public class GenericPlugin extends SimplePlugin  {
     */
   protected void execute() {
     // now we handle updates to our plan elements
-    if (_myPlanElements != null) {
-      updateAllocationResult(_myPlanElements);
-    } else if (DEBUG) {
-      System.out.println("GenericPlugin: _myPlanElements subscription is missing!");
+    if (myPlanElements != null) {
+      updateAllocationResult(myPlanElements);
+    } else if (getLoggingService().isDebugEnabled()) {
+      getLoggingService().debug("GenericPlugin: _myPlanElements subscription is missing!");
     }
 
-    processNewTasks( _allTasks.getAddedList());
+    processNewTasks(myAllTasks.getAddedList());
 
-    processChangedTasks( _allTasks.getChangedList());
+    processChangedTasks(myAllTasks.getChangedList());
 
-    processRemovedTasks( _allTasks.getRemovedList());
+    processRemovedTasks(myAllTasks.getRemovedList());
   }
 
   /**
@@ -298,7 +309,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
    * @return UnaryPredicate - task predicate to be used.
    */
   public UnaryPredicate getTaskPredicate() {
-    return allTaskPred;
+    return myAllTaskPred;
   }
 
   /**
@@ -318,18 +329,26 @@ abstract public class GenericPlugin extends SimplePlugin  {
    * Uses predicates returned by getTaskPredicate() & getPlanElementPredicate
    */
   protected void setupSubscriptions() {
-    if (DEBUG) {
-      System.out.println("GenericPlugin: setting up subscriptions for Packer.");
+    LoggingControlService lcs = 
+      (LoggingControlService) getDelegate().getServiceBroker().getService(this, LoggingControlService.class, null);
+    String logging = System.getProperty("org.cougaar.glm.packer.logging", 
+                                        INFO_STRING);
+    lcs.setLoggingLevel(getLogLevel(logging));
 
+    myLoggingService = 
+      (LoggingService) getDelegate().getServiceBroker().getService(this, LoggingService.class, null);
 
-      System.out.println("GenericPlugin.setupSubscriptions: didRehydrate() " + 
-                         didRehydrate() +
-                         " _allTasks " + _allTasks);
+    if (myLoggingService.isDebugEnabled()) {
+      myLoggingService.debug("GenericPlugin: setting up subscriptions for Packer.");
+
+      myLoggingService.debug("GenericPlugin.setupSubscriptions: didRehydrate() " + 
+                             didRehydrate() +
+                             " _allTasks " + myAllTasks);
     }
 
-    _allTasks = (IncrementalSubscription)subscribe(getTaskPredicate());
+    myAllTasks = (IncrementalSubscription)subscribe(getTaskPredicate());
     
-    _myPlanElements = (IncrementalSubscription)subscribe(getPlanElementPredicate());
+    myPlanElements = (IncrementalSubscription)subscribe(getPlanElementPredicate());
     
   }
 
@@ -349,7 +368,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
 	test = (Class.forName(ty)).isInstance(arg);
       }
       catch (ClassNotFoundException e) {
-	System.err.println(e.getMessage());
+	getLoggingService().error(e.getMessage(), e);
 	test = false;
       }
       finally {
@@ -379,6 +398,23 @@ abstract public class GenericPlugin extends SimplePlugin  {
     PluginHelper.updateAllocationResult(planElements);
   }
 
+  protected int getLogLevel(String logging) {
+    logging = logging.toLowerCase();
+
+    if (logging.equals(DEBUG_STRING)) {
+      return (Logger.DEBUG);
+    } else if (logging.equals(INFO_STRING)) {
+      return (Logger.INFO);
+    } else if (logging.equals(WARN_STRING)) {
+      return (Logger.WARN);
+    } else if (logging.equals(ERROR_STRING)) {
+      return (Logger.ERROR);
+    } else if (logging.equals(FATAL_STRING)) {
+      return (Logger.FATAL);
+    } else {
+      return (DEFAULT_LOGGING_LEVEL);
+    }
+  }
 }
 
 

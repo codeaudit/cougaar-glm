@@ -104,8 +104,8 @@ class Filler {
         double provided  = t.getPreferredValue(AspectType.QUANTITY);
         
         if (!_ac.validTask(t)) {
-          System.err.println("Filler.execute: AggregationClosure rejected " +
-                             " task - " + t);
+          _gp.getLoggingService().error("Filler.execute: AggregationClosure rejected " +
+                                      " task - " + t);
           continue;
         }
         
@@ -134,7 +134,7 @@ class Filler {
         PhysicalPG defaultPhysicalPG = 
           (PhysicalPG) physicalPGSchedule.getDefault();
         if (defaultPhysicalPG == null) {
-          System.err.println("Filler: milvan with a null default physicalPG");
+          _gp.getLoggingService().error("Filler: milvan with a null default physicalPG");
         }
         NewPhysicalPG loadedPhysicalPG = 
           PropertyGroupFactory.newPhysicalPG(defaultPhysicalPG);
@@ -149,8 +149,9 @@ class Filler {
 	_gp.createAggregation(agglist.iterator(), mpt, plan, _ard);
       }
     }
-    System.out.println("Packer  - current aggregated requested transport: " +
-                       TRANSPORT_TONS + " tons.");
+    
+    _gp.getLoggingService().info("Packer  - current aggregated requested transport: " +
+                                 TRANSPORT_TONS + " tons.");
   }
 
     

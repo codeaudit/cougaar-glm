@@ -20,7 +20,7 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TaskScoreTable;
 
-
+import org.cougaar.core.service.LoggingService;
 
 
 /**
@@ -30,14 +30,24 @@ import org.cougaar.planning.ldm.plan.TaskScoreTable;
   * @see org.cougaar.planning.ldm.plan.AllocationResultDistributor.DefaultDistributor
   */
 public class ProportionalDistributor implements AllocationResultDistributor, Serializable {
+  LoggingService myLoggingService = null;
   public static ProportionalDistributor DEFAULT_PROPORTIONAL_DISTRIBUTOR  =
     new ProportionalDistributor();
 
   public ProportionalDistributor () {}
 
+  public void setLoggingService(LoggingService ls) {
+    myLoggingService = ls;
+  }
+
+  public LoggingService getLoggingService() {
+    return myLoggingService;
+  }
+
   public TaskScoreTable calculate(Vector parents, AllocationResult ar) {
-    if (GenericPlugin.DEBUG) {
-      System.out.println("HTC ProportionalDistributor: start running...");
+    if ((getLoggingService() != null) &&
+        (getLoggingService().isDebugEnabled())) {
+      getLoggingService().debug("ProportionalDistributor: start running...");
     }
 
     int l = parents.size();
@@ -47,8 +57,9 @@ public class ProportionalDistributor implements AllocationResultDistributor, Ser
     if (!ar.isDefined(AspectType.QUANTITY)) {
       // if there's no quantity in the Allocation result, then we
       // can just use the Default Distributor
-      if (GenericPlugin.DEBUG) {
-        System.out.println("HTC ProportionalDistributor: done running...");
+    if ((getLoggingService() != null) &&
+        (getLoggingService().isDebugEnabled())) {
+      getLoggingService().debug("ProportionalDistributor: done running...");
       }
 
       return AllocationResultDistributor.DEFAULT.calculate(parents, ar);
@@ -66,7 +77,12 @@ public class ProportionalDistributor implements AllocationResultDistributor, Ser
 	  double thisQuant = getTaskQuantity(((Task)parents.get(i)));
 	  if (thisQuant == -1.0) {
 	    // no quantity was requested, set to zero
-	    System.err.println("HTC ProportionalDistributor: attempting to allocate a proportional share of quantity to a Task which requests no quantity.");
+
+            if (getLoggingService() == null) {
+              System.err.println("ProportionalDistributor: attempting to allocate a proportional share of quantity to a Task which requests no quantity.");
+            } else {
+              getLoggingService().warn("ProportionalDistributor: attempting to allocate a proportional share of quantity to a Task which requests no quantity.");
+            }
 	    thisQuant = 0.0;
 	  }
 	  totalRequestedQuant += thisQuant;
@@ -123,8 +139,10 @@ public class ProportionalDistributor implements AllocationResultDistributor, Ser
       Task tasks[] = new Task[l];
       parents.copyInto(tasks);
 
-      if (GenericPlugin.DEBUG) {
-        System.out.println("HTC ProportionalDistributor: done running...");
+
+      if ((getLoggingService() != null) &&
+          (getLoggingService().isDebugEnabled())) {
+        getLoggingService().debug("ProportionalDistributor: done running...");
       }
       return new TaskScoreTable(tasks, results);
     }

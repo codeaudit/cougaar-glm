@@ -79,15 +79,16 @@ public class AmmoTransport extends AggregationClosure {
       GeolocLocation taskDestination = getDestination(t);
       
       if ((taskSource == null) || (taskDestination == null)) {
-        System.err.println("AmmoTransport(): task without a source/destination");
+
+        _gp.getLoggingService().error("AmmoTransport(): task without a source/destination");
       } else if ((mySource == null) || (myDestination == null)) {
         mySource = taskSource;
         myDestination = taskDestination;
       } else if (!(mySource.getGeolocCode().equals(taskSource.getGeolocCode()))) {
-        System.err.println("AmmoTransport(): " + mySource + " not equal to " + 
+        _gp.getLoggingService().error("AmmoTransport(): " + mySource + " not equal to " + 
                            taskSource);
       } else if (!(myDestination.getGeolocCode().equals(taskDestination.getGeolocCode()))) {
-        System.err.println("AmmoTransport(): " + myDestination + 
+        _gp.getLoggingService().error("AmmoTransport(): " + myDestination + 
                            " not equal to " + taskDestination);
       }
     }
@@ -142,7 +143,7 @@ public class AmmoTransport extends AggregationClosure {
     
     if ((mySource == null) ||
         (myDestination == null)) {
-      System.err.println("AmmoTransport:  Error!  AmmoTransport not properly initialized: some parameter(s) are null.");
+      _gp.getLoggingService().error("AmmoTransport:  Error!  AmmoTransport not properly initialized: some parameter(s) are null.");
       return null;
     }
     
@@ -188,7 +189,7 @@ public class AmmoTransport extends AggregationClosure {
       MILVAN_PROTOTYPE = _gp.getGPFactory().getPrototype(MILVAN_NSN);
       
       if (MILVAN_PROTOTYPE == null) {
-        System.err.println("AmmoTransport: Error! Unable to get prototype for" +
+        _gp.getLoggingService().error("AmmoTransport: Error! Unable to get prototype for" +
                            " milvan NSN -" + MILVAN_NSN);
         return null;
       }
@@ -224,7 +225,7 @@ public class AmmoTransport extends AggregationClosure {
     PhysicalPG defaultPhysicalPG = 
       (PhysicalPG) physicalPGSchedule.getDefault();
     if (defaultPhysicalPG == null) {
-      System.err.println("AmmoTransport: milvan with a null default physicalPG");
+      _gp.getLoggingService().error("AmmoTransport: milvan with a null default physicalPG");
     }
     physicalPGSchedule = 
       PropertyGroupFactory.newPhysicalPGSchedule(defaultPhysicalPG);    
