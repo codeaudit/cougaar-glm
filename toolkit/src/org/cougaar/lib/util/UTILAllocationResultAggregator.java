@@ -58,7 +58,12 @@ import org.cougaar.planning.ldm.plan.TaskScoreTable;
    **/
 public class UTILAllocationResultAggregator implements AllocationResultAggregator, Serializable {
   // dummy location
-  public static final AspectValue UNDEFINED_POD = AspectValue.newAspectValue(POD, new Location() {});
+  private static final class UndefinedLocation implements Location, Serializable {
+    private Object readResolve() { return UNDEFINED_LOCATION; }
+  }
+  public static final Location UNDEFINED_LOCATION = new UndefinedLocation();
+  public static final AspectValue UNDEFINED_POD = 
+    AspectValue.newAspectValue(POD, UNDEFINED_LOCATION);
 
 
   /** These are the aspects we handle **/
