@@ -77,18 +77,12 @@ import org.w3c.dom.NamedNodeMap;
  * Debug information is now off by default.  See method <code>setDebug()</code>
  */
 public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
-        
-  /** Expand into an AssetGroup if true, else separate Tasks if false **/
-  protected boolean createAssetGroups = true;
 
-  /** delay re-processing DetermineRequirement Tasks by specified millis **/
-  protected long delayReprocessMillis;
-
-  /** Defaults optionally set by parameters. **/
-  protected int defaultAdjustDurationDays;
+  public final static long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
 
   /** Self Organization Info **/
   protected IncrementalSubscription selfOrgsSub;
+  // On rejydration filled in from selfOrgsSub;
   protected Organization selfOrg;
   protected String selfOrgId = "XXXSelfOrgNotSetYet";
 
@@ -97,9 +91,6 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
 
   /** Subscription to DetermineRequirement Tasks **/
   protected IncrementalSubscription drTasksSub;
-
-  /** Subscription to Transportable Assets **/
-  //  protected IncrementalSubscription transAssetsSub;
 
   /** Subscription to Transportable Person Assets **/
   protected IncrementalSubscription transAssetsPersonSub;
@@ -114,7 +105,17 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   protected IncrementalSubscription expansionsSub;
 
   /** List of determine requirements tasks waiting to be added **/
-  protected TaskWaitingList unhandledDetermineRequirementsTasks;
+  protected WaitingTask unhandledDetermineRequirementsTask;
+
+  // Following set from invocation parameters
+  /** Expand into an AssetGroup if true, else separate Tasks if false **/
+  protected boolean createAssetGroups = true;
+
+  /** delay re-processing DetermineRequirement Tasks by specified millis **/
+  protected long delayReprocessMillis;
+
+  /** Defaults optionally set by parameters. **/
+  protected int defaultAdjustDurationDays;
 
   /** XML file containing description of GeolocLocation used for Task fromLocation **/
   protected String originFile = null;
@@ -125,7 +126,10 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   /** GeolocLocation specified in XML file used for Task fromLocation  **/
   protected GeolocLocation overrideFromLocation = null;
 
-  public final static long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+
+  /** Holder for info required to handle the determine requirements task. **/
+  protected DeployPlan singleDeployPlan = null;
+
 
   /**
    * Subscribe.
@@ -148,9 +152,6 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     drTasksSub = (IncrementalSubscription) 
       subscribe(newDRTasksPred());
                 
-//      transAssetsSub = (IncrementalSubscription) 
-//        subscribe(newTransAssetsPred());
-
     transAssetsPersonSub = (IncrementalSubscription) 
       subscribe(newTransPersonPred());
 
@@ -162,11 +163,42 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   
     expansionsSub = (IncrementalSubscription) subscribe(newExpansionsPred());
 
-    unhandledDetermineRequirementsTasks = new TaskWaitingList();
-
     if (originFile != null) {
       overrideFromLocation = getGeoLoc(originFile);
     }
+
+    unhandledDetermineRequirementsTask = null;
+
+    // Fill in state from subscriptions if rehydrating
+    if (didRehydrate()) {
+      // Try to fill in self org info
+      if (!selfOrgsSub.isEmpty()) {
+        watchAddedSelfOrgs(selfOrgsSub.elements());;
+      }
+
+      //Initialize deployPlan 
+      if (!orgDeployActsSub.isEmpty()) {
+        OrgActivity selfOrgAct = findSelfOrgDeployAct(orgDeployActsSub.elements());
+        if (selfOrgAct != null) {
+          replaceDeployPlan(selfOrgAct);
+        }
+      }
+
+      // Need to fill in unhandled
+      Task drTask = findSingleDetermineRequirementsTask(drTasksSub.elements());
+      // Assume we only worry about dr task where plan element is null
+      if ((drTask != null) && (drTask.getPlanElement() == null)) {
+        // Put on unhandled list so we know about it
+        unhandledDetermineRequirementsTask = new WaitingTask(delayReprocessMillis,
+                                                             drTask);
+        // Have a deploy plan so we should be able to process the task.
+        // Set up alarm so that we handle in execute loop
+        if (getDeployPlan() != null) {
+          wakeAfterRealTime(delayReprocessMillis);
+        }
+      }
+    }
+
   }        
 
   /**
@@ -175,72 +207,60 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   protected void execute() {
                   
     if (selfOrgsSub.hasChanged()) {
-      //if (DEBUG) {
-      //  printDebug("selfOrgs hasChanged");
-      //}
+      if (DEBUG) {
+        printDebug("selfOrgs hasChanged");
+      }
       watchAddedSelfOrgs(selfOrgsSub.getAddedList());
     }
 
     if (orgDeployActsSub.hasChanged()) {
-      //if (DEBUG) {
-      //  printDebug("orgDeployActs hasChanged");
-      //}
+      if (DEBUG) {
+        printDebug("orgDeployActs hasChanged");
+      }
       watchChangedOrgDeployActs(orgDeployActsSub.getChangedList());
       watchRemovedOrgDeployActs(orgDeployActsSub.getRemovedList());
       watchAddedOrgDeployActs(orgDeployActsSub.getAddedList());
     }
 
-    Link l = unhandledDetermineRequirementsTasks.dueLinks();
-    if (l != null) {
-      //if (DEBUG) {
-      //  printDebug("DetermineReqs Tasks due");
-      //}
-      watchDueDetermineRequirementsTasks(l);
-    }
 
     if (drTasksSub.hasChanged()) {
-      //if (DEBUG) {
-      //  printDebug("DetermineReqs Tasks hasChanged");
-      //}
+      if (DEBUG) {
+        printDebug("DetermineReqs Tasks hasChanged");
+      }
       watchChangedDetermineRequirementsTasks(
           drTasksSub.getChangedList());
       watchRemovedDetermineRequirementsTasks(
           drTasksSub.getRemovedList());
       watchAddedDetermineRequirementsTasks(
           drTasksSub.getAddedList());
+    } else if (getDeployPlan() != null) {
+      // Process any unhandled dr tasks
+      watchDueDetermineRequirementsTasks();
     }
-    
-//      if (transAssetsSub.hasChanged()) {
-//        //if (DEBUG) {
-//        //  printDebug("Transportable Assets hasChanged");
-//        //}
-//        watchAddedTransportableAssets(transAssetsSub.getAddedList());
-//        watchChangedTransportableAssets(transAssetsSub.getChangedList());
-//        watchRemovedTransportableAssets(transAssetsSub.getRemovedList());
-//      }
 
+    
     if (transAssetsPersonSub.hasChanged()) {
-      //if (DEBUG) {
-      //  printDebug("Transportable Assets hasChanged");
-      //}
+      if (DEBUG) {
+        printDebug("Transportable Assets hasChanged");
+      }
       watchChangedTransportableAssets(transAssetsPersonSub.getChangedList());
       watchRemovedTransportableAssets(transAssetsPersonSub.getRemovedList());
       watchAddedTransportableAssets(transAssetsPersonSub.getAddedList());
     }
 
     if (transAssetsEquipmentSub.hasChanged()) {
-      //if (DEBUG) {
-      //  printDebug("Transportable Assets hasChanged");
-      //}
+      if (DEBUG) {
+        printDebug("Transportable Assets hasChanged");
+      }
       watchChangedTransportableAssets(transAssetsEquipmentSub.getChangedList());
       watchRemovedTransportableAssets(transAssetsEquipmentSub.getRemovedList());
       watchAddedTransportableAssets(transAssetsEquipmentSub.getAddedList());
     }
 
     if (failedDRAllocsSub.hasChanged()) {
-      //if (DEBUG) {
-      //  printDebug("Failed DR Subtask Allocation hasChanged");
-      //}
+      if (DEBUG) {
+        printDebug("Failed DR Subtask Allocation hasChanged");
+      }
       watchFailedDispositions(failedDRAllocsSub.getChangedList());
     }
 
@@ -253,7 +273,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   /**
    * Only one plan with one "Deployment" DetermineRequirements Task expected!
    */
-  DeployPlan singleDeployPlan = null;
+
   protected DeployPlan getDeployPlan() {
     return singleDeployPlan;
   }
@@ -294,7 +314,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       }
     }
   }
-
+  
   protected void watchAddedOrgDeployActs(Enumeration eOrgActs) {
     OrgActivity selfOrgAct = findSelfOrgDeployAct(eOrgActs);
     if (selfOrgAct != null) {
@@ -316,18 +336,16 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     }
   }
 
-  protected void watchDueDetermineRequirementsTasks(Link lTasks) {
-    if (lTasks == null) {
-      // no tasks to add
-      return;
+  protected void watchDueDetermineRequirementsTasks() {
+    if ((unhandledDetermineRequirementsTask != null) &&
+        (unhandledDetermineRequirementsTask.isDue())) {
+      if (DEBUG) {
+        printDebug("watchDueDetermineRequirementsTask - resubmitting dr task");
+      }
+      handleDetermineRequirementsTask(unhandledDetermineRequirementsTask.task);
     }
-    if (lTasks.next != null) {
-      // should be only one determine requirements task
-      printError("Expecting only one DetermineReqs Task! ignoring the others");
-    }
-    handleDetermineRequirementsTask(lTasks.task);
   }
-
+  
   protected Task findSingleDetermineRequirementsTask(Enumeration eTasks) {
     if (!(eTasks.hasMoreElements())) {
       // no task listed
@@ -344,21 +362,36 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   protected void watchAddedDetermineRequirementsTasks(Enumeration eTasks) {
     Task drTask = findSingleDetermineRequirementsTask(eTasks);
     if (drTask != null) {
-      watchAddedDetermineRequirementsTask(drTask);
+      handleDetermineRequirementsTask(drTask);
     }
   }
 
   protected void watchChangedDetermineRequirementsTasks(Enumeration eTasks) {
     Task drTask = findSingleDetermineRequirementsTask(eTasks);
     if (drTask != null) {
-      watchChangedDetermineRequirementsTask(drTask);
+      handleDetermineRequirementsTask(drTask);
     }
   }
 
+  /**
+   * Handle removed DetermineRequirements Task.
+   * <p>
+   * Removed task should remove it's subtasks, so we only need
+   * to clean out it's DeployPlan.
+   */
   protected void watchRemovedDetermineRequirementsTasks(Enumeration eTasks) {
     Task drTask = findSingleDetermineRequirementsTask(eTasks);
     if (drTask != null) {
-      watchRemovedDetermineRequirementsTask(drTask);
+      if (DEBUG) {
+        printDebug("Remove DetReqs Task");
+      }
+      DeployPlan dp = getDeployPlan();
+      if (dp == null) {
+        // never added?
+        return;
+      }
+      dp.detReqsTask = null;
+      dp.expandedWorkflow = null;
     }
   }
 
@@ -371,97 +404,27 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
    * OrgActivity-based <code>DeployPlan</code> saved.
    */
   protected void watchAddedSelfOrgDeployAct(OrgActivity selfOrgAct) {
-    // We don't know how long this task will take, so we
-    // use the default task adjustment duration!
-    int adjustDurationDays = defaultAdjustDurationDays;
-    Date prepoStartDate = null;
-
-    if (offsetDays > 0) {
-      // If OffsetDays was specified as an input parameter, use Oplan C Day + offset as 
-      // start date for the Task
-      Collection oplanCol = query(new OplanByUIDPred(selfOrgAct.getOplanUID()));
-      // Should be exactly one oplan for an OrgActivity
-      Oplan oplan = (Oplan) oplanCol.iterator().next();
-      prepoStartDate = new Date(oplan.getCday().getTime() + (MILLIS_PER_DAY * offsetDays));
-    }
-
-    DeployPlan newDP = 
-      new DeployPlan(selfOrg, selfOrgAct, adjustDurationDays, overrideFromLocation,  prepoStartDate);
     if (DEBUG) {
-      printDebug(newDP.toString());
+      printDebug("Adding orgActivity!: "+selfOrgAct+"\nbegin");
     }
-    if (!newDP.isValid()) {
-      if (newDP.fromLoc == null)
-        printError("This Organization lacks a MilitaryPG HomeLocation!");
-      printError("The DeployPlan lacks needed information and is ignored!");
-    } else {
-      DeployPlan oldDP = getDeployPlan();
-      if (oldDP != null) {
-        if (DEBUG) {
-          printDebug("Replace Deployment Plan!\n"+
-                     "OLD:\n"+oldDP+"\n"+
-                     "NEW:\n"+newDP);
-        }
-        
-        // Kill Associated Expansion
-        if (oldDP.expandedWorkflow != null) {
-          killWorkflow(oldDP.expandedWorkflow);
-        }
-      }
-      setDeployPlan(newDP);
 
+    DeployPlan oldDeployPlan = getDeployPlan();
+    if ((oldDeployPlan != null) && (oldDeployPlan.expandedWorkflow != null)) {
+      killWorkflow(oldDeployPlan.expandedWorkflow);
+      oldDeployPlan.expandedWorkflow = null;
+    }
 
-      // Re-process all existing DETERMINEREQUIREMENTS tasks in
-      // light of the new Org Activity
-      Collection drTasks = drTasksSub.getCollection();
-      for (Iterator iterator = drTasks.iterator();
-           iterator.hasNext();) {
-        Task drTask = (Task) iterator.next();
-        reprocessDetermineRequirementsTask(drTask);
-      }
+    replaceDeployPlan(selfOrgAct);
+
+    // Re-process existing DETERMINEREQUIREMENTS task in
+    // light of the new Org Activity
+    watchDueDetermineRequirementsTasks();
+
+    if (DEBUG) {
+      printDebug("Added orgActivity!: "+selfOrgAct+"\ndone");
     }
   }
 
-  /**
-   * Little utility to remove a workflow and expansion
-   */
-  protected void killWorkflow(Workflow wf) {
-    if (DEBUG) {
-      printDebug("  kill workflow: "+wf);
-    }
-    
-    // Only need to kill subtasks if wf was set to not propagate
-    if (!wf.isPropagatingToSubtasks()) {
-      Enumeration subtasksE = wf.getTasks();
-      while (subtasksE.hasMoreElements()) {
-        Task subt = (Task)subtasksE.nextElement();
-        if (DEBUG) {
-          printDebug("    remove task: "+subt);
-        }
-        publishRemove(subt);
-      }
-    }
-
-    // okay to get parent
-    Task ptask = wf.getParentTask();
-    if (ptask != null) {
-      PlanElement ppe = ptask.getPlanElement();
-      if (ppe != null) {
-        if (DEBUG) {
-          printDebug("  remove planElement: "+ppe);
-        }
-        publishRemove(ppe);
-      } else {
-        if (DEBUG) {
-          printDebug("   no wf parent planElement");
-        }
-      }
-    } else {
-      if (DEBUG) {
-        printDebug("   no wf parent");
-      }
-    }
-  }
 
   /**
    * Handle changed OrgActs.  We may need to change the associated
@@ -478,42 +441,13 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     if (DEBUG) {
       printDebug("Changed orgActivity!: "+selfOrgAct+"\nbegin");
     }
-    DeployPlan oldDP = getDeployPlan();
-    setDeployPlan(null);
-    if (DEBUG) {
-      printDebug("  re-add org activity");
-    }
+
     watchAddedSelfOrgDeployAct(selfOrgAct);
-    if (oldDP == null) {
-      // didn't replace anything
-      if (DEBUG) {
-        printDebug("done");
-      }
-      return;
-    }
-    DeployPlan newDP = getDeployPlan();
+
     if (DEBUG) {
-      printDebug("  old dp: "+oldDP+"\n  new dp: "+newDP);
-    }
-
-    Task drTask = oldDP.detReqsTask;
-    if (drTask != null) {
-      if (newDP != null) {
-        // kill the old workflow
-        if (oldDP.expandedWorkflow != null) {
-          killWorkflow(oldDP.expandedWorkflow);
-          oldDP.expandedWorkflow = null;
-        }
-      }
-
-      reprocessDetermineRequirementsTask(drTask);
-
-    }
-    if (DEBUG) {
-      printDebug("done");
+      printDebug("Changed orgActivity!: "+selfOrgAct+"\ndone");
     }
   }
-
 
 
   /**
@@ -523,60 +457,18 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
    */
   protected void watchRemovedSelfOrgDeployAct(OrgActivity selfOrgAct) {
     // throw away the deploy plan
-    DeployPlan oldDP = getDeployPlan();
-    if (oldDP != null) {
+    DeployPlan oldDeployPlan = getDeployPlan();
+    if (oldDeployPlan != null) {
       if (DEBUG) {
-        printDebug("Remove Deployment Plan!\nOLD:\n"+oldDP);
+        printDebug("Remove Deployment Plan!\nOLD:\n"+oldDeployPlan);
       }
       setDeployPlan(null);
 
       // Kill Associated Expansion
-      if (oldDP.expandedWorkflow != null) {
-        killWorkflow(oldDP.expandedWorkflow);
+      if (oldDeployPlan.expandedWorkflow != null) {
+        killWorkflow(oldDeployPlan.expandedWorkflow);
       }
     }
-  }
-
-  /**
-   * Handle added DetermineRequirements Task.
-   * <p>
-   * Carefully check for replacing prior drTasks.
-   */
-  protected void watchAddedDetermineRequirementsTask(Task drTask) {
-    handleDetermineRequirementsTask(drTask);
-  }
-
-
-  /**
-   * Handle changed DetermineRequirements Task.  This is also
-   * used when an Org Activity has changed.
-   * <p>
-   * For now we do something harsh:  Re-add the DRTask on top of the 
-   * existing one.  This should remove any existing workflow and
-   * subtasks, then re-expand the DRTask to a new workflow and
-   * subtasks.
-   */
-  protected void watchChangedDetermineRequirementsTask(Task drTask) {
-    watchAddedDetermineRequirementsTask(drTask);
-  }
-
-  /**
-   * Handle removed DetermineRequirements Task.
-   * <p>
-   * Removed task should remove it's subtasks, so we only need
-   * to clean out it's DeployPlan.
-   */
-  protected void watchRemovedDetermineRequirementsTask(Task drTask) {
-    if (DEBUG) {
-      printDebug("Remove DetReqs Task");
-    }
-    DeployPlan dp = getDeployPlan();
-    if (dp == null) {
-      // never added?
-      return;
-    }
-    dp.detReqsTask = null;
-    dp.expandedWorkflow = null;
   }
 
   /**
@@ -745,6 +637,87 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   /**
    * Protected methods other than subcription watchers
    */
+
+  /**
+   * Little utility to remove a workflow and expansion
+   */
+  protected void killWorkflow(Workflow wf) {
+    if (DEBUG) {
+      printDebug("  kill workflow: "+wf);
+    }
+    
+    // Only need to kill subtasks if wf was set to not propagate
+    if (!wf.isPropagatingToSubtasks()) {
+      Enumeration subtasksE = wf.getTasks();
+      while (subtasksE.hasMoreElements()) {
+        Task subt = (Task)subtasksE.nextElement();
+        if (DEBUG) {
+          printDebug("    remove task: "+subt);
+        }
+        publishRemove(subt);
+      }
+    }
+
+    // okay to get parent
+    Task ptask = wf.getParentTask();
+    if (ptask != null) {
+      PlanElement ppe = ptask.getPlanElement();
+      if (ppe != null) {
+        if (DEBUG) {
+          printDebug("  remove planElement: "+ppe);
+        }
+        publishRemove(ppe);
+      } else {
+        if (DEBUG) {
+          printDebug("   no wf parent planElement");
+        }
+      }
+    } else {
+      if (DEBUG) {
+        printDebug("   no wf parent");
+      }
+    }
+  }
+
+  protected void replaceDeployPlan(OrgActivity selfOrgAct) {
+    // We don't know how long this task will take, so we
+    // use the default task adjustment duration!
+    int adjustDurationDays = defaultAdjustDurationDays;
+    Date prepoStartDate = null;
+
+    if (offsetDays > 0) {
+      // If OffsetDays was specified as an input parameter, use Oplan C Day + offset as 
+      // start date for the Task
+      Collection oplanCol = query(new OplanByUIDPred(selfOrgAct.getOplanUID()));
+      // Should be exactly one oplan for an OrgActivity
+      Oplan oplan = (Oplan) oplanCol.iterator().next();
+      prepoStartDate = new Date(oplan.getCday().getTime() + (MILLIS_PER_DAY * offsetDays));
+    }
+
+    DeployPlan newDP = 
+      new DeployPlan(selfOrg, selfOrgAct, adjustDurationDays, overrideFromLocation,  
+                     prepoStartDate);
+    if (DEBUG) {
+      printDebug(newDP.toString());
+    }
+
+    if (!newDP.isValid()) {
+      if (newDP.fromLoc == null)
+        printError("This Organization lacks a MilitaryPG HomeLocation!");
+      printError("The DeployPlan lacks needed information and is ignored!");
+      setDeployPlan(null);
+    } else {
+      DeployPlan oldDP = getDeployPlan();
+      if (oldDP != null) {
+        if (DEBUG) {
+          printDebug("Replace Deployment Plan!\n"+
+                     "OLD:\n"+oldDP+"\n"+
+                     "NEW:\n"+newDP);
+        }
+      }
+      setDeployPlan(newDP);
+    }
+  }
 
   
   protected boolean DEBUG = false;
@@ -1005,7 +978,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     pp.setIndirectObject(strans);
     prepphrases.addElement(pp);
 
-    // Kludge - add "PREPO" prepositional phrase if we are using aren't using the Org's from loc
+    // Kludge - add "PREPO" prepositional phrase if we aren't using the Org's from loc
     if ((dp.fromPrepoLoc != null) &&  !isPersonAsset) {
 	pp = theLDMF.newPrepositionalPhrase();
 	pp.setPreposition("PREPO");
@@ -1027,22 +1000,6 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     Preference startPref = 
      theLDMF.newPreference(AspectType.START_TIME, startSF);
     prefs.addElement(startPref);
-
-    /*
-    //   END DATE    ((thruTime-thruRange) <= thruTime <= (thruTime+thruRange)
-    Date earlyEndDate = 
-      ShortDateFormat.adjustDate(dp.thruTime, 0, -dp.thruRange);
-    if (earlyEndDate.before(dp.startTime))
-      earlyEndDate = dp.startTime;
-    Date lateEndDate = 
-      ShortDateFormat.adjustDate(dp.thruTime, 0, dp.thruRange);
-    AspectValue earlyEndAV = 
-      new AspectValue(AspectType.END_TIME, earlyEndDate.getTime());
-    AspectValue bestEndAV = 
-      new AspectValue(AspectType.END_TIME, dp.thruTime.getTime());
-    AspectValue lateEndAV = 
-      new AspectValue(AspectType.END_TIME, lateEndDate.getTime());
-    */
 
     //   END DATE    (RDD - 5*range) <= RDD - range <= RDD
     Date lateEndDate = dp.thruTime;
@@ -1144,12 +1101,14 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       if (DEBUG) {
         printDebug("Create expansion");
       }
+      AllocationResult estimatedResult = 
+        PlugInHelper.createEstimatedAllocationResult(drTask, theLDMF, 1.0, true);
       PlanElement pe = 
         theLDMF.createExpansion(
           drTask.getPlan(),
           drTask,
           wf,
-          null);
+          estimatedResult);
       publishAdd(pe);
     }
 
@@ -1161,9 +1120,18 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   private void handleDetermineRequirementsTask(Task drTask) {
     DeployPlan dp = getDeployPlan();
     if (dp == null) {
-      // no deploy plan
+      // no deploy plan so put in unhandled
+      if (DEBUG) {
+        printDebug("handleDetermineRequirementsTask - no deploy plan so waiting on dr task");
+      }
+      unhandledDetermineRequirementsTask = new WaitingTask(0, drTask);
       return;
+    } else {
+      // Clear out the unhandled. Don't want to process multiple times
+      unhandledDetermineRequirementsTask = null;
     }
+
+    
     if (DEBUG) {
       printDebug("Add drTask with Deploy Plan: "+dp);
       if ((dp.detReqsTask != null) && (dp.detReqsTask != drTask)) {
@@ -1203,11 +1171,11 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       if (DEBUG) {
         printDebug("  delay re-add drTask: "+drTask);
       }
-      unhandledDetermineRequirementsTasks.addLink(delayReprocessMillis,
-                                                  drTask);
+      unhandledDetermineRequirementsTask = new WaitingTask(delayReprocessMillis,
+                                                           drTask);
       wakeAfterRealTime(delayReprocessMillis);
     } else {
-      // re-add task immediately
+      // handle task immediately
       if (DEBUG) {
         printDebug("  immediate re-add drTask: "+drTask);
       }
@@ -1366,26 +1334,6 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     };
   }
         
-  /**
-   * This predicate selects transportable assets:<br>
-   * <ul>
-   *   <li>person</li>
-   *   <li>class vii major end item</li>
-   *</ul>
-   *<p>
-   * These are the assets that we will transport.
-   **/
-//    protected static UnaryPredicate newTransAssetsPred() {
-//      return new UnaryPredicate() {
-//        public boolean execute(Object o) {
-//          while (o instanceof AggregateAsset)
-//            o = ((AggregateAsset)o).getAsset();
-//          return ((o instanceof Person) || 
-//                  (o instanceof ClassVIIMajorEndItem));
-//        }
-//      };
-//    }
-
   protected static UnaryPredicate newTransPersonPred() {
     return new UnaryPredicate() {
       public boolean execute(Object o) {
@@ -1526,9 +1474,8 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
 		      Date prepoStartDate) {
       if ((org == null) || 
           (orgAct == null)) {
-        //if (DEBUG) {
-        //  printDebug("BAD DeployPlan parameter(s)!");
-        //}
+        System.err.println("BAD DeployPlan parameter(s)! org = " + org + 
+                             " orgAct = " + orgAct);
         return;
       }
 
@@ -1630,129 +1577,23 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     }
   }
 
- 
-  /**
-   * Maintain sorted list of {time, tasks}.
-   * <p><pre>
-   * Lots of different ways to do this:
-   *   1) java.util.LinkedList unsorted, traverse when taking "dueLinks()"
-   *   2) java.util.LinkedList always sorted
-   *   3) java.util.TreeMap
-   *   4) write our own that maintains a sorted list.
-   * I had code sitting around for (4)...
-   * </pre>
-   */
-  protected static class TaskWaitingList {
-    Link head;
-    public TaskWaitingList() {
-    }
-    /**
-     * Add link.
-     */
-    public void addLink(long deltaTimeInFuture, Task task) {
-      long newTime = System.currentTimeMillis();
-      if (deltaTimeInFuture > 0) {
-        newTime += deltaTimeInFuture;
-      }
-      Link newLink = new Link(newTime, task);
-      if (head == null) {
-        // new list
-        head = newLink;
-        return;
-      }
-      if (head.time >= newTime) {
-        // new head
-        Link l = newLink;
-        l.next = head;
-        head = l;
-        return;
-      }
-      Link prevl = null;
-      Link currl = head;
-      while (true) {
-        prevl = currl;
-        currl = currl.next;
-        if (currl == null) {
-          // new tail
-          prevl.next = newLink;
-          return;
-        }
-        if (currl.time >= newTime) {
-          // insert
-          Link newl = newLink;
-          prevl.next = newl;
-          newl.next = currl;
-          return;
-        }
-      }
-    }
-
-    /**
-     * Take links with time &lteq; currentTime.
-     */
-    public Link dueLinks() {
-      long upToTime = System.currentTimeMillis();
-      if ((head == null) || 
-          (head.time > upToTime)) {
-        // no links
-        return null;
-      }
-      Link prevl = null;
-      Link currl = head;
-      while (true) {
-        prevl = currl;
-        currl = currl.next;
-        if (currl == null) {
-          // entire list
-          Link l = head;
-          head = null;
-          return l;
-        }
-        if (currl.time >= upToTime) {
-          // up to l
-          Link l = head;
-          head = currl;
-          prevl.next = null;
-          return l;
-        }
-      }
-    }
-
-    public String toString() {
-      return Link.toString(head);
-    }
-  }
-
-  /** Used by WaitingTaskList **/
-  protected static class Link {
+  private static class WaitingTask {
     public long time;
     public Task task;
-    public Link next;
 
-    public Link(long xtime, Task xtask) {
-      time = xtime;
+    public WaitingTask(long deltaMillis, Task xtask) {
+      time = System.currentTimeMillis() + deltaMillis;
       task = xtask;
       // maybe need plan info in future?
     }
 
-    public String toString() {
-      return toString(this);
+    public boolean isDue() {
+      return (time <= System.currentTimeMillis());
     }
 
-    public static String toString(Link l) {
+    public String toString() {
       long now = System.currentTimeMillis();
-      String s = "Links {\n";
-      for ( ; l != null; l = l.next) {
-        s += "  (+";
-        s += (l.time-now);
-        s += "ms, ";
-        if (l.task != null) {
-          s += l.task.getUID().toString();
-        }
-        s += ")\n";
-      }
-      s += "}";
-      return s;
+      return "  (+" + (time-now) + "ms, " + task.getUID().toString() + ")";
     }
   }
 
