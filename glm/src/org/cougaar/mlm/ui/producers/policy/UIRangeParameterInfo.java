@@ -74,7 +74,7 @@ public class UIRangeParameterInfo extends UIPolicyParameterInfo
    * Get parameter value keyed by int
    * If key fits into one of the defined ranges, return associated
    * value, otherwise return default value .
-   * @returns Object parameter value. Note : could be null.
+   * @return Object parameter value. Note : could be null.
    */
   public Object getValue(int key)
   {

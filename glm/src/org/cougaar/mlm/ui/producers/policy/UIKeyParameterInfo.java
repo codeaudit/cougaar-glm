@@ -74,7 +74,7 @@ public class UIKeyParameterInfo extends UIPolicyParameterInfo
    * Get parameter value (String) keyed by int
    * If key fits into one of the defined Keys, return associated
    * value, otherwise return default value (String).
-   * @returns Object parameter value (String). Note : could be null.
+   * @return Object parameter value (String). Note : could be null.
    */
   public Object getValue(String key)
   {

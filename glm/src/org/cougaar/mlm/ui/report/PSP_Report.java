@@ -70,7 +70,7 @@ public class PSP_Report extends PSP_BaseAdapter
    *
    * @param pkg String specifying package id
    * @param id String specifying PSP name
-   * @throw org.cougaar.lib.planserver.RuntimePSPException
+   * @throws org.cougaar.lib.planserver.RuntimePSPException
    */
   public PSP_Report(String pkg, String id ) throws RuntimePSPException {
     setResourceLocation(pkg, id);

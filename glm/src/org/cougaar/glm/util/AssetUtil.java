@@ -1018,7 +1018,7 @@ public static boolean isPallet(Asset asset) {
    * a task immediately previous (check_backwards is true) or after (false)
    * the time given in the RoleSchedule.
    * Do we need to check the role in this allocation as well?
-   * @returns null if no task found
+   * @return null if no task found
    */
   /** 
    * Inefficient...

@@ -114,7 +114,7 @@ public class UIItineraryElement implements org.cougaar.core.util.SelfPrinter, ja
    * get and set access methods for <code>InterpolatedInfo</code>
    * <p>
    * For the UITaskItineraryElements and UICarrierItineraryElements.
-   * @returns one of the "INTERPOLATED_" byte values;
+   * @return one of the "INTERPOLATED_" byte values;
    */
   public void setInterpolatedInfo(byte b) {
     interpolatedInfo = b;

@@ -1065,7 +1065,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
   /**
    * Given UITaskItineraryElement, add UITaskItinElems based on the template leg
    * and interpolated with task Route information.
-   * @returns true if successful
+   * @return true if successful
    */
   protected static boolean addLegsInterpolateRoute(
       List toLegsList, UITaskItineraryElement templateLeg,
