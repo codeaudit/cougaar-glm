@@ -24,9 +24,12 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.plaf.ButtonUI;
 
 import org.cougaar.domain.mlm.ui.data.UIInventoryImpl;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
@@ -34,14 +37,20 @@ import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedScheduleNames;
 import org.cougaar.domain.mlm.ui.data.UIQuantityScheduleElement;
 
-public class InventoryChart
-    extends JPanel
-    implements JCPickListener, ActionListener, UISimpleNamedScheduleNames
+public class InventoryChart extends JPanel
+    implements JCPickListener, 
+	       ActionListener, 
+	       ItemListener,
+	       UISimpleNamedScheduleNames
 {
     JCChart chart=null;
     InventoryLegend legend=null;
+    JPanel chartCheckBoxPanel=null;
     GridBagConstraints legendLocale=null;
+
+    final static String checkBoxUIClassID=(new JCheckBox()).getUIClassID();
     JToggleButton legendButton=null;
+    boolean       doShowInactive=true;
 
     JLabel pointLabel; // initialized when creating chart, set by pick method
     Hashtable dataViews = new Hashtable(); // temporary, until data view-data model correspondence is working
@@ -59,6 +68,10 @@ public class InventoryChart
     static final String UNCONFIRMED_LEGEND = "UnConfirmed";
     
     static final int CDAY_MIN=-5;
+
+    public static final String CDAY_MODE = "Cdays";
+    public static final String SHOW_INACTIVE = "Show Inactive";
+
 
     //PER_25,50,75,HORIZ_STRIPE,VERT_STRIPE,DIAG_HATCHED,CROSS_HATCHED,etc
     static final int INACTIVE_SERIES_PATTERN=JCFillStyle.STRIPE_45;
@@ -434,27 +447,28 @@ public class InventoryChart
 					  GridBagConstraints.BOTH, 
 					  blankInsets, 0, 0));
 
+
 	// provide for point labels displayed beneath chart
 	pointLabel = new JLabel("Right click to get quantity at a point."); // to leave space in layout
 	pointLabel.setBackground(Color.magenta);
-	add(pointLabel, new GridBagConstraints(gridx, gridy++, 1, 1, 1.0, 0.0,
+	add(pointLabel, new GridBagConstraints(gridx, gridy, 1, 1, 1.0, 0.0,
 					       GridBagConstraints.CENTER, 
 					       GridBagConstraints.NONE, 
 					       blankInsets, 0, 0));
 
-	legendButton = new JToggleButton(new HorzLegendIcon(), true);
-	legendButton.setSelectedIcon(new VertLegendIcon());
-	legendButton.setMargin (new Insets (0, 0, 0, 0));
-	legendButton.setBorderPainted (false);
-	legendButton.setToolTipText ("Show/Hide Legend");
+	//checkAndLegendButtonPanel = createChecksAndLegendButtonPanel();
+	JPanel cbPanel = createCheckBoxPanel();
+	
 
-	//          ((JScrollPane) rainbowChart).setCorner
-        //    (JScrollPane.UPPER_RIGHT_CORNER, legendButton);
+	add(cbPanel, new GridBagConstraints(gridx, gridy, 1, 1, 0.4, 0.0,
+					       GridBagConstraints.EAST, 
+					       GridBagConstraints.NONE, 
+					       blankInsets, 0, 0));
 
+	legendButton = createLegendButton();
 
-	legendButton.addActionListener(this);
-
-	add(legendButton, new GridBagConstraints(gridx, gridy++, 1, 1, 0.2, 0.0,
+	add(legendButton, 
+	    new GridBagConstraints(gridx, gridy++, 1, 1, 0.1, 0.0,
 				   GridBagConstraints.WEST, 
 				   GridBagConstraints.VERTICAL, 
 				   blankInsets, 0, 0));
@@ -727,19 +741,20 @@ public class InventoryChart
 				     ACTUAL_INVENTORY_LEGEND);
 	addView(chart, JCChart.BAR, actual);
 
-	// Requested
+	
+	// Requested Inactive
 	InventoryChartDataModel requestedInactive = 
 	    createInventoryDataModel(inventory, 
 				     REQUESTED_INACTIVE_INVENTORY_LEGEND);
 	requested.setAssociatedInactiveModel(requestedInactive);
-	addView(chart, JCChart.BAR, requestedInactive);
+	addView(chart, JCChart.BAR, requestedInactive).setVisible(doShowInactive);
 
-	// Actual
+	// Actual Inactive
 	InventoryChartDataModel actualInactive = 
 	    createInventoryDataModel(inventory, 
 				     ACTUAL_INACTIVE_INVENTORY_LEGEND);
 	actual.setAssociatedInactiveModel(actualInactive);
-	addView(chart, JCChart.BAR, actualInactive);
+	addView(chart, JCChart.BAR, actualInactive).setVisible(doShowInactive );
 
 	computeAndInitializeShortfall(inventory,actual,requested);
     }
@@ -845,6 +860,7 @@ public class InventoryChart
 	// set line width
 	if (chartType == JCChart.PLOT)
 	    for (int j = 0; j < chartDataView.getNumSeries(); j++)
+
 		chartDataView.getSeries(j).getStyle().setLineWidth(2);
 
 	// set removeable - has checkbox in legend
@@ -1063,6 +1079,10 @@ public class InventoryChart
 	return chart;
     }
 
+    public boolean getShowInactive() {
+	return doShowInactive;
+    }
+
     /** Called from legend to determine if the view label
 	should be a checkbox (allowing the view to be 
 	displayed or hidden).
@@ -1077,6 +1097,81 @@ public class InventoryChart
 	return false;
     }
 
+    public void setInactiveViewsVisible(boolean visible) {
+
+	Enumeration enum = removeableViews.elements();
+	int currIndex=0;
+	ChartDataView cdv=null;
+	ChartDataView actual,requested,actualInactive,requestedInactive;
+	
+	actual=null;
+	requested=null;
+	actualInactive=null;
+	requestedInactive=null;
+
+	while (enum.hasMoreElements()) {
+	    cdv = (ChartDataView)enum.nextElement();
+	    if(cdv.getName().equals(REQUESTED_INACTIVE_INVENTORY_LEGEND)){
+		requestedInactive=cdv;
+	    } 
+	    else if(cdv.getName().equals(ACTUAL_INACTIVE_INVENTORY_LEGEND)) {
+		actualInactive=cdv;
+	    }
+	    else if(cdv.getName().equals(REQUESTED_INVENTORY_LEGEND)) {
+		requested=cdv;
+	    }
+	    else if(cdv.getName().equals(ACTUAL_INVENTORY_LEGEND)) {
+		actual=cdv;     
+	    }
+	}
+	
+	//only set visible f there active counterparts are visible
+	if(!visible || actual.isVisible()) actualInactive.setVisible(visible);
+	if(!visible || requested.isVisible()) requestedInactive.setVisible(visible);
+
+
+	/****
+	 **
+	 ** below is more efficient, but hard to reconcile with 
+	 ** updates.
+	 ** MWD Remove.
+
+	chart.setBatched(true);
+
+	if(visible) {	
+	    while (enum.hasMoreElements()) {
+		cdv = (ChartDataView)enum.nextElement();
+		chart.setDataView(currIndex,cdv);
+		currIndex++;
+	    }
+	}
+	else {
+	    for(int i=viewIndex-1; i>=0; i--) {
+		cdv=chart.getDataView(i);
+		if((cdv.getName().equals(REQUESTED_INACTIVE_INVENTORY_LEGEND)) ||
+		    (cdv.getName().equals(ACTUAL_INACTIVE_INVENTORY_LEGEND))) {
+		    chart.removeDataView(i);
+		}
+	    }
+	}
+
+
+	// MWD remove
+	//resetAxes();
+	//chart.setChanged(true,chart.LAYOUT);
+	//chart.setChanged(true,chart.RECALC);
+	//chart.setChanged(true,chart.REDRAW);
+
+
+	chart.setBatched(false);
+	chart.update();
+
+
+	**/
+
+    }
+
+
 
     /**
        Called from legend when user selects/deselects checkbox
@@ -1087,7 +1182,13 @@ public class InventoryChart
 	while (enum.hasMoreElements()) {
 	    ChartDataView cdv = (ChartDataView)enum.nextElement();
 	    if (cdv.getName().equals(name)) {
-		cdv.setVisible(visible);
+		//don't make the INACTIVE ones visible if they've been
+		//turned off.
+		if(!(((cdv.getName().equals(REQUESTED_INACTIVE_INVENTORY_LEGEND)) ||
+		      (cdv.getName().equals(ACTUAL_INACTIVE_INVENTORY_LEGEND)))
+		     &&(!doShowInactive))){
+		    cdv.setVisible(visible);
+		}
 		return;
 	    }
 	}
@@ -1287,6 +1388,64 @@ public class InventoryChart
 	}
     }
 
+    protected JPanel createChecksAndLegendButtonPanel() {
+	JPanel cnlPanel = new JPanel(new BorderLayout());
+	legendButton = createLegendButton();
+	JPanel cbPanel = createCheckBoxPanel();
+
+	cnlPanel.add(legendButton,BorderLayout.WEST);
+	cnlPanel.add(cbPanel,BorderLayout.EAST);
+
+	return cnlPanel;
+    }
+	
+
+    protected JPanel createCheckBoxPanel() {
+	JPanel cbPanel = new JPanel(new GridBagLayout());
+
+	JCheckBox cdaysModeCheck = new JCheckBox(CDAY_MODE,false);
+	
+	Font newFont = cdaysModeCheck.getFont();
+	newFont = newFont.deriveFont(newFont.getStyle(), (float) 15);
+	
+	cdaysModeCheck.setFont(newFont);
+	cdaysModeCheck.setActionCommand(CDAY_MODE);
+	cdaysModeCheck.setToolTipText("Display xaxis dates as C-Days");
+	cdaysModeCheck.addItemListener(this);
+	cbPanel.add(cdaysModeCheck,
+		    new GridBagConstraints(0,0, 1, 1, 1.0, 1.0,
+					   GridBagConstraints.WEST, 
+					   GridBagConstraints.NONE, 
+					   blankInsets, 0, 0));
+
+	JCheckBox showInactiveCheck = new JCheckBox(SHOW_INACTIVE,doShowInactive);
+	showInactiveCheck.setFont(newFont);
+	showInactiveCheck.setActionCommand(SHOW_INACTIVE);
+	showInactiveCheck.setToolTipText("Display the inactive allocations");
+	showInactiveCheck.addItemListener(this);
+	cbPanel.add(showInactiveCheck,
+		    new GridBagConstraints(1,0, 1, 1, 1.0, 1.0,
+					   GridBagConstraints.WEST, 
+					   GridBagConstraints.NONE, 
+					   blankInsets, 0, 0));
+
+	return cbPanel;
+
+    }
+
+    protected JToggleButton createLegendButton() {
+	JToggleButton lButton = new LegendToggleButton(true);
+	lButton.setToolTipText ("Show/Hide Legend");
+
+	//          ((JScrollPane) rainbowChart).setCorner
+        //    (JScrollPane.UPPER_RIGHT_CORNER, legendButton);
+
+	lButton.addActionListener(this);
+	
+	return lButton;
+    }
+    
+
     public void actionPerformed(ActionEvent e) {
 	System.out.println("InventoryChart::actionPerformed: Event: " + e);
 	if(e.getSource() == legendButton) {
@@ -1304,52 +1463,102 @@ public class InventoryChart
 	}
     }
 
-
-  class VertLegendIcon implements Icon {
-
-    public int getIconHeight() {
-      return 16;
+    public void itemStateChanged(ItemEvent e) {
+	if(e.getSource() instanceof JCheckBox) {
+	    JCheckBox source = (JCheckBox) e.getSource();
+	    if(source.getActionCommand().equals(CDAY_MODE)) {
+		setDisplayCDays(e.getStateChange() == e.SELECTED);
+	    }
+	    else if(source.getActionCommand().equals(SHOW_INACTIVE)) {
+		doShowInactive = (e.getStateChange() == e.SELECTED);
+		setInactiveViewsVisible(doShowInactive);
+	    }
+	}
     }
 
-    public int getIconWidth() {
-      return 8;
+    public class LegendToggleButton extends JToggleButton {
+
+	public LegendToggleButton(boolean isSelected) {
+	    super(new HorzLegendIcon(), isSelected);
+	    setSelectedIcon(new VertLegendIcon());
+	    setMargin (blankInsets);
+	    setBorderPainted (false);
+	    setToolTipText ("Show/Hide Legend");
+
+
+	    setOpaque(true);
+	}
+
+	/**
+	 * Notification from the UIFactory that the L&F
+	 * has changed. 
+	 *
+	 * @see JComponent#updateUI
+	 */
+	public void updateUI() {
+	    this.setUI((ButtonUI)UIManager.getUI(this));
+	}
+
+
+	/**
+	 * Returns a string that specifies the name of the L&F class
+	 * that renders this component.
+	 *
+	 * @return "CheckBoxUI"
+	 * @see JComponent#getUIClassID
+	 * @see UIDefaults#getUI
+	 * @beaninfo
+	 *        expert: true
+	 *   description: A string that specifies the name of the L&F class
+	 */
+	public String getUIClassID() {
+	    return (checkBoxUIClassID);
+	}
     }
-
-    public void paintIcon (Component c, Graphics g, int x, int y) {
-      g.setColor (Color.red);
-      g.fillRect (x, y, 8, 4);
-      g.setColor (Color.blue);
-      g.fillRect (x, y + 4, 8, 4);
-      g.setColor (Color.green);
-      g.fillRect (x, y + 8, 8, 4);
-      g.setColor (Color.yellow);
-      g.fillRect (x, y + 12, 8, 4);
+    class VertLegendIcon implements Icon {
+	
+	public int getIconHeight() {
+	    return 16;
+	}
+	
+	public int getIconWidth() {
+	    return 8;
+	}
+	
+	public void paintIcon (Component c, Graphics g, int x, int y) {
+	    g.setColor (Color.red);
+	    g.fillRect (x, y, 8, 4);
+	    g.setColor (Color.blue);
+	    g.fillRect (x, y + 4, 8, 4);
+	    g.setColor (Color.green);
+	    g.fillRect (x, y + 8, 8, 4);
+	    g.setColor (Color.yellow);
+	    g.fillRect (x, y + 12, 8, 4);
+	}
+	
     }
-
-  }
-
-
-  class HorzLegendIcon implements Icon {
-
-    public int getIconHeight() {
-      return 8;
-    }
-
-    public int getIconWidth() {
-      return 16;
-    }
-
-    public void paintIcon (Component c, Graphics g, int x, int y) {
-      g.setColor (Color.red);
-      g.fillRect (x, y, 4, 8);
-      g.setColor (Color.blue);
-      g.fillRect (x + 4, y, 4, 8);
-      g.setColor (Color.green);
-      g.fillRect (x + 8, y, 4, 8);
-      g.setColor (Color.yellow);
-      g.fillRect (x + 12, y, 4, 8);
-    }
-
-  }
+    
+    
+    class HorzLegendIcon implements Icon {
+	    
+	public int getIconHeight() {
+	    return 8;
+	}
+	
+	public int getIconWidth() {
+		return 16;
+	}
+	    
+	public void paintIcon (Component c, Graphics g, int x, int y) {
+	    g.setColor (Color.red);
+	    g.fillRect (x, y, 4, 8);
+	    g.setColor (Color.blue);
+	    g.fillRect (x + 4, y, 4, 8);
+	    g.setColor (Color.green);
+	    g.fillRect (x + 8, y, 4, 8);
+	    g.setColor (Color.yellow);
+	    g.fillRect (x + 12, y, 4, 8);
+	}
+    }   
 
 }
