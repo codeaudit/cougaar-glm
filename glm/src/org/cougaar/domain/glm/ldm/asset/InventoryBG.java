@@ -37,6 +37,7 @@ import org.cougaar.domain.glm.ldm.ALPFactory;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.PlanScheduleType;
 import org.cougaar.domain.glm.ldm.plan.ObjectScheduleElement;
 import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
 import org.cougaar.domain.glm.plugins.*;
@@ -785,7 +786,7 @@ public abstract class InventoryBG implements PGDelegate {
 	    }
 	}
 	Schedule new_schedule = ALPFactory.newQuantitySchedule(new_elements.elements(), 
-							       ScheduleType.TOTAL_INVENTORY);
+							       PlanScheduleType.TOTAL_INVENTORY);
 
 	if (ScheduleUtils.isOffendingSchedule(new_schedule)) {
 	    GLMDebug.ERROR("InventoryBG", "UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
@@ -807,7 +808,7 @@ public abstract class InventoryBG implements PGDelegate {
 	new_elements.add(qse);
 
 	Schedule new_schedule = ALPFactory.newQuantitySchedule(new_elements.elements(), 
-							       ScheduleType.TOTAL_INVENTORY);
+							       PlanScheduleType.TOTAL_INVENTORY);
 
 	if (ScheduleUtils.isOffendingSchedule(new_schedule)) {
 	    GLMDebug.ERROR("InventoryBG", "UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
