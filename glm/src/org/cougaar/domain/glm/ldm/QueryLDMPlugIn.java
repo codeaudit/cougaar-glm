@@ -288,6 +288,8 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 		GLMDebug.ERROR(className_,"executeQuery fail to createStatement "+sqle);
 		releaseConnection(conn);
 		return null;
+	    } finally {
+		releaseConnection(conn);
 	    }
 	} else {
 	    GLMDebug.ERROR(className_,"executeQuery fail to connect "+url_);
