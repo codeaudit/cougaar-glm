@@ -10,12 +10,6 @@
 
 package  org.cougaar.lib.param;
 
-import org.xml.sax.HandlerBase;
-import org.xml.sax.DocumentHandler;
-import org.xml.sax.helpers.ParserFactory;
-import org.xml.sax.Parser;
-import org.xml.sax.InputSource;
-import java.io.File;
 import java.util.Vector;
 
 /**

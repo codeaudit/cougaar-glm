@@ -10,8 +10,6 @@
 
 package  org.cougaar.lib.param;
 
-//import org.xml.sax.HandlerBase;
-//import org.xml.sax.AttributeList;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -23,7 +21,6 @@ import org.xml.sax.SAXException;
  * the file.
  *
  */
-//class ParamHandler extends HandlerBase {
 class ParamHandler extends DefaultHandler {
 
   /**
@@ -41,7 +38,6 @@ class ParamHandler extends DefaultHandler {
    * @param name the name of the xml element (parameter name)
    * @param atts the attribute list of the xml element
    */
-  //  public void startElement (String name, AttributeList atts) {
   public void startElement (String uri, String local, String name, Attributes atts) throws SAXException {
     String attributeName = null;
     String attributeType = null;
