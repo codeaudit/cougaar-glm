@@ -62,8 +62,9 @@ public class OrgActivity extends OwnedUniqueObject
   public static final String RECEPTION = "Reception";
   public static final String DEFENSIVE = "Employment-Defensive";
   public static final String OFFENSIVE = "Employment-Offensive";
-  public static final String STAND_DOWN = "Employment-Standdown";
-  public static final String REDEPLOYMENT = "Re-Deployment";
+  public static final String EMPLOYMENT_CSS = "Employment-CSS";
+  public static final String STAND_DOWN = "Stand-down";
+  public static final String REDEPLOYMENT = "Redeployment";
   public static final String RETROGRADE = "Retrograde";
 
   //Optempo
