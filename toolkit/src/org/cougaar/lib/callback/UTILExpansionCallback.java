@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewExpansion;
 import org.cougaar.planning.ldm.plan.SubTaskResult;
@@ -294,7 +295,8 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
     for (Iterator iter = subtaskResults.iterator();
 	 iter.hasNext (); ) {
       SubTaskResult stres = (SubTaskResult) iter.next ();
-      if (!stres.getAllocationResult().isSuccess ())
+      AllocationResult allocResult = stres.getAllocationResult();
+      if (allocResult != null && !allocResult.isSuccess ())
 	n++;
     }
 
