@@ -75,10 +75,6 @@ public abstract class OrganizationAdapter extends GLMAsset {
     }
   }
   
-  public boolean isSelf() {
-    return getRelationshipPG().getRelationshipSchedule().getMatchingRelationships(Constants.Role.SELF).size() > 0;
-  }
-
   /**
    * getSuperiors - returns superior relationships.
    * Performs a 2 stage search, returns all SUPERIOR relationships if they 

@@ -20,15 +20,12 @@
  */
 package org.cougaar.domain.mlm.plugin.organization;
 
-import java.util.*;
-
-import org.cougaar.domain.planning.ldm.plan.Role;
-import org.cougaar.domain.planning.ldm.plan.Verb;
-import org.cougaar.domain.planning.plugin.AssetDataPlugIn;
-
+import java.util.Collection;
 import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.planning.ldm.plan.Verb;
+import org.cougaar.domain.planning.plugin.AssetDataPlugInBase;
 
-public class OrgDataPlugIn extends AssetDataPlugIn  {
+public class OrgDataPlugIn extends AssetDataPlugInBase  {
 
   static {
     packages.add("org.cougaar.domain.glm.ldm.asset");
@@ -50,9 +47,3 @@ public class OrgDataPlugIn extends AssetDataPlugIn  {
     }
   }
 }
-
-
-
-
-
-
