@@ -106,6 +106,7 @@ public class GLMStimulatorResponseData implements XMLable, Serializable {
    * @param w output Writer
    **/
   public void toXML(XMLWriter w) throws IOException{
+    w.optagln("response");
     w.optagln("results", "totalTime", totalTime);
     for (Iterator iter = new TreeSet(taskTimes.keySet()).iterator(); iter.hasNext();) {
       Object key = iter.next ();
@@ -133,6 +134,7 @@ public class GLMStimulatorResponseData implements XMLable, Serializable {
       bucketMin = bucketMax;
     }
     w.cltagln("histogram");
+    w.cltagln("response");
   }
 
   public String toString () {
