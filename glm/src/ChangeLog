@@ -1,3 +1,157 @@
+2001-05-18  Ray Tomlinson  <rtomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/TaskUtils.java:
+	Support fixes for Bug #407
+	Expose computation of daily quantity from a Rate as a separate,
+	public method.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Fixes Bug #407
+	Under some conditions, POL inventory goes negative due to
+	incorrect refill projections. The refills are too small relative
+	to the demand. This does not happen all the time, but seems to
+	happen mostly when the level is ramped down to the average demand
+	at the refill switchover day.
+	Analysis. The computation of refill projections is performed as an
+	adjustment to existing refill projections. When the needed
+	adjustment is negative (such as when ramping down to the average
+	level), the needed projection rate may be negative. Since negative
+	projections are not allowed, the existing projection is removed,
+	but the effect of this on the inventory level is computed as zero
+	instead of the negative of the removed refill projection amount.
+	This artificially elevates the inventory level causing the IM to
+	omit subsequent projections as well even though they are actually
+	needed.
+	The effect of the removed projection should be computed correctly
+	as the negative if the existing projection daily amount
+
+2001-05-08  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	Bug #402
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Inventory first planning day should be the first day of demand,
+	but the first day of demand was computed before the current set of
+	demand tasks had been added to the inventory. When this happened,
+	the default first day of 0 was used leading and incorrect first
+	planning day.
+	The first planning day is now determined after demand tasks have
+	been added.
+
+2001-05-03  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Bug #392
+	Compute refill switchover day correctly even when the first day of
+	demand is later than the switchover day. The buggy code started
+	with the first planning day so the switchover day could never be
+	computed as less that the first planning day. This could cause
+	refill tasks to be generated after the switchover day.
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Bug #392
+	Set the imputed day of a list of dueins everytime the inventory is
+	reset.
+
+2001-05-01  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugIn.java:
+	Add method to record a new customer based on a supply or withdraw
+	task.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Companion modifications for keeping track of inventories needing
+	attention while waiting for all customers to present their demand.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	Modifications to accumulate inventories needing attention while
+	waiting for all customers to present their demand.
+	Refine the test for activation due to changes in refill
+	allocations. Activation is necessary only for changes to the
+	estimated result not for arbitrary changes to the allocation.
+
+	* org/cougaar/domain/glm/plugins/DecorationPlugIn.java:
+	Add logic to delay execution of a processor until there is a
+	reasonable assurance that all customers have sent their tasks. For
+	inventory management, this allows inventory management to be
+	delayed until all demands are present. This more efficient than
+	successive replanning cycles.
+
+	* org/cougaar/domain/glm/plugins/BasicProcessor.java:
+	Catch exceptions when creating a description of an
+	AllocationResult.
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Make sure that all levels have been computed before generating
+	scheduled content. Failure to do so means that late refill or
+	demand may not be reflected in the displayed levels.
+
+2001-04-30  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/WithdrawAllocator.java: 
+	Bug #375
+	Create initial estimated result anticipating a successful outcome
+	so that new allocation results need not be propagated after a
+	successful outcome. Also, publishChange an Inventory after
+	additional tasks are allocated to it or the tasks already
+	allocated change preferences. This stimulates the IM to run.
+
+	* org/cougaar/domain/glm/plugins/inventory/SupplyExpander.java: 
+	Bug #375
+	Create initial estimated result anticipating a successful outcome
+	so that new allocation results need not be propagated after a
+	successful outcome.
+
+	* org/cougaar/domain/glm/ldm/asset/InventoryBG.java:
+	Bug #376
+	More efficient implementation of determineInventoryLevel keeps
+	track of valid and invalid range of levels and only computes new
+	levels as needed. Also keeps the duein and dueout totals so they
+	are not enumerated and recomputed every time.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	Bug #375
+	Remove changed withdraw allocation subscription and attendant
+	checks. The IM should run when the tasks change, not the
+	allocations of those tasks. The existing modified inventory
+	subscription is correct and sufficient.
+
+	* org/cougaar/domain/glm/plugins/inventory/ExternalAllocator.java:
+	Bug #375
+	Create initial estimated result anticipating a successful outcome
+	so that the inventory manager need not run again for a successful
+	outcome.
+
+	* org/cougaar/domain/glm/plugins/TaskUtils.java:
+	Bug #375
+	comparePreferences requires exactly matching values. Rounding
+	difference lead to apparent differences that should be ignored.
+	Use the nearlyEqual method.
+
+	* org/cougaar/domain/glm/plugins/BasicProcessor.java:
+	Part of Bug #334
+	Fix bug in diffProjections leading to duplicate projections in
+	certain cases.
+
+	* org/cougaar/domain/glm/ldm/asset/DueIn.java:
+	Bug #376
+	Move function to DueIO base class.
+
+	* org/cougaar/domain/glm/ldm/asset/DueOut.java:
+	Bug #376
+	Move function to DueIO base class.
+
+	* org/cougaar/domain/glm/ldm/asset/DueIO.java:
+	Bug #376
+	common functionality of DueIn and DueOut classes. This
+	facilitates other changes to InventoryBG.
+
+2001-04-23  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/mlm/ui/planviewer/inventory/InventoryChartUI.java:
+	Fixes Bug #279
+	Add -demo option to switch on larger fonts. Without this option,
+	fonts are normal size.
+
 2001-04-20  Amy Fedyk <afedyk@bbn.com>
 	* org/cougaar/domain/glm/plugins/TaskUtils.java:
 	Fixes bug #341
@@ -12,6 +166,35 @@
 	leaf nodes.
 	
 2001-04-20  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/execution/eg/TripletFCPlugIn.java:
+	Support 24x7
+	Abstracted the generic part of the POLSpecialPlugIn and added "all
+	consumables" selection plus extensible "multiplier" specification.
+	Subclasses can specify an arbitrary set of fields to be entered
+	for determining the "multiplier".
+
+	* org/cougaar/domain/glm/execution/eg/TwentyFourBySevenPlugIn.java:
+	Support 24x7
+	New plugin allows the failure rate of selected consumables be
+	controlled by a sensor readout.
+
+	* org/cougaar/domain/glm/execution/eg/TimeGUI.java:
+	Support 24x7
+	Insure using GMT for execution time. This brings execution time
+	into line with the time displayed in inventory chart ui.
+
+	* org/cougaar/domain/glm/execution/eg/POL2PlugIn.java:
+	Support 24x7
+	Reimplement POLSpecialPlugIn using TripletFCPlugIn.
+
+	* org/cougaar/domain/glm/execution/eg/EventGenerator.java:
+	Support 24x7 demo
+	Remove debug println.
+
+	* org/cougaar/domain/glm/execution/eg/EGDate.java:
+	Support 24x7 demo
+	Add static method for formatting a date ins the EG style.
 
 	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
 	Fixes bug #342
@@ -383,6 +566,15 @@
 	Previously, AllocationResults for refill projections were never updated.
 	
 2001-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/ldm/Oplan.java:
+
+	Fix for bux 189. Oplan no longer contains any references to
+	associated org activities, org relations, force packages, or 
+	policies. PlugIns interested in these objects should subscribe to
+	them directly.
+
+2001-03-21  Noelle Givler <ngivler@bbn.com>
 
 	* org/cougaar/domain/glm/ldm/Oplan.java:
 
