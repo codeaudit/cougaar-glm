@@ -387,10 +387,7 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
 	int days = invpg.getPlanningDays();
 // 	printDebug(1, "InventoryManager, refillNeeded(), current day: "+startDay+", planning days :"+ days);
-	int day = startDay;
-	for (; day<days-1; day++) {
-
-
+	for (int day = startDay; day < days; day++) {
 //  	    double qty = java.lang.Math.ceil(convertScalarToDouble(invpg.getLevel(day)));
 
 	    // WHY DO WE TAKE A CEIL??
@@ -401,21 +398,13 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	    if (qty < reorder_level) {
 //   		printDebug(1,inventoryDesc(inventory)+" needs refill on day: "+day+
 //   			   " level= "+qty+" reorder_level="+reorder_level);
-		needed = true;
-		break; // order refill on this day
+                return day;
 	    } else {
 // 		printDebug(1,inventoryDesc(inventory)+" doesn't need refill on day"+i+
 // 			   ", level= "+qty+" reorder_level="+reorder_level);
 	    }
 	}
-	if (needed) {
-// 	    printDebug(1, "InventoryManager, refillNeeded(), next day is "+day);
-//  	    ProjectionWeight pw = invpg.getProjectionWeight();
-	    return day;
-	}
-	else {
-	    return DONE;
-	}
+        return DONE;
     }
 
    
@@ -428,7 +417,7 @@ public abstract class GeneralInventoryManager extends InventoryManager {
     protected void adjustWithdraws() {
 	boolean refill_changed = refillAllocs_.getChangedList().hasMoreElements(); 
 
-	if (refill_changed) {
+	if (true || refill_changed) {
 	    adjustForInadequateInventory();
 	    passPreviouslyFailedDueOuts();
 	}
