@@ -21,7 +21,9 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.UnaryPredicate;
 
-import com.ibm.xml.parser.TXDocument;
+import org.apache.xml.serialize.XMLSerializer;
+import org.apache.xml.serialize.OutputFormat;
+import org.w3c.dom.Document;
 
 import org.cougaar.domain.mlm.ui.data.UIAssetImpl;
 
@@ -90,9 +92,17 @@ public class PSP_Maintenance extends PSP_BaseAdapter implements PlanServiceProvi
     }
 
     // send the XML document to the client
-    TXDocument doc = provider.getDocument();
+    Document doc = provider.getDocument();
     provider.printDocument(); // for debugging
-    doc.print(new PrintWriter(out));
+
+    OutputFormat format = new OutputFormat();
+    format.setPreserveSpace(true);
+    format.setIndent(2);
+    
+    XMLSerializer serializer = 
+       new XMLSerializer(new PrintWriter(out), format);
+    serializer.serialize(doc);
+
     System.out.println("Sent XML document");
   }
 

@@ -27,12 +27,14 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.core.util.XMLizable;
 
-import com.ibm.xml.parser.TXDocument;
-
 import  org.cougaar.core.util.XMLObjectProvider;
 
 import org.cougaar.domain.mlm.ui.data.XMLUIPlanObject;
 import org.cougaar.domain.mlm.ui.data.XMLUIPlanObjectConverter;
+
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.XMLSerializer;
+import org.apache.xml.serialize.OutputFormat;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,7 +47,7 @@ import org.w3c.dom.Element;
 
 public class XMLPlanObjectProvider implements XMLObjectProvider {
   protected ArrayList collection = new ArrayList();
-  TXDocument doc;
+  Document doc;
   Element root;
   Class xmlPlanObjectClass;
   Class xmlUIPlanObjectClass;
@@ -67,8 +69,7 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
 
   public void  reset() {
      collection.clear();
-     doc = new TXDocument();
-     doc.setVersion("1.0");
+     doc = new DocumentImpl();
      root = doc.createElement("LogPlan");
      doc.appendChild(root);
 
@@ -118,14 +119,6 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
   }
 
   public void printDocument() {
-    /**
-    try {
-      PrintWriter out = new PrintWriter(System.out);
-      doc.print(out);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    **/
     writeDocument(System.out);
   }
 
@@ -146,14 +139,19 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
       }
 
       try {
+	OutputFormat format = new OutputFormat();
+	format.setPreserveSpace(true);
+	format.setIndent(2);
+
           PrintWriter pw = new PrintWriter(os);
-          doc.print(pw);
+	  XMLSerializer serializer = new XMLSerializer(pw, format);
+	  serializer.serialize(doc);
       } catch (Exception e) {
           e.printStackTrace();
       }
   }
 
-  public TXDocument getDocument() {
+  public Document getDocument() {
       // for debugging, also print it
       //    printDocument();
       return doc;
@@ -170,9 +168,8 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
   }
 
   // for testing
-  private TXDocument testGenerateXML() {
-      TXDocument doc = new TXDocument();
-      doc.setVersion("1.0");
+  private Document testGenerateXML() {
+      Document doc = new DocumentImpl();
 
       Element root = doc.createElement("LogPlan");
       Element taskItem = doc.createElement("Task");

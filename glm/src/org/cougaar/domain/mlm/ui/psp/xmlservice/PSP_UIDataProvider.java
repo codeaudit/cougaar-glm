@@ -19,7 +19,9 @@ import org.cougaar.core.cluster.CollectionSubscription;
 import org.cougaar.core.cluster.Subscription;
 import org.cougaar.lib.planserver.*;
 
-import com.ibm.xml.parser.TXDocument;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.Document;
 
 public class PSP_UIDataProvider extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber {
   private String myID;
@@ -121,10 +123,16 @@ public class PSP_UIDataProvider extends PSP_BaseAdapter implements PlanServicePr
       } catch (Exception e) {
 	System.out.println("[PSP_UIDataProvider.execute()] Intercepted Exception during XML generation: " +  e.toString());
       }
-      TXDocument doc = provider.getDocument();
+      Document doc = provider.getDocument();
 
       // send document to client
-      doc.print(new PrintWriter(out));
+      OutputFormat format = new OutputFormat();
+      format.setPreserveSpace(true);
+      format.setIndent(2);
+      
+      XMLSerializer serializer = 
+         new XMLSerializer(new PrintWriter(out), format);
+      serializer.serialize(doc);
       System.out.println("Sent XML document");
 
     }

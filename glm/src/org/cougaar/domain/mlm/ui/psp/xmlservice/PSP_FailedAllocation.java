@@ -23,7 +23,9 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.UnaryPredicate;
 
-import com.ibm.xml.parser.TXDocument;
+import org.w3c.dom.Document;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 
 import org.cougaar.domain.mlm.ui.data.UIMPTaskImpl;
 import org.cougaar.domain.mlm.ui.data.UITaskImpl;
@@ -120,9 +122,18 @@ public class PSP_FailedAllocation extends PSP_BaseAdapter implements PlanService
       // first writes document to buffer and counts bytes
       // then prepends content length to buffer actually sent
       if (planObjects.size() > 0) {
-        TXDocument doc = provider.getDocument();
+        Document doc = provider.getDocument();
         ByteArrayOutputStream serviceOut = new ByteArrayOutputStream(512);
-        doc.print(new PrintWriter(serviceOut));
+
+	OutputFormat format = new OutputFormat();
+	format.setPreserveSpace(true);
+	format.setIndent(2);
+
+	XMLSerializer serializer = 
+	  new XMLSerializer(new PrintWriter(serviceOut), format);
+
+	serializer.serialize(doc);
+
         String header  = new String("\n\rContent-Length:" + serviceOut.size()
                                     + "\r\n");
         System.out.println("Sent bytes: " + serviceOut.size());
@@ -146,11 +157,15 @@ public class PSP_FailedAllocation extends PSP_BaseAdapter implements PlanService
   }
 
   // for debugging only
-  private void printDocument(TXDocument doc) {
+  private void printDocument(Document doc) {
     try {
+      OutputFormat format = new OutputFormat();
+      format.setPreserveSpace(true);
+      format.setIndent(2);
+
       PrintWriter out = new PrintWriter(System.out);
-      //      doc.printWithFormat(out);
-      doc.print(out);
+      XMLSerializer serializer = new XMLSerializer(out, format);
+      serializer.serialize(doc);
     } catch (Exception e) {
       e.printStackTrace();
     }
