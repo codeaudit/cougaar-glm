@@ -27,6 +27,8 @@ import java.io.Serializable;
 import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Location;
 import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
 import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.planning.ldm.plan.Task;
@@ -55,24 +57,31 @@ import org.cougaar.planning.ldm.plan.TaskScoreTable;
    * returns null when there are no subtasks or any task has no result.
    **/
 public class UTILAllocationResultAggregator implements AllocationResultAggregator, Serializable {
+  // dummy location
+  public static final AspectValue UNDEFINED_POD = AspectValue.newAspectValue(POD, new Location() {});
 
-  static final int[] _UTIL_ASPECTS = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+
+  static final int[] _UTIL_ASPECTS = {
+    START_TIME, END_TIME, COST, DANGER, RISK, QUANTITY, INTERVAL, TOTAL_QUANTITY, TOTAL_SHIPMENTS,
+    CUSTOMER_SATISFACTION, READINESS, POD_DATE, POD};
+
   public AllocationResult calculate(Workflow wf, TaskScoreTable tst, AllocationResult currentar) {
-    double acc[] = new double[AspectType._ASPECT_COUNT+2];
-    acc[START_TIME] = Double.MAX_VALUE;
-    acc[END_TIME] = 0.0;
+    AspectValue[] acc = new AspectValue[_ASPECT_COUNT+2];
+    
+    acc[START_TIME] = AspectValue.newAspectValue(START_TIME, Long.MAX_VALUE);
+    acc[END_TIME] =  AspectValue.newAspectValue(START_TIME, 0L);
     // duration is computed from end values of start and end
-    acc[COST] = 0.0;
-    acc[DANGER] = 0.0;
-    acc[RISK] = 0.0;
-    acc[QUANTITY] = 0.0;
-    acc[INTERVAL] = 0.0;
-    acc[TOTAL_QUANTITY] = 0.0;
-    acc[TOTAL_SHIPMENTS] = 0.0;
-    acc[CUSTOMER_SATISFACTION] = 1.0; // start at best
-    acc[READINESS] = 1.0;
-    acc[POD_DATE] = 0.0;
-    acc[POD] = 0.0;
+    acc[COST] =  AspectValue.newAspectValue(START_TIME, 0);
+    acc[DANGER] =  AspectValue.newAspectValue(DANGER, 0);
+    acc[RISK] =  AspectValue.newAspectValue(RISK, 0);
+    acc[QUANTITY] =  AspectValue.newAspectValue(QUANTITY, 0);
+    acc[INTERVAL] =  AspectValue.newAspectValue(INTERVAL, 0);
+    acc[TOTAL_QUANTITY] = AspectValue.newAspectValue(TOTAL_QUANTITY,0.0);
+    acc[TOTAL_SHIPMENTS] = AspectValue.newAspectValue(TOTAL_SHIPMENTS,0.0);
+    acc[CUSTOMER_SATISFACTION] = AspectValue.newAspectValue(CUSTOMER_SATISFACTION,1.0); // start at best
+    acc[READINESS] = AspectValue.newAspectValue(READINESS,1.0);
+    acc[POD_DATE] = AspectValue.newAspectValue(POD_DATE,0L);
+    acc[POD] = AspectValue.newAspectValue(POD,UNDEFINED_POD);
 
     int count = 0;
     boolean suc = true;
@@ -88,9 +97,9 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
       auxqsummary[aqs] = UNDEFINED;
     }
 
-	int tstSize = tst.size ();
-	for (int i = 0; i < tstSize; i++) {
-	  Task t = tst.getTask (i);
+    int tstSize = tst.size ();
+    for (int i = 0; i < tstSize; i++) {
+      Task t = tst.getTask (i);
       count++;
       AllocationResult ar = tst.getAllocationResult(i);
 
@@ -105,30 +114,50 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
       for (int b = 0; b < definedaspects.length; b++) {
 	// accumulate the values for the defined aspects
 	switch (definedaspects[b]) {
-	case START_TIME: acc[START_TIME] = Math.min(acc[START_TIME], ar.getValue(START_TIME));
+	case START_TIME: 
+          acc[START_TIME] = acc[START_TIME].dupAspectValue(Math.min(acc[START_TIME].longValue(),
+                                                                    ar.getAspectValue(START_TIME).longValue()));
 	  break;
-	case END_TIME: acc[END_TIME] = Math.max(acc[END_TIME], ar.getValue(END_TIME));
+	case END_TIME:
+          acc[END_TIME] = acc[END_TIME].dupAspectValue(Math.max(acc[END_TIME].longValue(),
+                                                                ar.getAspectValue(END_TIME).longValue()));
+
 	  break;
-	case POD_DATE: acc[POD_DATE] = Math.max(acc[POD_DATE], ar.getValue(POD_DATE));
+	case POD_DATE:
+          acc[POD_DATE] = acc[POD_DATE].dupAspectValue(Math.max(acc[POD_DATE].longValue(),
+                                                                ar.getAspectValue(POD_DATE).longValue()));
 	  break;
-	  // compute duration later
-	case COST: acc[COST] += ar.getValue(COST);
+        case DURATION:
+          break;
+
+	case COST:
+          acc[COST] = acc[COST].dupAspectValue(acc[COST].floatValue() + ar.getAspectValue(COST).floatValue());
 	  break;
-	case DANGER: acc[DANGER] = Math.max(acc[DANGER], ar.getValue(DANGER));
+	case DANGER:
+          acc[DANGER] = acc[DANGER].dupAspectValue(Math.max(acc[DANGER].longValue(),
+                                                            ar.getAspectValue(DANGER).longValue()));
+
 	  break;
-	case RISK: acc[RISK] = Math.max(acc[RISK], ar.getValue(RISK));
+	case RISK:
+          acc[RISK] = acc[RISK].dupAspectValue(Math.max(acc[RISK].longValue(),
+                                                            ar.getAspectValue(RISK).longValue()));
 	  break;
-	case QUANTITY: acc[QUANTITY] += ar.getValue(QUANTITY);
+	case QUANTITY: 
+          acc[QUANTITY] = acc[QUANTITY].dupAspectValue(acc[QUANTITY].floatValue() + ar.getAspectValue(QUANTITY).floatValue());
 	  break;
 	  // for now simply add the repetitve task values
-	case INTERVAL: acc[INTERVAL] += ar.getValue(INTERVAL);
+	case INTERVAL: 
+          acc[INTERVAL] = acc[INTERVAL].dupAspectValue(acc[INTERVAL].longValue() + ar.getAspectValue(INTERVAL).longValue());
 	  break;
-	case TOTAL_QUANTITY: acc[TOTAL_QUANTITY] += ar.getValue(TOTAL_QUANTITY);
+	case TOTAL_QUANTITY: 
+          acc[TOTAL_QUANTITY] = acc[TOTAL_QUANTITY].dupAspectValue(acc[TOTAL_QUANTITY].floatValue() + ar.getAspectValue(TOTAL_QUANTITY).floatValue());
 	  break;
-	case TOTAL_SHIPMENTS: acc[TOTAL_SHIPMENTS] += ar.getValue(TOTAL_SHIPMENTS);
+	case TOTAL_SHIPMENTS: 
+          acc[TOTAL_SHIPMENTS] = acc[TOTAL_SHIPMENTS].dupAspectValue(acc[TOTAL_SHIPMENTS].floatValue() + ar.getAspectValue(TOTAL_SHIPMENTS).floatValue());
 	  break;
 	  //end of repetitive task specific aspects
-	case CUSTOMER_SATISFACTION: acc[CUSTOMER_SATISFACTION] += ar.getValue(CUSTOMER_SATISFACTION);
+	case CUSTOMER_SATISFACTION: 
+          acc[CUSTOMER_SATISFACTION] = acc[CUSTOMER_SATISFACTION].dupAspectValue(acc[CUSTOMER_SATISFACTION].floatValue() + ar.getAspectValue(CUSTOMER_SATISFACTION).floatValue());
 	  break;
 	}
       }
@@ -170,18 +199,13 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
 
     } // end of looping through all subtasks
       
-    acc[DURATION] = acc[END_TIME] - acc[START_TIME];
-    acc[CUSTOMER_SATISFACTION] /= count;
+    acc[DURATION] =  AspectValue.newAspectValue(DURATION, acc[END_TIME].longValue()-acc[START_TIME].longValue());
+
+    acc[CUSTOMER_SATISFACTION] = acc[CUSTOMER_SATISFACTION].dupAspectValue(acc[CUSTOMER_SATISFACTION].floatValue()/ count);
 
     rating /= count;
 
     boolean delta = false;
-    //for (int i = 0; i <= _LAST_ASPECT; i++) {
-    //if (acc[i] != currentar.getValue(i)) {
-    //delta = true;
-    //break;
-    //}
-    //}
       
     // only check the defined aspects and make sure that the currentar is not null
     if (currentar == null) {
@@ -195,7 +219,7 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
       } else {
 	for (int i = 0; i < caraspects.length; i++) {
 	  int da = caraspects[i];
-	  if (acc[da] != currentar.getValue(da)) {
+	  if (! acc[da].equals(currentar.getAspectValue(da))) {
 	    delta = true;
 	    break;
 	  }
@@ -212,7 +236,7 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
     }
 
     if (delta) {
-      AllocationResult artoreturn = new AllocationResult(rating, suc, _UTIL_ASPECTS, acc);
+      AllocationResult artoreturn = new AllocationResult(rating, suc, acc);
       for (int aqt = 0; aqt < auxqsummary.length; aqt++) {
 		String aqdata = auxqsummary[aqt];
 		if ( (aqdata !=null) && (aqdata != UNDEFINED) ) {
