@@ -49,7 +49,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugIn.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.1 2001-10-02 22:36:18 bdepass Exp $
+  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.2 2001-10-02 23:36:46 bdepass Exp $
   **/
 
 public class NewUniversalExpanderPlugIn extends ComponentPlugin {
@@ -58,6 +58,7 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
   private IncrementalSubscription myExpansions;
   private DomainService domainService;
   private RootFactory theFactory;
+  private boolean flat = true;
 
   public void load() {
     super.load();
@@ -96,26 +97,34 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
 
   public void execute() {
     //System.out.println("In UniversalExpanderPlugin.execute");
-    
-    for(Enumeration e = interestingTasks.getAddedList();e.hasMoreElements();) {
-      Task task = (Task)e.nextElement();
-      // TODO: check for flat or tree here
-      Collection subtasks = findSubTasks(task);
-      NewWorkflow wf = theFactory.newWorkflow();
-      wf.setParentTask(task);
-      Iterator stiter = subtasks.iterator();
-      while (stiter.hasNext()) {
-        NewTask subtask = (NewTask) stiter.next();
-        subtask.setWorkflow(wf);
-        wf.addTask(subtask);
-        getBlackboardService().publishAdd(subtask);
+    if (flat) {
+      for(Enumeration e = interestingTasks.getAddedList();e.hasMoreElements();) {
+        Task task = (Task)e.nextElement();
+        // TODO: check for flat or tree here
+        Collection subtasks = findSubTasks(task);
+        NewWorkflow wf = theFactory.newWorkflow();
+        wf.setParentTask(task);
+        Iterator stiter = subtasks.iterator();
+        while (stiter.hasNext()) {
+          NewTask subtask = (NewTask) stiter.next();
+          subtask.setWorkflow(wf);
+          wf.addTask(subtask);
+          getBlackboardService().publishAdd(subtask);
+        }
+        // create the Expansion ...
+        Expansion newexpansion = theFactory.createExpansion(
+                                                            theFactory.getRealityPlan(), 
+                                                            task, wf, null);
+        getBlackboardService().publishAdd(newexpansion);
+      } //end of for
+    } else {
+      Enumeration tree_enum = interestingTasks.getAddedList();
+      while(tree_enum.hasMoreElements()) {
+        Task t = (Task)tree_enum.nextElement();
+        treeExpand(t);
       }
-      // create the Expansion ...
-      Expansion newexpansion = theFactory.createExpansion(
-                                                       theFactory.getRealityPlan(), 
-                                                       task, wf, null);
-      getBlackboardService().publishAdd(newexpansion);
-    } //end of for
+    }
+      
     
     for(Enumeration exp = myExpansions.getChangedList();exp.hasMoreElements();) {
       Expansion myexp = (Expansion)exp.nextElement();
@@ -177,8 +186,9 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
         
         while (rset.next ()) {
           gotresult = true;
-          //check to see if we have a leaf task or not
-          if (rset.getInt(1) == 1) {
+          //check to see if we have a leaf task or not and if this is
+          //not a flat expansion only do the initial expansion
+          if ((rset.getInt(1) == 1) || (!flat)) {
             //System.out.println("\n Got a result set for immediate Leafs!");
             ArrayList subtasksToAdd = parseRow(task, rset, rset.getInt(2));
             Iterator substoadd_iter = subtasksToAdd.iterator();
@@ -242,7 +252,9 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
             stmt2.close();
           } // close of else
         }  // close of rset.next
-        if (! gotresult) {
+        if ((! gotresult) && (flat)) {
+          //this is only an error for a flat expansion as the tree expansion
+          //is not keeping track of is_leaf_task
           System.err.println("\n UNIVERSALEXPANDERPLUGIN GOT NO RESULTS FOR THE QUERY: "+
                              firstlevelquery +".  THIS MEANS THE "+parentverb+
                              " TASK CAN NOT BE EXPANDED.  PLEASE CEHCK THE DB TABLE.");
@@ -452,7 +464,53 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
     }
     return shipmenttasks;
   }
-      
+     
+  //expand this as a multi-level expansion instead of a flat(single expansion)
+  private void treeExpand(Task t) {
+    // list to expand
+    ArrayList toexpand = new ArrayList();
+    // add the top level parent
+    toexpand.add(t);
+    //temporary holding list to expand while we recurse
+    ArrayList nexttoexpand = new ArrayList();
+    while (!toexpand.isEmpty()) {
+      Iterator te_iter = toexpand.iterator();
+      while (te_iter.hasNext()) {
+        Task aTask = (Task) te_iter.next();
+        //since the tree expand does not pay attention to is_leaf_task 
+        //check to see if this returns an empty collection meaning we are
+        //at the end of the road
+        Collection subs = findSubTasks(aTask);
+        if (!subs.isEmpty()) {
+          NewWorkflow wf = theFactory.newWorkflow();
+          wf.setParentTask(aTask);
+          Iterator siter = subs.iterator();
+          while (siter.hasNext()) {
+            NewTask subtask = (NewTask) siter.next();
+            subtask.setWorkflow(wf);
+            wf.addTask(subtask);
+            //keep this subtask to expand next
+            nexttoexpand.add(subtask);
+            getBlackboardService().publishAdd(subtask);
+          }
+          // create the Expansion ...
+          Expansion newexpansion = theFactory.createExpansion(
+                                                              theFactory.getRealityPlan(), 
+                                                              aTask, wf, null);
+          getBlackboardService().publishAdd(newexpansion);
+        }
+      }
+      //clear out toexpand since we've been through the list
+      toexpand.clear();
+      if (!nexttoexpand.isEmpty()) {
+        //move all of the next to expands into to expand
+        toexpand.addAll(nexttoexpand);
+        //reset next to expand
+        nexttoexpand.clear();
+      }
+    }
+
+  }
     
   //
   // Predicates
