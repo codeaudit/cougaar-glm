@@ -235,8 +235,10 @@ public class TimeSpan
   }
 
   private static void printWarning(String sMethodName) {
-    System.err.println(
-	"CALLING DEPRECATED METHOD org.cougaar.domain.glm.ldm.oplan.TimeSpan."+sMethodName+"()!");
+    /* Silenced for now
+    Exception e = new java.lang.IllegalArgumentException("CALLING DEPRECATED METHOD org.cougaar.domain.glm.ldm.oplan.TimeSpan."+sMethodName+"()!");
+    e.printStackTrace();
+    */
   }
 
   private static final java.util.HashMap dateCache = new java.util.HashMap(89);
