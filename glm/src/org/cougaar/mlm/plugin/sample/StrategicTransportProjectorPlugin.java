@@ -55,6 +55,7 @@ import org.cougaar.util.SingleElementEnumeration;
 import org.cougaar.util.ShortDateFormat;
 import org.cougaar.util.StringUtility;
 import org.cougaar.core.util.UID;
+import org.cougaar.core.service.LoggingService;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -852,6 +853,10 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       printDebug("Expand task: "+drTask+" with DP: "+ dp);
     }
 
+    // this is protection for problem where database may indicate zero items
+    // of a certain type.
+    assetsEnum = removeZeroQuantityAggregates (assetsEnum).elements();
+
     // get first and second assets from enumeration
     Asset firstAssetForTransport = null;
     Asset secondAssetForTransport = null;
@@ -1115,6 +1120,34 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     if (DEBUG) {
       printDebug("Published new DetermineReqs Task Expansion");
     }
+  }
+
+  /** 
+   * Filter out invalid zero quantity aggregates from those to make transport tasks for 
+   *
+   * @param assets original list of assets published to blackboard
+   * @return Vector of valid assets
+   */
+  protected Vector removeZeroQuantityAggregates (Enumeration assets) {
+    Vector validAssets = new Vector();
+
+    for (;assets.hasMoreElements ();) {
+      Object asset = assets.nextElement ();
+      
+      if (asset instanceof AggregateAsset) {
+	AggregateAsset aggregate = (AggregateAsset) asset;
+	if (aggregate.getQuantity() > 0)
+	  validAssets.add (asset);
+	else if (logger.isInfoEnabled()) // ignore zero quantity aggregates
+	  logger.info (getAgentIdentifier () + " - removeZeroQuantityAggregates - NOTE : " + 
+		       " ignoring zero quantity aggregate of : " + aggregate.getAsset() + 
+		       " since it's quantity is " + aggregate.getQuantity());
+      }
+      else
+	validAssets.add (asset);
+    }
+
+    return validAssets;
   }
 
   private void handleDetermineRequirementsTask(Task drTask) {
@@ -1601,7 +1634,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
   public GeolocLocation getGeoLoc(String xmlfilename)  {
     Document doc = null;
     try {
-       doc = getCluster().getConfigFinder().parseXMLConfigFile(xmlfilename);
+      doc = getConfigFinder().parseXMLConfigFile(xmlfilename);
       if (doc == null) {
 	printError(" XML Parser could not handle file " + xmlfilename);
 	return null;
@@ -1613,8 +1646,17 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     }
 
     Node node = doc.getDocumentElement();
-    return locationParser.getLocation(getCluster().getLDM(), node);
+    return locationParser.getLocation(getLDM(), node);
   }
 
+  /** rely upon load-time introspection to set these services - don't worry about revokation. */
+  public final void setLoggingService (LoggingService logger) { this.logger = logger; }
+
   LocationParser locationParser = new LocationParser();
+
+  /**
+   * Everybody needs a logger
+   **/
+  protected LoggingService logger;
+
 }
