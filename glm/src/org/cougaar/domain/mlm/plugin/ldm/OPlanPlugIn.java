@@ -178,6 +178,7 @@ public class OPlanPlugIn extends SimplePlugIn
     oplanButton.addActionListener(myOplanListener);
     oplanButton.setEnabled(false);
     UICoordinator.layoutButtonAndLabel(panel, oplanButton, oplanLabel);
+	frame.getRootPane().setDefaultButton(oplanButton); // hitting return sends the oplan
     frame.setContentPane(panel);
     frame.pack();
     UICoordinator.setBounds(frame);

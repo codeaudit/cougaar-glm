@@ -360,6 +360,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     oplanButton.addActionListener(myOplanListener);
     oplanButton.setEnabled(false);
     UICoordinator.layoutButtonAndLabel(panel, oplanButton, oplanLabel);
+	frame.getRootPane().setDefaultButton(oplanButton); // hitting return sends the oplan
 
     // Create the button
     updateButton = new JButton("Update Oplan");
