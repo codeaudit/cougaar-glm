@@ -46,7 +46,7 @@ public class DeletionProcessor extends InventoryProcessor {
     private Calendar tCalendar_ = Calendar.getInstance();
 
     /** Delete old reports when oldest becomes this old **/
-    private static final long INVENTORY_REPORT_CUTOFF = 4 * TimeUtils.MSEC_PER_WEEK;
+    private static final long INVENTORY_REPORT_CUTOFF = 8 * TimeUtils.MSEC_PER_WEEK;
 
     /** When pruning old reports, remove all older than this age. O
         disables pruning. This should match the inventoryBG refill
@@ -54,9 +54,9 @@ public class DeletionProcessor extends InventoryProcessor {
         during that interval. Mismatch is not harmful, but leads
         excess inventory reports or missing detail.
      **/
-    private static final long INVENTORY_REPORT_PRUNE = 2 * TimeUtils.MSEC_PER_WEEK;
+    private static final long INVENTORY_REPORT_PRUNE = 4 * TimeUtils.MSEC_PER_WEEK;
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public DeletionProcessor(InventoryPlugIn plugin, Organization org, String type) {
         super(plugin, org, type);
