@@ -320,7 +320,7 @@ public class SupplyExpander extends InventoryProcessor {
      * tasks. ProjectSupply tasks are expected to extend from midnight
      * to midnight. That is, their start and end times are of the form
      * MM/DD/YY 00:00:00.000. The start and end times of every
-     * generated ProjectWithdraw task has a time of 23:59:59.999 and
+     * generated ProjectWithdraw task has a time of 12:00:00.000 and
      * occurs for every day having any projected demand. The quantity
      * for the ProjectWithdraw task is adjusted to account for the
      * fraction of the day that the ProjectSupply covers. For example,
@@ -355,10 +355,10 @@ public class SupplyExpander extends InventoryProcessor {
             long task_end = Math.min(next_day, end_time);
             long duration = task_end - start_time;
             double this_quantity = (quantity  * duration) / TimeUtils.MSEC_PER_DAY;
-            long task_time = next_day - 1;
+            long task_time = next_day - 12 * TimeUtils.MSEC_PER_HOUR;
             withdrawTask = createProjectSupplyWithdrawTask(parent_task, task_time, task_time, this_quantity);
             expand_tasks.addElement(withdrawTask);
-            start_time = task_time + 1;
+            start_time = next_day;
 	}
         publishExpansion(parent_task, expand_tasks);
     }
