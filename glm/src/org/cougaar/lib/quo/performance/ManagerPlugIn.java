@@ -52,7 +52,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     protected int  OUTSTANDING_MESSAGES;
     protected boolean DEBUG = false;
     protected int BURST_TIME=0;
-    protected static String VERB;//="CODE1";
+    protected  String VERB;//="CODE1";
 
     private Date startTime;
     private Task t, changedMind;
@@ -63,7 +63,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     private long minDelta;
   
     private FileWriter fw;
-    private double lastReceived=0;
+    //    private double lastReceived=0;
   
     /**
      * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
@@ -81,7 +81,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     }
    
     
-    public  static UnaryPredicate myAllocationPredicate = new UnaryPredicate() {
+    public  UnaryPredicate myAllocationPredicate = new UnaryPredicate() {
 	    public boolean execute(Object o) {
 		if (o instanceof Allocation) {
 		    Task t = ((Allocation)o).getTask();
@@ -96,7 +96,12 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
      */
     protected void setupSubscriptions() {
 	parseParameter(); //read the plugIn arguments
-	addTask();
+	for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
+	    System.out.println("enetring loop");
+	    addTask();
+	    
+	    sequenceNum++;
+	}
 	allocations = (IncrementalSubscription)subscribe(myAllocationPredicate);
     }
 
@@ -112,6 +117,7 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	t = makeTask(what_to_code, VERB);
 	setPreference(t, AspectType._ASPECT_COUNT, sequenceNum);
 	publishAdd(t);
+	
     }
   
     public void publishAsset(Asset asset, String nameOfAsset, String itemIdentification){
@@ -127,28 +133,27 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
     protected void  allocateChangedtasks(Enumeration allo_enum){
 	AllocationResult est, rep;
 	double val=0;
-	double arr[] = null;
-	double received = 0;
+	//double arr[] = null;
+	//double received = 0;
 	while (allo_enum.hasMoreElements()) {
 	    Allocation alloc = (Allocation)allo_enum.nextElement() ;
 	    est=null; rep=null;
 	    est = alloc.getEstimatedResult();
 	    rep = alloc.getReportedResult();
 	    if (rep!=null){
-		arr =rep.getResult();
-		received = arr[0];
+		//arr =rep.getResult();
+		//received = arr[0];
 		//debug(DEBUG, FILENAME, fw,"ManagerPlugIn:allocateChangedTasks ........" + received);
 		printTheChange();
-		try {
-		    Thread.sleep(BURST_TIME);
-		} catch (InterruptedException e) {
-		    System.out.println(e);
+		waitFor(BURST_TIME);
+		for(int i = 0; i < OUTSTANDING_MESSAGES; i++) {
+		    //addTask();sequenceNum++; 
+		    changeTasks(t);
 		}
-		changeTasks(t);
 	    }
 	    breakFromLoop(count, MAXCOUNT);
 	}
-	lastReceived = received;
+	//lastReceived = received;
     }
     
     protected void setPreference ( Task t, int aspectType, int sequenceOfTask){
@@ -198,7 +203,8 @@ public class ManagerPlugIn extends CommonUtilPlugIn {
 	    minDelta = delta;
 	else
 	    minDelta = Math.min(minDelta, delta);
-	String msg=count+","+delta+","+ minDelta;
+	int taskCount = (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
+	String msg=t.getVerb() +"=>"+taskCount+","+delta+","+ minDelta;
 	debug(DEBUG, FILENAME, fw, msg);
 	count++;
     }

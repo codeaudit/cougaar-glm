@@ -50,7 +50,31 @@ public class ManagerAllocatorPlugIn extends  CommonUtilPlugIn {
     private IncrementalSubscription tasks;         // "CODE" tasks
     private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
     private IncrementalSubscription allocations;   // My allocations
-    private static String VERB=ManagerPlugIn.VERB;
+    protected  String VERB ;//= getParameterValue(getParameters(), "VERB");
+    protected String DEPARTMENT="SoftwareDevelopment"; //defaults
+
+    // protected Verb verb = new Verb(VERB);
+     /**
+     * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
+     */
+      protected void parseParameter(){
+ 	Vector p = getParameters();
+ 	VERB=getParameterValue(p, "VERB");
+	DEPARTMENT=getParameterValue(p, "DEPARTMENT");
+  	System.out.println("ManagerAllocator ===" + DEPARTMENT);
+      }
+
+    public UnaryPredicate myAllocationPredicate = new UnaryPredicate() {
+	    public boolean execute(Object o) {
+		if (o instanceof Allocation) {
+		    Task task = ((Allocation)o).getTask();
+		    
+		return (task != null) && (task.getVerb().equals(Verb.getVerb(VERB)));
+		}
+		return false;
+	    }
+	};
+
 
     /**
      * Predicate that matches VERB" 
@@ -72,7 +96,8 @@ public class ManagerAllocatorPlugIn extends  CommonUtilPlugIn {
 		if (o instanceof Organization) {
 		    Organization org = (Organization)o;
 		    OrganizationPG orgPG = org.getOrganizationPG();
-		    ret = orgPG.inRoles(Role.getRole("SoftwareDevelopment"));
+		    //ret = orgPG.inRoles(Role.getRole("SoftwareDevelopment"));
+		    ret = orgPG.inRoles(Role.getRole(DEPARTMENT));
 		}
 		return ret;
 	    }
@@ -82,10 +107,10 @@ public class ManagerAllocatorPlugIn extends  CommonUtilPlugIn {
      * subscribe to tasks and programming organizations
      */
     protected void setupSubscriptions() {
-	//parseParameter();
+	parseParameter();
 	tasks = (IncrementalSubscription)subscribe( myTaskPredicate);
 	programmers = (IncrementalSubscription)subscribe(myProgrammersPredicate);
-	allocations = (IncrementalSubscription)subscribe(ManagerPlugIn.myAllocationPredicate);
+	allocations = (IncrementalSubscription)subscribe(myAllocationPredicate);
     }
 
     /**

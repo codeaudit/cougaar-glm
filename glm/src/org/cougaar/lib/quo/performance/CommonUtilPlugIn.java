@@ -142,4 +142,12 @@ public  class CommonUtilPlugIn extends SimplePlugIn {
 	    System.exit(1); 
     }
 
+    public void waitFor(int time){
+	try {
+	    Thread.sleep(time);
+	} catch (InterruptedException e) {
+	    System.out.println(e);
+	}
+    }
    }
+

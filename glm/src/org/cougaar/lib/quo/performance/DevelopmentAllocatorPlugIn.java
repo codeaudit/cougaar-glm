@@ -28,7 +28,7 @@ import java.io.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.8 2001-12-27 22:42:18 bdepass Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.9 2002-01-04 19:45:45 psharma Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 {
@@ -38,7 +38,7 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
     protected int CPUCONSUME;
     protected int MESSAGESIZE;
     protected String FILENAME;
-    protected int MAXCOUNT;
+    protected int MAXCOUNT, THINK_TIME;
     protected int  OUTSTANDING_MESSAGES;
     protected String VERB;
     
@@ -64,9 +64,9 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 	OUTSTANDING_MESSAGES =getParameterIntValue(p, "OUTSTANDING_MESSAGES");
 	DEBUG=getParameterBooleanValue(p, "DEBUG");
 	VERB=getParameterValue(p, "VERB");
-	System.out.println("parseParameter:  " + VERB);
+	THINK_TIME=getParameterIntValue(p, "THINK_TIME");
+	
     }
-
     static class MyChangeReport implements ChangeReport {
 	private byte[] bytes;
 	MyChangeReport(byte[] bytes){
@@ -91,7 +91,9 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 		if (o instanceof Task)
 		    {	
 			Task task = (Task)o;
+			//System.out.println("==>" + task.getVerb() + "  " + Verb.getVerb(VERB));
 			return task.getVerb().equals(Verb.getVerb(VERB));
+			//return true;
 		    }
 		return false;
 	    }
@@ -122,10 +124,12 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 	    //debug(DEBUG, FILENAME, fw, "DevelopmentAllocatorPlugIn: Got task from blackboard.." 
 	    //+ task.getPreferredValue(AspectType._ASPECT_COUNT ) + " with verb " + task.getVerb());
 	    startTime = new Date();
+	    waitFor(THINK_TIME);
 	    allocateTask(task, startMonth(task));
 	}
     }
 
+   
     /**
      * Extract the start month from a task
      */
@@ -174,7 +178,7 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 		publishChange(pe, Collections.singleton(cr));
 	    }
 	    publishRemove(task);
-	    printTheChange();
+	    printTheChange(task);
 	    allocated = true;
 	    breakFromLoop(count, MAXCOUNT);
 	}
@@ -182,14 +186,15 @@ public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 	return end;
     }
 
-    protected void printTheChange(){
+    protected void printTheChange(Task task){
 	Date endTime = new Date();
 	long delta = endTime.getTime() - startTime.getTime();
 	if (count == 1)
 	    minDelta = delta;
 	else
 	    minDelta = Math.min(minDelta, delta);
-	String msg=count+","+delta+","+ minDelta;
+	int taskCount = (int)task.getPreferredValue(AspectType._ASPECT_COUNT);
+	String msg=task.getVerb() + "=>" +taskCount+","+delta+","+ minDelta;
 	debug(DEBUG, FILENAME, fw, msg);
 	count++;
     }
