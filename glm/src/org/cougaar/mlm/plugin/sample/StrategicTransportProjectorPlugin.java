@@ -425,16 +425,23 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     }
 
     DeployPlan oldDeployPlan = getDeployPlan();
+    Task oldDRTask = null;
     if ((oldDeployPlan != null) && (oldDeployPlan.expandedWorkflow != null)) {
       killWorkflow(oldDeployPlan.expandedWorkflow);
       oldDeployPlan.expandedWorkflow = null;
+      oldDRTask = oldDeployPlan.detReqsTask;
     }
 
     replaceDeployPlan(selfOrgAct);
 
-    // Re-process existing DETERMINEREQUIREMENTS task in
-    // light of the new Org Activity
-    watchDueDetermineRequirementsTasks();
+    if (oldDRTask != null) {
+	handleDetermineRequirementsTask (oldDRTask);
+    }
+    else {
+	// Re-process existing DETERMINEREQUIREMENTS task in
+	// light of the new Org Activity
+	watchDueDetermineRequirementsTasks();
+    }
 
     if (logger.isInfoEnabled()) {
       printInfo("Added orgActivity!: "+selfOrgAct+"\ndone");
