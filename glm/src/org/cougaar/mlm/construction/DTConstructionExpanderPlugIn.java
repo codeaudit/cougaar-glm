@@ -59,10 +59,8 @@ public class DTConstructionExpanderPlugIn extends SimplePlugIn {
     
     public void setupSubscriptions() {
       //System.out.println("In DTConstructionExpanderPlugin.setupSubscriptions");
-      interestingTasks = (IncrementalSubscription)subscribe(tasksPredicate());
-      myExpansions = (IncrementalSubscription)subscribe(expansionsPredicate());
       myOrgActivities = (IncrementalSubscription)subscribe(orgActsPred());
-
+      
       if (didRehydrate()) {
         // Only need one
         Object first =  myOrgActivities.first();
@@ -71,6 +69,13 @@ public class DTConstructionExpanderPlugIn extends SimplePlugIn {
         }
       }
     }
+
+  // only setup the task subscriptions after we have a valid cday from the
+  // orgactivity.
+  private void setupTaskSubscriptions() {
+    myExpansions = (IncrementalSubscription)subscribe(expansionsPredicate());
+    interestingTasks = (IncrementalSubscription)subscribe(tasksPredicate());
+  }
   
     
    
@@ -84,6 +89,10 @@ public class DTConstructionExpanderPlugIn extends SimplePlugIn {
           if (first != null) {
             getCDay((OrgActivity) first);
           }
+        }
+        // We may still be waiting for the orgactivity
+        if (interestingTasks == null) {
+          return;
         }
             
    	for(Enumeration e = interestingTasks.getAddedList();e.hasMoreElements();) 
@@ -181,6 +190,9 @@ public class DTConstructionExpanderPlugIn extends SimplePlugIn {
     // Should only be one
     Oplan oplan = (Oplan) oplanCol.iterator().next();
     this.cday = new Date(oplan.getCday().getTime());
+    if (interestingTasks == null) {
+      setupTaskSubscriptions();
+    }
   }
 
 
