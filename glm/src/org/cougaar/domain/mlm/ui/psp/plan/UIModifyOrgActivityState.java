@@ -92,7 +92,7 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
   protected String opTempoText;
   protected String cDayLabel;
   protected String startText;
-  protected String thruText;
+  protected String endText;
   protected String statusLabel;
   protected boolean statusError;
 
@@ -107,7 +107,7 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
     opTempoText = "";
     cDayLabel = "";
     startText = "";
-    thruText = "";
+    endText = "";
     statusLabel = "";
     statusError = false;
   }
@@ -130,8 +130,8 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
   public void setStartText(String s) {startText = takeString(s);}
   public String getStartText() {return startText;}
 
-  public void setThruText(String s) {thruText = takeString(s);}
-  public String getThruText() {return thruText;}
+  public void setEndText(String s) {endText = takeString(s);}
+  public String getEndText() {return endText;}
 
   public void setStatusLabel(String s) {statusLabel = takeString(s);}
   public String getStatusLabel() {return statusLabel;}
@@ -150,7 +150,7 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
     pr.print(opTempoText, "OpTempoText");
     pr.print(cDayLabel, "CDayLabel");
     pr.print(startText, "StartText");
-    pr.print(thruText, "ThruText");
+    pr.print(endText, "EndText");
     pr.print(statusLabel, "StatusLabel");
     pr.print(statusError, "StatusError");
   }
@@ -175,7 +175,7 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
       opTempoText = "";
       cDayLabel = cDateString;
       startText = "";
-      thruText = "";
+      endText = "";
       throw new Exception("Missing Org Activity");
     }
     if (orgAct.getOplanUID() != oplan.getUID()) {
@@ -195,19 +195,19 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
         dateFormatter.toString(
             timeSpan.getStartDate());
     }
-    String thruDateString;
-    if (timeSpan.getThruDate() == null)
-      thruDateString = cDateString;
+    String endDateString;
+    if (timeSpan.getEndDate() == null)
+      endDateString = cDateString;
     else {
-      thruDateString =
+      endDateString =
         dateFormatter.toString(
-            timeSpan.getThruDate());
+            timeSpan.getEndDate());
     }
     orgIdLabel = orgAct.getOrgID();
     opTempoText = orgAct.getOpTempo();
     cDayLabel = cDateString;
     startText = startDateString;
-    thruText = thruDateString;
+    endText = endDateString;
   }
 
   /**
@@ -233,9 +233,9 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
     if (startDate == null) {
       throw new Exception("Invalid start date");
     }
-    Date thruDate = dateFormatter.toDate(thruText, false);
-    if (thruDate == null) {
-      throw new Exception("Invalid thru date");
+    Date endDate = dateFormatter.toDate(endText, false);
+    if (endDate == null) {
+      throw new Exception("Invalid end date");
     }
     boolean changed = false;
     if (!opTempo.equals(orgAct.getOpTempo())) {
@@ -246,8 +246,8 @@ public class UIModifyOrgActivityState implements org.cougaar.core.util.SelfPrint
       timeSpan.setStartDate(startDate);
       changed = true;
     }
-    if (!thruDate.equals(timeSpan.getThruDate())) {
-      timeSpan.setThruDate(thruDate);
+    if (!endDate.equals(timeSpan.getEndDate())) {
+      timeSpan.setEndDate(endDate);
       changed = true;
     }
     if (!changed) {

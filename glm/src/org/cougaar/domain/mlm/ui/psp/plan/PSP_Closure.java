@@ -149,13 +149,13 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
       for(int i=1; i<size; i++)
         for(int k=size-1;k>=i;k--)
         {
-          if( org[k-1].getTimeSpan().getThruDate().getTime() > org[k].getTimeSpan().getThruDate().getTime() )
+          if( org[k-1].getTimeSpan().getEndDate().getTime() > org[k].getTimeSpan().getEndDate().getTime() )
           {
             OrgActivity temp = org[k-1];
             org[k-1] = org[k];
             org[k] = temp;
           }
-          else if(org[k-1].getTimeSpan().getThruDate().getTime()==org[k].getTimeSpan().getThruDate().getTime() )
+          else if(org[k-1].getTimeSpan().getEndDate().getTime()==org[k].getTimeSpan().getEndDate().getTime() )
           {
             if(org[k-1].getOrgID().compareTo(org[k].getOrgID()) > 0)
             {
@@ -186,33 +186,33 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
     }
     txtField = new String(strHolder[0].substring("textfield=".length() ) );
 
-    int thruTime = Integer.parseInt(txtField);
+    int endTime = Integer.parseInt(txtField);
 
     if(org.length > 1)
     {
       if(org[1].getTimeSpan() != null)
       {
-        if(  (thruTime + 1) > (org[1].getTimeSpan().getThruDate().getTime() ) )
+        if(  (endTime + 1) > (org[1].getTimeSpan().getEndDate().getTime() ) )
           return false;
 
         //TimeSpan depTimeSpan = org[0].getTimeSpan();
         //TimeSpan empTimeSpan = org[1].getTimeSpan();
         // org[0].getTimeSpan().setStartDelta(startTime);
-        org[0].getTimeSpan().setThruDelta(thruTime);
-        org[1].getTimeSpan().setStartDelta(thruTime+1);
+        org[0].getTimeSpan().setEndDelta(endTime);
+        org[1].getTimeSpan().setStartDelta(endTime+1);
       }
       return true;
     }
     else
     {
-      org[0].getTimeSpan().setThruDelta(thruTime);
+      org[0].getTimeSpan().setEndDelta(endTime);
       return true;
     }
     // set opTempo & timeSpan
     //if( org.getTimeSpan() != null)
     //{
     //      TimeSpan ts = org.getTimeSpan();
-    //      ts.setThruDelta(Integer.parseInt(txtField) );
+    //      ts.setEndDelta(Integer.parseInt(txtField) );
     //
     //      org.setTimeSpan(ts);
     //}
@@ -386,9 +386,9 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
         out.println("<tr>");
         out.println("<td>" + orgArray[i].getOrgID() +"</td>");
         if( orgArray[i].getActivityName() != null  )
-          out.println("<td><a href=" +"\"http://"+URLname+":5555/alpine/demo/CLOSURE_PLAN.PSP?ORGID="+orgArray[i].getOrgID()+"="+orgArray[i].getActivityType()+"="+orgArray[i].getActivityName()+ "\">"+" C+"+orgArray[i].getTimeSpan().getThruDate().getTime()+"</a></td>");
+          out.println("<td><a href=" +"\"http://"+URLname+":5555/alpine/demo/CLOSURE_PLAN.PSP?ORGID="+orgArray[i].getOrgID()+"="+orgArray[i].getActivityType()+"="+orgArray[i].getActivityName()+ "\">"+" C+"+orgArray[i].getTimeSpan().getEndDate().getTime()+"</a></td>");
         else
-          out.println("<td><a href=" +"\"http://"+URLname+":5555/alpine/demo/CLOSURE_PLAN.PSP?ORGID="+orgArray[i].getOrgID()+"="+orgArray[i].getActivityType()+"\">" +" C+"+orgArray[i].getTimeSpan().getThruDate().getTime()+"</a></td>");
+          out.println("<td><a href=" +"\"http://"+URLname+":5555/alpine/demo/CLOSURE_PLAN.PSP?ORGID="+orgArray[i].getOrgID()+"="+orgArray[i].getActivityType()+"\">" +" C+"+orgArray[i].getTimeSpan().getEndDate().getTime()+"</a></td>");
         out.println("</tr>");
         //}
       }
@@ -423,14 +423,14 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
     out.println("<tr>");
     out.println("<td><b>C-Time</b></td>");
     //out.println("<div align=\"right\"><b>C-Time</b></div>");
-    out.println("<td>C+ <input type=\"text\" name=\"textfield\" value=\""+ org.getTimeSpan().getThruDate().getTime() +"\" size=\"6\"></td>");
+    out.println("<td>C+ <input type=\"text\" name=\"textfield\" value=\""+ org.getTimeSpan().getEndDate().getTime() +"\" size=\"6\"></td>");
     out.println("</tr>");
 
     out.println("<tr>");
     out.println("<td><b>Date</b></td>");
 
 
-    out.println("<td>" +org.getTimeSpan().getThruDate().toGMTString() + "</td>");
+    out.println("<td>" +org.getTimeSpan().getEndDate().toGMTString() + "</td>");
     out.println("</tr>");
 
     out.println("<tr>");
@@ -495,14 +495,14 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
     out.println("<tr>");
     out.println("<td><b>C-Time</b></td>");
     //out.println("<div align=\"right\"><b>C-Time</b></div>");
-    out.println("<td>C+ <input type=\"text\" name=\"textfield\" value=\""+ org.getTimeSpan().getThruDate().getTime() +"\" size=\"6\"></td>");
+    out.println("<td>C+ <input type=\"text\" name=\"textfield\" value=\""+ org.getTimeSpan().getEndDate().getTime() +"\" size=\"6\"></td>");
     out.println("</tr>");
 
     out.println("<tr>");
     out.println("<td><b>Date</b></td>");
 
 
-    out.println("<td>" +org.getTimeSpan().getThruDate().toGMTString() + "</td>");
+    out.println("<td>" +org.getTimeSpan().getEndDate().toGMTString() + "</td>");
     out.println("</tr>");
 
     out.println("<tr>");

@@ -227,7 +227,7 @@ public class PSP_OplanView extends PSP_BaseAdapter implements PlanServiceProvide
 
 //        TimeSpan ts = new TimeSpan(plan);
 //        ts.setStartDelta(plan.getStartDelta());
-//        ts.setThruDelta(plan.getEndDelta());
+//        ts.setEndDelta(plan.getEndDelta());
 //        out.println(PSPOplanUtilities.writeProperty("Timespan", PSPOplanUtilities.writeTimeSpan(ts)));
         //out.println(writeProperty("Timespan", writeTimeSpan(plan.getTimeSpan())));
         out.println(PSPOplanUtilities.closeTable());
@@ -250,8 +250,8 @@ public class PSP_OplanView extends PSP_BaseAdapter implements PlanServiceProvide
                 out.println("<p>" + org.getOrgID() + " " + org.getActivityType() + " " + org.getOpTempo() + 
                             " " + org.getTimeSpan().getStartDate() + 
                             "(C+" + computeDeltaDay(org.getTimeSpan().getStartDate(), c_date) + ") " + 
-                            " " + org.getTimeSpan().getThruDate() + 
-                            "(C+" + computeDeltaDay(org.getTimeSpan().getThruDate(), c_date) + ") " + 
+                            " " + org.getTimeSpan().getEndDate() + 
+                            "(C+" + computeDeltaDay(org.getTimeSpan().getEndDate(), c_date) + ") " + 
                             "</p>");
                 out.println("<p>[" + org.getGeoLoc().getName() + " " + 
                             org.getGeoLoc().getGeolocCode() + " " + 

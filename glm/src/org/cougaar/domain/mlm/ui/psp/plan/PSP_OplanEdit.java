@@ -170,21 +170,21 @@ public class PSP_OplanEdit
     }
     //System.out.println(select+";"+txtField+";"+txtField2);
     Date startDate = getRelativeDate(cDate, txtField);
-    Date thruDate = getRelativeDate(cDate, txtField2);
+    Date endDate = getRelativeDate(cDate, txtField2);
     Date nextStartDate;
 /**/
     // leave one day between activities
-    nextStartDate = getRelativeDate(thruDate, 1);
+    nextStartDate = getRelativeDate(endDate, 1);
 /**/
 /*
     // leave same spacing between activities as before
     long nextSpacingTime = 
       org[1].getTimeSpan().getStartDate().getTime() -
-      org[0].getTimeSpan().getThruDate().getTime();
+      org[0].getTimeSpan().getEndDate().getTime();
     if (nextSpacingTime == 0) {
-      nextStartDate = thruDate;
+      nextStartDate = endDate;
     } else {
-      nextStartDate = new Date(thruDate.getTime() + nextSpacingTime);
+      nextStartDate = new Date(endDate.getTime() + nextSpacingTime);
     }
 */
     //if( activityType.equals("Deployment") )
@@ -193,12 +193,12 @@ public class PSP_OplanEdit
       {
         //if( org[1].getTimeSpan() != null )
         //{
-          if (nextStartDate.after(org[1].getTimeSpan().getThruDate()) ||
-              startDate.after(org[0].getTimeSpan().getThruDate())) {
+          if (nextStartDate.after(org[1].getTimeSpan().getEndDate()) ||
+              startDate.after(org[0].getTimeSpan().getEndDate())) {
             return false;
           }
           org[0].getTimeSpan().setStartDate(startDate);
-          org[0].getTimeSpan().setThruDate(thruDate);
+          org[0].getTimeSpan().setEndDate(endDate);
           org[1].getTimeSpan().setStartDate(nextStartDate);
         //}
       //else
@@ -207,7 +207,7 @@ public class PSP_OplanEdit
       else
       {
         org[0].getTimeSpan().setStartDate(startDate);
-        org[0].getTimeSpan().setThruDate(thruDate);
+        org[0].getTimeSpan().setEndDate(endDate);
       }
     //}
     //      return false;
@@ -462,7 +462,7 @@ System.out.println("is post");
               org.getActivityName()+ "\">" +"C+" +
               getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) + 
               " To C+" + 
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getThruDate()) +
+              getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) +
               "</a></td>");
           } else if (org.getActivityType().equals("Deployment")) {
             out.println("<td><a href=" +
@@ -471,13 +471,13 @@ System.out.println("is post");
               org.getActivityType()+ "\">" +"C+" +
               getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) +
               " To C+" + 
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getThruDate()) + 
+              getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) + 
               "</a></td>");
           } else {
             out.println("<td>" +"C+" +
               getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) +
               " To C+" + 
-              getRelativeOffsetDays(cDate, org.getTimeSpan().getThruDate()) +
+              getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) +
               "</td>");
           }
           org = (OrgActivity)org_activities.nextElement();
@@ -572,7 +572,7 @@ System.out.println("is post");
     out.println("<tr>");
     out.println("<td colspan=\"2\">&nbsp;</td>");
     out.println("<td><b>Start Time</b></td>");
-    out.println("<td><b>Thru Time</b></td>");
+    out.println("<td><b>End Time</b></td>");
     out.println("</tr>");
  
     out.println("<tr>");
@@ -584,7 +584,7 @@ System.out.println("is post");
       getRelativeOffsetDays(cDate, org.getTimeSpan().getStartDate()) +
       "\" size=\"6\"> </td>");
     out.println("<td>C+ <input type=\"text\" name=\"textfield2\" value=\""+ 
-      getRelativeOffsetDays(cDate, org.getTimeSpan().getThruDate()) +
+      getRelativeOffsetDays(cDate, org.getTimeSpan().getEndDate()) +
       "\" size=\"6\"></td>");
  
     out.println("<tr>");
@@ -595,7 +595,7 @@ System.out.println("is post");
     out.println("<td>" +
       getGMTString(org.getTimeSpan().getStartDate()) + "</td>");
     out.println("<td>" +
-      getGMTString(org.getTimeSpan().getThruDate()) + "</td>");
+      getGMTString(org.getTimeSpan().getEndDate()) + "</td>");
     out.println("</tr>");
  
     out.println("<tr>");

@@ -78,7 +78,7 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
   private JTextField opTempoText;
   private JLabel cDayLabel;
   private JTextField startText;
-  private JTextField thruText;
+  private JTextField endText;
 
   /** status label **/
   private JTextField statusLabel;
@@ -156,7 +156,7 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
     opTempoText.setText("");
     cDayLabel.setText("");
     startText.setText("");
-    thruText.setText("");
+    endText.setText("");
     setStatus(false, "");
   }
 
@@ -167,7 +167,7 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
     opTempoText.setText(moa.getOpTempoText());
     cDayLabel.setText(moa.getCDayLabel());
     startText.setText(moa.getStartText());
-    thruText.setText(moa.getThruText());
+    endText.setText(moa.getEndText());
     setStatus(moa.getStatusError(), moa.getStatusLabel());
   }
 
@@ -178,7 +178,7 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
     moa.setOpTempoText(opTempoText.getText());
     moa.setCDayLabel(cDayLabel.getText());
     moa.setStartText(startText.getText());
-    moa.setThruText(thruText.getText());
+    moa.setEndText(endText.getText());
     moa.setStatusError(
       (statusLabel.getForeground() == Color.red));
     moa.setStatusLabel(statusLabel.getText());
@@ -343,7 +343,7 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
     cDayLabel = new JLabel();
     cDayLabel.setForeground(Color.black);
     startText = new JTextField(11);
-    thruText = new JTextField(11);
+    endText = new JTextField(11);
     getOrgActButton = new JButton("Get Org Activities");
     getOrgActButton.addActionListener(new DRTListener());
     modifyOrgActButton = new JButton("Modify Org Activities");
@@ -431,14 +431,14 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
     orgActInfoTextPanel.add(new JLabel("OpTempo:"));
     orgActInfoTextPanel.add(new JLabel("cDay:"));
     orgActInfoTextPanel.add(new JLabel("Start Date:"));
-    orgActInfoTextPanel.add(new JLabel("Thru Date:"));
+    orgActInfoTextPanel.add(new JLabel("End Date:"));
     JPanel orgActInfoValuePanel = new JPanel();
     orgActInfoValuePanel.setLayout(new GridLayout(5,1));
     orgActInfoValuePanel.add(orgIdLabel);
     orgActInfoValuePanel.add(opTempoText);
     orgActInfoValuePanel.add(cDayLabel);
     orgActInfoValuePanel.add(startText);
-    orgActInfoValuePanel.add(thruText);
+    orgActInfoValuePanel.add(endText);
     orgActInfoPanel.add(orgActInfoTextPanel, BorderLayout.CENTER);
     orgActInfoPanel.add(orgActInfoValuePanel, BorderLayout.EAST);
     orgActPanel.add(orgActInfoPanel, BorderLayout.CENTER);

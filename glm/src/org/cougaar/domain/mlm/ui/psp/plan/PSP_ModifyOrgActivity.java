@@ -155,7 +155,7 @@ public class PSP_ModifyOrgActivity
             throw new Exception("OrgActivity lacks TimeSpan");
           } 
           Date origStartDate = timeSpan.getStartDate();
-          Date origThruDate = timeSpan.getThruDate();
+          Date origEndDate = timeSpan.getEndDate();
           
           PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
           delegate.openTransaction();
@@ -163,7 +163,7 @@ public class PSP_ModifyOrgActivity
           moa.changeOrgActivity(orgAct, oplan);
           // fix other orgActs
           fixAdjacentOrgActivities(psc, orgAct,
-                                   origStartDate, origThruDate);
+                                   origStartDate, origEndDate);
           // changed orgAct
           publishChange(psc, orgAct);
           delegate.closeTransaction();
@@ -184,14 +184,14 @@ public class PSP_ModifyOrgActivity
   }
 
   /**
-   * Find an orgAct with a thruDate <= the origStartDate.
+   * Find an orgAct with a endDate <= the origStartDate.
    */
   protected OrgActivity findPrevOrgActivity(
       PlanServiceContext psc, 
       OrgActivity orgAct, 
-      long maxThruTime) {
+      long maxEndTime) {
     String orgId = orgAct.getOrgID();
-    long bestMaxThruTime = 0;
+    long bestMaxEndTime = 0;
     OrgActivity prevOrgAct = null;
     Enumeration eOrgActs = searchForOrgActivities(psc);
     while (eOrgActs.hasMoreElements()) {
@@ -203,11 +203,11 @@ public class PSP_ModifyOrgActivity
         long tt;
         if (((ts = oa.getTimeSpan()) != null) &&
             (ts.getStartDate() != null) &&
-            ((td = ts.getThruDate()) != null) &&
-            ((tt = td.getTime()) <= maxThruTime) &&
-            (tt > bestMaxThruTime)) {
+            ((td = ts.getEndDate()) != null) &&
+            ((tt = td.getTime()) <= maxEndTime) &&
+            (tt > bestMaxEndTime)) {
           prevOrgAct = oa;
-          bestMaxThruTime = tt;
+          bestMaxEndTime = tt;
         }
       }
     }
@@ -215,7 +215,7 @@ public class PSP_ModifyOrgActivity
   }
 
   /**
-   * find an orgAct with a startDate >= the origThruDate
+   * find an orgAct with a startDate >= the origEndDate
    */
   protected OrgActivity findNextOrgActivity(
       PlanServiceContext psc, 
@@ -234,7 +234,7 @@ public class PSP_ModifyOrgActivity
         long st;
         if (((ts = oa.getTimeSpan()) != null) &&
             ((sd = ts.getStartDate()) != null) &&
-            (ts.getThruDate() != null) &&
+            (ts.getEndDate() != null) &&
             ((st = sd.getTime()) >= minStartTime) &&
             (st < bestMinStartTime)) {
           nextOrgAct = oa;
@@ -245,64 +245,64 @@ public class PSP_ModifyOrgActivity
     return nextOrgAct;
   }
 
-  protected Date getNewPrevThruDate(
+  protected Date getNewPrevEndDate(
       OrgActivity prevOrgAct, long deltaStartTime) throws Exception {
     TimeSpan timeSpan = prevOrgAct.getTimeSpan();
     Date startDate = timeSpan.getStartDate();
-    Date thruDate = timeSpan.getThruDate();
-    Date newPrevThruDate = new Date(thruDate.getTime() + deltaStartTime);
+    Date endDate = timeSpan.getEndDate();
+    Date newPrevEndDate = new Date(endDate.getTime() + deltaStartTime);
     if (DEBUG) {
       System.out.println("Orig Prev StartDate: "+startDate);
-      System.out.println("Orig Prev ThruDate: "+thruDate);
-      System.out.println("New Prev ThruDate: "+newPrevThruDate);
+      System.out.println("Orig Prev EndDate: "+endDate);
+      System.out.println("New Prev EndDate: "+newPrevEndDate);
     }
-    if (newPrevThruDate.before(startDate)) {
+    if (newPrevEndDate.before(startDate)) {
       if (DEBUG) {
-        System.out.println("BAD: NewThruDate < OrigStartDate");
+        System.out.println("BAD: NewEndDate < OrigStartDate");
       }
       throw new Exception(
-         "Can't adjust thruDate to "+newPrevThruDate+
+         "Can't adjust endDate to "+newPrevEndDate+
          " which is before startDate "+startDate);
     }
-    return newPrevThruDate;
+    return newPrevEndDate;
   }
 
   protected Date getNewNextStartDate(
-      OrgActivity nextOrgAct, long deltaThruTime) throws Exception {
+      OrgActivity nextOrgAct, long deltaEndTime) throws Exception {
     TimeSpan timeSpan = nextOrgAct.getTimeSpan();
     Date startDate = timeSpan.getStartDate();
-    Date thruDate = timeSpan.getThruDate();
-    Date newNextStartDate = new Date(startDate.getTime() + deltaThruTime);
+    Date endDate = timeSpan.getEndDate();
+    Date newNextStartDate = new Date(startDate.getTime() + deltaEndTime);
     if (DEBUG) {
       System.out.println("Orig Next StartDate: "+startDate);
-      System.out.println("Orig Next ThruDate: "+thruDate);
+      System.out.println("Orig Next EndDate: "+endDate);
       System.out.println("New Next StartDate: "+newNextStartDate);
     }
-    if (newNextStartDate.after(thruDate)) {
+    if (newNextStartDate.after(endDate)) {
       if (DEBUG) {
-        System.out.println("BAD: NewStartDate < OrigThruDate");
+        System.out.println("BAD: NewStartDate < OrigEndDate");
       }
       throw new Exception(
           "Can't adjust startDate to "+newNextStartDate+
-          " which is after thruDate "+thruDate);
+          " which is after endDate "+endDate);
     }
     return newNextStartDate;
   }
 
   /**
    * The OrgActivity <code>orgAct</code> has changed, maybe moving
-   * it's start and thru date.  Adjust the cronologically adjacent
+   * it's start and end date.  Adjust the cronologically adjacent
    * orgActivities for this timespan change, pushing them earlier 
    * or later to prevent overlap.
    */
   protected void fixAdjacentOrgActivities(
       PlanServiceContext psc, OrgActivity orgAct,
-      Date origStartDate, Date origThruDate) throws Exception {
+      Date origStartDate, Date origEndDate) throws Exception {
     TimeSpan newTimeSpan = orgAct.getTimeSpan();
     Date newStartDate = newTimeSpan.getStartDate();
-    Date newThruDate = newTimeSpan.getThruDate();
+    Date newEndDate = newTimeSpan.getEndDate();
     long deltaStartTime = (newStartDate.getTime() - origStartDate.getTime());
-    long deltaThruTime = (newThruDate.getTime() - origThruDate.getTime());
+    long deltaEndTime = (newEndDate.getTime() - origEndDate.getTime());
     OrgActivity prevOrgAct = null;
     if (deltaStartTime != 0) {
       if (DEBUG) {
@@ -318,29 +318,29 @@ public class PSP_ModifyOrgActivity
       // ok if null --> no prev
     }
     OrgActivity nextOrgAct = null;
-    if (deltaThruTime != 0) {
+    if (deltaEndTime != 0) {
       if (DEBUG) {
-        System.out.println("Adjust next orgAct thruTime");
-        System.out.println("  this orgAct original thruDate: "+origThruDate);
-        System.out.println("  this orgAct new thruDate: "+newThruDate);
-        System.out.println("  this orgAct thru delta: "+deltaThruTime);
+        System.out.println("Adjust next orgAct endTime");
+        System.out.println("  this orgAct original endDate: "+origEndDate);
+        System.out.println("  this orgAct new endDate: "+newEndDate);
+        System.out.println("  this orgAct end delta: "+deltaEndTime);
       }
-      nextOrgAct = findNextOrgActivity(psc, orgAct, origThruDate.getTime());
+      nextOrgAct = findNextOrgActivity(psc, orgAct, origEndDate.getTime());
       if (DEBUG) {
         System.out.println("Found nextOrgAct: "+nextOrgAct);
       }
       // ok if null --> no next
     }
     Object obj;
-    // get new thru date for prev orgAct
-    Date newPrevThruDate = null;
+    // get new end date for prev orgAct
+    Date newPrevEndDate = null;
     if (prevOrgAct != null) {
       if (DEBUG) {
-        System.out.println("Get the prevOrgAct new ThruDate");
+        System.out.println("Get the prevOrgAct new EndDate");
       }
-      newPrevThruDate = getNewPrevThruDate(prevOrgAct, deltaStartTime);
+      newPrevEndDate = getNewPrevEndDate(prevOrgAct, deltaStartTime);
       if (DEBUG) {
-        System.out.println("  prevOrgAct new ThruDate: "+newPrevThruDate);
+        System.out.println("  prevOrgAct new EndDate: "+newPrevEndDate);
       }
     }
     // get new start date for next orgAct
@@ -349,14 +349,14 @@ public class PSP_ModifyOrgActivity
       if (DEBUG) {
         System.out.println("Get the nextOrgAct new StartDate");
       }
-      newNextStartDate = getNewNextStartDate(nextOrgAct, deltaThruTime);
+      newNextStartDate = getNewNextStartDate(nextOrgAct, deltaEndTime);
       if (DEBUG) {
         System.out.println("  nextOrgAct new StartDate: "+newNextStartDate);
       }
     }
-    // change the prev orgAct's thru date
+    // change the prev orgAct's end date
     if (prevOrgAct != null) {
-      prevOrgAct.getTimeSpan().setThruDate(newPrevThruDate);
+      prevOrgAct.getTimeSpan().setEndDate(newPrevEndDate);
       publishChange(psc, prevOrgAct);
     } 
     // change the next orgAct's start date

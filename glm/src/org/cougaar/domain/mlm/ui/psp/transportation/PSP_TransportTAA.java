@@ -269,7 +269,7 @@ public class PSP_TransportTAA
         TimeSpan ts;
         if (((ts = oa.getTimeSpan()) != null) &&
             !(startDate.before(ts.getStartDate())) &&
-            !(startDate.after(ts.getThruDate()))) {
+            !(startDate.after(ts.getEndDate()))) {
           ie.setActivityType(oa.getActivityType());
           ie.setOpTempo(oa.getOpTempo());
           break;

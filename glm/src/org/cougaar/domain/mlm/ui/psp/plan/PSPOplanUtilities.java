@@ -399,10 +399,10 @@ public class PSPOplanUtilities {
         public static String writeTimeSpan(TimeSpan ts) {
 /*              if (ts != null) {
                         Integer startDelta = new Integer(ts.getStartDelta());
-                        Integer thruDelta = new Integer(ts.getThruDelta()); */
+                        Integer endDelta = new Integer(ts.getEndDelta()); */
                         
-/*                      return openTable("Start Delta", "Start Time", "Thru Delta", "Thru Time") 
-                                + writeTableRow(startDelta, ts.getStartTime(), thruDelta, ts.getThruTime())
+/*                      return openTable("Start Delta", "Start Time", "End Delta", "End Time") 
+                                + writeTableRow(startDelta, ts.getStartTime(), endDelta, ts.getEndTime())
                                 + closeTable();
                 } */
                         //else 
