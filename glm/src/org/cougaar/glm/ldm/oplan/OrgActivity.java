@@ -275,16 +275,18 @@ public class OrgActivity extends OwnedUniqueObject
     if (o instanceof OrgActivity) {
       OrgActivity oa = (OrgActivity) o;
 
-      return
+      boolean status = 
         matches(getActivityName(), oa.getActivityName()) &&
         matches(getActivityType(), oa.getActivityType()) &&
         matches(getOpTempo(), oa.getOpTempo()) &&
         matches(getTimeSpan(), oa.getTimeSpan()) &&
         matches(getGeoLoc(), oa.getGeoLoc()) &&
-        matches(getOaHashMap().entrySet(), oa.getOaHashMap().entrySet()) &&
+        //matches(getOaHashMap(), oa.getOaHashMap()) &&
         matches(getOrgID(), oa.getOrgID()) &&
         matches(getOplanUID(), oa.getOplanUID()) &&
         matches(getOrgActivityId(), oa.getOrgActivityId());
+
+      return status;
     } else {
 
       return false;
