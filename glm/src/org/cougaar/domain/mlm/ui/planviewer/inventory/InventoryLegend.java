@@ -84,6 +84,8 @@ public class InventoryLegend extends JPanel {
 	    String name = chartDataView.getName();
 	    if(name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND) ||
 	       (name.equals(InventoryChart.ACTUAL_INVENTORY_LEGEND)) ||
+	       (name.equals(InventoryChart.REQUESTED_INACTIVE_INVENTORY_LEGEND)) ||
+	       (name.equals(InventoryChart.ACTUAL_INACTIVE_INVENTORY_LEGEND))||
 	       (name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) ||
 	       (name.equals(InventoryChart.ACTUAL_SUPPLY_LEGEND))) {
 
@@ -123,6 +125,12 @@ public class InventoryLegend extends JPanel {
 
 	int gridX=-1;
 	int titleY=SUPPLY_TITLE_GRIDY;
+
+
+	if((name.equals(InventoryChart.REQUESTED_INACTIVE_INVENTORY_LEGEND)) ||
+	   (name.equals(InventoryChart.ACTUAL_INACTIVE_INVENTORY_LEGEND))) {
+	    return;
+	}
 
 	if((name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND)) ||
 	   (name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)))
@@ -414,9 +422,17 @@ protected void addOtherDataView(ChartDataView chartDataView) {
 	cb.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		JCheckBox cb1 = (JCheckBox)e.getSource();
-		inventoryChart.setChartDataViewVisible(cb1.getText(), cb1.isSelected());
-// 		checkBox_actionPerformed(e);
+		String viewName = cb1.getText();
+		String assocName=null;
+		inventoryChart.setChartDataViewVisible(viewName, cb1.isSelected());
+		if(viewName.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND))
+		    assocName = InventoryChart.REQUESTED_INACTIVE_INVENTORY_LEGEND;
+		else if(viewName.equals(InventoryChart.ACTUAL_INVENTORY_LEGEND))
+		    assocName = InventoryChart.ACTUAL_INACTIVE_INVENTORY_LEGEND;
+		if(assocName != null)
+		    inventoryChart.setChartDataViewVisible(assocName, cb1.isSelected());
 	    }
+
 	});
 	return cb;
     }
@@ -427,11 +443,6 @@ protected void addOtherDataView(ChartDataView chartDataView) {
 	return label;
     }
     
-    void checkBox_actionPerformed(ActionEvent e) {
-	JCheckBox cb = (JCheckBox)e.getSource();
-	inventoryChart.setChartDataViewVisible(cb.getText(), cb.isSelected());
-    }
-
     protected void initDemandSupplyPanel() {
 	if(demandSupplyPanel == null) {
 	    demandSupplyPanel = new JPanel();
@@ -524,7 +535,11 @@ protected void addOtherDataView(ChartDataView chartDataView) {
 	    if(series != null) {
 		//		System.out.println("InventoryLegend::SeriesToggleButton - " + series.getLabel() + "item selected: " + (e.getStateChange()==e.SELECTED));
 		//series.setVisible(e.getStateChange()==e.SELECTED);
-		dm.setSeriesVisible(seriesIndex,(e.getStateChange()==e.SELECTED));
+		boolean ImSelected = (e.getStateChange()==e.SELECTED);
+
+		dm.setSeriesVisible(seriesIndex,ImSelected);
+		dm.getAssociatedInactiveModel().setSeriesVisible(seriesIndex,
+								 ImSelected);
 	    }
 	}
 

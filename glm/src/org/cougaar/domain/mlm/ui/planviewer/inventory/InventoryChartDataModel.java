@@ -66,6 +66,8 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
   double ammoFactor = 1.0;
   Vector referenceOnHandSchedule;
 
+  protected InventoryChartDataModel inactiveMe=null;
+
   long baseCDayTime;
   boolean useCDay;
 
@@ -589,5 +591,12 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
       }
   }
 
+    public InventoryChartDataModel getAssociatedInactiveModel() {
+	return inactiveMe;
+    }
+
+    public void setAssociatedInactiveModel(InventoryChartDataModel assocModel){
+	inactiveMe = assocModel;
+    }
 }
 

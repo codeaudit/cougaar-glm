@@ -18,6 +18,7 @@ import com.klg.jclass.chart.*;
 import com.klg.jclass.util.legend.*;
 import com.klg.jclass.chart.data.JCDefaultDataSource;
 import com.klg.jclass.util.swing.JCExitFrame;
+import com.klg.jclass.chart.JCFillStyle;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -48,6 +49,8 @@ public class InventoryChart
     static final String INVENTORY_LEGEND = "Inventory";
     static final String REQUESTED_INVENTORY_LEGEND = "Requested";
     static final String ACTUAL_INVENTORY_LEGEND = "Actual";
+    static final String REQUESTED_INACTIVE_INVENTORY_LEGEND = "Requested Inactive";
+    static final String ACTUAL_INACTIVE_INVENTORY_LEGEND = "Actual Inactive";
     static final String REQUESTED_SUPPLY_LEGEND = REQUESTED_INVENTORY_LEGEND + " ";
     static final String ACTUAL_SUPPLY_LEGEND = ACTUAL_INVENTORY_LEGEND + " ";
     static final String SHORTFALL_LEGEND = "Shortfall";
@@ -56,6 +59,10 @@ public class InventoryChart
     static final String UNCONFIRMED_LEGEND = "UnConfirmed";
     
     static final int CDAY_MIN=-5;
+
+    //PER_25,50,75,HORIZ_STRIPE,VERT_STRIPE,DIAG_HATCHED,CROSS_HATCHED,etc
+    static final int INACTIVE_SERIES_PATTERN=JCFillStyle.VERT_STRIPE;
+
     Vector removeableViews = new Vector();
     int viewIndex = 0;
     int gridx = 0;
@@ -104,6 +111,7 @@ public class InventoryChart
 	long nowTime = now.getTime();
 	final long aDayTime = 24*60*60*1000;
 	final int numDays = 32;
+	final int switchDay = 20;
 	
 	final double DUE_OUT_QTY=150;
 	final double DUE_IN_QTY=750;
@@ -129,11 +137,15 @@ public class InventoryChart
 	Vector onHand = new Vector(numDays);
 	Vector dueIns=new Vector(numDays);
 	Vector dueOuts=new Vector(numDays);
+	Vector inactDueOuts=new Vector(numDays);
 	Vector projDueOuts= new Vector(numDays);
+	Vector projInactDueOuts= new Vector(numDays);
 	
 	Vector reqDueIns=new Vector(numDays);
 	Vector reqDueOuts=new Vector(numDays);
+	Vector reqInactDueOuts=new Vector(numDays);
 	Vector reqProjDueOuts=new Vector(numDays);
+	Vector reqProjInactDueOuts=new Vector(numDays);
 
 	Vector unconfirmedDueIns=dueOuts;
 
@@ -150,17 +162,33 @@ public class InventoryChart
 				  (currNow <= (c0Time + (22 * aDayTime))));
 
 	    projDueOutQty = PROJ_DUE_OUT_QTY;
-	    reqProjDueOuts.add(new UIQuantityScheduleElement(lastNow,
-							     currNow,
-							     projDueOutQty));
 
-
+	    if(i<=switchDay) {
+		reqProjInactDueOuts.add(new UIQuantityScheduleElement(lastNow,
+								 currNow,
+								 projDueOutQty));
+	    }
+	    else {
+		reqProjDueOuts.add(new UIQuantityScheduleElement(lastNow,
+								 currNow,
+								 projDueOutQty));
+	    }
 	    if(shortfallDay) {
 		projDueOutQty = PROJ_SHORTFALL_QTY;
 	    }
-	    projDueOuts.add(new UIQuantityScheduleElement(lastNow,
-							  currNow,
-							  projDueOutQty));
+
+	    if(i<=switchDay) {
+		projInactDueOuts.add(new UIQuantityScheduleElement(lastNow,
+							      currNow,
+							      projDueOutQty));
+
+	    }
+	    else {
+		projDueOuts.add(new UIQuantityScheduleElement(lastNow,
+							      currNow,
+							      projDueOutQty));
+		currInventory=currInventory-projDueOutQty;
+	    }
 
 	    //currInventory=currInventory-projDueOutQty;
 	    
@@ -168,23 +196,51 @@ public class InventoryChart
 	       ((i%2)==0)){
 		dueOutQty = DUE_OUT_QTY;
 
-		reqDueOuts.add(new UIQuantityScheduleElement(lastNow,
-							     currNow,
-							     dueOutQty));
+		if(i<=switchDay) {
+		    reqDueOuts.add(new UIQuantityScheduleElement(lastNow,
+								 currNow,
+								 dueOutQty));
+		}
+		else {
+		    reqInactDueOuts.add(new UIQuantityScheduleElement(lastNow,
+								     currNow,
+								     dueOutQty));
+		}
+				       
 		if(shortfallDay) {
 		    dueOutQty = DUE_OUT_SHORTFALL_QTY;
 		}
-		dueOuts.add(new UIQuantityScheduleElement(lastNow,
-							  currNow,
-							  dueOutQty));
-		currInventory=currInventory-dueOutQty;
+		if(i<=switchDay) {
+		    dueOuts.add(new UIQuantityScheduleElement(lastNow,
+							      currNow,
+							      dueOutQty));
+		    currInventory=currInventory-dueOutQty;
+		}
+		else {
+		    inactDueOuts.add(new UIQuantityScheduleElement(lastNow,
+								   currNow,
+								   dueOutQty));
+		}
+
+
 	    } else {
-		reqDueOuts.add(new UIQuantityScheduleElement(lastNow,
-							     currNow,
-							     0));
-		dueOuts.add(new UIQuantityScheduleElement(lastNow,
-							  currNow,
-							  0));
+		if(i<=switchDay) {
+		    reqDueOuts.add(new UIQuantityScheduleElement(lastNow,
+								 currNow,
+								 0));
+		    dueOuts.add(new UIQuantityScheduleElement(lastNow,
+							      currNow,
+							      0));
+		}
+		else {
+		    reqInactDueOuts.add(new UIQuantityScheduleElement(lastNow,
+								 currNow,
+								 0));
+		    inactDueOuts.add(new UIQuantityScheduleElement(lastNow,
+							      currNow,
+							      0));
+		}
+
 	    }
 	    
 	    if((currNow >= c0Time) && 
@@ -227,9 +283,15 @@ public class InventoryChart
 	                           
 	inventory.addNamedSchedule(DUE_OUT, dueOuts);
 	inventory.addNamedSchedule(REQUESTED_DUE_OUT, reqDueOuts);
+
+	inventory.addNamedSchedule(DUE_OUT + INACTIVE, inactDueOuts);
+	inventory.addNamedSchedule(REQUESTED_DUE_OUT + INACTIVE, reqInactDueOuts);
                                    
 	inventory.addNamedSchedule(PROJECTED_DUE_OUT, projDueOuts);
 	inventory.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT, reqProjDueOuts);
+
+	inventory.addNamedSchedule(PROJECTED_DUE_OUT+INACTIVE, projInactDueOuts);
+	inventory.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT+INACTIVE, reqProjInactDueOuts);
 
 	// MWD Uncomment to get Unconfirmed into the mix.
 //	inventory.addNamedSchedule(UNCONFIRMED_DUE_IN,unconfirmedDueIns);
@@ -490,35 +552,49 @@ public class InventoryChart
     // and no actual series then add one.
     private void equalizeInventorySchedule(UISimpleInventory inventory) {
 	String[][] reqActTable = {
-            {REQUESTED_DUE_IN, DUE_IN},
-            {REQUESTED_DUE_OUT, DUE_OUT},
-            {PROJECTED_REQUESTED_DUE_OUT, PROJECTED_DUE_OUT},
-            {REQUESTED_DUE_IN + INACTIVE, DUE_IN + INACTIVE},
-            {REQUESTED_DUE_OUT + INACTIVE, DUE_OUT + INACTIVE},
-            {PROJECTED_REQUESTED_DUE_OUT + INACTIVE, PROJECTED_DUE_OUT + INACTIVE}
+            {REQUESTED_DUE_IN, DUE_IN,
+	     REQUESTED_DUE_IN + INACTIVE, DUE_IN + INACTIVE},
+            {REQUESTED_DUE_OUT, DUE_OUT, 
+	     REQUESTED_DUE_OUT + INACTIVE, DUE_OUT + INACTIVE},
+            {PROJECTED_REQUESTED_DUE_OUT, PROJECTED_DUE_OUT,
+	     PROJECTED_REQUESTED_DUE_OUT + INACTIVE, 
+	     PROJECTED_DUE_OUT + INACTIVE}
         };
 
 	for (int i = 0; i < reqActTable.length; i++) {
-	    UISimpleNamedSchedule req, act;
-	    req = inventory.getNamedSchedule(reqActTable[i][0]);
-	    act = inventory.getNamedSchedule(reqActTable[i][1]);
-	    if((req!=null) && (act == null)) {
-		Vector reqSch = req.getSchedule();
-		Vector actSch = new Vector(reqSch.size());
-		for(int j=0; j < reqSch.size() ; j++) {
-		    UIQuantityScheduleElement element = 
-			(UIQuantityScheduleElement) reqSch.elementAt(j);
-		    UIQuantityScheduleElement newElement = 
-			(UIQuantityScheduleElement) element.clone();
-		    newElement.setQuantity(0);
-		    actSch.add(newElement);
-		}
-		inventory.addNamedSchedule(reqActTable[i][1],actSch);
-	    }
-	    else if((act!=null) && (req == null)) {
-		throw new RuntimeException("Did not expect to receive a schedule with an Actual " + reqActTable[i][0] + " but not corresponding requested");
-	    }
+	    UISimpleNamedSchedule curr=null, ex=null;
+	    int j=0;
 
+
+	    //If model is not null after this, then there
+	    //is a schdule entry for this "row" in the table.
+	    //ex is the exemplar for the rest of the table
+	    for(j=0;j < reqActTable[i].length; j++) {
+		curr = inventory.getNamedSchedule(reqActTable[i][j]);
+		if((curr != null) && (ex==null)) {
+		    ex = curr;
+		}
+	    }
+	    
+	    if(ex!=null) {
+		
+		for(j=0;j < reqActTable[i].length; j++) {
+		    curr = inventory.getNamedSchedule(reqActTable[i][j]);	
+		    if(curr == null) {
+			Vector modelSch = ex.getSchedule();
+			Vector newSch = new Vector(modelSch.size());
+			for(int k=0; k < modelSch.size() ; k++) {
+			    UIQuantityScheduleElement element = 
+				(UIQuantityScheduleElement) modelSch.elementAt(k);
+			    UIQuantityScheduleElement newElement = 
+				(UIQuantityScheduleElement) element.clone();
+			    newElement.setQuantity(0);
+			    newSch.add(newElement);
+			}
+			inventory.addNamedSchedule(reqActTable[i][j],newSch);
+		    }
+		}
+	    }
 	}    
     }
 
@@ -562,6 +638,20 @@ public class InventoryChart
 	    createInventoryDataModel(inventory, 
 				     ACTUAL_INVENTORY_LEGEND);
 	addView(chart, JCChart.BAR, actual);
+
+	// Requested
+	InventoryChartDataModel requestedInactive = 
+	    createInventoryDataModel(inventory, 
+				     REQUESTED_INACTIVE_INVENTORY_LEGEND);
+	requested.setAssociatedInactiveModel(requestedInactive);
+	addView(chart, JCChart.BAR, requestedInactive);
+
+	// Actual
+	InventoryChartDataModel actualInactive = 
+	    createInventoryDataModel(inventory, 
+				     ACTUAL_INACTIVE_INVENTORY_LEGEND);
+	actual.setAssociatedInactiveModel(actualInactive);
+	addView(chart, JCChart.BAR, actualInactive);
 
 	computeAndInitializeShortfall(inventory,actual,requested);
     }
@@ -684,9 +774,16 @@ public class InventoryChart
 	dataViews.put(chartDataView, dm);
 	String[] names = dm.getScheduleNames();
 	// set series color
-	for (int i = 0; i < chartDataView.getNumSeries(); i++) 
+	for (int i = 0; i < chartDataView.getNumSeries(); i++) {
 	    setSeriesColor(chartDataView.getSeries(i), 
 			   colorTable.get(names[i]));
+
+	    if(names[i].endsWith(INACTIVE)) {
+		setInactiveSeriesPattern(chartDataView.getSeries(i));
+	    }
+	}
+
+
 	// set line width
 	if (chartType == JCChart.PLOT)
 	    for (int j = 0; j < chartDataView.getNumSeries(); j++)
@@ -731,6 +828,16 @@ public class InventoryChart
 	    scheduleTypes.add(DUE_IN);
 	    scheduleTypes.add(DUE_OUT);
 	    scheduleTypes.add(PROJECTED_DUE_OUT);
+	}
+	else if(legendTitle.equals(REQUESTED_INACTIVE_INVENTORY_LEGEND)) {
+	    scheduleTypes.addElement(REQUESTED_DUE_IN + INACTIVE);
+	    scheduleTypes.addElement(REQUESTED_DUE_OUT + INACTIVE);
+	    scheduleTypes.addElement(PROJECTED_REQUESTED_DUE_OUT + INACTIVE);
+	}
+	else if(legendTitle.equals(ACTUAL_INACTIVE_INVENTORY_LEGEND)) {
+	    scheduleTypes.add(DUE_IN + INACTIVE);
+	    scheduleTypes.add(DUE_OUT + INACTIVE);
+	    scheduleTypes.add(PROJECTED_DUE_OUT + INACTIVE);
 	}
 	else if(legendTitle.equals(REQUESTED_SUPPLY_LEGEND)) {
 	    scheduleTypes.addElement(REQUESTED_DUE_IN);
@@ -829,6 +936,10 @@ public class InventoryChart
 	series.getStyle().setLineColor(color);
 	series.getStyle().setFillColor(color);
 	series.getStyle().setSymbolColor(color);
+    }
+
+    private void setInactiveSeriesPattern(ChartDataViewSeries series) {
+	series.getStyle().setFillPattern(INACTIVE_SERIES_PATTERN);
     }
 
     private void customizeAxes(JCChart chart, String yAxisTitleText) {
