@@ -45,7 +45,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected IncrementalSubscription inventoryAllocSubscription_ = null;
     protected IncrementalSubscription modifiedInventorySubscription_ = null;
     /** Subscription to policies */
-    protected IncrementalSubscription        onHandPolicySubscription_;
+    protected IncrementalSubscription inventoryPolicySubscription_;
 
     public static final int               DONE = -1; 
 
@@ -68,8 +68,8 @@ public abstract class InventoryManager extends InventoryProcessor {
 	    type_ = type;
 	}
 	public boolean execute(Object o) {
-	    if (o instanceof DaysOnHandPolicy) {
-		String type = ((DaysOnHandPolicy)o).getResourceType();
+	    if (o instanceof InventoryPolicy) {
+		String type = ((InventoryPolicy)o).getResourceType();
 		if (type.equals(type_)) {
 		    return true;
 		}
@@ -124,7 +124,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	super(plugin, org, type);
  	inventoryAllocSubscription_ = subscribe(new AllocToInventoryPredicate(supplyType_));
 	modifiedInventorySubscription_ = subscribe(new ModifiedInventoryPredicate(supplyType_));
-	onHandPolicySubscription_ = subscribe(new PolicyPredicate(type));
+	inventoryPolicySubscription_ = subscribe(new PolicyPredicate(type));
 
 	// FSB and higher maintain more inventory
 	if(!isBattalionLevel()) {
@@ -266,72 +266,43 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected Enumeration generateProjections(Inventory inventory) {
 //  	printDebug("STEP 2:  GenerateProjections() for "+AssetUtils.getAssetIdentifier(inventory));
 	Vector projections = new Vector();
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	InventoryPG invpg = (InventoryPG) inventory.searchForPropertyGroup(InventoryPG.class);
 	int days = invpg.getPlanningDays();
 	int today = invpg.getFirstPlanningDay();
-	Scalar previous = invpg.getProjected(today);
-	Scalar current = null;
-	double safety;
 	int periodBegin = today;
-	boolean newCurrent = false;
-	long start;
-	int i=today;
-	//  	printDebug(0, "!!!!!!!!!!!!!!!!! first day of demand : "+TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(),today))+", INV START: "+TimeUtils.dateString(invpg.getStartTime()));
-	for (; i < days; i++) {
-	    current = invpg.getProjected(i);
-	    if (previous !=  null) {
-		//    		printDebug("generateProjections(), previous: "+previous+", current: "+current+", on day "+i);
-		if (!current.equals(previous)) {
-		    double value = convertScalarToDouble(previous);
-		    if (!Double.isNaN(value) && value > 0.0) {
-			start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
-			// Period spans a single day
-			if (periodBegin == (i-1)) {
-			    // Subtract 12 hours from the start time to ensure a non-zero time span
-			    start = start - (TimeUtils.MSEC_PER_HOUR*12);
-			}
-			// safety accounts for the safety level which the inventory attempts to maintain.
-			// add the safety 'demand' to projected deman.
-			safety = determineSafetyIncrement(periodBegin, i-1, inventory);
-			Task t = newProjectSupplyTask(inventory, start,
-						      TimeUtils.addNDays(invpg.getStartTime(), i-1), 
-						      createIncrementedDailyRate(previous,safety));
-//  			if(safety>0){
-//  			    printDebug(0, "  !!! projection with dailyRate=" + createDailyRate(previous)+" and safetyRate="+safety);
-//  			}
-			projections.add(t);
-			invpg.addDueIn(t);
-			//      			printDebug("generateProjections(), created Projection task. Start: "+TimeUtils.dateString(start)+", End: "+
-			//  				   TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(), i))+", Value: "+previous);
-		    }
-		    periodBegin = i;
-		    newCurrent = false;
-		}
-		else {
-		    newCurrent = true;
-		}
+	Scalar previous = invpg.getProjected(today);
+//  	printDebug(0, "!!!!!!!!!!!!!!!!! first day of demand : "
+//                 + TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(),today))
+//                 + ", INV START: "+TimeUtils.dateString(invpg.getStartTime()));
+        /* Loop from tomorrow to the day after the inventory planning
+         * window ends. The extra step at the end allow the final
+         * segment to be processed.
+         */
+	for (int day = today + 1; day <= days; day++) {
+            Scalar current = (day < days) ? invpg.getProjected(day) : null;
+            if (!previous.equals(current)) {
+                double value = convertScalarToDouble(previous);
+                if (!Double.isNaN(value) && value > 0.0) {
+                    long start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
+                    // safety accounts for the safety level which the inventory attempts to maintain.
+                    // add the safety 'demand' to projected demand.
+                    double safety = determineSafetyIncrement(periodBegin, day-1, inventory);
+                    Task t = newProjectSupplyTask(inventory, start,
+                                                  start + (day - periodBegin) * TimeUtils.MSEC_PER_DAY, 
+                                                  createIncrementedDailyRate(previous, safety));
+//                      if (safety > 0) {
+//                          printDebug(0, "  !!! projection with dailyRate=" + createDailyRate(previous)+" and safetyRate="+safety);
+//                      }
+                    projections.add(t);
+                    invpg.addDueIn(t);
+//                      printDebug("generateProjections(), created Projection task. Start: "
+//                                 + TimeUtils.dateString(start)+", End: "
+//                                 + TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(), day))
+//                                 + ", Value: "+previous);
+                }
+                periodBegin = day;
 	    }
 	    previous = current;
-	}
-	if ((newCurrent) && (previous != null)) {
-	    double value = convertScalarToDouble(previous);
-	    if (!Double.isNaN(value) && (value > 0.0)) {
-		start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
-		// Period spans a single day
-		if (periodBegin == (days-1)) {
-		    // Subtract 12 hours from the start time to ensure a non-zero time span
-		    start = start - (TimeUtils.MSEC_PER_HOUR*12);
-		}
-		safety = determineSafetyIncrement(periodBegin, days-1, inventory);
-		Task t = newProjectSupplyTask(inventory, start,
-					      TimeUtils.addNDays(invpg.getStartTime(), days-1), 
-					      createIncrementedDailyRate(previous,safety));
-		//  		printDebug(0, "!!!!!!!!!!!!!!!!!!!! projection with dailyRate=" +
-		//  			   createDailyRate(previous)+" and safetyRate="+safety+"\n        Task: "+ TaskUtils.taskDesc(t));
-		projections.add(t);
-		invpg.addDueIn(t);
-	    }
-	    //  	    printDebug("generateProjections(), previous: "+previous+", current: "+current);
 	}
 	return projections.elements();
     }
@@ -834,15 +805,15 @@ public abstract class InventoryManager extends InventoryProcessor {
 	return nItems;
     }
 
-    /** Update the current DaysOnHandPolicy */
-    protected boolean updateDaysOnHandPolicy(Enumeration policies) {
-	DaysOnHandPolicy pol;
+    /** Update the current InventoryPolicy */
+    protected boolean updateInventoryPolicy(Enumeration policies) {
+	InventoryPolicy pol;
 	boolean changed = false;
-//  	printDebug("updateDaysOnHandPolicy(), Days On Hand Policy for "+supplyType_+". DaysOnHand: "+daysOnHand_+
+//  	printDebug("updateInventoryPolicy(), Days On Hand Policy for "+supplyType_+". DaysOnHand: "+daysOnHand_+
 //  		   ", Days Forward: "+daysForward_+", Days Backward: "+daysBackward_+", Window size: "+
 //  		   (daysForward_+daysBackward_));
 	while (policies.hasMoreElements()) {
-	    pol = (DaysOnHandPolicy)policies.nextElement();
+	    pol = (InventoryPolicy)policies.nextElement();
 	    int days = pol.getDaysOnHand();
             if ((days >= 0) && (days != daysOnHand_)) {
 		daysOnHand_ = days;
@@ -864,9 +835,17 @@ public abstract class InventoryManager extends InventoryProcessor {
 		goalLevelMultiplier_ = multiplier;
 		changed = true;
 	    }
+            if (pol.hasSwitchoverRule()) {
+                ProjectionWeight newWeight =
+                    new ProjectionWeightImpl(pol.getWithdrawSwitchoverDay(),
+                                             pol.getRefillSwitchoverDay(),
+                                             pol.getTurnOffProjections());
+                inventoryPlugIn_.setProjectionWeight(supplyType_, newWeight);
+                changed = true;
+            }
 	}
 	if (changed) {
-	    printDebug("updateDaysOnHandPolicy(), Days On Hand Policy CHANGED for "+supplyType_+". DaysOnHand: "+daysOnHand_+
+	    printDebug("updateInventoryPolicy(), Days On Hand Policy CHANGED for "+supplyType_+". DaysOnHand: "+daysOnHand_+
 		       ", Days Forward: "+daysForward_+", Days Backward: "+daysBackward_+", Window size: "+
 		       (daysForward_+daysBackward_)+", goal level multiplier: "+goalLevelMultiplier_);
 	}		

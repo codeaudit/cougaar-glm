@@ -61,8 +61,10 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     private static class InventoryTypeHashEntry {
         Vector invBins = new Vector();
         UnaryPredicate dueOutPredicate;
-        public InventoryTypeHashEntry(UnaryPredicate predicate) {
+	ProjectionWeight projectionWeight;
+        public InventoryTypeHashEntry(UnaryPredicate predicate, ProjectionWeight weight) {
             dueOutPredicate = predicate;
+	    projectionWeight = weight;
         }
     }
 
@@ -114,6 +116,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 
     public InventoryPlugIn() {
 	super();
+        setExecutionDelay(10000, 60000);
     }
 
     public synchronized void execute() {
@@ -399,10 +402,43 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
         InventoryTypeHashEntry result =
             (InventoryTypeHashEntry) inventoryTypeHash_.get(supplyType);
         if (result == null) {
-            result = new InventoryTypeHashEntry(createDueOutPredicate(supplyType));
+	    ProjectionWeight weight = createProjectionWeight(supplyType);
+            result = new InventoryTypeHashEntry(createDueOutPredicate(supplyType), weight);
             inventoryTypeHash_.put(supplyType, result);
         }
         return result;
+    }
+
+    public ProjectionWeight getProjectionWeight(String supplyType) {
+        InventoryTypeHashEntry entry = getInventoryTypeHashEntry(supplyType);
+        return entry.projectionWeight;
+    }
+
+    /**
+     * Set the ProjectionWeight for a class of supply. This becomes
+     * the default ProjectionWeight for new Inventory Assets for the
+     * class of supply. The ProjectionWeight of existing Inventory
+     * assets is updated to the new ProjectionWeight. Override this if
+     * you don't want this behavior.
+     **/
+    public void setProjectionWeight(String supplyType, ProjectionWeight weight) {
+	InventoryTypeHashEntry entry = getInventoryTypeHashEntry(supplyType);
+	entry.projectionWeight = weight;
+	Enumeration e = entry.invBins.elements();
+	while (e.hasMoreElements()) {
+            Inventory inv = (Inventory) e.nextElement();
+	    NewInventoryPG invpg = (NewInventoryPG) inv.getInventoryPG();
+	    invpg.setProjectionWeight(weight);
+	}
+    }
+
+    /**
+     * Create a default ProjectWeight for a class of supply. This
+     * implementation creates a new ProjectionWeightImpl with default
+     * settings. Override this if you want a different default.
+     **/
+    protected ProjectionWeight createProjectionWeight(String supplyType) {
+	return new ProjectionWeightImpl();
     }
 
     public synchronized Inventory findOrMakeInventory(String supplytype, Asset resource) {

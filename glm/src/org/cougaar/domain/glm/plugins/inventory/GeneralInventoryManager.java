@@ -82,8 +82,9 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	boolean failed_refill = updateAllocations();
 	boolean refill_changed = refillAllocs_.getChangedList().hasMoreElements(); 
 	boolean inventory_changed = modifiedInventorySubscription_.getChangedList().hasMoreElements();
-	boolean on_hand_policy_changed = updateDaysOnHandPolicy(onHandPolicySubscription_.getAddedList()) ||
-	                                 updateDaysOnHandPolicy(onHandPolicySubscription_.getChangedList());
+	boolean inventory_policy_changed =
+            updateInventoryPolicy(inventoryPolicySubscription_.getAddedList()) ||
+            updateInventoryPolicy(inventoryPolicySubscription_.getChangedList());
 
 	// Allocations of tasks with quantity > 0 to Inventory objects
 	// inventoryAllocSubscription_ only used to determine when to run processor.
@@ -94,7 +95,8 @@ public abstract class GeneralInventoryManager extends InventoryManager {
  	    printLog("<"+supplyType_+"> UPDATING INVENTORIES due to changed Inventory allocations.");
 	}
 
-	return(failed_refill || refill_changed  || allocatedInventories || inventory_changed || on_hand_policy_changed);
+	return failed_refill || refill_changed  || allocatedInventories || inventory_changed
+            || inventory_policy_changed;
     }
 
 
@@ -271,7 +273,7 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	if(!invpg.getFillToCapacity()) {
 	    // ** THIS IS A KLUDGE FOR SUBSISTENCE -- WITHOUT IT WE FAIL THE FIRST ORDER.
 	    //    SHOULDN'T HAPPEN LIKE THAT -- FIX ASAP -- RUSTY AND AMY!!
-	    refill_qty = refill_qty*1.3;
+  	    refill_qty = refill_qty*1.3;
 	    // *** KLUDGE ********
 	}
 
