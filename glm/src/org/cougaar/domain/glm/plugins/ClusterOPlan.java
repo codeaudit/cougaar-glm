@@ -32,7 +32,7 @@ public class ClusterOPlan implements Serializable {
     IncrementalSubscription orgActivitySubscription_;
 
     public ClusterOPlan(ClusterIdentifier id, Oplan op, IncrementalSubscription sub) {
-	System.out.println("--- Creating ClusterOPlan for "+id+", oplan "+op);
+//  	System.out.println("--- Creating ClusterOPlan for "+id+", oplan "+op);
 	clusterId_ = id;
 	oplan_ = op;
 	startTime_ = oplan_.getCday().getTime();
@@ -50,7 +50,7 @@ public class ClusterOPlan implements Serializable {
 	if (orgActivitySubscription_.getChangedList().hasMoreElements()
 	    || orgActivitySubscription_.getAddedList().hasMoreElements() 
 	    || orgActivitySubscription_.getRemovedList().hasMoreElements()) {
-	    System.out.println("--- New/Changed/Removed OrgActivities for "+clusterId_);
+//  	    System.out.println("--- New/Changed/Removed OrgActivities for "+clusterId_);
 	    updateOrgActivities(orgActivitySubscription_.elements());
 	    updateOPlanTimes();
 	    return true;
