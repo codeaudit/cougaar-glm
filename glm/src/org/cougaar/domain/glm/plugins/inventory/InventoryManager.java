@@ -495,8 +495,9 @@ public abstract class InventoryManager extends InventoryProcessor {
 		    printDebug("    ---->Failing due-out: "+TaskUtils.taskDesc(task)+"\n");
 		    
 		    // DEBUG PRINTOUT
-		    Enumeration dueIns = invpg.getAllDueIns();
-		    printInventory(inventory,dueIns,0);
+//  		    Enumeration dueIns = invpg.getAllDueIns();
+//  		    printInventory(inventory,dueIns,0);
+//  		    invpg.printInventoryLevels(inventory, clusterId_);
 
 		    PlanElement pe = task.getPlanElement();
 		    if (pe instanceof Allocation) {
