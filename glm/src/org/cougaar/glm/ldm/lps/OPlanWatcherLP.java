@@ -48,6 +48,8 @@ import org.cougaar.planning.ldm.asset.NewLocationSchedulePG;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.util.EmptyEnumeration;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
 import org.cougaar.util.UnaryPredicate;
 
 
@@ -59,6 +61,7 @@ import org.cougaar.util.UnaryPredicate;
 public class OPlanWatcherLP
 implements LogicProvider, EnvelopeLogicProvider
 {
+  private static final Logger logger = Logging.getLogger(OPlanWatcherLP.class);
   private final RootPlan rootplan;
   private final PlanningFactory ldmf;
 
@@ -92,6 +95,10 @@ implements LogicProvider, EnvelopeLogicProvider
     // find the matching Organization
     final String orgID = oa.getOrgID();
 
+    if (logger.isDebugEnabled()) {
+      logger.debug("OplanWatcherLP() - OrgActivity = " + oa +
+		   " action = " + action);
+    }
 
     Organization org = null;
     UnaryPredicate pred = 
@@ -121,8 +128,8 @@ implements LogicProvider, EnvelopeLogicProvider
 
 
     if (! (a instanceof Organization)) {
-      System.err.println("OPlanWatcher"
-                         " found non org asset "+a+" in logplan by name: "+orgID);
+      logger.error("OPlanWatcher() found non org asset " +
+                   a + " in logplan by name: "+orgID);
       return;
     }
     Organization org = (Organization) a;
@@ -163,8 +170,8 @@ implements LogicProvider, EnvelopeLogicProvider
       case Envelope.ADD:        // 
         {
           if (found.size()>0) {
-            System.err.println("Warning: OPlanWatcher saw redundant OrgActivity add for "+
-                               oa);
+	    logger.warn("OPlanWatcher() saw redundant OrgActivity add for "+
+			oa);
           }
           ScheduleElement se = oa.getNormalizedScheduleElement();
           if (se != null) {
@@ -185,8 +192,8 @@ implements LogicProvider, EnvelopeLogicProvider
         ls.removeAll(found);
         break;
       default:
-        System.err.println("Warning: OPlanWatcher somehow caught random envelope type "+
-                           action);
+	logger.warn("OPlanWatcher() somehow caught random envelope type "+
+		    action);
         return;
       }
     }
