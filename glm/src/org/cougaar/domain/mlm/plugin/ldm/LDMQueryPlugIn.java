@@ -131,6 +131,12 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
   private Vector queries = new Vector();
   private static int numDatabases = 0;
 
+  //WAN the type of database we are connecting to (Oracle, MySQL...)
+  protected int dbType; //WAN
+  protected static final int ORACLE=0; //WAN
+  protected static final int MYSQL=1; //WAN
+
+  protected static final String[] DBTYPES={"Oracle", "MySQL"}; //WAN
 
   /********************************************************************************
    *
@@ -654,12 +660,10 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
             else if (line.startsWith("DB_DRIVER"))
               {
                 driver = (line.substring(indexToUse+1, line.length())).trim();
-                //System.out.println("DB_DRIVER is " + driver);			   
               }// DB_DRIVER
             else if (line.startsWith("USER"))
               {
                 userID = (line.substring(indexToUse+1, line.length())).trim();
-                //System.out.println("USER is " + userID);			   
               }// USER
             else if (line.startsWith("MIN_IN_POOL"))
               {
@@ -862,6 +866,31 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
                       }
                   }// else statement
               }// if line begins with a %
+            else if (line.indexOf("select ") != -1) { //WAN if the word "select " is found process as if query
+              //String queryType = line.substring(1).trim(); // skip the <
+              int equalsIndex = line.indexOf('='); //find the =
+              String queryType = line.substring(0, equalsIndex);
+              int dotIndex = queryType.indexOf(".");
+              if (dotIndex != -1)
+                queryType = queryType.substring(dotIndex+1).trim();
+              else
+                queryType = "default";
+
+              //only process query if it is a default query or it is a query for the type of database that is being used
+              if (queryType.equals("default")) {
+                parseQueryParameter(((pt==null)?globalParameters:pt),
+                                  line);
+              }
+              else if (queryType.equalsIgnoreCase(DBTYPES[dbType])){
+                String startQuery = line.substring(0, dotIndex);
+                String endQuery = line.substring(equalsIndex);
+                String newLine = startQuery+endQuery;
+                parseQueryParameter(((pt==null)?globalParameters:pt),
+                                  newLine);
+              }
+              else //skip if this query does not match this database type and is not a default query (WAN)
+                continue;
+            }
             else
               {
                 // should be a param=value line
@@ -885,7 +914,16 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
          
       
   }//parseQueryFile
-  
+
+  private static int stringToType(String str){ //WAN copied from DBConfig.java
+    for(int i=0;i<DBTYPES.length;i++){
+      if(str.equalsIgnoreCase(DBTYPES[i]))
+	return i;
+    }
+    System.err.println("Unknown database type: "+str);
+    return MYSQL;
+  }
+
   /********************************************************************************
    *
    * Method Name:	parseQueryParmeters
@@ -898,16 +936,20 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
    *
    * Output:	  	None
    *
-   ********************************************************************************/     
-  private void parseQueryParameter(Properties table, String s) 
-  {
-    //System.out.println("ParseQueryParameter String is " + s);  
+   ********************************************************************************/
+  private void parseQueryParameter(Properties table, String s) {
     int i = s.indexOf('=');
-
+    //System.err.println( "\ns = " + s );
     String p = s.substring(0,i).trim();
     String v = s.substring(i+1).trim();
+
+    if (p.equalsIgnoreCase("database")) {//WAN added
+      String realVal = Parameters.replaceParameters(v); //WAN added
+      int colonIndex1 = realVal.indexOf(':');
+      int colonIndex2 = realVal.indexOf(':', colonIndex1+1);
+      dbType = stringToType(realVal.substring(colonIndex1+1, colonIndex2));  //WAN added
+    }
     table.put(p,v);
-	  
   }// parseQueryParameter
   
   public void registerAsset( Asset anAsset ) 
