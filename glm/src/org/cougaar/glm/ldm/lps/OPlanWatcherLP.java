@@ -19,10 +19,13 @@
  * </copyright>
  */
 
+
 package org.cougaar.glm.ldm.lps;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+
 
 import org.cougaar.core.blackboard.Envelope;
 import org.cougaar.core.blackboard.EnvelopeTuple;
@@ -33,6 +36,7 @@ import org.cougaar.core.util.UID;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.LocalPG;
 import org.cougaar.planning.ldm.asset.LocationSchedulePG;
 import org.cougaar.planning.ldm.asset.LocationSchedulePGImpl;
 import org.cougaar.planning.ldm.asset.NewLocationSchedulePG;
@@ -44,14 +48,15 @@ import org.cougaar.util.UnaryPredicate;
 
 
 /**
- * OPlanWatcherLP tracks OPlan changes, reconciling other objects to the OPlan(s)
+ * OPlanWatcherLP tracks OPlan changes, reconciling other objects to the OPlan(s).
+ * In particular, it updates the local Org asset with the required LocationSchedule changes.
  **/
-
 public class OPlanWatcherLP
 implements LogicProvider, EnvelopeLogicProvider
 {
   private final RootPlan rootplan;
   private final PlanningFactory ldmf;
+
 
   public OPlanWatcherLP(
       RootPlan rootplan,
@@ -60,8 +65,10 @@ implements LogicProvider, EnvelopeLogicProvider
     this.ldmf = ldmf;
   }
 
+
   public void init() {
   }
+
 
   /**  
    * Catch interesting Oplan and Oplan component activity.
@@ -74,10 +81,12 @@ implements LogicProvider, EnvelopeLogicProvider
     // else do nothing
   }
 
+
     
   private void processOrgActivity(OrgActivity oa, int action) {
     // find the matching Organization
     final String orgID = oa.getOrgID();
+
 
     Organization org = null;
     UnaryPredicate pred = 
@@ -97,12 +106,14 @@ implements LogicProvider, EnvelopeLogicProvider
     }
 
 
+
     /*
       // something like this would work if the world was sane... 
       // right now, we'd have to do something even uglier like
       //   findAsset("UIC/"+orgID);  
       // bleah!
     Asset a = logplan.findAsset(orgID);
+
 
     if (! (a instanceof Organization)) {
       System.err.println("OPlanWatcher"
@@ -111,6 +122,7 @@ implements LogicProvider, EnvelopeLogicProvider
     }
     Organization org = (Organization) a;
     */
+
 
     // get the pg
     LocationSchedulePG lspg = org.getLocationSchedulePG();
@@ -124,6 +136,7 @@ implements LogicProvider, EnvelopeLogicProvider
       ls = ldmf.newLocationSchedule(EmptyEnumeration.getEnumeration());
       ((NewLocationSchedulePG)lspg).setSchedule(ls);
     }
+
 
     // now that we have it, lock it so nobody bashes it
     synchronized (ls) {
@@ -139,6 +152,7 @@ implements LogicProvider, EnvelopeLogicProvider
           }
         }
       });
+
 
       switch (action) {
       case Envelope.ADD:        // 
@@ -179,6 +193,7 @@ implements LogicProvider, EnvelopeLogicProvider
     // other LPs to pay attention to what changed, only reacting when/as 
     // appropriate.  Yet another pre-demo hack.
 
+
     // RAY - Turned this back on since some plugins need to see
     // updated location schedules. The offending plugin
     // (PropagationPlugin) checks explicitly for
@@ -186,8 +201,18 @@ implements LogicProvider, EnvelopeLogicProvider
     // ChangeReports and re-propagates IFF the changes include such a
     // ChangeReport
 
+
     // mark the object as having changed...maybe we should forward the changes?
-    rootplan.change(org, null);  
+
+
+    // Mark the org as only having changed local things
+    // AssetReportPlugin - which is responsible for forwarding the changes to the org
+    // to other agents - will look for this change report, and avoid propogating 
+    // the change if it was only such LocalPG changes
+    Collection changes = new ArrayList();
+    changes.add(new LocalPG.LocalPGChangeReport());
+    rootplan.change(org, changes);
+
 
   }
 }
