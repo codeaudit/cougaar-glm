@@ -102,8 +102,12 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
       Collection subtasks = new ArrayList();
       
       try {
-        // Load the Oracle JDBC driver
-        Class.forName ("oracle.jdbc.driver.OracleDriver");
+        String rawdb = Parameters.replaceParameters("${generic.database.expander.database}");
+        int colonIndex1 = rawdb.indexOf(':');
+        int colonIndex2 = rawdb.indexOf(':', colonIndex1+1);
+        String dbType = rawdb.substring(colonIndex1+1, colonIndex2);  //WAN added
+        String driverName = Parameters.findParameter("driver."+dbType);
+        Class.forName(driverName);
         Connection conn = null;
         ResultSet rset = null;
 
@@ -113,7 +117,6 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
     	    // You can use either the fully specified SQL*net syntax or a short cut
     	    // syntax as <host>:<port>:<sid>.  The example uses the short cut syntax.
          // get the db info out of the cougaarrc file
-         String rawdb = "${generic.database.expander.database}";
          String dbinfo = Parameters.replaceParameters(rawdb);
          String rawuser = "${generic.database.expander.user}";
          String dbuser = Parameters.replaceParameters(rawuser);
@@ -122,7 +125,7 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
          String exptable = "${generic.database.expander.expansion_table}";
          String dbexptable = Parameters.replaceParameters(exptable);
 
-         conn = DriverManager.getConnection ("jdbc:oracle:thin:@" + dbinfo, dbuser, dbpasswd );
+	 conn = DriverManager.getConnection (dbinfo, dbuser, dbpasswd );
          String parentverb = task.getVerb().toString();
 	       // Create a Statement
     	   Statement stmt = conn.createStatement ();
@@ -146,10 +149,10 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
 	       // close this round of queries
 	       stmt.close();
 	       stmt = conn.createStatement();
-
-         StringBuffer secondaryleafquery = new StringBuffer("select cte.subtask_name, t1.offset + cte.offset, cte.duration from "+ dbexptable +" cte, (select cte1.subtask_name, cte1.is_leaf_task, cte1.offset, cte1.duration from "+ dbexptable +" cte1 where is_leaf_task = 0 and root_task_name = '");
-	       secondaryleafquery.append( parentverb + "') t1 where cte.root_task_name = t1.subtask_name order by t1.offset, t1.subtask_name" );
-         //System.out.println("\n About to execute query: "+ secondaryleafquery);
+	       StringBuffer secondaryleafquery =
+		 new StringBuffer("select cte.subtask_name, t1.offset + cte.offset, cte.duration from "+ dbexptable +" cte, "+ dbexptable +" t1 where t1.is_leaf_task = 0 and t1.root_task_name = '");
+	       secondaryleafquery.append( parentverb + "' and cte.root_task_name = t1.subtask_name order by t1.offset, t1.subtask_name" );
+	       //         System.out.println("\n About to execute query: "+ secondaryleafquery);
 	       rset = stmt.executeQuery(secondaryleafquery.toString());
 
     	   while (rset.next ()) {
@@ -267,3 +270,7 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
     }  
 
 }
+
+
+
+
