@@ -33,11 +33,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 
 /** XMLPolicyCreator - creates policies from xml file
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: XMLPolicyCreator.java,v 1.3 2001-02-07 19:00:26 ngivler Exp $
+ * @version $Id: XMLPolicyCreator.java,v 1.4 2001-03-08 17:00:14 ngivler Exp $
  **/
 
 public class XMLPolicyCreator {
@@ -156,8 +157,8 @@ public class XMLPolicyCreator {
 	    if (rp != null)
 	      p.Add(rp);
 	  }
-	  else
-	    System.out.println(ruleParamNode.getNodeName());
+	  else 
+            System.out.println(ruleParamNode.getNodeName());
 	}
       }
     }
@@ -218,6 +219,25 @@ public class XMLPolicyCreator {
       }
 
       rp = drp;
+    } else if (nodeType.equals("Long")) {
+      String stringval = child.getAttributes().getNamedItem("value").getNodeValue();
+      Long val = Long.valueOf(stringval);
+      stringval = child.getAttributes().getNamedItem("min").getNodeValue();
+      long min= Long.valueOf(stringval).longValue();
+      stringval = child.getAttributes().getNamedItem("max").getNodeValue();
+      long max = Long.valueOf(stringval).longValue();
+      LongRuleParameter lrp = 
+	new LongRuleParameter(paramName, min, max);
+//    System.out.println("new LongRuleParameter(" + paramName 
+// 			 + ", " + min  +", " + max + ")" );
+
+      try {
+	lrp.setValue(val);
+      } catch (RuleParameterIllegalValueException ve) {
+	System.out.println(ve);
+      }
+
+      rp = lrp;
     } else if (nodeType.equals("String")) {
       String stringval = child.getAttributes().getNamedItem("value").getNodeValue();
 
@@ -234,16 +254,20 @@ public class XMLPolicyCreator {
 
       rp = srp;
     } else if (nodeType.equals("Class")) {
-      String classvalue = child.getAttributes().getNamedItem("class_type").getNodeValue();
+      String interfaceType = child.getAttributes().getNamedItem("interface_type").getNodeValue();
+      String classType = child.getAttributes().getNamedItem("class_type").getNodeValue();
       try {
-	Class c = Class.forName(classvalue);
+	Class c = Class.forName(interfaceType);
 	ClassRuleParameter crp = 
 	  new ClassRuleParameter(paramName, c);
+
+        c = Class.forName(classType);
+        crp.setValue(c);
+        System.out.println(99);
 	rp = crp;
       } catch (Exception e) {
-	System.out.println("Couldn't create class " + classvalue + e);
-      }
-
+	System.out.println("Couldn't create class " + interfaceType + e);
+      } 
     } else if (nodeType.equals("Boolean")) {
       String boolvalue = child.getAttributes().getNamedItem("value").getNodeValue();
       boolvalue = boolvalue.trim();
@@ -338,14 +362,34 @@ public class XMLPolicyCreator {
 	    Node rangeNode = nlist.item(i);
 	    if (rangeNode.getNodeType() != Node.ELEMENT_NODE)
 		continue;
-	    int min = Integer.valueOf(rangeNode.getAttributes().getNamedItem
-				      ("min").getNodeValue()).intValue();
-	    int max = Integer.valueOf(rangeNode.getAttributes().getNamedItem
-				      ("max").getNodeValue()).intValue();
-	    String value = rangeNode.getAttributes().getNamedItem("value").getNodeValue();
-	    rangeVector.addElement(new RangeRuleParameterEntry
-		(value, min, max));
-	}
+            int min = Integer.valueOf(rangeNode.getAttributes().getNamedItem
+                                        ("min").getNodeValue()).intValue();
+            int max = Integer.valueOf(rangeNode.getAttributes().getNamedItem
+                                      ("max").getNodeValue()).intValue();
+            NodeList valList = rangeNode.getChildNodes();
+            Object value = null;
+            for (int j = 0; j < valList.getLength(); j++) {
+              Node valNode = valList.item(j);
+              String valType = valNode.getNodeName();
+              switch (valNode.getNodeType()) {
+              case Node.ELEMENT_NODE:
+                if (valType.equals("String")) {
+                  value = valNode.getAttributes().getNamedItem("value").getNodeValue();
+                } else {
+                  value = parseRuleParamNode((Element) valNode);
+                }
+                break;
+              default:
+                //System.out.println("Node type: " + valNode.getNodeType());
+              }
+            }
+            if (value == null) {
+              System.err.println("XMLPolicyCreator: unable to parse range entry value for " +
+                                 paramName + ". Min = " + min + " , max = " + max);
+            } else {
+              rangeVector.addElement(new RangeRuleParameterEntry(value, min, max));
+            }
+        } 
 	RangeRuleParameterEntry []ranges = 
 	    new RangeRuleParameterEntry[rangeVector.size()];
 	for(int i = 0; i < ranges.length; i++) 
