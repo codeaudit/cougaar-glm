@@ -342,108 +342,6 @@ public abstract class InventoryManager extends InventoryProcessor {
     return projections;
   }
 
-  /**
-   * Reorder increment specifies an adjustment to duein preferences
-   * to keep the inventory level above the target level. Since each
-   * projection produces a piece of a piecewise-linear approximation
-   * to the needed level we need to find a series of straight lines
-   * that overbound the target level. Starting at the startDay, we
-   * find the next horizon day to delimit a segment. The horizon day
-   * is the day for which the slope of the line from the value on
-   * one day to the value on the other is maximum. Think of ranges
-   * of mountains in the distance. some peaks in the foreground will
-   * have others behind them that reach higher and higher until,
-   * finally, there is a peak that obscures all the peaks behind it.
-   * The peaks behind may be higher, but because of the point of
-   * view, they can't be seen. From the peak on the horizon day,
-   * find the next horizon day, and so on until the last day is
-   * reached.
-   **/
-  protected static class SegmentInfo {
-    int nDays;
-    int endDay;
-    double startLevel;
-    double endLevel;
-    SegmentInfo(int nDays, double startLevel, double endLevel) {
-      this.nDays = nDays;
-      this.startLevel = startLevel;
-      this.endLevel = endLevel;
-    }
-    public double getSlope() {
-      return (endLevel - startLevel) / nDays;
-    }
-    public int getDays() {
-      return nDays;
-    }
-  }
-
-  protected SegmentInfo[] determineReorderProfile(int startDay, int endDay, Inventory inventory) {
-    int e = endDay - startDay;
-    List segments = new ArrayList();
-    if (e == 0) return new SegmentInfo[0];
-
-    InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
-    double[] level = new double[e + 1];
-    for (int i = 0; i <= e; i++) {
-      //              level[i] = 0.5 * (invpg.getReorderLevel(i + startDay) + invpg.getGoalLevel(i + startDay));
-      level[i] = invpg.getReorderLevel(i + startDay - 1);
-    }
-    if (e == 1) return new SegmentInfo[] {new SegmentInfo(1, level[0], level[1])};
-    int i = 0;
-    double li = level[i];
-    while (true) {
-      int ip = i + 1;
-      double peakSlope = (level[ip] - li); // The bounding slope
-      for (int j = ip + 1; j <= e; j++) {
-	double lj = level[j];
-	double thisSlope = (lj - li) / (j - i);
-	double minLevel = (li + peakSlope * (j - i)) * 0.99;
-	if (lj > minLevel) {
-	  ip = j;     // Include in this segment
-	  if (thisSlope > peakSlope) {
-	    peakSlope = thisSlope;
-	  }
-	}
-      }
-      double lip = li + peakSlope * (ip - i);
-      segments.add(new SegmentInfo(ip - i, li, lip));
-      i = ip;
-      li = lip;
-      if (i == e) break;
-    }
-    return (SegmentInfo[]) segments.toArray(new SegmentInfo[segments.size()]);
-  }
-
-  protected static class ReorderIncrement {
-    public double first;
-    public double highest;
-    public double last;
-    public int highestDay;
-  }
-
-  protected ReorderIncrement determineReorderIncrement(int startDay, int endDay, Inventory inventory) {
-    InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
-    double first = invpg.getGoalLevel(startDay);
-
-    ReorderIncrement si = new ReorderIncrement();
-    double highest = first;
-    double last = invpg.getGoalLevel(endDay);
-    int highestDay = startDay;
-    for (int i = startDay + 1; i < endDay; i++) {
-      double reorder = invpg.getGoalLevel(i);
-	    
-      if (reorder > highest){
-	highest = reorder;
-	highestDay = i;
-      }
-    }
-    si.first = first * 1.1;
-    si.highest = highest * 1.1;
-    si.highestDay = highestDay;
-    si.last = last * 1.1;
-    return si;
-  }
-
   protected Rate createDailyRate(Measure qty) {
     Rate rate = null;
     if (qty instanceof Volume) {
@@ -566,16 +464,6 @@ public abstract class InventoryManager extends InventoryProcessor {
 
     //  	p_start = createDateAfterPreference(AspectType.START_TIME, start_time);
     p_end = createDateBeforePreference(AspectType.END_TIME,end_time);
-
-    // AMY - SF need early (OPlan Start date), best (defaultRefillEndDate) and Late (Plan End date)
-    //  	    double early = (double)oplan.getStartTime();
-    //  	    double best = (double)end_time;
-    //  	    double late = (double)oplan.getEndTime();
-    //  	    AspectValue earlyAV = new AspectValue(AspectType.END_TIME, early);
-    //  	    AspectValue bestAV = new AspectValue(AspectType.END_TIME, best);
-    //  	    AspectValue lateAV = new AspectValue(AspectType.END_TIME, late);
-    //  	    ScoringFunction endTimeSF = ScoringFunction.createVScoringFunction(earlyAV, bestAV, lateAV);
-    //  	    p_end = ldmFactory_.newPreference(AspectType.END_TIME, endTimeSF);
 
     p_qty = createRefillQuantityPreference(refill_qty);
     //  	prefs.addElement(p_start);
@@ -848,19 +736,6 @@ public abstract class InventoryManager extends InventoryProcessor {
 	invpg.updateDetailedContentSchedule(inventory);
       }
       invpg.updateInventoryLevelsSchedule(inventory);
-    }
-  }
-
-  protected void clearInventorySchedule() {
-    Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
-    Inventory inventory;
-    InventoryPG invpg;
-    printError("clearInventorySchedule() !!!!!!!! Should not be called.");
-    printDebug("LAST STEP: CLEARINVENTORYSCHEDULE()");
-    while (inventories.hasMoreElements()) {
-      inventory = (Inventory)inventories.nextElement();
-      invpg = (InventoryPG)inventory.getInventoryPG();
-      invpg.clearContentSchedule(inventory);
     }
   }
 
