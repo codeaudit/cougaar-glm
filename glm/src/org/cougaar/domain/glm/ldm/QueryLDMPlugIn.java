@@ -53,6 +53,13 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     protected Vector cannotHandle_ = new Vector();
     protected String className_ = null;
     protected Hashtable myParams_ = new Hashtable();
+    //WAN the type of database we are connecting to (Oracle, MySQL...)
+    protected int dbType; //WAN
+    protected static final int ORACLE=0; //WAN
+    protected static final int MYSQL=1; //WAN
+
+    protected static final String[] DBTYPES={"Oracle", "MySQL"}; //WAN
+
 
     /**
      * Parse plugIn arguments, initialize driver, get cluster identifier.
@@ -128,7 +135,16 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	}
 	return proto;
     }
-    
+
+    private static int stringToType(String str){ //WAN copied from DBConfig.java
+      for(int i=0;i<DBTYPES.length;i++){
+        if(str.equalsIgnoreCase(DBTYPES[i]))
+          return i;
+      }
+      System.err.println("Unknown database type: "+str);
+      return MYSQL;
+    }
+
     // retrieve and parse the arguments
     // Currently expecting the query file as the only argument.
     protected void parseArguments() {
@@ -206,10 +222,36 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 		// skip comments
 		if (c == '#') 
 		    continue;
+                else if (line.indexOf("select ") != -1) { //WAN if the word "select " is found process as if query
+                  //String queryType = line.substring(1).trim(); // skip the <
+                  int equalsIndex = line.indexOf('='); //find the =
+                  String queryType = line.substring(0, equalsIndex);
+                  int dotIndex = queryType.indexOf(".");
+                  if (dotIndex != -1)
+                    queryType = queryType.substring(dotIndex+1).trim();
+                  else
+                    queryType = "default";
 
-		// should be a param=value line
-		line = Parameters.replaceParameters(line);
-		parseQueryLine(line);
+                  //only process query if it is a default query or it is a query for the type of database that is being used
+                  if (queryType.equals("default")) {
+                    line = Parameters.replaceParameters(line);
+                    parseQueryLine(line);
+                  }
+                  else if (queryType.equalsIgnoreCase(DBTYPES[dbType])){
+                    String startQuery = line.substring(0, dotIndex);
+                    String endQuery = line.substring(equalsIndex);
+                    String newLine = startQuery+endQuery;
+                    newLine = Parameters.replaceParameters(line);
+                    parseQueryLine(newLine);
+                  }
+                  else //skip if this query does not match this database type and is not a default query (WAN)
+                    continue;
+                }
+                else {
+                  // should be a param=value line
+                  line = Parameters.replaceParameters(line);
+                  parseQueryLine(line);
+                }
 	    }
 	    in.close();
       
@@ -228,6 +270,12 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	}
 	String p = s.substring(0,i).trim();
 	String v = s.substring(i+1).trim();
+        if (p.equalsIgnoreCase("database")) {//WAN added
+          String realVal = Parameters.replaceParameters(v); //WAN added
+          int colonIndex1 = realVal.indexOf(':');
+          int colonIndex2 = realVal.indexOf(':', colonIndex1+1);
+          dbType = stringToType(realVal.substring(colonIndex1+1, colonIndex2));  //WAN
+        }
 	fileParameters_.put(p,v);
     }
 
@@ -242,7 +290,20 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 
     // initialize driver and obtain info to execute a query
     protected void initializeDriver() {
-	String driverName = getParm("Driver");
+	//String driverName = getParm("Driver"); //WAN - removed this to get Driver from database name
+        url_ = getParm("Database");
+	user_ = getParm("Username");
+	password_= getParm("Password");
+        int colonIndex1 = url_.indexOf(':'); //WAN
+        int colonIndex2 = url_.indexOf(':', colonIndex1+1); //WAN
+
+        String dbtype = url_.substring(colonIndex1+1, colonIndex2);
+        if (dbtype == null) {
+          throw new RuntimeException("No Connection parameter. - No dbtype");
+        }
+
+        String driverName = Parameters.findParameter("driver."+dbtype);//WAN  must go directly to cougaar.rc now
+
         if (driverName != null) {
           try {
             DBConnectionPool.registerDriver(driverName);

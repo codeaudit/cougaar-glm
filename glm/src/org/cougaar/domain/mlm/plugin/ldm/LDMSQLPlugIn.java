@@ -127,6 +127,12 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   protected Vector queries = new Vector();
   // the name of the file to look for.
   protected String queryFile;
+  //WAN the type of database we are connecting to (Oracle, MySQL...)
+  protected int dbType; //WAN
+  protected static final int ORACLE=0; //WAN
+  protected static final int MYSQL=1; //WAN
+
+  protected static final String[] DBTYPES={"Oracle", "MySQL"}; //WAN
 
   protected void setupSubscriptions() {
     // let the super run to deal with the uninteresting stuff
@@ -261,7 +267,31 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	      bogon.printStackTrace();
 	    }
 	  }
-	} else {
+	} else if (line.indexOf("select ") != -1) { //WAN if the word "select " is found process as if query
+          int equalsIndex = line.indexOf('='); //find the =
+          String queryType = line.substring(0, equalsIndex);
+          int dotIndex = queryType.indexOf(".");
+          if (dotIndex != -1)
+            queryType = queryType.substring(dotIndex+1).trim();
+          else
+            queryType = "default";
+
+          //only process query if it is a default query or it is a query for the type of database that is being used
+          if (queryType.equals("default")) {
+            parseQueryParameter(((pt==null)?globalParameters:pt),
+			      line);
+          }
+          else if (queryType.equalsIgnoreCase(DBTYPES[dbType])){
+            String startQuery = line.substring(0, dotIndex);
+            String endQuery = line.substring(equalsIndex);
+            String newLine = startQuery + " " +endQuery;
+            parseQueryParameter(((pt==null)?globalParameters:pt),
+			      newLine);
+          }
+          else //skip if this query does not match this database type and is not a default query (WAN)
+            continue;
+        }
+        else {
 	  // should be a param=value line
 	  parseQueryParameter(((pt==null)?globalParameters:pt),
 			      line);
@@ -276,11 +306,27 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     }
   }
 
+  private static int stringToType(String str){ //WAN copied from DBConfig.java
+    for(int i=0;i<DBTYPES.length;i++){
+      if(str.equalsIgnoreCase(DBTYPES[i]))
+	return i;
+    }
+    System.err.println("Unknown database type: "+str);
+    return MYSQL;
+  }
+
   private void parseQueryParameter(Properties table, String s) {
     int i = s.indexOf('=');
     //System.err.println( "\ns = " + s );
     String p = s.substring(0,i).trim();
     String v = s.substring(i+1).trim();
+
+    if (p.equalsIgnoreCase("database")) {//WAN added
+      String realVal = Parameters.replaceParameters(v); //WAN added
+      int colonIndex1 = realVal.indexOf(':');
+      int colonIndex2 = realVal.indexOf(':', colonIndex1+1);
+      dbType = stringToType(realVal.substring(colonIndex1+1, colonIndex2));  //WAN added
+    }
     table.put(p,v);
   }
 
@@ -349,16 +395,24 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 
   public void executeSQL(String rawSql, QueryHandler qh) {
     try {
-      String driver = qh.getParameter("Driver");
-      if (driver != null) {
-	DBConnectionPool.registerDriver(driver);
-      }
-
       String dbname = qh.getParameter("Database");
       if (dbname == null) {
 	throw new RuntimeException("No Connection parameter.");
       }
-      
+      //WAN find the dbtype by using the value of the dbname
+      int colonIndex1 = dbname.indexOf(':'); //WAN
+      int colonIndex2 = dbname.indexOf(':', colonIndex1+1); //WAN
+
+      String dbtype = dbname.substring(colonIndex1+1, colonIndex2);
+      if (dbtype == null) {
+	throw new RuntimeException("No Connection parameter. - No dbtype");
+      }
+
+      String driver = Parameters.findParameter("driver."+dbtype);//WAN  must go directly to cougaar.rc now
+      if (driver != null) {
+	DBConnectionPool.registerDriver(driver);
+      }
+
       // do Param substitution
       String sql;
       sql = produceQuery(qh, rawSql);
