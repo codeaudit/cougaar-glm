@@ -538,7 +538,7 @@ public class GLSClient extends JPanel {
 
   /**
    * Invoked when user selects "Connect" button.
-   * Attempts to connect to the NCA agent in the society running
+   * Attempts to connect to the OSD.GOV(NCA) agent in the society running
    * in the current experiment.
    */
   private class ConnectionButtonListener implements ActionListener {
@@ -721,7 +721,7 @@ public class GLSClient extends JPanel {
    * which the user can edit.
    */
   public static void main(String args[]) {
-    GLSClient gui = new GLSClient("localhost", "8800", "NCA");
+    GLSClient gui = new GLSClient("localhost", "8800", "OSD.GOV");
     JFrame frame = new JFrame("OPlan Control");
     frame.getContentPane().add(gui);
     gui.setDefaultButton();
