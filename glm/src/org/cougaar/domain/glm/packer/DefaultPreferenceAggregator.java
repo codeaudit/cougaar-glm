@@ -39,7 +39,7 @@ public class DefaultPreferenceAggregator implements PreferenceAggregator {
    */
   private static long EARLIEST_INCREMENT = -(21 * MILLIS_PER_DAY);
   private static long BEST_INCREMENT = 0 * MILLIS_PER_DAY;
-  private static long LATEST_INCREMENT = 7 * MILLIS_PER_DAY;
+  private static long LATEST_INCREMENT = 0 * MILLIS_PER_DAY;
 
   private Calendar myCalendar = Calendar.getInstance();
 
