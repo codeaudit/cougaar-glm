@@ -21,10 +21,10 @@
 
 package org.cougaar.lib.gss;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.plan.Task;
-import org.cougaar.domain.planning.ldm.measure.Distance;
-import org.cougaar.domain.planning.ldm.measure.Speed;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.measure.Distance;
+import org.cougaar.planning.ldm.measure.Speed;
 
 /**
  * Finds the travel time of a task using great circle distance

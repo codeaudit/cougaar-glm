@@ -10,9 +10,9 @@
 //package org.cougaar.lib.quo.performance;
 package org.cougaar.lib.quo.performance;
 
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import org.cougaar.lib.quo.performance.assets.*;
-import org.cougaar.core.cluster.ChangeReport;
+import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.plugin.Annotation;
 import java.io.*;
 
@@ -28,7 +28,7 @@ import java.io.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.7 2001-11-08 16:51:25 psharma Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.8 2001-12-27 22:42:18 bdepass Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends CommonUtilPlugIn
 {

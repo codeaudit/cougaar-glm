@@ -21,10 +21,10 @@
 
 package org.cougaar.lib.gss;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.plan.Preposition;
-import org.cougaar.domain.planning.ldm.plan.Schedule;
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Preposition;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.Task;
 
 import org.cougaar.lib.util.UTILPreference;
 

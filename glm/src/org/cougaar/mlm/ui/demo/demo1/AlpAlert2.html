@@ -1,0 +1,47 @@
+<html>
+<head>
+
+<title>Pop-up Scoreboard</title>
+</head>
+<body bgcolor="#ffffff" link="#990000" vlink="#999999">
+<center>
+
+<table border=0 cellpadding=8 cellspacing=0 width=550>
+<tr><td align=center colspan=2>
+<hr noshade>
+<font color="#cc6600" face="Arial,Helvetica" size=4><b>Active Alerts</b></font>
+<hr noshade>
+</td></tr>
+<tr>
+
+<td width=450>
+<font face="Arial,Helvetica" size=2>
+<p>
+This illustrates use of PSP (server) and HTML/Javascript (client) to provide continuous
+update to a browser console of Alerts.
+This particular model uses a tiny Java applet to listen to a PSP for alerts.  As they occur
+it forces refresh of the left-side scrolling frame with the new Alert information appended.
+For this implementation, random Alerts are generated at PSP approximately every 10 secs and displayed via HTTP feed back
+to applet.
+</P>
+</font>
+</td>
+</tr>
+<tr><td align=center colspan=2>
+<hr noshade size=1>
+<font face="Arial,Helvetica" size=2></font>
+</td></tr>
+</table>
+
+
+<P>The following applet is displayed for illustration -- it can be "hidden" by setting display to 1x1 pixel. </P>
+<APPLET  CODE=org.cougaar.mlm.ui.applets.ClientPSPEventDemo.class codeBase=.  archive="ui_applets.jar" width = 120 height = 35 >
+<param name=window value="ScrollAlertsFrame"> 
+<param name=port value="5555"></APPLET>
+
+
+<P><A HREF="SelectAlert.html">Select Alerts for activation</A></P>
+
+</center>
+</body>
+</html>

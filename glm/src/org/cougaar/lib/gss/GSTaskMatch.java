@@ -21,7 +21,7 @@
 
 package org.cougaar.lib.gss;
 
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Task;
 import java.util.List;
 
 /**

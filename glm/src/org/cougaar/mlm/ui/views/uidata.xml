@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<LogPlan>
+  <object class="org.cougaar.mlm.ui.data.UIPolicy" UID="MCCGlobalMode/36">
+    <field name="policyName" type="String">ShipPolicy</field>
+    <field name="policyParameter" type="collection">
+      <collection type="object">
+        <object class="org.cougaar.mlm.ui.data.UIPolicyParameterImpl">
+          <field name="name" type="String">ShipMode</field>
+          <field name="value" type="String">Ground</field>
+        </object>
+        <object class="org.cougaar.mlm.ui.data.UIPolicyParameterImpl">
+          <field name="name" type="String">ShipDays</field>
+          <field name="value" type="String">3</field>
+        </object>
+      </collection>
+    </field>
+  </object>
+  <object class="org.cougaar.mlm.ui.data.UIPolicy" UID="MCCGlobalMode/37">
+    <field name="policyName" type="String">StockageLevelPolicy</field>
+    <field name="policyParameter" type="collection">
+      <collection type="object">
+        <object class="org.cougaar.mlm.ui.data.UIPolicyParameterImpl">
+          <field name="name" type="String">WarReserves</field>
+          <field name="value" type="String">false</field>
+        </object>
+        <object class="org.cougaar.mlm.ui.data.UIPolicyParameterImpl">
+          <field name="name" type="String">HostNation</field>
+          <field name="value" type="String">false</field>
+        </object>
+        <object class="org.cougaar.mlm.ui.data.UIPolicyParameterImpl">
+          <field name="name" type="String">DaysOfSupply</field>
+          <field name="value" type="String">7</field>
+        </object>
+        <object class="org.cougaar.mlm.ui.data.UIPolicyParameterImpl">
+          <field name="name" type="String">PrepositionStock</field>
+          <field name="value" type="String">false</field>
+        </object>
+      </collection>
+    </field>
+  </object>
+</LogPlan>

@@ -79,12 +79,12 @@
 
 	* org/cougaar/domain/mlm/plugin/organization/GLSRescindPlugIn.java:
 	Make random pusher GUI optional controlled by
-	org.cougaar.domain.mlm.plugin.organization.GLSRescindPlugIn.hidden
+	org.cougaar.mlm.plugin.organization.GLSRescindPlugIn.hidden
 	system property. Defaults to true (hidden).
 
 	* org/cougaar/domain/mlm/plugin/organization/GLSGUIInitPlugIn.java:
 	Make random pusher GUI optional controlled by
-	org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.hidden
+	org.cougaar.mlm.plugin.organization.GLSGUIInitPlugIn.hidden
 	system property. Defaults to true (hidden).
 
 2001-09-06  Ray Tomlinson  <RTomlinson@bbn.com>
@@ -880,7 +880,7 @@
 	cases a PublishException is thrown. The exception may contain a
 	PublishStack from the prior activity that is in conflict with the
 	current, erroneous activity. This latter behavior is enabled by
-	the org.cougaar.core.cluster.savePriorPublisher system property
+	the org.cougaar.core.agent.savePriorPublisher system property
 	being true. The default is false since keeping the history is
 	expensive, but invaluable for debugging publishing errors.
 
@@ -928,24 +928,24 @@
 	change report collection.
 
 2001-02-02 Mark Davis <mdavis@bbn.com>
-	* org.cougaar.domain.mlm.ui.planviewer.inventory.InventoryChart
+	* org.cougaar.mlm.ui.planviewer.inventory.InventoryChart
 	and others in that package.
 
 	Made compatible to both build and run Inventory GUI with new Sitraka JChart upgrade (new jcchart451K.jar to replace old jcchart400K.jar in core).
 Cannot mix and match different builds of glm and core across this date.
 	
 2001-01-11 Jim Winston <jwinston@bbn.com>
-	* org.cougaar.domain.mlm.plugin.generic.PropgationPlugIn
-	* org.cougaar.domain.mlm.plugin.ldm.XMLPolicyPlugIn
+	* org.cougaar.mlm.plugin.generic.PropgationPlugIn
+	* org.cougaar.mlm.plugin.ldm.XMLPolicyPlugIn
 	Both PlugIns now accept more than one XML file parameter. 
 	
 2001-01-11 Amy Fedyk <afedyk@bbn.com>
-	* org.cougaar.domain.glm.plugins.projection.GenerateSupplyDemandExpander
+	* org.cougaar.glm.plugins.projection.GenerateSupplyDemandExpander
 	Removed dependency on OPlan for determining time phased location.
 	Made use of LocationSchedulePG on Organization.  This necessitates
 	that Plugins populate this PG on the Organization.
 	
-	* org.cougaar.domain.glm.plugins.inventory.SupplyExpander
+	* org.cougaar.glm.plugins.inventory.SupplyExpander
 	Using LocationSchedulePG for FROM Prep in creation of Transport Tasks.
 	If LocationSchedulePG is not present on Organization, HomeLocation is used.
 	

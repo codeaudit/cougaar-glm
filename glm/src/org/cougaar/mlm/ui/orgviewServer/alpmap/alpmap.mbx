@@ -1,0 +1,3 @@
+jmenu 1 CLUSTER (('show tasks' LSHOW 'http://$H:5555/$$$L/alpine/demo/TASKS.PSP?MODE=1')('show relationships' LSHOW 'http://$H:5555/$$$L/alpine/demo/CLUSTERS_R.PSP?MODE=2?HTML'))
+jmenu 4 COMMUNITY (('load community view' VIEW 777))
+jpulldowns [  'Plugin pollers'  [('Poll Now' MB 'pipecontrol pollnow')  ('Start PipeClusters' MB 'plugin org.cougaar.mlm.ui.orgviewServer.PipeClusters "http://localhost:5555"') ('Start PipeTasks' MB 'plugin org.cougaar.mlm.ui.orgviewServer.PipeTasks "http://localhost:5555" ')  ('Terminate all pollers'  MB 'pipecontrol terminate')]  'Relationships' [('Supporting' MB 'lines "Relate Supporting"')  ('Superior' MB 'lines "Relate Superior"') ('Subordinate' MB 'lines "Relate Subordinate"')  ('None' MB 'lines noLines') ] ]

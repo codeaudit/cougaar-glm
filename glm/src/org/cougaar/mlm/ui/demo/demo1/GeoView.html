@@ -1,0 +1,30 @@
+<HTML>
+
+
+<BODY>
+
+<H2>Geographic/Spatial Display Indexing</H2>
+
+<P>This applet illustrates the use of a Geographic Map or spatial display as an index
+into other displays.   The following map is an imagemap which is partititoned into sub-regions. 
+Selection of a sub-region on the main display will evoke a URL which can be displayed in 
+separate browser window or in another frame on the current display.
+</P>
+
+
+<APPLET CODE="org.cougaar.mlm.ui.applets.ScrollingImage.JDScrollingImagemap" CODEBASE=. WIDTH=650 HEIGHT=465>
+<param name="scrollBoxColor" value="000099">
+<param name="borderColor" value="000000">
+<param name="imagemap_file_name" value="eusa.gif">
+<param name="index_file_name" value="eusa_small.gif">
+<param name="scale" value="4">
+<>
+<param name="imagemap_data" value="
+  1, 1, 2532, 1800, ClustTdDemoDoc.html, _blank;
+">
+
+</APPLET>
+
+
+</BODY>
+</HTML>

@@ -21,9 +21,9 @@
 
 package org.cougaar.lib.gss;
 
-import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.AssetGroup;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AssetGroup;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Method;

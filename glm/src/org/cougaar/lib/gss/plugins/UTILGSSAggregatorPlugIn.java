@@ -21,28 +21,28 @@
 
 package org.cougaar.lib.gss.plugins;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Asset;
 
-import org.cougaar.domain.planning.ldm.plan.Aggregation;
-import org.cougaar.domain.planning.ldm.plan.AllocationResult;
-import org.cougaar.domain.planning.ldm.plan.AllocationResultDistributor;
-import org.cougaar.domain.planning.ldm.plan.AspectScorePoint;
-import org.cougaar.domain.planning.ldm.plan.AspectType;
-import org.cougaar.domain.planning.ldm.plan.AspectValue;
-import org.cougaar.domain.planning.ldm.plan.AuxiliaryQueryType;
-import org.cougaar.domain.planning.ldm.plan.MPTask;
-import org.cougaar.domain.planning.ldm.plan.NewComposition;
-import org.cougaar.domain.planning.ldm.plan.NewMPTask;
-import org.cougaar.domain.planning.ldm.plan.PlanElement;
-import org.cougaar.domain.planning.ldm.plan.Preference;
-import org.cougaar.domain.planning.ldm.plan.Preposition;
-import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.domain.planning.ldm.plan.Role;
-import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
-import org.cougaar.domain.planning.ldm.plan.Task;
-import org.cougaar.domain.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Aggregation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
+import org.cougaar.planning.ldm.plan.AspectScorePoint;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
+import org.cougaar.planning.ldm.plan.MPTask;
+import org.cougaar.planning.ldm.plan.NewComposition;
+import org.cougaar.planning.ldm.plan.NewMPTask;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Preposition;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 
-import org.cougaar.core.society.UniqueObject;
+import org.cougaar.core.util.UniqueObject;
 
 import org.cougaar.lib.callback.UTILAggregationCallback;
 import org.cougaar.lib.callback.UTILAssetCallback;
@@ -161,7 +161,7 @@ public abstract class UTILGSSAggregatorPlugIn
      *
      * @param t task to check for notification
      * @return boolean true if task is interesting
-     * @see org.cougaar.domain.planning.ldm.plan.Verb
+     * @see org.cougaar.planning.ldm.plan.Verb
      */
     public boolean interestingParentTask (Task t) { 
 	return interestingTask (t);

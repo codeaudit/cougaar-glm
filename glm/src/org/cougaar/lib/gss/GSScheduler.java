@@ -21,9 +21,9 @@
 
 package org.cougaar.lib.gss;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Asset;
 
-import org.cougaar.domain.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Task;
 //import org.cougaar.util.ConfigFileFinder;
 import org.cougaar.util.ConfigFinder;
 
@@ -368,55 +368,55 @@ public class GSScheduler {
    * this test script depends on that.
 
   public static final void main (String[] args) {
-    org.cougaar.domain.planning.ldm.RootFactory ldmf = new org.cougaar.domain.planning.ldm.RootFactory (null, null);
+    org.cougaar.core.domain.RootFactory ldmf = new org.cougaar.core.domain.RootFactory (null, null);
     GSScheduler s = parseSpecs ("tops/gss/aircrew.xml");
     Asset asset1 = new Asset();
-    org.cougaar.domain.planning.ldm.asset.NewAirForcePersonPG prop1 =
-      org.cougaar.domain.planning.ldm.asset.PropertyGroupFactory.newAirForcePersonPG();
+    org.cougaar.planning.ldm.asset.NewAirForcePersonPG prop1 =
+      org.cougaar.planning.ldm.asset.PropertyGroupFactory.newAirForcePersonPG();
     prop1.setQualifiedAircraftType ("C-17");
     prop1.setAircraftPosition ("Pilot");
     asset1.setAirForcePersonPG (prop1);
-    org.cougaar.domain.glm.ldm.asset.NewWaterSelfPropulsionPG prop4 =
-      org.cougaar.domain.planning.ldm.asset.PropertyGroupFactory.newWaterSelfPropulsionPG();
-    prop4.setCruiseSpeed (org.cougaar.domain.planning.ldm.measure.Speed.newMetersPerSecond (3150.0));
+    org.cougaar.glm.ldm.asset.NewWaterSelfPropulsionPG prop4 =
+      org.cougaar.planning.ldm.asset.PropertyGroupFactory.newWaterSelfPropulsionPG();
+    prop4.setCruiseSpeed (org.cougaar.planning.ldm.measure.Speed.newMetersPerSecond (3150.0));
     asset1.setWaterSelfPropulsionPG (prop4);
     Asset asset2 = new Asset();
-    org.cougaar.domain.glm.ldm.asset.NewAirVehiclePG prop2 =
-      org.cougaar.domain.planning.ldm.asset.PropertyGroupFactory.newAirVehiclePG();
+    org.cougaar.glm.ldm.asset.NewAirVehiclePG prop2 =
+      org.cougaar.planning.ldm.asset.PropertyGroupFactory.newAirVehiclePG();
     prop2.setVehicleType ("C-17");
     asset2.setAirVehiclePG (prop2);
     Asset asset3 = new Asset();
-    org.cougaar.domain.planning.ldm.asset.NewAirForcePersonPG prop3 =
-      org.cougaar.domain.planning.ldm.asset.PropertyGroupFactory.newAirForcePersonPG();
+    org.cougaar.planning.ldm.asset.NewAirForcePersonPG prop3 =
+      org.cougaar.planning.ldm.asset.PropertyGroupFactory.newAirForcePersonPG();
     prop3.setQualifiedAircraftType ("C-141");
     prop3.setAircraftPosition ("Pilot");
     asset3.setAirForcePersonPG (prop3);
     asset3.setWaterSelfPropulsionPG (prop4);
-    org.cougaar.domain.planning.ldm.plan.TaskImpl task1 =
-      new org.cougaar.domain.planning.ldm.plan.TaskImpl (1);
-    task1.setVerb (new org.cougaar.domain.planning.ldm.plan.Verb ("Supply"));
-    org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl pp1 =
-      new org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl();
+    org.cougaar.planning.ldm.plan.TaskImpl task1 =
+      new org.cougaar.planning.ldm.plan.TaskImpl (1);
+    task1.setVerb (new org.cougaar.planning.ldm.plan.Verb ("Supply"));
+    org.cougaar.planning.ldm.plan.PrepositionalPhraseImpl pp1 =
+      new org.cougaar.planning.ldm.plan.PrepositionalPhraseImpl();
     pp1.setPreposition ("Using");
     pp1.setIndirectObject (asset2);
     java.util.Date d1 = new java.util.Date ();
-    org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl pp3 =
-      new org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl();
+    org.cougaar.planning.ldm.plan.PrepositionalPhraseImpl pp3 =
+      new org.cougaar.planning.ldm.plan.PrepositionalPhraseImpl();
     pp3.setPreposition ("From");
-    org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl gl1 =
-      new org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl();
-    gl1.setLatitude (org.cougaar.domain.planning.ldm.measure.Latitude.newLatitude (0.0));
-    gl1.setLongitude (org.cougaar.domain.planning.ldm.measure.Longitude.newLongitude (0.0));
+    org.cougaar.glm.ldm.plan.GeolocLocationImpl gl1 =
+      new org.cougaar.glm.ldm.plan.GeolocLocationImpl();
+    gl1.setLatitude (org.cougaar.planning.ldm.measure.Latitude.newLatitude (0.0));
+    gl1.setLongitude (org.cougaar.planning.ldm.measure.Longitude.newLongitude (0.0));
     gl1.setGeolocCode ("aaa");
     gl1.setName ("aaa");
     pp3.setIndirectObject (gl1);
-    org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl pp4 =
-      new org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl();
+    org.cougaar.planning.ldm.plan.PrepositionalPhraseImpl pp4 =
+      new org.cougaar.planning.ldm.plan.PrepositionalPhraseImpl();
     pp4.setPreposition ("To");
-    org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl gl2 =
-      new org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl();
-    gl2.setLatitude (org.cougaar.domain.planning.ldm.measure.Latitude.newLatitude (10.0));
-    gl2.setLongitude (org.cougaar.domain.planning.ldm.measure.Longitude.newLongitude (10.0));
+    org.cougaar.glm.ldm.plan.GeolocLocationImpl gl2 =
+      new org.cougaar.glm.ldm.plan.GeolocLocationImpl();
+    gl2.setLatitude (org.cougaar.planning.ldm.measure.Latitude.newLatitude (10.0));
+    gl2.setLongitude (org.cougaar.planning.ldm.measure.Longitude.newLongitude (10.0));
     gl2.setGeolocCode ("bbb");
     gl2.setName ("bbb");
     pp4.setIndirectObject (gl2);
@@ -425,23 +425,23 @@ public class GSScheduler {
     v1.addElement (pp3);
     v1.addElement (pp4);
     task1.setPrepositionalPhrases (v1.elements());
-    task1.setSource (new org.cougaar.core.cluster.ClusterIdentifier ("abc"));
+    task1.setSource (new org.cougaar.core.agent.ClusterIdentifier ("abc"));
     Vector v5 = new Vector();
-    org.cougaar.domain.planning.ldm.plan.Preference pref1 =
+    org.cougaar.planning.ldm.plan.Preference pref1 =
       com.bbn.tops.util.TOPSPreference.makeStartDatePreference (ldmf, d1);
     v5.addElement (pref1);
-    org.cougaar.domain.planning.ldm.plan.Preference pref2 =
+    org.cougaar.planning.ldm.plan.Preference pref2 =
       com.bbn.tops.util.TOPSPreference.makeEndDatePreference
         (ldmf, new java.util.Date (d1.getTime() + 500000),
          new java.util.Date (d1.getTime() + 1000000),
          new java.util.Date (d1.getTime() + 2000000));
     v5.addElement (pref2);
     task1.setPreferences (v5.elements());
-    org.cougaar.domain.planning.ldm.plan.TaskImpl task2 =
-      new org.cougaar.domain.planning.ldm.plan.TaskImpl (2);
-    task2.setVerb (new org.cougaar.domain.planning.ldm.plan.Verb ("Transport"));
+    org.cougaar.planning.ldm.plan.TaskImpl task2 =
+      new org.cougaar.planning.ldm.plan.TaskImpl (2);
+    task2.setVerb (new org.cougaar.planning.ldm.plan.Verb ("Transport"));
     task2.setPrepositionalPhrases (v1.elements());
-    task2.setSource (new org.cougaar.core.cluster.ClusterIdentifier ("abc"));
+    task2.setSource (new org.cougaar.core.agent.ClusterIdentifier ("abc"));
     task2.setPreferences (v5.elements());
     System.out.println ("Looking for true, got " +
                         s.specs.interestingTask (task1));
@@ -461,30 +461,30 @@ public class GSScheduler {
                         s.specs.incrementCapacities(task1, arr1)[0]);
     Vector tasks = new Vector (4);
     tasks.addElement (task1);
-    task2.setVerb (new org.cougaar.domain.planning.ldm.plan.Verb ("Supply"));
+    task2.setVerb (new org.cougaar.planning.ldm.plan.Verb ("Supply"));
     tasks.addElement (task2);
     Vector assets = new Vector (4);
     assets.addElement (asset1);
     assets.addElement (asset3);
-    org.cougaar.domain.planning.ldm.plan.TaskImpl task3 =
-      new org.cougaar.domain.planning.ldm.plan.TaskImpl (3);
-    task3.setVerb (new org.cougaar.domain.planning.ldm.plan.Verb ("Supply"));
+    org.cougaar.planning.ldm.plan.TaskImpl task3 =
+      new org.cougaar.planning.ldm.plan.TaskImpl (3);
+    task3.setVerb (new org.cougaar.planning.ldm.plan.Verb ("Supply"));
     task3.setPrepositionalPhrases (v1.elements());
-    task3.setSource (new org.cougaar.core.cluster.ClusterIdentifier ("abc"));
+    task3.setSource (new org.cougaar.core.agent.ClusterIdentifier ("abc"));
     task3.setPreferences (v5.elements());
     tasks.addElement (task3);
-    org.cougaar.domain.planning.ldm.plan.TaskImpl task4 =
-      new org.cougaar.domain.planning.ldm.plan.TaskImpl (4);
-    task4.setVerb (new org.cougaar.domain.planning.ldm.plan.Verb ("Supply"));
+    org.cougaar.planning.ldm.plan.TaskImpl task4 =
+      new org.cougaar.planning.ldm.plan.TaskImpl (4);
+    task4.setVerb (new org.cougaar.planning.ldm.plan.Verb ("Supply"));
     task4.setPrepositionalPhrases (v1.elements());
-    task4.setSource (new org.cougaar.core.cluster.ClusterIdentifier ("abc"));
+    task4.setSource (new org.cougaar.core.agent.ClusterIdentifier ("abc"));
     task4.setPreferences (v5.elements());
     tasks.addElement (task4);
-    org.cougaar.domain.planning.ldm.plan.TaskImpl task5 =
-      new org.cougaar.domain.planning.ldm.plan.TaskImpl (5);
-    task5.setVerb (new org.cougaar.domain.planning.ldm.plan.Verb ("Supply"));
+    org.cougaar.planning.ldm.plan.TaskImpl task5 =
+      new org.cougaar.planning.ldm.plan.TaskImpl (5);
+    task5.setVerb (new org.cougaar.planning.ldm.plan.Verb ("Supply"));
     task5.setPrepositionalPhrases (v1.elements());
-    task5.setSource (new org.cougaar.core.cluster.ClusterIdentifier ("abc"));
+    task5.setSource (new org.cougaar.core.agent.ClusterIdentifier ("abc"));
     task5.setPreferences (v5.elements());
     tasks.addElement (task5);
     Hashtable ht = s.schedule(tasks.elements(), assets.elements());

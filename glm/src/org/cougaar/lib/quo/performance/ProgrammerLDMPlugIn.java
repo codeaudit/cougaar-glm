@@ -24,9 +24,9 @@ package org.cougaar.lib.quo.performance;
 
 import org.cougaar.core.plugin.*;
 import org.cougaar.lib.quo.performance.assets.*;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 
 /**
  * This COUGAAR PlugIn creates and publishes ProgrammerAsset objects.

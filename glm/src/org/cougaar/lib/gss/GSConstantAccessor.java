@@ -20,8 +20,8 @@
  */
 
 package org.cougaar.lib.gss;
-import org.cougaar.domain.planning.ldm.plan.Task;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.asset.Asset;
 
 /**
  * Replacess a task or resource accessor with a constant value

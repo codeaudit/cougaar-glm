@@ -22,7 +22,7 @@
 //package org.cougaar.lib.quo.performance;
 package org.cougaar.lib.quo.performance;
 
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Asset;
 
 /**
  * This COUGAAR Asset class serves as a base class for the ProgrammerAsset class.

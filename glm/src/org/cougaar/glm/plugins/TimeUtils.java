@@ -1,0 +1,106 @@
+/*--------------------------------------------------------------------------
+ *                         RESTRICTED RIGHTS LEGEND
+ *
+ *   Use, duplication, or disclosure by the Government is subject to
+ *   restrictions as set forth in the Rights in Technical Data and Computer
+ *   Software Clause at DFARS 52.227-7013.
+ *
+ *                             BBN Technologies,
+ *                               A Division of
+ *                              BBN Corporation
+ *                             10 Moulton Street
+ *                            Cambridge, MA 02138
+ *                              (617) 873-3000
+ *
+ *   Copyright 1999 by
+ *             BBN Technologies, A Division of
+ *             BBN Corporation, all rights reserved.
+ *
+ * --------------------------------------------------------------------------*/
+package org.cougaar.glm.plugins;
+
+import org.cougaar.core.agent.ClusterIdentifier;
+
+import java.lang.Class;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import org.cougaar.glm.debug.GLMDebug;
+
+/** Provides convenience methods. */
+public class TimeUtils {
+    public static DateFormat dateTimeFormat_;
+    /** number of msec per day */
+    // 86400000 msec/day = 1000msec/sec * 60sec/min *60min/hr * 24 hr/day
+    public static final long MSEC_PER_WEEK = 7 * 86400000L;
+    public static final long MSEC_PER_DAY  =     86400000L;
+    public static final long MSEC_PER_HOUR =      3600000L;
+    public static final long MSEC_PER_MIN  =        60000L;
+
+    public static long addNDays(long time, int n_days) {
+	return addNDaysTime(time, n_days);
+    }
+
+    public static long addNDaysTime(long time, int n_days) {
+	return (long)((int)(time/MSEC_PER_DAY)+n_days)*MSEC_PER_DAY;
+    }
+
+    public static String dateString () {
+	return dateString(new Date());
+    }
+
+    public static String dateString (long time) {
+	return dateString(new Date(time));
+    }
+
+    public static String dateString (Date date) {
+//  	dateTimeFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+//  							 DateFormat.SHORT);
+	dateTimeFormat_= new SimpleDateFormat("MM/dd/yy HH:mm:ss.SSS z");
+	String sdate = dateTimeFormat_.format(date);
+	// mape '9/8/00 12:00 AM' to ' 9/8/00 12:00 AM'
+	while(sdate.length()<17){
+	    sdate = " "+sdate;
+	}
+	return sdate;
+    }
+
+    public static String msecDateString (long time) {
+	dateTimeFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+							 DateFormat.SHORT);
+	String sdate = dateTimeFormat_.format(new Date(time));
+	// mape '9/8/00 12:00 AM' to ' 9/8/00 12:00 AM'
+	while(sdate.length()<17){
+	    sdate = " "+sdate;
+	}
+	long msec = time - (time/1000)*1000;
+	return sdate+":"+msec;
+    }
+
+    public static int getDaysBetween(long today, long tomorrow) {
+	return (int)((tomorrow-today)/MSEC_PER_DAY);
+    }
+
+    
+    public static long pushToEndOfDay(long time) {
+// 	GLMDebug.DEBUG("TimeUtils", "pushToMidnight(), Before: "+TimeUtils.dateString(time));
+	return pushToEndOfDay(Calendar.getInstance(), time);
+    }    
+
+    public static long pushToEndOfDay(Calendar calendar, long time) {
+// 	GLMDebug.DEBUG("TimeUtils", "pushToMidnight(), Before: "+TimeUtils.dateString(time));
+	calendar.setTime(new Date(time));
+	calendar.set(Calendar.HOUR, 11);
+	calendar.set(Calendar.MINUTE, 59);
+	calendar.set(Calendar.AM_PM, Calendar.PM);
+	calendar.set(Calendar.SECOND, 59);
+ 	calendar.set(Calendar.MILLISECOND, 999);
+    	calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+//   	GLMDebug.DEBUG("TimeUtils", "pushToEndOfDay(), After : "+TimeUtils.dateString(calendar.getTime().getTime()));
+	return calendar.getTime().getTime();
+    }
+}
+
