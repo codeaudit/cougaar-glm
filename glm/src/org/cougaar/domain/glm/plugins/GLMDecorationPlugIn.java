@@ -27,9 +27,13 @@ import org.cougaar.core.society.UID;
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.util.UnaryPredicate;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
@@ -46,12 +50,14 @@ import org.cougaar.domain.glm.ldm.oplan.Oplan;
 public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
     private static final String SYNCHRONOUS_MODE_PROP =
         "org.cougaar.domain.glm.plugins.synchronous";
-    public Vector                        ClusterOPlans_ = new Vector();
-    //    public ClusterOPlan                        oplan_ = null;
+    /** Map keyed by OPlan UID of ClusterOPlans **/
+    public Map                             ClusterOPlans_ = new HashMap();
     public IncrementalSubscription         oplans_;
     public boolean                         oplanChanged_ = false,
                                            orgActChanged_ = false, 
 	                                   clusterOplanChanged_ = false;
+    /** Map keyed by OPlan UID to an org activity subscription **/
+    private Map orgActivitySubscriptionOfOPlanUID = new HashMap();
 
     // oplan
     static class OplanPredicate implements UnaryPredicate
@@ -77,12 +83,25 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
 	}
     }
 
+    private void getClusterOPlans() {
+        Collection c = query(new UnaryPredicate() {
+            public boolean execute(Object o) {
+                return o instanceof ClusterOPlan;
+            }
+        });
+        for (Iterator i = c.iterator(); i.hasNext(); ) {
+            ClusterOPlan coplan = (ClusterOPlan) i.next();
+            ClusterOPlans_.put(coplan.getOplanUID(), coplan);
+        }
+    }
+
     protected void setupSubscriptions() {
 	super.setupSubscriptions();
 	oplans_ = (IncrementalSubscription)subscribe(new OplanPredicate());
 	monitorPlugInSubscription(oplans_);
 	
 	if(didRehydrate()) {
+            getClusterOPlans();
 	    doUpdateOplans();
 	}
     }
@@ -174,12 +193,20 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
 	    enum = oplans_.getAddedList();
 	    while (enum.hasMoreElements()) {
 		Oplan oplan = (Oplan)enum.nextElement();
-		// Give each ClusterOPlan a subscription to its OrgActivities
-		IncrementalSubscription oplanActivities = 
-		    (IncrementalSubscription)subscribe(new OplanOrgActivitiesPredicate(oplan.getUID()));
-		monitorPlugInSubscription(oplanActivities);
-//  		System.out.println("--- Creating new ClusterOPlan for "+oplan);
-		ClusterOPlans_.add(new ClusterOPlan(clusterId_, oplan, oplanActivities));
+                UID oplanUID = oplan.getUID();
+                IncrementalSubscription oplanActivities = (IncrementalSubscription)
+                    orgActivitySubscriptionOfOPlanUID.get(oplanUID);
+                if (oplanActivities == null) {
+                    oplanActivities = (IncrementalSubscription)
+                        subscribe(new OplanOrgActivitiesPredicate(oplanUID));
+                    monitorPlugInSubscription(oplanActivities);
+                    orgActivitySubscriptionOfOPlanUID.put(oplanUID, oplanActivities);
+                }
+                ClusterOPlan coplan = (ClusterOPlan) ClusterOPlans_.get(oplanUID);
+                if (coplan == null) {
+                    coplan = new ClusterOPlan(clusterId_, oplan);
+                    ClusterOPlans_.put(oplanUID, coplan);
+                }
 	    }
 	}
 	// Remove ClusterOPlan objects that are no longer relevant
@@ -187,17 +214,15 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
 	    enum = oplans_.getRemovedList();
 	    while (enum.hasMoreElements()) {
 		Oplan oplan = (Oplan)enum.nextElement();
-		Enumeration cluster_oplans = ClusterOPlans_.elements();
-		while (cluster_oplans.hasMoreElements()) {
-		    ClusterOPlan coplan = (ClusterOPlan)cluster_oplans.nextElement();
-		    if (coplan.getOplanUID().equals(oplan.getUID())) {
-			// Remove ClusterOPlan from array
-			ClusterOPlans_.remove(coplan);
-			// Cancel subscription
-			unsubscribe(coplan.getOrgActivitySubscription());
-			break;
-		    }
-		}
+                UID oplanUID = oplan.getUID();
+                ClusterOPlan coplan = (ClusterOPlan) ClusterOPlans_.get(oplanUID);
+                // Remove ClusterOPlan from array
+                ClusterOPlans_.remove(oplanUID);
+                // Cancel subscription
+                IncrementalSubscription s = (IncrementalSubscription)
+                    orgActivitySubscriptionOfOPlanUID.remove(oplanUID);
+                if (s != null) unsubscribe(s);
+                break;
 	    }
 	}
 	if (ClusterOPlans_.isEmpty()) {
@@ -207,32 +232,27 @@ public abstract class GLMDecorationPlugIn extends DecorationPlugIn {
 
     // Each ClusterOPlan updates its own OrgActivities if needed
     private boolean updateOrgActivities() {
-	Enumeration enum = ClusterOPlans_.elements();
+	Iterator enum = ClusterOPlans_.values().iterator();
 	boolean update = false;
-	while (enum.hasMoreElements()) {
-	    update = update || ((ClusterOPlan)enum.nextElement()).updateOrgActivities();
+	while (enum.hasNext()) {
+            ClusterOPlan coplan = (ClusterOPlan) enum.next();
+            IncrementalSubscription s = (IncrementalSubscription)
+                orgActivitySubscriptionOfOPlanUID.get(coplan.getOplanUID());
+	    update = update || coplan.updateOrgActivities(s);
 	}
 	return update;
     }
 
     public Vector getOPlans() {
-	return ClusterOPlans_;
+	return new Vector(ClusterOPlans_.values());
     }
 
     public ClusterOPlan findOPlan(UID oplanUID) {
-        for (Enumeration oplans = getOPlans().elements(); oplans.hasMoreElements(); ) {
-            ClusterOPlan coplan = (ClusterOPlan) oplans.nextElement();
-            if (coplan.oplan_.getUID().equals(oplanUID)) return coplan;
-        }
-        return null;
+        return (ClusterOPlan) ClusterOPlans_.get(oplanUID);
     }
 
     public ClusterOPlan findOPlan(Oplan oplan) {
-        for (Enumeration oplans = getOPlans().elements(); oplans.hasMoreElements(); ) {
-            ClusterOPlan coplan = (ClusterOPlan) oplans.nextElement();
-            if (coplan.oplan_.same(oplan)) return coplan;
-        }
-        return null;
+        return findOPlan(oplan.getUID());
     }
 
     // returns location from first oplan w/ info on that time.

@@ -40,15 +40,15 @@ public class ClusterOPlan implements Serializable {
     long startTime_, endTime_;
     Vector orgActivities_ = null;
     Oplan oplan_;
-    IncrementalSubscription orgActivitySubscription_;
+//      IncrementalSubscription orgActivitySubscription_;
 
-    public ClusterOPlan(ClusterIdentifier id, Oplan op, IncrementalSubscription sub) {
+    public ClusterOPlan(ClusterIdentifier id, Oplan op/*, IncrementalSubscription sub*/) {
 //  	System.out.println("--- Creating ClusterOPlan for "+id+", oplan "+op);
 	clusterId_ = id;
 	oplan_ = op;
 	startTime_ = oplan_.getCday().getTime();
 	endTime_ = oplan_.getCday().getTime();
-	orgActivitySubscription_ = sub;
+//  	orgActivitySubscription_ = sub;
 //  	updateOrgActivities(orgActivitySubscription_.elements());
 //  	updateOPlanTimes();
     }
@@ -56,7 +56,7 @@ public class ClusterOPlan implements Serializable {
     /* If OPlan does not change but OrgActivities for the OPlan change
      * then get the updated OrgActivities.
      */
-    public boolean updateOrgActivities() {
+    public boolean updateOrgActivities(IncrementalSubscription orgActivitySubscription_) {
 	// Only update OrgActivities if subscription has changed
 	if (orgActivitySubscription_.getChangedList().hasMoreElements()
 	    || orgActivitySubscription_.getAddedList().hasMoreElements() 
@@ -173,12 +173,12 @@ public class ClusterOPlan implements Serializable {
 	return null;
     }
 
-    /* When disposing of a ClusterOPlan object, need to get the
-     * OrgActivity subscription to do an 'unsubscribe'
-     */
-    public IncrementalSubscription getOrgActivitySubscription() {
-	return orgActivitySubscription_;
-    }
+//      /* When disposing of a ClusterOPlan object, need to get the
+//       * OrgActivity subscription to do an 'unsubscribe'
+//       */
+//      public IncrementalSubscription getOrgActivitySubscription() {
+//  	return orgActivitySubscription_;
+//      }
 
     public String toString() {
 	return oplan_.toString();
