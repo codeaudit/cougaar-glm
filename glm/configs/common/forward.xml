@@ -18,10 +18,10 @@
   <TransferablePropagation class="org.cougaar.domain.glm.plugins.projection.DemandProjectionPolicy">
 	<role> AdministrativeSubordinate </role> 
   </TransferablePropagation>
-  <TransferablePropagation class="com.bbn.supply.data.LimitResourcesPolicy">
+  <TransferablePropagation class="mil.darpa.log.alpine.blackjack.policy.LimitResourcesPolicy">
 	<role> Subordinate </role> 
   </TransferablePropagation>
-  <TransferablePropagation class="com.bbn.supply.data.LimitResourcesPolicy">
+  <TransferablePropagation class="mil.darpa.log.alpine.blackjack.policy.LimitResourcesPolicy">
 	<role> AdministrativeSubordinate </role> 
   </TransferablePropagation>
 </Propagations>

@@ -4,7 +4,7 @@
 
 <Policies>
 
- <Policy name="MaxConsumablesPolicy" type="com.bbn.supply.data.LimitResourcesPolicy">
+ <Policy name="MaxConsumablesPolicy" type="mil.darpa.log.alpine.blackjack.policy.LimitResourcesPolicy">
     <RuleParam name="ItemConsumed">
       	<String value ="Consumable">
 	</String>
