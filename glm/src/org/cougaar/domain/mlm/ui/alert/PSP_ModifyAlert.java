@@ -146,6 +146,10 @@ public class PSP_ModifyAlert extends PSP_BaseAdapter
         }
       } 
 
+
+      // Bracket subsequent activity within a transaction
+      psc.getServerPlugInSupport().openLogPlanTransaction();
+
       Subscription subscription = 
         psc.getServerPlugInSupport().subscribe(this, alertPred);
       Collection container = 
@@ -187,6 +191,7 @@ public class PSP_ModifyAlert extends PSP_BaseAdapter
 
       psc.getServerPlugInSupport().publishChangeForSubscriber(newAlert);
       psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+      psc.getServerPlugInSupport().openLogPlanTransaction();
 
       if (chosenParam != null) {
         if (chosenParam.getParameter() instanceof String) {
