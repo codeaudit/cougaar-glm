@@ -21,7 +21,7 @@ import java.util.Properties;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.ClusterServesPlugIn;
-import org.cougaar.core.cluster.Subscriber;
+import org.cougaar.core.blackboard.BlackboardService;
 import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
 import org.cougaar.domain.planning.ldm.RootFactory;
 
@@ -58,7 +58,7 @@ public abstract class SQLOplanQueryHandler extends QueryHandler {
                             ClusterServesPlugIn comp,
                             RootFactory aldmf,
                             Properties params,
-                            Subscriber sub) {
+                            BlackboardService sub) {
     if (!(ldmplugin instanceof SQLOplanPlugIn)) {
       throw new IllegalArgumentException("ldmplugin must be an SQLOplanPlugIn");
     } else {
