@@ -38,6 +38,7 @@ import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.debug.*;
+import org.cougaar.domain.planning.ldm.DeletionPlugIn;
 
 public abstract class InventoryManager extends InventoryProcessor {
 
@@ -133,7 +134,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	    printDebug(2,"Cluster: "+clusterId_.toString()+" is Battalion level. 	    daysOnHand_=3;");
 	    daysOnHand_=3;
 	}
-
+        checkDeletionPolicy();
     }
 
     // ********************************************************
@@ -168,6 +169,56 @@ public abstract class InventoryManager extends InventoryProcessor {
 	}
     }
 
+    public static class IMDeletionPolicy extends DeletionPlugIn.DeletionPolicy {
+        public String supplyType_;
+    }
+
+    private IMDeletionPolicy createDeletionPolicy(long deletionDelay) {
+        IMDeletionPolicy policy =
+            (IMDeletionPolicy) ldmFactory_.newPolicy(IMDeletionPolicy.class.getName());
+        policy.supplyType_ = supplyType_;
+        policy.init(supplyType_ + " Due Outs",
+                    inventoryPlugIn_.getDueOutPredicate(supplyType_),
+                    deletionDelay);
+        return policy;
+    }
+
+    /**
+       This predicate finds our deletion policies. They must be
+       instances of IMDeletionPolicy and have a supplyType_ matching
+       our supplyType_;
+     **/
+    private UnaryPredicate deletionPolicyPredicate = new UnaryPredicate() {
+        public boolean execute(Object o) {
+            if (o instanceof IMDeletionPolicy) {
+                IMDeletionPolicy policy = (IMDeletionPolicy) o;
+                return policy.supplyType_.equals(supplyType_);
+            }
+            return false;
+        }
+    };
+
+    /**
+       Checks the current deletion policy and insures that it is
+       consistent with the current on hand policy. Generally, due out
+       tasks must not be deleted until the daysBackward_ days have
+       passed. The DeletionPolicy is created or updated to reflect
+       this.
+     **/
+    protected void checkDeletionPolicy() {
+        long deletionDelay = daysBackward_ * TimeUtils.MSEC_PER_DAY;
+        Collection policies = delegate_.query(deletionPolicyPredicate);
+        if (policies.isEmpty()) {
+            IMDeletionPolicy policy = createDeletionPolicy(deletionDelay);
+            delegate_.publishAdd(policy);
+            System.out.println("Added DeletionPolicy " + policy);
+        } else {
+            IMDeletionPolicy policy = (IMDeletionPolicy) policies.iterator().next();
+            policy.setDeletionDelay(deletionDelay);
+            delegate_.publishChange(policy);
+            System.out.println("Changed DeletionPolicy " + policy);
+        }
+    }
 
     // ********************************************************
     //                                                        *
@@ -793,6 +844,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	    int backward = pol.getDaysBackward();
 	    if ((backward >= 0) && (backward != daysBackward_)) {
 		daysBackward_ = backward;
+                checkDeletionPolicy(); // Changed daysBackward, need to change deletion policy
 		changed = true;
 	    }
 	    double multiplier = pol.getGoalLevelMultiplier();

@@ -58,6 +58,36 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
         }
     }
 
+    private static class InventoryTypeHashEntry {
+        Vector invBins = new Vector();
+        UnaryPredicate dueOutPredicate;
+        public InventoryTypeHashEntry(UnaryPredicate predicate) {
+            dueOutPredicate = predicate;
+        }
+    }
+
+    public static class WithdrawTaskPredicate implements UnaryPredicate {
+        String supplyType_;
+        public WithdrawTaskPredicate(String type) {
+            supplyType_ = type;
+        }
+	public boolean execute(Object o) {
+	    if (o instanceof Task ) {
+		Task task = (Task)o;
+		if (task.getVerb().equals(Constants.Verb.WITHDRAW) ||
+		    task.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {		 
+                    if (TaskUtils.isDirectObjectOfType(task, supplyType_) ||
+                        TaskUtils.isTaskPrepOfType(task, supplyType_)) {
+                        // 		    if (TaskUtils.getQuantity(task) > 0.0){
+                        return true;
+                        // 		    }
+                    }
+		}
+	    }
+	    return false;
+	}
+    };
+
     /** Subscription for aggregatable support requests. **/
     private IncrementalSubscription detReqSubscription_;
 
@@ -178,20 +208,32 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
      **/
     private void addInventories(Collection inventories) {
         for (Iterator i = inventories.iterator(); i.hasNext(); ) {
-            // get current inventories with current qty
-            Inventory inventory = (Inventory) i.next();
-	    String item = getInventoryType(inventory);
-	    inventoryHash_.put(item, inventory);
+            addInventory((Inventory) i.next());
 	}
     }
 
     private void removeInventories(Enumeration inventories) {
 	while (inventories.hasMoreElements()) {
-            // get current inventories with current qty
-            Inventory inventory = (Inventory) inventories.nextElement();
-	    String item = getInventoryType(inventory);
-	    inventoryHash_.remove(item);
+            removeInventory((Inventory) inventories.nextElement());
 	}
+    }
+
+    private void addInventory(Inventory inventory) {
+        addInventory(inventory, getInventoryType(inventory));
+    }
+
+    private void addInventory(Inventory inventory, String item) {
+        inventoryHash_.put(item, inventory);
+        getInventoryTypeHashEntry(getAssetType(inventory)).invBins.add(inventory);
+    }
+
+    private void removeInventory(Inventory inventory) {
+        removeInventory(inventory, getInventoryType(inventory));
+    }
+
+    private void removeInventory(Inventory inventory, String item) {
+        inventoryHash_.remove(item);
+        getInventoryTypeHashEntry(getAssetType(inventory)).invBins.remove(inventory);
     }
 
     private void addMILTasks(Enumeration milTasks) {
@@ -345,27 +387,46 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	return findOrMakeInventory(supplytype, resource);
     }
 
+    /**
+       Override this if you want to use a different predicate for selecting due out tasks
+     **/
+
+    protected UnaryPredicate createDueOutPredicate(String supplyType) {
+        return new WithdrawTaskPredicate(supplyType);
+    }
+        
+    private InventoryTypeHashEntry getInventoryTypeHashEntry(String supplyType) {
+        InventoryTypeHashEntry result =
+            (InventoryTypeHashEntry) inventoryTypeHash_.get(supplyType);
+        if (result == null) {
+            result = new InventoryTypeHashEntry(createDueOutPredicate(supplyType));
+            inventoryTypeHash_.put(supplyType, result);
+        }
+        return result;
+    }
+
     public synchronized Inventory findOrMakeInventory(String supplytype, Asset resource) {
 	Inventory inventory = null;
 	// only need to sync if each processor is running on its own thread.
 	// currently, ANTS is single-threaded but could easily be made multi-threaded.
 	String id = resource.getTypeIdentificationPG().getTypeIdentification();
-	inventory = (Inventory)inventoryHash_.get(id);
+	inventory = (Inventory) inventoryHash_.get(id);
 	if (inventory == null) {
 	    inventory = createInventory(supplytype, resource);
 	    if (inventory != null) {
-		inventoryHash_.put(id, inventory);
+		addInventory(inventory, id);
 		getDelegate().publishAdd(inventory);
 		GLMDebug.DEBUG("InventoryPlugIn", "findOrMakeInventory(), CREATED inventory bin for: "+
 				  AssetUtils.assetDesc(inventory.getScheduledContentPG().getAsset()));
 		findOrMakeMILTask(inventory);
-		Vector invBinsOfType = (Vector)inventoryTypeHash_.get(supplytype);
-		if (invBinsOfType != null) {
-		    invBinsOfType.add(inventory);
-		}   
 	    }
 	}
 	return inventory;
+    }
+
+    public final synchronized UnaryPredicate getDueOutPredicate(String supplyType) {
+        InventoryTypeHashEntry entry = getInventoryTypeHashEntry(supplyType);
+        return entry.dueOutPredicate;
     }
 
     public abstract Inventory createInventory(String supplytype, Asset resource);
@@ -395,23 +456,8 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     }
 
     public Enumeration getInventoryBins(String assetType) {
-	
-	Vector invBinsOfType;
-	// If the inventory bins of this type have not already been collected,
-	// sort out the Inventory assets of the given type and save the vector.
-	if ((invBinsOfType = (Vector)inventoryTypeHash_.get(assetType))==null) {
-	    invBinsOfType = new Vector();
-	    Enumeration list = inventoryHash_.elements();
-	    Inventory inv;
-	    while (list.hasMoreElements()) {
-		inv = (Inventory) list.nextElement();
-		if (assetType.equals(getAssetType(inv))) {
-		    invBinsOfType.add(inv);
-		}
-	    }
-	    inventoryTypeHash_.put(assetType, invBinsOfType);
-	}
-	return invBinsOfType.elements();
+        InventoryTypeHashEntry entry = getInventoryTypeHashEntry(assetType);
+        return entry.invBins.elements();
     }
 
     public void initializeInventoryFile(String type) {

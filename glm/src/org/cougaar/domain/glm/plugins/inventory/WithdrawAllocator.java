@@ -50,29 +50,6 @@ public class WithdrawAllocator extends InventoryProcessor {
 	initialize();
     }
 
-    static class WithdrawTaskPredicate implements UnaryPredicate
-    {
-      String supplyType_;
-      public WithdrawTaskPredicate(String type) {
-	supplyType_ = type;
-      }
-	public boolean execute(Object o) {
-	    if (o instanceof Task ) {
-		Task task = (Task)o;
-		if (task.getVerb().equals(Constants.Verb.WITHDRAW) ||
-		    task.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {		 
-		  if (TaskUtils.isDirectObjectOfType(task, supplyType_) ||
-		      TaskUtils.isTaskPrepOfType(task, supplyType_)) {
-		    // 		    if (TaskUtils.getQuantity(task) > 0.0){
-		    return true;
-		    // 		    }
-		  }
-		}
-	    }
-	    return false;
-	}
-    };
-
     /**
      *  Set up subscriptions, 
      *  get the this plugin's organization UIC, and 
@@ -81,7 +58,7 @@ public class WithdrawAllocator extends InventoryProcessor {
     private void initialize()
     {
 	// Subscribe to SupplyInventory Task
-        withdrawTasks_ = subscribe(new WithdrawTaskPredicate(supplyType_));
+        withdrawTasks_ = subscribe(inventoryPlugIn_.getDueOutPredicate(supplyType_));
     }
  
     public void update() {
