@@ -185,7 +185,7 @@ public abstract class InventoryBG implements PGDelegate {
     }
 
     private void setStartTime(long newStartTime) {
-        System.out.println("setStartTime " + TimeUtils.dateString(newStartTime));
+      //System.out.println("setStartTime " + TimeUtils.dateString(newStartTime));
         if (newStartTime <= 0L) {
             throw new IllegalArgumentException("Bogus newStartTime: " + newStartTime);
         }
