@@ -21,31 +21,20 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.planning.ldm.asset.Asset;
-
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
-import org.cougaar.lib.callback.UTILAllocationCallback;
-import org.cougaar.lib.callback.UTILAllocationListener;
-import org.cougaar.lib.callback.UTILAssetCallback;
-import org.cougaar.lib.callback.UTILAssetListener;
-import org.cougaar.lib.callback.UTILFilterCallback;
-import org.cougaar.lib.callback.UTILGenericListener;
-import org.cougaar.lib.callback.UTILWorkflowCallback;
-
-import org.cougaar.lib.util.UTILAllocate;
-import org.cougaar.lib.util.UTILPrepPhrase;
-
 import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
+
+import org.cougaar.lib.callback.UTILAllocationCallback;
+import org.cougaar.lib.callback.UTILAssetCallback;
+import org.cougaar.lib.callback.UTILFilterCallback;
+import org.cougaar.lib.callback.UTILGenericListener;
+import org.cougaar.lib.callback.UTILWorkflowCallback;
+import org.cougaar.lib.util.UTILAllocate;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * <pre>

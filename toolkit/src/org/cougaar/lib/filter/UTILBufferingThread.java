@@ -21,15 +21,13 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.lib.param.ParamMap;
-
-import org.cougaar.lib.util.UTILPluginException;
-import org.cougaar.util.log.Logger;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import org.cougaar.lib.param.ParamMap;
+import org.cougaar.util.log.Logger;
 
 /**
  * Interacts with a BufferingPlugin.

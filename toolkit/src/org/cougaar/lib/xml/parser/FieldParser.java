@@ -21,18 +21,18 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import java.lang.reflect.Method;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.util.log.Logger;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Parses fields of objects.

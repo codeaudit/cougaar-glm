@@ -21,18 +21,15 @@
 
 package org.cougaar.lib.callback;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.Composition;
 import org.cougaar.planning.ldm.plan.Task;
-
 import org.cougaar.util.UnaryPredicate;
- 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.cougaar.util.log.Logger;
 
 /**

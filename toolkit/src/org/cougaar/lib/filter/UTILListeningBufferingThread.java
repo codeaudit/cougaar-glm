@@ -21,16 +21,12 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.planning.ldm.plan.Task;
-
-
-import org.cougaar.util.UnaryPredicate;
+import java.util.Collection;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
 import org.cougaar.lib.callback.UTILGenericListener;
-
-import java.util.Collection;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 
 /**

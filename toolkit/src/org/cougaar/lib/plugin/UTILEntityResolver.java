@@ -21,14 +21,12 @@
 
 package org.cougaar.lib.plugin;
 
-import org.cougaar.util.ConfigFinder;
-
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
 import java.net.URL;
 
-import java.io.*;
-import org.cougaar.util.log.*;
+import org.cougaar.util.ConfigFinder;
+import org.cougaar.util.log.Logger;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
 /**
  * <pre>

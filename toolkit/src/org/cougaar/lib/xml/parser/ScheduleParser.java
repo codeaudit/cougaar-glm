@@ -21,15 +21,13 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.plan.Schedule;
-
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.cougaar.util.log.*;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.util.log.Logger;
+import org.w3c.dom.Node;
 
 /**
  * Parses the schedule tag, which defines the initial role schedule 

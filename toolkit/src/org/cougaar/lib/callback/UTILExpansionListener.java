@@ -21,11 +21,10 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Task;
-
 import java.util.List;
+
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * <pre>

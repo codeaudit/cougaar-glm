@@ -21,12 +21,11 @@
 
 package org.cougaar.lib.callback;
 
+import java.util.Enumeration;
+
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.util.UnaryPredicate;
- 
-import java.util.Enumeration;
-
 import org.cougaar.util.log.Logger;
 
 /**

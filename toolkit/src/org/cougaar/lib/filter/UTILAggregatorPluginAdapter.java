@@ -21,28 +21,19 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.planning.ldm.asset.Asset;
-
-import org.cougaar.planning.ldm.plan.Aggregation;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
-import org.cougaar.lib.callback.UTILAggregationCallback;
-import org.cougaar.lib.callback.UTILAggregationListener;
-import org.cougaar.lib.callback.UTILAssetCallback;
-import org.cougaar.lib.callback.UTILAssetListener;
-import org.cougaar.lib.callback.UTILFilterCallback;
-import org.cougaar.lib.callback.UTILGenericListener;
-import org.cougaar.lib.callback.UTILWorkflowCallback;
-
-import org.cougaar.lib.util.UTILAggregate;
-
-
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+
+import org.cougaar.lib.callback.UTILAggregationCallback;
+import org.cougaar.lib.callback.UTILAssetCallback;
+import org.cougaar.lib.callback.UTILFilterCallback;
+import org.cougaar.lib.callback.UTILGenericListener;
+import org.cougaar.lib.callback.UTILWorkflowCallback;
+import org.cougaar.lib.util.UTILAggregate;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Aggregation;
+import org.cougaar.planning.ldm.plan.Task;
 
 
 /**

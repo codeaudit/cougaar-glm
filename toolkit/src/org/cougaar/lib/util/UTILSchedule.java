@@ -21,16 +21,16 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.ldm.plan.ScheduleImpl;
-import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
-import org.cougaar.util.TimeSpan;
-
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.planning.ldm.plan.ScheduleElement;
+import org.cougaar.planning.ldm.plan.ScheduleElementImpl;
+import org.cougaar.planning.ldm.plan.ScheduleImpl;
+import org.cougaar.util.TimeSpan;
 
 public class UTILSchedule {
 

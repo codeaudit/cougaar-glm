@@ -21,45 +21,29 @@
 
 package org.cougaar.lib.plugin;
 
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-
-import org.cougaar.planning.ldm.LDMPluginServesLDM;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
-
-import org.cougaar.util.ConfigFinder;
-
-import org.cougaar.lib.plugin.UTILEntityResolver;
-import org.cougaar.lib.param.Param;
-import org.cougaar.lib.xml.parser.ParamParser;
-import org.cougaar.lib.param.ParamTable;
-import org.cougaar.lib.util.UTILPluginException;
-
-import org.cougaar.lib.xml.parser.PrototypeParser;
-import org.cougaar.lib.xml.parser.InstanceParser;
-import org.cougaar.lib.xml.parser.AggregateAssetParser;
-
-import java.io.File;
 import java.io.InputStream;
-import java.io.IOException;
-
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
 import org.apache.xerces.parsers.DOMParser;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.SAXNotRecognizedException;
 import org.cougaar.core.component.StateObject;
 import org.cougaar.core.service.LoggingService;
+import org.cougaar.lib.param.Param;
+import org.cougaar.lib.xml.parser.AggregateAssetParser;
+import org.cougaar.lib.xml.parser.InstanceParser;
+import org.cougaar.lib.xml.parser.ParamParser;
+import org.cougaar.lib.xml.parser.PrototypeParser;
+import org.cougaar.planning.ldm.LDMPluginServesLDM;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.plugin.legacy.SimplePlugin;
+import org.cougaar.util.ConfigFinder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
 /**
  * <pre>

@@ -21,9 +21,9 @@
 
 package  org.cougaar.lib.param;
 
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class that handles what to do when we encouter a parameter in a 

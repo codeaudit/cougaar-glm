@@ -21,13 +21,11 @@
 
 package org.cougaar.lib.xml.parser;
 
+import org.cougaar.lib.util.UTILAsset;
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
-
+import org.cougaar.util.log.Logger;
 import org.w3c.dom.Node;
-
-import org.cougaar.lib.util.UTILAsset;
-import org.cougaar.util.log.*;
 
 /**
  * Creates an asset instance.

@@ -21,12 +21,11 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.w3c.dom.Node;
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.util.log.Logger;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.cougaar.util.log.*;
 
 /**
  * Parses direct objects of tasks in test input files.

@@ -21,26 +21,20 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.MPTask;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.SubTaskResult;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Workflow;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 import org.cougaar.lib.callback.UTILExpandableTaskCallback;
 import org.cougaar.lib.callback.UTILExpansionCallback;
 import org.cougaar.lib.callback.UTILFilterCallback;
 import org.cougaar.lib.callback.UTILGenericListener;
-
 import org.cougaar.lib.util.UTILExpand;
 import org.cougaar.lib.util.UTILPluginException;
-
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.SubTaskResult;
+import org.cougaar.planning.ldm.plan.Task;
 
 
 /**

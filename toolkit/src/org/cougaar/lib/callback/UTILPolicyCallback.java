@@ -22,14 +22,7 @@
 package org.cougaar.lib.callback;
 
 import org.cougaar.planning.ldm.policy.Policy;
-
 import org.cougaar.util.UnaryPredicate;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
 import org.cougaar.util.log.Logger;
 
 public class UTILPolicyCallback extends UTILFilterCallbackAdapter {

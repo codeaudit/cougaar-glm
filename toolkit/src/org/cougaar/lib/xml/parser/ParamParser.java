@@ -21,14 +21,14 @@
 
 package  org.cougaar.lib.xml.parser;
 
-import org.cougaar.lib.param.Param;
-import org.cougaar.lib.param.StringParam;
 import org.cougaar.lib.param.BooleanParam;
 import org.cougaar.lib.param.DoubleParam;
 import org.cougaar.lib.param.FloatParam;
 import org.cougaar.lib.param.IntParam;
 import org.cougaar.lib.param.LongParam;
+import org.cougaar.lib.param.Param;
 import org.cougaar.lib.param.ShortParam;
+import org.cougaar.lib.param.StringParam;
 
 /**
  * Class that create parameters from strings.

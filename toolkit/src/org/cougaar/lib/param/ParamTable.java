@@ -21,12 +21,8 @@
 
 package org.cougaar.lib.param;
 
-import org.cougaar.util.ConfigFinder;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -37,16 +33,11 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.apache.xerces.parsers.SAXParser;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-
 import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.xml.parser.ParamParser;
-import org.cougaar.lib.param.ParamMap;
-
-import org.cougaar.util.log.*;
+import org.cougaar.util.ConfigFinder;
+import org.cougaar.util.log.Logger;
+import org.xml.sax.InputSource;
 
 /**
  * <pre>

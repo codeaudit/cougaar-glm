@@ -22,7 +22,6 @@
 package org.cougaar.lib.callback;
 
 import org.cougaar.planning.ldm.plan.MPTask;
-
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 

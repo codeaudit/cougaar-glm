@@ -21,20 +21,14 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.domain.Factory;
-import org.cougaar.planning.ldm.asset.Asset;
-
-import org.cougaar.planning.ldm.asset.PropertyGroup;
-import org.cougaar.core.domain.FactoryException;
-import org.cougaar.planning.ldm.measure.AbstractMeasure;
 import java.lang.reflect.Method;
 
+import org.cougaar.core.domain.Factory;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.util.log.Logger;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Parses objects within prototypes or instances.

@@ -21,15 +21,12 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.util.UnaryPredicate;
+import java.util.Enumeration;
 
-import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Workflow;
-
-import java.util.Enumeration;
+import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 
 /**

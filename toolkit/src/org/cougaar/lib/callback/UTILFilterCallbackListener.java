@@ -21,11 +21,10 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-
-import org.cougaar.util.UnaryPredicate;
-
 import java.util.Collection;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.util.UnaryPredicate;
 
 
 /**

@@ -21,9 +21,8 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.planning.ldm.plan.Task;
-
 import org.cougaar.lib.filter.UTILTaskChecker;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * Listener for use with Workflow and ExpandableTask Callbacks.

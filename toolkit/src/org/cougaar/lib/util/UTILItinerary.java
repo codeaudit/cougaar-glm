@@ -21,16 +21,16 @@
 
 package org.cougaar.lib.util;
 
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.ItineraryElement;
 import org.cougaar.planning.ldm.plan.Location;
 import org.cougaar.planning.ldm.plan.NewItineraryElement;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.Verb;
-
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
 
 public class UTILItinerary {
 

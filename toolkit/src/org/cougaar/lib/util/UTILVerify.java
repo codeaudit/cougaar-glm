@@ -21,15 +21,11 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.planning.ldm.measure.Latitude;
-import org.cougaar.planning.ldm.measure.Longitude;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Task;
-
-import org.cougaar.util.log.*;
-
 import java.util.Date;
+
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.log.Logger;
 
 /**
  * Helper classes to see if a task is consistent and 

@@ -21,13 +21,13 @@
 
 package org.cougaar.lib.util;
 
+import java.util.Date;
+
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
-
-import java.util.Calendar;
-import java.util.Date;
-import org.cougaar.util.log.*;
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.LoggerFactory;
 
 /** 
  * Represents an <early, best, late> end date scoring function

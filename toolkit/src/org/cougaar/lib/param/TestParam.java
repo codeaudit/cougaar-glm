@@ -22,7 +22,9 @@
 package  org.cougaar.lib.param;
 
 import java.util.Vector;
-import org.cougaar.util.log.*;
+
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.LoggerFactory;
 
 /**
  * Class that is used to test a ParamTable.  The table consists of

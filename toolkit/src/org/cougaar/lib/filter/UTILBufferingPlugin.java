@@ -21,13 +21,11 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.planning.ldm.plan.Task;
+import java.util.List;
 
 import org.cougaar.lib.callback.UTILFilterCallbackListener;
-
 import org.cougaar.lib.param.ParamMap;
-
-import java.util.List;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * The interface between the plugin and the BufferingThread.

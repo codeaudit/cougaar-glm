@@ -22,6 +22,7 @@
 package org.cougaar.lib.callback;
 
 import java.util.Enumeration;
+
 import org.cougaar.planning.ldm.asset.Asset;
 
 /**

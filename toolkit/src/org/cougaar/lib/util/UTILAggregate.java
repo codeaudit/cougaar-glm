@@ -21,12 +21,18 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.lib.filter.UTILPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
@@ -34,25 +40,11 @@ import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.NewComposition;
 import org.cougaar.planning.ldm.plan.NewMPTask;
-import org.cougaar.planning.ldm.plan.MPTask;
 import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Priority;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.HashSet;
-
-import org.cougaar.lib.filter.UTILPlugin;
-import org.cougaar.util.log.*;
+import org.cougaar.util.log.Logger;
 
 /**
  * This class contains utility functions for creating

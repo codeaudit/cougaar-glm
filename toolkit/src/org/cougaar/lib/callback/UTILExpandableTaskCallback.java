@@ -22,12 +22,7 @@
 package org.cougaar.lib.callback;
 
 import org.cougaar.planning.ldm.plan.Task;
-
 import org.cougaar.util.UnaryPredicate;
-
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
 import org.cougaar.util.log.Logger;
 
 /**

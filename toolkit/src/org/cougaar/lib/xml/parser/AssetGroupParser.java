@@ -20,20 +20,17 @@
  */
 
 package org.cougaar.lib.xml.parser;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-
-import org.cougaar.planning.ldm.asset.AggregateAsset;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.AssetGroup;
-
-import org.cougaar.lib.util.UTILAsset;
-
 import java.util.Date;
 import java.util.Vector;
 
+import org.cougaar.lib.util.UTILAsset;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.asset.AggregateAsset;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.AssetGroup;
+import org.cougaar.util.log.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.util.log.*;
 
 /**
  * Creates an asset group -- primarily used in parsing test input files.

@@ -21,12 +21,11 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.planning.ldm.plan.Task;
-
 import java.util.Vector;
 
 import org.cougaar.lib.callback.UTILExpansionListener;
 import org.cougaar.lib.callback.UTILGenericListener;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * An expander just listens for "generic" events and then

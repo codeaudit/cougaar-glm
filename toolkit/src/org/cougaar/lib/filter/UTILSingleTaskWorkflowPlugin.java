@@ -22,7 +22,6 @@
 package org.cougaar.lib.filter;
 
 import org.cougaar.planning.ldm.asset.Asset;
-
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
 

@@ -21,30 +21,20 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.core.agent.service.alarm.Alarm;
+import java.util.List;
 
+import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.component.ServiceRevokedEvent;
 import org.cougaar.core.component.ServiceRevokedListener;
-
 import org.cougaar.core.service.AgentIdentificationService;
-import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.QuiescenceReportService;
 import org.cougaar.core.service.ThreadService;
-
-import org.cougaar.core.thread.CougaarThread;
 import org.cougaar.core.thread.Schedulable;
-
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
 import org.cougaar.lib.callback.UTILFilterCallback;
 import org.cougaar.lib.callback.UTILGenericListener;
-import org.cougaar.lib.callback.UTILWorkflowCallback;
-
 import org.cougaar.lib.util.UTILPreference;
 import org.cougaar.lib.util.UTILVerify;
-
-import java.util.List;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * <pre>

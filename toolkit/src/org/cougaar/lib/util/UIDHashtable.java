@@ -21,9 +21,9 @@
 
 package org.cougaar.lib.util;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Enumeration;
 
 /**
  * A class that stores items, keying them by a generated UID.

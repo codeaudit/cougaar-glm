@@ -21,18 +21,12 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.util.ConfigFinder;
-
-import java.io.File;
-
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.lib.param.Param;
 import org.cougaar.lib.param.ParamTable;
-import org.cougaar.lib.xml.parser.ParamParser;
-
 import org.cougaar.util.log.Logger;
 
 /**

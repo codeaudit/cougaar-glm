@@ -21,9 +21,13 @@
 
 package org.cougaar.lib.util;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
+
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
-
 import org.cougaar.planning.ldm.asset.AggregateAsset;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.AssetGroup;
@@ -31,26 +35,11 @@ import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
-
-import org.cougaar.planning.ldm.measure.Area;
-import org.cougaar.planning.ldm.measure.Distance;
-import org.cougaar.planning.ldm.measure.Mass;
-import org.cougaar.planning.ldm.measure.Volume;
-
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.RoleSchedule;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.planning.ldm.plan.Task;
-
-import java.util.*;
-
-import org.cougaar.lib.util.UTILPreference;
-
-import org.cougaar.util.log.*;
+import org.cougaar.util.log.Logger;
 
 /**
  * This class contains utility functions for getting

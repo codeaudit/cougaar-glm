@@ -21,33 +21,6 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.core.mts.MessageAddress;
-
-import org.cougaar.planning.ldm.PlanningFactory;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
-import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.AspectType;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.MPTask;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.NewWorkflow;
-import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.Workflow;
-
-import org.cougaar.planning.plugin.legacy.PluginDelegate;
-
-import org.cougaar.core.util.UID;
-
-import org.cougaar.lib.filter.UTILPlugin;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -58,9 +31,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.BlackboardService;
-
-import org.cougaar.util.log.*;
+import org.cougaar.core.util.UID;
+import org.cougaar.lib.filter.UTILPlugin;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AllocationResultAggregator;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.MPTask;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.planning.plugin.legacy.PluginDelegate;
+import org.cougaar.util.log.Logger;
 
 /** 
  * This class contains utility functions related to

@@ -21,9 +21,9 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.planning.ldm.policy.Policy;
-
 import java.util.Enumeration;
+
+import org.cougaar.planning.ldm.policy.Policy;
 
 /**
  * Listener for use with Workflow and ExpandableTask Callbacks.

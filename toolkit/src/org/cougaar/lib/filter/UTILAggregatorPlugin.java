@@ -21,8 +21,8 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.lib.callback.UTILAssetListener;
 import org.cougaar.lib.callback.UTILAggregationListener;
+import org.cougaar.lib.callback.UTILAssetListener;
 
 /**
  * An aggregator is a plugin that is interested in aggregations (it's products)

@@ -21,11 +21,10 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.util.UnaryPredicate;
+import java.util.Enumeration;
 
 import org.cougaar.planning.ldm.asset.Asset;
-
-import java.util.Enumeration;
+import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 
 /**

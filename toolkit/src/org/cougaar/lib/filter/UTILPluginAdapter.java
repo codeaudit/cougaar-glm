@@ -22,25 +22,31 @@
 package org.cougaar.lib.filter;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-
 import org.cougaar.core.component.StateObject;
-import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.planning.service.LDMService;
 import org.cougaar.core.service.LoggingService;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
+import org.cougaar.lib.callback.UTILFilterCallback;
+import org.cougaar.lib.callback.UTILRehydrateReactor;
+import org.cougaar.lib.param.Param;
+import org.cougaar.lib.param.ParamMap;
+import org.cougaar.lib.util.UTILAggregate;
+import org.cougaar.lib.util.UTILAllocate;
+import org.cougaar.lib.util.UTILAsset;
+import org.cougaar.lib.util.UTILExpand;
+import org.cougaar.lib.util.UTILParamTable;
+import org.cougaar.lib.util.UTILPreference;
+import org.cougaar.lib.util.UTILPrepPhrase;
+import org.cougaar.lib.util.UTILVerify;
+import org.cougaar.lib.xml.parser.ParamParser;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AuxiliaryQueryType;
 import org.cougaar.planning.ldm.plan.NewTask;
@@ -48,15 +54,7 @@ import org.cougaar.planning.ldm.plan.NewWorkflow;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
-
-import org.cougaar.lib.callback.UTILFilterCallback;
-import org.cougaar.lib.callback.UTILRehydrateReactor;
-import org.cougaar.lib.param.ParamMap;
-import org.cougaar.lib.param.Param;
-import org.cougaar.lib.util.*;
-import org.cougaar.lib.xml.parser.ParamParser;
-
-import org.cougaar.util.StateModelException;
+import org.cougaar.planning.service.LDMService;
 import org.cougaar.util.UnaryPredicate;
 
 /**

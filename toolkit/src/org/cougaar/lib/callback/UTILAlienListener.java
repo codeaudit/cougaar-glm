@@ -21,7 +21,6 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Task;
 
 /**

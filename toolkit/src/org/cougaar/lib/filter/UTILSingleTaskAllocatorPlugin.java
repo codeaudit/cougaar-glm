@@ -21,16 +21,11 @@
 
 package org.cougaar.lib.filter;
 
-import org.cougaar.planning.ldm.asset.Asset;
-
-import org.cougaar.planning.ldm.plan.PlanElement;
-
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
 import java.util.List;
 
-import org.cougaar.lib.util.UTILPluginException;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.PlanElement;
+import org.cougaar.planning.ldm.plan.Task;
 
 /**
  * Listeners for workflow tasks that should be handled one at a

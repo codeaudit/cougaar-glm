@@ -27,7 +27,9 @@
 
 package org.cougaar.lib.util;
 import java.util.Random;
-import org.cougaar.util.log.*;
+
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.LoggerFactory;
 
 public final class UTILRandom extends Random {
   private static Logger logger=LoggerFactory.getInstance().createLogger("UTILRandom");

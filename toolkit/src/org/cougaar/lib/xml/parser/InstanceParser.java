@@ -21,21 +21,16 @@
 
 package org.cougaar.lib.xml.parser;
 
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.Schedule;
-
-import org.cougaar.planning.ldm.plan.NewRoleSchedule;
-
-import org.cougaar.lib.util.UTILAsset;
-import org.cougaar.util.log.Logger;
-
-import java.util.Date;
-import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.cougaar.lib.util.UTILAsset;
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.NewRoleSchedule;
+import org.cougaar.planning.ldm.plan.Schedule;
+import org.cougaar.util.log.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

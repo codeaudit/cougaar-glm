@@ -21,24 +21,15 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.NewExpansion;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.SubTaskResult;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Workflow;
-
-import org.cougaar.util.UnaryPredicate;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewExpansion;
+import org.cougaar.planning.ldm.plan.SubTaskResult;
+import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 
 /**

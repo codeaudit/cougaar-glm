@@ -21,26 +21,18 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.util.log.Logger;
-
-import org.cougaar.planning.ldm.asset.Asset;
-
-import org.cougaar.planning.ldm.plan.NewItineraryElement;
-import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.Preposition;
-import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.util.log.Logger;
 
 /** 
  * This class contains utility functions for creating

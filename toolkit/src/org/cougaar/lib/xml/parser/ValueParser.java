@@ -21,12 +21,10 @@
 
 package org.cougaar.lib.xml.parser;
 
+import org.cougaar.planning.ldm.LDMServesPlugin;
+import org.cougaar.util.log.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.cougaar.planning.ldm.ClusterServesPlugin;
-import org.cougaar.planning.ldm.LDMServesPlugin;
-
-import org.cougaar.util.log.Logger;
 
 /**
  * Parses the value portion of an object in an xml file.

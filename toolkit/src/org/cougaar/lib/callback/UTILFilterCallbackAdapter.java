@@ -21,15 +21,12 @@
 
 package org.cougaar.lib.callback;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.Subscription;
-
-import org.cougaar.util.UnaryPredicate;
-
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.lib.util.UTILVerify;
+import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
 
 /**

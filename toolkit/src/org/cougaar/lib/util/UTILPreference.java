@@ -21,10 +21,13 @@
 
 package org.cougaar.lib.util;
 
-import org.cougaar.planning.ldm.PlanningFactory;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.AspectLocation;
 import org.cougaar.planning.ldm.plan.AspectScorePoint;
 import org.cougaar.planning.ldm.plan.AspectScoreRange;
 import org.cougaar.planning.ldm.plan.AspectType;
@@ -35,12 +38,6 @@ import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import org.cougaar.util.log.Logger;
 
 /** 
