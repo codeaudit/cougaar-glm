@@ -584,7 +584,9 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	public boolean execute(Object o) {
 	    if (o instanceof Allocation ) {
 		Task task = ((Allocation)o).getTask();
-		if (task.getVerb().equals(Constants.Verb.SUPPLY)) {
+                Verb verb = task.getVerb();
+		if (verb.equals(Constants.Verb.SUPPLY)
+                    || verb.equals(Constants.Verb.PROJECTSUPPLY)) {
 		    if (TaskUtils.isDirectObjectOfType(task, type_)) {
 			// need to check if externally allocated
 			if(((Allocation)o).getAsset() instanceof Organization) {
