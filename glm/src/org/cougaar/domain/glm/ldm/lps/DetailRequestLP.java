@@ -300,7 +300,6 @@ public class DetailRequestLP
    * and sent back to  cluster where the request originated.
    */
   private void processQueryRequestAssignment(QueryRequestAssignment ta, Collection changes) {
-    System.out.println(99);
     QueryRequest request = (QueryRequest) ta.getQueryRequest();
     UnaryPredicate pred = request.getQueryPredicate();
     ArrayList collection;
