@@ -12,7 +12,7 @@ package org.cougaar.domain.glm.ldm;
 
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 
-public final class Constants {
+public class Constants implements org.cougaar.domain.planning.Constants {
   private Constants() {}
 
   public static final String DSMAINTENANCE = "DSMaintenance";
@@ -21,7 +21,7 @@ public final class Constants {
   public static final String GSMAINTENANCE = "GSMaintenance";
   public static final String WATER = "Water";
 
-  public static interface Verb {
+  public static interface Verb extends org.cougaar.domain.planning.Constants.Verb {
     // ALPINE defined verb types
     // Keep in alphabetical order
     public static final String ACCOUNTFORSUPPLY = "AccountForSupply";
@@ -108,20 +108,14 @@ public final class Constants {
     public static final org.cougaar.domain.planning.ldm.plan.Verb Withdraw = org.cougaar.domain.planning.ldm.plan.Verb.getVerb("Withdraw");
   }
 
-  public static interface Preposition {
+  public static interface Preposition extends org.cougaar.domain.planning.Constants.Preposition {
     // ALPINE defined prepositions
-    public static final String WITH        = "With"; 	// typically used for the OPlan object
-    public static final String TO          = "To"; 	// typically used for a destination geoloc
-    public static final String FROM        = "From"; 	// typically used for an origin geoloc
-    public static final String FOR         = "For"; 	// typically used for the originating organization
-    public static final String OFTYPE      = "OfType"; 	// typically used with abstract assets
     public static final String VIA         = "Via"; 	// typically used with transportation routes
     public static final String READYAT     = "ReadyAt"; 	// typically used for origin and available date
     public static final String ITINERARYOF = "ItineraryOf"; 	// typically used for detailed schedules
-    public static final String USING       = "Using"; 	// typically used for ???
     public static final String REPORTINGTO = "ReportingTo"; 	// typically used for specifying a new superior
     public static final String MAINTAINING = "Maintaining"; 	// indicates consumer, e.g., MEI
-    public static final String AS          = "As"; 	// used with Roles for RFS/RFD task
+
 
     // FGI Prepositions
     public static final String REFILL             = "Refill";           // For ANTS
@@ -385,6 +379,8 @@ public final class Constants {
       org.cougaar.domain.planning.ldm.plan.Role.getRole("Water" + RelationshipType.PROVIDER_SUFFIX);
   }
 }
+
+
 
 
 
