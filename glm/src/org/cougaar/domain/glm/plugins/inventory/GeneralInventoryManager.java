@@ -374,6 +374,7 @@ public class GeneralInventoryManager extends InventoryManager {
   // ********************************************************
   //                                                        *
   // ????????? Section                                      *
+  //    These methods currently not used                    *
   //                                                        *
   // ********************************************************
 
