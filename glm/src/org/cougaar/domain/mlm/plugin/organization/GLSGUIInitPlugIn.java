@@ -67,7 +67,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * with the OPLAN object.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIInitPlugIn.java,v 1.2 2000-12-20 18:18:42 mthome Exp $
+ * @version      $Id: GLSGUIInitPlugIn.java,v 1.3 2001-02-02 14:47:00 tomlinso Exp $
  *
  */
 
@@ -181,12 +181,18 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
 
     // schedule
     long startTime = currentTimeMillis();
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Date(startTime));
-    // increment date by 3 MONTHs
-    cal.add(Calendar.MONTH, 3);
-    long endTime = cal.getTime().getTime();
-    
+    long endTime;
+    Date endDay = oplan.getEndDay();
+    if (endDay != null) {
+      endTime = endDay.getTime();
+    } else {
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(new Date(startTime));
+      // increment date by 3 MONTHs
+      cal.add(Calendar.MONTH, 3);
+      endTime = cal.getTime().getTime();
+    }
+
     TimeAspectValue startTav = new TimeAspectValue(AspectType.START_TIME, startTime);
     TimeAspectValue endTav = new TimeAspectValue(AspectType.END_TIME, endTime);
 
