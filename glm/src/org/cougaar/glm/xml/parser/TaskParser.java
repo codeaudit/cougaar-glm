@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.7 2002-04-02 20:54:53 gvidaver Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.8 2002-05-31 21:16:33 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -65,6 +65,9 @@ public class TaskParser{
     directObjectParser = new DirectObjectParser (log);
     locationParser = new LocationParser ();
     itineraryParser = new ItineraryParser ();
+
+    if (logger.isInfoEnabled ())
+      logger.info ("TaskParser created.");
   }
 
   public Task getTask(LDMServesPlugin ldm,
@@ -95,9 +98,11 @@ public class TaskParser{
 	  if(childname.equals("verb")){
 	    Verb verb = verbParser.getVerb(child);
 	    task.setVerb(verb);
+	    if (logger.isDebugEnabled()) logger.debug ("TaskParser - on task " + task.getUID () + " set verb to " + verb);
 	  }
 	  else if(childname.equals("directobject")){
 	    task.setDirectObject(directObjectParser.getDirectObject(ldm, child));
+	    if (logger.isDebugEnabled()) logger.debug ("TaskParser - on task " + task.getUID () + " set d.o. to " + task.getDirectObject());
 	  }
 	  else if(childname.equals("from")){
 	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
@@ -219,6 +224,14 @@ public class TaskParser{
 	      logger.error("problem creating the AbstractAsset for FromTask", exc);
 	    }
 	    newpp.setIndirectObject(AEF);
+	    prep_phrases.addElement(newpp);
+	  }
+	  else {
+	    if (logger.isDebugEnabled()) 
+	      logger.debug ("TaskParser - found non-specific prep : creating marker prep for tag " + childname);
+	    NewPrepositionalPhrase newpp = ldmf.newPrepositionalPhrase();
+	    newpp.setPreposition(childname);
+	    newpp.setIndirectObject(childname);
 	    prep_phrases.addElement(newpp);
 	  }
 	}
