@@ -371,6 +371,10 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	String scheduleType = myInventory.getScheduleType();
 	Object[] viewsToRemove = removeableViews.toArray();
 
+	//Batch up chart updates while rebuilding otherwise there
+	//will be trouble when removing views.
+	chart.setBatched(true);
+
 	removeAllViews();
 
 	baseCDayTime = myInventory.getBaseCDayTime();
@@ -422,6 +426,8 @@ public class InventoryChart extends JPanel implements JCPickListener{
 
 	chart.update();
 	legend.revalidate();
+
+	chart.setBatched(false);
 	
 	//      chart.repaint();
 
@@ -646,8 +652,7 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    ChartDataView iView = chart.getDataView(i);
 	    InventoryBaseChartDataModel baseDM = 
 			    (InventoryBaseChartDataModel) iView.getDataSource();
-	    System.out.println("Removing: " + baseDM.getDataSourceName() + 
-			       " at " + i);
+	    //	    System.out.println("Removing: " + baseDM.getDataSourceName() + " at " + i);
 	    chart.removeDataView(i);
 	    dataViews.remove(iView);
 	    removeableViews.remove(iView);
@@ -946,7 +951,7 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    nowValue = xAxis.dateToValue(now);
 
 	    
-	//System.out.println("InventoryChart::setAlpNow: NowDate: " + now + " NowValue:" + nowValue);
+	System.out.println("InventoryChart::setAlpNow: NowDate: " + now + " NowValue:" + nowValue);
 	//System.out.println("InventoryChart::setAlpNow: minValue:" + xAxis.getMin() + " maxValue:" + xAxis.getMax() + " diff:" + (xAxis.getMax() - xAxis.getMin()) + " diff/4:" + ((xAxis.getMax() - xAxis.getMin())/4));
 	
 	alpNow=now;
