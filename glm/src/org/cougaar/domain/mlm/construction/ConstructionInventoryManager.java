@@ -33,7 +33,7 @@ import org.cougaar.domain.glm.ldm.asset.*;
 /** Allocate SUPPLY tasks for construction supplies to local construction inventory
  *  (if there is any) or to the closest supplier.
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: ConstructionInventoryManager.java,v 1.2 2001-04-10 17:39:08 bdepass Exp $
+ * @version $Id: ConstructionInventoryManager.java,v 1.3 2001-05-16 21:12:27 mdavis Exp $
  **/
 public class ConstructionInventoryManager extends GeneralInventoryManager {
 
@@ -41,26 +41,6 @@ public class ConstructionInventoryManager extends GeneralInventoryManager {
     public ConstructionInventoryManager(InventoryPlugIn plugin, Organization org, String type)
     {
         super(plugin, org, type);
-    }
-
-
-    /** Calculates Reorder Level based on current day,
-     *  days on hand, days forward and days backward.
-     */
-    protected  double getReorderLevel(Inventory inventory, int day) {
-      //printDebug("******ConstructionInventoryManager, getReorderLevel()");
-	    Asset asset = getInventoryAsset(inventory);
-	    InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-	    double capacity = convertScalarToDouble(invpg.getCapacity());
-	    double rl = convertScalarToDouble(invpg.getNDaysDemand(day,daysOnHand_, daysForward_, daysBackward_));
-	    double grl = convertScalarToDouble(invpg.getReorderLevel());
- 
-    	if(rl>capacity) {
-	     rl = capacity;
-	    }
- 
-      //printDebug("******ConstructionInventoryManager, getReorderLevel()  Reorder Level on return: "+ rl);
-	    return rl;
     }
 
     protected int getPolicyForNextReorderDay(Task refill, int day, Inventory inventory) {

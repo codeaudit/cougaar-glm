@@ -42,6 +42,8 @@ public  class ConstructionInventoryBG extends InventoryBG {
 	    ((NewInventoryPG)myPG_).setUnobtainable(new Count(0.0, Count.EACHES));
 	    ((NewInventoryPG)myPG_).setFillToCapacity(false);
 
+	    ((NewInventoryPG)myPG_).setMaintainAtCapacity(false);
+
 	    if ((capacity < erq) || (erq < 0)) {
 		    GLMDebug.ERROR("ConstructionInventoryBG","Cannot create InventoryBG, capacity "+
 				 capacity+" < erq "+erq);
