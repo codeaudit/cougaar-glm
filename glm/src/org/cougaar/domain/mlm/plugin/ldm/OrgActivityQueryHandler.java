@@ -13,6 +13,7 @@ package org.cougaar.domain.mlm.plugin.ldm;
 import java.util.Date;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,8 +44,14 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
   public static final String LOCATION_PARAMETER = "location";
 
   private static final String QUERY_NAME = "OrgActivityQuery";
+  
+  private static final int ACTIVITY_INDEX = 0;
+  private static final int LOCATION_INDEX = 1;
+  private static final int OPTEMPO_INDEX = 2;
 
-  private HashMap myOrgActivityMap;	
+  private static Calendar myCalendar = Calendar.getInstance();
+
+  private HashMap myOrgInfoMap = new HashMap();	
   private Oplan myOplan;
   private String myActivityKey;
   private String myOpTempoKey;
@@ -60,7 +67,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     myOplan = myPlugIn.getOplan(oplanID);
     
     if (myOplan == null) {
-      // error out
+      throw new java.lang.IllegalArgumentException("OrgActivityQueryHandler.startQuery() - " +
+                         " unable to get oplan info for " + oplanID);
     }
 
     myActivityKey = getParameter(ACTIVITY_PARAMETER);
@@ -93,7 +101,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     } else if (relation.equals(myLocationKey)) {
       processLocation(rowData);
     } else {
-      System.err.println("OrgActivityQueryHandler.processRow(): unexpected text in RELATION_NAME column 6 columns of data - " + relation);
+      System.err.println("OrgActivityQueryHandler.processRow(): unexpected text in RELATION_NAME column - " + relation);
       System.err.println("Ignoring row of data: " + rowData);
     }
   }
@@ -105,16 +113,18 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * SQLOplanPlugIn
    **/
   public void endQuery() {
-    // myOrgActivityMap has a TimeSpanSet for each Org
-    Collection orgActivitiesByOrg = myOrgActivityMap.values();
+    // myOrgInfoMap has a TimeSpanSet for each Org
+    Collection orgInfosByOrg = myOrgInfoMap.values();
 
-    ArrayList allOrgActivities = new ArrayList(orgActivitiesByOrg.size());
-    for (Iterator iterator = orgActivitiesByOrg.iterator();
+    
+    ArrayList allOrgActivities = new ArrayList(orgInfosByOrg.size());
+    for (Iterator iterator = orgInfosByOrg.iterator();
          iterator.hasNext();) {
-      allOrgActivities.addAll((Collection) iterator.next());
+      TimeSpanSet orgActivities = getMergedOrgActivities((OrgInfo) iterator.next());
+      allOrgActivities.addAll((Collection) orgActivities);
     }
 
-    /* Debugging 
+    /* Debugging  */
     for (Iterator iterator = allOrgActivities.iterator();
          iterator.hasNext();) {
       OrgActivity orgActivity = (OrgActivity)iterator.next();
@@ -126,7 +136,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                          new Date(orgActivity.getTimeSpan().getEndTime()) + " " + 
                          orgActivity.getGeoLoc());
     }
-    */
+    /* */
 
     myOplan.setOrgActivities(allOrgActivities);
   }
@@ -140,15 +150,33 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
         !opTempo.equals(OrgActivity.MEDIUM_OPTEMPO) &&
         !opTempo.equals(OrgActivity.LOW_OPTEMPO)) {
       System.err.println("OrgActivityQueryHandler: Unrecognized op tempo - " + 
-                         opTempo + " for " + orgName + " in " + myOplan);
+                         opTempo + " - for " + orgName + " in " + myOplan);
     }
     
-    org.cougaar.domain.glm.ldm.oplan.TimeSpan timeSpan = 
-      new TimeSpan(myOplan.getCday(), 
-                   ((Number) rowData[5]).intValue(), 
-                   ((Number) rowData[6]).intValue());
+    OrgInfoElement element = 
+      new OrgInfoElement(opTempo, myOplan.getCday(), 
+                         ((Number) rowData[5]).intValue(), 
+                         ((Number) rowData[6]).intValue());
 
-    getOrgActivity(orgName, timeSpan).setOpTempo(opTempo);
+    OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
+    if (orgInfo == null) {
+      orgInfo = new OrgInfo(orgName);
+      myOrgInfoMap.put(orgName, orgInfo);
+    } else {
+      Collection opTempoCollection = 
+        orgInfo.getOpTempoSchedule().intersectingSet(element.getStartTime(),
+                                                     element.getEndTime());
+
+      if (opTempoCollection.size() > 0) {
+        System.err.println("OrgActivityQueryHandler: found more than one opTempo for " + 
+                           orgName + " during " + 
+                           new Date(element.getStartTime()) + " - " + 
+                           new Date(element.getEndTime()));
+      }
+    }
+
+    
+    orgInfo.getOpTempoSchedule().add(element);
   }
 
   protected void processActivity(Object[] rowData) {
@@ -157,12 +185,29 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
     // validate string?
     
-    org.cougaar.domain.glm.ldm.oplan.TimeSpan timeSpan = 
-      new TimeSpan(myOplan.getCday(), 
-                   ((Number) rowData[5]).intValue(), 
-                   ((Number) rowData[6]).intValue());
+    OrgInfoElement element = 
+      new OrgInfoElement(activity, myOplan.getCday(), 
+                         ((Number) rowData[5]).intValue(), 
+                         ((Number) rowData[6]).intValue());
 
-    getOrgActivity(orgName, timeSpan).setActivityType(activity);
+    OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
+    if (orgInfo == null) {
+      orgInfo = new OrgInfo(orgName);
+      myOrgInfoMap.put(orgName, orgInfo);
+    } else {
+      Collection activityCollection = 
+        orgInfo.getActivitySchedule().intersectingSet(element.getStartTime(),
+                                                      element.getEndTime());
+
+      if (activityCollection.size() > 0) {
+        System.err.println("OrgActivityQueryHandler: found more than one activity for " + 
+                           orgName + " during " + 
+                           new Date(element.getStartTime()) + " - " + 
+                           new Date(element.getEndTime()));
+      }
+    }
+    
+    orgInfo.getActivitySchedule().add(element);
   }
 
   protected void processLocation(Object[] rowData) {
@@ -172,48 +217,316 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     // look up geoloc from location string
     GeolocLocation geoLoc = (GeolocLocation) myPlugIn.getLocation(locCode);
 
-    org.cougaar.domain.glm.ldm.oplan.TimeSpan timeSpan = 
-      new TimeSpan(myOplan.getCday(), 
-                   ((Number) rowData[5]).intValue(), 
-                   ((Number) rowData[6]).intValue());
+    OrgInfoElement element = 
+      new OrgInfoElement(geoLoc, myOplan.getCday(), 
+                         ((Number) rowData[5]).intValue(), 
+                         ((Number) rowData[6]).intValue());
+
+    OrgInfo orgInfo = (OrgInfo) myOrgInfoMap.get(orgName);
+    if (orgInfo == null) {
+      orgInfo = new OrgInfo(orgName);
+      myOrgInfoMap.put(orgName, orgInfo);
+    } else {
+      Collection locationCollection = 
+        orgInfo.getLocationSchedule().intersectingSet(element.getStartTime(),
+                                                      element.getEndTime());
+
+      if (locationCollection.size() > 0) {
+        System.err.println("OrgActivityQueryHandler: found more than one location for " + 
+                           orgName + " during " + 
+                           new Date(element.getStartTime()) + " - " + 
+                           new Date(element.getEndTime()));
+      }
+    }
     
-    getOrgActivity(orgName, timeSpan).setGeoLoc(geoLoc);
+    orgInfo.getLocationSchedule().add(element);
   }
 
-  private OrgActivity getOrgActivity(String orgName, 
-                                     org.cougaar.domain.glm.ldm.oplan.TimeSpan timeSpan) {
-    if (myOrgActivityMap == null) {
-      myOrgActivityMap = new HashMap();
-    }
+  
+  /**
+   * getMergedOrgActivities - merges the activity, location, and optempo 
+   * TimeSpanSets for the Org into a set of OrgActivities.
+   **/
+  protected TimeSpanSet getMergedOrgActivities(OrgInfo orgInfo) {
+    TimeSpanSet timeSpanSet = new TimeSpanSet();
+    if (orgInfo != null) {
+      Iterator activityIterator = orgInfo.getActivitySchedule().iterator();
+      Iterator locationIterator = orgInfo.getLocationSchedule().iterator();
+      Iterator opTempoIterator = orgInfo.getOpTempoSchedule().iterator();
 
-    TimeSpanSet orgActivities = (TimeSpanSet)myOrgActivityMap.get(orgName);
-    if (orgActivities == null) {
-      orgActivities = new TimeSpanSet();
-      myOrgActivityMap.put(orgName, orgActivities);
-    } 
-
-    Collection oaCollection = 
-      orgActivities.intersectingSet(timeSpan.getStartTime(),
-                                    timeSpan.getEndTime());
-    OrgActivity orgActivity;
-    
-    if (oaCollection.size() > 0) {
-      if (oaCollection.size() != 1) {
-        System.err.println("OrgActivityQueryHandler.getOrgActivity: found more than match for " + 
-                           orgName + " during " + 
-                           timeSpan.getStartTime() + " - " + 
-                           timeSpan.getEndTime());
+      OrgInfoElement activity;
+      if (activityIterator.hasNext()) {
+        activity = (OrgInfoElement) activityIterator.next();
+      } else {
+        System.err.println("OrgActivityQueryHandler:getMergedOrgActivities()" +
+                           " - no activities for " + orgInfo.getOrgName());
+        return timeSpanSet;
       }
-      orgActivity = (OrgActivity)oaCollection.iterator().next();
+
+      OrgInfoElement location;
+      if (locationIterator.hasNext()) {
+        location = (OrgInfoElement) locationIterator.next();
+      } else {
+        System.err.println("OrgActivityQueryHandler:getMergedOrgActivities()" +
+                           " - no location for " + orgInfo.getOrgName());
+        return timeSpanSet;
+      }
+
+      OrgInfoElement opTempo;
+      if (opTempoIterator.hasNext()) {
+        opTempo = (OrgInfoElement) opTempoIterator.next();
+      } else {
+        System.err.println("OrgActivityQueryHandler:getMergedOrgActivities()" +
+                           " - no optempo for " + orgInfo.getOrgName());
+        return timeSpanSet;
+      }
+
+
+      ArrayList orgInfoElements = new ArrayList(3);
+
+      orgInfoElements.add(ACTIVITY_INDEX, activity);
+      orgInfoElements.add(LOCATION_INDEX, location);
+      orgInfoElements.add(OPTEMPO_INDEX, opTempo);
+
+      long start = getStart(TimeSpan.MIN_VALUE, orgInfoElements);
+      long end = TimeSpan.MAX_VALUE;
+      
+      while (start != TimeSpan.MAX_VALUE) {
+        end = getEnd(start, orgInfoElements);
+
+        OrgActivity orgActivity = makeOrgActivity(orgInfo.getOrgName(),
+                                                  start, end, activity, 
+                                                  location, opTempo);
+        timeSpanSet.add(orgActivity);
+
+        activity = endsAfter(end, activity, activityIterator);
+        orgInfoElements.set(ACTIVITY_INDEX, activity);
+
+        location = endsAfter(end, location, locationIterator);
+        orgInfoElements.set(LOCATION_INDEX, location);
+
+        opTempo = endsAfter(end, opTempo, opTempoIterator);
+        orgInfoElements.set(OPTEMPO_INDEX, opTempo);
+
+        // Find start of next interval
+        start = getStart(end, orgInfoElements);
+ 
+        if ((start != TimeSpan.MAX_VALUE) &&
+            (start > end)) {
+          System.out.println("OrgActivityQueryHandler: found a schedule gap for " +
+                             orgInfo.getOrgName() + 
+                             " - gap between " + new Date(end) + " - " + new Date(start));
+        }
+      }
+    }      
+    return timeSpanSet;
+  }
+
+  private OrgActivity makeOrgActivity(String orgName,
+                                      long startTime,
+                                      long endTime,
+                                      OrgInfoElement activity, 
+                                      OrgInfoElement location, 
+                                      OrgInfoElement opTempo) {
+
+    OrgActivity orgActivity = new OrgActivity(orgName, myOplan.getUID());
+    myComponent.getUIDServer().registerUniqueObject(orgActivity);
+    orgActivity.setOwner(myClusterIdentifier);
+    orgActivity.setTimeSpan(makeOplanTimeSpan(startTime, endTime));
+
+    if ((activity != null) &&
+        (intersect(orgActivity.getTimeSpan(), activity))) {
+      orgActivity.setActivityType((String) activity.getObject());
     } else {
-      orgActivity = new OrgActivity(orgName, myOplan.getUID());
-      myComponent.getUIDServer().registerUniqueObject(orgActivity);
-      orgActivity.setOwner(myClusterIdentifier);
-      orgActivity.setTimeSpan(timeSpan);
-      orgActivities.add(orgActivity);
+      System.err.println("OrgActivityQueryHandler.makeOrgActivity() - " +
+                         " no activity for " + orgName + 
+                         " from " + new Date(startTime) + 
+                         " to " + new Date(endTime));
     }
 
-    return orgActivity;
+    if ((location != null) &&
+        (intersect(orgActivity.getTimeSpan(), location))) {
+      orgActivity.setGeoLoc((GeolocLocation) location.getObject());
+    } else {
+      System.err.println("OrgActivityQueryHandler.makeOrgActivity() - " +
+                         " no location for " + orgName + 
+                         " from " + new Date(startTime) + 
+                         " to " + new Date(endTime));
+    }
+    
+    if ((opTempo != null) &&
+        (intersect(orgActivity.getTimeSpan(), opTempo))) {
+      orgActivity.setOpTempo((String) opTempo.getObject());
+    } else {
+      System.err.println("OrgActivityQueryHandler.makeOrgActivity() - " +
+                         " no optempo for " + orgName + 
+                         " from " + new Date(startTime) + 
+                         " to " + new Date(endTime));
+    }
+      
+    return orgActivity; 
+  }
+
+  private static long getEnd(long start, Collection timeSpans) {
+    long end = TimeSpan.MAX_VALUE;
+
+    for (Iterator iterator = timeSpans.iterator(); 
+         iterator.hasNext();) {
+      Object o = iterator.next();
+      if (o != null) {
+        TimeSpan timeSpan = (TimeSpan) o;
+        if (timeSpan.getStartTime() <= start) {
+          end = Math.min(end, timeSpan.getEndTime());
+        } else {
+          end = Math.min(end, timeSpan.getStartTime());
+        }
+      }
+    }
+
+    return end;
+  }
+
+  // returns TimeSpan.MAX_VALUE if there isn't any more data
+  private static long getStart(long end, Collection timeSpans) {
+    long start = TimeSpan.MAX_VALUE;
+
+    for (Iterator iterator = timeSpans.iterator(); 
+         iterator.hasNext();) {
+      Object o = iterator.next();
+      if (o != null) {
+        TimeSpan timeSpan = (TimeSpan) o;
+        if (timeSpan.getStartTime() <  end) {
+          start = Math.min(start, end);
+        } else {
+          start = Math.min(start, timeSpan.getStartTime());
+        }
+      }
+    }
+
+    return start;
+  }
+
+
+  private static boolean intersect(TimeSpan ts1, TimeSpan ts2) {
+    return ((ts1 != null) &&
+            (ts2 != null) &&
+            (ts1.getStartTime() < ts2.getEndTime()) &&
+            (ts1.getEndTime() > ts2.getStartTime()));
+  }
+
+  private TimeSpan makeOplanTimeSpan(long startTime, long endTime) {
+    System.out.println(99);
+
+    Date startDate = normalize(new Date(startTime));
+
+    Date thruDate = normalize(new Date(endTime));
+    // roll back to start of previous day. Wacky definition of thru date.
+    myCalendar.setTime(thruDate);
+    myCalendar.add(Calendar.DATE, -1);
+    thruDate = myCalendar.getTime();
+
+    Date cDate = normalize(myOplan.getCday());
+    
+    // Find cDate -> startDate
+    int startDelta = 0;
+    for (myCalendar.setTime(cDate); 
+         myCalendar.getTime().getTime() < startDate.getTime(); 
+         startDelta++) {
+      myCalendar.add(Calendar.DATE, 1);
+    }
+
+    int endDelta = startDelta;
+    for (myCalendar.setTime(startDate); 
+         myCalendar.getTime().getTime() < thruDate.getTime(); 
+         endDelta++) {
+      myCalendar.add(Calendar.DATE, 1);
+    }
+
+    return new org.cougaar.domain.glm.ldm.oplan.TimeSpan(myOplan.getCday(), 
+                                                         startDelta, 
+                                                         endDelta);
+  }
+  
+  private Date normalize(Date date) {
+    myCalendar.setTime(date);
+    int year = myCalendar.get(Calendar.YEAR);
+    int month = myCalendar.get(Calendar.MONTH);
+    int day = myCalendar.get(Calendar.DATE);
+
+    // set to midnight
+    myCalendar.set(year, month, day, 0, 0);
+    return myCalendar.getTime();
+  }
+
+
+  // Presumes that that OrgInfoElements are sorted by TimeSpan and non 
+  // overlapping
+  private OrgInfoElement endsAfter(long start, OrgInfoElement current, 
+                                   Iterator iterator) {
+
+    if (current == null) {
+      // We've already walked the entire set.
+      return current;
+    }
+
+    if (current.getEndTime() <= start) {
+      while (iterator.hasNext()) {
+        OrgInfoElement next = (OrgInfoElement) iterator.next();
+        if (next.getEndTime() > start) {
+          return next;
+        }
+      }
+      return null;
+    } else {
+      return current;
+    }
+  }
+
+  private class OrgInfo {
+    
+    private String myOrgName;
+    private TimeSpanSet myOpTempoSchedule;
+    private TimeSpanSet myActivitySchedule;
+    private TimeSpanSet myLocationSchedule;
+
+    public OrgInfo(String orgName) {
+      myOrgName = orgName;
+
+      myOpTempoSchedule = new TimeSpanSet();
+      myActivitySchedule = new TimeSpanSet();
+      myLocationSchedule = new TimeSpanSet();
+    }
+
+    public String getOrgName() {
+      return myOrgName;
+    }
+
+    public TimeSpanSet getOpTempoSchedule() {
+      return myOpTempoSchedule;
+    }
+
+    public TimeSpanSet getActivitySchedule() {
+      return myActivitySchedule;
+    }
+
+    public TimeSpanSet getLocationSchedule() {
+      return myLocationSchedule;
+    }
+  }
+  
+
+  private class OrgInfoElement extends org.cougaar.domain.glm.ldm.oplan.TimeSpan {
+    private Object myObject;
+
+    public OrgInfoElement(Object object, Date baseDate, int startDelta, int thruDelta) {
+      super(baseDate, startDelta, thruDelta);
+
+      myObject = object;
+    }
+
+    public Object getObject() {
+      return myObject;
+    }
   }
 }
 
