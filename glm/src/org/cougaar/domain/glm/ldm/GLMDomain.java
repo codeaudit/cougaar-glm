@@ -12,11 +12,11 @@ package org.cougaar.domain.glm.ldm;
 
 import java.util.*;
 
-import org.cougaar.core.cluster.WhiteboardServesLogicProvider;
+import org.cougaar.core.cluster.BlackboardServesLogicProvider;
 import org.cougaar.core.cluster.ClusterServesLogicProvider;
 import org.cougaar.core.cluster.LogPlan;
 import org.cougaar.core.cluster.LogPlanServesLogicProvider;
-import org.cougaar.core.cluster.XPlanServesWhiteboard;
+import org.cougaar.core.cluster.XPlanServesBlackboard;
 import org.cougaar.domain.planning.ldm.Domain;
 import org.cougaar.domain.planning.ldm.Factory;
 import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
@@ -38,15 +38,15 @@ public class GLMDomain implements Domain {
     return new GLMFactory(ldm);
   }
 
-  public XPlanServesWhiteboard createXPlan(Collection existingXPlans) {
+  public XPlanServesBlackboard createXPlan(Collection existingXPlans) {
     for (Iterator plans = existingXPlans.iterator(); plans.hasNext(); ) {
-      XPlanServesWhiteboard xPlan = (XPlanServesWhiteboard) plans.next();
+      XPlanServesBlackboard xPlan = (XPlanServesBlackboard) plans.next();
       if (xPlan instanceof LogPlan) return xPlan;
     }
     return new LogPlan();
   }
 
-  public Collection createLogicProviders(WhiteboardServesLogicProvider alpplan,
+  public Collection createLogicProviders(BlackboardServesLogicProvider alpplan,
                                          ClusterServesLogicProvider cluster) {
     ArrayList l = new ArrayList(5); // don't let this be too small.
 

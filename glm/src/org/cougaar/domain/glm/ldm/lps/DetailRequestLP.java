@@ -116,7 +116,7 @@ public class DetailRequestLP
         return false;
       }
     };
-    Enumeration enum = logplan.searchWhiteboard(pred);
+    Enumeration enum = logplan.searchBlackboard(pred);
     while (enum.hasMoreElements()) {
       DetailRequest ir = (DetailRequest) enum.nextElement();
       System.out.println("Resending " + ir);
@@ -134,7 +134,7 @@ public class DetailRequestLP
         return false;
       }
     };
-    Enumeration queryEnum = logplan.searchWhiteboard(queryPred);
+    Enumeration queryEnum = logplan.searchBlackboard(queryPred);
     while (queryEnum.hasMoreElements()) {
       QueryRequest ir = (QueryRequest) queryEnum.nextElement();
       System.out.println("Resending " + ir);
