@@ -1556,7 +1556,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 
 
     /**
-     * @see #getSelfLegs()
+     * see getSelfLegs ()
      **/
     protected Vector selfLegsCache;
 
