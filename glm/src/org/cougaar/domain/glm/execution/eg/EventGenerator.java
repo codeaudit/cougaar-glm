@@ -79,6 +79,11 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
   private int timeScriptCurrentIndex = -1;
   private boolean timeScriptSawHighRate = false;
   private long theSchedulingLookAhead = 10L * 60000L; // Look ahead ten minutes
+  private InventoryReportManager theInventoryReportManager;
+  private InventoryScheduleManager theInventoryScheduleManager;
+  private FailureConsumptionReportManager theFailureConsumptionReportManager;
+  private FailureConsumptionRateManager theFailureConsumptionRateManager;
+  private TaskEventReportManager theTaskEventReportManager;
 
   private static class TimeScriptItem {
     long elapsedTime;
@@ -100,23 +105,25 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
   }
 
   public EventGenerator() {
-    InventoryReportManager theInventoryReportManager =
+    theInventoryReportManager =
       new InventoryReportManager(this);
-    InventoryScheduleManager theInventoryScheduleManager =
+    theInventoryScheduleManager =
       new InventoryScheduleManager(this, theInventoryReportManager);
+    theFailureConsumptionReportManager =
+      new FailureConsumptionReportManager(this);
+    theFailureConsumptionRateManager =
+      new FailureConsumptionRateManager(this, theFailureConsumptionReportManager);
+    theTaskEventReportManager =
+      new TaskEventReportManager(this);
     scheduleManagers.add(theInventoryScheduleManager);
     scheduleManagers.add(theInventoryReportManager);
-    FailureConsumptionReportManager theFailureConsumptionReportManager =
-      new FailureConsumptionReportManager(this);
-    FailureConsumptionRateManager theFailureConsumptionRateManager =
-      new FailureConsumptionRateManager(this, theFailureConsumptionReportManager);
     scheduleManagers.add(theFailureConsumptionRateManager);
     scheduleManagers.add(theFailureConsumptionReportManager);
-    TaskEventReportManager theTaskEventReportManager = new TaskEventReportManager(this);
     scheduleManagers.add(theTaskEventReportManager);
+  }
 
+  public void initialize() {
     restore();
-
     String url = getContactURL();   // Get a toehold into the society
     try {
       getClusterInfo(url);           // The all the clusters
@@ -538,7 +545,7 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
    **/
   
   private String getContactURL() {
-    String s = (String) OptionPane.showInputDialog(null,
+    String s = (String) OptionPane.showInputDialog(getGUI(),
       "Enter location of a cluster Log Plan Server in the form host:port",
                    "Cluster Location",
                     OptionPane.INFORMATION_MESSAGE,
@@ -963,10 +970,10 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
     }
     addPlugIns(System.getProperties()); // Add plugins specified as system properties
     final EventGenerator eventGenerator = new EventGenerator();
-    eventGenerator.setTimeScript(timeScript);
     JFrame frame = new JFrame("ALP Event Generator");
     frame.setContentPane(eventGenerator.getGUI());
     frame.setJMenuBar(eventGenerator.getJMenuBar());
+    eventGenerator.setTimeScript(timeScript);
     final JComponent timeGUIPanel = eventGenerator.getTimeGUI();
     timeGUIPanel.setBackground(new Color(250, 240, 192));
     timeGUIPanel.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -988,10 +995,12 @@ public class EventGenerator implements TimeGUI.Listener, TimeConstants {
         }
       }
     });
-    frame.pack();
     timeGUIPanel.setLocation(10000, 0);
     forceComponentInWindow(timeGUIPanel, lp);
+    frame.pack();
+    frame.setState(frame.ICONIFIED);
     frame.show();
+    eventGenerator.initialize();
     eventGenerator.startListeners();
   }
 }
