@@ -214,6 +214,30 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_InputTaskAssetVolume</Classname>
     <PSPName>alpine/demo/TRANSPORT_VOLUME.PSP</PSPName>
   </element>
+
+<!-- BEGIN BLACKJACK PSPs -->
+	<element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>mil.darpa.log.alpine.blackjack.plugins.PSP_BlackJackDemand</Classname>
+    <PSPName>BlackJackDemand.PSP</PSPName>
+  </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>mil.darpa.log.alpine.blackjack.plugins.PSP_BlackJackPatients</Classname>
+    <PSPName>BlackJackPatients.PSP</PSPName>
+  </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>mil.darpa.log.alpine.blackjack.plugins.PSP_CasualtyEstimate</Classname>
+    <PSPName>CasualtyEstimate.PSP</PSPName>
+  </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>mil.darpa.log.alpine.blackjack.plugins.PSP_PatientDistribution</Classname>
+    <PSPName>PatientDistribution.PSP</PSPName>
+  </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>mil.darpa.log.alpine.blackjack.plugins.PSP_ClusterInfo</Classname>
+    <PSPName>ClusterInfo.PSP</PSPName>
+  </element>
+<!-- END BLACKJACK PSPs -->
+
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_FailedAllocation</Classname>
