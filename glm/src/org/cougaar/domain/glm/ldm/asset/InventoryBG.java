@@ -1174,15 +1174,9 @@ public abstract class InventoryBG implements PGDelegate {
         long start = TimeUtils.addNDaysTime(getStartTime(), 0);
         long end = TimeUtils.addNDaysTime(getStartTime(), 30);
 	
-<<<<<<<<<<<<<< variant A
         qse = ScheduleUtils.buildQuantityScheduleElement(getDouble(myPG_.getInitialLevel()), start, end);
         new_elements.add(qse);
 	Schedule new_schedule = GLMFactory.newQuantitySchedule(new_elements.elements(), 
->>>>>>>>>>>>>> variant B
-        qse = ScheduleUtils.buildQuantityScheduleElement(getDouble(myPG_.getInitialLevel()), start, end);
-        new_elements.add(qse);
-	Schedule new_schedule = ALPFactory.newQuantitySchedule(new_elements.elements(), 
-======= end of combination
 							       PlanScheduleType.TOTAL_INVENTORY);
 
 	if (ScheduleUtils.isOffendingSchedule(new_schedule)) {
