@@ -9,27 +9,27 @@
         <RangeValue min="0"  max="9">
 	  <RuleParam name="Meals">
       	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="MRE" />
-	      <KeyValue key="Lunch" value="MRE" />
-	      <KeyValue key="Dinner" value="MRE" />
+	      <KeyValue key="Breakfast" value="NSN/8970001491094" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/8970001491094" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
         <RangeValue min="10"  max="29">
 	  <RuleParam name="Meals">
       	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="T-Ration" />
-	      <KeyValue key="Lunch" value="MRE" />
-	      <KeyValue key="Dinner" value="T-Ration" />
+	      <KeyValue key="Breakfast" value="NSN/TRATIONBRKXXX" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/TRATIONLDXXXX" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
         <RangeValue min="30"  max="225">
 	  <RuleParam name="Meals">
       	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="B-Ration" />
-	      <KeyValue key="Lunch" value="MRE" />
-	      <KeyValue key="Dinner" value="B-Ration" />
+	      <KeyValue key="Breakfast" value="NSN/BRATIONBRKXXX" />
+	      <KeyValue key="Lunch" value="NSN/8970001491094" />
+	      <KeyValue key="Dinner" value="NSN/BRATIONLDXXXX" />
     	    </KeySet>
   	  </RuleParam>
 	</RangeValue>
