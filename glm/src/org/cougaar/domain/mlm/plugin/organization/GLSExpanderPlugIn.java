@@ -72,30 +72,31 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
    * The Socrates subscription
    **/
   private IncrementalSubscription mySelfOrgs;
-
+  
   /** for knowing when we get our self org asset **/
   private Organization selfOrgAsset = null;
-
+  
   /**
    * Parameters are the types of determinerequirements to generate.
    **/
   String[] myParams = null;
   RootFactory theLDMF = null;
-    
+  
   /**
    * Override the setupSubscriptions() in ComponentPlugin
    * Get an LDMService for factory calls
    * Use the blackboard service inherited from ComponentPlugin
    **/
   protected void setupSubscriptions() {
-    //        System.out.println("setupSubscriptions: "+this.getBindingSite().getAgentIdentifier());
+    
+    //System.out.println("setupSubscriptions: "+this.getBindingSite().getAgentIdentifier());
     //get the LDM service to access the object factories from my bindingsite's servicebroker
     LDMService ldmService = null;
     if (theLDMF == null) {
       ldmService = (LDMService) getBindingSite().getServiceBroker().getService(this, LDMService.class,
-                                                                               new ServiceRevokedListener() {
-        public void serviceRevoked(ServiceRevokedEvent re) {
-          theLDMF = null;
+                                                  new ServiceRevokedListener() {
+				         public void serviceRevoked(ServiceRevokedEvent re) {
+				       theLDMF = null;
         }
       });
     }
@@ -108,73 +109,76 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
     } else {
       myParams = new String[0];
     }
-	
+    
     // subscribe using the blackboardservice - blackboard variable(representing the service)
     //is inherited from ComponentPlugin
     mySelfOrgs = (IncrementalSubscription) blackboard.subscribe(selfOrgAssetPred);
     
-	
     if (blackboard.didRehydrate()) {
       processOrgAssets(mySelfOrgs.elements()); // May already be there
     }
   }
-    
-
+  
+  
   private void setupSubscriptions2() {
+    
     /** Predicate for finding input GLS Task. It must be a GLS FOR us **/
     final UnaryPredicate myTaskPred = new UnaryPredicate() {
-      public boolean execute(Object o) {
-        if (o instanceof Task) {
-          Task task = (Task) o;
-          Verb verb = task.getVerb();
-          if (verb.equals(Constants.Verb.GetLogSupport)) {
-            PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
-            if (pp != null) {
-              return pp.getIndirectObject().equals(selfOrgAsset);
-            }
-          }
-        }
-        return false;
-      }
-    };
+	public boolean execute(Object o) {
+	  
+	  if (o instanceof Task) {
+	    Task task = (Task) o;
+	    Verb verb = task.getVerb();
+	    if (verb.equals(Constants.Verb.GetLogSupport)) {
+	      PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
+	      if (pp != null) {
+		return pp.getIndirectObject().equals(selfOrgAsset);
+	      }
+	    }
+	  }
+	  return false;
+	}
+      };
     expandableTasks = (IncrementalSubscription) blackboard.subscribe(myTaskPred);
     
     /** Predicate for watching our expansions **/
     final UnaryPredicate myExpansionPred = new UnaryPredicate() {
-      public boolean execute(Object o) {
-        if (o instanceof Expansion) {
-          Expansion exp = (Expansion) o;
-          return myTaskPred.execute(exp.getTask());
-        }
-        return false;
-      }
-    };
+	public boolean execute(Object o) {
+	  
+	  if (o instanceof Expansion) {
+	    Expansion exp = (Expansion) o;
+	    return myTaskPred.execute(exp.getTask());
+	  }
+	  return false;
+	}
+      };
     myExpansions = (IncrementalSubscription) blackboard.subscribe(myExpansionPred);
   }
-   
+  
   /**
    * The predicate for the Socrates subscription
    **/
   private static UnaryPredicate selfOrgAssetPred = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Organization) {
-        Organization org = (Organization) o;
-        return org.isSelf();
+      public boolean execute(Object o) {
+	
+	if (o instanceof Organization) {
+	  Organization org = (Organization) o;
+	  return org.isSelf();
+	}
+	return false;
       }
-      return false;
-    }
-  };
-
+    };
+  
   /**
    * Plugin execute method is called every time one of our
    * subscriptions has something to do
    **/
   protected void execute() {
-
+    
     if (mySelfOrgs.hasChanged()) {
       processOrgAssets(mySelfOrgs.getAddedList());
     }
-
+    
     if (expandableTasks == null) 
       {
         return; // Still waiting for ourself
@@ -190,7 +194,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
       PlugInHelper.updateAllocationResult(myExpansions);
     }
   }
-
+  
   private void processOrgAssets(Enumeration e) {
     if (e.hasMoreElements()) {
       selfOrgAsset = (Organization) e.nextElement();
@@ -200,16 +204,17 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
       }
     }
   }
-
+  
   /**
    * Expand a task into a GLS for subordinates plus
    * DETERMINEREQUIREMENTS for all types specified by params.
    * @param task The Task to expand.
    **/
   public void expand(Task task) {
+    
     Vector subtasks = new Vector();
     subtasks.addElement(createForSubordinatesTask(task));
-
+    
     for (int i = 0; i < myParams.length; i++) {
       subtasks.addElement(createDetermineRequirementsTask(task, myParams[i]));
     }
@@ -250,9 +255,9 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
   public Task createDetermineRequirementsTask(Task task, String ofTypePreposition) {
     NewTask subtask = createTask(task);
     subtask.setVerb(Constants.Verb.DetermineRequirements);
-
+    
     Vector prepphrases = new Vector();
-
+    
     // get the existing prep phrase(s) - look for FOR <Clustername>
     // and add that one to the new subtask
     Enumeration origpp = task.getPrepositionalPhrases();
@@ -287,7 +292,7 @@ public class GLSExpanderPlugIn extends ComponentPlugin {
     } else {
       subtask.setDirectObject(null);
     }
-
+    
     subtask.setPlan(task.getPlan());
     subtask.setPreferences(task.getPreferences());
     ContextOfUIDs context = (ContextOfUIDs) task.getContext();
