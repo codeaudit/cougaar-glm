@@ -275,18 +275,13 @@ public final class Utility {
    */
   public final static AllocationResult createAllocationResult( RootFactory factory, boolean successFlag,
                                 double startTime, double endTime, double cost, double quantity) {
-    int[] aspectarray = new int[ 4];
     double[] resultsarray = new double[4];
 
-    aspectarray[ 0] = AspectType.START_TIME;
     resultsarray[ 0] = startTime;
-    aspectarray[ 1] = AspectType.END_TIME;
     resultsarray[ 1] = endTime;
-    aspectarray[ 2] = AspectType.COST;
     resultsarray[ 2] = cost;
-    aspectarray[ 3] = AspectType.QUANTITY;
     resultsarray[ 3] = quantity;
-    return factory.newAllocationResult( 1.0, successFlag, aspectarray, resultsarray);
+    return factory.newAllocationResult( 1.0, successFlag, AspectType.CommonAspects, resultsarray);
   }
 
   /**
