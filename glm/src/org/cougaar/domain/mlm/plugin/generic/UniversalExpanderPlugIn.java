@@ -30,10 +30,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 
+
 /** ExpanderPlugIn that takes arguments of verbs to determine what kinds of tasks we would like to expand.
-  * PlugIn will look up in a database information about how to expand the incoming tasks to create a workflow.
+  * The PlugIn will access a database that contains information about how to expand the tasks it is interested in.
+  * Please see glm/docs/UniversalExpanderPlugIn.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: UniversalExpanderPlugIn.java,v 1.2 2001-04-10 17:39:10 bdepass Exp $
+  * @version $Id: UniversalExpanderPlugIn.java,v 1.3 2001-06-06 17:54:44 bdepass Exp $
   **/
 
 public class UniversalExpanderPlugIn extends SimplePlugIn {
@@ -41,43 +43,7 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
     private IncrementalSubscription interestingTasks;
     private IncrementalSubscription myExpansions;
     
-   protected static UnaryPredicate VerbTasksPredicate(final Vector verbs) {
-     return new UnaryPredicate() {
-	     public boolean execute(Object o) {
-         if (o instanceof Task) {
-           Task task = (Task)o;
-           String taskVerb = task.getVerb().toString();
-           Enumeration verbsenum = verbs.elements();
-           while (verbsenum.hasMoreElements()) {
-             String interestingVerb = (String)verbsenum.nextElement();
-             if (interestingVerb.equals(taskVerb)) {
-               return true;
-	           }
-           }
-         }
-         return false;
-       }
-     };
-   }	
-
-    protected static UnaryPredicate VerbExpansionsPredicate(final Vector verbs) {
-      return new UnaryPredicate() {
-	      public boolean execute(Object o) {
-          if (o instanceof Expansion) {
-            Task task = ((Expansion)o).getTask();
-            String taskVerb = task.getVerb().toString();
-            Enumeration verbsenum = verbs.elements();
-            while (verbsenum.hasMoreElements()) {
-              String interestingVerb = (String)verbsenum.nextElement();
-              if (interestingVerb.equals(taskVerb)) {
-                return true;
-	            }
-            }
-          }
-          return false;
-        }
-      };
-    }	
+   
 
     public void setupSubscriptions() {
       //System.out.println("In UniversalExpanderPlugin.setupSubscriptions");
@@ -102,7 +68,7 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
 		      wf.addTask(subtask);
 		      publishAdd(subtask);
 		    }
-		    // create the Expansion ...??? Do we want to provide an EstimatedAllocationResult ???
+		    // create the Expansion ...
 		    Expansion newexpansion = theLDMF.createExpansion(theLDMF.getRealityPlan(), task, wf, null);
 		    publishAdd(newexpansion);
 	    } //end of for
@@ -116,11 +82,12 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
     }  //end of execute
 
   
-
+    /** Gather expansion/subtask information from our database to use
+      * in creating our subtasks and workflow.
+      * @param task  The parent task to expand
+      * @return Collection of subtasks
+      **/
     private Collection createSubTasks(Task task)  {
-      // initialize this with root to kick off the first pass
-      //Collection subroots = new ArrayList();
-      //subroots.add("root");
       Collection subtasks = new ArrayList();
       
       try {
@@ -141,6 +108,8 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
          String dbuser = Parameters.replaceParameters(rawuser);
          String rawpasswd = "${generic.database.expander.password}";
          String dbpasswd = Parameters.replaceParameters(rawpasswd);
+         String exptable = "${generic.database.expander.expansion_table}";
+         String dbexptable = Parameters.replaceParameters(exptable);
 
          conn = DriverManager.getConnection ("jdbc:oracle:thin:@" + dbinfo, dbuser, dbpasswd );
          String parentverb = task.getVerb().toString();
@@ -148,7 +117,7 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
     	   Statement stmt = conn.createStatement ();
 	  
 	       //First get the first order leaf tasks
-         StringBuffer immediateleafquery = new StringBuffer("select SUBTASK_NAME, OFFSET, DURATION from CONSTR_TASK_EXP where ROOT_TASK_NAME = ");
+         StringBuffer immediateleafquery = new StringBuffer("select SUBTASK_NAME, OFFSET, DURATION from "+ dbexptable +" where ROOT_TASK_NAME = ");
 	       immediateleafquery.append("'" + parentverb + "' and IS_LEAF_TASK = '1'");
 
 	       //System.out.println("\n About to execute query: "+ immediateleafquery);
@@ -167,7 +136,7 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
 	       stmt.close();
 	       stmt = conn.createStatement();
 
-         StringBuffer secondaryleafquery = new StringBuffer("select cte.subtask_name, t1.offset + cte.offset, cte.duration from constr_task_exp cte, (select cte1.subtask_name, cte1.is_leaf_task, cte1.offset, cte1.duration from constr_task_exp cte1 where is_leaf_task = 0 and root_task_name = '");
+         StringBuffer secondaryleafquery = new StringBuffer("select cte.subtask_name, t1.offset + cte.offset, cte.duration from "+ dbexptable +" cte, (select cte1.subtask_name, cte1.is_leaf_task, cte1.offset, cte1.duration from "+ dbexptable +" cte1 where is_leaf_task = 0 and root_task_name = '");
 	       secondaryleafquery.append( parentverb + "') t1 where cte.root_task_name = t1.subtask_name order by t1.offset, t1.subtask_name" );
          //System.out.println("\n About to execute query: "+ secondaryleafquery);
 	       rset = stmt.executeQuery(secondaryleafquery.toString());
@@ -244,5 +213,46 @@ public class UniversalExpanderPlugIn extends SimplePlugIn {
 
     return subtask;
   }
+  
+  //
+  // Predicates
+  //
+  protected static UnaryPredicate VerbTasksPredicate(final Vector verbs) {
+     return new UnaryPredicate() {
+       public boolean execute(Object o) {
+         if (o instanceof Task) {
+           Task task = (Task)o;
+           String taskVerb = task.getVerb().toString();
+           Enumeration verbsenum = verbs.elements();
+           while (verbsenum.hasMoreElements()) {
+             String interestingVerb = (String)verbsenum.nextElement();
+             if (interestingVerb.equals(taskVerb)) {
+               return true;
+             }
+           }
+         }
+         return false;
+       }
+     };
+   }  
+
+    protected static UnaryPredicate VerbExpansionsPredicate(final Vector verbs) {
+      return new UnaryPredicate() {
+        public boolean execute(Object o) {
+          if (o instanceof Expansion) {
+            Task task = ((Expansion)o).getTask();
+            String taskVerb = task.getVerb().toString();
+            Enumeration verbsenum = verbs.elements();
+            while (verbsenum.hasMoreElements()) {
+              String interestingVerb = (String)verbsenum.nextElement();
+              if (interestingVerb.equals(taskVerb)) {
+                return true;
+              }
+            }
+          }
+          return false;
+        }
+      };
+    }  
 
 }
