@@ -33,6 +33,9 @@ import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
 import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
+/* Abstract base class for query handlers which are invoked on behalf of
+ * SQLOplanPlugIn.
+ */
 public abstract class SQLOplanQueryHandler extends QueryHandler {
   protected SQLOplanPlugIn myPlugIn;
                

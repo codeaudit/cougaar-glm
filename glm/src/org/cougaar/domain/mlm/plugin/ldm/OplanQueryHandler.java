@@ -23,6 +23,11 @@ import org.cougaar.util.Parameters;
 
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 
+
+/** Reads oplan info from a database table. Assumes it's being invoked on
+ * behalf of SQLOplanPlugIn. Updates oplan maintained by SQLOplanPlugIn.
+ */
+
 public class OplanQueryHandler  extends SQLOplanQueryHandler {
   private static final String QUERY_NAME = "OplanInfoQuery";
 
@@ -49,7 +54,8 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
    **/
   public void processRow(Object[] rowData) {
     if (rowData.length != 3) {
-      System.err.println("OplanQueryInfo:processRow() - unexpected number of columns.");
+      System.err.println("OplanQueryHandler.processRow()- expected 3 columns of data, " +
+                         " got " + rowData.length);
     }
 
     myOperationName = (String) rowData[0];

@@ -32,6 +32,11 @@ import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
 import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
+/** Reads OrgActivity for specified Oplan from a database table. Assumes it's 
+ * being invoked on behalf of SQLOplanPlugIn. Updates orgactivities maintained 
+ * by SQLOplanPlugIn.
+ */
+
 public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
   public static final String ACTIVITY_PARAMETER = "activity";
   public static final String OPTEMPO_PARAMETER = "opTempo";
@@ -74,8 +79,9 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * doing whatever is required.
    **/
   public void processRow(Object[] rowData) {
-    if (rowData.length != 6) {
-      // Print out error
+    if (rowData.length != 7) {
+      System.err.println("OrgActivityQueryHandler.processRow() - expected 7 columns of data, " +
+                         " got " + rowData.length);
     }
 
     String relation = (String) rowData[0];
@@ -87,15 +93,16 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     } else if (relation.equals(myLocationKey)) {
       processLocation(rowData);
     } else {
-      // ERROR
+      System.err.println("OrgActivityQueryHandler.processRow(): unexpected text in RELATION_NAME column 6 columns of data - " + relation);
+      System.err.println("Ignoring row of data: " + rowData);
     }
   }
   
 
 
   /** this method is called when a query is complete, 
-   * afer the last call to processRow.  The default method is empty
-   * but may be overridden by subclasses.
+   * afer the last call to processRow. Updates OrgActivities maintained by
+   * SQLOplanPlugIn
    **/
   public void endQuery() {
     // myOrgActivityMap has a TimeSpanSet for each Org
@@ -107,7 +114,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
       allOrgActivities.addAll((Collection) iterator.next());
     }
 
-    /*
+    /* Debugging 
     for (Iterator iterator = allOrgActivities.iterator();
          iterator.hasNext();) {
       OrgActivity orgActivity = (OrgActivity)iterator.next();
@@ -120,6 +127,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
                          orgActivity.getGeoLoc());
     }
     */
+
     myOplan.setOrgActivities(allOrgActivities);
   }
 
@@ -208,6 +216,9 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     return orgActivity;
   }
 }
+
+
+
 
 
 

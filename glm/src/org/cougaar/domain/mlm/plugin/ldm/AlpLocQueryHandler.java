@@ -33,6 +33,13 @@ import org.cougaar.domain.glm.ldm.ALPFactory;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
+/** Reads alploc info from a database table. Assumes it's being invoked on
+ * behalf of SQLOplanPlugIn. Updates SQLOplanPlugIn's geoloc table with alplocs.
+ *
+ * BOZO - alplocs are not geolocs but there isn't any other commonly understood way
+ * to access them.
+ */
+
 
 public class AlpLocQueryHandler  extends SQLOplanQueryHandler {
   private static final String QUERY_NAME = "AlpLocQuery";
@@ -49,7 +56,7 @@ public class AlpLocQueryHandler  extends SQLOplanQueryHandler {
    **/
   public void processRow(Object[] rowData) {
     if (rowData.length != 4) {
-      System.err.println("AlpLocQueryHandler: expected 4 columns of data, " +
+      System.err.println("AlpLocQueryHandler.processRow() -  expected 4 columns of data, " +
                          " got " + rowData.length);
     }
 

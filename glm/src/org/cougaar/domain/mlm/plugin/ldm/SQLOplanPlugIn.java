@@ -35,9 +35,9 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
 import java.io.*;
 
 /**
- * The SQLPlanPlugIn instantiates the Oplan
- * and adds it to the LogPlan.  Uses QueryHandlers to load Oplan info from
- * a database
+ * The SQLOplanPlugIn instantiates the Oplan and adds it to the LogPlan.  Essentially
+ * a copy of OplanPlugIn.java except that it uses QueryHandlers to load Oplan info from
+ * a database.
  *
  **/
 public class SQLOplanPlugIn extends LDMSQLPlugIn {

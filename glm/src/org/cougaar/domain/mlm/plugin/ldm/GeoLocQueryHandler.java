@@ -33,6 +33,9 @@ import org.cougaar.domain.glm.ldm.ALPFactory;
 import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
+/** Reads geoloc info from a database table. Assumes it's being invoked on
+ * behalf of SQLOplanPlugIn. Updates SQLOplanPlugIn's geoloc table.
+ */
 
 public class GeoLocQueryHandler  extends SQLOplanQueryHandler {
   private static final String QUERY_NAME = "GeoLocQuery";
@@ -48,20 +51,20 @@ public class GeoLocQueryHandler  extends SQLOplanQueryHandler {
    * doing whatever is required.
    **/
   public void processRow(Object[] rowData) {
-    if (rowData.length != 7) {
-      System.err.println("GeoLocQueryHandler: expected 7 columns of data, " +
+    if (rowData.length != 8) {
+      System.err.println("GeoLocQueryHandler.processRow() - expected 8 columns of data, " +
                          " got " + rowData.length);
     }
 
     NewGeolocLocation geoloc = ALPFactory.newGeolocLocation();
     geoloc.setName((String) rowData[1]);
     geoloc.setGeolocCode((String) rowData[0]);
-    geoloc.setIcaoCode((String) rowData[0]); //???
+    geoloc.setIcaoCode((String) rowData[3]); 
     geoloc.setInstallationTypeCode((String) rowData[2]);
-    geoloc.setLatitude(Latitude.newLatitude(((Number) rowData[3]).doubleValue()));
-    geoloc.setLongitude(Longitude.newLongitude(((Number) rowData[4]).doubleValue()));
-    geoloc.setCountryStateCode((String) rowData[5]);
-    geoloc.setCountryStateName((String) rowData[6]);
+    geoloc.setLatitude(Latitude.newLatitude(((Number) rowData[4]).doubleValue()));
+    geoloc.setLongitude(Longitude.newLongitude(((Number) rowData[5]).doubleValue()));
+    geoloc.setCountryStateCode((String) rowData[6]);
+    geoloc.setCountryStateName((String) rowData[7]);
 
     if (!myPlugIn.addLocation(geoloc)) {
       System.err.println("GeoLocQueryHandler: unable to add geoloc for " +
@@ -69,6 +72,7 @@ public class GeoLocQueryHandler  extends SQLOplanQueryHandler {
     }
   }
 }
+
 
 
 
