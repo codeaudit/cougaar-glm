@@ -37,4 +37,22 @@ public class OrgDataPlugIn extends AssetDataPlugIn  {
     packages.add("org.cougaar.domain.glm.ldm.policy");
   }
 
+  protected Verb getReportVerb(Collection roles) {
+    // kludge - assuming that collection of roles never mixes subordinate with
+    // provider roles.
+    if (roles.contains(Constants.Role.SUBORDINATE) ||
+        roles.contains(Constants.Role.ADMINISTRATIVESUBORDINATE)) {
+      //System.out.println("Report for duty");
+      return Constants.Verb.ReportForDuty;
+    } else {
+      //System.out.println("Report for service");
+      return Constants.Verb.ReportForService;
+    }
+  }
 }
+
+
+
+
+
+
