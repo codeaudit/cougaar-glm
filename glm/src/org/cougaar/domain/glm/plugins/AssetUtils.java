@@ -139,8 +139,9 @@ public class AssetUtils {
 		geolocs.add((GeolocLocation)lse.getLocation());
 	    }
 	} catch (NullPointerException npe) {
-	    GLMDebug.ERROR("AssetUtils", 
-			   "getGeolocLocationAtTime(), LocationSchedulePG NOT found on "+org);
+	    // Not all organizations have LocationSchedulePG's
+//  	    GLMDebug.DEBUG("AssetUtils", 
+//  			   "getGeolocLocationAtTime(), LocationSchedulePG NOT found on "+org);
 	}
 	return geolocs.elements();
     }
