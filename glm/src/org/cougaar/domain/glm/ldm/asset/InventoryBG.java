@@ -159,56 +159,20 @@ public abstract class InventoryBG implements PGDelegate {
     }
 
     /**
-       Try to do a reasonable job setting the startDay_ and
-       firstDayOfDemand_ variables. If there is demand, then the start
-       time is set 14 days before the earliest demand. If there is no
-       demand, but there are inventory reports, the start time is set
-       the time of the earliest inventory report. Otherwise, the start
-       time is not set, but getStartTime() will return today. If there
-       is no demand the firstDayOfDemand is set to 14 days after the
-       start time (which defaults to today, if it has not been set).
-       Otherwise, it is set to the time of the earliest demand. In all
-       cases, both the start time and the first day of demand are
-       pushed to the end of the day in which they fall.
+       Set the startTime to the earliest of today or the oldest
+       inventory report. In all cases, the start time is pushed to the
+       end of the day in which it falls.
      **/
     private void initializeTime(Inventory inventory, long today) {
 	try {
-	    // Today is AlpTime, i.e. now
-            Enumeration role_sched = inventory.getRoleSchedule().getRoleScheduleElements();
-            long earliest_demand = Long.MAX_VALUE;
-            // StartTime_ is day 0 for this inventory. It is set to the
-            // earliest of 14 days before earliest demand or day of oldest
-            // inventory report.
-            // firstDayOfDemand is the day on which the IM receives its first request.
-            while (role_sched.hasMoreElements()) {
-                PlanElement pe = (PlanElement)role_sched.nextElement();
-                Task dueOut = pe.getTask();
-                try {
-                    long time;
-                    if (TaskUtils.isProjection(dueOut)) {
-                        time = TaskUtils.getStartTime(dueOut);
-                    } else {
-                        time = TaskUtils.getEndTime(dueOut);
-                    }
-                    earliest_demand = Math.min(time, earliest_demand);
-                } catch (RuntimeException re) {
-                    continue;   // No start time, probably
-                }
-            }
             if (!isStartTimeSet) { // Need to set start time
                 long start_time = today;
                 InventoryReport oldest = getOldestInventoryReport();
-                start_time = Math.min(start_time, earliest_demand - 14 * TimeUtils.MSEC_PER_DAY);
                 if (oldest != null) {
                     start_time = Math.min(start_time, oldest.theReportDate);
                 }
                 startDay_ = (int) (start_time / TimeUtils.MSEC_PER_DAY);
                 isStartTimeSet = true;
-            }
-            if (earliest_demand == Long.MAX_VALUE) {
-                firstDayOfDemand_ = 0;
-            } else {
-                firstDayOfDemand_ = convertTimeToDay(earliest_demand);
             }
             today_ = convertTimeToDay(today);
         } catch (RuntimeException re) {
@@ -279,19 +243,27 @@ public abstract class InventoryBG implements PGDelegate {
         }
     }
 
+    /**
+     * Record all demand tasks as dueouts. As a side effect compute the firstDayOfDemand_
+     **/
     public int withdrawFromInventory(Inventory inventory, ClusterIdentifier clusterID) {
 	Enumeration role_sched = inventory.getRoleSchedule().getRoleScheduleElements();
+        long earliestDemand = Long.MAX_VALUE;
 	while (role_sched.hasMoreElements()) {
 	    PlanElement pe = (PlanElement)role_sched.nextElement();
 	    Task task = pe.getTask();
 	    if (task.getVerb().equals(Constants.Verb.WITHDRAW)) {
 		addDueOut(task);
+                earliestDemand = Math.min(earliestDemand, TaskUtils.getEndTime(task));
 	    } else if (task.getVerb().equals(Constants.Verb.PROJECTWITHDRAW)) {
 		addDueOutProjection(task);
+                earliestDemand = Math.min(earliestDemand, TaskUtils.getStartTime(task));
 	    } else {
 		System.err.println("What the .... Task added to role schedule "+TaskUtils.taskDesc(task));
 	    }
 	}
+        if (earliestDemand != Long.MAX_VALUE)
+            firstDayOfDemand_ = convertTimeToDay(earliestDemand);
 	return 0;
     }
 
@@ -1202,9 +1174,15 @@ public abstract class InventoryBG implements PGDelegate {
         long start = TimeUtils.addNDaysTime(getStartTime(), 0);
         long end = TimeUtils.addNDaysTime(getStartTime(), 30);
 	
+<<<<<<<<<<<<<< variant A
         qse = ScheduleUtils.buildQuantityScheduleElement(getDouble(myPG_.getInitialLevel()), start, end);
         new_elements.add(qse);
 	Schedule new_schedule = GLMFactory.newQuantitySchedule(new_elements.elements(), 
+>>>>>>>>>>>>>> variant B
+        qse = ScheduleUtils.buildQuantityScheduleElement(getDouble(myPG_.getInitialLevel()), start, end);
+        new_elements.add(qse);
+	Schedule new_schedule = ALPFactory.newQuantitySchedule(new_elements.elements(), 
+======= end of combination
 							       PlanScheduleType.TOTAL_INVENTORY);
 
 	if (ScheduleUtils.isOffendingSchedule(new_schedule)) {
