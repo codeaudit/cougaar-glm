@@ -88,7 +88,6 @@ public class TransferableLP
    * longer valid.
    **/
   public void restart(final ClusterIdentifier cid) {
-    System.out.println("Resending transferables to " + cid);
     UnaryPredicate pred = new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof TransferableTransfer) {
@@ -102,11 +101,8 @@ public class TransferableLP
     Enumeration enum = logplan.searchBlackboard(pred);
     while (enum.hasMoreElements()) {
       TransferableTransfer tt = (TransferableTransfer) enum.nextElement();
-      System.out.println("Resending " + tt);
       processTransferableTransferAdded(tt, cid);
     }
-    System.out.println("Resending finished");
-    System.out.println("Verifying received transferables");
     pred = new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof Transferable) {
@@ -121,10 +117,8 @@ public class TransferableLP
       NewTransferableVerification nav = ldmf.newTransferableVerification(transferable);
       nav.setSource(cluster.getClusterIdentifier());
       nav.setDestination(cid);
-      System.out.println("Verifying " + transferable + " with " + nav);
       logplan.sendDirective(nav);
     }
-    System.out.println("Verifying finished");
   }
     
 

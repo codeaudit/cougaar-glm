@@ -116,7 +116,6 @@ public class DetailRequestLP
    * and QueryRequests to the restarted cluster. 
    **/
   public void restart(final ClusterIdentifier cid) {
-    System.out.println("Resending DetailRequest to " + cid);
     UnaryPredicate pred = new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof DetailRequest) {
@@ -130,11 +129,9 @@ public class DetailRequestLP
     Enumeration enum = logplan.searchBlackboard(pred);
     while (enum.hasMoreElements()) {
       DetailRequest ir = (DetailRequest) enum.nextElement();
-      System.out.println("Resending " + ir);
       processDetailRequestAdded(ir);
     }
 
-    System.out.println("Resending QueryRequest to " + cid);
     UnaryPredicate queryPred = new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof QueryRequest) {
@@ -148,10 +145,8 @@ public class DetailRequestLP
     Enumeration queryEnum = logplan.searchBlackboard(queryPred);
     while (queryEnum.hasMoreElements()) {
       QueryRequest ir = (QueryRequest) queryEnum.nextElement();
-      System.out.println("Resending " + ir);
       processQueryRequestAdded(ir);
     }
-    System.out.println("Resending finished");
   }
     
 
@@ -372,7 +367,6 @@ public class DetailRequestLP
           if (!localObj.equals(obj)) {
             //System.out.println("DetailRequestLP: publish changing existing obj " + obj);
             // changes probably not filled in
-            System.out.println("Publishing a change to " + localObj);
             logplan.change(localObj, changes);
           }
         } else {
