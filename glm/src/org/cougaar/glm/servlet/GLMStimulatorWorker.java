@@ -51,11 +51,6 @@ import javax.servlet.ServletException;
 import org.cougaar.core.servlet.SimpleServletSupport;
 import org.cougaar.core.servlet.ServletUtil;
 
-import org.cougaar.mlm.ui.psp.transit.DataComputer;
-import org.cougaar.mlm.ui.psp.transit.Registry;
-import org.cougaar.mlm.ui.psp.transit.RegistryCache;
-import org.cougaar.mlm.ui.psp.transit.RegistryComputer;
-
 import org.cougaar.util.Trigger;
 import org.cougaar.util.TriggerModel;
 import org.cougaar.util.SyncTriggerModelImpl;
@@ -544,8 +539,6 @@ public class GLMStimulatorWorker
   protected Collection handledPlanElements = new HashSet();
   protected ResponseData responseData=new ResponseData();
 
-  //  protected JLabel myLabel = null;
-  //  protected String myXmlTaskFile = "";
   protected int batchesSent = 0;
   protected int totalBatches = 0;
   protected long interval;
@@ -553,7 +546,7 @@ public class GLMStimulatorWorker
   protected String inputFile = "                     ";
   protected ServletBase servlet;
   protected GLMStimulatorSupport support;
-  protected boolean debug = true;
+  protected boolean debug = false;
   protected boolean wait = false;
   protected Set subscriptions = new HashSet();
 }

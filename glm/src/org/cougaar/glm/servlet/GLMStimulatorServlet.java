@@ -51,14 +51,6 @@ import org.cougaar.glm.callback.GLMOrganizationListener;
 import org.cougaar.glm.parser.GLMTaskParser;
 import org.cougaar.glm.util.AssetUtil;
 
-//import org.cougaar.lib.filter.UTILPlugInAdapter;
-
-import org.cougaar.lib.callback.UTILAllocationListener;
-import org.cougaar.lib.callback.UTILAllocationCallback;
-
-import org.cougaar.lib.util.UTILAllocate;
-import org.cougaar.lib.util.UTILPreference;
-
 import org.cougaar.planning.servlet.ServletBase;
 import org.cougaar.planning.servlet.ServletWorker;
 import org.cougaar.core.servlet.SimpleServletSupport;
