@@ -38,54 +38,54 @@ public interface ParamMap {
    * @param n name of the paramter
    * @param p the parameter to add
    */
-  public void addParam(String n, Param p);
+  void addParam(String n, Param p);
   
   /**
    * Get the value of a boolean parameter.
    * @param name of the parameter to get
    * @return the boolean value of the parameter
    */
-  public boolean getBooleanParam(String name) throws ParamException;
+  boolean getBooleanParam(String name) throws ParamException;
 
   /**
    * Get the value of a double parameter.
    * @param name of the parameter to get
    * @return the double value of the parameter
    */
-  public double getDoubleParam(String name) throws ParamException;
+  double getDoubleParam(String name) throws ParamException;
   
   /**
    * Get the value of a float parameter.
    * @param name of the parameter to get
    * @return the float value of the parameter
    */
-  public float getFloatParam(String name) throws ParamException;
+  float getFloatParam(String name) throws ParamException;
   
   /**
    * Get the value of a int parameter.
    * @param name of the parameter to get
    * @return the int value of the parameter
    */
-  public int getIntParam(String name) throws ParamException;
+  int getIntParam(String name) throws ParamException;
   
   /**
    * Get the value of a long parameter.
    * @param name of the parameter to get
    * @return the long value of the parameter
    */
-  public long getLongParam(String name) throws ParamException;
+  long getLongParam(String name) throws ParamException;
 
   /**
    * Get the value of a short parameter.
    * @param name of the parameter to get
    * @return the short value of the parameter
    */
-  public short getShortParam(String name) throws ParamException;
+  short getShortParam(String name) throws ParamException;
 
   /**
    * Get the value of a String parameter.
    * @param name of the parameter to get
    * @return the String value of the parameter
    */
-  public String getStringParam(String name) throws ParamException;
+  String getStringParam(String name) throws ParamException;
 }

@@ -224,4 +224,4 @@ public class UTILAllocationResultAggregator implements AllocationResultAggregato
       return currentar;
     }
   }
-};
+}
