@@ -85,7 +85,7 @@ public class InstanceParser{
 	String prefix = "";
 	// we want id's less than 10 to be 01, 02, etc. instead of 0,1,2
 	if (intQ.intValue () > 1) {
-	  prefix = (j < 10) ? "0" : "";
+	  prefix = (j < 9) ? "0" : "";
 	  newID = newID + "-" + prefix+(j+1);
 	}
 	newAssets.add (makeNewAsset(ldm, prototype, newID, newSchedule));
