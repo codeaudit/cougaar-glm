@@ -835,6 +835,7 @@ public abstract class InventoryManager extends InventoryProcessor {
     //      printDebug("Inventory level before failing allocation is "+
     //                 TimeUtils.dateString(invpg.convertDayToTime(day)) + " : "+invpg.getLevel(day)+
     //                 ", Reorder level :"+invpg.getReorderLevel(day));
+    invpg.setDueOutFilled(lowestPriorityDueOut, false);
     lowestPriorityDueOut.setFilled(false);
     if (isPrintConcise()) {
       if (lowestPriorityDueOut.getPreviouslyFilled() != false) {

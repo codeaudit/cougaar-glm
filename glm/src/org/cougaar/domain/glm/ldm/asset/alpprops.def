@@ -761,7 +761,9 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
         long getStartOfDay(int day);\
         int convertTimeToDay(long time);\
         int getImputedDayOfTime(long time);\
-        int getImputedDay(int day);
+        int getImputedDay(int day);\
+        void setDueOutFilled(DueOut dueOut, boolean newFilled);
+
 reorder_level.doc=volume level at which you are allowed to reorder. 
 in_reorder.doc=minimum volume you can order. Should be \ 
         less than or equal to reorder level. 
@@ -770,7 +772,7 @@ unobtainable.doc=Quantity of materiel which cannot be used. E.g. fuel \
 fill_to_capacity.doc=specifies whether the inventory is filled to cpacity \ 
         for refills. 
 initial_level.doc=Level of the inventory before any withdraws or deposits. 
-capacity.doc=maximum amount that can be contained or accommodated. 
+capacity.doc=maximum amount that can be contained or accommodated.\
 
 [SupplyClassPG]
 slots=String supplyClass, \

@@ -577,6 +577,11 @@ public class InventoryBG implements PGDelegate {
     return lowest;            // Nothing found
   }
 
+  public void setDueOutFilled(DueOut dueOut, boolean newFilled) {
+    dueOut.setFilled(newFilled);
+    updateDirtyDay(dueOut.getDay());
+  }
+
   /**
    * Compare two DueOuts for priority.
    * Returns priority(d1) - priority(d2).
