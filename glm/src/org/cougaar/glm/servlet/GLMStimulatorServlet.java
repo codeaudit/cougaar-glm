@@ -51,9 +51,9 @@ import org.cougaar.planning.servlet.ServletWorker;
  *
  * http://localhost:8800/$3-FSB/stimulator?inputFileName=Supply.dat.xml&tasksPerBatch=1&numberOfBatches=1&interval=1000&format=html
  *
- * It requires a special servlet component in the ini file (or equivalent CSMART entry) :
+ * It requires a special servlet component in the ini file (or equivalent XML entry) :
  *
- * plugin = org.cougaar.glm.servlet.GLMStimulatorServletComponent(org.cougaar.glm.servlet.GLMStimulatorServlet, /stimulator)
+ * plugin = org.cougaar.planning.servlet.BlackboardServletComponent(org.cougaar.glm.servlet.GLMStimulatorServlet, /stimulator)
  *
  * Also, if the xml file that defines a task that needs a prototype that is not provided by the XMLPrototypeProvider, you 
  * may need to register the prototype using an xml file, e.g.:
