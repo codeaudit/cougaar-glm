@@ -417,6 +417,10 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
    **/
   private void averageResults(ArrayList results, int denominator) {
 
+    // not much point in doing this if denominator is 0
+    if (denominator == 0)
+      return;
+
     for (int i = 0; i < results.size(); i++) {
       AspectValue[] avs = (AspectValue[]) results.get(i);
       avs[2].setValue(avs[2].getValue()/denominator);
