@@ -1,7 +1,7 @@
-Database=jdbc:oracle:thin:@eiger.alpine.bbn.com:1521:alp
+Database = jdbc:oracle:thin:@${tops.database}
 Driver = oracle.jdbc.driver.OracleDriver
-Username = blackjack
-Password = blackjack
+Username = ${blackjack.database.user}
+Username = ${blackjack.database.password}
 MIN_IN_POOL= 1
 MAX_IN_POOL= 4
 TIMEOUT= 1

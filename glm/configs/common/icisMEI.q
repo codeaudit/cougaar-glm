@@ -1,7 +1,7 @@
 Database=jdbc:oracle:thin:@${org.cougaar.database}
 Driver = oracle.jdbc.driver.OracleDriver
-Username = icis
-Password = icis
+Username = ${icis.database.user}
+Password = ${icis.database.password}
 MIN_IN_POOL= 1
 MAX_IN_POOL= 4
 TIMEOUT= 1

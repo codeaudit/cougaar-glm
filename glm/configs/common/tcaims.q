@@ -1,8 +1,8 @@
 # Live TCAIMS query 
 Driver=com.sybase.jdbc2.jdbc.SybDriver
-Database=jdbc:sybase:Tds:192.168.1.10:5000
-Username=beth
-Password=tcaimsii
+Database = jdbc:sybase:Tds:${tcaims.database}
+Username = ${tcaims.database.user}
+Username = ${tcaims.database.password}
 
 pacing = '2350010871095'
 

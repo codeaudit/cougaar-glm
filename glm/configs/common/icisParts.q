@@ -1,6 +1,6 @@
 Database=jdbc:oracle:thin:@${org.cougaar.database}
 Driver = oracle.jdbc.driver.OracleDriver
-Username = icis
+Username = ${icis.database.user}
 Password = icis
 MIN_IN_POOL= 1
 MAX_IN_POOL= 4
