@@ -59,7 +59,7 @@ public class TimeUtils {
     public static String dateString (Date date) {
 //  	dateTimeFormat_ = DateFormat.getDateTimeInstance(DateFormat.SHORT,
 //  							 DateFormat.SHORT);
-	dateTimeFormat_= new SimpleDateFormat("MM/dd/yy HH:mm z");
+	dateTimeFormat_= new SimpleDateFormat("MM/dd/yy HH:mm:ss.SSS z");
 	String sdate = dateTimeFormat_.format(date);
 	// mape '9/8/00 12:00 AM' to ' 9/8/00 12:00 AM'
 	while(sdate.length()<17){
