@@ -554,13 +554,10 @@ public class TestDeletionPlugIn extends SimplePlugIn {
             setEndTimePreference(mpTask, endTime);
         }
         AllocationResult ar =
-            PlugInHelper.createEstimatedAllocationResult(subtask, theLDMF, 1.0, true);
-        Aggregation agg = theLDMF.createAggregation(subtask.getPlan(), subtask,
-                                                    mpTask.getComposition(),
-                                                    ar);
-        NewComposition comp = (NewComposition) mpTask.getComposition();
-        comp.addAggregation(agg);
-        mpTask.setParentTasks(new Enumerator(comp.getParentTasks()));
+            PlugInHelper.createEstimatedAllocationResult(subtask, theLDMF,
+                                                         1.0, true);
+        Aggregation agg =
+            PlugInHelper.wireAggregation(subtask, mpTask, theLDMF, ar);
         publishChange(mpTask);
         publishAdd(agg);
     }
