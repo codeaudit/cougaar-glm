@@ -49,7 +49,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugIn.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.2 2001-10-02 23:36:46 bdepass Exp $
+  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.3 2001-10-03 21:15:34 bdepass Exp $
   **/
 
 public class NewUniversalExpanderPlugIn extends ComponentPlugin {
@@ -58,6 +58,7 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
   private IncrementalSubscription myExpansions;
   private DomainService domainService;
   private RootFactory theFactory;
+  private ArrayList expansionVerbs = new ArrayList();
   private boolean flat = true;
 
   public void load() {
@@ -74,6 +75,28 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
           }
         }
       });
+    // parse the parameters
+    Collection params = getParameters();
+    Iterator param_iter = params.iterator();
+    while (param_iter.hasNext()) {
+      String aParam = (String) param_iter.next();
+      if (aParam.startsWith("flat=")) {
+        // this assumes no spaces ... flat=true or flat=false
+        if (aParam.endsWith("false")) {
+          flat = false;
+        } else if (aParam.endsWith("true")){
+          flat = true;
+        } else {
+          throw new IllegalArgumentException("\n UNIVERSALEXPANDERPLUGIN received an " +
+                                             "illegal plugin argument to flat='value'. " +
+                                             "The value should either be 'true' or 'false'.");
+        }
+      } else {
+        // assume its a verb
+        expansionVerbs.add(aParam);
+      }
+    }
+    //System.err.println("\n UniversalExpanderPlugIn Flat flag is: "+flat);
   }
 
   public void unload() {
@@ -87,10 +110,10 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
     //System.out.println("In UniversalExpanderPlugin.setupSubscriptions");
     interestingTasks = (IncrementalSubscription)
       getBlackboardService().subscribe(
-                                       VerbTasksPredicate(getParameters()));
+                                       VerbTasksPredicate(expansionVerbs));
     myExpansions = (IncrementalSubscription)
       getBlackboardService().subscribe(
-                                       VerbExpansionsPredicate(getParameters()));
+                                       VerbExpansionsPredicate(expansionVerbs));
 
     theFactory = domainService.getFactory();
   }
@@ -177,7 +200,7 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
         StringBuffer firstlevelquery = new StringBuffer(basequery + 
           " where ROOT_TASK_NAME = '" + parentverb + "'");
         
-        System.out.println("\n About to execute query: "+ firstlevelquery);
+        //System.out.println("\n About to execute query: "+ firstlevelquery);
         rset = stmt.executeQuery(firstlevelquery.toString());
         //check to make sure we get something back from the query - resultset
         //api show's no easy way to check this - statement api says resultset will
