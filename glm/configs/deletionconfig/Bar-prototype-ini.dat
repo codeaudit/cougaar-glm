@@ -1,0 +1,31 @@
+[Prototype] MilitaryOrganization
+
+[UniqueId] "UTC/CombatOrg"
+
+[UIC] "UIC/Bar"
+
+[Relationship]
+Superior "Foo" ""
+Supporting "Foo" "TestDeletionProvider"
+
+[TypeIdentificationPG]
+TypeIdentification String "UTC/RTOrg"
+Nomenclature String "Bart"
+AlternateTypeIdentification String "SRC/17375L000100"
+
+[ClusterPG]
+ClusterIdentifier ClusterIdentifier "Bar"
+
+[OrganizationPG]
+Roles Collection<Role> "TestDeletionProvider"
+Service Service "Army"
+Agency Agency "FORSCOM"
+
+[MilitaryOrgPG]
+UIC String "WAQ1AA"
+Echelon String "5"
+UTC String "2JTTT"
+SRC String "17375L000100"
+Hierarchy2525 String "1.X.3.1.1.2"
+IsReserve boolean false
+HomeLocation GeolocLocation "GeolocCode=HKUZ, InstallationTypeCode=AIN, CountryStateCode=13, CountryStateName=GEORGIA, Name=FT_STEWART, Latitude=Latitude 31.85degrees, Longitude=Longitude -81.6degrees"
