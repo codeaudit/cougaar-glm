@@ -32,7 +32,9 @@ import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
-import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+
+import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.*;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.oplan.*;
 import org.cougaar.domain.glm.ldm.plan.*;
@@ -47,7 +49,9 @@ import org.cougaar.domain.glm.ldm.policy.*;
 public class PSP_AssetPerturbation extends PSP_BaseAdapter 
   implements PlanServiceProvider, UISubscriber, Assessor {
 
-    private static boolean debug = false;
+  private static boolean debug = false;
+
+  private Calendar myCalendar = Calendar.getInstance();
   private UID myModifyUID;
 
   /** 
@@ -191,14 +195,17 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
       psc.getServerPlugInSupport().subscribe(this, allAssetPred);
     Enumeration assets = ((CollectionSubscription)subscription).elements();
 
-    Date startDate = new Date("01/01/1995 00:00");
-    Date endDate   = new Date("12/31/2005 00:00");
+    myCalendar.set(1995, 0, 1, 0, 0, 0);
+    long startTime = myCalendar.getTime().getTime();
+
+    myCalendar.set(2005, 11, 31, 0, 0, 0);
+    long endTime = myCalendar.getTime().getTime();
 
     while (assets.hasMoreElements()) {
       Asset asset = (Asset)assets.nextElement();
       RoleSchedule roleSchedule = asset.getRoleSchedule();
       Collection overlapSchedule = 
-          roleSchedule.getOverlappingRoleSchedule(startDate, endDate);
+          roleSchedule.getOverlappingRoleSchedule(startTime, endTime);
       if (!overlapSchedule.isEmpty()) {
         String name = asset.toString();
         
@@ -292,7 +299,8 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
 
     RoleSchedule roleSchedule = asset.getRoleSchedule();
     Collection overlapSchedule = 
-      roleSchedule.getOverlappingRoleSchedule(startDate, endDate);
+      roleSchedule.getOverlappingRoleSchedule(startDate.getTime(), 
+                                              endDate.getTime());
     if (!overlapSchedule.isEmpty()) {
       Enumeration planElements = new Enumerator(overlapSchedule);
       if (debug) {
@@ -343,10 +351,16 @@ public class PSP_AssetPerturbation extends PSP_BaseAdapter
                          "\nAllocation is " + allocation + 
                          " to asset " + asset);
     }
+
+    myCalendar.set(1999, 0, 1, 0, 0, 0);
+    long startTime = myCalendar.getTime().getTime();
+
+    myCalendar.set(1999, 11, 31, 23, 59, 0);
+    long endTime = myCalendar.getTime().getTime();
+
     roleSchedule = asset.getRoleSchedule();
     Collection encapSchedule = 
-      roleSchedule.getEncapsulatedRoleSchedule(new Date("01/01/1999 00:00"),
-                                               new Date("12/31/1999 11:59"));
+      roleSchedule.getEncapsulatedRoleSchedule(startTime, endTime);
     if (!encapSchedule.isEmpty()) {
       Enumeration planElements = new Enumerator(encapSchedule);
       while (planElements.hasMoreElements()) {
