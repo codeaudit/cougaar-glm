@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.5 2001-02-27 20:04:10 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.6 2001-03-01 00:37:28 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -344,7 +344,7 @@ public class ServerPlanElementProvider extends PlanElementProvider
    */
   private void handleCompleteItinerary(UITaskItinerary itinerary, 
 					String unitName) {
-//       System.out.println("HANDLING COMPLETE: "+itinerary);
+      //System.out.println("HANDLING: "+itinerary);
 	
     // Store the itineraries -- this is used for saving the state
     // of the aggregation server
@@ -813,10 +813,15 @@ public class ServerPlanElementProvider extends PlanElementProvider
   }
 
   public void fireItemAdded(Object item){
-    if ( item instanceof UITaskItinerary )
-	handleCompleteItinerary((UITaskItinerary)item,
-				PathString.basename(((UITaskItinerary)item).getTransportedUnitName()));
-//       handleNewItinerary((UITaskItinerary)item);
+      if ( item instanceof UITaskItinerary ) {
+	  String unitName = ((UITaskItinerary)item).getTransportedUnitName();
+	  if (unitName == null) { 
+	      System.err.println("Discarding itinerary with bad unit info: "+item); 
+	  } else {
+	      handleCompleteItinerary((UITaskItinerary)item,
+				      PathString.basename(unitName));
+	  }
+      }
     else if ( item instanceof TaskNode )
       handleNewTaskNode((TaskNode)item);
     else if ( item instanceof Object[] ) {
