@@ -440,8 +440,6 @@ public class InventoryServlet
       Date alpNow = new Date(alarmService.currentTimeMillis());
 
       logger.debug("Setting Alp now to " + alpNow);
-      logger.error("Setting Alp now to " + alpNow);
-      System.out.println("Setting Alp now to " + alpNow);
 
       inv.setAlpNow(alarmService.currentTimeMillis());
       
