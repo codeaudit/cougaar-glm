@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskGanttChart.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskGanttChart.java,v 1.2 2001-02-23 01:07:38 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -213,8 +213,10 @@ public class TaskGanttChart extends GanttChart
 		// forgiveness factor due to TOPS roundoff: push "pretty close" values to 1 hour apart
 		if ( Math.abs(startVal - oldEndVal) < 3600 * 1000 )
 		    startVal = oldEndVal + 3600 * 1000;
-		if ( startVal < oldEndVal )
-		    heightOffset += 0.1;
+// 		Code below lowers lozenge display to allow the display of overlapping legs
+// 		I removed it because it didn't work stellarly - wseitz
+// 		if ( startVal < oldEndVal )
+// 		    heightOffset += 0.1;
 	    }
 
 	    Lozenge loz = new Lozenge(this, t);
