@@ -25,6 +25,7 @@ import org.cougaar.domain.planning.ldm.plan.Task;
 
 import org.cougaar.util.UnaryPredicate;
 
+import java.util.Collection;
 import java.util.Enumeration;
 
 /**
@@ -79,8 +80,13 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter {
     boolean anythingChanged = newtasks.hasMoreElements();
     int i = 0;
 
+    Collection removedCollection = mySub.getRemovedCollection ();
+
     while (newtasks.hasMoreElements()) {
       Task t = (Task) newtasks.nextElement();
+	  if (removedCollection.contains (t))
+		continue;
+	  
       if (isWellFormed (t)) {
 	((UTILGenericListener) myListener).handleTask (t);
 	if (xxdebug) 
@@ -97,6 +103,8 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter {
 
     while (changedTasks.hasMoreElements()) {
       Task changedT = (Task)changedTasks.nextElement();
+	  if (removedCollection.contains (changedT))
+		continue;
       if (isWellFormed (changedT)) {
 	((UTILGenericListener) myListener).handleTask(changedT);
 	System.out.println ("UTILExpandableTaskCallback : Notifying " + myListener + 
