@@ -24,10 +24,12 @@ package org.cougaar.glm.ldm;
 import java.util.*;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.agent.ClusterServesLogicProvider;
+import org.cougaar.core.service.AgentIdentificationService;
+import org.cougaar.core.service.DomainService;
 
 import org.cougaar.core.domain.*;
 import org.cougaar.core.component.BindingSite;
+import org.cougaar.core.component.ServiceBroker;
 
 import org.cougaar.core.domain.DomainAdapter;
 import org.cougaar.core.domain.DomainBindingSite;
@@ -39,6 +41,7 @@ import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
 
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.service.LDMService;
 
 
 /**
@@ -46,7 +49,13 @@ import org.cougaar.planning.ldm.PlanningFactory;
  **/
 
 public class GLMDomain extends DomainAdapter {
+
   public static final String GLM_NAME = "glm";
+
+  private MessageAddress self;
+  private AgentIdentificationService agentIdService;
+  private DomainService domainService;
+  private LDMService ldmService;
 
   public String getDomainName() {
     return GLM_NAME;
@@ -56,13 +65,42 @@ public class GLMDomain extends DomainAdapter {
     super();
   }
 
+  public void setAgentIdentificationService(AgentIdentificationService ais) {
+    this.agentIdService = ais;
+    this.self = ais.getMessageAddress();
+  }
+
+  public void setDomainService(DomainService domainService) {
+    this.domainService = domainService;
+  }
+
+  public void setLDMService(LDMService ldmService) {
+    this.ldmService = ldmService;
+  }
+
   public void initialize() {
     super.initialize();
     Constants.Role.init();    // Insure that our Role constants are initted
   }
 
-  public void load() {
-    super.load();
+  public void unload() {
+    ServiceBroker sb = getBindingSite().getServiceBroker();
+    if (ldmService != null) {
+      sb.releaseService(
+          this, LDMService.class, ldmService);
+      ldmService = null;
+    }
+    if (domainService != null) {
+      sb.releaseService(
+          this, DomainService.class, domainService);
+      domainService = null;
+    }
+    if (agentIdService != null) {
+      sb.releaseService(
+          this, AgentIdentificationService.class, agentIdService);
+      agentIdService = null;
+    }
+    super.unload();
   }
 
   public Collection getAliases() {
@@ -74,15 +112,7 @@ public class GLMDomain extends DomainAdapter {
   }
 
   protected void loadFactory() {
-    DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
-    if (bindingSite == null) {
-      throw new RuntimeException(
-          "Binding site for the domain has not be set.\n" +
-          "Unable to initialize domain Factory without a binding site.");
-    } 
-
-    LDMServesPlugin ldm = 
-      bindingSite.getClusterServesLogicProvider().getLDM();
+    LDMServesPlugin ldm = ldmService.getLDM();
     PlanningFactory ldmf = (PlanningFactory) ldm.getFactory("planning");
     if (ldmf == null) {
       throw new RuntimeException("Missing \"planning\" factory!");
@@ -102,26 +132,19 @@ public class GLMDomain extends DomainAdapter {
   }
 
   protected void loadLPs() {
-    DomainBindingSite bindingSite = (DomainBindingSite) getBindingSite();
-    if (bindingSite == null) {
-      throw new RuntimeException(
-          "Binding site for the domain has not be set.\n" +
-          "Unable to initialize domain LPs without a binding site.");
-    } 
-
-    ClusterServesLogicProvider cluster = 
-      bindingSite.getClusterServesLogicProvider();
-    RootPlan rootplan = (RootPlan) 
-      bindingSite.getXPlanForDomain("root");
+    DomainBindingSite domainBS = (DomainBindingSite) getBindingSite();
+    RootPlan rootplan = (RootPlan) domainBS.getXPlanForDomain("root");
     if (rootplan == null) {
-      throw new RuntimeException("Missing \"root\" domain plan!");
+      throw new RuntimeException("Missing \"root\" plan!");
     }
-    MessageAddress self = cluster.getMessageAddress();
-    PlanningFactory ldmf = (PlanningFactory) cluster.getFactory("planning");
+
+    PlanningFactory ldmf = (PlanningFactory) 
+      domainService.getFactory("planning");
     if (ldmf == null) {
       throw new RuntimeException("Missing \"planning\" factory!");
     }
-    GLMFactory glmFactory = (GLMFactory) cluster.getFactory("glm");
+    GLMFactory glmFactory = (GLMFactory) 
+      domainService.getFactory("glm");
 
     addLogicProvider(new ReceiveTransferableLP(rootplan, ldmf));
     addLogicProvider(new TransferableLP(rootplan, self, ldmf));
