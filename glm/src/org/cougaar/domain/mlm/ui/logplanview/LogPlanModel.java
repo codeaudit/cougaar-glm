@@ -493,40 +493,42 @@ public class LogPlanModel extends DefaultTreeModel {
         String assetName = asset.getTypeIdentificationPG().getNomenclature();
         allocationResult = allocation.getEstimatedResult();
 
-        newLogPlanItem = new LogPlanItem( "Estimated Values (Success: " + allocationResult.isSuccess() + ")");
-        allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
-        insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
+	if (allocationResult != null) {
+	  newLogPlanItem = new LogPlanItem( "Estimated Values (Success: " + allocationResult.isSuccess() + ")");
+	  allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
+	  insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
 
-        if ( allocationResult.isDefined( AspectType.COST)) {
-          cost = allocationResult.getValue( AspectType.COST);
-          costString = formatPenaltyValue( cost);
-          newLogPlanItem = new LogPlanItem( "     Cost: " + costString);
-          allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
-          insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
-        }
-        if ( allocationResult.isDefined( AspectType.QUANTITY)) {
-          quantity = allocationResult.getValue( AspectType.QUANTITY);
-          quantityString = formatPenaltyValue( quantity);
-          newLogPlanItem = new LogPlanItem( "     Qty:" + " " + quantityString);
-          allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
-          insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
-        }
-        if ( allocationResult.isDefined( AspectType.START_TIME)) {
-          dateValue = allocationResult.getValue( AspectType.START_TIME);
-          date = new Date( (long)dateValue);
-          dateString = date.toString();
-          newLogPlanItem = new LogPlanItem( "     Start: " + dateString);
-          allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
-          insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
-        }
-        if ( allocationResult.isDefined( AspectType.END_TIME)) {
-          dateValue = allocationResult.getValue( AspectType.END_TIME);
-          date = new Date( (long)dateValue);
-          dateString = date.toString();
-          newLogPlanItem = new LogPlanItem( "     End: " + dateString);
-          allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
-          insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
-        }
+	  if ( allocationResult.isDefined( AspectType.COST)) {
+	    cost = allocationResult.getValue( AspectType.COST);
+	    costString = formatPenaltyValue( cost);
+	    newLogPlanItem = new LogPlanItem( "     Cost: " + costString);
+	    allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
+	    insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
+	  }
+	  if ( allocationResult.isDefined( AspectType.QUANTITY)) {
+	    quantity = allocationResult.getValue( AspectType.QUANTITY);
+	    quantityString = formatPenaltyValue( quantity);
+	    newLogPlanItem = new LogPlanItem( "     Qty:" + " " + quantityString);
+	    allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
+	    insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
+	  }
+	  if ( allocationResult.isDefined( AspectType.START_TIME)) {
+	    dateValue = allocationResult.getValue( AspectType.START_TIME);
+	    date = new Date( (long)dateValue);
+	    dateString = date.toString();
+	    newLogPlanItem = new LogPlanItem( "     Start: " + dateString);
+	    allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
+	    insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
+	  }
+	  if ( allocationResult.isDefined( AspectType.END_TIME)) {
+	    dateValue = allocationResult.getValue( AspectType.END_TIME);
+	    date = new Date( (long)dateValue);
+	    dateString = date.toString();
+	    newLogPlanItem = new LogPlanItem( "     End: " + dateString);
+	    allocationChild = new DefaultMutableTreeNode( newLogPlanItem, true);
+	    insertNodeInto( allocationChild, allocationNode, allocationNode.getChildCount());
+	  }
+	}
       } else {
         // insert the allocationNode as a child node of its associated task
         insertNodeInto( allocationNode, taskNode, 0);
