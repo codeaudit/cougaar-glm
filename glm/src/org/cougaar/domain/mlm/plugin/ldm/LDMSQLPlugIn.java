@@ -413,8 +413,6 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       String sql;
       sql = produceQuery(qh, rawSql);
       
-      System.out.println("\n\nSubstituted sql is: "+sql);
-
       Properties props = new Properties();
       String user = qh.getParameter("Username");
       if (user == null) user = qh.getParameter("user");
