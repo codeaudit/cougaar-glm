@@ -171,20 +171,29 @@ Additional PSPs loaded by PSP Launcher
     <PSPName>alpine/demo/UIASSETS.PSP</PSPName>
   </element>
 
-<!-- BEGIN SRA PSPs
+
+<!-- BEGIN SRA PSPs -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>com.sra.ui.PSP_MaintenanceDemand</Classname>
-    <PSPName>alpine/demo/com/sra/ui/MAINTDEMAND.PSP</PSPName>
+    <Classname>org.cougaar.domain.css.ui.PSP_MaintenanceDemand</Classname>
+    <PSPName>alpine/demo/org/cougaar/domain/css/ui/MAINTDEMAND.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>com.sra.ui.PSP_QuartermasterDemand</Classname>
-    <PSPName>alpine/demo/com/sra/ui/QMDEMAND.PSP</PSPName>
+    <Classname>org.cougaar.domain.css.ui.PSP_QuartermasterDemand</Classname>
+    <PSPName>alpine/demo/org/cougaar/domain/css/ui/QMDEMAND.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>com.sra.ui.PSP_WaterDemand</Classname>
-    <PSPName>alpine/demo/com/sra/ui/WATERDEMAND.PSP</PSPName>
+    <Classname>org.cougaar.domain.css.ui.PSP_WaterDemand</Classname>
+    <PSPName>alpine/demo/org/cougaar/domain/css/ui/WATERDEMAND.PSP</PSPName>
   </element>
-      END SRA PSPs -->
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.domain.css.ui.PSP_PolicyUI</Classname>
+    <PSPName>alpine/demo/org/cougaar/domain/css/ui/POLICYUI.PSP</PSPName>
+  </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.domain.css.ui.PSP_ReadinessUI</Classname>
+    <PSPName>alpine/demo/org/cougaar/domain/css/ui/READINESSUI.PSP</PSPName>
+  </element>
+<!-- END SRA PSPs -->
 
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.perturbation.asset.PSP_AssetPerturbation</Classname>
