@@ -292,6 +292,12 @@ public class UTILExpanderPlugInAdapter extends UTILBufferingPlugInAdapter
 			 getSubtasks(t));
   }
 
+  public void handleRemovedTask (Task t) {
+    if (myExtraExtraOutput)
+      System.out.println (getName () + 
+			  ".handleRemovedTask : ignoring removed task - " + t.getUID());
+  }
+  
   /**
    * Implemented for UTILExpanderPlugIn interface
    *

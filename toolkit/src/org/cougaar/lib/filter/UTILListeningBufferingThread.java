@@ -67,6 +67,15 @@ public class UTILListeningBufferingThread
     addTask (t); 
   }
 
+  public void handleRemovedTask (Task t) {
+    if (myExtraExtraOutput)
+      System.out.println (classname + 
+			  ".handleRemovedTask : " + this + " got task " + t + 
+			  "\nfrom " + t.getSource ());
+
+	removeTask (t);
+  }
+  
   /** 
    * Asks listener to examine task
    *

@@ -31,5 +31,7 @@ public interface UTILGenericListener extends UTILFilterCallbackListener, UTILTas
    * @param t Task to handle
    */
   void    handleTask     (Task t);
+
+  void    handleRemovedTask (Task t);
 }
 

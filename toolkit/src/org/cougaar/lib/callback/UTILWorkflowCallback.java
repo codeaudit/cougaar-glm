@@ -156,6 +156,17 @@ public class UTILWorkflowCallback extends UTILFilterCallbackAdapter {
 	myListener.notify ();
       }
 
+	if (mySub.getRemovedList().hasMoreElements ()) {
+	  Enumeration removedtasks = mySub.getRemovedList();
+	  while (removedtasks.hasMoreElements()) {
+		Task t = (Task) removedtasks.nextElement();
+		if (xxdebug)
+		  System.out.println ("UTILWorkflowTaskCallback : Telling listener that task " + t.getUID() + 
+							  " was removed.");
+		((UTILGenericListener) myListener).handleRemovedTask(t);
+	  }
+	}
+
     if (xxdebug) {
       Enumeration removedTasks = mySub.getRemovedList();
       if (removedTasks.hasMoreElements ()) {

@@ -205,11 +205,21 @@ public class UTILBufferingThread implements Runnable {
 
       if (myExtraExtraOutput) 
 	System.out.println("" + this + 
-			   " thread now has " + bufferedTasks.size () + 
+			   " after add, thread now has " + bufferedTasks.size () + 
 			   " elements queued.");
     }
   }
 
+  protected void removeTask(Object removedObject) {
+    synchronized (this) {
+      bufferedTasks.remove (removedObject);
+      if (myExtraExtraOutput) 
+		System.out.println("" + this + 
+						   " after remove, thread now has " + bufferedTasks.size () + 
+						   " elements queued.");
+	}
+  }
+  
   /**
    * Defines when to dispatch buffered tasks
    *
