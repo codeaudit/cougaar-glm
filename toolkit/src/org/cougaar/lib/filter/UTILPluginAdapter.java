@@ -568,14 +568,14 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
     publishRemove (taskToReplace);
   }
 
-  protected final boolean publishAdd(Object o) {
-    return getBlackboardService().publishAdd(o);
+  protected final void publishAdd(Object o) {
+    getBlackboardService().publishAdd(o);
   }
-  protected final boolean publishRemove(Object o) {
-    return getBlackboardService().publishRemove(o);
+  protected final void publishRemove(Object o) {
+    getBlackboardService().publishRemove(o);
   }
-  protected final boolean publishChange(Object o) {
-    return getBlackboardService().publishChange(o, null);
+  protected final void  publishChange(Object o) {
+    getBlackboardService().publishChange(o, null);
   }
 
   /** @return the name of the cluster */

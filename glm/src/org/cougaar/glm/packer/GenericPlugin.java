@@ -143,25 +143,15 @@ abstract public class GenericPlugin extends SimplePlugin  {
       subTask.setWorkflow(workflow);
       workflow.addTask(subTask);
 
-      if (!publishAdd(subTask)) {
-	getLoggingService().error("Error publishing task - " + subTask.getUID());
-      }
+      publishAdd(subTask);
     }
 
-    if (!publishAdd(workflow)) {
-      getLoggingService().error("Error publishing workflow - " + workflow);
-    }
-
+    publishAdd(workflow);
     
     Expansion expan = getFactory().createExpansion(parentTask.getPlan(), 
                                                    parentTask, workflow, 
                                                    null);
-    if (!publishAdd(expan)) {
-      getLoggingService().error("Error publishing expansion - " + expan.getUID() + ".\n" +
-                         "Task: " + expan.getTask().getUID() + 
-                         " task commit date: " + expan.getTask().getCommitmentDate() +
-                         " task plan element: " + expan.getTask().getPlanElement());
-    }
+    publishAdd(expan);
 
     return;
   }
@@ -226,10 +216,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
         getLoggingService().debug("GenericPlugin: built the aggregation.");
       }
       
-      if (!publishAdd(aggregation)) {
-        getLoggingService().error("Error publishing aggregation - " + 
-                           aggregation.getUID());
-      }
+      publishAdd(aggregation);
       
       /* BOZO - Work around for persistence bug - need to publish the 
        * aggregation before adding it to the composition.  Should not be 
@@ -243,10 +230,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
       getLoggingService().debug("GenericPlugin: After the while loop.");
     }
     
-    if (!publishAdd(comp)) {
-      getLoggingService().error("Error publishing composition " + 
-                         comp);
-    }
+    publishAdd(comp);
     
     NewMPTask mpt = (NewMPTask)childTask;
     
@@ -255,9 +239,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
     //BOZO !!!
     mpt.setParentTasks(new Vector(parentTasks).elements());
     
-    if (!publishAdd(childTask)) {
-      getLoggingService().error("Error publishing mpt - " + mpt.getUID());
-    }
+    publishAdd(childTask);
     
     return true;
   }

@@ -495,19 +495,15 @@ public class SourceExpander extends SimplePlugin {
    * @param expansion the Expansion being added to the Blackboard.
    */
   private boolean publishAddExpansion( Expansion expansion) {
-    if ( publishAdd( expansion) == false){
-      return false;
-    }
-    if ( publishAdd( expansion.getWorkflow()) == false) {
-      return false;
-    }
+    publishAdd( expansion);
+    publishAdd( expansion.getWorkflow());
+
     Enumeration subtasks = expansion.getWorkflow().getTasks();
     while ( subtasks.hasMoreElements()) {
-      if ( publishAdd( subtasks.nextElement()) == false) {
-        return false;
-      }
+      publishAdd( subtasks.nextElement());
     }
-    return true;
+
+    return true;                //  hack
   }
 
   protected LoggingService logger;

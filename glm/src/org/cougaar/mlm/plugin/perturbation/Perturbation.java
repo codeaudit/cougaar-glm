@@ -612,15 +612,13 @@ public class Perturbation implements Runnable
  */
    private boolean removeObject( Asset asset )
    {
-      boolean status;
-		 
       System.out.println("\n<<<PerturbationPlugin>>> Removing asset with " +
              "item_id " + getItemId() + " of Cluster with UIC " + getUIC() );
       objectSubscriber_.openTransaction();
-      status = objectSubscriber_.publishRemove( asset );
+      objectSubscriber_.publishRemove( asset );
       objectSubscriber_.closeTransactionDontReset();
 		 
-      return status;      
+      return true;
    }
    
 /** 
@@ -638,7 +636,6 @@ public class Perturbation implements Runnable
       Object accessor      = null;
       String assetId       = null;
       String methodName    = null;
-      boolean status       = false;
       String startString   = getStartDate();
       String endString     = getEndDate();
       String prop          = getProperty();
@@ -697,7 +694,7 @@ public class Perturbation implements Runnable
 				
                // Publish change
                objectSubscriber_.openTransaction();
-               status = objectSubscriber_.publishChange( asset );
+               objectSubscriber_.publishChange( asset );
                objectSubscriber_.closeTransaction( false );
 				 
                // For testing....
@@ -736,7 +733,7 @@ public class Perturbation implements Runnable
 
             // Publish change
             objectSubscriber_.openTransaction();
-            status = objectSubscriber_.publishChange( asset );
+            objectSubscriber_.publishChange( asset );
             objectSubscriber_.closeTransaction( false );
 
             //For testing...
@@ -764,7 +761,7 @@ public class Perturbation implements Runnable
             "\n" + exception.toString() );
          exception.printStackTrace();
       }
-      return status;
+      return true;
    }
 
 // ************************
@@ -780,7 +777,7 @@ public class Perturbation implements Runnable
       Class className = null;
       Object obj      = null;	 
       Oplan theOplan  = null;
-      boolean status  = false;
+      boolean status  = true;
 
       if( ( obj = locateObject() ) != null )
       {

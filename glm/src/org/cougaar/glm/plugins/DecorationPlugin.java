@@ -397,7 +397,8 @@ public abstract class DecorationPlugin extends SimplePlugin {
 
 
     public boolean publishAddObject(Object obj) {
-	return this.publishAdd(obj);
+	publishAdd(obj);
+        return true;            // hack
     }
 
 
@@ -410,9 +411,8 @@ public abstract class DecorationPlugin extends SimplePlugin {
 
     public void publishAddToExpansion(Task parent, Task subtask) {
 	// Publish new task
-	if (!publishAddObject(subtask)) {
-	    GLMDebug.DEBUG(className_, "publishAddToExpansion fail to publish task "+TaskUtils.taskDesc(subtask));
-	}
+      publishAddObject(subtask);
+
 	PlanElement pe = parent.getPlanElement();
 	Expansion expansion;
 	NewWorkflow wf;

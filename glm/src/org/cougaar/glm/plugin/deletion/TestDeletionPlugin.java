@@ -430,30 +430,6 @@ public class TestDeletionPlugin extends SimplePlugin {
         }
     }
 
-    protected boolean publishAdd(Task task) {
-        boolean result = super.publishAdd(task);
-        if (!result) {
-            System.err.println("publishAdd failed: " + format(task));
-        }
-        return result;
-    }
-
-    protected boolean publishChange(Task task) {
-        boolean result = super.publishChange(task);
-        if (!result) {
-            System.err.println("publishChange failed: " + format(task));
-        }
-        return result;
-    }
-
-    protected boolean publishRemove(Task task) {
-        boolean result = super.publishRemove(task);
-        if (!result) {
-            System.err.println("publishRemove failed: " + format(task));
-        }
-        return result;
-    }
-
     /**
      * Tasks are expanded into an number of subtasks. Constraints are
      * erected between the tasks restricting them to strictly

@@ -190,12 +190,9 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
     Enumeration assets = getAssets(doc);
     while(assets.hasMoreElements()){
       Asset asset = (Asset)assets.nextElement();
-      boolean result = publishAdd(asset);
+      publishAdd(asset);
       if (logger.isDebugEnabled())
 	logger.debug ("UTILLdmXMLPlugin.createAssets - Publishing " + asset + " to the log plan");
-
-      if (!result)
-	logger.error("Warning: GLMLdmXMLPlugin not successful publishing asset " + asset);
     }
   }
 

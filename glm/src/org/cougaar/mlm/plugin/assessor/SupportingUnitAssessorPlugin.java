@@ -153,10 +153,7 @@ public class SupportingUnitAssessorPlugin extends SimplePlugin {
         
         System.out.println(report.getText());
         
-        if (!publishAdd(report)) {
-          throw new RuntimeException("SupportingUnitAssessorPlugin: unable to " + 
-                                     "publish add Report for " + org);
-        }
+        publishAdd(report);
       }
     }
   }
@@ -187,10 +184,7 @@ public class SupportingUnitAssessorPlugin extends SimplePlugin {
                                                       supportingRelationships)));
         
         System.out.println(report.getText());
-        if (!publishAdd(report)) {
-          throw new RuntimeException("SupportingUnitAssessorPlugin: unable to " + 
-                                     "publish modify Report for " + org);
-        }
+        publishAdd(report);
       }
     }
   }
@@ -221,10 +215,7 @@ public class SupportingUnitAssessorPlugin extends SimplePlugin {
         
         System.out.println(report.getText());
         
-        if (!publishAdd(report)) {
-          throw new RuntimeException("SupportingUnitAssessorPlugin: unable to " + 
-                                     "publish remove Report for " + org);
-        }
+        publishAdd(report);
       }
     }
   }
