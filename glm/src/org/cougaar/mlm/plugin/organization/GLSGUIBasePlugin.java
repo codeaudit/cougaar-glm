@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2002 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.core.util.UID;
 import org.cougaar.util.UnaryPredicate;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;
@@ -39,6 +40,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
 import javax.swing.*;
+
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.oplan.Oplan;
@@ -52,10 +54,7 @@ import org.cougaar.mlm.plugin.UICoordinator;
  * When the selected oplan is changed, methods are invoked in the
  * subclasses to allow labels to be updated.
  *
- * @author       ALPINE <alpine-software@bbn.com>
- *
- * */
-
+ **/
 public abstract class GLSGUIBasePlugin extends SimplePlugin {
   private static String EXIT_ON_CLOSE_PROP =
     "org.cougaar.mlm.plugin.organization.GLSGUIBasePlugin.exitOnClose";

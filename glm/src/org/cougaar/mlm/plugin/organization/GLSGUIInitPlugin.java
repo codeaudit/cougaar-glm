@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2002 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -76,14 +76,10 @@ import org.cougaar.mlm.plugin.RandomButtonPusher;
 import org.cougaar.mlm.plugin.UICoordinator;
 
 /**
- * The GSLInitExpanderPlugin will create the initial GetLogSupport task
+ * The GLSGUIInitPlugin will create the initial GetLogSupport task
  * with the OPLAN object.
  *
- * @author       ALPINE <alpine-software@bbn.com>
- *
- *
  */
-
 public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
   private static final String MIN_SLEEP_PROP =
     "org.cougaar.mlm.plugin.organization.GLSGUIInitPlugin.minSleepTime";
@@ -100,12 +96,12 @@ public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
   private IncrementalSubscription sendGLSRootSubscription;
 
   private static UnaryPredicate sendGLSRootPredicate = new UnaryPredicate() {
-	               public boolean execute(Object o) {
-		        	if (o instanceof java.lang.String)
-			                   return ((o.toString()).equalsIgnoreCase("sendGLSRoot"));
-					return false;   
-		                }
-	                };
+      public boolean execute(Object o) {
+	if (o instanceof java.lang.String)
+	  return ((o.toString()).equalsIgnoreCase("sendGLSRoot"));
+	return false;   
+      }
+    };
 
   /** My private state **/
   private MyPrivateState myPrivateState;
@@ -127,11 +123,11 @@ public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
   }
   
   protected void sendPSP(OplanWrapper wrapper) {
-	if (selfOrgAsset == null) {
-		System.out.println("\n\nGLSGUIInitPlugin HAVEN'T RECEIVED SELF ORG ASSET YET.  TRY AGAIN LATER\n\n");
-	} else {
-		doPublishRootGLS(selfOrgAsset, wrapper.oplan);
-	}
+    if (selfOrgAsset == null) {
+      System.out.println("\n\nGLSGUIInitPlugin HAVEN'T RECEIVED SELF ORG ASSET YET.  TRY AGAIN LATER\n\n");
+    } else {
+      doPublishRootGLS(selfOrgAsset, wrapper.oplan);
+    }
   }
   
   protected void buttonPushed(OplanWrapper wrapper) {
@@ -193,33 +189,33 @@ public class GLSGUIInitPlugin extends GLSGUIBasePlugin {
     }
   }
   
-  	public void sendThePSP()
-	{
-		OplanWrapper wrapper = (OplanWrapper) oplanCombo.getSelectedItem();
-		if (wrapper != null) sendPSP(wrapper);
-	}
+  public void sendThePSP()
+  {
+    OplanWrapper wrapper = (OplanWrapper) oplanCombo.getSelectedItem();
+    if (wrapper != null) sendPSP(wrapper);
+  }
 
-	protected void additionalExecute()
-	{
+  protected void additionalExecute()
+  {
 
-		Collection sendIt=sendGLSRootSubscription.getAddedCollection();
-		if (sendIt!=null && sendIt.size() > 0) {
-			for (Iterator iterator = sendIt.iterator();iterator.hasNext();) {
-				Object object = iterator.next();
-				getBlackboardService().publishRemove(object);
-			}
-			sendThePSP();
-		}
+    Collection sendIt=sendGLSRootSubscription.getAddedCollection();
+    if (sendIt!=null && sendIt.size() > 0) {
+      for (Iterator iterator = sendIt.iterator();iterator.hasNext();) {
+	Object object = iterator.next();
+	getBlackboardService().publishRemove(object);
+      }
+      sendThePSP();
+    }
 
-	}
+  }
   
-	public void publishRootGLS(Organization me, Oplan oplan) {
-		openTransaction();
-		doPublishRootGLS(me, oplan);
-		closeTransactionDontReset();
-	}
+  public void publishRootGLS(Organization me, Oplan oplan) {
+    openTransaction();
+    doPublishRootGLS(me, oplan);
+    closeTransactionDontReset();
+  }
 
-private void doPublishRootGLS(Organization me, Oplan oplan) {    
+  private void doPublishRootGLS(Organization me, Oplan oplan) {    
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
@@ -231,10 +227,10 @@ private void doPublishRootGLS(Organization me, Oplan oplan) {
     NewPrepositionalPhrase newpp;
 
     // Removed following as being redundant with the task's context
-//      newpp = theLDMF.newPrepositionalPhrase();
-//      newpp.setPreposition(Constants.Preposition.WITH);
-//      newpp.setIndirectObject(oplan);
-//      phrases.add(newpp);
+    //      newpp = theLDMF.newPrepositionalPhrase();
+    //      newpp.setPreposition(Constants.Preposition.WITH);
+    //      newpp.setIndirectObject(oplan);
+    //      phrases.add(newpp);
 
     newpp = theLDMF.newPrepositionalPhrase();
     newpp.setPreposition(Constants.Preposition.FOR);
