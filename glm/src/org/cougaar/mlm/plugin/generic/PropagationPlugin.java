@@ -23,6 +23,7 @@ package org.cougaar.mlm.plugin.generic;
 
 import java.util.*;
 
+import org.cougaar.core.blackboard.AnonymousChangeReport;
 import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.plan.Transferable;
@@ -143,7 +144,8 @@ public class PropagationPlugin extends SimplePlugin
             Organization org = (Organization)iterator.next();
             boolean isRelationshipChange = false;
             Set changeReports = organizations.getChangeReports(org);
-            if (changeReports != null) {
+            if ((changeReports != AnonymousChangeReport.SET) &&
+                (changeReports != null)) {
               for (Iterator i = changeReports.iterator(); i.hasNext(); ) {
                 ChangeReport changeReport = (ChangeReport) i.next();
                 if (changeReport instanceof RelationshipSchedule.RelationshipScheduleChangeReport) {
