@@ -1,0 +1,136 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Beth DePass">
+   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; I) [Netscape]">
+   <title>UniversalExpanderPlugIn</title>
+</head>
+<body>
+<b><font size=+1>UniversalExpanderPlugIn</font></b>
+<p>The UniversalExpanderPlugin gathers information from plugin arguments,
+the cougaar.rc file parameters and a database table in order to accomplish
+its expansions.
+<p>The plugin parameters are a comma seperated list of verbs that define
+what task or tasks the plugin should expand.
+<br>For example your <i>cluster.ini </i>file should contain a line similar
+to the following:
+<p><i>plugin = org.cougaar.domain.mlm.plugin.generic.UniversalExpanderPlugIn(Expand_Runway_Apron,
+Build_Sh</i>
+<br><i>ort_Runway, Build_Small_Tent_City)</i>
+<p>The cougaar.rc file defines the database connection string, database
+user and password and the database table containing the expansion information.
+<br>For example, your cougaar.rc should contain entries like:
+<p><i># generic database expander</i>
+<br><i>generic.database.expander.database=machine.foo.com:dbport:dbsid</i>
+<br><i>generic.database.expander.user=dbusername</i>
+<br><i>generic.database.expander.password=dbpassword</i>
+<br><i>generic.database.expander.expansion_table=dbtable</i>
+<br>&nbsp;
+<p>The database table defined in the cougaar.rc should be created with
+these guidelines:
+<p>SQL> desc constr_task_exp
+<br>&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Null?&nbsp;&nbsp;&nbsp;&nbsp; Type
+<br>&nbsp;------------------------------- --------&nbsp;&nbsp;&nbsp;&nbsp;
+----
+<br>&nbsp;ROOT_TASK_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+VARCHAR2(50)
+<br>&nbsp;SUBTASK_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+VARCHAR2(50)
+<br>&nbsp;IS_LEAF_TASK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NUMBER(1)
+<br>&nbsp;OFFSET&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NUMBER(10)
+<br>&nbsp;DURATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NUMBER(10)
+<br>&nbsp;
+<p>The fields ROOT_TASK_NAME and SUBTASK_NAME should contain strings that
+represent COUGAAR Verbs.&nbsp; For example the root task that the plugin
+is expanding might be 'Build_Short_Runway' and the matching SUBTASK_NAME
+values might be 'Grade_Area' or 'Lay_Gravel'. The IS_LEAF_TASK field defines
+whether or not that subtask should be expanded another level.&nbsp; If
+it needs to be expanded again, the plugin will query for that 'sub'tasks
+children.&nbsp; Note that this plugin does not create multiple workflows
+when expanding a root task.&nbsp; As it recurses through the table it finds
+the final set of leaf or child subtasks for each root task.&nbsp; The OFFSET
+field defines the number of days the task should begin with respect to
+the start day of the root task.&nbsp; The DURATION field defines how long
+that task should take to complete.&nbsp; This value is used to calculate
+the end day of the task.
+<p>For example, if the plugin is instantiated with an argument of Build_Short_Runway,
+when it receives a task containing this verb through its subscription it
+will find the following information in the database expansion table:
+<p>ROOT_TASK_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SUBTASK_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IS_LEAF_TASK&nbsp;&nbsp;&nbsp;&nbsp; OFFSET&nbsp;&nbsp;&nbsp; DURATION
+<br>-------------------------------&nbsp;&nbsp; -----------------------------&nbsp;&nbsp;
+------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+----------&nbsp;&nbsp;&nbsp;&nbsp; ----------
+<br>Build_Short_Runway&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Clear_Area&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+10
+<p>Build_Short_Runway&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Lay_Gravel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4
+<p>Build_Short_Runway&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Pour_Concrete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8
+<p>Build_Short_Runway&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Lay_Mesh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4
+<br>&nbsp;
+<p>Note that Clear_Area is not a leaf task.&nbsp; So the plugin needs to
+find the children of Clear_Area.
+<p>ROOT_TASK_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SUBTASK_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IS_LEAF_TASK&nbsp;&nbsp;&nbsp;&nbsp; OFFSET&nbsp;&nbsp;&nbsp; DURATION
+<br>-------------------------------&nbsp;&nbsp; -----------------------------&nbsp;&nbsp;
+------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+----------&nbsp;&nbsp;&nbsp;&nbsp; ----------
+<br>Clear_Area&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Cut_Trees&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5
+<p>Clear_Area&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Remove_Stumps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+5
+<br>&nbsp;
+<p>Given this information, our expansion of Build_Short_Runway should look
+like:
+<p>Build_Short_Runway&nbsp; start = 06/01/01
+<ul>
+<li>
+Cut_Trees&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+start = 06/01/01&nbsp;&nbsp;&nbsp; end = 06/06/01</li>
+
+<li>
+Remove_Stumps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; start = 06/06/01&nbsp;&nbsp;&nbsp;
+end = 06/11/01</li>
+
+<li>
+Lay_Gravel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+start = 06/14/01&nbsp;&nbsp;&nbsp; end = 06/18/01</li>
+
+<li>
+Lay_Mesh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+start = 06/17/01&nbsp;&nbsp;&nbsp; end = 06/21/01</li>
+
+<li>
+Pour_Concrete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+start = 06/19/01&nbsp;&nbsp;&nbsp; end = 06/27/01</li>
+</ul>
+
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>
