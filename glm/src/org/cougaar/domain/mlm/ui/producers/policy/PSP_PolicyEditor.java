@@ -17,6 +17,7 @@ import java.util.*;
 
 import org.cougaar.core.cluster.CollectionSubscription;
 import org.cougaar.core.cluster.Subscription;
+import org.cougaar.core.plugin.PlugInDelegate;
 import org.cougaar.domain.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
@@ -155,20 +156,21 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
     
     // enter subscription which causes policy editor
     // to be invoked and make its changes
-    psc.getServerPlugInSupport().openLogPlanTransaction();
-    Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, xmlPredicate);
+    PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+    delegate.openTransaction();
+
+    Subscription subscription = delegate.subscribe(xmlPredicate);
     Collection container = 
       ((CollectionSubscription)subscription).getCollection();
     Vector ldmPolicies = new Vector(container.size());
     for (Iterator j = container.iterator(); j.hasNext(); ) {
       Object changedObject = j.next();
       ldmPolicies.addElement(changedObject);
-      psc.getServerPlugInSupport().publishChangeForSubscriber(changedObject);
+      delegate.publishChange(changedObject);
     }
     // unsubscribe, don't need this subscription any more
-    psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
-    psc.getServerPlugInSupport().closeLogPlanTransaction();
+    delegate.unsubscribe(subscription);
+    delegate.closeTransaction();
 
     Vector policies = convertToUIPolicyInfos(ldmPolicies.elements());
 

@@ -16,6 +16,7 @@ import java.net.URLConnection;
 import java.util.*;
 
 import org.cougaar.core.cluster.*;
+import org.cougaar.core.plugin.PlugInDelegate;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
@@ -156,16 +157,16 @@ public class PSP_ModifyOrgActivity
           Date origStartDate = timeSpan.getStartDate();
           Date origThruDate = timeSpan.getThruDate();
           
-          psc.getServerPlugInSupport().openLogPlanTransaction();
+          PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+          delegate.openTransaction();
           // modify
           moa.changeOrgActivity(orgAct, oplan);
           // fix other orgActs
           fixAdjacentOrgActivities(psc, orgAct,
-             origStartDate, origThruDate);
+                                   origStartDate, origThruDate);
           // changed orgAct
           publishChange(psc, orgAct);
-
-          psc.getServerPlugInSupport().closeLogPlanTransaction();
+          delegate.closeTransaction();
 
           moa.setStatus(true, "Modified Org Activity");
         }
@@ -367,13 +368,13 @@ public class PSP_ModifyOrgActivity
 
   protected void publishChange(
       PlanServiceContext psc, Object obj) {
-    psc.getServerPlugInSupport().publishChangeForSubscriber(obj);
+    psc.getServerPlugInSupport().getDirectDelegate().publishChange(obj);
   }
 
   protected Enumeration searchUsingUnaryPredicate(
       PlanServiceContext psc, UnaryPredicate pred) {
     Subscription subscription = 
-      psc.getServerPlugInSupport().subscribe(this, pred);
+      psc.getServerPlugInSupport().getDirectDelegate().subscribe(pred);
     return ((CollectionSubscription)subscription).elements();
   }
 

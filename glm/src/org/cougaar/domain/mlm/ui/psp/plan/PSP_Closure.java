@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.cougaar.core.cluster.CollectionSubscription;
 import org.cougaar.core.cluster.Subscription;
+import org.cougaar.core.plugin.PlugInDelegate;
 import org.cougaar.domain.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.core.util.*;
@@ -280,11 +281,12 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
       System.out.println("DEBUG:!!!!"+orgActivityVector.size());
       orgActivityVector.copyInto(orgActivityArray);
 
-      if( doPost(orgActivityArray,postData) == true)
+      PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+      delegate.openTransaction();
+
+      if (doPost(orgActivityArray,postData) == true)
       {
-        psc.getServerPluginSupport().openLogPlanTransaction();
-        psc.getServerPluginSupport().publishChangeForSubscriber(plan);
-        psc.getServerPluginSupport().closeLogPlanTransaction();
+        delegate.publishChange(plan);
         out.println("<html>");
         out.println("<head>");
         out.println("<title>Untitled Document</title>");
@@ -307,6 +309,7 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
         out.println("<h3><center>Please redo it</center></h3>");
         printHtmlEnd(out);
       }
+      delegate.closeTransaction();
     }
   }
 

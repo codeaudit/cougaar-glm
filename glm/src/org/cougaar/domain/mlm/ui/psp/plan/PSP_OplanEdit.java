@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.cougaar.core.cluster.CollectionSubscription;
 import org.cougaar.core.cluster.Subscription;
+import org.cougaar.core.plugin.PlugInDelegate;
 import org.cougaar.domain.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.UnaryPredicate;
@@ -319,18 +320,22 @@ System.out.println("is post");
           OrgActivity[] orgActivityArray =
             new OrgActivity[orgActivityVector.size()];
           orgActivityVector.copyInto(orgActivityArray);
+
+          PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+          delegate.openTransaction();
+          
           // post 
           if (doPost(orgActivityArray, cDate,
                      postActivityType, postData)) {
-            psc.getServerPlugInSupport().openLogPlanTransaction();
-            psc.getServerPlugInSupport().publishChangeForSubscriber(plan);
-            psc.getServerPlugInSupport().closeLogPlanTransaction();
+            delegate.publishChange(plan);
             displayPostSuccess(out, URLname);
           } else {
             displayPostFailure(out, URLname);
           }
+
+          delegate.closeTransaction();
         } else {
-System.out.println("is usage");
+          System.out.println("is usage");
           displayOPlanEdit(out, psc, URLname, plan, cDate);
         }
       }

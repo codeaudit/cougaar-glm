@@ -19,6 +19,7 @@ import java.util.*;
 import org.cougaar.core.cluster.CollectionSubscription;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.cluster.Subscription;
+import org.cougaar.core.plugin.PlugInDelegate;
 import org.cougaar.domain.planning.ldm.plan.Alert;
 import org.cougaar.domain.planning.ldm.plan.AlertParameter;
 import org.cougaar.domain.planning.ldm.plan.NewAlert;
@@ -148,10 +149,10 @@ public class PSP_ModifyAlert extends PSP_BaseAdapter
 
 
       // Bracket subsequent activity within a transaction
-      psc.getServerPlugInSupport().openLogPlanTransaction();
+      PlugInDelegate delegate = psc.getServerPlugInSupport().getDirectDelegate();
+      delegate.openTransaction();
 
-      Subscription subscription = 
-        psc.getServerPlugInSupport().subscribe(this, alertPred);
+      Subscription subscription = delegate.subscribe(alertPred);
       Collection container = 
         ((CollectionSubscription)subscription).getCollection();
 
@@ -159,14 +160,16 @@ public class PSP_ModifyAlert extends PSP_BaseAdapter
         System.out.println("PSP_ModifyAlert.execute(): query by UID " + 
                            myModifyUID + 
                            " returned no alerts.");
-        psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+        delegate.unsubscribe(subscription);
+        delegate.closeTransaction();
         throw new RuntimePSPException("UID " + myModifyUID + 
                                       " does not exist.");
       } else if (container.size() > 1) {         
         System.out.println("PSP_ModifyAlert.execute(): query by UID " + 
                            myModifyUID + 
                            " returned multiple alerts.");
-        psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
+        delegate.unsubscribe(subscription);
+        delegate.closeTransaction();
         throw new RuntimePSPException("UID " + myModifyUID + " not unique.");
       }          
 
@@ -189,9 +192,10 @@ public class PSP_ModifyAlert extends PSP_BaseAdapter
         newAlert.setOperatorResponse(chosenParam);
       }
 
-      psc.getServerPlugInSupport().publishChangeForSubscriber(newAlert);
-      psc.getServerPlugInSupport().unsubscribeForSubscriber(subscription);
-      psc.getServerPlugInSupport().openLogPlanTransaction();
+      delegate.publishChange(newAlert);
+      delegate.unsubscribe(subscription);
+
+      delegate.closeTransaction();
 
       if (chosenParam != null) {
         if (chosenParam.getParameter() instanceof String) {
