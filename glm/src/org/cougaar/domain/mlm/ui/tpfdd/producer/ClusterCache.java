@@ -69,6 +69,7 @@ public class ClusterCache
     private Hashtable logPlanCache;
     private Hashtable itineraryCache;
     private String host = "localhost";
+    private String demandHost = "localhost";
     private boolean clientMode;
 
     // comma separated versions to build into above Vectors
@@ -77,6 +78,7 @@ public class ClusterCache
 
   // defines default host when dialog comes up.
   private String defaultHostName = "localhost";
+  private String defaultDemandHost = "localhost";
   // default root Cluster to ask for its subordinates
   private String rootCluster = "TRANSCOM";
   // are we asking the subordinates PSP for the subords of rootCluster?
@@ -126,6 +128,12 @@ public class ClusterCache
 	  defaultHostName = defaultHostNameProp;
 	  host = defaultHostName;
 	}
+
+	String defaultDemandHostProp = System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.defaultDemandHost");
+	if (defaultDemandHostProp != null) {
+	  defaultDemandHost = defaultDemandHostProp;
+	}
+
 	noHostPrompt = 
 	  ("true".equals(System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.noHostPrompt")));
 	if (debug && noHostPrompt) 
@@ -133,6 +141,7 @@ public class ClusterCache
 	if (debug) {
 	  System.out.println ("ClusterCache.ctor - root cluster property " + clusterNameProp + " - if null means use default");
 	  System.out.println ("ClusterCache.ctor - default host " + defaultHostName);
+	  System.out.println ("ClusterCache.ctor - default demand host " + defaultDemandHost);
 	  System.out.println ("ClusterCache.ctor - noHostPrompt " + noHostPrompt);
 	}
   }
@@ -145,6 +154,11 @@ public class ClusterCache
     public void setHost(String host)
     {
 	this.host = host;
+    }
+
+    public String getDemandHost()
+    {
+	return demandHost;
     }
 
   /** 
@@ -170,10 +184,10 @@ public class ClusterCache
 	return host;
   }
     
-  //
-  // FUnction called by tpfdd client
-  // to set the host, ie the aggregation server machine
-  //
+  /**
+   * Called by tpfdd client
+   * to set the host, i.e. the aggregation server machine
+   **/
   public String clientGuiSetHost(String defHost)
   {
 	if (noHostPrompt) {
@@ -190,6 +204,29 @@ public class ClusterCache
     if ( host != null )
       host = host.trim();
     return host;
+  }
+    
+  /**
+   * Called by tpfdd client
+   * to set a demand host.  This is used ultimately by the UnitHierarchy
+   * of the Filter dialog to enable it to discover the hierarchy on the demand side.
+   */
+  public String clientGuiSetDemandHost(String defHost)
+  {
+	if (noHostPrompt) {
+	  demandHost = defaultDemandHost;
+	  if (debug)
+		System.out.println ("ClusterCache.clientGuiSetHost - no host prompt, demand host is " + demandHost);
+	  return demandHost;
+	}
+	
+    demandHost = (String)JOptionPane.showInputDialog(null,
+             "Enter Any Demand Host Machine","Machine",
+             JOptionPane.INFORMATION_MESSAGE,
+             null, null, defHost);
+    if ( demandHost != null )
+      demandHost = demandHost.trim();
+    return demandHost;
   }
     
   public Vector getallowOrgNames()
