@@ -55,7 +55,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugIn.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.4 2001-10-03 21:29:48 bdepass Exp $
+  * @version $Id: NewUniversalExpanderPlugIn.java,v 1.5 2001-10-04 18:39:37 bdepass Exp $
   **/
 
 public class NewUniversalExpanderPlugIn extends ComponentPlugin {
@@ -129,7 +129,6 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
     if (flat) {
       for(Enumeration e = interestingTasks.getAddedList();e.hasMoreElements();) {
         Task task = (Task)e.nextElement();
-        // TODO: check for flat or tree here
         Collection subtasks = findSubTasks(task);
         NewWorkflow wf = theFactory.newWorkflow();
         wf.setParentTask(task);
@@ -173,8 +172,13 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
     Collection subtasks = new ArrayList();
     
     try {
-      // Load the Oracle JDBC driver
-      Class.forName ("oracle.jdbc.driver.OracleDriver");
+      // Load the driver
+      String rawdb = Parameters.replaceParameters("${generic.database.expander.database}");
+      int colonIndex1 = rawdb.indexOf(':');
+      int colonIndex2 = rawdb.indexOf(':', colonIndex1+1);
+      String dbType = rawdb.substring(colonIndex1+1, colonIndex2);  //WAN added
+      String driverName = Parameters.findParameter("driver."+dbType);
+      Class.forName(driverName);
       Connection conn = null;
       ResultSet rset = null;
       
@@ -184,7 +188,6 @@ public class NewUniversalExpanderPlugIn extends ComponentPlugin {
         // You can use either the fully specified SQL*net syntax or a short cut
         // syntax as <host>:<port>:<sid>.  The example uses the short cut syntax.
         // get the db info out of the cougaarrc file
-        String rawdb = "${generic.database.expander.database}";
         String dbinfo = Parameters.replaceParameters(rawdb);
         String rawuser = "${generic.database.expander.user}";
         String dbuser = Parameters.replaceParameters(rawuser);
