@@ -25,6 +25,7 @@ package org.cougaar.lib.quo.performance;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.util.UnaryPredicate;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 import java.util.*;
@@ -35,211 +36,212 @@ import java.io.*;
  * it keeps producing more task
  * It also reads the PlugIn arguments and may alter MessageSize or slurp CPU
  */
-public class ManagerPlugIn extends SimplePlugIn {
+public class ManagerPlugIn extends CommonUtilPlugIn {
 
     // Two assets to use as direct objects for the CODE tasks
-  protected Asset what_to_code;
-  protected IncrementalSubscription allocations;   // My allocations
-  protected int CPUCONSUME=-1;
-  protected int MESSAGESIZE=-1;
-    protected String FILENAME="stdout";
-    protected int MAXCOUNT=-1;
+    protected Asset what_to_code;
+    protected IncrementalSubscription allocations;   // My allocations
+    protected IncrementalSubscription forceExecute;   // My allocations
 
-  private Date startTime;
-  private Task t;
-  private double start_month;
+    
+    protected int CPUCONSUME;
+    protected int MESSAGESIZE;
+    protected String FILENAME;
+    protected int MAXCOUNT;
+    protected int MYCOUNT=1;
+    protected int  OUTSTANDING_MESSAGES;
+    protected boolean DEBUG = false;
+    protected int BURST_TIME=0;
+    protected static String VERB;//="CODE1";
+
+    private Date startTime;
+    private Task t, changedMind;
+    private int  sequenceNum=1;
+    private AspectValue aspectVal;
+
     private  int count = 0;
     private long minDelta=0;
+  
     private FileWriter fw;
-  /**
-   * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
-   */
-  protected void parseParameter(){
-    Vector p = getParameters();
-    for(int i = 0; i < p.size(); i++){
-      String s = (String)p.elementAt(i);
-      if (s.indexOf("SLURPFACTOR") != -1){
-	s = s.substring(s.indexOf("=")+1, s.length());
-	CPUCONSUME = Integer.parseInt(s);
-      }
-      if (s.indexOf("MESSAGESIZE") != -1){
-	s = s.substring(s.indexOf("=")+1, s.length());
-	MESSAGESIZE = Integer.parseInt(s);
-      }
-
-      if (s.indexOf("FILE") != -1){
-	 FILENAME = s.substring(s.indexOf("=")+1, s.length());
-	 System.out.println("FILENAME:  " + FILENAME);
-      }
-      if (s.indexOf("MAXCOUNT") != -1){
-	s = s.substring(s.indexOf("=")+1, s.length());
-	MAXCOUNT = Integer.parseInt(s);
-
-	 System.out.println("MAXCOUNT:  " + MAXCOUNT);
-      }
+    private double lastReceived=0;
+  
+    /**
+     * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
+     */
+    protected void parseParameter(){
+	Vector p = getParameters();
+	CPUCONSUME=getParameterIntValue(p, "CPUCONSUME");
+	MESSAGESIZE=getParameterIntValue(p, "MESSAGESIZE");
+	FILENAME=getParameterValue(p, "FILENAME");
+	MAXCOUNT=getParameterIntValue(p, "MAXCOUNT");
+	OUTSTANDING_MESSAGES =getParameterIntValue(p, "OUTSTANDING_MESSAGES");
+	DEBUG=getParameterBooleanValue(p, "DEBUG");
+	BURST_TIME=getParameterIntValue(p, "BURST_TIME");
+	VERB=getParameterValue(p, "VERB");
     }
-  }
-
-  /**
-   * Using setupSubscriptions to create the initial CODE tasks
-   */
-  protected void setupSubscriptions() {
-      // Create a task to code the next killer app
-    //modified to create a lots of tasks if allocation is a success
-      parseParameter(); //read the plugIn arguments
-      addTask();
-      allocations = (IncrementalSubscription)subscribe(new myAllocationPredicate());
-  }
-
-
-  /**
-   * This PlugIn has no subscriptions so this method does nothing
-   */
-  protected void execute () {
-    //System.out.println("ManagerPlugIn::execute()");
-    allocateChangedtasks(); // Process changed allocations
-    
    
+    /**
+     * Predicate that matches "CHANGE_MIND"
+     */
+    private UnaryPredicate changedMindPredicate = new UnaryPredicate() {
+	    public boolean execute(Object o) {
+		if (o instanceof Task)
+		    {
+			Task task = (Task)o;
+			return task.getVerb().equals(Verb.getVerb("CHANGED_MIND"));
+		    }
+		return false;
+	    }
+	};
 
-  }
+  
+    public  static UnaryPredicate myAllocationPredicate = new UnaryPredicate() {
+	    public boolean execute(Object o) {
+		if (o instanceof Allocation) {
+		    Task t = ((Allocation)o).getTask();
+		    return (t != null) && (t.getVerb().equals(Verb.getVerb(VERB)));	
+		}
+		return false;
+	    }
+	};
 
-  protected void addTask() {
-      //publish the Asset
-    what_to_code = theLDMF.createPrototype("AbstractAsset", "The Next Killer App");
-    NewItemIdentificationPG iipg = 
-      (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
-    iipg.setItemIdentification("e-somthing java");
-    what_to_code.setItemIdentificationPG(iipg);
-    publishAdd(what_to_code); //need to add a different task else a exception --so publishChange used
-    
-    t = makeTask(what_to_code);
-    // System.out.println("\nManagerPlugIn::Adding task " + t); 
-    
-    startTime = new Date();
-    // Add a start_time and end_time strict preference
-    ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.START_TIME, start_month));
-    Preference pref =
-      theLDMF.newPreference(AspectType.START_TIME, scorefcn);
-    //preferences.add(pref);
-    ((NewTask) t).setPreference(pref);
-    publishAdd(t);
-  }
-    
-  /**
-   * Create a CODE task.
-   * @param what the direct object of the task
-   */
-  protected Task makeTask(Asset what) {
-    NewTask new_task = theLDMF.newTask();
-    new_task.setVerb(new Verb("CODE"));// Set the verb as given
-    new_task.setPlan(theLDMF.getRealityPlan());// Set the reality plan for the task
-    new_task.setDirectObject(what);
-
-    NewPrepositionalPhrase npp = theLDMF.newPrepositionalPhrase();
-    npp.setPreposition("USING_LANGUAGE");
-    if (MESSAGESIZE == -1)
-      npp.setIndirectObject(alterMessageSize(0));
-    else
-      npp.setIndirectObject(alterMessageSize(MESSAGESIZE));
-	new_task.setPrepositionalPhrase(npp);
-	return new_task;
+    /**
+     * Using setupSubscriptions to create the initial CODE tasks
+     */
+    protected void setupSubscriptions() {
+	parseParameter(); //read the plugIn arguments
+	addTask();
+	forceExecute= (IncrementalSubscription)subscribe(changedMindPredicate); 
+	allocations = (IncrementalSubscription)subscribe(myAllocationPredicate);
     }
 
-    protected void   changeTasks(){
-      if(CPUCONSUME != -1)  //i.e. cpuconsume passed to plugin as a arg
-	consumeCPU(CPUCONSUME);
-      //t = makeTask(what_to_code);
-      // Add a start_time and end_time strict preference
-      start_month++;
-      //System.out.println("\nManagerPlugIn::Changing task " + start_month + " ---- "  + t); 
-      ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-	(new AspectValue(AspectType.START_TIME, start_month));
-      Preference pref =
-	theLDMF.newPreference(AspectType.START_TIME, scorefcn);
-      //preferences.add(pref);
-      ((NewTask) t).setPreference(pref);
-       startTime = new Date();
-      publishChange(t);
+    /**
+     * This PlugIn has no subscriptions so this method does nothing
+     */
+    protected void execute () {
+	allocateChangedtasks(allocations.getChangedList()); // Process changed allocations
+	allocateChangedMind(forceExecute.getChangedList()); // Process changedMind allocations
     }
 
-    protected void  allocateChangedtasks(){
+    protected void addTask() {
+	publishAsset(what_to_code, "The next Killer App", "e something java");
+	t = makeTask(what_to_code, VERB);
+	setPreference(t, AspectType._ASPECT_COUNT, sequenceNum);
+	publishAdd(t);
+	//debug(DEBUG, FILENAME, fw,"\nManagerPlugIn::Adding task with num " +
+	//    t.getPreferredValue(AspectType._ASPECT_COUNT ) + " and Verb " + VERB); 
+	changedMind=makeTask(what_to_code, "CHANGED_MIND");
+	publishAdd(changedMind);
+    }
+  
+    public void publishAsset(Asset asset, String nameOfAsset, String itemIdentification){
+	asset = theLDMF.createPrototype("AbstractAsset", nameOfAsset);
+	NewItemIdentificationPG iipg = 
+	    (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
+	iipg.setItemIdentification(itemIdentification);
+	asset.setItemIdentificationPG(iipg);
+	publishAdd(asset); 
+    }
+
+    protected void allocateChangedMind(Enumeration allo_enum){ // Process changed allocations  
+	double outstanding=sequenceNum-lastReceived;
+	while (allo_enum.hasMoreElements()) {
+	    //System.out.println("outstanding tasks: " + outstanding);
+	    Task task = (Task)allo_enum.nextElement() ;
+	    if (outstanding < OUTSTANDING_MESSAGES) {
+		changeTasks(t);
+		changeTasks(changedMind);
+	    }
+	}
+    }
+
+    protected void  allocateChangedtasks(Enumeration allo_enum){
 	AllocationResult est, rep;
-	Enumeration allo_enum = allocations.getChangedList();
-     
+	double val=0;
+	double arr[] = null;
+	double received = 0;
 	while (allo_enum.hasMoreElements()) {
 	    Allocation alloc = (Allocation)allo_enum.nextElement() ;
 	    est=null; rep=null;
 	    est = alloc.getEstimatedResult();
 	    rep = alloc.getReportedResult();
+	   
 	    if (rep!=null){
-		Date endTime = new Date();
-		long delta = endTime.getTime() - startTime.getTime();
-		count++;
-		if (count == 1)
-		    minDelta = delta;
-		else
-		    minDelta = Math.min(minDelta, delta);
-		debug(count, delta, minDelta);
-		  
-		//System.out.println(count+","+delta+","+minDelta);
-		//publishRemove(t);
-		//allocations.clear();
+		arr =rep.getResult();
+		received = arr[0];
+		//debug(DEBUG, FILENAME, fw,"ManagerPlugIn:allocateChangedTasks ........" + received);
+		printTheChange();
 		try {
-		    Thread.sleep(1000);
+		    Thread.sleep(BURST_TIME);
 		} catch (InterruptedException e) {
 		    System.out.println(e);
 		}
-		changeTasks();
+		changeTasks(t);
+		changeTasks(changedMind);
 	    }
-	    if ( (count == MAXCOUNT) & (MAXCOUNT != -1)) 
-		// break;
-		System.exit(1); 
+	    breakFromLoop(count, MAXCOUNT);
 	}
+	lastReceived = received;
     }
     
-   
+    protected void setPreference ( Task t, int aspectType, int sequenceOfTask){
+	startTime = new Date(); // Add a start_time and end_time strict preference
+	aspectVal = new AspectValue(aspectType, sequenceOfTask);
+	ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue(aspectVal);
+	Preference pref = theLDMF.newPreference(aspectType, scorefcn);
+	((NewTask) t).setPreference(pref);
+    }
 
     /**
-     * Writes the data to the specified FILENAME
+     * Create a CODE task.
+     * @param what the direct object of the task
      */
-    private void debug(int count, long delta, long minDelta){
-	//creates a file handle based on the arguments after parsing
-        try {
-	    if (FILENAME.equals("stdout")){
-		//fw = new FileWriter(FileDescriptor.out); //not working!!!!!!!
-		System.out.println(count+","+delta+","+minDelta);
-	    }
-	    else{
-		fw = new FileWriter(FILENAME, true);
-		fw.write(count +","+delta+"," +minDelta+ "\n");
-		fw.close();
-	    }
-	}catch (IOException ie) {
-	    ie.printStackTrace();
-	}
+    protected Task makeTask(Asset what, String verb) {
+	NewTask new_task = theLDMF.newTask();
+	new_task.setVerb(new Verb(verb));// Set the verb as given
+	new_task.setPlan(theLDMF.getRealityPlan());// Set the reality plan for the task
+	new_task.setDirectObject(what);
+
+	NewPrepositionalPhrase npp = theLDMF.newPrepositionalPhrase();
+	npp.setPreposition("USING_LANGUAGE");
+	if (MESSAGESIZE == -1)
+	    npp.setIndirectObject(alterMessageSize(0));
+	else
+	    npp.setIndirectObject(alterMessageSize(MESSAGESIZE));
+	new_task.setPrepositionalPhrase(npp);
+	return new_task;
     }
-  /**
-   * consume CPU cycles by the argument passed as  parameter
-   */
-  private void consumeCPU(int cyclesConsumed) {
-    //Just using CPU computations    
-    int slurp = 0;
-    for(int i= 0; i < cyclesConsumed; i++){
-      slurp++;
+
+    protected void   changeTasks(Task t){
+	if(CPUCONSUME != -1)  //i.e. cpuconsume passed to plugin as a arg
+	    consumeCPU(CPUCONSUME);
+	startTime = new Date();
+	if (t.getVerb().equals(VERB))
+	    sequenceNum++;
+	setPreference(t, AspectType._ASPECT_COUNT, sequenceNum);
+	//debug(DEBUG, FILENAME, fw,"\nManagerPlugIn::Changing task " + t.getVerb() + " with num  " 
+	//    +t.getPreferredValue(AspectType._ASPECT_COUNT )); 
+	publishChange(t);
     }
-  }
+
+    protected void printTheChange(){
+	Date endTime = new Date();
+	long delta = endTime.getTime() - startTime.getTime();
+	debug(DEBUG, FILENAME, fw, getMsgStr(count++, delta, minDelta));
     
-  /**
-   * Changing message size  by the argument passed as  parameter
-   */
-  private byte[] alterMessageSize(int val) {
-      //Byte b = new Byte (Byte.MAX_VALUE);
-      byte[] bytes = new byte[val];
-      for(int i = 0; i < val; i++) bytes[i] = 42;
-      return bytes;
-  }
+    }
+
+    
+   
 }
+
+
+
+
+
+
+
+
 
 
 

@@ -28,8 +28,16 @@ import org.cougaar.domain.planning.ldm.plan.AllocationResult;
 import org.cougaar.domain.planning.ldm.plan.Role;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.domain.planning.ldm.plan.*;
 
 import java.util.Enumeration;
+import java.util.Vector;
+
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
+import org.cougaar.domain.planning.ldm.plan.Role;
+
 
 /**
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
@@ -37,53 +45,77 @@ import java.util.Enumeration;
  * @author ALPINE (alpine-software@bbn.com)
  *
  **/
-public class ManagerAllocatorPlugIn extends SimplePlugIn {
+public class ManagerAllocatorPlugIn extends  CommonUtilPlugIn {
   
-  private IncrementalSubscription tasks;         // "CODE" tasks
-  private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
-  private IncrementalSubscription allocations;   // My allocations
+    private IncrementalSubscription tasks;         // "CODE" tasks
+    private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
+    private IncrementalSubscription allocations;   // My allocations
+    private static String VERB=ManagerPlugIn.VERB;
 
+    /**
+     * Predicate that matches VERB" 
+     */
+    private UnaryPredicate myTaskPredicate = new UnaryPredicate() {
+	    public boolean execute(Object o) {
+		if (o instanceof Task)
+		    {
+			Task task = (Task)o;
+			return task.getVerb().equals(Verb.getVerb(VERB));
+		    }
+		return false;
+	    }
+	};
 
-  /**
-   * subscribe to tasks and programming organizations
-   */
-  protected void setupSubscriptions() {
-    tasks = (IncrementalSubscription)subscribe(new myTaskPredicate());
-    programmers = (IncrementalSubscription)subscribe(new myProgrammersPredicate());
-    allocations = (IncrementalSubscription)subscribe(new myAllocationPredicate());
-  }
+    protected UnaryPredicate  myProgrammersPredicate = new  UnaryPredicate(){
+	    public boolean execute(Object o) {
+		boolean ret = false;
+		if (o instanceof Organization) {
+		    Organization org = (Organization)o;
+		    OrganizationPG orgPG = org.getOrganizationPG();
+		    ret = orgPG.inRoles(Role.getRole("SoftwareDevelopment"));
+		}
+		return ret;
+	    }
+	};
 
+    /**
+     * subscribe to tasks and programming organizations
+     */
+    protected void setupSubscriptions() {
+	//parseParameter();
+	tasks = (IncrementalSubscription)subscribe( myTaskPredicate);
+	programmers = (IncrementalSubscription)subscribe(myProgrammersPredicate);
+	allocations = (IncrementalSubscription)subscribe(ManagerPlugIn.myAllocationPredicate);
+    }
 
-  /**
-   * Top level plugin execute loop.  Allocate CODE tasks to organizations
-   */
-  protected void execute () {
-      allocateUnallocatedTasks();
-  }
+    /**
+     * Top level plugin execute loop.  Allocate CODE tasks to organizations
+     */
+    protected void execute () {
+	allocateUnallocatedTasks();
+    }
 
-  /**
-   * Allocate the task to the asset
-   */
-  private void allocateTo(Asset asset, Task task) {
-    AllocationResult estAR = null;
-    Allocation allocation =
-      theLDMF.createAllocation(task.getPlan(), task, asset,estAR, Role.ASSIGNED);
-    publishAdd(allocation);
-  }
+    /**
+     * Allocate the task to the asset
+     */
+    private void allocateTo(Asset asset, Task task) {
+	AllocationResult estAR = null;
+	Allocation allocation =
+	    theLDMF.createAllocation(task.getPlan(), task, asset,estAR, Role.ASSIGNED);
+	publishAdd(allocation);
+    }
 
     protected void  allocateUnallocatedTasks(){
-  	//   process unallocated tasks
-	Enumeration task_enum = tasks.elements();
+  	Enumeration task_enum = tasks.elements();	//   process unallocated tasks
 	while (task_enum.hasMoreElements()) {
 	    Task t = (Task)task_enum.nextElement();
 	    if (t.getPlanElement() != null)
 		continue;  //already allocated
 	    Asset organization = (Asset)programmers.first();
-	    //Asset organization = (Asset)programmers;
 	    if (organization != null)   //if no organization yet, give up for now
 		allocateTo(organization, t);
 	}
-  }
+    }
 }
 
 

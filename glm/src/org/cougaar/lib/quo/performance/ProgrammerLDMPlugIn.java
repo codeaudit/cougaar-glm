@@ -59,10 +59,10 @@ protected void setupSubscriptions() {
     publishAdd(asset);
 
    //   // Create an asset based on an existing prototype
-//      ProgrammerAsset another_asset = (ProgrammerAsset) theLDMF.createInstance(asset);
-//      another_asset.setSkillsPG(getSkillsPG(15, 150));   // 15 years experience, 150 SLOC/day
-//      another_asset.setItemIdentificationPG(getItemIdentificationPG("Linus Torvalds"));
-//      publishAdd(another_asset);
+      ProgrammerAsset another_asset = (ProgrammerAsset) theLDMF.createInstance(asset);
+     another_asset.setSkillsPG(getSkillsPG(15, 150));   // 15 years experience, 150 SLOC/day
+     another_asset.setItemIdentificationPG(getItemIdentificationPG("Linus Torvalds"));
+     publishAdd(another_asset);
 
 }
 
