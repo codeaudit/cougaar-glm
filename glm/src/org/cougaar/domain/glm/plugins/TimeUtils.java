@@ -97,8 +97,6 @@ public class TimeUtils {
 	calendar.set(Calendar.MINUTE, 59);
 	calendar.set(Calendar.AM_PM, Calendar.PM);
 	calendar.set(Calendar.SECOND, 59);
-	calendar.set(Calendar.MILLISECOND, 0);
-	calendar.set(Calendar.SECOND, 59);
  	calendar.set(Calendar.MILLISECOND, 999);
     	calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
 //   	GLMDebug.DEBUG("TimeUtils", "pushToEndOfDay(), After : "+TimeUtils.dateString(calendar.getTime().getTime()));
