@@ -97,11 +97,11 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   public LDMSQLPlugIn() {}
 	
   // the global parameters table (String -> object/String
-  private Properties globalParameters = new Properties();
+  protected Properties globalParameters = new Properties();
   // list of query objects
-  private Vector queries = new Vector();
+  protected Vector queries = new Vector();
   // the name of the file to look for.
-  private String queryFile;
+  protected String queryFile;
 
   protected void setupSubscriptions() {
     // let the super run to deal with the uninteresting stuff

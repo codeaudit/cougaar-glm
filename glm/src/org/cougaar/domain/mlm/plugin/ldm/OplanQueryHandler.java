@@ -71,11 +71,30 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
    **/
   public void endQuery() {
     String oplanID = getParameter(SQLOplanPlugIn.OPLAN_ID_PARAMETER);
-    Oplan oplan = myPlugIn.addOplan(oplanID);
+    Oplan oplan = myPlugIn.getOplan(oplanID);
+    boolean updateNeeded = false;
 
-    oplan.setOperationName(myOperationName);
-    oplan.setPriority(myPriority);
-    oplan.setCday(myCday);
+    if (oplan != null) {
+      // No time stamp on the oplan so we fudge with a field by field 
+      // comparison
+      if ((!oplan.getOperationName().equals(myOperationName)) ||
+          (!oplan.getPriority().equals(myPriority)) ||
+          (!oplan.getCday().equals(myCday))) {
+        updateNeeded = true;
+      } 
+    } else {
+      oplan = new Oplan();
+      oplan.setOplanId(oplanID);
+      updateNeeded = true;
+    }
+
+    if (updateNeeded) {
+      oplan.setOperationName(myOperationName);
+      oplan.setPriority(myPriority);
+      oplan.setCday(myCday);
+      
+      myPlugIn.updateOplanInfo(oplan);
+    }
   }
 }
 

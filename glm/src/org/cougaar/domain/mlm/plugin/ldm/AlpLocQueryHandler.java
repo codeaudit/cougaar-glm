@@ -68,11 +68,9 @@ public class AlpLocQueryHandler  extends SQLOplanQueryHandler {
     geoloc.setLongitude(Longitude.newLongitude(((Number) rowData[3]).doubleValue()));
     geoloc.setInstallationTypeCode("AlpLoc");			
 
-    if (!myPlugIn.addLocation(geoloc)) {
-      System.err.println("AlpLocQueryHandler: unable to add pseudo geoloc for " +
-                         geoloc.getName());
-    }
+    myPlugIn.updateLocation(geoloc);
   }
+
 }
 
 

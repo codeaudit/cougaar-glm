@@ -51,6 +51,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
   private static Calendar myCalendar = Calendar.getInstance();
 
+  private long myLastQueryTime = TimeSpan.MIN_VALUE;
+
   private HashMap myOrgInfoMap = new HashMap();	
   private Oplan myOplan;
   private String myActivityKey;
@@ -74,6 +76,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     myActivityKey = getParameter(ACTIVITY_PARAMETER);
     myOpTempoKey = getParameter(OPTEMPO_PARAMETER);
     myLocationKey = getParameter(LOCATION_PARAMETER);
+
+    myOrgInfoMap.clear();
   }
                         
   /** Construct and return an SQL query to be used by the Database engine.
@@ -87,8 +91,8 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * doing whatever is required.
    **/
   public void processRow(Object[] rowData) {
-    if (rowData.length != 7) {
-      System.err.println("OrgActivityQueryHandler.processRow() - expected 7 columns of data, " +
+    if (rowData.length != 8) {
+      System.err.println("OrgActivityQueryHandler.processRow() - expected 8 columns of data, " +
                          " got " + rowData.length);
     }
 
@@ -113,32 +117,39 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * SQLOplanPlugIn
    **/
   public void endQuery() {
+    System.out.println(99);
+
     // myOrgInfoMap has a TimeSpanSet for each Org
     Collection orgInfosByOrg = myOrgInfoMap.values();
-
     
     ArrayList allOrgActivities = new ArrayList(orgInfosByOrg.size());
     for (Iterator iterator = orgInfosByOrg.iterator();
          iterator.hasNext();) {
-      TimeSpanSet orgActivities = getMergedOrgActivities((OrgInfo) iterator.next());
-      allOrgActivities.addAll((Collection) orgActivities);
+      OrgInfo orgInfo = (OrgInfo) iterator.next();
+
+      if (needToUpdate(orgInfo)) {
+        TimeSpanSet orgActivities = getMergedOrgActivities(orgInfo);
+
+        /* Debugging  */
+        /*
+        for (Iterator oaIterator = orgActivities.iterator();
+             oaIterator.hasNext();) {
+          OrgActivity orgActivity = (OrgActivity)oaIterator.next();
+          System.out.println(orgActivity.getOrgID() + " " + 
+                             orgActivity.getOpTempo() + " " + 
+                             orgActivity.getActivityType() + " " + 
+                             orgActivity.getTimeSpan().getStartDate() + " " +
+                             orgActivity.getTimeSpan().getEndDate() + " " + 
+                             orgActivity.getGeoLoc());
+        }
+        */
+        
+        myPlugIn.updateOrgActivities(myOplan, orgInfo.getOrgName(), 
+                                     orgActivities);
+      }
     }
 
-    /* Debugging  */
-    for (Iterator iterator = allOrgActivities.iterator();
-         iterator.hasNext();) {
-      OrgActivity orgActivity = (OrgActivity)iterator.next();
-      System.out.println(orgActivity.getOrgID() + " " + 
-                         orgActivity.getOpTempo() + " " + 
-                         orgActivity.getActivityType() + " " + 
-                         orgActivity.getTimeSpan().getStartDate() + " " +
-                         orgActivity.getTimeSpan().getEndDate() + " " + 
-                         new Date(orgActivity.getTimeSpan().getEndTime()) + " " + 
-                         orgActivity.getGeoLoc());
-    }
-    /* */
-
-    myOplan.setOrgActivities(allOrgActivities);
+    myLastQueryTime = new Date().getTime();
   }
 
 
@@ -154,7 +165,9 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     }
     
     OrgInfoElement element = 
-      new OrgInfoElement(opTempo, myOplan.getCday(), 
+      new OrgInfoElement(opTempo, 
+                         ((Date) rowData[7]).getTime(), 
+                         myOplan.getCday(), 
                          ((Number) rowData[5]).intValue(), 
                          ((Number) rowData[6]).intValue());
 
@@ -186,7 +199,9 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     // validate string?
     
     OrgInfoElement element = 
-      new OrgInfoElement(activity, myOplan.getCday(), 
+      new OrgInfoElement(activity, 
+                         ((Date) rowData[7]).getTime(),
+                         myOplan.getCday(), 
                          ((Number) rowData[5]).intValue(), 
                          ((Number) rowData[6]).intValue());
 
@@ -218,7 +233,9 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     GeolocLocation geoLoc = (GeolocLocation) myPlugIn.getLocation(locCode);
 
     OrgInfoElement element = 
-      new OrgInfoElement(geoLoc, myOplan.getCday(), 
+      new OrgInfoElement(geoLoc, 
+                         ((Date) rowData[7]).getTime(),
+                         myOplan.getCday(), 
                          ((Number) rowData[5]).intValue(), 
                          ((Number) rowData[6]).intValue());
 
@@ -242,7 +259,34 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     orgInfo.getLocationSchedule().add(element);
   }
 
-  
+  protected boolean needToUpdate(OrgInfo orgInfo) {
+    for (Iterator iterator = orgInfo.getActivitySchedule().iterator();
+         iterator.hasNext();) {
+      OrgInfoElement element = (OrgInfoElement) iterator.next();
+      if (element.getLastModified() > myLastQueryTime) {
+        return true;
+      }
+    }
+
+    for (Iterator iterator = orgInfo.getLocationSchedule().iterator();
+         iterator.hasNext();) {
+      OrgInfoElement element = (OrgInfoElement) iterator.next();
+      if (element.getLastModified() > myLastQueryTime) {
+        return true;
+      }
+    }
+
+    for (Iterator iterator = orgInfo.getOpTempoSchedule().iterator();
+         iterator.hasNext();) {
+      OrgInfoElement element = (OrgInfoElement) iterator.next();
+      if (element.getLastModified() > myLastQueryTime) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   /**
    * getMergedOrgActivities - merges the activity, location, and optempo 
    * TimeSpanSets for the Org into a set of OrgActivities.
@@ -509,15 +553,21 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 
   private class OrgInfoElement extends org.cougaar.domain.glm.ldm.oplan.TimeSpan {
     private Object myObject;
+    private long myLastModified;
 
-    public OrgInfoElement(Object object, Date baseDate, int startDelta, int endDelta) {
+    public OrgInfoElement(Object object, long lastModified, Date baseDate, int startDelta, int endDelta) {
       super(baseDate, startDelta, endDelta);
 
       myObject = object;
+      myLastModified = lastModified;
     }
 
     public Object getObject() {
       return myObject;
+    }
+
+    public long getLastModified() {
+      return myLastModified;
     }
   }
 }

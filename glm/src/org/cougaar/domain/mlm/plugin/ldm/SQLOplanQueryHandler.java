@@ -49,6 +49,10 @@ public abstract class SQLOplanQueryHandler extends QueryHandler {
     execute();
   }
 
+  public void update() {
+    execute();
+  }
+    
   protected void initialize(LDMSQLPlugIn ldmplugin,
                             ClusterIdentifier cid,
                             ClusterServesPlugIn comp,

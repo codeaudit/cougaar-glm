@@ -15,10 +15,15 @@ import java.awt.event.*;
 import java.awt.LayoutManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.society.UID;
@@ -30,6 +35,7 @@ import org.cougaar.domain.glm.ldm.plan.NamedPosition;
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.oplan.OplanContributor;
 import org.cougaar.domain.glm.ldm.oplan.OplanCoupon;
+import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
 import org.cougaar.domain.mlm.plugin.UICoordinator;
 
 import java.io.*;
@@ -57,9 +63,20 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
 
   private ArrayList oplans = new ArrayList();
   private HashMap locations = new HashMap();
+  
+  // Additions/Modifications/Deletions which have not yet been published
+  private HashSet newObjects = new HashSet();
+  private HashSet modifiedObjects = new HashSet();
+  private HashSet removedObjects = new HashSet();
+
+  private JLabel updateLabel;
+  protected JButton updateButton;
+
+  protected long myOplanTime;
 
   private static class MyPrivateState implements java.io.Serializable {
     boolean oplanExists = false;
+    boolean unpublishedChanges = false;
     boolean errorOccurred = false;
   }
 
@@ -118,12 +135,11 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
   }
 
   public Oplan getOplan(String oplanID) {
-    Oplan oplan;
 
     synchronized (oplans) {
       for (Iterator iterator = oplans.iterator();
            iterator.hasNext();) {
-        oplan = (Oplan)iterator.next();
+        Oplan oplan = (Oplan) iterator.next();
         if ((oplan.getOplanId().equals(oplanID))){
           return oplan;
         }
@@ -132,44 +148,98 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     }
   }
 
-  public Oplan addOplan(String oplanID) {
-    Oplan oplan;
 
+  public void updateOplanInfo(Oplan update) {
     synchronized (oplans) {
-      oplan = getOplan(oplanID);
+      String oplanID = update.getOplanId();
+      Oplan oplan = getOplan(oplanID);
       
-      if (oplan != null) {
-        System.err.println("SQLOplanPlugIn.addOplan(): " + oplanID + 
-                           " already exists.");
-        return oplan;
-      } else {
-        oplan = new Oplan("");
-        getCluster().getUIDServer().registerUniqueObject(oplan);
-        oplan.setOwner(getClusterIdentifier());
-        oplan.setOplanId(oplanID);
-        
-        oplans.add(oplan);
+      if (oplan == null) {
+        oplan = addOplan(oplanID);
       }
-    } // end syncronization on oplans
-    return oplan;
+      
+      oplan.setOperationName(update.getOperationName());
+      oplan.setPriority(update.getPriority());
+      oplan.setCday(update.getCday());
+      oplan.setEndDay(update.getEndDay());
+
+      boolean found = false;
+      if (oplanSubscription != null) {
+        Collection published = oplanSubscription.getCollection();
+        for (Iterator iterator = published.iterator();
+             iterator.hasNext();) {
+          if (((Oplan) iterator.next()).getOplanId().equals(oplanID)) {
+            found = true;
+            break;
+          }
+        }
+      }
+
+      if (found) {
+        modifiedObjects.add(oplan);
+
+        if (myPrivateState != null) {
+          myPrivateState.unpublishedChanges = true;
+        }
+      } else {
+        newObjects.add(oplan);
+      }
+    }
   }
 
-  // Dummy until we have some ability to build a look up table
+  public void updateOrgActivities(Oplan update,
+                                  String orgId,
+                                  Collection orgActivities) {
+    synchronized (oplans) {
+      String oplanID = update.getOplanId();
+      Oplan oplan = getOplan(oplanID);
+      
+      if (oplan == null) {
+        System.err.println("SQLOplanPlugIn.updateOrgActivities(): can't find" +
+                           " referenced Oplan " + oplanID);
+        return;
+      }
+      
+      ArrayList orgActivityList = 
+        new ArrayList(Arrays.asList(oplan.getOrgActivityArray()));
+      for (ListIterator iterator = orgActivityList.listIterator();
+           iterator.hasNext();) {
+        OrgActivity orgActivity = (OrgActivity) iterator.next();
+        if (orgActivity.getOrgID().equals(orgId)) {
+          iterator.remove();
+
+          removedObjects.add(orgActivity);
+        }
+      }
+
+      for (Iterator iterator = orgActivities.iterator();
+           iterator.hasNext();) {
+        OrgActivity orgActivity = (OrgActivity) iterator.next();
+
+        orgActivityList.add(orgActivity);
+        newObjects.add(orgActivity);
+      }
+
+      oplan.setOrgActivities(orgActivityList);
+
+      if (myPrivateState != null) {
+        myPrivateState.unpublishedChanges = true;
+      }
+    }
+  }
+
+
+  // Used by query handlers to get location info
   public NamedPosition getLocation(String locCode) {
     return (NamedPosition) locations.get(locCode);
   }
 
-
-  public boolean addLocation(GeolocLocation location) {
+  // Used by query handlers to update location info
+  public void updateLocation(GeolocLocation location) {
     String locName = location.getGeolocCode();
-    if (!locations.containsKey(locName)) {
-      locations.put(locName, location);
-      return true;
-    } else {
-      return false;
-    }
+    locations.put(locName, location);
   }
-    
+
   /*
    * Creates a subscription.
    */
@@ -192,9 +262,29 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     } else {
       publishAdd(new MyPrivateState());
     }
-
-    
   }	   		 
+
+  private Oplan addOplan(String oplanID) {
+    Oplan oplan;
+
+    synchronized (oplans) {
+      oplan = getOplan(oplanID);
+      
+      if (oplan != null) {
+        System.err.println("SQLOplanPlugIn.addOplan(): " + oplanID + 
+                           " already exists.");
+        return oplan;
+      } else {
+        oplan =  new Oplan();
+        getCluster().getUIDServer().registerUniqueObject(oplan);
+        oplan.setOwner(getClusterIdentifier());
+        oplan.setOplanId(oplanID);
+        
+        oplans.add(oplan);
+      }
+    } // end syncronization on oplans
+    return oplan;
+  }
 
   private void checkForPrivateState(Enumeration e) {
     if (myPrivateState == null) {
@@ -217,6 +307,17 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     oplanButton.addActionListener(myOplanListener);
     oplanButton.setEnabled(false);
     UICoordinator.layoutButtonAndLabel(panel, oplanButton, oplanLabel);
+
+    // Create the button
+    updateButton = new JButton("Update Oplan");
+    updateLabel = new JLabel("No Oplan has been published.");
+
+    // Register a listener for the check box
+    UpdateButtonListener myUpdateListener = new UpdateButtonListener();
+    updateButton.addActionListener(myUpdateListener);
+    updateButton.setEnabled(false);
+    UICoordinator.layoutButtonAndLabel(panel, updateButton, updateLabel);
+
     frame.setContentPane(panel);
     frame.pack();
     UICoordinator.setBounds(frame);
@@ -230,9 +331,17 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     }
   }
 
+  /** An ActionListener that listens to the update button. */
+  class UpdateButtonListener implements ActionListener {
+    public void actionPerformed(ActionEvent ae) {
+      refreshOplan();
+    }
+  }
+
   private void checkButtonEnable() {
     // Log status
-    oplanButton.setEnabled(!myPrivateState.oplanExists);
+    oplanButton.setEnabled(!myPrivateState.oplanExists || 
+                           myPrivateState.unpublishedChanges);
     if (myPrivateState.oplanExists) {
       oplanLabel.setText("Published successfully");
     } else if (myPrivateState.errorOccurred) {
@@ -240,10 +349,16 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
     } else {
       oplanLabel.setText("No Oplan has been published.");
     }
+
+    updateButton.setEnabled(myPrivateState.oplanExists);
+    if (myPrivateState.oplanExists) {
+      updateLabel.setText("Oplan can be updated.");
+    } else {
+      updateLabel.setText("No Oplan to update.");
+    }
+
   }
-
-
-
+  /*
   protected void addOplan(Oplan oplan) {
     if (oplans == null) {
       oplans = new ArrayList();
@@ -253,41 +368,53 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
 
     oplans.add(oplan);
   }
-
+  */
   private void publishOplan() {
+    // Need to make separate add/remove/modify lists
     openTransaction();
-    int n = oplans.size();
-    if (n > 0) {
-      for (int i = 0; i < n; i++) {
-        Oplan oplan = (Oplan) oplans.get(i);
-        // Add the OPLAN to the LogPlan.
-        publishAdd(oplan);
-        // publish the subs
-        for (Enumeration es = oplan.getForcePackages(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
-        }
-        for (Enumeration es = oplan.getOrgActivities(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
-        }
-        for (Enumeration es = oplan.getOrgRelations(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
-        }
-        // policies are not oplan-associated
-        for (Enumeration es = oplan.getPolicies(); es.hasMoreElements(); ) {
-          publishAdd(es.nextElement());
-        }
 
-        OplanCoupon ow = new OplanCoupon(oplan.getUID(), getClusterIdentifier());
+    for (Iterator iterator = newObjects.iterator();
+         iterator.hasNext();) {
+      Object object = iterator.next();
+      publishAdd(object);
+
+      if (object instanceof Oplan) {
+        OplanCoupon ow = new OplanCoupon(((Oplan) object).getUID(), 
+                                         getClusterIdentifier());
         getCluster().getUIDServer().registerUniqueObject(ow);
         publishAdd(ow);
+
+        myPrivateState.oplanExists = true;
       }
-      myPrivateState.oplanExists = true;
-    } else {
-      myPrivateState.errorOccurred = true;
+    }
+
+    for (Iterator iterator = modifiedObjects.iterator();
+         iterator.hasNext();) {
+      publishChange(iterator.next());
+    }
+
+    for (Iterator iterator = removedObjects.iterator();
+         iterator.hasNext();) {
+      publishRemove(iterator.next());
     }
 
     publishChange(myPrivateState);
     closeTransaction(false);
+
+    newObjects.clear();
+    modifiedObjects.clear();
+    removedObjects.clear();
+
+    myPrivateState.unpublishedChanges = false;
+
+    checkButtonEnable();
+  }
+
+  private void refreshOplan() {
+    for (Enumeration e = queries.elements(); e.hasMoreElements();) {
+      SQLOplanQueryHandler qh = (SQLOplanQueryHandler) e.nextElement();
+      qh.update();
+    }
     checkButtonEnable();
   }
 
@@ -302,18 +429,26 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
   }
 
   private void processChanges(Collection changes) {
-    for (Iterator it = changes.iterator(); it.hasNext();) {
+    HashSet changedOplans = new HashSet();
+
+    for (Iterator iterator = changes.iterator(); iterator.hasNext();) {
       UID oplanUID = null;
-      Object o = it.next();
+      Object o = iterator.next();
       if (o instanceof Oplan) {
 	oplanUID = ((Oplan) o).getUID();
       } else if (o instanceof OplanContributor) {
 	oplanUID = ((OplanContributor) o).getOplanUID();
       } else continue;
+      
+      changedOplans.add(oplanUID);
+    }
 
-      Collection coupons = query( new CouponPredicate(oplanUID) );
+    // Publish once for each changed oplan
+    for (Iterator iterator = changedOplans.iterator(); iterator.hasNext();) {
+      Collection coupons = 
+        query(new CouponPredicate((UID) iterator.next()));
       for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
-	//System.out.println("SQLOplanPlugIn: publishChanging OplanCoupon");
+	System.out.println("SQLOplanPlugIn: publishChanging OplanCoupon");
 	publishChange(couponIt.next());
       }
     }
@@ -322,7 +457,7 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
   private void processOplanDeletes(Collection deletes) {
     for (Iterator it = deletes.iterator(); it.hasNext();) {
       Oplan oplan = (Oplan) it.next();
-      Collection coupons = query( new CouponPredicate(oplan.getUID()) );
+      Collection coupons = query(new CouponPredicate(oplan.getUID()));
       for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
 	publishRemove(couponIt.next());
       }
@@ -358,8 +493,6 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
       return false;
     }
   }
-
-
 }
 
 

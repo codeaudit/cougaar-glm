@@ -66,10 +66,7 @@ public class GeoLocQueryHandler  extends SQLOplanQueryHandler {
     geoloc.setCountryStateCode((String) rowData[6]);
     geoloc.setCountryStateName((String) rowData[7]);
 
-    if (!myPlugIn.addLocation(geoloc)) {
-      System.err.println("GeoLocQueryHandler: unable to add geoloc for " +
-                         geoloc.getName());
-    }
+    myPlugIn.updateLocation(geoloc);
   }
 }
 
