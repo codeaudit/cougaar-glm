@@ -44,35 +44,40 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 
 
-/***********************************************************************************************************************
-<b>Description</b>: PSP class to provide initial HTML page for the readiness assessor chart applet.  This PSP sends
-                    the
-										required HTML for finding the readiness assesssor chart applet and accessing the KeepAlive PSP that
-										provides the readiness assessor chart applet with data.
+/***********************************************************************************************
+<b>Description</b>: PSP class to provide initial HTML page for the
+readiness assessor chart applet.  This PSP sends the required HTML for
+finding the readiness assesssor chart applet and accessing the
+KeepAlive PSP that provides the readiness assessor chart applet with
+data.
 
 <br><br><b>Notes</b>:<br>
 									-
 
-@author Eric B. Martin, &copy;2000 Clark Software Engineering, Ltd. & Defense Advanced Research Projects Agency (DARPA)
+@author Eric B. Martin, &copy;2000 Clark Software Engineering, Ltd. &
+Defense Advanced Research Projects Agency (DARPA)
 @version 1.0
-***********************************************************************************************************************/
-public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAdapter implements org.cougaar.lib.planserver.PlanServiceProvider, org.cougaar.lib.planserver.UISubscriber
+**************************************************************************************************/
+public class PSP_ReadinessAssessor 
+  extends org.cougaar.lib.planserver.PSP_BaseAdapter 
+  implements org.cougaar.lib.planserver.PlanServiceProvider, 
+	     org.cougaar.lib.planserver.UISubscriber
 {
 
 
-	/*********************************************************************************************************************
+/******************************************************************************************************
   <b>Description</b>: Default constructor.  This constructor simply calls its super class default constructor to ensure
   										the instance is properly constructed.
 
   <br><b>Notes</b>:<br>
 	                  -
 	*********************************************************************************************************************/
-	public PSP_ReadinessAssessor()
-	{
-		super();
-	}
-
-	/*********************************************************************************************************************
+  public PSP_ReadinessAssessor()
+  {
+    super();
+  }
+  
+  /*********************************************************************************************************************
   <b>Description</b>: Constructor.  This constructor sets the PSP's resource location according to the parameters
   										passed in.
 
@@ -84,16 +89,16 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   @param id The PSP name
 
   @throws RuntimePSPException
-	*********************************************************************************************************************/
-	public PSP_ReadinessAssessor (String pkg, String id) throws org.cougaar.lib.planserver.RuntimePSPException
-	{
-		setResourceLocation(pkg, id);
-	}
+  *********************************************************************************************************************/
+  public PSP_ReadinessAssessor (String pkg, String id) throws org.cougaar.lib.planserver.RuntimePSPException
+  {
+    setResourceLocation(pkg, id);
+  }
 
-	/*********************************************************************************************************************
-  <b>Description</b>: Main entry point for starting the BOL inventroy chart applet KeepAlive PSP connection.
-
-  <br><b>Notes</b>:<br>
+  /**************************************************************************************************
+												     <b>Description</b>: Main entry point for starting the BOL inventroy chart applet KeepAlive PSP connection.
+															
+															<br><b>Notes</b>:<br>
 	                  - Uses a BOLPSPState object to hold PSP configuration and HTTP request data<BR>
 	                  - Catches all Throwable objects and prints a stack trace to the HTTP response output
 
@@ -105,69 +110,60 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 
   @throws Exception 
 	*********************************************************************************************************************/
-	public void execute(PrintStream out, HttpInput query_parameters, PlanServiceContext psc, PlanServiceUtilities psu) throws Exception
-	{
+  public void execute(PrintStream out, HttpInput query_parameters, PlanServiceContext psc, PlanServiceUtilities psu) throws Exception
+  {
 
     String clusterId = psc.getServerPluginSupport().getClusterIDAsString();
 
-		try
-		{
+    try
+      {
 
-			// Default page displayed when PSP is first accessed
-			out.println("<HTML><HEAD><TITLE>Readiness Assessor</TITLE></HEAD><BODY BACKGROUND='images/clouds.gif'>");
-//out.println("<OBJECT classid=\"clsid:CAFEEFAC-0013-0001-0000-ABCDEFFEDCBA\"");
-	      out.println("<OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"");
-				//out.println("WIDTH = 600 HEIGHT = 600 NAME = \"NChartApplet\"  codebase=\"http://java.sun.com/products/plugin/1.3.1/jinstall-131-win32.cab#Version=1,3,1,0\">");
-				out.println("WIDTH = 600 HEIGHT = 600 codebase=\"http://java.sun.com/products/plugin/1.2/jinstall-12-win32.cab#Version=1,2,0,0\">");
-				out.println("<PARAM NAME = CODE VALUE = \"NChartApplet.class\" >");
-				out.println("<PARAM NAME = ARCHIVE VALUE = \"/big.jar\" >");
-				//out.println("<PARAM NAME = CODEBASE = \".\" >");
-				//out.println("<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;jpi-version=1.3.1\">");
-				out.println("<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.2\">");
-				//out.println("<PARAM NAME=\"scriptable\" VALUE=\"false\">");
-			sendReadinessParameters(clusterId, psc, out);
-			out.println("<COMMENT>");
-				//out.println("<EMBED type=\"application/x-java-applet;jpi-version=1.3.1\"");  
-				out.println("<EMBED type=\"application/x-java-applet;version=1.2.2\"" + " java_CODE=\"NChartApplet.class\"" + " java_ARCHIVE=\"/big.jar\"");
-			  //out.println("ARCHIVE=\"/big.jar\""); 
-			  //out.println("CODEBASE=\".\"");
-			  //out.println("CODE=\"NChartApplet.class\""); 
-			  out.println("NAME=\"NChartApplet\""); 
-			  out.println("WIDTH = 600"); 
-			  out.println("HEIGHT = 600"); 
-      sendnetscapeReadinessParameters(clusterId, psc, out);
-			//out.println("pluginspage=\"http://java.sun.com/products/plugin/1.3.1/plugin-install.html\"><NOEMBED>");
-			  out.println(" pluginspage=\"http://java.sun.com/products/plugin/1.2/plugin-install.html\"><NOEMBED>");
-		  	out.println("</NOEMBED>");
-			  out.println("</EMBED>");
-			  out.println("</COMMENT>");
-			  out.println("</OBJECT>");
-			//out.println("<CENTER><APPLET ARCHIVE='/rasschart.jar' CODEBASE='./bin' CODE='org.cougaar.domain.mlm.plugin.assessor.ReadinessAssessorApplet.class' WIDTH=600 HEIGHT=450>");
-      //out.println("<CENTER><APPLET ARCHIVE='/big.jar'  CODE='NChartApplet.class' WIDTH=600 HEIGHT=450>");
-//			out.println("<PARAM NAME=ReadinessURL VALUE='" + pspURL + "'>");
-			//sendReadinessParameters(out);
-			//out.println("</APPLET>");
+	// Default page displayed when PSP is first accessed
+	out.println("<HTML><HEAD><TITLE>Readiness Assessor</TITLE></HEAD><BODY BACKGROUND='images/clouds.gif'>");
 
-			//out.println("<BR><IMG SRC='images/CougaarLogo.gif' ALIGN=ABSMIDDLE> <I><B>Powered by Cougaar</B></I>");
-			out.println("</CENTER></BODY></HTML>");
+	out.println("<OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"");
 
-		}
+	out.println("WIDTH = 600 HEIGHT = 600 codebase=\"http://java.sun.com/products/plugin/1.2/jinstall-12-win32.cab#Version=1,2,0,0\">");
+	out.println("<PARAM NAME = CODE VALUE = \"NChartApplet.class\" >");
+	out.println("<PARAM NAME = ARCHIVE VALUE = \"/big.jar\" >");
 
-		// Catch all exceptions and send the stack trace of them as part of the HTTP response
-		catch (Throwable e)
-		{
-			// Send the stack trace to the standard error output
-			e.printStackTrace();
+	out.println("<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.2\">");
 
-			// Send the stack trace to the HTTP response stream
-			out.print("<HTML><BODY><H1><FONT COLOR=RED>Unexpected Exception!</FONT></H1><P><PRE>");
-			e.printStackTrace(out);
-			out.print("</PRE></BODY></HTML>");
-		}
+	sendReadinessParameters(clusterId, psc, out);
+	out.println("<COMMENT>");
 
-		out.flush();
+	out.println("<EMBED type=\"application/x-java-applet;version=1.2.2\"" + " java_CODE=\"NChartApplet.class\"" + " java_ARCHIVE=\"/big.jar\"");
 
-	}
+	out.println("NAME=\"NChartApplet\""); 
+	out.println("WIDTH = 600"); 
+	out.println("HEIGHT = 600"); 
+	sendnetscapeReadinessParameters(clusterId, psc, out);
+
+	out.println(" pluginspage=\"http://java.sun.com/products/plugin/1.2/plugin-install.html\"><NOEMBED>");
+	out.println("</NOEMBED>");
+	out.println("</EMBED>");
+	out.println("</COMMENT>");
+	out.println("</OBJECT>");
+
+	out.println("</CENTER></BODY></HTML>");
+
+      }
+
+    // Catch all exceptions and send the stack trace of them as part of the HTTP response
+    catch (Throwable e)
+      {
+	// Send the stack trace to the standard error output
+	e.printStackTrace();
+
+	// Send the stack trace to the HTTP response stream
+	out.print("<HTML><BODY><H1><FONT COLOR=RED>Unexpected Exception!</FONT></H1><P><PRE>");
+	e.printStackTrace(out);
+	out.print("</PRE></BODY></HTML>");
+      }
+
+    out.flush();
+
+  }
 
 	/*********************************************************************************************************************
   <b>Description</b>: Creates applet parameters which represent the initial inventory list and counts.
@@ -179,12 +175,12 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   @param out HTTP response socket stream
   @param pspState Current state of the PSP including HTTP request parameters
 	*********************************************************************************************************************/
-	private void sendReadinessParameters(String cId, PlanServiceContext psc, PrintStream out)
-	{
+  private void sendReadinessParameters(String cId, PlanServiceContext psc, PrintStream out)
+  {
     Iterator itSet, itDOs;
     int ii, jj, kk;
 
-		// Get the readiness assessment
+    // Get the readiness assessment
 
     //HashMap allClusterData = ReadinessAssessorPSPPlugIn.pspData;
     Hashtable allClusterData = ReadinessAssessorPSPPlugIn.pspData;
@@ -387,6 +383,7 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
 	   }
   };
 
+
   private HashMap getRollUpData (PlanServiceContext psc)
   {
 
@@ -420,16 +417,16 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
     List phasedResults = ar.getPhasedAspectValueResults();
 
     for ( int ii=0; ii < phasedResults.size(); ii ++)
-    {
-      AspectValue[] avs = (AspectValue[]) phasedResults.get(ii);
-      arl.add(avs);
-    }
+      {
+	AspectValue[] avs = (AspectValue[]) phasedResults.get(ii);
+	arl.add(avs);
+      }
 
     return retMap;
     
   }
   
-	/*********************************************************************************************************************
+  /*********************************************************************************************************************
   <b>Description</b>: Required by the UISubscriber interface.
 
   <br><b>Notes</b>:<br>
@@ -438,11 +435,11 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   <br>
   @param subscription Subscription object
 	*********************************************************************************************************************/
-	public void subscriptionChanged(Subscription subscription)
-	{
-	}
+  public void subscriptionChanged(Subscription subscription)
+  {
+  }
 
-	/*********************************************************************************************************************
+  /*********************************************************************************************************************
   <b>Description</b>: Required by the PlanServiceProvider interface.
 
   <br><b>Notes</b>:<br>
@@ -451,12 +448,12 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   <br>
   @return True if PSP returns XML, false otherwise
 	*********************************************************************************************************************/
-	public boolean returnsXML()
-	{
-		return(false);
-	}
+  public boolean returnsXML()
+  {
+    return(false);
+  }
 	
-	/*********************************************************************************************************************
+  /*********************************************************************************************************************
   <b>Description</b>: Required by the PlanServiceProvider interface.
 
   <br><b>Notes</b>:<br>
@@ -465,12 +462,12 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   <br>
   @return True if PSP returns HTML, false otherwise
 	*********************************************************************************************************************/
-	public boolean returnsHTML()
-	{
-		return(true);
-	}
+  public boolean returnsHTML()
+  {
+    return(true);
+  }
 
-	/*********************************************************************************************************************
+  /*********************************************************************************************************************
   <b>Description</b>: Required by the PlanServiceProvider interface.
 
   <br><b>Notes</b>:<br>
@@ -479,12 +476,12 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   <br>
   @return DTD String
 	*********************************************************************************************************************/
-	public String getDTD()
-	{
-		return(null);
-	}
+  public String getDTD()
+  {
+    return(null);
+  }
 	
-	/*********************************************************************************************************************
+  /*********************************************************************************************************************
   <b>Description</b>: Required by the PlanServiceProvider interface.
 
   <br><b>Notes</b>:<br>
@@ -493,9 +490,9 @@ public class PSP_ReadinessAssessor extends org.cougaar.lib.planserver.PSP_BaseAd
   <br>
   @return True if interested, false otherwise
 	*********************************************************************************************************************/
-	public boolean test(HttpInput query_parameters, PlanServiceContext sc)
-	{
-		super.initializeTest(); // IF subclass off of PSP_BaseAdapter.java
-		return(false);  // This PSP is only accessed by direct reference.
-	}
+  public boolean test(HttpInput query_parameters, PlanServiceContext sc)
+  {
+    super.initializeTest(); // IF subclass off of PSP_BaseAdapter.java
+    return(false);  // This PSP is only accessed by direct reference.
+  }
 }
