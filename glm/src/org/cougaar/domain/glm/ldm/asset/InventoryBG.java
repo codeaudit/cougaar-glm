@@ -50,7 +50,7 @@ import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 
-public abstract class InventoryBG implements PGDelegate {
+public class InventoryBG implements PGDelegate {
 
   public static final int PRIORITY_LEVELS = 10;
   public static final long CANONICAL_TIME_OFFSET = TimeUtils.MSEC_PER_DAY - 1;
@@ -1402,7 +1402,9 @@ public abstract class InventoryBG implements PGDelegate {
     return 0;
   }
 
-  public abstract PGDelegate copy(PropertyGroup pg);
+  public PGDelegate copy(PropertyGroup pg) {
+    return new InventoryBG((InventoryPG)pg);
+  }
     
   /**
    * Add the newInventoryReport to the report_history ArrayList
