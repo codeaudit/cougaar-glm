@@ -96,7 +96,7 @@ public class UserInputTask {
       task.setPrepositionalPhrase(phrase);
     }
     if (verb != "")
-      task.setVerb(new Verb(verb));
+      task.setVerb(Verb.get(verb));
     // set dates in penalty function
     //if ((startDate != "") && (endDate != "") && (bestDate != ""))
     //  task.setPenaltyFunction(createPenaltyFunction(startDate, endDate, 

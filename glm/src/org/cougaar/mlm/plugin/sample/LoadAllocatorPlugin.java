@@ -757,7 +757,7 @@ public class LoadAllocatorPlugin extends SimplePlugin {
 
     NewTask t = theLDMF.newTask();
     t.setPlan(/*thePlan*/theLDMF.getRealityPlan());
-    t.setVerb(new Verb(Constants.Verb.SUPPORTREQUEST));
+    t.setVerb(Verb.get(Constants.Verb.SUPPORTREQUEST));
     Vector pps = new Vector();
     NewPrepositionalPhrase pp = theLDMF.newPrepositionalPhrase();
     pp.setPreposition(Constants.Preposition.FOR);

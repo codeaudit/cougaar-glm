@@ -310,7 +310,7 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
     task.setPrepositionalPhrases( prepphrases.elements() );
 
     // Verb DetermineRequirements
-    task.setVerb(new Verb(Constants.Verb.DETERMINEREQUIREMENTS));
+    task.setVerb(Verb.get(Constants.Verb.DETERMINEREQUIREMENTS));
 
     // Preferences
     task.setPreferences( getPreferences() );

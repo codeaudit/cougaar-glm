@@ -238,7 +238,7 @@ public class MCCAggregatorPlugin extends SimplePlugin
 	    
 	    NewMPTask combTask = theLDMF.newMPTask();
 	    combTask.setParentTasks( tasks.elements() );
-	    combTask.setVerb(new Verb(Constants.Verb.TRANSPORTATIONMISSION));
+	    combTask.setVerb(Verb.get(Constants.Verb.TRANSPORTATIONMISSION));
 	    AssetGroup ag = new AssetGroup();
 	    ag.setAssets( assets );
 	    combTask.setDirectObject( ag );

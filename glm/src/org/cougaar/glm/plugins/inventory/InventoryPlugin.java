@@ -722,7 +722,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
 	NewTask subtask = theLDMF.newTask();
 	subtask.setDirectObject(inventory);
 	subtask.setParentTask(parent);
-	subtask.setVerb(new Verb(Constants.Verb.MAINTAININVENTORY));
+	subtask.setVerb(Verb.get(Constants.Verb.MAINTAININVENTORY));
         setStartTimePreference(subtask, TaskUtils.getStartTime(parent));
         setEndTimePreference(subtask, TaskUtils.getEndTime(parent));
 	return subtask;
@@ -743,7 +743,7 @@ public abstract class InventoryPlugin extends GLMDecorationPlugin {
         composition.setIsPropagating(false);
         mpTask.setComposition(composition);
         composition.setCombinedTask(mpTask);
-	mpTask.setVerb(new Verb(Constants.Verb.MAINTAININVENTORY));
+	mpTask.setVerb(Verb.get(Constants.Verb.MAINTAININVENTORY));
         aggregateDetermineRequirementsTasks(mpTask, parents);
 	return mpTask;
     }

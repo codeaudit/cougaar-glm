@@ -372,9 +372,9 @@ public class SourceExpander extends SimplePlugin {
                     // If nextSupplier does not have role of MultipleSupplierCapable, set the verb to SUPPLY.
                     // Otherwise, set the verb to SOURCE.
                     if ( nextSupplier == Utility.findNamedOrganization( getClusterName(), getOrganizationAssets())) {
-                      subtask.setVerb( new Verb( Constants.Verb.SUPPLY));
+                      subtask.setVerb( Verb.get( Constants.Verb.SUPPLY));
                     } else {
-                      subtask.setVerb( new Verb( Grammar.SOURCE));
+                      subtask.setVerb( Verb.get( Grammar.SOURCE));
                     }
 
                     ((NewWorkflow)workflow).addTask( subtask);
@@ -478,9 +478,9 @@ public class SourceExpander extends SimplePlugin {
       // If firstSupplier does not have role of MultipleSupplierCapable, set the verb to SUPPLY.
       // Otherwise, set the verb to SOURCE.
       if ( firstSupplier == Utility.findNamedOrganization( getClusterName(), getOrganizationAssets())) {
-        subtask.setVerb( new Verb( Constants.Verb.SUPPLY));
+        subtask.setVerb( Verb.get( Constants.Verb.SUPPLY));
       } else {
-        subtask.setVerb( new Verb( Grammar.SOURCE));
+        subtask.setVerb( Verb.get( Grammar.SOURCE));
       }
 
       subtasks.add( subtask);

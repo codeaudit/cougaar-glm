@@ -216,7 +216,7 @@ public class TriggerTesterPlugin extends SimplePlugin
     NewTask ntask = factory.newTask();
     // only fill in a few things on the task since it is only for testing.
     // if this was a real task we would need to fill in more.
-    ntask.setVerb(new Verb(theverb));
+    ntask.setVerb(Verb.get(theverb));
     ntask.setPlan(factory.getRealityPlan());
         
     Asset theasset = null;

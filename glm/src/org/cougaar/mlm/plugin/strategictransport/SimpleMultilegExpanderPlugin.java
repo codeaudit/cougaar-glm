@@ -215,7 +215,7 @@ public class SimpleMultilegExpanderPlugin extends org.cougaar.planning.plugin.le
 	new_task.setPrepositionalPhrases(prepositions.elements());
 	
 	// Set the verb as given
-	new_task.setVerb(new Verb(verb));
+	new_task.setVerb(Verb.get(verb));
 
 	// Set the plan for the task
 	new_task.setPlan(parent.getPlan());

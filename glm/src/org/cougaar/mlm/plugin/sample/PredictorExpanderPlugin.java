@@ -203,7 +203,7 @@ public class PredictorExpanderPlugin extends SimplePlugin
 
     private Task createTransportLeg(Task task, NewWorkflow wf, TransportTuple tt)
     {
-        //Verb newverb = new Verb(Constants.Verb.TRANSPORT);
+        //Verb newverb = Verb.get(Constants.Verb.TRANSPORT);
         NewTask subtask = theLDMF.newTask();
         Vector prepphrases = new Vector();
         //Enumeration origpp = task.getPrepositionalPhrases();

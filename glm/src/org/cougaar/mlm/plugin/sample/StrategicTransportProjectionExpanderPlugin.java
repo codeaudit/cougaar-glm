@@ -109,7 +109,7 @@ public class StrategicTransportProjectionExpanderPlugin extends SimplePlugin {
     Asset mystuff = null;
     //	System.out.println("&&&&&&&&&&&&&&&&&&&&& DRtoST myComponent is: " + myComponent);
     MessageAddress me = getMessageAddress();
-    Verb newverb = new Verb(Constants.Verb.TRANSPORT);
+    Verb newverb = Verb.get(Constants.Verb.TRANSPORT);
     startDate = rightNow.getTime();
     // increment date by 5 DAYS
     rightNow.add(Calendar.DATE, 5);
