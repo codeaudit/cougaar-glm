@@ -21,6 +21,7 @@
 package org.cougaar.glm.packer;
 
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -38,6 +39,7 @@ import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.NewMPTask;
 import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 
@@ -70,7 +72,7 @@ class Filler {
     */
   private AllocationResultDistributor _ard;
 
-  private static int TRANSPORT_TONS;
+  public static double TRANSPORT_TONS;
 
   Filler (Sizer sz, GenericPlugin gp, AggregationClosure ac,
 	  AllocationResultDistributor ard,
@@ -85,9 +87,14 @@ class Filler {
   /**
     * This is the driving function in the whole packing process.
     */
-  public void execute () {
+  public double execute () {
     boolean finished = false;
-
+    double tonsPacked = 0;
+    
+    if (_gp.getLoggingService().isInfoEnabled()) 
+      _gp.getLoggingService().info("Filler.execute - entered.");
+    int numTasks = 0;
+    int numParents = 0;
     while (!finished) {
       // initialize the aggregation
       ArrayList agglist = new ArrayList();
@@ -98,6 +105,7 @@ class Filler {
           finished = true;
           break;
         }
+	numTasks++;
         
         // if we reach here, t is a Task that provides
         // some amount towards our overall amount
@@ -114,29 +122,64 @@ class Filler {
       }
       
       if (!agglist.isEmpty()) {
-	// now we do the aggregation
-	NewMPTask mpt = _ac.newTask();
-        
-        // Set ContentsPG on container
-        addContentsInfo((GLMAsset) mpt.getDirectObject(), agglist);
-        
-        //BOZO
-	mpt.setPreferences(new Vector(_pa.aggregatePreferences(agglist.iterator(),
-                                                               _gp.getGPFactory())).
-                           elements());
-        double loadedQuantity = mpt.getPreferredValue(AspectType.QUANTITY);
+	double loadedQuantity = createMPTask(agglist);
+	numParents += agglist.size();
         TRANSPORT_TONS += loadedQuantity;
-	Plan plan = ((Task)agglist.get(0)).getPlan();
-        
-	_gp.createAggregation(agglist.iterator(), mpt, plan, _ard);
+	tonsPacked += loadedQuantity;
       }
     }
-    
-    _gp.getLoggingService().info("Packer  - current aggregated requested transport: " +
-                                 TRANSPORT_TONS + " tons.");
+
+    if (numTasks != numParents)
+      _gp.getLoggingService().error("Filler.execute - num tasks created " + numTasks + 
+				    " != parents of MPTask " + numParents);
+
+    if (numParents != _sz.sizedMade)
+      _gp.getLoggingService().error("Filler.execute - sizer num tasks made " + _sz.sizedMade + 
+				    " != total parents of MPTask " + numParents);
+
+    if(_gp.getLoggingService().isInfoEnabled())
+      _gp.getLoggingService().info("Packer  - current aggregated requested transport: " +
+				   TRANSPORT_TONS + " tons.");
+
+    if (_gp.getLoggingService().isInfoEnabled()) 
+      _gp.getLoggingService().info("Filler.execute - exited.");
+
+    return tonsPacked;
   }
 
-  protected void addContentsInfo(GLMAsset container, ArrayList agglist) {
+  public double handleUnplanned (Task unplanned) {
+    if (_gp.getLoggingService().isWarnEnabled()) 
+      _gp.getLoggingService().warn("Filler.handleUnplanned - replanning " + unplanned.getUID());
+    List agglist = new ArrayList ();
+    agglist.add (unplanned);
+    double loadedQuantity = createMPTask(agglist);
+    return loadedQuantity;
+  }
+
+  protected double createMPTask (List agglist) {
+    // now we do the aggregation
+    NewMPTask mpt = _ac.newTask();
+        
+    // Set ContentsPG on container
+    addContentsInfo((GLMAsset) mpt.getDirectObject(), agglist);
+        
+    //BOZO
+    mpt.setPreferences(new Vector(_pa.aggregatePreferences(agglist.iterator(),
+							   _gp.getGPFactory())).elements());
+    double loadedQuantity = mpt.getPreferredValue(AspectType.QUANTITY);
+    Plan plan = ((Task)agglist.get(0)).getPlan();
+        
+    _gp.createAggregation(agglist.iterator(), mpt, plan, _ard);
+
+    if (mpt.getComposition().getParentTasks().size () != agglist.size())
+      _gp.getLoggingService().error("Filler.createMPTask - received " + agglist.size() + 
+				    " tasks to be agggregated, but only "+
+				    mpt.getComposition().getParentTasks().size ()  + 
+				    " tasks as parents of " + mpt.getUID());
+    return loadedQuantity;
+  } 
+
+  protected void addContentsInfo(GLMAsset container, List agglist) {
     ArrayList typeIDs = new ArrayList();
     ArrayList nomenclatures = new ArrayList();
     ArrayList weights = new ArrayList();
@@ -172,13 +215,20 @@ class Filler {
       
       Object receiver = 
         task.getPrepositionalPhrase(Constants.Preposition.FOR);
+
+      if (receiver != null)
+	receiver = ((PrepositionalPhrase) receiver).getIndirectObject();
+
       String receiverID;
         
       // Add field with recipient
-      if (receiver == null)
+      if (receiver == null) {
         receiverID = UNKNOWN;
-      else if (receiver instanceof String) 
+	_gp.getLoggingService().error ("Filler.addContentsInfo - Task " + task.getUID() + " had no FOR prep.");
+      }
+      else if (receiver instanceof String) {
 	receiverID = (String) receiver;
+      }
       else if (!(receiver instanceof Asset)) {
         receiverID = UNKNOWN;
       } else {

@@ -30,7 +30,8 @@ public class AmmoPackerPredicate  {
         if ((o instanceof Task) &&
             (((Task)o).getVerb().equals(Constants.Verb.SUPPLY)) &&
             (((Task)o).getPrepositionalPhrase(GenericPlugin.INTERNAL) == null) &&
-            (((Task)o).getDirectObject() instanceof Ammunition)) {
+            (((Task)o).getDirectObject() instanceof Ammunition) &&
+            (((Task)o).getPrepositionalPhrase("LOW_FIDELITY") == null)) {// BOZO - change this to a const reference later...
           return true;
         } else {
           return false;

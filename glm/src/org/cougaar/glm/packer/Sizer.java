@@ -76,6 +76,11 @@ class Sizer {
     if (_remainder == 0.0) {
       if ((_curTask = getNextTask()) != null) {
         _remainder = _curTask.getPreferredValue(AspectType.QUANTITY);
+	if (_expansionQueue != null) {
+	  _gp.getLoggingService().error ("Sizer.provide : ERROR - Expansion queue is not null - we will drop tasks :");
+	  for (Iterator iter = _expansionQueue.iterator(); iter.hasNext(); )
+	    _gp.getLoggingService().error ("\t" + ((Task)iter.next()).getUID());
+	}
         _expansionQueue = new ArrayList();
       } else {
         return null;
@@ -91,11 +96,14 @@ class Sizer {
       ret = sizedTask(_curTask, _remainder);
       _expansionQueue.add(0, ret);
       makeExpansion(_curTask, _expansionQueue);
+      _expansionQueue = null; // it has been used - we shouldn't try to use it again
       _remainder = 0.0;
     } else {
       ret = sizedTask(_curTask, requestedAmt);
       _expansionQueue.add(0, ret);
       _remainder = _remainder - requestedAmt;
+      if (_remainder == 0.0)
+	_gp.getLoggingService().error ("Sizer.provide : ERROR - We will drop task " + ret.getUID());
     }
     return ret;
   }
@@ -114,6 +122,8 @@ class Sizer {
     }
   }
 
+  public int sizedMade = 0;
+
   /**
     * Returns a copy of the input task that is identical in every way,
     * but whose quantity has been set to size.
@@ -122,6 +132,8 @@ class Sizer {
   private Task sizedTask (Task t, double size) {
     RootFactory factory = _gp.getGPFactory();
     NewTask nt = factory.newTask();
+
+    sizedMade++;
 
     nt.setVerb(t.getVerb());
     nt.setParentTask(t);

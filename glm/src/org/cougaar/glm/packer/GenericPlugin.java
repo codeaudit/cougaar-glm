@@ -133,7 +133,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
     }
 
     NewWorkflow workflow = getFactory().newWorkflow();
-    workflow.setIsPropagatingToSubtasks(true);
+    workflow.setIsPropagatingToSubtasks(true); // was true, but may lead to dangling unprocessed internal Supply tasks
     workflow.setParentTask(parentTask);
 
     workflow.setAllocationResultAggregator(AllocationResultAggregator.DEFAULT);
@@ -217,6 +217,10 @@ abstract public class GenericPlugin extends SimplePlugin  {
       
       Aggregation aggregation = 
         getFactory().createAggregation(plan, parentTask, comp, null);
+
+      if (getLoggingService().isInfoEnabled()) {
+        getLoggingService().info("GenericPlugin: adding aggregation to " + parentTask.getUID());
+      }
       
       if (getLoggingService().isDebugEnabled()) {
         getLoggingService().debug("GenericPlugin: built the aggregation.");

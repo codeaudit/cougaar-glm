@@ -31,8 +31,8 @@ public abstract class Packer extends GenericPlugin {
   private int ADD_TASKS = 0;
   private int MODIFIED_TASKS = 0;
   private int REMOVE_TASKS = 0;
-  private int ADD_TONS = 0;
-  private int REMOVE_TONS = 0;
+  private double ADD_TONS = 0;
+  private double REMOVE_TONS = 0;
 
   /**
    * Packer - constructor 
@@ -91,6 +91,8 @@ public abstract class Packer extends GenericPlugin {
   public void processNewTasks(Enumeration newTasks) {
     ArrayList tasks = new ArrayList();
 
+    double tonsReceived = 0;
+
     while (newTasks.hasMoreElements()) {
       Task task = (Task)newTasks.nextElement();
       if (task.getPlanElement() != null) {
@@ -106,6 +108,7 @@ public abstract class Packer extends GenericPlugin {
         }
         ADD_TASKS++;
         ADD_TONS += task.getPreferredValue(AspectType.QUANTITY);
+        tonsReceived += task.getPreferredValue(AspectType.QUANTITY);
         tasks.add(task);
       }
     }
@@ -120,8 +123,19 @@ public abstract class Packer extends GenericPlugin {
                                ", aggregated quantity from added SUPPLY tasks: " + 
                                ADD_TONS + " tons.");
     }
-    doPacking(tasks, getSortFunction(), getPreferenceAggregator(),
-              getAllocationResultDistributor());
+
+    double tonsPacked = doPacking(tasks, getSortFunction(), getPreferenceAggregator(),
+				  getAllocationResultDistributor());
+
+    if ((tonsPacked > tonsReceived + 0.0001) || (tonsPacked < tonsReceived - 0.0001)) {
+      if (getLoggingService().isErrorEnabled()) {
+	getLoggingService().error("Packer - received " + tonsReceived + " tons but packed " + tonsPacked + 
+				  " tons, (total received " + ADD_TONS + " vs total packed " + Filler.TRANSPORT_TONS +
+				  ") for tasks : ");
+	for (Iterator iter = tasks.iterator(); iter.hasNext();) 
+	  getLoggingService().error ("\t" + ((Task) iter.next()).getUID());
+      }
+    }
   }
 
   /**
@@ -135,7 +149,7 @@ public abstract class Packer extends GenericPlugin {
     while (changedTasks.hasMoreElements()) {
         Task task = (Task)changedTasks.nextElement();
         
-        getLoggingService().warn("ERROR: Packer - ignoring changed task - " + 
+        getLoggingService().error("Packer - ignoring changed task - " + 
                                  task.getUID() + 
                                  " from " + task.getSource());
         
@@ -155,7 +169,10 @@ public abstract class Packer extends GenericPlugin {
                                 "removed tasks");
     }
 
+    boolean anyRemoved = false;
+
     while (removedTasks.hasMoreElements()) {
+      anyRemoved = true;
       Task task = (Task)removedTasks.nextElement();
       
       if (getLoggingService().isInfoEnabled()) {
@@ -174,8 +191,42 @@ public abstract class Packer extends GenericPlugin {
                                REMOVE_TONS + " tons.");
       }
     }
+    
+    if (anyRemoved) {
+      Collection unplannedInternal = getBlackboardService().query (new UnaryPredicate () {
+	  public boolean execute (Object obj) {
+	    if (obj instanceof Task) {
+	      Task task = (Task) obj;
+	      return ((task.getPrepositionalPhrase(GenericPlugin.INTERNAL) !=null) &&
+		      task.getPlanElement () == null);
+	    }
+	    return false;
+	  }
+	}
+								   );
+
+      handleUnplanned (unplannedInternal);
+    }
   }
     
+  protected void handleUnplanned (Collection unplanned) {
+    if (getLoggingService().isWarnEnabled())
+      getLoggingService().warn("Packer: found " + unplanned.size() + " tasks -- replanning them!");
+
+    for (Iterator iter = unplanned.iterator(); iter.hasNext(); ) {
+      Task task = (Task) iter.next();
+      
+      ArrayList copy = new ArrayList();
+      copy.add (task);
+      AggregationClosure ac = getAggregationClosure(copy);
+				  
+      Filler fil = new Filler(null, this, ac, getAllocationResultDistributor(), 
+			      getPreferenceAggregator());
+
+      fil.handleUnplanned (task);
+    }
+  }
+
   /** 
     * doPacking - packs specified set of supply tasks.
     * Assumes that it's called within an open/close transaction.
@@ -188,15 +239,16 @@ public abstract class Packer extends GenericPlugin {
     * @param ard AllocationResultDistributor to be used in distributing allocation results
     * for the transport task amount the initial supply tasks.    *
     */
-  protected void doPacking(ArrayList tasks,
-                           Comparator sortfun,
-                           PreferenceAggregator prefagg,
-                           AllocationResultDistributor ard) {
+  protected double doPacking(ArrayList tasks,
+			     Comparator sortfun,
+			     PreferenceAggregator prefagg,
+			     AllocationResultDistributor ard) {
     
     // Divide into 'pack together'  groups
     Collection packGroups = groupByAggregationClosure(tasks);
     
-    
+    double totalPacked = 0;
+
     for (Iterator iterator = packGroups.iterator(); iterator.hasNext();) {
       ArrayList packList = (ArrayList) iterator.next(); 
       // sort them, if appropriate
@@ -225,8 +277,10 @@ public abstract class Packer extends GenericPlugin {
       }
       
       
-      fil.execute();
+      totalPacked += fil.execute();
     }
+    
+    return totalPacked;
   }
 
 
@@ -251,6 +305,11 @@ public abstract class Packer extends GenericPlugin {
         
         AspectValue[] aspectValues = estimatedAR.getAspectValueResults();
         
+	// Possibly need to add quantity to list of aspects if it's not there in the first place.
+	// Couldn't see that this was in fact necessary so leaving it out for the moment
+	// Gordon Vidaver 08/23/02
+
+	//	boolean foundQuantity = false;
         for (int i = 0; i < aspectValues.length; i++) {
           if (aspectValues[i].getAspectType() == AspectType.QUANTITY) {
             if (aspectValues[i].getValue() != prefValue) {
@@ -258,9 +317,20 @@ public abstract class Packer extends GenericPlugin {
               aspectValues[i].setValue(prefValue); 
               needToCorrectQuantity = true;
             }
+	    //   foundQuantity = true;
             break;
           }
         }
+
+	/*
+	if (!foundQuantity) {
+	  AspectValue [] copy = new AspectValue [aspectValues.length+1];
+	  System.arraycopy(aspectValues,0,copy,0,aspectValues.length);
+	  copy[aspectValues.length] = new AspectValue (AspectType.QUANTITY, prefValue);
+	  aspectValues=copy;
+	}
+	*/
+
         if (needToCorrectQuantity) {
 	  if (getLoggingService().isDebugEnabled()) {
             getLoggingService().debug("Packer.updateAllocationResult - fixing quantity on estimated AR of pe " + pe.getUID());

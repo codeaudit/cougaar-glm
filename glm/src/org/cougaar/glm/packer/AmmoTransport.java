@@ -72,7 +72,13 @@ public class AmmoTransport extends AggregationClosure {
     return destMap.values();
   }
 
-  public AmmoTransport(ArrayList tasks) {
+  public AmmoTransport () {}
+
+  //  public AmmoTransport(ArrayList tasks) {
+  //    setDestinations(tasks);
+  //  }
+
+  public void setDestinations(ArrayList tasks) {
     for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
       Task t = (Task) iterator.next();
       GeolocLocation taskSource = getSource(t);
@@ -137,7 +143,7 @@ public class AmmoTransport extends AggregationClosure {
    */
   public NewMPTask newTask() {
     if (_gp == null) {
-      System.err.println("AmmoTransport:  Error!  AmmoTransport not properly initialized: setGenericPlugin not called.");
+      _gp.getLoggingService().error("AmmoTransport:  Error!  AmmoTransport not properly initialized: setGenericPlugin not called.");
       return null;
     }
     
@@ -222,9 +228,7 @@ public class AmmoTransport extends AggregationClosure {
   }
   
   protected String makeMilvanID() {
-    
-    return new String(_gp.getGPClusterIdentifier() + 
-                      ":Milvan" + getCounter());
+    return new String("Milvan" + getCounter());
   }
   
   private static synchronized long getCounter() {
