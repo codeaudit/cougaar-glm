@@ -177,7 +177,7 @@ public abstract class InventoryManager extends InventoryProcessor {
         IMDeletionPolicy policy =
             (IMDeletionPolicy) ldmFactory_.newPolicy(IMDeletionPolicy.class.getName());
         policy.supplyType_ = supplyType_;
-        policy.init(supplyType_ + " Due Outs",
+        policy.init(supplyType_ + " Due Out Deletion",
                     inventoryPlugIn_.getDueOutPredicate(supplyType_),
                     deletionDelay);
         return policy;
