@@ -49,8 +49,6 @@ import org.cougaar.glm.ldm.oplan.*;
 import org.cougaar.glm.ldm.plan.*;
 
 import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.ContextOfUIDs;
-import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewPlanElement;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
@@ -338,12 +336,6 @@ public class GLSExpanderPlugin extends ComponentPlugin {
     subtask.setPlan(task.getPlan());
     synchronized (task) {
       subtask.setPreferences(task.getPreferences());
-    }
-    ContextOfOplanIds context = (ContextOfOplanIds) task.getContext();
-    //ContextOfUIDs context = (ContextOfUIDs) task.getContext();
-    if (context == null) {
-    } else {
-      //RAY      subtask.setContext(context);
     }
     return subtask;
   }
