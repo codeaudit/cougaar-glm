@@ -52,7 +52,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * subclasses to allow labels to be updated.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIBasePlugIn.java,v 1.6 2001-08-22 20:27:40 mthome Exp $
+ * @version      $Id: GLSGUIBasePlugIn.java,v 1.7 2001-08-24 17:08:35 gvidaver Exp $
  * */
 
 public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
@@ -178,6 +178,7 @@ public abstract class GLSGUIBasePlugIn extends SimplePlugIn {
       }
     });
     UICoordinator.layoutButtonAndLabel(panel, glsButton, glsLabel);
+	frame.getRootPane().setDefaultButton(glsButton); // hitting return sends GLS
     JLabel oplanComboLabel = new JLabel("Select Oplan");
     UICoordinator.layoutButtonAndLabel(panel, oplanCombo, oplanComboLabel);
     frame.setContentPane(panel);
