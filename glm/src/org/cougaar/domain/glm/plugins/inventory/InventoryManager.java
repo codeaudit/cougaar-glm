@@ -178,7 +178,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	resetInventories();
 	accountForWithdraws();
 	generateHandleDueIns();
-	adjustWithdraws();
+	adjustForInadequateInventory();
 	updateWithdrawAllocations();
 	refreshInventorySchedule();
 	// RJB now we have handled all inventories
@@ -636,8 +636,6 @@ public abstract class InventoryManager extends InventoryProcessor {
   //                                                        *
   // ********************************************************
 
-
-  protected abstract void adjustWithdraws();
 
   protected void adjustForInadequateInventory() {
     printLog("adjustForInadequateInventory()");

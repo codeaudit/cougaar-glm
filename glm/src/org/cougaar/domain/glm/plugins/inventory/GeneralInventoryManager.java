@@ -352,24 +352,6 @@ public abstract class GeneralInventoryManager extends InventoryManager {
     }
     return false;
   }
-   
-  // ********************************************************
-  //                                                        *
-  // Adjust Withdraws Section                               *
-  //                                                        *
-  // ********************************************************
-
-  protected void adjustWithdraws() {
-    adjustForInadequateInventory();
-    passPreviouslyFailedDueOuts();
-  }
-
-  // Pass Previously Failed Dueouts
-
-  protected void passPreviouslyFailedDueOuts() { 
-    // The work formerly done by this method is now subsumed by
-    // updateDueOutAllocations()
-  }
 
   // ********************************************************
   //                                                        *
