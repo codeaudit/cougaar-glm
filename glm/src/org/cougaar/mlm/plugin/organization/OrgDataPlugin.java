@@ -137,13 +137,15 @@ public class OrgDataPlugin extends AssetDataPlugin  {
   // org activities
   protected class OrgActivitiesPredicate implements UnaryPredicate {
     UID oplanUID_;
-    public OrgActivitiesPredicate(UID uid) {
+    String orgId_;
+    public OrgActivitiesPredicate(UID uid, String orgId) {
       oplanUID_ = uid;
+      orgId_ = orgId;
     }
     
     public boolean execute(Object o) {
       if (o instanceof OrgActivity) {
-	if (oplanUID_.equals(((OrgActivity)o).getOplanUID())) {
+	if (oplanUID_.equals(((OrgActivity)o).getOplanUID()) && orgId_.equals(((OrgActivity)o).getOrgID())) {
 	  return true;
 	}
       }
@@ -213,7 +215,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 	UID oplanUID = oplan.getUID();
 	if (myOrgActivitySubscription == null) {
 	  myOrgActivitySubscription = (IncrementalSubscription)
-	    getBlackboardService().subscribe(new OrgActivitiesPredicate(oplanUID));
+	    getBlackboardService().subscribe(new OrgActivitiesPredicate(oplanUID, getSelfOrg().getMessageAddress().toString()));
 	}
       }
     }
@@ -250,6 +252,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
     Collection opConInfoRelays = new ArrayList();
 
+    myLogger.shout("Creating timeSpanSet with OASub: " + myOrgActivitySubscription);
     NonOverlappingTimeSpanSet orgActivities = 
       new NonOverlappingTimeSpanSet(myOrgActivitySubscription);
     NonOverlappingTimeSpanSet opconInfos = 
@@ -333,9 +336,9 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 	      myLogger.info("New is:" + rfdTask);
 	    }
 	  }
-    }
-      }
-    }
+	}
+      } // loop over rfds
+    } // loop over opconinfos
 
     if (myLogger.isInfoEnabled())
       myLogger.info("processPotentialChangedOpCons: adding  " + 
@@ -523,7 +526,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
       }
       // General clean up
       publishRemove(relay);
-    }
+    } // loop over changed opconinfo relays
   }
   
 
@@ -581,8 +584,10 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 	selfOrg.getRelationshipSchedule();
       Collection relationships = 
 	relationshipSchedule.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
-      
-      if (relationships.size() != 1) {
+      if (relationships.isEmpty()) {
+	if (myLogger.isWarnEnabled())
+	  myLogger.warn("getAdConRelationship found no AdministrativeSuperior!");
+      } else if (relationships.size() != 1) {
 	myLogger.error("getAdConRelationship - " +
 		       " found multiple administrative superiors " +
 		       relationships + " choice is random.");
@@ -699,7 +704,9 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     Organization adCon = null;
 
     if (adConRelationship == null) {
+      // FIXME: Not an error for the older style oplan.xml societies
       myLogger.error("buildOpConInfos - no AdConRelationship.");
+      return opconInfos;
     } else {
       adCon = 
         (Organization) getSelfOrg().getRelationshipSchedule().getOther(adConRelationship);
