@@ -350,7 +350,7 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 
 	printLog("Replacing: "+TaskUtils.taskDesc(prev_refill)+" by: "+
 		 TaskUtils.taskDesc(task));
-	publishRemoveTask(prev_refill);
+	plugin_.publishRemoveFromExpansion(prev_refill);
 	invpg.removeDueIn(prev_refill);
 	Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
 	plugin_.publishAddToExpansion(parentTask, task);
