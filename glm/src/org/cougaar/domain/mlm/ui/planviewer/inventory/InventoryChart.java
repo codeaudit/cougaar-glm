@@ -15,7 +15,7 @@ import org.cougaar.util.ThemeFactory;
 
 import com.klg.jclass.chart.*;
 //451K uncomment MWD 
-//import com.klg.jclass.util.legend.*;
+import com.klg.jclass.util.legend.*;
 import com.klg.jclass.chart.data.JCDefaultDataSource;
 import com.klg.jclass.util.swing.JCExitFrame;
 
