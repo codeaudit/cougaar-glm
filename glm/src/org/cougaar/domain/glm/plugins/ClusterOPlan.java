@@ -1,6 +1,8 @@
 package org.cougaar.domain.glm.plugins;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.society.UID;
 
 import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
@@ -15,15 +17,36 @@ import java.util.Vector;
 
 public class ClusterOPlan implements Serializable {
     ClusterIdentifier clusterId_;
-    long startTime_ = -1, endTime_ = -1;
-    Vector orgActivities_;
+    long startTime_, endTime_;
+    Vector orgActivities_ = null;
     Oplan oplan_;
+    IncrementalSubscription orgActivitySubscription_;
 
-    public ClusterOPlan(ClusterIdentifier id, Oplan op) {
+    public ClusterOPlan(ClusterIdentifier id, Oplan op, IncrementalSubscription sub) {
+	System.out.println("--- Creating ClusterOPlan for "+id+", oplan "+op);
 	clusterId_ = id;
 	oplan_ = op;
-	updateOrgActivities(oplan_.getOrgActivities());
-	updateOPlanTimes();
+	startTime_ = oplan_.getCday().getTime();
+	endTime_ = oplan_.getCday().getTime();
+	orgActivitySubscription_ = sub;
+//  	updateOrgActivities(orgActivitySubscription_.elements());
+//  	updateOPlanTimes();
+    }
+
+    /* If OPlan does not change but OrgActivities for the OPlan change
+     * then get the updated OrgActivities.
+     */
+    public boolean updateOrgActivities() {
+	// Only update OrgActivities if subscription has changed
+	if (orgActivitySubscription_.getChangedList().hasMoreElements()
+	    || orgActivitySubscription_.getAddedList().hasMoreElements() 
+	    || orgActivitySubscription_.getRemovedList().hasMoreElements()) {
+	    System.out.println("--- New/Changed/Removed OrgActivities for "+clusterId_);
+	    updateOrgActivities(orgActivitySubscription_.elements());
+	    updateOPlanTimes();
+	    return true;
+	}
+	return false;
     }
 
     private void updateOPlanTimes() {
@@ -60,11 +83,19 @@ public class ClusterOPlan implements Serializable {
 	    // only deal w/ org activities for this cluster
 	    orgact = (OrgActivity)activities.nextElement();
 	    if (orgact.getOrgID().equals(cluster_name)) {
+		System.out.println("--- Adding OrgActivity for "+clusterId_+", activity "+orgact.getActivityName()+
+				   ", "+orgact.getOpTempo()+", "+orgact);
 		orgActivities_.add(orgact);
 	    }
 	}
     }
-    
+
+    /* getOplan() returns the OPlan UID this object is handling
+     */
+    public UID getOplanUID() {
+	return oplan_.getUID();
+    }
+
     public long getEndTime(OrgActivity act) {
 	return act.getTimeSpan().getEndDate().getTime();
     }
@@ -73,11 +104,16 @@ public class ClusterOPlan implements Serializable {
 	return act.getTimeSpan().getStartDate().getTime();
     }
 
+    /* Latest end time of the OrgActivities
+     * If now orgActivities are received, end time is not set
+     */
     public long getEndTime() {
 	return endTime_;
     }
 
-
+    /* Earliest start time of the OrgActivities
+     * If now orgActivities are received, start time is not set
+     */
     public long getStartTime() {
 	return startTime_;
     }
@@ -115,6 +151,17 @@ public class ClusterOPlan implements Serializable {
 	    }
 	}
 	return null;
+    }
+
+    /* When disposing of a ClusterOPlan object, need to get the
+     * OrgActivity subscription to do an 'unsubscribe'
+     */
+    public IncrementalSubscription getOrgActivitySubscription() {
+	return orgActivitySubscription_;
+    }
+
+    public String toString() {
+	return oplan_.toString();
     }
 }
 
