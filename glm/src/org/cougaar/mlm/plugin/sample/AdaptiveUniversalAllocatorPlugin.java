@@ -22,26 +22,25 @@
 package org.cougaar.mlm.plugin.sample;
 
 import java.util.*;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.SimplePlugin;
-import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.core.adaptivity.OMCRangeList;
 import org.cougaar.core.adaptivity.OperatingMode;
 import org.cougaar.core.adaptivity.OperatingModeImpl;
-import org.cougaar.core.adaptivity.OMSMValueList;
-import org.cougaar.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.core.agent.service.alarm.Alarm;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.component.ServiceBroker;
+import org.cougaar.core.naming.Glob;
+import org.cougaar.core.plugin.SimplePlugin;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.core.service.OperatingModeService;
 import org.cougaar.glm.ldm.Constants;
+import org.cougaar.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.glm.plugins.TaskUtils;
+import org.cougaar.glm.plugins.TimeUtils;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.TimeSpan;
-import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.glm.plugins.TaskUtils;
-import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.core.naming.Glob;
-import org.cougaar.core.adaptivity.OperatingMode;
-import org.cougaar.core.service.OperatingModeService;
-import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.component.ServiceBroker;
 
 // Simple plugin that says 'yes' to any task fed to it
 // Optionally, if arguments are given, will only allocate tasks with given verbs
@@ -85,27 +84,23 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
     private Map verbMap = new HashMap();
 
     /** The current speed OperatingMode **/
-    private static final int LOW_SPEED = 0;
-    private static final int MEDIUM_SPEED = 1;
-    private static final int HIGH_SPEED = 2;
-    private static final String LOW_SPEED_KNOB_SETTING = "LOW_SPEED";
-    private static final String MEDIUM_SPEED_KNOB_SETTING = "MEDIUM_SPEED";
-    private static final String HIGH_SPEED_KNOB_SETTING = "HIGH_SPEED";
-    private static final int LOW_SPEED_LOOP_COUNT = 10000000;
-    private static final int MEDIUM_SPEED_LOOP_COUNT = 100000;
-    private static final int HIGH_SPEED_LOOP_COUNT = 1000;
     private static int sv = 0;
     public static final String SPEED_KNOB_NAME =
         "AdaptiveUniversalAllocatorPlugin.SPEED";
-    private static Map modeMap = new HashMap();
+    private static Double[] counts = {
+        new Double(  1),
+        new Double(  2),
+        new Double(  4),
+        new Double(  8),
+        new Double( 16),
+        new Double( 32),
+        new Double( 64),
+        new Double(128),
+        new Double(256),
+        new Double(512),
+    };
 
-    static {
-        modeMap.put(LOW_SPEED_KNOB_SETTING, new Integer(LOW_SPEED));
-        modeMap.put(MEDIUM_SPEED_KNOB_SETTING, new Integer(MEDIUM_SPEED));
-        modeMap.put(HIGH_SPEED_KNOB_SETTING, new Integer(HIGH_SPEED));
-    }
-
-    private int mode = LOW_SPEED;
+    private static OMCRangeList values = new OMCRangeList(counts);
 
     private OperatingModeService operatingModeService;
 
@@ -115,7 +110,9 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
 
     private Alarm timer;
 
-    OperatingMode speedOM = null;
+    OperatingModeImpl speedOM = null;
+
+    Double currentMode = (Double) values.getEffectiveValue();
 
     /**
      * Create a single dummy asset to which to allocate all
@@ -147,13 +144,11 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
         if (logger == null) {
             logger = (LoggingService) sb.getService(this, LoggingService.class, null);
             if (logger == null) return false;
-            System.out.println("logger acquired");
         }
         if (operatingModeService == null) {
             operatingModeService =
                 (OperatingModeService) sb.getService(this, OperatingModeService.class, null);
             if (operatingModeService == null) return false;
-            System.out.println("operatingModeService acquired");
         }
         allServicesAcquired = true;
         return true;
@@ -181,11 +176,6 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
     private void reallyStart() {
 	allTasks = (IncrementalSubscription) subscribe(allTasksPredicate);
         parseParams();
-        String[] modeNames = {
-            LOW_SPEED_KNOB_SETTING,
-            MEDIUM_SPEED_KNOB_SETTING,
-            HIGH_SPEED_KNOB_SETTING
-        };
         Collection operatingModes = getBlackboardService().query(new UnaryPredicate() {
             public boolean execute(Object o) {
                 if (o instanceof OperatingMode) {
@@ -197,17 +187,15 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
                 return false;
             }
         });
-        System.out.println("Really start");
         if (operatingModes.size() > 0) {
-            speedOM = (OperatingMode) operatingModes.iterator().next();
+            speedOM = (OperatingModeImpl) operatingModes.iterator().next();
         } else {
-            speedOM = new OperatingModeImpl(SPEED_KNOB_NAME, new OMSMValueList(modeNames));
+            speedOM = new OperatingModeImpl(SPEED_KNOB_NAME, values);
             publishAdd(speedOM);
         }
     }
 
     public void execute() {
-        System.out.println("execute");
         if (timer != null) cancelTimer();
         if (!allServicesAcquired) {
             if (acquireServices()) {
@@ -217,7 +205,6 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
                 return;
             }
         }
-        setOperatingMode();
         addTasks(allTasks.getAddedList());
         changeTasks(allTasks.getChangedList());
         removeTasks(allTasks.getRemovedList());
@@ -324,36 +311,21 @@ public class AdaptiveUniversalAllocatorPlugin extends SimplePlugin {
         }
     }
 
-    private void setOperatingMode() {
-        String speedMode = ((OperatingModeImpl)speedOM).getValue().toString();
-        int newMode = ((Integer) modeMap.get(speedMode)).intValue();
-        if (newMode != mode) {
-            logger.debug("New mode is " + speedMode);
-            mode = newMode;
-        }
-    }
-
     private void wasteTime() {
-        if (mode > 3) {
-            sv += mode;
+        if (currentMode.intValue() > 3) {
+            sv += currentMode.intValue();
         } else {
             sv -= 1;
         }
     }
 
     private void delay() {
-        int loopCount = 0;
-        switch (mode) {
-        case LOW_SPEED:
-            loopCount = LOW_SPEED_LOOP_COUNT;
-            break;
-        case MEDIUM_SPEED:
-            loopCount = MEDIUM_SPEED_LOOP_COUNT;
-            break;
-        case HIGH_SPEED:
-            loopCount = HIGH_SPEED_LOOP_COUNT;
-            break;
+        Double newMode = ((Double) speedOM.getValue());
+        if (!newMode.equals(currentMode)) {
+            logger.debug("New mode is " + newMode);
+            currentMode = newMode;
         }
+        int loopCount = currentMode.intValue() * 8000;
         for (int i = 0; i < loopCount; i++) {
             wasteTime();
         }
