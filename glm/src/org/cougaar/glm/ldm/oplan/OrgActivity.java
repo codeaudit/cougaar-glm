@@ -281,12 +281,14 @@ public class OrgActivity extends OwnedUniqueObject
         matches(getOpTempo(), oa.getOpTempo()) &&
         matches(getTimeSpan(), oa.getTimeSpan()) &&
         matches(getGeoLoc(), oa.getGeoLoc()) &&
-        matches(getOaHashMap(), oa.getOaHashMap()) &&
+        matches(getOaHashMap().entrySet(), oa.getOaHashMap().entrySet()) &&
         matches(getOrgID(), oa.getOrgID()) &&
         matches(getOplanUID(), oa.getOplanUID()) &&
         matches(getOrgActivityId(), oa.getOrgActivityId());
-    } else
+    } else {
+
       return false;
+    }
   }
 
   public Object clone() {
