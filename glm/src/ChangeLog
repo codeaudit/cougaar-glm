@@ -1,3 +1,22 @@
+2001-02-15  Ray Tomlinson  <rtomlinson@bbn.com>
+
+	* InventoryPlugIn
+	Maintains the DueOutPredicate. This is the predicate used by the
+	WithdrawAllocator to select Tasks to allocate against inventories
+	of a supply type. Putting it in the plugin makes it accessible to
+	the InventoryManager (which see).
+
+	* WithdrawAllocator
+	Gets the DueOutPredicate from the InventoryPlugIn instead of
+	creating it itself.
+
+	* InventoryManager
+	Publishes a DeletionPolicy reflecting the need to keep due out
+	Tasks in the LogPlan in order to compute NDaysDemand. The deletion
+	delay specified by the policy tracks the daysBackward_ variable.
+	The predicate of the DeletionPolicy is the DueOutPredicate
+	obtained from the InventoryPlugIn.
+
 2001-02-13  Ray Tomlinson  <rtomlinson@bbn.com>
 
 	* OplanWatcherLP
