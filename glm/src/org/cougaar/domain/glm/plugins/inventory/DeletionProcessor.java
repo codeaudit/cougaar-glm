@@ -51,6 +51,8 @@ public class DeletionProcessor extends InventoryProcessor {
     /** When pruning old reports, remove all older than this age. O disables pruning **/
     private static final long INVENTORY_REPORT_PRUNE = 0L; // disabled TimeUtils.MSEC_PER_WEEK;
 
+    private static final boolean DEBUG = false;
+
     public DeletionProcessor(InventoryPlugIn plugin, Organization org, String type) {
         super(plugin, org, type);
 	initialize();
@@ -146,7 +148,7 @@ public class DeletionProcessor extends InventoryProcessor {
 		printError("Inventory NOT found for "+typeID);
 		continue;
 	    }
-            printDebug(1000, "Removing task from inventory: " + TaskUtils.taskDesc(task));
+            if (DEBUG) printDebug(1000, "Removing task from inventory: " + TaskUtils.taskDesc(task));
             long et = TaskUtils.getEndTime(task);
             et = TimeUtils.pushToEndOfDay(tCalendar_, et);
             DeletionTimeRange dtr = (DeletionTimeRange) tMap.get(inventory);
@@ -181,7 +183,7 @@ public class DeletionProcessor extends InventoryProcessor {
                 if (iter.hasNext()) { // There should be exactly one element
                     QuantityScheduleElement qse = (QuantityScheduleElement) iter.next();
                     double q = qse.getQuantity();
-                    printDebug(1000,
+                    if (DEBUG) printDebug(1000,
                                "Adding inventory report to "
                                + inventory
                                + " at "
@@ -197,7 +199,7 @@ public class DeletionProcessor extends InventoryProcessor {
             if (INVENTORY_REPORT_PRUNE > 0L) {
                 InventoryReport oldestReport = invpg.getOldestInventoryReport();
                 if (false && oldestReport != null && oldestReport.theReportDate < inventoryReportCutoffTime) {
-                    printDebug(1000, "Pruning old inventoryReports: " + inventory);
+                    if (DEBUG) printDebug(1000, "Pruning old inventoryReports: " + inventory);
                     invpg.pruneOldInventoryReports(inventoryReportPruneTime);
                     needPublishChange = true;
                 }
