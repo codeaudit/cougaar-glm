@@ -209,8 +209,12 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                 }}
           );
 
-
+          //
+          // Updating Session Attribute (Query) List
+          //
           session.getQueryObject().setEntries(attributesMap);
+
+
         /**
         // WHERE THE AgentRole SEARCH ATTRIBUTES GET COMPILED into Session.
         int counter=0;
@@ -292,6 +296,10 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                   // return all Relationships
                   Collection relations = rs.getMatchingRelationships(getAllPredicate() );
                   Object[] arr  = relations.toArray();
+
+                  //
+                  // TO DO: FACTOR JNDI LOGIC (below) INTO YPDemoJNDI.java
+                  //
                   BasicAttributes attributes = new BasicAttributes();
                   session.add("<TABLE>");
                   for(int i=0; i< relations.size(); i++){
@@ -335,52 +343,60 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
     private void processSearchFromPOST( String post, PlanServiceContext psc,
                       QueryObject qObject, YPDemoSession session, PrintStream out)
     {
-       System.out.println("[PSP_YPDemo.processSearchFromPOST()] Entered.");
-       String decodedpost = URLDecoder.decode(post);
-       System.out.println("DECODED POST="+  decodedpost);
+          System.out.println("[PSP_YPDemo.processSearchFromPOST()] Entered.");
+          String decodedpost = URLDecoder.decode(post);
+          System.out.println("DECODED POST="+  decodedpost);
 
-       //
-       // Parse and interpet return checked fields...
-       //
-       Hashtable nameAttrs = new Hashtable(); // Values are Vectors of attributes associated with named obj
+          NamingService nservice = psc.getServerPlugInSupport().getNamingService();
+          //---------------------------------------------
+          String tag3 = qObject.GET_ALL;
+          int ind3 = decodedpost.indexOf(tag3);
+          if( ind3 > -1) {
+              //qObject.allRoles=true;
+              session.addHeader("List everything (JNDI directories and contents).");
+              session.add( YPDemoJNDI.describeAllDirContexts( nservice ) );
+              session.doPrepend();
+          }
+          else
+          {
+             //
+             // Parse and interpet return checked fields...
+             //
+             Hashtable nameAttrs = new Hashtable(); // Values are Vectors of attributes associated with named obj
+             int idx0 =0;
+             int idx1 =0;
+             int idx2 =0;
+             while( true ) {
+                 idx0 = decodedpost.indexOf("{", idx0);
+                 if(idx0 > -1) idx1 = decodedpost.indexOf("::",idx0);
+                 else break;
+                 if(idx1 > -1) idx2 = decodedpost.indexOf(":=",idx0);
+                 else break;
 
-       int idx0=0;
-       int idx1 =0;
-       int idx2 =0;
-       while( true ) {
-          idx0 = decodedpost.indexOf("{", idx0);
-          if(idx0 > -1) idx1 = decodedpost.indexOf("::",idx0);
-          else break;
-          if(idx1 > -1) idx2 = decodedpost.indexOf(":=",idx0);
-          else break;
+                 String name ="";
+                 String attribute ="";
+                 if( (idx0 > -1) && (idx1 > -1) ) {
+                     name = decodedpost.substring(idx0+1,idx1);
+                 } else break;
+                 if( (idx1 > -1) && (idx2 > -1) ) {
+                     attribute = decodedpost.substring(idx1+2,idx2);
+                 } else break;
 
-          String name ="";
-          String attribute ="";
-          if( (idx0 > -1) && (idx1 > -1) ) {
-              name = decodedpost.substring(idx0+1,idx1);
-          } else break;
-          if( (idx1 > -1) && (idx2 > -1) ) {
-              attribute = decodedpost.substring(idx1+2,idx2);
-          } else break;
+                 System.out.println("ATTRIBUTE PARSER.  name="  + name + ", attribute=" + attribute);
+                 String searchResults = YPDemoJNDI.searchAttribute(name, attribute, nservice );
+                 session.addHeader("List objects found by attribute at named context (Search): context=" + name  + ", attribute=" + attribute );
+                 session.add( searchResults );
+                 session.doPrepend();
 
-          System.out.println("PARSER.  name="  + name + ", attribute=" + attribute);
-          if( nameAttrs.get(name) == null) nameAttrs.put(name, new Vector());
-          Vector v = (Vector)nameAttrs.get(name);
-          v.add(attribute);
-          idx0=idx2+2;
-       }
-
-       //---------------------------------------------
-       String tag3 = qObject.GET_ALL;
-       int ind3 = decodedpost.indexOf(tag3);
-       if( ind3 > -1) {
-           //qObject.allRoles=true;
-           session.addHeader("List all JNDI directories and contents.");
-           NamingService nservice = psc.getServerPlugInSupport().getNamingService();
-           session.add( YPDemoJNDI.describeAllDirContexts( nservice ) );
-           session.doPrepend();
-       }
-
+                 //
+                 // Add values to nameAttrs Hashtable
+                 //
+                 if( nameAttrs.get(name) == null) nameAttrs.put(name, new Vector());
+                 Vector v = (Vector)nameAttrs.get(name);
+                 v.add(attribute);
+                 idx0=idx2+2;
+             }// end while
+          }
     }
 
     /**

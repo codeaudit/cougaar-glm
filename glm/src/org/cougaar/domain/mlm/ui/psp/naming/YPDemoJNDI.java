@@ -43,6 +43,31 @@ public class YPDemoJNDI
 {
 
      //###########################################################################
+     //
+     //
+     public static String searchAttribute(String name, String attribute, NamingService nserve ){
+          try{
+               Attributes attributes = new BasicAttributes();
+               Attribute att = new BasicAttribute(attribute);
+               attributes.put(att);
+               DirContext dctx = nserve.getRootContext();
+               NamingEnumeration en = dctx.search(name,attributes);
+               String ret = new String("<TABLE>");
+               while( en.hasMore() ) {
+                   Object obj =  en.next();
+                   String each = "<TR><TD>FOUND SEARCH ATTRIBUTE: " + obj + "</TD></TR>";
+                   ret += each;
+                   System.out.println(each);
+               }
+               ret += "</TABLE>";
+               return ret;
+          } catch( Exception ex) {
+          }
+          return null;
+     }
+
+
+     //###########################################################################
      // Traverses directory structure and prints HTMLized represetnation of contents
      //
      public static String describeAllDirContexts( NamingService nserve  )
@@ -57,7 +82,7 @@ public class YPDemoJNDI
                Context ctx = nserve.getRootContext();
                CompositeName cn = new CompositeName("");
                stream.println("<TABLE>");
-               describeNamingEnumeration(  cn, ctx.listBindings(""), stream, nserve, 1);
+               describeNamingEnumeration(  cn, ctx.listBindings(""), stream, nserve,  1);
                stream.println("</TABLE>");
                stream.flush();
          } catch (NamingException e) {
@@ -70,7 +95,7 @@ public class YPDemoJNDI
 
      //###########################################################################
      private static void describeNamingEnumeration( CompositeName tail, NamingEnumeration en,
-                                 PrintStream stream,  NamingService nserve, int depth ) throws NamingException
+                                 PrintStream stream,  NamingService nserve,  int depth ) throws NamingException
      {
          while( en.hasMoreElements() ) {
              Object obj = en.nextElement();
@@ -100,7 +125,7 @@ public class YPDemoJNDI
                         FDSURL furl = (FDSURL)bind.getObject();
                         stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</FONT>:" + furl.myURL + "</TD>");
                   }
-                  if( bind.getObject() instanceof AgentRole) {
+                  else if( bind.getObject() instanceof AgentRole) {
                         AgentRole role = (AgentRole)bind.getObject();
                         stream.println("<TD><FONT COLOR=RED SIZE=-1>" + bind.getName() + "</FONT>, namespace=" + role.namespace + "</TD>");
                   }
@@ -201,7 +226,7 @@ public class YPDemoJNDI
                              v= new Vector();
                              returnMap.put(tail.toString(), v);
                          }
-                         v.add(a.toString());
+                         if( v.contains(a.toString()) == false) v.add(a.toString());
 
                          //returnList.add("{" + tail.toString() + "::" + a.toString() + "}");
                      }
