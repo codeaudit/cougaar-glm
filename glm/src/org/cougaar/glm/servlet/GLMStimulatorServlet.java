@@ -98,6 +98,7 @@ public class GLMStimulatorServlet extends ServletBase {
   }
 
   public static final String INPUT_FILE      = "inputFileName";
+  public static final String FOR_PREP        = "forPrep";
   public static final String NUM_BATCHES     = "numberOfBatches";
   public static final String TASKS_PER_BATCH = "tasksPerBatch";
   public static final String INTERVAL        = "interval";
@@ -134,6 +135,13 @@ public class GLMStimulatorServlet extends ServletBase {
     out.print("Input Task File");
     out.print("</td><td>");
     out.print("<INPUT TYPE=\"text\" NAME=\"" + INPUT_FILE + "\" SIZE=40>");
+    out.println("</td></tr>");
+
+    // allow optional override of file's FOR prep
+    out.println ("<tr><td>");
+    out.print("Override \"FOR\" prepositional phrase value");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + FOR_PREP + "\" SIZE=40>");
     out.println("</td></tr>");
 
     // get number of batches to send 

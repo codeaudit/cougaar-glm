@@ -39,6 +39,7 @@ import org.cougaar.core.service.SchedulerService;
 import org.cougaar.core.servlet.SimpleServletSupport;
 import org.cougaar.core.servlet.BlackboardServletSupport;
 
+import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.parser.GLMTaskParser;
 
 import org.cougaar.lib.util.UTILAllocate;
@@ -46,6 +47,8 @@ import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.servlet.ServletBase;
 import org.cougaar.planning.servlet.ServletWorker;
 import org.cougaar.planning.servlet.data.xml.*;
@@ -182,7 +185,10 @@ public class GLMStimulatorWorker
 
     if (eq (name, GLMStimulatorServlet.INPUT_FILE))
       inputFile = value;
-    else if (eq (name, "debug"))
+    else if (eq (name, GLMStimulatorServlet.FOR_PREP)) {
+      String tmp = (value != null ? value.trim() : "");
+      forPrep = (tmp.length() > 0 ? tmp : null);
+    } else if (eq (name, "debug"))
       debug = eq (value, "true");
     else if (eq (name, GLMStimulatorServlet.NUM_BATCHES))
       totalBatches = Integer.parseInt(value);
@@ -343,6 +349,14 @@ public class GLMStimulatorWorker
         Collection theseTasks = readXmlTasks(inputFile);
         for (Iterator it = theseTasks.iterator(); it.hasNext(); ) {
           Task task = (Task) it.next();
+          if (forPrep != null) {
+            NewTask nt = (NewTask) task;
+            NewPrepositionalPhrase npp = 
+              support.getLDMF().newPrepositionalPhrase();
+            npp.setPreposition(Constants.Preposition.FOR);
+            npp.setIndirectObject(forPrep);
+            nt.addPrepositionalPhrase(npp);
+          }
           sentTasks.put(task, batchStart);
           support.getBlackboardService().publishAdd(task);
         }
@@ -537,6 +551,9 @@ public class GLMStimulatorWorker
 
   /** remove the injected tasks after they have been completed */
   protected boolean rescindAfterComplete;
+
+  /** option override of task FOR preposition */
+  protected String forPrep = null;
 
   protected String inputFile = "                     ";
 
