@@ -32,7 +32,7 @@ import org.cougaar.core.util.XMLObjectFactory;
 
 import org.w3c.dom.Element;
 
-import org.cougaar.mlm.ui.psp.society.SocietyUI;
+//import org.cougaar.mlm.ui.psp.society.SocietyUI;
 
 /**
  * Modify Organization Activities GUI (via PSP_ModifyOrgActivity).
@@ -325,9 +325,10 @@ public class AppletModifyOrgActivity extends java.applet.Applet {
       moa.setPressedButton(sPressButton);
       grabUIModifyOrgActivityState(moa);
       // fetch the new info
-      setMOAs(
-        SocietyUI.sendUIModifyOrgActivityState(
-          url_base, clusters, moa));
+      System.err.println ("THIS IS NOW DEFUNCT -- talk to Todd Wright if you want it back!");
+      //      setMOAs(
+      //        SocietyUI.sendUIModifyOrgActivityState(
+      //          url_base, clusters, moa));
     }
   }
 
