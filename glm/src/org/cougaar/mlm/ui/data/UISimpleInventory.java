@@ -59,10 +59,10 @@ public class UISimpleInventory implements Serializable {
 
   public void addNamedSchedule(String name, Vector schedule) {
     if (schedule != null) {
-//        System.out.println("Schedule " + name + " has " + schedule.size() + " elements");
+       System.out.println("Schedule " + name + " has " + schedule.size() + " elements");
       schedules.addElement(new UISimpleNamedSchedule(name, schedule));
     } else {
-//        System.out.println("Schedule " + name + " is null");
+        System.out.println("Schedule " + name + " is null");
     }
   }
 
@@ -99,4 +99,15 @@ public class UISimpleInventory implements Serializable {
       return baseCDayTime;
   }
 
+  public String toString() {
+    return
+      "UISimpleInventory {"+
+      "\n  assetName: "+assetName+
+      "\n  scheduleType: "+scheduleType+
+      "\n  unitType: "+unitType+
+      "\n  schedules: "+schedules+
+      "\n  provider: "+provider+
+      "\n  baseCDayTime: "+baseCDayTime+
+      "\n}";
+  }
 }
