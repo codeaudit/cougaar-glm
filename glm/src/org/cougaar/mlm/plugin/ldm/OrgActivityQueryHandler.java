@@ -77,7 +77,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * but may be overridden.
    **/
   public void startQuery() {
-    String oplanID = getParameter(SQLOplanPlugin.OPLAN_ID_PARAMETER);
+    String oplanID = getParameter(OplanReaderPlugin.OPLAN_ID_PARAMETER);
     myOplan = myPlugin.getOplan(oplanID);
     
     if (myOplan == null) {
@@ -104,7 +104,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
    * doing whatever is required.
    **/
   public void processRow(Object[] rowData) {
-    if (rowData.length != 8) {
+    if (rowData.length != 7) {
       System.err.println("OrgActivityQueryHandler.processRow() - expected 8 columns of data, " +
                          " got " + rowData.length);
     }
@@ -115,8 +115,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
       else
 	relation = new String ((byte[])rowData[0],"US-ASCII");
     
-      myMaxModifiedTime = 
-        Math.max(((Date) rowData[7]).getTime(), myMaxModifiedTime);
+      myMaxModifiedTime = Math.max(((Date) myOplan.getCday()).getTime(), myMaxModifiedTime);
 
       if (relation.equals(myOpTempoKey)) {
         processOpTempo(rowData);
@@ -145,9 +144,11 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     // myOrgInfoMap has a TimeSpanSet for each Org
     Collection orgInfosByOrg = myOrgInfoMap.values();
     ArrayList allOrgActivities = new ArrayList();
+    OrgInfo myOrgInfo = null;
     for (Iterator iterator = orgInfosByOrg.iterator();
          iterator.hasNext();) {
       OrgInfo orgInfo = (OrgInfo) iterator.next();
+      myOrgInfo = orgInfo;
 
       // Need to compute all org activities so I can update the 
       // oplan end day
@@ -177,9 +178,9 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     myOplan.inferEndDay(allOrgActivities);
     if ((currentEndDay == null) ||
         (!currentEndDay.equals(myOplan.getEndDay()))) {
-      //System.out.println("Setting end Day to " + myOplan.getEndDay());
       myPlugin.updateOplanInfo(myOplan);
     }
+
 
     myLastModifiedTime = myMaxModifiedTime;
   }
@@ -198,8 +199,6 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 	opTempo = (String)rowData[3];
       else
 	opTempo = new String ((byte[])rowData[3],"US-ASCII");
-      //String orgName = (String) rowData[1];
-      //String opTempo = (String) rowData[3];
 
       if (!opTempo.equals(OrgActivity.HIGH_OPTEMPO) &&
           !opTempo.equals(OrgActivity.MEDIUM_OPTEMPO) &&
@@ -211,7 +210,7 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     
       OrgInfoElement element = 
         new OrgInfoElement(opTempo, 
-                           ((Date) rowData[7]).getTime(), 
+                           ((Date) myOplan.getCday()).getTime(), 
                            myOplan.getCday(), 
                            ((Number) rowData[5]).intValue(), 
                            ((Number) rowData[6]).intValue());
@@ -254,14 +253,10 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
 	activity = (String) rowData[3];
       else
 	activity = new String ((byte[])rowData[3],"US-ASCII");
-      //String orgName = (String) rowData[1];
-      //String activity = (String) rowData[3];
 
-      // validate string?
-    
       OrgInfoElement element = 
         new OrgInfoElement(activity, 
-                           ((Date) rowData[7]).getTime(),
+                           ((Date) myOplan.getCday()).getTime(),
                            myOplan.getCday(), 
                            ((Number) rowData[5]).intValue(), 
                            ((Number) rowData[6]).intValue());
@@ -304,15 +299,12 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
       else
 	locCode = new String ((byte[])rowData[3],"US-ASCII");
 
-      //String orgName = (String) rowData[1];
-      //String locCode = (String) rowData[3];
-
       // look up geoloc from location string
       GeolocLocation geoLoc = (GeolocLocation) myPlugin.getLocation(locCode);
 
       OrgInfoElement element = 
         new OrgInfoElement(geoLoc, 
-                           ((Date) rowData[7]).getTime(),
+                           ((Date) myOplan.getCday()).getTime(),
                            myOplan.getCday(), 
                            ((Number) rowData[5]).intValue(), 
                            ((Number) rowData[6]).intValue());
@@ -667,10 +659,3 @@ public class OrgActivityQueryHandler  extends SQLOplanQueryHandler {
     }
   }
 }
-
-
-
-
-
-
-

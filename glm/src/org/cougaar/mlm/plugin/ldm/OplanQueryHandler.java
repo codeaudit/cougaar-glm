@@ -44,7 +44,7 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
 
   private String myOperationName;
   private String myPriority;
-  private Date myCday;
+  //private Date myCday;
 
   /** this method is called before a query is started,
    * before even getQuery.  The default method is empty
@@ -64,8 +64,8 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
    * doing whatever is required.
    **/
   public void processRow(Object[] rowData) {
-    if (rowData.length != 3) {
-      System.err.println("OplanQueryHandler.processRow()- expected 3 columns of data, " +
+    if (rowData.length != 2) {
+      System.err.println("OplanQueryHandler.processRow()- expected 2 columns of data, " +
                          " got " + rowData.length);
     }
     try {
@@ -79,9 +79,6 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
       else
 	myPriority = new String ((byte[])rowData[1],"US-ASCII");
 
-      //myOperationName = (String) rowData[0];
-      //myPriority = (String) rowData[1];
-      myCday = (Date) rowData[2];
     } catch (Exception usee) {
       System.err.println("Caught exception while executing a query: "+usee);
       usee.printStackTrace();
@@ -97,31 +94,13 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
    * but may be overridden by subclasses.
    **/
   public void endQuery() {
-    String oplanID = getParameter(SQLOplanPlugin.OPLAN_ID_PARAMETER);
+    String oplanID = getParameter(OplanReaderPlugin.OPLAN_ID_PARAMETER);
+    //should already have this oplan
     Oplan oplan = myPlugin.getOplan(oplanID);
-    boolean updateNeeded = false;
-
-    if (oplan != null) {
-      // No time stamp on the oplan so we fudge with a field by field 
-      // comparison
-      if ((!oplan.getOperationName().equals(myOperationName)) ||
-          (!oplan.getPriority().equals(myPriority)) ||
-          (!oplan.getCday().equals(myCday))) {
-        updateNeeded = true;
-      } 
-    } else {
-      oplan = new Oplan();
-      oplan.setOplanId(oplanID);
-      updateNeeded = true;
-    }
-
-    if (updateNeeded) {
       oplan.setOperationName(myOperationName);
       oplan.setPriority(myPriority);
-      oplan.setCday(myCday);
       
       myPlugin.updateOplanInfo(oplan);
-    }
   }
 }
 

@@ -46,7 +46,7 @@ import org.cougaar.glm.ldm.plan.GeolocLocation;
 
 
 /* Abstract base class for query handlers which are invoked on behalf of
- * SQLOplanPlugin.
+ * OplanReaderPlugin
  */
 public abstract class SQLOplanQueryHandler extends QueryHandler {
   protected SQLOplanBase myPlugin;

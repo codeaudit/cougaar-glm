@@ -22,7 +22,6 @@
 package org.cougaar.mlm.plugin.ldm;
 
 import org.cougaar.util.StateModelException;
-import org.cougaar.util.DBConnectionPool;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.Parameters;
 
@@ -30,6 +29,11 @@ import org.cougaar.planning.ldm.ClusterServesPlugin;
 import org.cougaar.planning.ldm.LDMPluginServesLDM;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
+import org.cougaar.planning.ldm.plan.ContextOfOplanIds;
+import org.cougaar.planning.ldm.plan.Context;
 
 import org.cougaar.core.domain.FactoryException;
 import org.cougaar.core.plugin.ComponentPlugin;
@@ -42,14 +46,12 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.component.ServiceRevokedEvent;
 
+import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.ldm.plan.NamedPosition;
 import org.cougaar.glm.ldm.oplan.Oplan;
-import org.cougaar.glm.ldm.oplan.OplanCoupon;
 import org.cougaar.glm.ldm.oplan.OrgActivity;
-import org.cougaar.glm.ldm.oplan.OplanContributor;
-import org.cougaar.glm.ldm.oplan.OrgRelation;
 
 import org.cougaar.mlm.plugin.ldm.LDMSQLPlugin;
 import org.cougaar.mlm.plugin.ldm.SQLOplanBase;
@@ -65,6 +67,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Date;
 
 import java.io.InputStream;
 import java.io.FileInputStream;
@@ -74,9 +77,9 @@ import java.io.FileReader;
 import java.io.File;
 import java.io.Serializable;
 
-import java.sql.*;
 
 public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
+  public static final String OPLAN_ID_PARAMETER = "oplanid";
 
   private ArrayList oplans;
   private HashMap locations = new HashMap();
@@ -86,17 +89,43 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
   private HashSet modifiedObjects = new HashSet();
   private HashSet removedObjects = new HashSet();
 
-  private IncrementalSubscription oplanCoupons;
+  //private IncrementalSubscription oplanCoupons;
   private IncrementalSubscription oplanSubscription;
   private IncrementalSubscription stateSubscription;
+  private IncrementalSubscription glsSubscription;
+  private IncrementalSubscription mySelfOrgs;
 
-  private static UnaryPredicate oplanCouponPred = new UnaryPredicate() {
-      public boolean execute(Object o) { 
-        if (o instanceof OplanCoupon) {
-          return true;
-        } else {
-          return false;
+  /** for knowing when we get our self org asset **/
+  private Organization selfOrgAsset = null;
+
+
+  /**
+   * The predicate for the Socrates subscription
+   **/
+  private static UnaryPredicate selfOrgAssetPred = new UnaryPredicate() {
+      public boolean execute(Object o) {
+	
+	if (o instanceof Organization) {
+	  Organization org = (Organization) o;
+	  return org.isSelf();
+	}
+	return false;
+      }
+    };
+
+  private UnaryPredicate glsTaskPredicate = new UnaryPredicate() {
+      public boolean execute (Object o) {
+        if (o instanceof Task) {
+          Task task = (Task) o;
+          Verb verb = task.getVerb();
+          if (verb.equals(Constants.Verb.GetLogSupport)) {
+            PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
+            if (pp != null) {
+              return pp.getIndirectObject().equals(selfOrgAsset);
+            }
+          }
         }
+        return false;
       }
     };
 
@@ -106,21 +135,6 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
       return (o instanceof Oplan);
     }
   };
-
-  private static class OplanCouponMapPredicate implements UnaryPredicate {
-    UID _couponUID;
-    public OplanCouponMapPredicate(UID couponUID) {
-      _couponUID = couponUID;
-    }
-    public boolean execute(Object o) {
-      if (o instanceof OplanCouponMap) {
-	if (((OplanCouponMap ) o).getCouponUID().equals(_couponUID)) {
-	  return true;
-	}
-      }
-      return false;
-    }
-  }
 
 
   private static class OrgActivityPredicate implements UnaryPredicate {
@@ -135,7 +149,6 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
       if (myOplan == null)  {
         return false;
       }
-    
       return ((o instanceof OrgActivity) &&
               (((OrgActivity) o).getOplanUID().equals(myOplan.getUID())));
     }
@@ -157,218 +170,122 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
 					 });
     }
     theFactory = ((PlanningFactory) domainService.getFactory("planning"));
+
+    mySelfOrgs = (IncrementalSubscription) getBlackboardService().subscribe(selfOrgAssetPred);
     oplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(oplanPredicate);
 
     oplans = new ArrayList();
     // refill oplan Collection on rehydrate
     processOplanAdds(oplanSubscription.getCollection());
 
-//     if (!getBlackboardService().didRehydrate()) {
-      try {
-	// set up initial properties - use super method
-	initProperties();
-      } catch (SubscriberException se) {
-	System.err.println(this.toString()+": Initialization failed: "+se);
-      }
-//     }
+    try {
+      // set up initial properties - use super method
+      initProperties();
+    } catch (SubscriberException se) {
+      System.err.println(this.toString()+": Initialization failed: "+se);
+    }
+    
+    //oplanCoupons = (IncrementalSubscription)subscribe(oplanCouponPred);
+  }
 
-    oplanCoupons = (IncrementalSubscription)subscribe(oplanCouponPred);
+
+  private void setupSubscriptions2() {
+    glsSubscription = (IncrementalSubscription) getBlackboardService().subscribe(glsTaskPredicate);
+  }
+
+  private void processOrgAssets(Enumeration e) {
+    if (e.hasMoreElements()) {
+      selfOrgAsset = (Organization) e.nextElement();
+      // Setup our other subscriptions now that we know ourself
+      if (glsSubscription == null) {
+        setupSubscriptions2();
+      }
+    }
   }
 
   public synchronized void execute() {    
-    if (oplanCoupons.hasChanged()) {
-      Collection adds = oplanCoupons.getAddedCollection();
+    if (mySelfOrgs.hasChanged()) {
+      processOrgAssets(mySelfOrgs.getAddedList());
+    }
+    if (glsSubscription == null) 
+      {
+        return; // Still waiting for ourself
+      }
+    if (glsSubscription.hasChanged()) {
+      Collection adds = glsSubscription.getAddedCollection();
       if (adds != null) {
 	for (Iterator addIterator = adds.iterator(); addIterator.hasNext();) {
-	  OplanCoupon ow = (OplanCoupon) addIterator.next();
-	    requestOplan(ow);
-	}
-      }
-      // Don't be clever about changes for now, just get the whole thing again.
-      Collection changes = oplanCoupons.getChangedCollection();
-      if (changes != null) {
-	for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
-	  OplanCoupon ow = (OplanCoupon) changeIterator.next();
-	    requestOplan(ow);
-	}
-      }
-      Collection deletes = oplanCoupons.getRemovedCollection();
-      if (deletes != null) {
-	for (Iterator delIterator = deletes.iterator(); delIterator.hasNext();) {
-	  OplanCoupon ow = (OplanCoupon) delIterator.next();
-	    removeOplan(ow);
+	  Task task = (Task) addIterator.next();
+          //System.out.println("OplanReaderPlugin: got GLSTask "+task.getUID() +" for "+getMessageAddress().toString());
+          requestOplan(task);
 	}
       }
     }
   }
-  private void requestOplan(final OplanCoupon oplanCoupon) {
-    //does the job of grokArguments in super class     
-    queryFile = oplanCoupon.getOplanQueryFile();
+
+  private void requestOplan(Task t) {
+    ContextOfOplanIds cIds = (ContextOfOplanIds)t.getContext();
+    String oplanId = cIds.get(0);
+    if (oplanId != null) {
+      queryFile = oplanId+".oplan.q";
+    }
+
+    PrepositionalPhrase prepp = t.getPrepositionalPhrase("WithC0");
+    long c0_date = ((Long)(prepp.getIndirectObject())).longValue();
+    Date cDay = new Date(c0_date);
+
+    Oplan myOplan = addOplan(oplanId);
+    myOplan.setCday(cDay);
+
+    newObjects.add(myOplan);
+    publishOplanObjects();
+    publishOplanPostProcessing();
 
     try {
-      // parse the query file into our query vectors and parameters
+      // parse q file into query vectors and parameters, initialize query handlers
       parseQueryFile();
-
+      
+      //runs thru and kicks off all query handlers to go to db
       grokQueries();
     } catch (SubscriberException se) {
       System.err.println(this.toString()+": Initialization failed: "+se);
     }
-    UID couponUID = oplanCoupon.getUID();
-    publishOplanObjects(couponUID);
+    publishOplanObjects();
     publishOplanPostProcessing();
   }
 
-  /**
-   * Removes all matching Oplan components from the logplan
-   **/
-  private void removeOplan(OplanCoupon ow) {
-
-    String orgID = getMessageAddress().toString();
-    if (ow.getUID() != null) {
-      //get glue objects that map this coupon uid to an oplan uid
-      OplanCouponMapPredicate ocp = new OplanCouponMapPredicate(ow.getUID());
-      Collection oplanObjs = query(ocp);
-
-      for (Iterator it = oplanObjs.iterator(); it.hasNext();) {
-        UID opUID = ((OplanCouponMap)it.next()).getContributorUID();
-        OplanPredicate op = new OplanPredicate(opUID, orgID);
-        Collection removedOplans = query(op);
-        for (Iterator iter= removedOplans.iterator(); iter.hasNext();) {
-          publishRemove(iter.next());
-        }
-      }
-    }
-  }
-
-  private static class OplanCouponMap implements Serializable {
-    UID _couponUID;
-    UID _contributorUID;
-
-    public OplanCouponMap(UID couponUID, UID contributorUID) {
-      _couponUID=couponUID;
-      _contributorUID = contributorUID;
-    }
-    
-    public void setCouponUID (UID couponUID) {
-      _couponUID=couponUID;
-    }
-
-    public UID getCouponUID() {
-      return _couponUID;
-    }
-    public void setContributorUID (UID contributorUID) {
-      _contributorUID = contributorUID;
-    }
-
-    public UID getContributorUID() {
-      return _contributorUID;
-    }
-    
-  }
-
-  private static class OplanPredicate implements UnaryPredicate {
-    private UID _oplanUID;
-    private String _orgID;
-
-    public OplanPredicate(UID oplanUID, String orgID) {
-      _oplanUID = oplanUID;
-      _orgID = orgID;
-    }
-
-    public boolean execute(Object o) {
-      if (o instanceof Oplan) {
-	if (((Oplan) o).getUID().equals(_oplanUID)) {
-	  return true;
-	}
-	return false;
-      }
-
-      if (o instanceof OplanContributor) {
-	OplanContributor oc = (OplanContributor) o;
-	System.out.println("Predicate: found OplanContributor");
-	if (oc.getOplanUID().equals(_oplanUID))  {
-	  System.out.println("Predicate: has correct OplanUID " + oc.getOplanUID());
-	  if (oc instanceof OrgActivity) {
-	    if (((OrgActivity) oc).getOrgID().equals(_orgID)) {
-	      System.out.println("Predicate: correct OrgID in OrgActivity");
-	      return true;
-	    } else {
-	      return false;
-	    }
-	  } else if (oc instanceof OrgRelation) {
-	    if (((OrgRelation) oc).getOrgID().equals(_orgID)) {
-	      return true;
-	    } else {
-	      return false;
-	    }
-	  }
-	  //System.out.println("Predicate: found a good one! " + o);
-	  return true;
-	}
-      }
-      //System.out.println("Predicate: Sorry, play again soon");
-      return false;
-    }
-  }
-
-
-  private void publishOplanObjects(UID couponUID) {
+  private void publishOplanObjects() {
     for (Iterator iterator = newObjects.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
       getBlackboardService().publishAdd(object);
-      if (object instanceof Oplan) {
-        //only stuff oplanUID, orgactivities not needed
-        OplanCouponMap uidMap = new OplanCouponMap(couponUID,((Oplan)object).getUID());
-        getBlackboardService().publishAdd(uidMap);
-      }
     }
     for (Iterator iterator = modifiedObjects.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
       getBlackboardService().publishChange(object);
     }
-
     for (Iterator iterator = removedObjects.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
       getBlackboardService().publishRemove(object);
     }
   }
-  
+
   private void publishOplanPostProcessing() {
     newObjects.clear();
     modifiedObjects.clear();
     removedObjects.clear();
   }
-  
-
+ 
   public void updateOplanInfo(Oplan update) {
     synchronized (oplans) {
       String oplanID = update.getOplanId();
       Oplan oplan = getOplan(oplanID);
-      
-      boolean found = false;
-      if (oplan == null) {
-        oplan = addOplan(oplanID);
-      }
-      else {
-        found = true;
-      }
-      
-      oplan.setOperationName(update.getOperationName());
-      oplan.setPriority(update.getPriority());
-      oplan.setCday(update.getCday());
-      oplan.setEndDay(update.getEndDay());
-
-      if (found) {
-        modifiedObjects.add(oplan);
-      } else {
-        newObjects.add(oplan);
-      }
+      modifiedObjects.add(oplan);
     }
   }
-
+      
   // Replace org activies for Org.
   public void updateOrgActivities(Oplan update,
                                   String orgId,
@@ -455,4 +372,3 @@ public class OplanReaderPlugin extends LDMSQLPlugin implements SQLOplanBase{
     }
   }
 }
-
