@@ -10,52 +10,76 @@ package org.cougaar.mlm.plugin.xml;
  ****************************************************************
  **/
 
-
+import java.io.*;
 import org.cougaar.core.plugin.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.util.*;
+import org.cougaar.lib.xml.parser.*;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.*;
 import org.w3c.dom.*;
-import org.cougaar.lib.xml.parser.*;
-import java.io.*;
 
 /**
+ * <pre>
  * This plugin is a prototype provider that attempts to supply
  * prototypes by looking for XML files by name. It finds the prototype
- * file by using the ConfigFileFinder mechanism, and parses it using the
- * 'contrib' TOPS XML Parser. If successful, it will cache and return the
+ * file by using the ConfigFinder mechanism, and parses it using the
+ * toolkit prototype XML Parser. If successful, it will cache and return the
  * generated prototype.
  * NOTE : The name of the prototype is modified to 
  * change '/' characters to '-' characters to allow for O/S compatibility:
  * Example : Prototype "NSN/1234567890123" looks for a 
  * file NSN-1234567890123.xml
  * 
+ * </pre>
+ * @see org.cougaar.lib.xml.parser.PrototypeProvider#cachePrototype
+ * @see org.cougaar.util.ConfigFinder#parseXMLConfigFile
  **/
 public class XMLPrototypeProviderPlugin extends SimplePlugin
 implements PrototypeProvider
 {
+  /** 
+   * Rely upon load-time introspection to set these services - 
+   * don't worry about revokation.
+   */
+  public final void setLoggingService(LoggingService bs) {  
+    logger = bs; 
+    prototypeParser = new PrototypeParser (logger);
+  }
 
-  // While this is a plugin, we only expect it to operate 
-  // as a prototype provider
+  /**
+   * Get the logging service, for subclass use.
+   */
+  protected LoggingService getLoggingService() {  return logger; }
+
+  /**
+   * While this is a plugin, we only expect it to operate 
+   * as a prototype provider.  No subscriptions are made here.
+   */
   public void setupSubscriptions() 
   {
     // System.out.println("Loading XMLPrototypeProviderPlugin...");
   }
 
+  /** no subscriptions -- nothing happens here */
   public void execute() 
   {
   }
 
-  // Interface required for PrototypeProvider
-  // If possible, Create a prototype from XML file given by name
-  // <aTypeName>.xml and cache and return prototype
-  // Otherwise, return null
-  public Asset getPrototype(String aTypeName, Class anAssetClassHint)
+  /**
+   * <pre>
+   * Interface required for PrototypeProvider
+   * If possible, Create a prototype from XML file given by name
+   * <aTypeName>.xml and cache and return prototype
+   * Otherwise, return null
+   * </pre>
+   * @param aTypeName name of the Prototype to create
+   * @param ignoredAnAssetClassHint class hint not used, since we read from a file
+   * @return asset prototype if we can find and parse the file, null otherwise
+   */
+  public Asset getPrototype(String aTypeName, Class ignoredAnAssetClassHint)
   {
-    //    System.out.println("XMLPrototypeProviderPlugin.getPrototype : " + 
-    //		       aTypeName + " " + anAssetClassHint);
-
     Asset new_prototype = null;
     Node node = null;
 
@@ -63,24 +87,23 @@ implements PrototypeProvider
     // Using ConfigFileFinder
     String filename = cleanupPrototypeName(aTypeName) + ".xml";
     try {
-      Document doc = ConfigFileFinder.parseXMLConfigFile(filename);
+      Document doc = getConfigFinder().parseXMLConfigFile(filename);
       if (doc != null) {
 	node = doc.getDocumentElement();
       }
     } catch (FileNotFoundException fnfe) {
     } catch (IOException ie) {
-      System.out.println("Exception parsing prototype file : " + filename);
-      ie.printStackTrace();
+      logger.error("Exception parsing prototype file : " + filename, ie);
     }
 
     // Create a prototype from the parsed node
-    // Using TOPS contrib XML Asset parser
+    // Using toolkit XML Asset parser
     if (node != null) {
-      new_prototype = PrototypeParser.cachePrototype(getLDM(), node, true);
+      new_prototype = prototypeParser.cachePrototype(getLDM(), node, true);
       if (new_prototype != null) {
 	getLDM().cachePrototype(aTypeName, new_prototype);
-	//System.out.println("XMLPrototypeProviderPlugin : " +
-  //	   "Caching prototype for " + aTypeName);
+	if (logger.isDebugEnabled())
+	  logger.debug(".getPrototype : Caching prototype for " + aTypeName);
 	getLDM().fillProperties(new_prototype);
       }
     }
@@ -89,11 +112,17 @@ implements PrototypeProvider
     return new_prototype;
   }
 
-  // Alter prototype string to change '/' to '-'
+  /** Alter prototype string to change '/' to '-' */
   private String cleanupPrototypeName(String prototype)
   {
     return prototype.replace('/', '-');
   }
 
-
+  protected LoggingService logger;
+  protected PrototypeParser prototypeParser;
 }
+
+
+
+
+
