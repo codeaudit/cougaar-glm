@@ -53,7 +53,7 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
   }
 
   /** Tasks that published by this processor **/
-  static class ProjectionTasksPredicate implements UnaryPredicate
+  public static class ProjectionTasksPredicate implements UnaryPredicate
   {
     ClusterIdentifier clusterId_;
     String myOrgName_;
