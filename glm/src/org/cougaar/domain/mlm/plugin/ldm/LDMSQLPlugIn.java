@@ -13,6 +13,7 @@ package org.cougaar.domain.mlm.plugin.ldm;
 
 import org.cougaar.core.plugin.LDMPlugInServesLDM;
 import org.cougaar.util.StateModelException;
+import org.cougaar.util.DBConnectionPool;
 import org.cougaar.core.cluster.Subscriber;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.cluster.SubscriberException;
@@ -108,7 +109,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 		
     try {
       //load an initial driver
-      registerDriver ("oracle.jdbc.driver.OracleDriver");
+      DBConnectionPool.registerDriver ("oracle.jdbc.driver.OracleDriver");
     } catch (Exception er) {
       throw new RuntimeException(this.toString()+": Couldn't register the Oracle JDBC driver: "+er);
     }
@@ -138,17 +139,6 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   // empty execute
   public void execute() {}
   
-  // keep track of all registered JDBC drivers.
-  private static Hashtable drivers = new Hashtable();
-
-  private void registerDriver(String driverName) throws Exception {
-    if (drivers.get(driverName) != null) 
-      return;
-    Driver driver = (Driver)(Class.forName(driverName).newInstance());
-    DriverManager.registerDriver(driver);
-    drivers.put(driverName,driver);
-  }
-
   private void initProperties() {
     // default package for QueryHandler
     globalParameters.put("Package", "org.cougaar.domain.mlm.plugin.ldm");
@@ -266,10 +256,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       QueryHandler qh = (QueryHandler) e.nextElement();
       qh.start();
       if (qh instanceof org.cougaar.domain.mlm.plugin.ldm.PrototypeProvider) {
-	  //System.err.println("Registered "+qh+" as PrototypeProvider");
 	prototypeProviders.addElement(qh);
       } else if (qh instanceof org.cougaar.domain.mlm.plugin.ldm.PropertyProvider) {
-	  //System.err.println("Registered "+qh+" as PropertyProvider");
 	propertyProviders.addElement(qh);
       } 
       // else it was just a PeriodicQuery.
@@ -326,8 +314,7 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
     try {
       String driver = qh.getParameter("Driver");
       if (driver != null) {
-				//registerDriver ("driver");
-	registerDriver(driver);
+	DBConnectionPool.registerDriver(driver);
       }
 
       String dbname = qh.getParameter("Database");
@@ -335,6 +322,10 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
 	throw new RuntimeException("No Connection parameter.");
       }
       
+      // do Param substitution
+      String sql;
+      sql = produceQuery(qh, rawSql);
+
       Properties props = new Properties();
       String user = qh.getParameter("Username");
       if (user == null) user = qh.getParameter("user");
@@ -345,36 +336,32 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
       props.put("user", user);
       props.put("password", pass);
 
-      // do Param substitution
-      String sql;
-      sql = produceQuery(qh, rawSql);
-      //System.err.println("Query = '"+sql+"'");
-
-      //System.err.println("Opening Connection to " + dbname);
-      Connection conn = DriverManager.getConnection(dbname, props);
-      //System.err.println("JDBC successfully connected... creating a statement");
-      Statement statement = conn.createStatement();
-      //System.err.println("created statement");
-
-      ResultSet rset = statement.executeQuery(sql);
-      //System.err.println("executedQuery");
-      
-      ResultSetMetaData md = rset.getMetaData();
-      int ncols = md.getColumnCount();
-
-      Object row[] = new Object[ncols];
-
-      //System.err.println("Getting rows");
-      while (rset.next()) {
-	  for (int i = 0; i < ncols; i++)
-	      row[i] = rset.getObject(i+1);
-	  //System.err.println( "\nprocessRow( " + row + " )" );
-	  qh.processRow(row);
+      // open a connection - prefer a connection from the DBConnectionPool
+      // unless the pool parameter = false.
+      Connection conn;
+      if (qh.getParameter("pool").equals("false")) {
+        conn = DriverManager.getConnection(dbname, props);
+      } else {
+        conn = DBConnectionPool.getConnection(dbname, user, pass);
       }
-      //System.err.println("done");
-      statement.close();
+      try {
+        Statement statement = conn.createStatement();
+        ResultSet rset = statement.executeQuery(sql);
+        ResultSetMetaData md = rset.getMetaData();
+        int ncols = md.getColumnCount();
+        
+        Object row[] = new Object[ncols];
 
-      conn.close();
+        while (rset.next()) {
+	  for (int i = 0; i < ncols; i++)
+            row[i] = rset.getObject(i+1);
+	  qh.processRow(row);
+        }
+
+        statement.close();
+      } finally {
+        conn.close();
+      }
 
     } catch (Exception e) {
       System.err.println("Caught exception while executing a query: "+e);
@@ -390,12 +377,10 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   //
 
   public Asset getPrototype(String typeid, Class hint) {
-    //System.err.print("getPrototype for '"+typeid+"' = ");
     for (Enumeration e = prototypeProviders.elements(); e.hasMoreElements();){
       PrototypeProvider pp = (PrototypeProvider) e.nextElement();
       if (pp.canHandle(typeid)) {
 	Asset a = pp.getAssetPrototype(typeid);
-				//System.err.println(a.toString());
 	return a;
       }
     }
@@ -405,17 +390,8 @@ public class LDMSQLPlugIn extends LDMEssentialPlugIn //implements SQLService
   public Asset getPrototype(String typeid) {
     return getPrototype(typeid, null);
   }
-
-  // public void provideProperties(Asset asset) {
-  // 		//System.err.println("Providing properties to "+asset);
-  // 		for (Enumeration e = propertyProviders.elements(); e.hasMoreElements();){
-  // 			PropertyProvider pp = (PropertyProvider) e.nextElement();
-  // 			pp.provideProperties(asset);
-  // 		}
-  // 	}
 	
   public void fillProperties( Asset anAsset ) {
-    //System.err.println("Providing properties to "+asset);
     for (Enumeration e = propertyProviders.elements(); e.hasMoreElements();){
       PropertyProvider pp = (PropertyProvider) e.nextElement();
       pp.provideProperties( anAsset );

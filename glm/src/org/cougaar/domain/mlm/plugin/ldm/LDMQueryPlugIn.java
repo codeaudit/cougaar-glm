@@ -82,178 +82,178 @@ import java.sql.*;
 
 class CFGFilter implements FilenameFilter 
 {
-    public boolean accept(File dir, String name) 
-	{
-        return (name.endsWith(".cfg"));
-    }
+  public boolean accept(File dir, String name) 
+  {
+    return (name.endsWith(".cfg"));
+  }
 }
 
 class QFilter implements FilenameFilter 
 {
-    public boolean accept(File dir, String name) 
-	{
-        return (name.endsWith(".q"));
-    }
+  public boolean accept(File dir, String name) 
+  {
+    return (name.endsWith(".q"));
+  }
 }
  
 
 public class LDMQueryPlugIn extends LDMEssentialPlugIn
 {
 
-private String queryFileDirectory;
-private String queryFile;
-private String configFile;
-private Vector prototypeProviders = new Vector();
-private Vector propertyProviders = new Vector();
+  private String queryFileDirectory;
+  private String queryFile;
+  private String configFile;
+  private Vector prototypeProviders = new Vector();
+  private Vector propertyProviders = new Vector();
 
-// Vector of LDMConnection Driver Pools
-private static Vector allDBConnections = new Vector();
-
-
-private Properties globalParameters = new Properties();
-
-private Vector queries = new Vector();
-private static int numDatabases = 0;
+  // Vector of LDMConnection Driver Pools
+  private static Vector allDBConnections = new Vector();
 
 
-/********************************************************************************
- *
- * Method Name: executeQuery
- *
- * Description: This routine executes a given SQL statement and sends the 
- *				results to the given QueryHandler.
- * 
- * Input:		rawSQL - SQL from QueryHandler
- *				qh	   - A given QueryHandler
- *				dbName - The database Name
- *
- * Output:		success - returns a true if the connection was made successfully.
- *						  else returns false.
- *
- ********************************************************************************/
-public boolean executeQuery(String rawSql, QueryHandler qh, String dbName) 
-{
-   boolean success = false;
-   String db = null;
-   LDMConnectionDriver jDriver;
-   LDMConnectionDriver actualDriver = null;
-   int cCount = 0;
-   Connection conn;
+  private Properties globalParameters = new Properties();
+
+  private Vector queries = new Vector();
+  private static int numDatabases = 0;
+
+
+  /********************************************************************************
+   *
+   * Method Name: executeQuery
+   *
+   * Description: This routine executes a given SQL statement and sends the 
+   *				results to the given QueryHandler.
+   * 
+   * Input:		rawSQL - SQL from QueryHandler
+   *				qh	   - A given QueryHandler
+   *				dbName - The database Name
+   *
+   * Output:		success - returns a true if the connection was made successfully.
+   *						  else returns false.
+   *
+   ********************************************************************************/
+  public boolean executeQuery(String rawSql, QueryHandler qh, String dbName) 
+  {
+    boolean success = false;
+    String db = null;
+    LDMConnectionDriver jDriver;
+    LDMConnectionDriver actualDriver = null;
+    int cCount = 0;
+    Connection conn;
    
-//System.out.println("executeSQL: beginning");   
-//System.out.println("The Dbname is " + dbName);
-   // Check to see if the name is valid
-   if (dbName == null) 
-   {
-         // Error
-   	  return false;
-   }
-
-//System.out.println("The size of the connections is " +allDBConnections.size());   
-   while (cCount < allDBConnections.size())
-   {
-
-	  jDriver = (LDMConnectionDriver)allDBConnections.elementAt(cCount);
-	  
-//System.out.println("The jDriver db name is " + jDriver.getDBName());
-//System.out.println("The given dbame is " + dbName);
-
-	  if (jDriver.getDBName().equals(dbName))
-	  {
-//System.out.println("The names Equal");	  
-	     db = dbName;
-		 actualDriver = jDriver;
-	     // Quit out of both loops
-		 cCount = allDBConnections.size();
-      }// if statement
-	  else
-	     cCount++;
-   }// while loop
-    
-//System.out.println("The database found was  " + actualDriver.getDBName());
-   
-   if (actualDriver != null)
-   {
-      try 
+    //System.out.println("executeSQL: beginning");   
+    //System.out.println("The Dbname is " + dbName);
+    // Check to see if the name is valid
+    if (dbName == null) 
       {
-//System.out.println("executeSQL:About to try and connect to " + actualDriver.getDBName());	  
-	     // If the particular database URL has failed int the past, then do not use it
-		 // any more.
-		 conn = null;
-		 if (actualDriver.isWorking())
-            conn = actualDriver.connect();
-		 else
-		    return false;
+        // Error
+        return false;
+      }
+
+    //System.out.println("The size of the connections is " +allDBConnections.size());   
+    while (cCount < allDBConnections.size())
+      {
+
+        jDriver = (LDMConnectionDriver)allDBConnections.elementAt(cCount);
 	  
-	     // If the connection was unsucessful,
-	     // then tell the caller to try again with
-   	     // another type of raw SQL query.
-	     if (conn == null)
-         {		 
-//System.out.println("executeSQL:Connection Failed :(");		 
-	        return success;
-         }			
-		 
-	     // The connection was sucessful	 
-	     else
-	     {
-//System.out.println("executeSQL:connection worked");		 
-            // Produce the appropriate query      
-            String sql;  
-//System.out.println("THe SQL that is going to be used in produceQuery is " + rawSql);			
-            sql = produceQuery(qh, rawSql);
-//System.out.println("The resulting SQL is " + sql);	
+        //System.out.println("The jDriver db name is " + jDriver.getDBName());
+        //System.out.println("The given dbame is " + dbName);
 
-
-// A test to see what happens
-
-            Statement statement = conn.createStatement();
-//System.out.println("executeSQL:After createStatement\n");			
-//System.out.println("executeSQL:About to query using " + sql);	   
-            ResultSet rset = statement.executeQuery(sql);      
-//System.out.println("executeSQL:After executeQuery\n");	
-
-            ResultSetMetaData md = rset.getMetaData();
-//System.out.println("executeSQL:After getMetaData\n");	
-            int ncols = md.getColumnCount();
-//System.out.println("executeSQL:After getColumnCount"  + ncols);				
-
-            Object row[] = new Object[ncols];
+        if (jDriver.getDBName().equals(dbName))
+	  {
+            //System.out.println("The names Equal");	  
+            db = dbName;
+            actualDriver = jDriver;
+            // Quit out of both loops
+            cCount = allDBConnections.size();
+          }// if statement
+        else
+          cCount++;
+      }// while loop
     
-            while (rset.next()) 
-		    {
-	           for (int i = 0; i < ncols; i++)
-               {
-			      
-	              row[i] = rset.getObject(i+1);
- 
-//System.out.println("executeSQL:I see equipment characteristics for : " + row[i]);
+    //System.out.println("The database found was  " + actualDriver.getDBName());
    
-               }
+    if (actualDriver != null)
+      {
+        try 
+          {
+            //System.out.println("executeSQL:About to try and connect to " + actualDriver.getDBName());	  
+            // If the particular database URL has failed int the past, then do not use it
+            // any more.
+            conn = null;
+            if (actualDriver.isWorking())
+              conn = actualDriver.connect();
+            else
+              return false;
+	  
+            // If the connection was unsucessful,
+            // then tell the caller to try again with
+            // another type of raw SQL query.
+            if (conn == null)
+              {		 
+                //System.out.println("executeSQL:Connection Failed :(");		 
+	        return success;
+              }			
+		 
+            // The connection was sucessful	 
+            else
+              {
+                //System.out.println("executeSQL:connection worked");		 
+                // Produce the appropriate query      
+                String sql;  
+                //System.out.println("THe SQL that is going to be used in produceQuery is " + rawSql);			
+                sql = produceQuery(qh, rawSql);
+                //System.out.println("The resulting SQL is " + sql);	
 
-               // Give the results back to the caller.
-  	           qh.processRow(row);
-            }// while loop
+
+                // A test to see what happens
+
+                Statement statement = conn.createStatement();
+                //System.out.println("executeSQL:After createStatement\n");			
+                //System.out.println("executeSQL:About to query using " + sql);	   
+                ResultSet rset = statement.executeQuery(sql);      
+                //System.out.println("executeSQL:After executeQuery\n");	
+
+                ResultSetMetaData md = rset.getMetaData();
+                //System.out.println("executeSQL:After getMetaData\n");	
+                int ncols = md.getColumnCount();
+                //System.out.println("executeSQL:After getColumnCount"  + ncols);				
+
+                Object row[] = new Object[ncols];
+    
+                while (rset.next()) 
+                  {
+                    for (int i = 0; i < ncols; i++)
+                      {
+			      
+                        row[i] = rset.getObject(i+1);
+ 
+                        //System.out.println("executeSQL:I see equipment characteristics for : " + row[i]);
+   
+                      }
+
+                    // Give the results back to the caller.
+                    qh.processRow(row);
+                  }// while loop
 		
    
-            statement.close();
-            conn.close();
-            success=true;
+                statement.close();
+                conn.close();
+                success=true;
  		
 
-          }// else statement
+              }// else statement
 		  
-        } catch (Exception e) 
-        {
-            System.err.println("Caught exception while executing a query: "+e);
-            e.printStackTrace();
-			return false;			
-        }
-     }//else statement
-//System.out.println("executeSQL: end");   	 
-     return success;
+          } catch (Exception e) 
+            {
+              System.err.println("Caught exception while executing a query: "+e);
+              e.printStackTrace();
+              return false;			
+            }
+      }//else statement
+    //System.out.println("executeSQL: end");   	 
+    return success;
   
-   }//executeQuery
+  }//executeQuery
 
   public Asset getPrototype(String typeid) {
     return getPrototype(typeid, null);
@@ -261,36 +261,39 @@ public boolean executeQuery(String rawSql, QueryHandler qh, String dbName)
   public Asset getPrototype(String typeid, Class hint)
   {
      
-     for (Enumeration e = prototypeProviders.elements(); e.hasMoreElements();)
-	 {
+    for (Enumeration e = prototypeProviders.elements(); e.hasMoreElements();)
+      {
         PrototypeProvider pp = (PrototypeProvider) e.nextElement();
         if (pp.canHandle(typeid)) 
-		{
-    	   Asset a = pp.getAssetPrototype(typeid);
+          {
+            Asset a = pp.getAssetPrototype(typeid);
 
-    	   return a;
-        }
-     }// for loop
-     return null;
+            return a;
+          }
+      }// for loop
+    return null;
   }
 
-/********************************************************************************
- *
- * Method Name: setupSubscriptions
- *
- * Description: This routine is called by the cluster infrastucture to
- *				start execution of this LDMPlugin
- * 
- * Input:		None
- *
- * Output:		None
- *
- ********************************************************************************/
-protected void setupSubscriptions() 
-{
+  /********************************************************************************
+   *
+   * Method Name: setupSubscriptions
+   *
+   * Description: This routine is called by the cluster infrastucture to
+   *				start execution of this LDMPlugin
+   * 
+   * Input:		None
+   *
+   * Output:		None
+   *
+   ********************************************************************************/
+  protected void setupSubscriptions() 
+  {
 
-//System.out.println("LDMQueryPlugIn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-     // first, initialize the global table with some basics
+    System.err.println("LDMQueryPlugin "+this+" loaded");
+    Thread.dumpStack();
+
+    //System.out.println("LDMQueryPlugIn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    // first, initialize the global table with some basics
 
  
     // set up the subscription
@@ -299,124 +302,124 @@ protected void setupSubscriptions()
 	
 	
     subscriber = getSubscriber();
-	if (!didRehydrate()) 
-	{	// Objects should already exist after rehydration
-       try 
-	   {
-         // set up initial properties
-         initProperties();
+    if (!didRehydrate()) 
+      {	// Objects should already exist after rehydration
+        try 
+          {
+            // set up initial properties
+            initProperties();
 	  
-         // deal with the arguments.
-         grokArguments();
+            // deal with the arguments.
+            grokArguments();
 	  
-	     // MML commented out and changed logic to find an individual file
-	     // instead of looking for files in a specified directory.
-	     // Parse the configuration files.
-	     //boolean filesFound = parseConfigFiles(queryFileDirectory);
-	     //if (!filesFound)
-	     //{
-	        // there is a problem
-	     //}
+            // MML commented out and changed logic to find an individual file
+            // instead of looking for files in a specified directory.
+            // Parse the configuration files.
+            //boolean filesFound = parseConfigFiles(queryFileDirectory);
+            //if (!filesFound)
+            //{
+            // there is a problem
+            //}
 	  
-	     try
-	     {
+            try
+              {
 	        // Locate the .cfg file
 	        InputStreamReader config = new InputStreamReader(getCluster().getConfigFinder().open(configFile));
 		  
 	        parseConfigFile(config);
 	   
                 config.close();
-	     } catch (Exception e)
-	     {         
-	        String message = e.getMessage();
-	        //System.out.println("Exception" + message);
-	        e.printStackTrace();
-         }
+              } catch (Exception e)
+                {         
+                  String message = e.getMessage();
+                  //System.out.println("Exception" + message);
+                  e.printStackTrace();
+                }
 	  
-	     // MML commented out and changed logic to find an individual file
-	     // instead of looking for files in a specified directory.
-         // parse the query files and store properties in the appropriate
-	     // queryhandlr.
-         //filesFound = parseQueryFiles(queryFileDirectory);
-	     //if (!filesFound)
-	     //{
-	     //	     // there is a problem
-	     //}
-	     try
-	     {
+            // MML commented out and changed logic to find an individual file
+            // instead of looking for files in a specified directory.
+            // parse the query files and store properties in the appropriate
+            // queryhandlr.
+            //filesFound = parseQueryFiles(queryFileDirectory);
+            //if (!filesFound)
+            //{
+            //	     // there is a problem
+            //}
+            try
+              {
 	        InputStreamReader qs = new InputStreamReader(getCluster().getConfigFinder().open(queryFile));	 
 	        parseQueryFile(qs);
                 qs.close();
-             } catch (Exception e)
-	     {         
-	        String message = e.getMessage();
-	        System.err.println("Exception: " + message);
-	        e.printStackTrace();
-         }
+              } catch (Exception e)
+                {         
+                  String message = e.getMessage();
+                  System.err.println("Exception: " + message);
+                  e.printStackTrace();
+                }
 	  
-         // sort the queryhandlers into categories.
-         grokQueries();        
-       } 
-	   catch (SubscriberException se) 
-	   {
-         System.err.println("Caught: "+se);
-       }
-	}// if statement
+            // sort the queryhandlers into categories.
+            grokQueries();        
+          } 
+        catch (SubscriberException se) 
+          {
+            System.err.println("Caught: "+se);
+          }
+      }// if statement
 
   }// setupSubscriptions
   /********************************************************************************
-     *
-     * Method Name:	grokArguments
-     *
-     * Description:	This method retrieves and stores the arguments passed in to the
-     *			 	this plugin
-     * 
-     * Input:		  	None
-     *
-     * Output:	  	None
-     *
-     ********************************************************************************/
-    private void grokArguments() 
-    {
-       // first, initialize the global table with some basics    
-  	 Vector pv = getParameters();
+   *
+   * Method Name:	grokArguments
+   *
+   * Description:	This method retrieves and stores the arguments passed in to the
+   *			 	this plugin
+   * 
+   * Input:		  	None
+   *
+   * Output:	  	None
+   *
+   ********************************************************************************/
+  private void grokArguments() 
+  {
+    // first, initialize the global table with some basics    
+    Vector pv = getParameters();
   	 
       
-       if (pv.isEmpty()) 
-  	   {
-          throw new RuntimeException("LDMPlugIn requires at least one parameter");
-       } 
-  	   else 
-  	   {
-          int parameter = 0;
+    if (pv.isEmpty()) 
+      {
+        throw new RuntimeException("LDMPlugIn requires at least one parameter");
+      } 
+    else 
+      {
+        int parameter = 0;
   		
-          for (Enumeration ps = pv.elements(); ps.hasMoreElements(); ) 
-  		  {
-    	     String p = (String) ps.nextElement();
+        for (Enumeration ps = pv.elements(); ps.hasMoreElements(); ) 
+          {
+            String p = (String) ps.nextElement();
   		   
-  		     // The item in the vector is a directory
-    	     if (parameter == 0) 	         
-  		     {
+            // The item in the vector is a directory
+            if (parameter == 0) 	         
+              {
     	        queryFile =  p;
-  //System.out.println("First Parameter is " + queryFile);			    			  
-  		     }
-  	         else if (parameter == 1)
-		     {
-	            configFile = p;
-//System.out.println("The second parameter is " + configFile);			  
-		     }
-		     else
-  		     {
-  		        parseQueryParameter(globalParameters, p);					  
-  		      }	  
-		     parameter++;
+                //System.out.println("First Parameter is " + queryFile);			    			  
+              }
+            else if (parameter == 1)
+              {
+                configFile = p;
+                //System.out.println("The second parameter is " + configFile);			  
+              }
+            else
+              {
+                parseQueryParameter(globalParameters, p);					  
+              }	  
+            parameter++;
           }//for loop
-	      if (parameter != 3) 
-	      {
-	          // no args
-	          throw new RuntimeException("LDMPlugIn requires at least three parameters");
+        if (parameter != 3) 
+          {
+            // no args
+            throw new RuntimeException("LDMPlugIn requires at least three parameters");
           }
-	  }// else
+      }// else
   }// grokArguments
 
   /********************************************************************************
@@ -433,41 +436,41 @@ protected void setupSubscriptions()
    ********************************************************************************/
   private void grokDirArguments() 
   {
-     // first, initialize the global table with some basics    
-	 Vector pv = getParameters();
+    // first, initialize the global table with some basics    
+    Vector pv = getParameters();
 	 
     
-     if (pv.isEmpty()) 
-	 {
+    if (pv.isEmpty()) 
+      {
         throw new RuntimeException("LDMPlugIn requires at least one parameter");
-     } 
-	 else 
-	 {
+      } 
+    else 
+      {
         boolean isFirst = true;
 		
         for (Enumeration ps = pv.elements(); ps.hasMoreElements(); ) 
-		{
-  	       String p = (String) ps.nextElement();
+          {
+            String p = (String) ps.nextElement();
 		   
-		   // The item in the vector is a directory
-  	       if (isFirst) 	         
-		   {
-  	          queryFileDirectory =  p;
-//System.out.println("First Parameter is " + queryFileDirectory);			  
-			  isFirst = false;
-		   }
-	       else 
-		   {
-		      parseQueryParameter(globalParameters, p);					  
-		   }	  
+            // The item in the vector is a directory
+            if (isFirst) 	         
+              {
+                queryFileDirectory =  p;
+                //System.out.println("First Parameter is " + queryFileDirectory);			  
+                isFirst = false;
+              }
+            else 
+              {
+                parseQueryParameter(globalParameters, p);					  
+              }	  
 	  
-        } // for statement
+          } // for statement
         if (isFirst) 
-	    {
-  		  // no args
-  	      throw new RuntimeException("LDMPlugIn requires at least one parameter");
-        }
-     }//else statement
+          {
+            // no args
+            throw new RuntimeException("LDMPlugIn requires at least one parameter");
+          }
+      }//else statement
   }// grokDirArguments
   
   /** sort queryhandlers into categories.
@@ -489,22 +492,22 @@ protected void setupSubscriptions()
   private void grokQueries()
   {
     for (Enumeration e = queries.elements(); e.hasMoreElements();)
-    {
+      {
 
-       QueryHandler qh = (QueryHandler) e.nextElement();
-       qh.start();
-       if (qh instanceof org.cougaar.domain.mlm.plugin.ldm.PrototypeProvider) 
-	   {
+        QueryHandler qh = (QueryHandler) e.nextElement();
+        qh.start();
+        if (qh instanceof org.cougaar.domain.mlm.plugin.ldm.PrototypeProvider) 
+          {
 
-  	      prototypeProviders.addElement(qh);
-       }  
-	   else if (qh instanceof org.cougaar.domain.mlm.plugin.ldm.PropertyProvider) 
-	   {
+            prototypeProviders.addElement(qh);
+          }  
+        else if (qh instanceof org.cougaar.domain.mlm.plugin.ldm.PropertyProvider) 
+          {
 
- 	      propertyProviders.addElement(qh);
-       } 
-      // else it was just a PeriodicQuery.
-    }// for loop
+            propertyProviders.addElement(qh);
+          } 
+        // else it was just a PeriodicQuery.
+      }// for loop
   }// grokQueries
   /********************************************************************************
    *
@@ -537,49 +540,49 @@ protected void setupSubscriptions()
    ********************************************************************************/
   private boolean parseConfigFiles(String directory)
   {
-      // Get the File Pointer for the Directory
-	  // and store it in configDirectory
-//System.out.println("LDMQueryPlugIn:parseConfigFiles BEGIN " + directory);
-      File configDirectory = new File(directory);
-	  boolean cfgFound = false;
+    // Get the File Pointer for the Directory
+    // and store it in configDirectory
+    //System.out.println("LDMQueryPlugIn:parseConfigFiles BEGIN " + directory);
+    File configDirectory = new File(directory);
+    boolean cfgFound = false;
 	  
 	
 	  
-      // Obtain a listing of all the *.cfg files in the directory
-	  // Using a filter 
+    // Obtain a listing of all the *.cfg files in the directory
+    // Using a filter 
 	  
-	  if (configDirectory.isDirectory()) 
-	  {	  
+    if (configDirectory.isDirectory()) 
+      {	  
       
-	    FilenameFilter filter = new CFGFilter();
- 	    String files[] = configDirectory.list(filter);	  
+        FilenameFilter filter = new CFGFilter();
+        String files[] = configDirectory.list(filter);	  
 	  
-	    for (int i=0; i < files.length; i++)
-	    {
-//System.out.println("First file and directory is " + configDirectory+files[i]);		
-		   try
-		   {
-	          // Get File instance for each file
-	          FileReader configFile = new FileReader(configDirectory+"\\"+files[i]);
+        for (int i=0; i < files.length; i++)
+          {
+            //System.out.println("First file and directory is " + configDirectory+files[i]);		
+            try
+              {
+                // Get File instance for each file
+                FileReader configFile = new FileReader(configDirectory+"\\"+files[i]);
 		      
-	   	      cfgFound = true;
+                cfgFound = true;
   	  
-  	          // Parse file name before .cfg and store the result in queryFile Vector
-        	  // Instantiate the File object.
-  	          parseConfigFile(configFile);  	     
+                // Parse file name before .cfg and store the result in queryFile Vector
+                // Instantiate the File object.
+                parseConfigFile(configFile);  	     
 			  
-		   } catch (Exception e)
-		   {
+              } catch (Exception e)
+                {
 		         
-		   	  String message = e.getMessage();
-		   	  System.err.println("Exception: " + message);
-		   	  e.printStackTrace();
-           }
+                  String message = e.getMessage();
+                  System.err.println("Exception: " + message);
+                  e.printStackTrace();
+                }
   	     
-        }// for loop
-	  }// if statement
+          }// for loop
+      }// if statement
 	  
-	  return (cfgFound);
+    return (cfgFound);
      
   }// parsefiles
   /********************************************************************************
@@ -716,41 +719,41 @@ protected void setupSubscriptions()
    ********************************************************************************/  
   private boolean parseQueryFiles(String directory)
   {
-     File queryFileDirectory = new File(directory);
-	 boolean qFound = false;
+    File queryFileDirectory = new File(directory);
+    boolean qFound = false;
   	  
-  	 // Get the File Pointer for the Directory
-  	 // and store it in queryFileDirectory
+    // Get the File Pointer for the Directory
+    // and store it in queryFileDirectory
   	  
-     // Obtain a listing of all the *.q files in the directory
-  	 // Using a filter 
-	 FilenameFilter filter = new QFilter();
-     String[] files = queryFileDirectory.list(filter);
+    // Obtain a listing of all the *.q files in the directory
+    // Using a filter 
+    FilenameFilter filter = new QFilter();
+    String[] files = queryFileDirectory.list(filter);
   	  
   	  
-   	  for (int i=0; i < files.length; i++)
-  	  {
-	     try
-	     {
-	        // Get File instance for each file
-	        FileReader queryFile = new FileReader(directory+"\\"+files[i]);
+    for (int i=0; i < files.length; i++)
+      {
+        try
+          {
+            // Get File instance for each file
+            FileReader queryFile = new FileReader(directory+"\\"+files[i]);
 			
             // A query file has been found
-		    qFound = true;
+            qFound = true;
     	  
     	    // Parse file name before .cfg and store the result in queryFile Vector
        	    // Instantiate the File object.
     	    parseQueryFile(queryFile);  	     
 			
-		 } catch (FileNotFoundException e) 
-		 {
-		    e.printStackTrace();
-		 }// catch
+          } catch (FileNotFoundException e) 
+            {
+              e.printStackTrace();
+            }// catch
     	     
       }	
-	  return (qFound);
+    return (qFound);
 	  
-	}// parseQueryFiles  
+  }// parseQueryFiles  
 	
   /********************************************************************************
    *
@@ -766,102 +769,102 @@ protected void setupSubscriptions()
    * Output:	  	None
    *
    ********************************************************************************/   
-   private void parseQueryFile(InputStreamReader queryFile) 
-   {
+  private void parseQueryFile(InputStreamReader queryFile) 
+  {
      	 	 			
-	 try 
-	 {
-		  BufferedReader in = new BufferedReader(queryFile);
-		  Properties pt = null;
+    try 
+      {
+        BufferedReader in = new BufferedReader(queryFile);
+        Properties pt = null;
 			  
-  	      for (String line = in.readLine(); line != null; line=in.readLine())
-		  {
+        for (String line = in.readLine(); line != null; line=in.readLine())
+          {
 			  
-		     line = line.trim();
+            line = line.trim();
 			  				
-		     // skip empty lines
-		     if (line.length() == 0)
-			     	  continue;
+            // skip empty lines
+            if (line.length() == 0)
+              continue;
 			  
-	  	     int len;
-		     // handle continuation lines
-		     while ((len = line.length()) > 0 && '\\' == line.charAt(len-1)) 
-		     {
-	    	    line = (line.substring(0,len-1))+(in.readLine().trim());
-		     }
-                     line = Parameters.replaceParameters(line); // parameterize
+            int len;
+            // handle continuation lines
+            while ((len = line.length()) > 0 && '\\' == line.charAt(len-1)) 
+              {
+                line = (line.substring(0,len-1))+(in.readLine().trim());
+              }
+            line = Parameters.replaceParameters(line); // parameterize
 			  
-			 char c = line.charAt(0);
+            char c = line.charAt(0);
 			  
-			 // skip comments
-			 if (c == '#')
-			     continue;
+            // skip comments
+            if (c == '#')
+              continue;
 			  
-			 // queryhandler section
-			 if (c == '%') 
-			 {
-			    String s = line.substring(1).trim(); // skip the %
-			    if (s == null || s.length() == 0 || s.equals("Global"))
-			    {
+            // queryhandler section
+            if (c == '%') 
+              {
+                String s = line.substring(1).trim(); // skip the %
+                if (s == null || s.length() == 0 || s.equals("Global"))
+                  {
 			     
-			       // global handler parameters
-			       pt = null;
-			    }
-			 	else
-			    {
-			       // s names a queryhandler class (for now)
-			       try
-			       {
-			          if (s.indexOf('.') < 0)
-			    	  { 
-					    // if the class has no package..
-			    	    // try the default package (which is the same as ours)
-			    		String pkg = globalParameters.getProperty("Package");
-			    		if (pkg != null)
-			            {
-			    		   s = pkg+"."+s;
+                    // global handler parameters
+                    pt = null;
+                  }
+                else
+                  {
+                    // s names a queryhandler class (for now)
+                    try
+                      {
+                        if (s.indexOf('.') < 0)
+                          { 
+                            // if the class has no package..
+                            // try the default package (which is the same as ours)
+                            String pkg = globalParameters.getProperty("Package");
+                            if (pkg != null)
+                              {
+                                s = pkg+"."+s;
 			 
-			    		}
-			          }// if statement
+                              }
+                          }// if statement
 			  
-                     // This code needs to be commented out before delivery MML		  
-			    	  QueryHandler cqh= (QueryHandler)(Class.forName(s).newInstance());
- 	    	          cqh.initializeQH(this, // LDMEssentialPlugIn			    		
-                                           getClusterIdentifier(),
-                                           getCluster(),
-                                           getFactory(),
-                                           pt = (Properties)globalParameters.clone(),
-                                           subscriber);
+                        // This code needs to be commented out before delivery MML		  
+                        QueryHandler cqh= (QueryHandler)(Class.forName(s).newInstance());
+                        cqh.initializeQH(this, // LDMEssentialPlugIn			    		
+                                         getClusterIdentifier(),
+                                         getCluster(),
+                                         getFactory(),
+                                         pt = (Properties)globalParameters.clone(),
+                                         subscriber);
 			
-			    	  queries.addElement(cqh);
-			      } // try statement
-				  catch (Exception bogon) 
-				  {
-			         System.err.println("Exception creating "+s+": "+bogon);
-			    	 bogon.printStackTrace();
-			      }
-			   }// else statement
-			}// if line begins with a %
-			else
-			{
-		       // should be a param=value line
-			   parseQueryParameter(((pt==null)?globalParameters:pt),
-			  			      line);
-			}// else 
+                        queries.addElement(cqh);
+                      } // try statement
+                    catch (Exception bogon) 
+                      {
+                        System.err.println("Exception creating "+s+": "+bogon);
+                        bogon.printStackTrace();
+                      }
+                  }// else statement
+              }// if line begins with a %
+            else
+              {
+                // should be a param=value line
+                parseQueryParameter(((pt==null)?globalParameters:pt),
+                                    line);
+              }// else 
 
-//if (pt != null)			
-//   pt.list(System.out);
-//else
-//   globalParameters.list(System.out);
+            //if (pt != null)			
+            //   pt.list(System.out);
+            //else
+            //   globalParameters.list(System.out);
 
-         }// for loop
-	  } 
-	  catch (Exception e) 
-	  {
+          }// for loop
+      } 
+    catch (Exception e) 
+      {
 	     
-		 e.printStackTrace();
-		 throw new RuntimeException("No QueryFile: "+e);
-	  }
+        e.printStackTrace();
+        throw new RuntimeException("No QueryFile: "+e);
+      }
          
       
   }//parseQueryFile
@@ -881,48 +884,48 @@ protected void setupSubscriptions()
    ********************************************************************************/     
   private void parseQueryParameter(Properties table, String s) 
   {
-//System.out.println("ParseQueryParameter String is " + s);  
-      int i = s.indexOf('=');
+    //System.out.println("ParseQueryParameter String is " + s);  
+    int i = s.indexOf('=');
 
-      String p = s.substring(0,i).trim();
-      String v = s.substring(i+1).trim();
-      table.put(p,v);
+    String p = s.substring(0,i).trim();
+    String v = s.substring(i+1).trim();
+    table.put(p,v);
 	  
   }// parseQueryParameter
   
   public void registerAsset( Asset anAsset ) 
   {
     
-      for (Enumeration e = propertyProviders.elements(); e.hasMoreElements();)
-	  {
+    for (Enumeration e = propertyProviders.elements(); e.hasMoreElements();)
+      {
         PropertyProvider pp = (PropertyProvider) e.nextElement();
         pp.provideProperties( anAsset );
       }
   }//registerAsset
   
   private String produceQuery(QueryHandler qh, String s) {
-      if (s.indexOf(':') < 0) {   // no params to handle
-        return s;
-      }
+    if (s.indexOf(':') < 0) {   // no params to handle
+      return s;
+    }
   
-      char[] scs = s.toCharArray();
-      int l = s.length();
-      StringBuffer sb = new StringBuffer();
+    char[] scs = s.toCharArray();
+    int l = s.length();
+    StringBuffer sb = new StringBuffer();
   
-      int i = 0;
-      while (i < l) {
-        char c = scs[i];
+    int i = 0;
+    while (i < l) {
+      char c = scs[i];
   
-        if (c == '\\') {          // quoted?
+      if (c == '\\') {          // quoted?
   	i++;
   	sb.append(scs[i]);
   	i++;
-        } else if (c == ':') {    // param subst?
+      } else if (c == ':') {    // param subst?
   	i++;
   				// find the end of the var
   	int j;
   	for (j = i; j<l && Character.isLetterOrDigit(scs[j]); j++)
-  	    ;
+          ;
   				// j is now the index of the first non symbol char past the colon
   	String param = s.substring(i,j);
   	String value = qh.getParameter(param);
@@ -932,25 +935,25 @@ protected void setupSubscriptions()
   	}
   	sb.append(value);
   	i = j;
-        } else {
+      } else {
   	sb.append(c);
   	i++;
-        }
       }
+    }
   
-      // sb contains the substituted string
-      return sb.toString();
+    // sb contains the substituted string
+    return sb.toString();
   }
   
   public void fillProperties( Asset anAsset ) 
   {
     //System.err.println("Providing properties to "+asset);
     for (Enumeration e = propertyProviders.elements(); e.hasMoreElements();)
-	{
-//System.out.println("Providing properties for " + anAsset);	
-      PropertyProvider pp = (PropertyProvider) e.nextElement();
-      pp.provideProperties( anAsset );
-    } 
+      {
+        //System.out.println("Providing properties for " + anAsset);	
+        PropertyProvider pp = (PropertyProvider) e.nextElement();
+        pp.provideProperties( anAsset );
+      } 
   }
 	
 

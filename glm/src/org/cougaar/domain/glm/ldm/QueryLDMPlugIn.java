@@ -5,9 +5,9 @@ import org.cougaar.core.cluster.ClusterImpl;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.util.Parameters;
+import org.cougaar.util.DBConnectionPool;
 import org.cougaar.domain.glm.debug.GLMDebug;
 import org.cougaar.domain.mlm.plugin.ldm.LDMEssentialPlugIn;
-import org.cougaar.domain.mlm.plugin.ldm.LDMConnectionPool;
 
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -35,7 +35,6 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     protected ClusterImpl cluster_;
     protected ClusterIdentifier clusterId_;
     protected Vector cannotHandle_ = new Vector();
-    protected LDMConnectionPool pool_;
     protected String className_ = null;
     protected Hashtable myParams_ = new Hashtable();
 
@@ -74,7 +73,7 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	// SHOULD NOT NEED TO BE CALLED!
 	fillProperties(asset);
 	cluster_.cachePrototype(aTypeName, asset);
-	GLMDebug.DEBUG(className_,clusterId_, "Cached name "+aTypeName+" w/ asset "+asset, 3);
+	//GLMDebug.DEBUG(className_,clusterId_, "Cached name "+aTypeName+" w/ asset "+asset, 3);
 	return asset;
     }
 	
@@ -132,13 +131,11 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 		}
 		else if (s.charAt(0) == '+') {
 		    myParams_.put(new String(s.substring(1)), new Boolean(true));
-		    GLMDebug.DEBUG("QueryLDMPlugIn", getClusterIdentifier(),
-				   "parseArguments(), adding "+s.substring(1));
+		    //GLMDebug.DEBUG("QueryLDMPlugIn", getClusterIdentifier(), "parseArguments(), adding "+s.substring(1));
 		}
 		else if (s.charAt(0) == '-') {
 		    myParams_.put(new String(s.substring(1)), new Boolean(false));
-		    GLMDebug.DEBUG("QueryLDMPlugIn", getClusterIdentifier(),
-				   "parseArguments(), adding "+s.substring(1));
+		    //GLMDebug.DEBUG("QueryLDMPlugIn", getClusterIdentifier(), "parseArguments(), adding "+s.substring(1));
 		}
 		else {
 		    // If it was not a key/value pair then it is a query file
@@ -229,7 +226,14 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
     // initialize driver and obtain info to execute a query
     protected void initializeDriver() {
 	String driverName = getParm("Driver");
-	registerDriver(driverName);
+        if (driverName != null) {
+          try {
+            DBConnectionPool.registerDriver(driverName);
+          } catch (Exception e) {
+            System.err.println("Could not register driver "+driverName+":");
+            e.printStackTrace();
+          }
+        }
   	url_ = getParm("Database");
 	user_ = getParm("Username"); 
 	password_= getParm("Password");
@@ -241,79 +245,44 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 	// String queryFile = "";
 	int nTries= Integer.parseInt(getParm("NUMBER_OF_TRIES"));
 	//try {
-	pool_  = new LDMConnectionPool(url_, user_, password_,
-				       minPoolSize, maxPoolSize,
-				       timeout, nTries);			
-	    //} catch (Exception e) {
-	// 	    throw new RuntimeException(this.toString()+": Couldn't initializeDriver: "+e);
-	// 	}
-	GLMDebug.DEBUG(className_,"initialized driver");
-    }
-
-    // keep track of all registered JDBC drivers.
-    private static Hashtable drivers = new Hashtable();
-    
-    private void registerDriver(String driverName) {
-	if (drivers.get(driverName) != null) 
-	    return;
-	try {
-	    Driver driver = (Driver)(Class.forName(driverName).newInstance());
-	    DriverManager.registerDriver(driver);
-	    drivers.put(driverName,driver);
-	} catch (Exception er) {
-	    throw new RuntimeException(this.toString()+": Couldn't register the Oracle JDBC driver: "+er);
-	}
+	//GLMDebug.DEBUG(className_,"initialized driver");
     }
 
     public Vector executeQuery(String query) {
 	Vector result = new Vector();
 	ResultSet rs = null;
-	Connection conn = getConnection();
-	if (conn != null) {
-	    try {
-		Statement statement = conn.createStatement();
-		rs = statement.executeQuery(query);
-		ResultSetMetaData md = rs.getMetaData();
-		int ncols = md.getColumnCount();
-		Object row[] = new Object[ncols];
-		while (rs.next()) {
-		    for (int i = 0; i < ncols; i++) {
-			row[i] = rs.getObject(i+1);
-		    }
-		    result.add((Object[])row.clone());
-		}
-		statement.close();
-		releaseConnection(conn);
-	    } catch (java.sql.SQLException sqle) {
-		GLMDebug.ERROR(className_,"executeQuery fail to createStatement "+sqle);
-		releaseConnection(conn);
-		return null;
-	    } finally {
-		if (conn != null) {
-		    releaseConnection(conn);
-		}
-	    }
-	} else {
-	    GLMDebug.ERROR(className_,"executeQuery fail to connect "+url_);
-	}
-
+	Connection conn = null;
+        try {
+          conn = getConnection();
+          Statement statement = conn.createStatement();
+          rs = statement.executeQuery(query);
+          ResultSetMetaData md = rs.getMetaData();
+          int ncols = md.getColumnCount();
+          Object row[] = new Object[ncols];
+          while (rs.next()) {
+            for (int i = 0; i < ncols; i++) {
+              row[i] = rs.getObject(i+1);
+            }
+            result.add((Object[])row.clone());
+          }
+          statement.close();
+        } catch (java.sql.SQLException sqle) {
+          GLMDebug.ERROR(className_,"executeQuery fail to createStatement "+sqle);
+          return null;
+        } finally {
+          if (conn != null)
+            releaseConnection(conn);
+        }
 	return result;
     }
 
-    protected Connection getConnection() {
- 	Connection conn = pool_.getConnection();
-// 	Connection conn = null;
-// 	try {
-// 	    conn = DriverManager.getConnection(url_, user_, password_);
-// 	} catch (Exception sqle) {
-// 	    GLMDebug.ERROR(className_,"getConnection("+url_+","+user_+","+password_+") "+sqle);
-// 	}
-	return conn;
+    protected Connection getConnection() throws SQLException {
+      return DBConnectionPool.getConnection(url_, user_, password_);
     }
 
     protected void releaseConnection(Connection conn) {
 	try {
-	    conn.close();
+          conn.close();
 	} catch (java.sql.SQLException sqle) {
 	    GLMDebug.ERROR(className_,"releaseConnection "+sqle);
 	}
