@@ -80,7 +80,7 @@ public class PublicationKey
 	    key += " ORG:"+((Organization)a).getClusterIdentifier().getAddress();
 	} else {
 	    ScheduledContentPG prop = (ScheduledContentPG) a.searchForPropertyGroup(ScheduledContentPG.class);
-	    if (prop != null) {
+	    if ((a instanceof Inventory) && (prop != null)) {
 		key +=" INVENTORY ASSET "+getKey(prop.getAsset());
 	    }
 	    PhysicalPG phys_prop = (PhysicalPG) a.searchForPropertyGroup(PhysicalPG.class);
@@ -137,7 +137,6 @@ public class PublicationKey
    public static String getTaskKey(Task task)
     {
 	String key = "VERB:"+task.getVerb().toString();
-	
 	Asset direct_obj = task.getDirectObject();
 	if (direct_obj != null) {
 	    key += " "+getKey(direct_obj);
