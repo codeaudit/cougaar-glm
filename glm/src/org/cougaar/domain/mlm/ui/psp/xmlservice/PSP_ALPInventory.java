@@ -34,8 +34,12 @@ import org.cougaar.domain.glm.ldm.policy.*;
 import org.cougaar.domain.mlm.ui.data.UIInventoryImpl;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
+import org.cougaar.domain.mlm.ui.data.UISimpleNamedScheduleNames;
 
-public class PSP_ALPInventory extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber {
+public class PSP_ALPInventory
+  extends PSP_BaseAdapter
+  implements PlanServiceProvider, UISubscriber, UISimpleNamedScheduleNames
+{
   private String myID;
   public String desiredAssetName;
 
@@ -111,40 +115,34 @@ public class PSP_ALPInventory extends PSP_BaseAdapter implements PlanServiceProv
     inv.setBaseCDay(cDay);
 
     if (scheduleType.equals(PlanScheduleType.TOTAL_CAPACITY)) {
-	//      inv.addNamedSchedule(UISimpleNamedSchedule.ALLOCATED, inventory.getDueOutSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.ALLOCATED, inventory.getDueOutLaborSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.TOTAL_LABOR, inventory.getLaborSchedule());
+      inv.addNamedSchedule(ALLOCATED,   inventory.getDueOutLaborSchedule());
+      inv.addNamedSchedule(TOTAL_LABOR, inventory.getLaborSchedule());
     } else if (scheduleType.equals(PlanScheduleType.ACTUAL_CAPACITY)) {
-	//      inv.addNamedSchedule(UISimpleNamedSchedule.ALLOCATED, inventory.getDueOutSchedule());
-	inv.addNamedSchedule(UISimpleNamedSchedule.ALLOCATED, inventory.getDueOutLaborSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.ON_HAND, inventory.getOnHandSchedule());
+      inv.addNamedSchedule(ALLOCATED, inventory.getDueOutLaborSchedule());
+      inv.addNamedSchedule(ON_HAND,   inventory.getOnHandSchedule());
     } else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
-      inv.addNamedSchedule(UISimpleNamedSchedule.ON_HAND, inventory.getOnHandSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.DUE_IN, inventory.getDueInSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN, inventory.getUnconfirmedDueInSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
-			   inventory.getRequestedDueInSchedule());
+      inv.addNamedSchedule(ON_HAND,                     inventory.getOnHandSchedule());
+      inv.addNamedSchedule(DUE_IN,                      inventory.getDueInSchedule());
+      inv.addNamedSchedule(UNCONFIRMED_DUE_IN,          inventory.getUnconfirmedDueInSchedule());
+      inv.addNamedSchedule(REQUESTED_DUE_IN,            inventory.getRequestedDueInSchedule());
+      inv.addNamedSchedule(DUE_IN            +INACTIVE, inventory.getDueInSchedule());
+      inv.addNamedSchedule(UNCONFIRMED_DUE_IN+INACTIVE, inventory.getUnconfirmedDueInSchedule());
+      inv.addNamedSchedule(REQUESTED_DUE_IN  +INACTIVE, inventory.getRequestedDueInSchedule());
 
-      inv.addNamedSchedule(UISimpleNamedSchedule.DUE_OUT, inventory.getDueOutSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_DUE_OUT, inventory.getProjectedDueOutSchedule());
+      inv.addNamedSchedule(DUE_OUT,                     inventory.getDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_DUE_OUT,           inventory.getProjectedDueOutSchedule());
+                           
+      inv.addNamedSchedule(REQUESTED_DUE_OUT,           inventory.getRequestedDueOutSchedule());
+      inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT, inventory.getProjectedRequestedDueOutSchedule());
 
-      inv.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_OUT, 
-			   inventory.getRequestedDueOutSchedule());
-      inv.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT, 
-			   inventory.getProjectedRequestedDueOutSchedule());
-
- //       inv.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_OUT_SHORTFALL, 
-//  			   inventory.getDueOutShortfallSchedule());
+//    inv.addNamedSchedule(REQUESTED_DUE_OUT_SHORTFALL, inventory.getDueOutShortfallSchedule());
     } 
     else if (scheduleType.equals(inventory.NO_INVENTORY_SCHEDULE_JUST_CONSUME)){
-	inv.addNamedSchedule(UISimpleNamedSchedule.DUE_IN, inventory.getDueInSchedule());
-	inv.addNamedSchedule(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN, inventory.getUnconfirmedDueInSchedule());
-	inv.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
-			   inventory.getRequestedDueInSchedule());
-	inv.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_DUE_IN, 
-			   inventory.getProjectedDueInSchedule());
-	inv.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN, 
-			   inventory.getProjectedRequestedDueInSchedule());
+	inv.addNamedSchedule(DUE_IN,                     inventory.getDueInSchedule());
+	inv.addNamedSchedule(UNCONFIRMED_DUE_IN,         inventory.getUnconfirmedDueInSchedule());
+	inv.addNamedSchedule(REQUESTED_DUE_IN,           inventory.getRequestedDueInSchedule());
+	inv.addNamedSchedule(PROJECTED_DUE_IN,           inventory.getProjectedDueInSchedule());
+	inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN, inventory.getProjectedRequestedDueInSchedule());
 
 	System.out.println("getInventoryForClient: returning schedule type: " + scheduleType);
 

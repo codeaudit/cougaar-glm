@@ -30,10 +30,13 @@ import javax.swing.*;
 import org.cougaar.domain.mlm.ui.data.UIInventoryImpl;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
+import org.cougaar.domain.mlm.ui.data.UISimpleNamedScheduleNames;
 import org.cougaar.domain.mlm.ui.data.UIQuantityScheduleElement;
 
-public class InventoryChart extends JPanel implements JCPickListener,
-ActionListener {
+public class InventoryChart
+    extends JPanel
+    implements JCPickListener, ActionListener, UISimpleNamedScheduleNames
+{
     JCChart chart=null;
     InventoryLegend legend=null;
     GridBagConstraints legendLocale=null;
@@ -215,29 +218,22 @@ ActionListener {
 	    onHand.add(new UIQuantityScheduleElement(lastNow,
 						     currNow,
 						     currInventory));
-	    
-
-	    
-	    
 	}
 	
 
-	inventory.addNamedSchedule(UISimpleNamedSchedule.ON_HAND,onHand);
-	inventory.addNamedSchedule(UISimpleNamedSchedule.DUE_IN,dueIns);
-	inventory.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_IN,reqDueIns);
-	
-	inventory.addNamedSchedule(UISimpleNamedSchedule.DUE_OUT,dueOuts);
-	inventory.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_OUT,reqDueOuts);
-
-	inventory.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_DUE_OUT,
-				   projDueOuts);
-	inventory.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT,
-				   reqProjDueOuts);
+	inventory.addNamedSchedule(ON_HAND, onHand);
+	inventory.addNamedSchedule(DUE_IN, dueIns);
+	inventory.addNamedSchedule(REQUESTED_DUE_IN, reqDueIns);
+	                           
+	inventory.addNamedSchedule(DUE_OUT, dueOuts);
+	inventory.addNamedSchedule(REQUESTED_DUE_OUT, reqDueOuts);
+                                   
+	inventory.addNamedSchedule(PROJECTED_DUE_OUT, projDueOuts);
+	inventory.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT, reqProjDueOuts);
 
 	// MWD Uncomment to get Unconfirmed into the mix.
-	//	inventory.addNamedSchedule(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN,unconfirmedDueIns);
+//	inventory.addNamedSchedule(UNCONFIRMED_DUE_IN,unconfirmedDueIns);
 
-	
 	return inventory;
 
     }
@@ -469,8 +465,8 @@ ActionListener {
 	setChartTitle(title);
 	//MWD Remove
 	//Vector scheduleTypes = new Vector(2);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.TOTAL_LABOR);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+	//scheduleTypes.addElement(TOTAL_LABOR);
+	//scheduleTypes.addElement(ALLOCATED);
 	addView(chart, JCChart.AREA,
 		createInventoryDataModel(inventory, TOTAL_CAPACITY_LEGEND));
     }
@@ -480,12 +476,12 @@ ActionListener {
 	setChartTitle(title);
 	//MWD Remove
 	//Vector scheduleTypes = new Vector(1);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
+	//scheduleTypes.addElement(ON_HAND);
 	addView(chart, JCChart.AREA,
 		createInventoryDataModel(inventory, INVENTORY_LEGEND));
 	//MWD Remove
 	//scheduleTypes = new Vector(1);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+	//scheduleTypes.addElement(ALLOCATED);
 	addView(chart, JCChart.BAR, 
 		createInventoryDataModel(inventory, ALLOCATED_LEGEND));
     }
@@ -493,15 +489,17 @@ ActionListener {
     // Fix up inventory by making sure if there is a requested schedule,
     // and no actual series then add one.
     private void equalizeInventorySchedule(UISimpleInventory inventory) {
-	String[][] reqActTable = {{UISimpleNamedSchedule.REQUESTED_DUE_IN,
-				   UISimpleNamedSchedule.DUE_IN},
-				  {UISimpleNamedSchedule.REQUESTED_DUE_OUT,
-				   UISimpleNamedSchedule.DUE_OUT},
-				  {UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT,
-				   UISimpleNamedSchedule.PROJECTED_DUE_OUT}};
+	String[][] reqActTable = {
+            {REQUESTED_DUE_IN, DUE_IN},
+            {REQUESTED_DUE_OUT, DUE_OUT},
+            {PROJECTED_REQUESTED_DUE_OUT, PROJECTED_DUE_OUT},
+            {REQUESTED_DUE_IN + INACTIVE, DUE_IN + INACTIVE},
+            {REQUESTED_DUE_OUT + INACTIVE, DUE_OUT + INACTIVE},
+            {PROJECTED_REQUESTED_DUE_OUT + INACTIVE, PROJECTED_DUE_OUT + INACTIVE}
+        };
 
-	for(int i=0; i<reqActTable.length; i++) {
-	    UISimpleNamedSchedule req,act;
+	for (int i = 0; i < reqActTable.length; i++) {
+	    UISimpleNamedSchedule req, act;
 	    req = inventory.getNamedSchedule(reqActTable[i][0]);
 	    act = inventory.getNamedSchedule(reqActTable[i][1]);
 	    if((req!=null) && (act == null)) {
@@ -529,7 +527,7 @@ ActionListener {
 
 
 	// if no on hand schedule, then don't plot an inventory graph
-	if (inventory.getNamedSchedule(UISimpleNamedSchedule.ON_HAND) == null) {
+	if (inventory.getNamedSchedule(ON_HAND) == null) {
 	    JOptionPane.showMessageDialog(null, "No data received",
 					  "No data received",
 					  JOptionPane.ERROR_MESSAGE);
@@ -546,12 +544,12 @@ ActionListener {
 	// On Hand
 	// MWD Remove
 	//scheduleTypes = new Vector(1);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
+	//scheduleTypes.addElement(ON_HAND);
 	InventoryChartDataModel chartDataModel = createInventoryDataModel(inventory, 
 									  INVENTORY_LEGEND);
 	ChartDataView icv = addView(chart, JCChart.BAR, chartDataModel);
 	((JCBarChartFormat)icv.getChartFormat()).setClusterWidth(100);
-	icv.setOutlineColor(colorTable.get(UISimpleNamedSchedule.ON_HAND));
+	icv.setOutlineColor(colorTable.get(ON_HAND));
 
 	// Requested
 	InventoryChartDataModel requested = 
@@ -722,37 +720,37 @@ ActionListener {
 	//MWD
 	Vector scheduleTypes = new Vector(3);
 	if(legendTitle.equals(INVENTORY_LEGEND)) {
-	    scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
+	    scheduleTypes.addElement(ON_HAND);
 	}
 	else if(legendTitle.equals(REQUESTED_INVENTORY_LEGEND)) {
-	    scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_IN);
-	    scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_OUT);
-	    scheduleTypes.addElement(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT);
+	    scheduleTypes.addElement(REQUESTED_DUE_IN);
+	    scheduleTypes.addElement(REQUESTED_DUE_OUT);
+	    scheduleTypes.addElement(PROJECTED_REQUESTED_DUE_OUT);
 	}
 	else if(legendTitle.equals(ACTUAL_INVENTORY_LEGEND)) {
-	    scheduleTypes.add(UISimpleNamedSchedule.DUE_IN);
-	    scheduleTypes.add(UISimpleNamedSchedule.DUE_OUT);
-	    scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_OUT);
+	    scheduleTypes.add(DUE_IN);
+	    scheduleTypes.add(DUE_OUT);
+	    scheduleTypes.add(PROJECTED_DUE_OUT);
 	}
 	else if(legendTitle.equals(REQUESTED_SUPPLY_LEGEND)) {
-	    scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_IN);
-	    scheduleTypes.addElement(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN);
+	    scheduleTypes.addElement(REQUESTED_DUE_IN);
+	    scheduleTypes.addElement(PROJECTED_REQUESTED_DUE_IN);
 	}
 	else if(legendTitle.equals(ACTUAL_SUPPLY_LEGEND)) {
-	    scheduleTypes.add(UISimpleNamedSchedule.DUE_IN);
-	    scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_IN);
+	    scheduleTypes.add(DUE_IN);
+	    scheduleTypes.add(PROJECTED_DUE_IN);
 	}
 	else if(legendTitle.equals(SHORTFALL_LEGEND)) {
 	}
 	else if(legendTitle.equals(TOTAL_CAPACITY_LEGEND)) {
-	    scheduleTypes.addElement(UISimpleNamedSchedule.TOTAL_LABOR);
-	    scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+	    scheduleTypes.addElement(TOTAL_LABOR);
+	    scheduleTypes.addElement(ALLOCATED);
 	}
 	else if(legendTitle.equals(ALLOCATED_LEGEND)) {
-	    scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+	    scheduleTypes.addElement(ALLOCATED);
 	}
 	else if(legendTitle.equals(UNCONFIRMED_LEGEND)) {
-	    scheduleTypes.add(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN);
+	    scheduleTypes.add(UNCONFIRMED_DUE_IN);
 	}
 	else {
 	    throw new RuntimeException("Unknown legend title");
@@ -787,7 +785,7 @@ ActionListener {
 
       if (inventoryFlag) {
 	  UISimpleNamedSchedule tmp =
-		inventory.getNamedSchedule(UISimpleNamedSchedule.ON_HAND);
+		inventory.getNamedSchedule(ON_HAND);
 	    if (tmp != null)
 		onHandSchedule = tmp.getSchedule();
       }

@@ -88,6 +88,11 @@ public class UIInventoryImpl {
   TimeSpanSet requestedDueInSchedule = new TimeSpanSet();
   TimeSpanSet projectedDueInSchedule = new TimeSpanSet();
   TimeSpanSet projectedRequestedDueInSchedule = new TimeSpanSet();
+  TimeSpanSet inactiveDueInSchedule = new TimeSpanSet();
+  TimeSpanSet inactiveUnconfirmedDueInSchedule = new TimeSpanSet();
+  TimeSpanSet inactiveRequestedDueInSchedule = new TimeSpanSet();
+  TimeSpanSet inactiveProjectedDueInSchedule = new TimeSpanSet();
+  TimeSpanSet inactiveProjectedRequestedDueInSchedule = new TimeSpanSet();
 
   Vector dueOutSchedule = null;
   Vector dueOutLaborSchedule = null;
@@ -96,6 +101,11 @@ public class UIInventoryImpl {
   Vector onHandSchedule = null;
   Vector laborSchedule = null;
   Vector requestedDueOutSchedule = null;
+  Vector inactiveDueOutSchedule = null;
+  Vector inactiveDueOutLaborSchedule = null;
+  Vector inactiveProjectedDueOutSchedule = null;
+  Vector inactiveProjectedDueOutLaborSchedule = null;
+  Vector inactiveRequestedDueOutSchedule = null;
 //    Vector dueOutShortfallSchedule = null;
   Schedule ALPRequestedDueOutSchedule = null;
   Schedule ALPProjectedRequestedDueOutSchedule = null;

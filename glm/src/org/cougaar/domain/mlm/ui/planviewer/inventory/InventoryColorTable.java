@@ -20,49 +20,54 @@ public class InventoryColorTable {
 
   public InventoryColorTable() {
     colorTable = new Hashtable();
-    colorTable.put(UISimpleNamedSchedule.ON_HAND, 
+    twoPut(UISimpleNamedSchedule.ON_HAND, 
 		   new Color(255, 255, 204)); // light yellow
-    //    colorTable.put(UISimpleNamedSchedule.DUE_IN, 
+    //    twoPut(UISimpleNamedSchedule.DUE_IN, 
     //             new Color(102, 51, 255));  // blue
-    //    colorTable.put(UISimpleNamedSchedule.DUE_OUT, 
+    //    twoPut(UISimpleNamedSchedule.DUE_OUT, 
     //             new Color(0, 204, 0));     // green
-    //    colorTable.put(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
+    //    twoPut(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
     //             new Color(153, 153, 255)); // light blue
-    //    colorTable.put(UISimpleNamedSchedule.REQUESTED_DUE_OUT, 
+    //    twoPut(UISimpleNamedSchedule.REQUESTED_DUE_OUT, 
     //             new Color(153, 255, 153)); // light green
-    colorTable.put(UISimpleNamedSchedule.DUE_IN, 
+    twoPut(UISimpleNamedSchedule.DUE_IN, 
                    new Color(0, 0, 150));  // blue
-    colorTable.put(UISimpleNamedSchedule.DUE_OUT, 
+    twoPut(UISimpleNamedSchedule.DUE_OUT, 
                    new Color(0, 100, 0));     // green
-    colorTable.put(UISimpleNamedSchedule.PROJECTED_DUE_OUT, 
+    twoPut(UISimpleNamedSchedule.PROJECTED_DUE_OUT, 
                    new Color(255,180,0));     // orange
-    colorTable.put(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
+    twoPut(UISimpleNamedSchedule.REQUESTED_DUE_IN, 
 		   new Color(160, 160, 255)); // light blue
-    colorTable.put(UISimpleNamedSchedule.REQUESTED_DUE_OUT, 
+    twoPut(UISimpleNamedSchedule.REQUESTED_DUE_OUT, 
 		   new Color(120, 225, 120)); // light green
-    colorTable.put(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT, 
+    twoPut(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT, 
                    new Color(255, 210, 120));     // light orange
-    colorTable.put(UISimpleNamedSchedule.PROJECTED_DUE_IN, 
+    twoPut(UISimpleNamedSchedule.PROJECTED_DUE_IN, 
                    new Color(0, 100, 100));     //light blue - green 
-    colorTable.put(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN, 
+    twoPut(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN, 
                    new Color(100,220,220));     // light blue-green
     
-    //    colorTable.put(UISimpleNamedSchedule.TOTAL, 
+    //    twoPut(UISimpleNamedSchedule.TOTAL, 
     //             new Color(0, 153, 0));     // forest green
-    colorTable.put(UISimpleNamedSchedule.ALLOCATED, 
-                   new Color(127, 127, 255)); // blue
-    colorTable.put(UISimpleNamedSchedule.TOTAL_LABOR_8, 
-                   new Color(0, 153, 0));     // darkest green
-    colorTable.put(UISimpleNamedSchedule.TOTAL_LABOR_10, 
-                   new Color(0, 200, 0));     // medium green
-    colorTable.put(UISimpleNamedSchedule.TOTAL_LABOR_12, 
-                   new Color(0, 225, 0));     // lightest green
+    twoPut(UISimpleNamedSchedule.ALLOCATED, 
+           new Color(127, 127, 255)); // blue
+    twoPut(UISimpleNamedSchedule.TOTAL_LABOR_8, 
+           new Color(0, 153, 0));     // darkest green
+    twoPut(UISimpleNamedSchedule.TOTAL_LABOR_10, 
+           new Color(0, 200, 0));     // medium green
+    twoPut(UISimpleNamedSchedule.TOTAL_LABOR_12, 
+           new Color(0, 225, 0));     // lightest green
+  }
+
+  private void twoPut(String key, Color value) {
+    colorTable.put(key, value);
+    colorTable.put(key + UISimpleNamedSchedule.INACTIVE, value);
   }
 
   public Color get(String s) {
     if (colorTable.get(s) == null)
       return Color.white;
-    return (Color)colorTable.get(s);
+    return (Color) colorTable.get(s);
   }
 
 }
