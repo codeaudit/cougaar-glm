@@ -146,7 +146,7 @@ public class UTILPrepPhrase {
   /**
    * Add a prepositionalPhrase to a task. Changes list of phrases on task.
    *
-   * @param tasktoAddTo task to add prep phrase to
+   * @param taskToAddTo task to add prep phrase to
    * @param prepPhrase to add to list of prep phrases on task
    */
   public void addPrepToTask (Task taskToAddTo, PrepositionalPhrase prepPhrase) {

@@ -92,10 +92,10 @@ public class InstanceParser{
    * Make a new asset of the specified prototype and bumper #.
    * Also gives it a default schedule.
    *
-   * @param ldm   - place to get new instances
-   * @param prototype    - what kind of asset is it
-   * @param id           - unique identifier within kind
-   * @param newScheduler - initial availability
+   * @param ldm place to get new instances
+   * @param prototype what kind of asset is it
+   * @param id unique identifier within kind
+   * @param newSchedule initial availability
    * @return the new asset!
    */
   protected Asset makeNewAsset (LDMServesPlugin ldm, 

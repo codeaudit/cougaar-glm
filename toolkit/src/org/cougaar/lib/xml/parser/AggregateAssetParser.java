@@ -49,8 +49,8 @@ public class AggregateAssetParser{
    *
    * Insensitive to the case of the <aggregateasset> tag.  (So <AggregateAsset> is OK too.)
    *
-   * @param ldmFactory - the factory to ask to create instances
-   * @param node       - the AggregateAsset document node itself
+   * @param ldm the factory to ask to create instances
+   * @param node the AggregateAsset document node itself
    * @return an aggregate asset that corresponds to the node
    */
   public AggregateAsset getAggregate(LDMServesPlugin ldm, Node node){

@@ -314,8 +314,8 @@ public abstract class UTILAllocatorPluginAdapter
    *
    * </pre>
    * @param alloc the allocation that should be rescinded
-   * @see UTILPluginAdapter#updateAllocationResult(PlanElement)
-   * @see UTILAllocationListener#updateAllocationResult(PlanElement)
+
+
    * @see org.cougaar.lib.callback.UTILAllocationCallback#reactToChangedAlloc
    * @see #needToRescind
    */

@@ -357,8 +357,8 @@ public class UTILPreference {
   /**
    * get the Cost preference of a task.
    *
-   * @param  Task t - the Task object
-   * @return Date date at which task is ready
+   * @param t the Task object
+   * @return date at which task is ready
    */
 
   public double getCost(Task t) {
@@ -383,8 +383,8 @@ public class UTILPreference {
   /**
    * get the Quantity preference of a task.
    *
-   * @param  Task t - the Task object
-   * @return Date date at which task is ready
+   * @param t the Task object
+   * @return date at which task is ready
    */
 
   public long getQuantity(Task t) {
@@ -410,8 +410,8 @@ public class UTILPreference {
    * Returns the READYAT Date from task object, or new Date if READYAT 
    * date is null
    *
-   * @param  Task t - the Task object
-   * @return Date date at which task is ready
+   * @param t the Task object
+   * @return date at which task is ready
    */
 
   public Date getReadyAt(Task t) {
@@ -439,8 +439,8 @@ public class UTILPreference {
   /**
    * Returns the POD Date from task object, null if POD date not a pref on this task
    *
-   * @param  Task t - the Task with the pref
-   * @return Date point of departure date for task, null if no POD date pref
+   * @param t the Task with the pref
+   * @return point of departure date for task, null if no POD date pref
    */
 
   public Date getPODDate(Task t) {

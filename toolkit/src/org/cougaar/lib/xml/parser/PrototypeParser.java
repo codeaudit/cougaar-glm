@@ -68,7 +68,6 @@ public class PrototypeParser {
    * @param node that defines the prototype
    * @param return_first says whether to return the prototype before cacheing it
    * @return prototype defined by node
-   * @see org.cougaar.mlm.plugin.xml.XMLPrototypeProviderPlugin#getPrototype
    * @see org.cougaar.lib.xml.parser.ObjectParser#getObject
    */ 
   public Asset cachePrototype(LDMServesPlugin ldm, Node node,

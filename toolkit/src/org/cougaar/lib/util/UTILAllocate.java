@@ -595,8 +595,8 @@ public class UTILAllocate {
   /**
    * Utility function for creating AspectValues from type and value arrays
    *
-   * @param aspectArray type array
-   * @param resultsArray value array
+   * @param aspectarray type array
+   * @param resultsarray value array
    * @return AspectValue array
    */
   public AspectValue [] getAspectsFromArrays (int [] aspectarray,

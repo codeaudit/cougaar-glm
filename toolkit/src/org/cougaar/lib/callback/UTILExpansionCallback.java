@@ -287,7 +287,7 @@ public class UTILExpansionCallback extends UTILFilterCallbackAdapter {
    * the reported alloc result will remain marked as failed, even
    * after the failed subtasks have been removed.
    *
-   * @param SubTaskResults All subtask results
+   * @param subTaskResults All subtask results
    * @return number of failed sub tasks
    */
   protected int getNumFailedSubTasks (List subtaskResults) {
