@@ -30,6 +30,7 @@ import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.plan.Verb;
 
 public interface GLSConstants {
+  // This is used by SDClientPlugin
   final String FOR_OPLAN_STAGES = "ForOplanStages";
   final String WITH_C0 = "WithC0";
   final String FOR_ROOT = "ForRoot";
