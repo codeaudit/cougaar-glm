@@ -237,14 +237,18 @@ public class GLSExpanderPlugin extends ComponentPlugin {
    * @param task The Task to expand.
    **/
   public void expand(Task task) {
-    
     Vector subtasks = new Vector();
     subtasks.addElement(createForSubordinatesTask(task));
     
     for (int i = 0; i < myParams.length; i++) {
       subtasks.addElement(createDetermineRequirementsTask(task, myParams[i]));
     }
-    Expansion exp = PluginHelper.wireExpansion(task, subtasks, theLDMF);
+
+    AllocationResult estResult = 
+        PluginHelper.createEstimatedAllocationResult(task, theLDMF, 0.0, true);
+    Expansion exp = PluginHelper.wireExpansion(task, subtasks, theLDMF, 
+					       estResult);
+
     //use the helper to publish the expansion and the wf subtasks all in one
     PluginHelper.publishAddExpansion(blackboard, exp);
   }
