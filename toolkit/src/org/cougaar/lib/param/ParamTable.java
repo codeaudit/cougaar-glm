@@ -13,42 +13,50 @@ package org.cougaar.lib.param;
 import org.cougaar.util.ConfigFinder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.xerces.parsers.SAXParser;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.DocumentHandler;
 import org.xml.sax.EntityResolver;
-//import org.xml.sax.HandlerBase;
 import org.xml.sax.InputSource;
-//import org.xml.sax.Parser;
-//import org.xml.sax.helpers.ParserFactory;
 
 import org.cougaar.lib.plugin.UTILEntityResolver;
 import org.cougaar.lib.xml.parser.ParamParser;
+import org.cougaar.lib.param.ParamMap;
 
 /**
+ * <pre>
  * Class that encapsulates a parameter table.  The table consists of
- * [name, com.bbn.tops.param.Parameter] pairs.  If a parameter does not exist,
+ * [name, org.cougaar.lib.param.ParamTable] pairs.  If a parameter does not exist,
  * a ParamException will be thrown. this is not a RuntimeException,
  * so clients must use the try{}catch{} trick.  The catch block is a 
  * good place to put "default" values for the parameters.
  *
  */
-public class ParamTable{
+public class ParamTable implements ParamMap {
 
+  public static boolean debug = 
+	"true".equals (System.getProperty ("org.cougaar.lib.param.ParamTable.debug", 
+									   "false"));
+  public static boolean showMissingFiles = 
+	"true".equals (System.getProperty ("org.cougaar.lib.param.ParamTable.showMissingFiles", 
+									   "true"));
+  
   /**
    * No default Constructor.
    */
   private ParamTable() {}
 
   /**
+   * <pre>
    * Constructor. In the act of building a the parameter handler
    * we pass that class a pointer to ourselves so that it can 
    * call our addParam() method.
@@ -67,10 +75,11 @@ public class ParamTable{
    *
    * envParams MUST have a param "envFile".  It specifies the parse file!
    *
+   * </pre>
    * @param envParams vector of ParamParse-able strings
    */
   public ParamTable(Vector envParams){
-    paramTable = new Hashtable();
+    paramTable = new HashMap ();
 
     // environment parameters are "name={type}value" or "name=StringValue"
     // parse parameters.  Remember these special ones: envDir, envFile
@@ -110,29 +119,49 @@ public class ParamTable{
     }
 
     String pfile = envDir + envFile;
-    try {
-	InputStream inputStream = ConfigFinder.getInstance().open(pfile);
 
-	// must specify which parser to use.
-	//	Parser parser = ParserFactory.makeParser("com.ibm.xml.parsers.SAXParser");
-	SAXParser parser = new SAXParser();
-	//	parser.setDocumentHandler(new ParamHandler(this));
-	parser.setContentHandler(new ParamHandler(this));
-	parser.setEntityResolver (new UTILEntityResolver ());
-	InputSource is = new InputSource (inputStream);
-	is.setSystemId (pfile);
-	parser.parse(is);
-    }
-    catch(Exception e){
-      System.err.println(e.getMessage());
-      e.printStackTrace();
-//        System.out.println ("Config path is " + ConfigFinder.configPath);
-    }
-
+	populateParamMap (pfile);
+	
     // add environment parameters, replacing any from file
     for (Enumeration pv = envPV.elements(); pv.hasMoreElements();) {
       Param p = (Param) pv.nextElement();
       addParam(p.getName(), p);
+    }
+  }
+
+  /** 
+   * Given the XML parameter file <code>pfile</code>, parse it and <p>
+   * use the ParamHandler to populate the parameter map.
+   *
+   * Also uses UTILEntityResolver to find any entities that have   <p>
+   * been included in the xml file.  The Entity Resolver uses the  <p>
+   * ConfigFinder to find referenced files.
+   *
+   * @param pfile parameter file to read
+   * @see org.cougaar.lib.param.ParamHandler#startElement
+   * @see org.cougaar.lib.plugin.UTILEntityResolver#resolveEntity
+   **/
+  protected void populateParamMap (String pfile) {
+    try {
+	  InputStream inputStream = ConfigFinder.getInstance().open(pfile);
+
+	  SAXParser parser = new SAXParser();
+	  parser.setContentHandler(new ParamHandler(this));
+	  parser.setEntityResolver (new UTILEntityResolver ());
+	  InputSource is = new InputSource (inputStream);
+	  is.setSystemId (pfile);
+	  parser.parse(is);
+    }
+    catch(Exception e){
+	  if (debug) {
+		System.err.println(e.getMessage());
+		e.printStackTrace();
+	  }
+	  if (showMissingFiles && (e instanceof FileNotFoundException)) {
+		System.err.println("ParamTable.populateParamMap - could not find env.xml file : "+
+						   e.getMessage() + "\nTurn this message off with " +
+						   "-Dorg.cougaar.lib.param.ParamTable.showMissingFiles=false");
+	  }
     }
   }
   
@@ -152,29 +181,12 @@ public class ParamTable{
     return copy;
   }
 
-  public static String getInstallRelativeEnvDir (final String envDir) {
-    File envDirectory = new File(envDir);
-    String installRelativeDir = new String (envDir);
-    if (!envDirectory.exists() && !envDirectory.isAbsolute()) {
-      if (envDir.startsWith ("../")) {
-	installRelativeDir = 
-	  getWithSlashAppended (System.getProperties().getProperty("org.cougaar.install.path")) + 
-	  envDir.substring (3, envDir.length ());
-      } else {
-	installRelativeDir = 
-	  getWithSlashAppended (System.getProperties().getProperty("org.cougaar.install.path")) + 
-	  envDir;
-      }
-    }
-    return getWithSlashAppended (installRelativeDir);
-  }
-
   /**
    * Add a parameter into the parameter table.
    * @param n name of the paramter
    * @param p the parameter to add
    */
-  void addParam(String n, Param p){
+  public void addParam(String n, Param p){
     paramTable.put(n, p);
   }
   
@@ -269,6 +281,7 @@ public class ParamTable{
     throw new ParamException("parameter " + name + " not found");
   }
 
+  /** show the parameters in the map **/
   public String toString () {
     StringBuffer sb = new StringBuffer ();
     for (Iterator i = paramTable.keySet().iterator ();
@@ -279,6 +292,6 @@ public class ParamTable{
     return sb.toString ();
   }
 
-  private Hashtable paramTable;
+  private Map paramTable;
 }
 
