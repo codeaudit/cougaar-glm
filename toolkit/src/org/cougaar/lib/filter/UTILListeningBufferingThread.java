@@ -124,6 +124,8 @@ public class UTILListeningBufferingThread
   }
 
   public void wakeUp () {
+    if (logger.isDebugEnabled())
+      logger.debug("UTILListeningThread about to do plugin.wakeUp");
     myPlugin.wakeUp ();
   }
 
