@@ -147,7 +147,7 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
       if (missing > 0) {
         if (logger.isWarnEnabled() && present > 0) {
           StringBuffer msg = new StringBuffer();
-          msg.append("OrgActivityQueryHandler: missing ");
+          msg.append("NewOrgActivityQueryHandler: missing ");
           boolean first = true;
           for (int i = 0; i < oiElements.length; i++) {
             if (oiElements[i].isFinished()) {
@@ -163,7 +163,7 @@ public class NewOrgActivityQueryHandler extends NewQueryHandler {
             .append(formatDate(start))
             .append(" - ")
             .append(formatDate(end));
-          logger.warn(msg.toString());
+          //logger.warn(msg.toString());
         }
         return timeSpanSet;
       }
