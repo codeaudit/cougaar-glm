@@ -1,3 +1,9 @@
+2003-03-05  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/organization/GLSAllocatorPlugin.java:
+	Replace old version with alternate version that doesn't depend on
+	storing private state in a local variable.
+
 2002-08-26  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* org/cougaar/mlm/plugin/organization/GLSExpanderPlugin.java: 
