@@ -24,12 +24,13 @@ public class UIRangeEntryInfo implements SelfPrinter, java.io.Serializable {
   private int myMin = Integer.MIN_VALUE;
   private int myMax = Integer.MAX_VALUE;
 
-  public UIRangeEntryInfo(RangeRuleParameterEntry entry) {
+  /*
+  public UIRangeEntryInfo(UIPolicyParameterInfo entry) {
     myValue = entry.getValue();
     myMin = entry.getRangeMin();
     myMax = entry.getRangeMax();
   }
-
+  */
   public UIRangeEntryInfo(Object value, int min, int max) {
     myValue = value;
     myMin = min;

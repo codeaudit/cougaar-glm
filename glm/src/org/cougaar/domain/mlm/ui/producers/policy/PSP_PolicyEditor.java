@@ -222,139 +222,148 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
       RuleParameter []ldmParameters = ldmPolicy.getRuleParameters();
       
       for (int i = 0; i < ldmParameters.length; i++) {
-        int type = convertToUIType(ldmParameters[i].ParameterType());
-        
-        //System.out.println("Parameter " + ldmParameters[i].getName() + " type " + 
-        //                   ldmParameters[i].ParameterType());
-
-        // Don't recognize the type so report error and move on to the 
-        // next parameter
-        if (type == -1) {
-          System.err.println("PSP_PolicyEditor: unable to handle " +
-                             " RuleParameter with a type of " + 
-                             ldmParameters[i].ParameterType());
-          continue;
-        }
-
-        switch (type) {
-        case UIPolicyParameterInfo.DOUBLE_TYPE:
-          DoubleRuleParameter 
-            doubleParam = (DoubleRuleParameter)ldmParameters[i];
-          Double doubleMin = new Double(doubleParam.getLowerBound());
-          Double doubleMax = new Double(doubleParam.getUpperBound());
-          policyInfo.add(new UIBoundedParameterInfo(doubleParam.getName(),
-                                                    type,
-                                                    doubleParam.getValue(),
-                                                    doubleMin,
-                                                    doubleMax));
-          break;
-
-        case UIPolicyParameterInfo.ENUMERATION_TYPE:
-          EnumerationRuleParameter 
-            enumParam = (EnumerationRuleParameter)ldmParameters[i];
-          List ldmEnum = Arrays.asList(enumParam.getEnumeration());
-          policyInfo.add(new UIEnumerationParameterInfo(enumParam.getName(),
-                                                        type,
-                                                        enumParam.getValue(),
-                                                        new ArrayList(ldmEnum)));
-          break;
-
-        case UIPolicyParameterInfo.INTEGER_TYPE:
-          IntegerRuleParameter 
-            intParam = (IntegerRuleParameter)ldmParameters[i];
-          Integer intMin = new Integer(intParam.getLowerBound());
-          Integer intMax = new Integer(intParam.getUpperBound());
-          policyInfo.add(new UIBoundedParameterInfo(intParam.getName(),
-                                                    type,
-                                                    intParam.getValue(),
-                                                    intMin,
-                                                    intMax));
-          break;
-
-        case UIPolicyParameterInfo.LONG_TYPE:
-          LongRuleParameter 
-            longParam = (LongRuleParameter)ldmParameters[i];
-          Long longMin = new Long(longParam.getLowerBound());
-          Long longMax = new Long(longParam.getUpperBound());
-          policyInfo.add(new UIBoundedParameterInfo(longParam.getName(),
-                                                    type,
-                                                    longParam.getValue(),
-                                                    longMin,
-                                                    longMax));
-          break;
-
-        case UIPolicyParameterInfo.CLASS_TYPE:
-          ClassRuleParameter 
-            classParam = (ClassRuleParameter)ldmParameters[i];
-          policyInfo.add(new UIPolicyParameterInfo(classParam.getName(),
-                                                   type,
-                                                   ((Class) classParam.getValue()).getName()));
-          break;
-
-        case UIPolicyParameterInfo.PREDICATE_TYPE:
-          PredicateRuleParameter 
-            predicateParam = (PredicateRuleParameter)ldmParameters[i];
-          policyInfo.add(new UIPolicyParameterInfo(predicateParam.getName(),
-                                                   type,
-                                                   predicateParam.getValue().getClass()));
-          break;
-
-        case UIPolicyParameterInfo.KEY_TYPE:
-          KeyRuleParameter keyParam = (KeyRuleParameter)ldmParameters[i];
-          List ldmKeys = Arrays.asList(keyParam.getKeys());
-          ArrayList uiKeyEntries = new ArrayList();
-          for (Iterator iterator = ldmKeys.iterator(); iterator.hasNext();) {
-            KeyRuleParameterEntry entry = (KeyRuleParameterEntry)iterator.next();
-            uiKeyEntries.add(new UIKeyEntryInfo(entry));
-          }
-          policyInfo.add(new UIKeyParameterInfo(keyParam.getName(),
-                                                type,
-                                                keyParam.getValue(),
-                                                uiKeyEntries));
-          break;
-
-        case UIPolicyParameterInfo.RANGE_TYPE:
-          RangeRuleParameter 
-            rangeParam = (RangeRuleParameter)ldmParameters[i];
-          List ldmRanges = Arrays.asList(rangeParam.getRanges());
-          ArrayList uiRangeEntries = new ArrayList();
-          for (Iterator iterator = ldmRanges.iterator();
-               iterator.hasNext();) {
-            RangeRuleParameterEntry entry = 
-              (RangeRuleParameterEntry)iterator.next();
-            Object entryValue = entry.getValue();
-            if (entryValue instanceof String) {
-              // value was/is a String
-              uiRangeEntries.add(new UIStringRangeEntryInfo(entry));
-            } else {
-              if (entryValue instanceof SelfPrinter) {
-                uiRangeEntries.add(new UIRangeEntryInfo(entry));
-              } else {
-                // Convert to string because we don't know how to xmit otherwise
-                // Enclose in quotation marks so XML parser doesn't try to parse.
-                uiRangeEntries.add(new UIRangeEntryInfo("\"" + entryValue.toString() + "\"",
-                                                        entry.getMin(),
-                                                        entry.getMax()));
-              }
-            }
-          }
-          policyInfo.add(new UIRangeParameterInfo(rangeParam.getName(),
-                                                  type,
-                                                  rangeParam.getValue(),
-                                                  uiRangeEntries));
-          break;
-          
-        default:
-          policyInfo.add(new UIPolicyParameterInfo(ldmParameters[i].getName(),
-                                                   type,
-                                                   ldmParameters[i].getValue()));
-        }
+        policyInfo.add(convertToUIPolicyParameterInfo(ldmParameters[i]));
       }
       
       policies.add(policyInfo);
     }
     
     return policies;
+  }
+
+  protected UIPolicyParameterInfo convertToUIPolicyParameterInfo(RuleParameter ldmParameter) {
+
+    UIPolicyParameterInfo uiPolicyParameterInfo;
+
+    int type = convertToUIType(ldmParameter.ParameterType());
+    
+    //System.out.println("Parameter " + ldmParameter.getName() + " type " + 
+    //                   ldmParameter.ParameterType());
+    
+    // Don't recognize the type so report error and move on to the 
+    // next parameter
+    if (type == -1) {
+      System.err.println("PSP_PolicyEditor: unable to handle " +
+                         " RuleParameter with a type of " + 
+                         ldmParameter.ParameterType());
+      return null;
+    }
+    
+    switch (type) {
+    case UIPolicyParameterInfo.DOUBLE_TYPE:
+      DoubleRuleParameter 
+        doubleParam = (DoubleRuleParameter)ldmParameter;
+      Double doubleMin = new Double(doubleParam.getLowerBound());
+      Double doubleMax = new Double(doubleParam.getUpperBound());
+      uiPolicyParameterInfo = new UIBoundedParameterInfo(doubleParam.getName(),
+                                                type,
+                                                doubleParam.getValue(),
+                                                doubleMin,
+                                                doubleMax);
+      break;
+      
+    case UIPolicyParameterInfo.ENUMERATION_TYPE:
+      EnumerationRuleParameter 
+        enumParam = (EnumerationRuleParameter)ldmParameter;
+      List ldmEnum = Arrays.asList(enumParam.getEnumeration());
+      uiPolicyParameterInfo = new UIEnumerationParameterInfo(enumParam.getName(),
+                                                    type,
+                                                    enumParam.getValue(),
+                                                    new ArrayList(ldmEnum));
+      break;
+      
+    case UIPolicyParameterInfo.INTEGER_TYPE:
+      IntegerRuleParameter 
+        intParam = (IntegerRuleParameter)ldmParameter;
+      Integer intMin = new Integer(intParam.getLowerBound());
+      Integer intMax = new Integer(intParam.getUpperBound());
+      uiPolicyParameterInfo = new UIBoundedParameterInfo(intParam.getName(),
+                                                   type,
+                                                   intParam.getValue(),
+                                                   intMin,
+                                                   intMax);
+      break;
+      
+    case UIPolicyParameterInfo.LONG_TYPE:
+      LongRuleParameter 
+        longParam = (LongRuleParameter)ldmParameter;
+      Long longMin = new Long(longParam.getLowerBound());
+      Long longMax = new Long(longParam.getUpperBound());
+      uiPolicyParameterInfo = new UIBoundedParameterInfo(longParam.getName(),
+                                                   type,
+                                                   longParam.getValue(),
+                                                   longMin,
+                                                   longMax);
+      break;
+      
+    case UIPolicyParameterInfo.CLASS_TYPE:
+      ClassRuleParameter 
+        classParam = (ClassRuleParameter)ldmParameter;
+      uiPolicyParameterInfo = new UIPolicyParameterInfo(classParam.getName(),
+                                                  type,
+                                                  ((Class) classParam.getValue()).getName());
+      break;
+      
+    case UIPolicyParameterInfo.PREDICATE_TYPE:
+      PredicateRuleParameter 
+        predicateParam = (PredicateRuleParameter)ldmParameter;
+      uiPolicyParameterInfo = new UIPolicyParameterInfo(predicateParam.getName(),
+                                                  type,
+                                                  predicateParam.getValue().getClass());
+      break;
+      
+    case UIPolicyParameterInfo.KEY_TYPE:
+      KeyRuleParameter keyParam = (KeyRuleParameter)ldmParameter;
+      List ldmKeys = Arrays.asList(keyParam.getKeys());
+      ArrayList uiKeyEntries = new ArrayList();
+      for (Iterator iterator = ldmKeys.iterator(); iterator.hasNext();) {
+        KeyRuleParameterEntry entry = (KeyRuleParameterEntry)iterator.next();
+        uiKeyEntries.add(new UIKeyEntryInfo(entry));
+      }
+      uiPolicyParameterInfo = new UIKeyParameterInfo(keyParam.getName(),
+                                               type,
+                                               keyParam.getValue(),
+                                               uiKeyEntries);
+      break;
+      
+    case UIPolicyParameterInfo.RANGE_TYPE:
+      RangeRuleParameter 
+        rangeParam = (RangeRuleParameter)ldmParameter;
+      List ldmRanges = Arrays.asList(rangeParam.getRanges());
+      ArrayList uiRangeEntries = new ArrayList();
+      for (Iterator iterator = ldmRanges.iterator();
+           iterator.hasNext();) {
+        RangeRuleParameterEntry entry = 
+          (RangeRuleParameterEntry)iterator.next();
+        Object entryValue = entry.getValue();
+        if (entryValue instanceof String) {
+          // value was/is a String
+          uiRangeEntries.add(new UIStringRangeEntryInfo(entry));
+        } else if (entryValue instanceof RuleParameter) {
+          uiRangeEntries.add(new UIRangeEntryInfo(convertToUIPolicyParameterInfo((RuleParameter) entryValue), 
+                                                  entry.getMax(),
+                                                  entry.getMin()));
+        } else {
+          // Convert to string because we don't know how to xmit otherwise
+          // Enclose in quotation marks so XML parser doesn't try to parse.
+          uiRangeEntries.add(new UIRangeEntryInfo("\"" + entryValue.toString() + "\"",
+                                                  entry.getMin(),
+                                                  entry.getMax()));
+        }
+
+      }
+      uiPolicyParameterInfo = new UIRangeParameterInfo(rangeParam.getName(),
+                                                       type,
+                                                       rangeParam.getValue(),
+                                                       uiRangeEntries);
+      break;
+        
+      default:
+        uiPolicyParameterInfo = new UIPolicyParameterInfo(ldmParameter.getName(),
+                                                 type,
+                                                 ldmParameter.getValue());
+    }
+    return uiPolicyParameterInfo;
   }
 
   protected static int convertToUIType(int ldmType) {

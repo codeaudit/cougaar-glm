@@ -223,8 +223,8 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
         try {
           myValue = Class.forName(value.toString());
         } catch (ClassNotFoundException cnfe) {
-          cnfe.printStackTrace();
-          success = false;
+          //cnfe.printStackTrace();
+          myValue = value.toString();
         }
       }
 
@@ -237,8 +237,8 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
         try {
           myValue = Class.forName(value.toString());
         } catch (ClassNotFoundException cnfe) {
-          cnfe.printStackTrace();
-          success = false;
+          //cnfe.printStackTrace();
+          myValue = value.toString();
         }
       }
 
@@ -272,6 +272,7 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
 
     return convertToString(getType());
   }
+
   public void printContent(AsciiPrinter pr) {
     pr.print(myName, "Name");
     pr.print(myType, "Type");
@@ -284,3 +285,4 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
             (myType != PREDICATE_TYPE));
   }
 }
+
