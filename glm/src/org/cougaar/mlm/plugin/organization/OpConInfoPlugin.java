@@ -37,6 +37,16 @@ import java.util.Enumeration;
 import java.util.Collection;
 import java.util.Iterator;
 
+
+/** OpConInfoPlugin subscribes to OpConInfoRelay's and 
+ *  places a response on the Relay.  This response is
+ *  an ArrayList of the ItemIdentification and 
+ *  TypeIdentification for the target agent (itself).
+ *  This information is used by the sending agent to
+ *  construct new ReportForDuty tasks for a new
+ *  OperationalSuperior.
+**/
+
 public class OpConInfoPlugin extends ComponentPlugin {
   ArrayList idInfo = new ArrayList();
 
@@ -76,6 +86,17 @@ public class OpConInfoPlugin extends ComponentPlugin {
   protected void execute() {
     if (mySelfOrgs.hasChanged()) {
       initIdInfo();
+      Iterator it = myOpConInfoRelaySubscription.iterator();
+      while (it.hasNext()) {
+        OpConInfoRelay opir = (OpConInfoRelay) it.next();
+        if (opir.getResponse() == null) {
+          if (logger.isDebugEnabled()) {
+            logger.debug("Updating the relay with: " +idInfo);
+          }
+          opir.updateResponse(null, idInfo); 
+          getBlackboardService().publishChange(opir);
+        }
+      }
     }
 
     if (myOpConInfoRelaySubscription.hasChanged()) {
