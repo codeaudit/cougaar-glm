@@ -47,7 +47,6 @@ import org.cougaar.core.servlet.SimpleServletSupport;
 import org.cougaar.util.Trigger;
 import org.cougaar.util.TriggerModel;
 import org.cougaar.util.SyncTriggerModelImpl;
-import org.cougaar.util.log.NullLogger;
 
 import org.cougaar.lib.util.UTILAllocate;
 import org.cougaar.glm.parser.GLMTaskParser;
@@ -71,6 +70,7 @@ public class GLMStimulatorWorker
   private static long MIN_INTERVAL = 20l; // millis
 
   /**
+   * <pre>
    * Here is our inner class that will handle all HTTP and
    * HTTPS service requests.
    *
@@ -78,11 +78,14 @@ public class GLMStimulatorWorker
    * the blackboard, a trigger that will call blackboardChanged (), and a trigger model
    * to connect them.
    *
+   * </pre>
    * @see #blackboardChanged
    */
   public void execute(HttpServletRequest request,
                       HttpServletResponse response,
                       SimpleServletSupport support) throws IOException, ServletException {
+    this.support = (GLMStimulatorSupport) support;
+
     Enumeration params = request.getParameterNames ();
     for (;params.hasMoreElements();) {
       String name  = (String) params.nextElement ();
@@ -90,10 +93,8 @@ public class GLMStimulatorWorker
       getSettings (name, value);
     }
 
-    if (debug)
-      System.out.println("GLMStimulatorWorker Invoked...");
-
-    this.support = (GLMStimulatorSupport) support;
+    if (support.getLog().isDebugEnabled ())
+      support.getLog().debug ("GLMStimulatorWorker.Invoked...");
 
     if (waitBefore || waitAfter) {
       // create a blackboard watcher
@@ -170,8 +171,8 @@ public class GLMStimulatorWorker
   public void getSettings(String name, String value) {
     super.getSettings (name, value);
 
-    if (debug)
-      System.out.println ("GLMStimulatorWorker.getSettings - name " + name + " value " + value);
+    if (support.getLog().isDebugEnabled ())
+      support.getLog().debug ("GLMStimulatorWorker.getSettings - name " + name + " value " + value);
 
     if (eq (name, GLMStimulatorServlet.INPUT_FILE))
       inputFile = value;
@@ -245,8 +246,7 @@ public class GLMStimulatorWorker
   protected XMLable getResult() {
     // Get name of XML data file
     if (inputFile == null || inputFile.equals("") || support.getConfigFinder().locateFile (inputFile) == null) {
-      if (debug)
-        System.out.println("GLMStimulatorWorker Could not find the file [" + inputFile + "]");
+      support.getLog().error ("GLMStimulatorWorker Could not find the file [" + inputFile + "]");
       return new Message (inputFile);
     }
 
@@ -254,16 +254,17 @@ public class GLMStimulatorWorker
     nextSendTime = testStart;
 
     while (batchesSent < totalBatches) {
-      if (debug)
-        System.out.println ("GLMStimulatorWorker.getResult - batches so far " + batchesSent +
-                            " < total " + totalBatches + " sentTasks " + sentTasks.size());
+      if (support.getLog().isDebugEnabled ())
+	support.getLog().debug ("GLMStimulatorWorker.getResult - batches so far " + batchesSent +
+				" < total " + totalBatches + " sentTasks " + sentTasks.size());
       if (waitBefore) {
         synchronized (sentTasks) {
           while (!sentTasks.isEmpty()) {
             // Wait for previously sent tasks to complete
             try {
-              if (debug)
-                System.out.println ("GLMStimulatorWorker.getResult - waiting for blackboard to notify.");
+	      if (support.getLog().isDebugEnabled ())
+		support.getLog().debug ("GLMStimulatorWorker.getResult - waiting for blackboard to notify.");
+
               sentTasks.wait();
             } catch (Exception e) {}
           }
@@ -272,8 +273,8 @@ public class GLMStimulatorWorker
       long waitTime = nextSendTime - System.currentTimeMillis();
       if (waitTime > 0L) {
         // Need to wait a while
-        if (debug)
-          System.out.println ("GLMStimulatorWorker.getResult - waiting wait time " + waitTime);
+	if (support.getLog().isDebugEnabled ())
+	  support.getLog().debug ("GLMStimulatorWorker.getResult - waiting wait time " + waitTime);
         try {
           Thread.sleep(waitTime);
         } catch (Exception e) {
@@ -287,8 +288,8 @@ public class GLMStimulatorWorker
       synchronized (sentTasks) {
         while (!sentTasks.isEmpty()) {
           try {
-            if (debug)
-              System.out.println ("GLMStimulatorWorker.getResult - waiting for tasks to complete.");
+	    if (support.getLog().isDebugEnabled ())
+	      support.getLog().debug ("GLMStimulatorWorker.getResult - waiting for tasks to complete.");
             sentTasks.wait();
           } catch (Exception e) {}
         }
@@ -323,7 +324,8 @@ public class GLMStimulatorWorker
   protected void sendNextBatch(boolean withinTransaction) {
     Date batchStart = new Date();
 
-    if (debug) System.out.println ("GLMStimulatorWorker.sendTasks - batch start " + batchStart);
+    if (support.getLog().isDebugEnabled ())
+      support.getLog().debug ("GLMStimulatorWorker.sendTasks - batch start " + batchStart);
 
     batchesSent++;
 
@@ -340,9 +342,7 @@ public class GLMStimulatorWorker
         }
       }
     } catch (Exception exc) {
-      System.err.println("Could not publish tasks.");
-      System.err.println(exc.getMessage());
-      exc.printStackTrace();
+      support.getLog().error ("Could not next batch", exc);
     }
     finally{
       if (withinTransaction)
@@ -364,12 +364,11 @@ public class GLMStimulatorWorker
                                            support.getAgentIdentifier(),
                                            support.getConfigFinder(),
                                            support.getLDM(),
-					   NullLogger.getNullLogger()); // THIS SHOULD BE CHANGED ONCE THERE IS LOGGING SUPPORT
+					   support.getLog()); // SEEMS LIKE THE NULL LOGGER!!!!
       tasks = UTILAllocate.enumToList (tp.getTasks());
     }
     catch( Exception ex ) {
-      System.err.println(ex.getMessage());
-      ex.printStackTrace();
+      support.getLog().error ("Error parsing xml task file " + xmlTaskFile, ex);
     }
     return tasks;
   }
@@ -388,8 +387,8 @@ public class GLMStimulatorWorker
         Collection changedItems = planElementSubscription.getChangedCollection();
         synchronized (sentTasks) {
           for (Iterator iter2 = changedItems.iterator (); iter2.hasNext();) {
-            if (debug)
-              System.out.println ("GLMStimulatorWorker.blackboard changed - found changed plan elements.");
+	    if (support.getLog().isDebugEnabled ())
+	      support.getLog().debug ("GLMStimulatorWorker.blackboard changed - found changed plan elements.");
             wasEmpty = false;
             PlanElement pe = (PlanElement) iter2.next();
             Task task = pe.getTask();
@@ -400,17 +399,15 @@ public class GLMStimulatorWorker
             sentTasks.remove(task);
             rescindTasks.add(task);
           }
-          if (debug)
-            System.out.println ("GLMStimulatorWorker.blackboard changed - notifying.");
+	  if (support.getLog().isDebugEnabled ())
+	    support.getLog().debug ("GLMStimulatorWorker.blackboard changed - notifying.");
           synchronized (this) {
             sentTasks.notify();
           }
         }
       }
     } catch (Exception exc) {
-      System.err.println("Could not publish tasks.");
-      System.err.println(exc.getMessage());
-      exc.printStackTrace();
+      support.getLog().error ("Could not publish tasks.", exc);
     }
     finally{
       support.getBlackboardService().closeTransaction(false);
@@ -424,9 +421,10 @@ public class GLMStimulatorWorker
     long elapsed = now - sentTime.getTime();
     String t = getElapsedTime(elapsed);
     String total = getElapsedTime(now - testStart);
-    if (debug)
-      System.out.println("\n*** Testing batch #" + (responseData.taskTimes.size() + 1) +
-                         " completed in " + t + " total " + total);
+
+    if (support.getLog().isDebugEnabled ())
+      support.getLog().debug ("*** Testing batch #" + (responseData.taskTimes.size() + 1) +
+			      " completed in " + t + " total " + total);
 
     // Cache the timing information
     responseData.addTaskAndTime(taskUID, t, elapsed);
@@ -446,8 +444,8 @@ public class GLMStimulatorWorker
     String totalTime = getElapsedTime(System.currentTimeMillis() - testStart);
     responseData.totalTime = totalTime;
 
-    if (debug)
-      System.out.println(responseData);
+    if (support.getLog().isDebugEnabled())
+      support.getLog().debug(responseData.toString());
   }
 
   // rely upon load-time introspection to set these services -
