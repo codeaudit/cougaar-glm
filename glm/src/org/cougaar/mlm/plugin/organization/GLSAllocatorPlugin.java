@@ -60,6 +60,7 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.planning.ldm.plan.WorkflowImpl;
 
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.core.plugin.util.PluginHelper;
@@ -535,21 +536,27 @@ public class GLSAllocatorPlugin extends SimplePlugin {
 	if (o instanceof Expansion) {
 	  Workflow wf = ((Expansion)o).getWorkflow();
 	  // Synchronize so we can walk tasks safely
-	  synchronized (wf) { 
+	  synchronized (wf) {
 	    Enumeration wftasks = wf.getTasks();
-	    while (wftasks.hasMoreElements()) {
-	      Task t = (Task) wftasks.nextElement();
-	      if (t.getVerb().equals(verbGLS)) {
-		Enumeration pp = t.getPrepositionalPhrases();
-		while (pp.hasMoreElements()) {
-		  PrepositionalPhrase app = (PrepositionalPhrase) pp.nextElement();
-		  if ((app.getPreposition().equals(Constants.Preposition.FOR)) && (app.getIndirectObject() instanceof Organization) ) {
-		    return true;
+	    try {
+	      ((WorkflowImpl) wf).setWalkingSubtasks(true);
+
+	      while (wftasks.hasMoreElements()) {
+		Task t = (Task) wftasks.nextElement();
+		if (t.getVerb().equals(verbGLS)) {
+		  Enumeration pp = t.getPrepositionalPhrases();
+		  while (pp.hasMoreElements()) {
+		    PrepositionalPhrase app = (PrepositionalPhrase) pp.nextElement();
+		    if ((app.getPreposition().equals(Constants.Preposition.FOR)) && (app.getIndirectObject() instanceof Organization) ) {
+		      return true;
+		    }
 		  }
 		}
 	      }
+	    } finally {
+	      ((WorkflowImpl) wf).setWalkingSubtasks(false);
 	    }
-	  } // end synchronization of workflow
+	  } // end synchronized (wf)
 	}
 	return false;
       }
