@@ -42,19 +42,23 @@ import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logging;
+import org.cougaar.util.log.Logger;
 
 /** Allocate SUPPLY tasks to local inventory (if there is any) or to 
  *  the closest supplier.
  */
 public class GeneralInventoryManager extends InventoryManager {
-    
+  private static Logger logger = Logging.getLogger(GeneralInventoryManager.class);
   private IncrementalSubscription refillAllocs_ = null;
 
   /** Constructor */
   public GeneralInventoryManager(InventoryPlugin plugin, Organization org, String type)
   {
     super(plugin, org, type);
-    printLog("Constructor type:"+type);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Constructor type:" + type);
+    }
     initialize();
 
   }
@@ -94,10 +98,27 @@ public class GeneralInventoryManager extends InventoryManager {
 
     if (refill_changed  || allocatedInventories || inventory_changed || inventory_policy_changed) {
       String prefix = "<" + supplyType_ + "> UPDATING INVENTORIES: ";
-      if (refill_changed          ) printLog(prefix + "refill changed.");
-      if (allocatedInventories    ) printLog(prefix + "allocations added/removed.");
-      if (inventory_changed       ) printLog(prefix + "inventory changed.");
-      if (inventory_policy_changed) printLog(prefix + "inventory policy changed.");
+      if (refill_changed) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(prefix + "refill changed.");
+        }
+      }
+      if (allocatedInventories) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(prefix + "allocations added/removed.");
+        }
+
+      }
+      if (inventory_changed) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(prefix + "inventory changed.");
+        }
+      }
+      if (inventory_policy_changed) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(prefix + "inventory policy changed.");
+        }
+      }
     }
     return invSet;
   }
@@ -178,10 +199,6 @@ public class GeneralInventoryManager extends InventoryManager {
   // this should be over-ridden for specialized inventory managers
   protected double getMinRefillQuantity(Inventory inventory) {
     return inventory.getVolumetricStockagePG().getMinReorderVolume().getGallons();
-  }
-
-  public void printInventoryBins() {
-    printInventoryBins(0);
   }
 
   // ********************************************************
