@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/ItineraryProducer.java,v 1.1 2000-12-15 20:17:47 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/ItineraryProducer.java,v 1.2 2001-02-19 20:58:53 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -77,8 +77,12 @@ public class ItineraryProducer extends ThreadedProducer
 	    int noisyInterval;
 	    
 	    while ( true ) {
-		produce(PSP_Itinerary.LIVE);
+		synchronized(clusterCache) {
+		    produce(PSP_Itinerary.LIVE);
+		}
+
 		noisyInterval = ((int)(1000 * interval * (noise.nextDouble() * 0.2 + 0.9)));
+		
 		synchronized(ItineraryProducer.this) {
 		    try {
 			ItineraryProducer.this.wait(noisyInterval);
