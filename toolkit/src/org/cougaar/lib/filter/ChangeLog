@@ -1,0 +1,6 @@
+2002-06-14  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* UTILBufferingPluginAdapter.java:
+	Replace closeTransaction(false) with closeTransactionDontReset()
+
+
