@@ -237,6 +237,12 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   
 
   protected void createSuperior(String sup) {
+    if ((sup == null) ||
+        (sup.equals(""))) {
+      System.err.println("OrgRTDataPlugIn@" + getClusterIdentifier() + " ignoring Superior specified as \"\"");
+      return;
+    }
+
     Organization superiorOrg = createOrganization(sup);
 
     if (superiorOrg == null) {
@@ -284,6 +290,12 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   protected void cloneMe(String sendto, String caproles) {
     if (selfOrg == null) {
       System.err.println("OrgRTDataPlugIn: selfOrg is null in cloneMe");
+      return;
+    }
+
+    if ((sendto == null) ||
+        (sendto.equals(""))) {
+      System.err.println("OrgRTDataPlugIn@" + getClusterIdentifier() + " ignoring " + caproles + " customer specified as \"\"");
       return;
     }
 
