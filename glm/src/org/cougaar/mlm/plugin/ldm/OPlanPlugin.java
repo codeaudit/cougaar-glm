@@ -157,6 +157,11 @@ public class OPlanPlugin extends SimplePlugin
     }
   }
 
+  public void unload() {
+    destroyGUI();
+    super.unload();
+  }
+
   private void checkForPrivateState(Enumeration e) {
     if (myPrivateState == null) {
       while(e.hasMoreElements()) {
@@ -185,6 +190,10 @@ public class OPlanPlugin extends SimplePlugin
     frame.setVisible(true);
   }
  
+  private void destroyGUI() {
+    frame.dispose();
+  }
+
   /** An ActionListener that listens to the GLS buttons. */
   class OplanButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
