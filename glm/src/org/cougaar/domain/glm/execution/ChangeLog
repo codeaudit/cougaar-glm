@@ -1,3 +1,12 @@
+2001-09-06  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* eg/TaskEventReportManager.java:
+	Synchronize manipulation of constraint reports to avoid
+	co-modification errors.
+
+	* common/InventoryReport.java: Make InventoryReport serializable.
+	These reports get serialized by persistence.
+
 2001-05-03  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* eg/ScheduleManager.java:
