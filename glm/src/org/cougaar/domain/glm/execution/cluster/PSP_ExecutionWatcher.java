@@ -57,6 +57,10 @@ public class PSP_ExecutionWatcher
     return new PSP_ExecutionWatcher();
   }
 
+    public String getConnectionACKMessage() {
+        return null;
+    }
+
   protected Context createContext() {
     return new MyContext();
   }
