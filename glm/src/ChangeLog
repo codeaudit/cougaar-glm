@@ -1,3 +1,19 @@
+2001-02-13  Ray Tomlinson  <rtomlinson@bbn.com>
+
+	* OplanWatcherLP
+	Reinstate logplan.change(selfOrg) when org activities cause the
+	location schedule to change.
+
+	* OrgReportPlugIn
+	When resending asset transfers due to changes to the self
+	organization, pass through the change reports.
+
+	* PropagationPlugIn
+	Only re-propagate when an organization changes due to a change in
+	relationships as indicated by the presence of
+	RelationshipSchedule.RelationshipScheduleChangeReport in the
+	change report collection.
+
 2001-02-02 Mark Davis <mdavis@bbn.com>
 	* org.cougaar.domain.mlm.ui.planviewer.inventory.InventoryChart
 	and others in that package.
