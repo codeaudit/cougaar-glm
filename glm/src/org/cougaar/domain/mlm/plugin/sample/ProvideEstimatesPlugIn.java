@@ -136,6 +136,7 @@ public class ProvideEstimatesPlugIn extends SimplePlugIn {
     NewWorkflow wf = factory.newWorkflow();
     wf.setParentTask(betask);
     ((NewTask)sub).setParentTask(betask);
+    ((NewTask)sub).setWorkflow(wf);
     wf.addTask(sub);
     wf.setIsPropagatingToSubtasks(true);
     
