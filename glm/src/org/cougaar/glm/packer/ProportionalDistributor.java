@@ -30,7 +30,7 @@ import org.cougaar.core.service.LoggingService;
   * @see org.cougaar.planning.ldm.plan.AllocationResultDistributor.DefaultDistributor
   */
 public class ProportionalDistributor implements AllocationResultDistributor, Serializable {
-  LoggingService myLoggingService = null;
+  private transient LoggingService myLoggingService = null;
   public static ProportionalDistributor DEFAULT_PROPORTIONAL_DISTRIBUTOR  =
     new ProportionalDistributor();
 
@@ -45,11 +45,6 @@ public class ProportionalDistributor implements AllocationResultDistributor, Ser
   }
 
   public TaskScoreTable calculate(Vector parents, AllocationResult ar) {
-    if ((getLoggingService() != null) &&
-        (getLoggingService().isDebugEnabled())) {
-      getLoggingService().debug("ProportionalDistributor: start running...");
-    }
-
     int l = parents.size();
 
     if (l == 0 || ar == null) return null;
@@ -57,11 +52,6 @@ public class ProportionalDistributor implements AllocationResultDistributor, Ser
     if (!ar.isDefined(AspectType.QUANTITY)) {
       // if there's no quantity in the Allocation result, then we
       // can just use the Default Distributor
-    if ((getLoggingService() != null) &&
-        (getLoggingService().isDebugEnabled())) {
-      getLoggingService().debug("ProportionalDistributor: done running...");
-      }
-
       return AllocationResultDistributor.DEFAULT.calculate(parents, ar);
     } else {
       double quantAchieved = ar.getValue(AspectType.QUANTITY);
@@ -139,11 +129,6 @@ public class ProportionalDistributor implements AllocationResultDistributor, Ser
       Task tasks[] = new Task[l];
       parents.copyInto(tasks);
 
-
-      if ((getLoggingService() != null) &&
-          (getLoggingService().isDebugEnabled())) {
-        getLoggingService().debug("ProportionalDistributor: done running...");
-      }
       return new TaskScoreTable(tasks, results);
     }
   }
