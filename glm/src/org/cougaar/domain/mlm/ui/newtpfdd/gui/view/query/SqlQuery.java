@@ -8,6 +8,24 @@ import java.sql.SQLException;
 public abstract class SqlQuery implements Query {
   public QueryResponse getResponse (Connection connection, int connectionType) {
 	QueryResponse response = new QueryResponse ();
+	String sqlQuery = getSqlQuery ();
+	
+	ResultSet rs = null;
+	try{
+	  rs = getResultSet(connection, sqlQuery);
+	  handleResult (rs, response);
+	}finally{
+	  if(rs!=null) {
+		try { rs.close(); } catch (SQLException e){
+		  System.out.println ("SqlQuery.getResponse - closing result set, got sql error : " + e); 
+		}
+	  }
+	}
+
+	return response;
+  }
+
+  public ResultSet getResultSet (Connection connection, String sqlQuery) {
 	Statement s=null;
 	try{
 	  s=connection.createStatement();
@@ -16,7 +34,7 @@ public abstract class SqlQuery implements Query {
 	}
 	if(s==null) {
 	  System.out.println ("SqlQuery.getResponse - ERROR, statement null."); 
-	  return response;
+	  return null;
 	}
 
 	/*
@@ -26,20 +44,11 @@ public abstract class SqlQuery implements Query {
 	 * for examples of functions for doing oracle/my sql syntax)
 	 */	
 
-	String sqlQuery = getSqlQuery ();
-	
 	ResultSet rs = null;
 	try{
 	  rs = s.executeQuery(sqlQuery);
-	  handleResult (rs, response);
 	}catch(SQLException e){
 	  System.out.println ("SqlQuery.getResponse - got sql error : " + e); 
-	}finally{
-	  if(rs!=null) {
-		try { rs.close(); } catch (SQLException e){
-		  System.out.println ("SqlQuery.getResponse - closing result set, got sql error : " + e); 
-		}
-	  }
 	}
 
 	try{
@@ -49,7 +58,7 @@ public abstract class SqlQuery implements Query {
 	  System.out.println ("SqlQuery.getResponse - got sql error : " + e); 
 	}
 	
-	return response;
+	return rs;
   }
 
   protected abstract String getSqlQuery ();
