@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ClusterQuery.java,v 1.2 2001-01-20 02:08:43 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ClusterQuery.java,v 1.3 2001-02-20 19:32:47 gvidaver Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -122,6 +122,8 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
 	setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	setBounds(25, 50, 600, 725);
 	this.host = host;
+	Debug.out ("ClusterQuery.ClusterQuery demand host is " + host);
+	
 	setContentPane(getQueryContentPane());
     }
 
