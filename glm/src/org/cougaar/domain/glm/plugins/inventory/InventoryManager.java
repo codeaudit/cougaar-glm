@@ -211,12 +211,10 @@ public abstract class InventoryManager extends InventoryProcessor {
         if (policies.isEmpty()) {
             IMDeletionPolicy policy = createDeletionPolicy(deletionDelay);
             delegate_.publishAdd(policy);
-            System.out.println("Added DeletionPolicy " + policy);
         } else {
             IMDeletionPolicy policy = (IMDeletionPolicy) policies.iterator().next();
             policy.setDeletionDelay(deletionDelay);
             delegate_.publishChange(policy);
-            System.out.println("Changed DeletionPolicy " + policy);
         }
     }
 
