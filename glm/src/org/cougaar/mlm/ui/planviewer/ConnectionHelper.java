@@ -185,7 +185,7 @@ return results
        */
       
       int p = clusterURL.lastIndexOf(":");
-      URL url = new URL(clusterURL + "agents?all&text");
+      URL url = new URL(clusterURL + "agents?scope=all&format=text");
       //System.out.println(url.toString());
       URLConnection urlconn = null; 
       InputStream in;
