@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/xml/Attic/ParserTest.java,v 1.1 2000-12-15 20:17:47 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/xml/Attic/ParserTest.java,v 1.2 2001-04-16 20:30:58 bkrisler Exp $ */
 
 /*
   Copyright (C) 1998-1999 Ascent Technology Inc. (Program).  All rights
@@ -50,12 +50,7 @@ public class ParserTest
 	}
 	String xmlString = new String(file_buffer);
 	UIParser child = null;
-	try {
-	  child = new UIParser(xmlString.getBytes(), "object", null);
-	}
-	catch (MismatchException e) {
-	  System.err.println(e);
-	}
+	child = new UIParser(xmlString.getBytes(), "object", null);
 	UIVector results = null;
 	try {
 	    results = child.parse();
