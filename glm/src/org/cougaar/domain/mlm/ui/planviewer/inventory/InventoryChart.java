@@ -1515,7 +1515,7 @@ public class InventoryChart extends JPanel
 	    return (checkBoxUIClassID);
 	}
     }
-    class VertLegendIcon implements Icon {
+  static class VertLegendIcon implements Icon {
 	
 	public int getIconHeight() {
 	    return 16;
@@ -1539,7 +1539,7 @@ public class InventoryChart extends JPanel
     }
     
     
-    class HorzLegendIcon implements Icon {
+  static class HorzLegendIcon implements Icon {
 	    
 	public int getIconHeight() {
 	    return 8;
