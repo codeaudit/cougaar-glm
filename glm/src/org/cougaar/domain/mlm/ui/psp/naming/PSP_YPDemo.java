@@ -1,0 +1,642 @@
+/*
+ * <copyright>
+ *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the Cougaar Open Source License as published by
+ *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
+ *
+ *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
+ *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
+ *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
+ *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND WITHOUT
+ *  ANY WARRANTIES AS TO NON-INFRINGEMENT.  IN NO EVENT SHALL COPYRIGHT
+ *  HOLDER BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT OR CONSEQUENTIAL
+ *  DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE OF DATA OR PROFITS,
+ *  TORTIOUS CONDUCT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ *  PERFORMANCE OF THE COUGAAR SOFTWARE.
+ * </copyright>
+ */
+
+package org.cougaar.domain.mlm.ui.psp.naming;
+
+import javax.naming.*;
+import javax.naming.directory.*;
+import javax.naming.spi.*;
+
+import java.io.*;
+import java.util.*;
+import java.net.*;
+
+import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.society.UniqueObject;
+import org.cougaar.lib.planserver.*;
+import org.cougaar.util.*;
+import org.cougaar.core.util.*;
+import org.cougaar.core.cluster.Subscription;
+import org.cougaar.core.cluster.CollectionSubscription;
+import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.lib.planserver.server.FDSURL;
+
+import org.cougaar.core.naming.*;
+
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.planning.ldm.plan.Role;
+import org.cougaar.domain.planning.ldm.plan.RoleSchedule;
+import org.cougaar.domain.planning.ldm.plan.PlanElement;
+import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
+import org.cougaar.domain.planning.ldm.plan.Relationship;
+
+/**
+ * .<pre>
+ * This is a simple JNDI demonstratino/illustration PSP implementation.
+ * Contents of this file are:
+ *
+ *    1.) number of specialized, light-weight helper classes (non-public)
+ *    2.) public PSP_YPDemo class which is the demo JNDI PSP.
+ *
+ * </pre>
+ **/
+
+
+//###########################################################################
+//###########################################################################
+//###########################################################################
+//
+// Identifies Query Tags against JNDI NS.  Populated at runtime when
+// user BUTTON_UPDATE_YP_ATTRIBUTES selected
+//
+class QueryObject {
+     public  QueryObject() {
+          myEntries.put(GET_ALL_NAMES, GET_ALL_NAMES);
+     }
+
+     public final static String GET_ALL_NAMES = "GET_ALL_NAMES";
+     public final static String GET_ALL_ATTRIBUTES = "GET_ALL_ATTRIBUTES";
+
+     //public boolean allRoles = true;
+     private Map myEntries = new Hashtable(); // new ArrayList();
+
+     public Map getEntries() { return myEntries; }
+}
+
+
+//###########################################################################
+//###########################################################################
+//###########################################################################
+//
+// Session object - manages state at LogPlanServer with respect to
+// "session transcript".   Sessions are on a per Agent basis.
+// Meaning that there is no centralized "global session" represetnation (ahem
+// cookies next time?) across a society of Agents.
+//
+class YPDemoSession
+{
+     public final String SESSION_TRANSCRIPT_HEADERS_COLOR = "009933";
+
+     // transcript = formatted HTML text
+     private StringBuffer transcript = new StringBuffer();
+     public QueryObject qobject = null;
+     public StringBuffer buffer = new StringBuffer();
+
+     // append entry to session transcript
+     public void add(String entry){
+          buffer.append(entry);
+     }
+     public void addHeader(String entry){
+          add(createHeaderToSessionTranscript(entry) );
+     }
+
+     public void doPrepend(){
+          transcript.insert(0,buffer.toString());
+          buffer = new StringBuffer();
+     }
+     public void doAppend() {
+          transcript.append(buffer.toString());
+          buffer = new StringBuffer();
+     }
+
+     public String getTranscript(){
+          return transcript.toString();
+     }
+
+     public int getTranscriptLength() {
+          return transcript.length();
+     }
+
+   private String createHeaderToSessionTranscript(String header)
+   {
+       String ret = new String("<TABLE WIDTH=\"100%\" ><TR><TD  BGCOLOR=" +  SESSION_TRANSCRIPT_HEADERS_COLOR
+              + " COLOR=RED>"
+              + "<FONT COLOR=white>"
+              + header + "</FONT></TD></TR></TABLE>");
+       return ret;
+   }
+
+}
+
+
+
+//###########################################################################
+//###########################################################################
+//###########################################################################
+//
+// Main Demonstration PSP class
+//
+public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
+{
+
+   private String BUTTON_SUBMIT_YP_SEARCH = "BUTTON_SUBMIT_YP_SEARCH";
+   private String BUTTON_UPDATE_YP_ATTRIBUTES = "BUTTON_UPDATE_YP_ATTRIBUTES";
+   private String BUTTON_GET_YP_ATTRIBUTES = "BUTTON_GET_YP_ATTRIBUTES";
+   private String TEXT_COLOR = "#006869";
+
+
+   public UnaryPredicate getOrganizationPredicate() {
+         UnaryPredicate pred = new UnaryPredicate() {
+                 public boolean execute(Object o) {
+                     if( o instanceof Organization ) return true;
+                     // else
+                     return false;
+                }
+         };
+         return pred;
+   }
+   public UnaryPredicate getAllPredicate() {
+         UnaryPredicate pred = new UnaryPredicate() {
+                 public boolean execute(Object o) {
+                     return true;
+                }
+         };
+         return pred;
+   }
+
+  /**
+   * A zero-argument constructor is required for dynamically loaded PSPs,
+   * required by Class.newInstance()
+   **/
+  public PSP_YPDemo()
+  {
+    super();
+  }
+
+  public PSP_YPDemo(String pkg, String id)
+    throws RuntimePSPException
+  {
+    setResourceLocation(pkg, id);
+  }
+
+  public boolean test(HttpInput query_parameters, PlanServiceContext sc)
+  {
+    super.initializeTest(); // IF subclass off of PSP_BaseAdapter.java
+    return false;  // This PSP is only accessed by direct reference.
+  }
+
+  UnaryPredicate myAllObjsPredicate   = new UnaryPredicate() {
+           public boolean execute(Object o) {
+                     if( o instanceof Object ) {
+                         return true;
+                     }
+                     return false;
+           }
+    };
+
+  //################################################################################
+  public void execute(
+      PrintStream out,
+      HttpInput query_parameters,
+      PlanServiceContext psc,
+      PlanServiceUtilities psu ) throws Exception
+  {
+        YPDemoSession session = (YPDemoSession)psu.getBlackBoard().getEntry("YPDemoSession",psc.getSessionAddress());
+        if( session == null) {
+              session = new YPDemoSession();
+              psu.getBlackBoard().addEntry("YPDemoSession",psc.getSessionAddress(),session);
+        }
+
+        String GETLINE = query_parameters.getInputLines()[0];
+        System.out.println("[PSP_ExternalQuery] GETLINE=" + GETLINE);
+        QueryObject qObject =null;
+        if( session.qobject == null) {
+             qObject = new QueryObject();
+             session.qobject=qObject;
+        } else {
+             qObject = session.qobject;
+        }
+        if( query_parameters.getInputLines()[0].indexOf("?UPDATE") > -1 ) {
+              processFormPOST(query_parameters, psc, qObject, session, out);
+        }
+        PlugInDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
+        displayUserSearchCheckBoxes(out,  query_parameters, qObject, session, psc, pd.getClusterIdentifier().cleanToString());
+        out.flush();
+  }
+
+   //################################################################################
+    private boolean processFormPOST(HttpInput query_parameters,
+                      PlanServiceContext psc, QueryObject qObject, YPDemoSession session, PrintStream out )
+    {
+       char buf[] =    query_parameters.getPostData();
+       String post = new String( buf).trim();
+       //System.out.println("[PSP_YPDemo.processFormPOST(POST=:" + post + ")]" );
+
+       if( (buf == null) || (buf.length == 0) ) return false;
+
+       if( post.indexOf(BUTTON_SUBMIT_YP_SEARCH) > -1 ) {
+           processSearchFromPOST(post,psc,qObject,session, out);
+       }
+       else if( post.indexOf(BUTTON_UPDATE_YP_ATTRIBUTES) > -1 ) {
+           processUpdateAttributesFromPOST(post,psc,session, out);
+       }
+       else if( post.indexOf( BUTTON_GET_YP_ATTRIBUTES ) > -1) {
+           processGetAttributesFromPOST(post,psc,session,out);
+       }
+       return true;
+    }
+
+    //###############################################################################
+    private void processGetAttributesFromPOST( String post, PlanServiceContext psc,
+                      YPDemoSession session, PrintStream out)
+    {
+        System.out.println("[PSP_YPDemo.processGetAttributesFromPOST()] Entered.");
+        NamingService nservice = psc.getServerPlugInSupport().getNamingService();
+        /**
+         *  Returns List of Binding objects which match predicate
+         *
+        List lst = YPDemoJNDI.collectObjects(nservice, new UnaryPredicate() {
+                 public boolean execute(Object o) {
+                        if( o instanceof Binding ){
+                                Binding b = (Binding)o;
+                                if( b.getObject() instanceof AgentRole) return true;
+                        }
+                        return false;
+                }}
+          );
+          **/
+
+        // Returns list of Name : Attribute Strings.
+        List lst = YPDemoJNDI.collectAttributes(nservice, new UnaryPredicate() {
+                 public boolean execute(Object o) {
+                        if( o instanceof Binding ){
+                                Binding b = (Binding)o;
+                                if( b.getObject() instanceof AgentRole) return true;
+                        }
+                        return false;
+                }}
+          );
+
+        // WHERE THE AgentRole SEARCH ATTRIBUTES GET COMPILED into Session.
+        int counter=0;
+        for(int i=0; i< lst.size(); i++) {
+              String ar = (String)lst.get(i);
+              if( session.qobject.getEntries().containsKey( ar.toString() ) == false) {
+                   counter ++;
+                   session.qobject.getEntries().put( ar.toString(), ar);
+              }
+        }
+        if( lst.size() > 0 ) {
+            session.addHeader("Search attributes updated with " + counter + " new search attributes.");
+        } else session.addHeader("No search attributes updated.");
+        session.doPrepend();
+    }
+
+    //###############################################################################
+    private void processUpdateAttributesFromPOST( String post, PlanServiceContext psc,
+                      YPDemoSession session, PrintStream out)
+    {
+        System.out.println("[PSP_YPDemo.processUpdateAttributesFromPOST()] Entered.");
+
+        //session.append( session.createHeaderToSessionTranscript("Attributes added to YP.") );
+        NamingService nservice = psc.getServerPlugInSupport().getNamingService();
+        DirContext root = null;
+
+        try{
+            root = (DirContext)nservice.getRootContext();
+        } catch( NamingException ex ){
+            ex.printStackTrace();
+        }
+
+        PlugInDelegate pd = psc.getServerPluginSupport().getDirectDelegate();
+        Subscription subscription = psc.getServerPluginSupport().subscribe(this,
+                                           myAllObjsPredicate );
+        Collection container = ((CollectionSubscription)subscription).getCollection();
+        Object [] objs = container.toArray();
+        for( int i=0; i< objs.length; i++) {
+              Object obj = objs[i];
+              processRoles(obj, root, session);
+        }
+    }
+
+    //###############################################################################
+    // Processes organization assets from blackboard and populates
+    //  AgentRoles in JNDI
+    //
+    private void processRoles( Object obj, DirContext dirc, YPDemoSession session ) {
+          if( obj instanceof Organization ) {
+              Organization og = (Organization)obj;
+              if( og.isSelf() )
+              {
+                  //System.out.println("Organization=" + og.getItemIdentificationPG().getNomenclature());
+                  String ret = new String();
+                  /**
+                  ret += "<TABLE><TR><TD><FONT COLOR=" + TEXT_COLOR + ">Roles attributed to "
+                               + og.getItemIdentificationPG().getNomenclature()
+                               + "</FONT></TD><TD></TD></TR>";
+                  **/
+                  session.addHeader("Roles attributed to " + og.getItemIdentificationPG().getNomenclature());
+
+                  //
+                  // COLLECT ALL ROLES FOR ORGANIZATION (PLACE ROLES IN ATTRIBUTES OBJ)
+                  //
+                  RelationshipSchedule rs = og.getRelationshipSchedule();
+                  // return all Relationships
+                  Collection relations = rs.getMatchingRelationships(getAllPredicate() );
+                  Object[] arr  = relations.toArray();
+                  BasicAttributes attributes = new BasicAttributes();
+                  session.add("<TABLE>");
+                  for(int i=0; i< relations.size(); i++){
+                      Relationship rel = (Relationship)arr[i];
+                      Role role = rel.getRoleA();
+                      session.add("<TR><TD></TD><TD><FONT SIZE=-1 COLOR=RED>" + role.getName() + "</FONT></TD></TR>");
+                      BasicAttribute attribute = new BasicAttribute(role.getName(), "true");
+                      attributes.put(attribute);
+                  }
+
+                  //
+                  // BIND ATTRIBUTES OBJ TO NAME
+                  //
+                  try{
+                              DirContext subKontext = null;
+                              try{
+                                  DirContext agents = (DirContext)dirc.lookup("Agents");
+                                  subKontext = (DirContext)agents.createSubcontext(og.getItemIdentificationPG().getNomenclature());
+                              } catch( NameAlreadyBoundException ex ) {
+                                      //
+                                      // catch NameAlreadyBoundException -  directory already exists
+                                      // perform a lookup instead of creating new
+                                      //
+                                      subKontext = (DirContext)dirc.lookup(og.getItemIdentificationPG().getNomenclature());
+                              }
+                              System.out.println("Created Subdirectory=" + subKontext.getNameInNamespace());
+                              //subKontext.bind("Roles", new AgentRole("http://www.ultralog.net")); //, new BasicAttributes("name", role.getName()));
+
+                              System.out.println("BInding attributes, size=" + attributes.size() );
+                              subKontext.bind("Roles", new AgentRole("http://www.ultralog.net"), attributes );
+                    } catch( NamingException ex ){
+                          // if already bound, ignore
+                    }
+                    session.add("</TABLE>");
+                    session.doPrepend();
+              }
+          }
+    }
+
+    //###############################################################################
+    private void processSearchFromPOST( String post, PlanServiceContext psc,
+                      QueryObject qObject, YPDemoSession session, PrintStream out)
+    {
+       System.out.println("[PSP_YPDemo.processQueriesFromPOST()] Entered.");
+       String decodedpost = URLDecoder.decode(post);
+       System.out.println("DECODED POST="+  decodedpost);
+
+       /**
+       //---------------------------------------------
+       String tag1 = "offtimeout=";
+       int ind1 = post.indexOf(tag1);
+       if( ind1 > -1 ) {
+           System.out.println("[processFormPOST] offtimeout =true");
+       }
+       else  {
+           System.out.println("[processFormPOST] offtimeout =false, ind1=" + ind1);
+       }
+       //---------------------------------------------
+       String tag2 = "refuseexternalcons=";
+       int ind2 = post.indexOf(tag2);
+       if( ind2 > -1 ) {
+           System.out.println("[processFormPOST] refuseexternalcons =true");
+       }
+       else  {
+           System.out.println("[processFormPOST] refuseexternalcons =false, ind2=" + ind2);
+       }
+       **/
+       Hashtable nameAttrs = new Hashtable(); // Values are Vectors of attributes associated with named obj
+
+       int idx0=0;
+       int idx1 =0;
+       int idx2 =0;
+       while( true ) {
+          idx0 = decodedpost.indexOf("{", idx0);
+          if(idx0 > -1) idx1 = decodedpost.indexOf("::",idx0);
+          else break;
+          if(idx1 > -1) idx2 = decodedpost.indexOf(":=",idx0);
+          else break;
+
+          String name ="";
+          String attribute ="";
+          if( (idx0 > -1) && (idx1 > -1) ) {
+              name = decodedpost.substring(idx0+1,idx1);
+          } else break;
+          if( (idx1 > -1) && (idx2 > -1) ) {
+              attribute = decodedpost.substring(idx1+2,idx2);
+          } else break;
+
+          System.out.println("PARSER.  name="  + name + ", attribute=" + attribute);
+          if( nameAttrs.get(name) == null) nameAttrs.put(name, new Vector());
+          Vector v = (Vector)nameAttrs.get(name);
+          v.add(attribute);
+          idx0=idx2+2;
+       }
+
+       //---------------------------------------------
+       String tag3 = qObject.GET_ALL_NAMES;
+       int ind3 = decodedpost.indexOf(tag3);
+       if( ind3 > -1) {
+           System.out.println("[processFormPOST] case: qObject.GET_ALL_NAMES");
+           //qObject.allRoles=true;
+           session.addHeader("List all JNDI directories and contents.");
+           NamingService nservice = psc.getServerPlugInSupport().getNamingService();
+           session.add( YPDemoJNDI.describeAllDirContexts( nservice ) );
+           session.doPrepend();
+       }
+
+    }
+
+    /**
+    public static String decode(String s) {
+    ByteArrayOutputStream out = new ByteArrayOutputStream(s.length());
+    for (int i = 0; i < s.length(); i++) {
+      int c = (int) s.charAt(i);
+      if (c == '+') {
+        out.write(' ');
+      }
+      else if (c == '%') {
+        int c1 = Character.digit(s.charAt(++i), 16);
+        int c2 = Character.digit(s.charAt(++i), 16);
+        out.write((char) (c1 * 16 + c2));
+      }
+      else {
+        out.write(c);
+      }
+    } // end for
+
+    return out.toString();
+  }
+  **/
+
+    //###############################################################################
+    //
+    private void displayUserSearchCheckBoxes(PrintStream out,
+                                HttpInput query_parameters,
+                                QueryObject qObject, YPDemoSession session,
+                                PlanServiceContext psc, String cluster_id)
+    {
+        out.println("<HTML><BODY bgcolor=#FFFFCC>");
+        out.println("<form method=\"post\"");
+        out.println("action=\"?UPDATE\">");
+
+        out.println("<center><h1><Font color=GREEN>JNDI Yellow Pages Demonstration Viewer</font></h1></center>");
+        out.println("<center><h2><Font color=GREEN SIZE=-1>Your browser view is currently with respect to Cluster = "
+                                                + cluster_id + "</font></h2></center>");
+        //out.println("<center><h2><Font color=RED><I>DRAFT VERSION: 17.AUGUST.2001</I></font></h2></center>");
+
+        out.println("<P>");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>To change your cluster view, select links below</FONT></I></P>");
+        out.println(linksToOtherClusters(query_parameters, psc));
+
+        // BUTTON 1 ------------------
+
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Get queryiable attributes...' ");
+        out.println("to update query attributes selection for search.  You need to do this each time you update YP (e.g. 'Add/Update Yellow Pages...')");
+        out.println("as well as each time you change view (to new Agent).</P></FONT></I>");
+
+        out.println("<div align=center>");
+        out.println("<input type=submit name="+BUTTON_GET_YP_ATTRIBUTES +" value=\"Get queryiable attributes from Yellow Pages\">");
+        out.println("</div>");
+        out.println("<P>");
+        out.println("</P>");
+
+
+        // BUTTON 2 ------------------
+
+        out.println("<P>");
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Add/Update Yellow Pages...' to update <FONT COLOR=RED>this</FONT> Cluster's JNDI entries.");
+        out.println("Note that updates are only with respect to current Cluster.");
+        out.println("To illustrate, why don't you navigate to each cluster and update the Yellow Pages");
+        out.println("with its attributes.  Query at each increment note the additions using 'Search Yellow Pages...'</P></FONT></I>");
+        out.println("<div align=center>");
+        out.println("<input type=submit name="+BUTTON_UPDATE_YP_ATTRIBUTES
+                                              +" value=\"Add/Update Yellow Pages with attributes for this cluster (  "
+                                              +cluster_id + ").\">");
+        out.println("</div>");
+        out.println("<P>");
+        out.println("</P>");
+
+
+        // BUTTON 3 ------------------
+
+        out.println("<P><FONT COLOR=" + TEXT_COLOR + "><I>Select 'Search Yellow Pages...' to search from all JNDI entries</I></FONT></P>");
+        out.println("<div align=center>");
+        out.println("<input type=submit name="+BUTTON_SUBMIT_YP_SEARCH+" value=\"Search Yellow Pages\">");
+        out.println("<P>");
+        out.println("</P>");
+        //
+        // START ROLE CHECK BOXES
+        //
+        Object [] arr = qObject.getEntries().values().toArray();
+        for(int i=0; i< arr.length; i++) {
+            Object entry = arr[i];
+            if( entry == qObject.GET_ALL_NAMES ) {
+                 out.println("<input type=checkbox name=" + qObject.GET_ALL_NAMES + " value=X checked><I>Search for all attributes</I>,");
+            } else {
+                 out.println("<input type=checkbox name=" + entry.toString() + " value=X checked><I>" + entry.toString() + "</I>,");
+            }
+        }
+        //
+        // END SROLE CHECK BOXES
+        //
+        out.println("</div>");
+
+
+        out.println("<P>");
+        if( session.getTranscriptLength() > 0) {
+            out.println("<center><H2><FONT COLOR=GREEN>~~~~~~~~~~~~~~ Session Transcript ~~~~~~~~~~~~~~</FONT></H2></CENTER>");
+            out.println("<center><I><FONT COLOR=GREEN>~~~~~~~~~~~ most recent entry first! ~~~~~~~~~~</FONT></I></CENTER>");
+            out.println("<PRE>");
+            out.println(session.getTranscript());
+            out.println("</PRE>");
+        }
+        out.println("</form>");
+        out.println("</BODY></HTML>");
+   }
+
+
+   //###########################################################################
+   private String linksToOtherClusters(HttpInput query_parameters, PlanServiceContext psc) {
+           String ret = new String();
+           Vector urls = new Vector();
+           Vector names = new Vector();
+           psc.getAllURLsAndNames(urls,names);
+           int sz = urls.size();
+           for(int i=0; i<sz; i++) {
+                String url = (String)urls.get(i);
+                String name = (String)names.get(i);
+                String psp_path = query_parameters.getGETUrlString();
+                if (psp_path.endsWith("/")) {
+                   psp_path = psp_path.substring(0, psp_path.length()-1);
+                }
+                if (psp_path.startsWith("/")) {
+                  psp_path = psp_path.substring(1, psp_path.length());
+                }
+                if (false == url.endsWith("/")) {
+                  url += "/";
+                }
+                ret += "<TABLE WIDTH=\"100%\"><TR>";
+                //ret += "<TD BGCOLOR=\"#e9e9e9\"><FONT FACE=\"Arial\"SIZE=\"2\">";
+                //ret += "<A href= \"" +  url +  psp_path + "?FORMS" + "\">" + name  + "</A></TD>";
+                ret += "<TD BGCOLOR=\"#e9e9e9\"><FONT FACE=\"Arial\"SIZE=\"2\">";
+                ret += "<A href= \"" +  url +   "/ul/demo/YPDEMO.PSP" + "\">JNDI Yellow Pages Demonstration.......... (" + url + ")</A></TD>";
+
+                ret += "</TR></TABLE>";
+           }
+           return ret;
+   }
+
+   //###########################################################################
+   private String extractDelimitedSubstring( String GETLINE, int idx, String open, String close)
+   {
+       int ivalue0 =  GETLINE.indexOf(open, idx);
+       int ivalue1 =  GETLINE.indexOf(close,ivalue0);
+       if( (ivalue0<0) || (ivalue1<0)) return "";
+
+       String val  =  GETLINE.substring(ivalue0 + open.length(), ivalue1);
+       return val.trim();
+   }
+
+
+
+
+   /**
+    * A PSP can output either HTML or XML (for now).  The server
+    * should be able to ask and find out what type it is.
+    **/
+    public boolean returnsXML() {
+      return false;
+   }
+
+   public boolean returnsHTML() {
+      return true;
+   }
+
+   /**  Any PlanServiceProvider must be able to provide DTD of its
+    *  output IFF it is an XML PSP... ie.  returnsXML() == true;
+    *  or return null
+    **/
+   public String getDTD()  {
+      return null;
+   }
+
+    public void subscriptionChanged(Subscription subscription) {
+
+    }
+
+}
