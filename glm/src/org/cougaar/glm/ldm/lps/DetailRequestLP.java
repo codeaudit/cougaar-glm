@@ -21,15 +21,18 @@
 
 package org.cougaar.glm.ldm.lps;
 
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.log.Logging;
+
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
 import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.UID;
 import org.cougaar.planning.ldm.plan.Directive;
+import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.glm.ldm.GLMFactory;
 import org.cougaar.glm.ldm.plan.DetailRequest;
 import org.cougaar.glm.ldm.plan.DetailRequestAssignment;
@@ -43,6 +46,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
+
 /**
  *  Logic Provider for handling Detail and Query Requests and Replys.
  *  It is both an EnvelopeLogicProvider and a MessageLogicProvider,
@@ -54,6 +58,7 @@ public class DetailRequestLP
   extends LogPlanLogicProvider
   implements EnvelopeLogicProvider, RestartLogicProvider, MessageLogicProvider
 {
+  private final ClusterIdentifier self;
   private transient GLMFactory _alpFactory=null;
   
   private transient HashMap outstandingRequests = new HashMap(7);
@@ -61,6 +66,7 @@ public class DetailRequestLP
   public DetailRequestLP(LogPlanServesLogicProvider logplan,
 			 ClusterServesLogicProvider cluster) {
     super(logplan,cluster);
+    self = cluster.getClusterIdentifier();
   }
 
   private GLMFactory getGLMFactory() {
@@ -77,7 +83,7 @@ public class DetailRequestLP
   public void execute(EnvelopeTuple o, Collection changes) {
     Object obj = o.getObject();
     if (obj instanceof DetailRequest) {
-      //System.out.println("DetailRequestLP: received DetailRequest");
+      Logging.defaultLogger().debug("Received DetailRequest");
       DetailRequest ir = (DetailRequest) obj;
       if (o.isAdd()) {
         processDetailRequestAdded(ir);
@@ -85,6 +91,7 @@ public class DetailRequestLP
 	// no-nop
       }
     } else if (obj instanceof QueryRequest) {
+      Logging.defaultLogger().debug("Received QueryRequest");
       QueryRequest qr = (QueryRequest) obj;
       if (o.isAdd()) {
 	processQueryRequestAdded(qr);
@@ -101,14 +108,16 @@ public class DetailRequestLP
    **/
   public void execute(Directive dir, Collection changes) {
     if (dir instanceof DetailReplyAssignment) {
-      //System.out.println("DetailRequestLP: received DetailReplyAssignment");
+      Logging.defaultLogger().debug("Received DetailReplyAssignment");
       processDetailReplyAssignment((DetailReplyAssignment) dir, changes);
     } else if (dir instanceof DetailRequestAssignment) {
-      //System.out.println("DetailRequestLP: received DetailRequestAssignment");
+      Logging.defaultLogger().debug("Received DetailRequestAssignment");
       processDetailRequestAssignment((DetailRequestAssignment) dir, changes);
     } else if (dir instanceof QueryRequestAssignment) {
+      Logging.defaultLogger().debug("Received QueryRequestAssignment");
       processQueryRequestAssignment((QueryRequestAssignment) dir, changes);
     } else if (dir instanceof QueryReplyAssignment) {
+      Logging.defaultLogger().debug("Received QueryReplyAssignment");
       processQueryReplyAssignment((QueryReplyAssignment) dir, changes);
     }
   }
@@ -125,7 +134,9 @@ public class DetailRequestLP
         if (o instanceof DetailRequest) {
           DetailRequest ir = (DetailRequest) o;
           ClusterIdentifier dest = ir.getSourceCluster();
-          return cid.equals(dest);
+          return 
+            RestartLogicProviderHelper.matchesRestart(
+                self, cid, dest);
         }
         return false;
       }
@@ -141,7 +152,9 @@ public class DetailRequestLP
         if (o instanceof QueryRequest) {
           QueryRequest ir = (QueryRequest) o;
           ClusterIdentifier dest = ir.getSourceCluster();
-          return cid.equals(dest);
+          return 
+            RestartLogicProviderHelper.matchesRestart(
+                self, cid, dest);
         }
         return false;
       }
@@ -152,7 +165,6 @@ public class DetailRequestLP
       processQueryRequestAdded(ir);
     }
   }
-    
 
   /**
    * Turn request into assignment.
@@ -172,7 +184,7 @@ public class DetailRequestLP
 
     // create an DetailRequestAssignment directive
     DetailRequestAssignment dra = getGLMFactory().newDetailRequestAssignment(dr);
-    //System.out.println("DetailRequestLP: sending DetailRequestAssignment to " + dest);
+    Logging.defaultLogger().debug("Sending DetailRequestAssignment to " + dra.getDestination());
     // Give the directive to the logplan for tranmission
     logplan.sendDirective(dra);
   }
@@ -187,16 +199,24 @@ public class DetailRequestLP
   private void processDetailRequestAssignment(DetailRequestAssignment ta, Collection changes) {
     DetailRequest request = (DetailRequest) ta.getDetailRequest();
     UID uid = request.getDetailUID();
-    //System.out.println("UID: " + uid);
+    Logging.defaultLogger().debug("UID: " + uid);
     try {
       UniqueObject uo = (UniqueObject)logplan.findUniqueObject(uid) ;
+      if (uo instanceof Transferable) {
+        // Clone so we don't have cross cluster references to the same object
+        uo = (UniqueObject) ((Transferable)uo).clone();
+      } else {
+          Logging.defaultLogger().warn(uo + " does not implement Transferable." +
+                                     " Fullfillment of the DetailRequest may result \n" +
+                                     " in cross agent references to the same object.");
+      }
       DetailReplyAssignment dra = getGLMFactory().newDetailReplyAssignment(uo,
-								      uid,
-						   cluster.getClusterIdentifier(),
-						   request.getRequestingCluster());
+                                                                           uid,
+                                                                           cluster.getClusterIdentifier(),
+                                                                           request.getRequestingCluster());
 
-      //System.out.println("DetailRequestLP:  DetailReplyAssignment " + dra);
-      //System.out.println("DetailReplyAssignment UID: " + dra.getRequestUID());
+      Logging.defaultLogger().debug("DetailReplyAssignment " + dra);
+      Logging.defaultLogger().debug("DetailReplyAssignment UID: " + dra.getRequestUID());
       logplan.sendDirective(dra);
     } catch (RuntimeException excep) {
       excep.printStackTrace();
@@ -213,8 +233,8 @@ public class DetailRequestLP
     UniqueObject obj = reply.getDetailObject();
     final UID replyUID = reply.getRequestUID();
     if (obj == null) {
-      System.out.println("DetailRequestLP: object not found on remote cluster " +
-			 replyUID);
+      Logging.defaultLogger().warn("Object not found on remote cluster " +
+                                   replyUID);
       cleanup(replyUID);
       return;
     }
@@ -222,17 +242,23 @@ public class DetailRequestLP
     final UID objUID = obj.getUID();
     UniqueObject existingObj = logplan.findUniqueObject(obj.getUID());
     if (existingObj != null) {
-      existingObj = obj;
+
+      // Copy fields so the changes actually appear
+      if (obj instanceof Transferable) { 
+        ((Transferable) existingObj).setAll((Transferable) obj);
+      } else {
+        Logging.defaultLogger().warn(existingObj + " does not implement Transferable." +     
+                                   " Changes to source will not be visible.");
+      }
+
       try {
-	//System.out.println("DetailRequestLP: publish changing existing obj " + obj + obj.getUID());
-	// changes probably not filled in
-	logplan.change(existingObj, changes);
+	logplan.change(obj, changes);
       } catch (RuntimeException re) {
 	re.printStackTrace();	
       }
     } else {
       try {
-	//System.out.println("DetailRequestLP: publishing DetailReply " + reply + obj.getUID());
+	Logging.defaultLogger().debug("Publishing DetailReply " + reply + obj.getUID());
 	logplan.add(obj);
       } catch (RuntimeException excep) {
 	excep.printStackTrace();
@@ -256,11 +282,11 @@ public class DetailRequestLP
 	  DetailRequest dr = (DetailRequest) o;
 	  UID uid = dr.getDetailUID();
 	  if (uid == null) {
-	    //System.out.println("Why the hell is this null? " + dr);
+            Logging.defaultLogger().error("Null UID for " + dr);
 	    return false;
 	  }
 	  if (cleanupUID == null) {
-	    //System.out.println("Why the hell is replyUID null?");
+	    Logging.defaultLogger().error("Null cleanup UID");
 	    return false;
 	  }
 	  if (uid.equals(cleanupUID))
@@ -272,7 +298,7 @@ public class DetailRequestLP
 
     while ( requests.hasMoreElements()) {
       DetailRequest dr = (DetailRequest) requests.nextElement();
-      //System.out.println("Removing DetailRequest from logplan: " + dr);
+      Logging.defaultLogger().debug("Removing DetailRequest from logplan: " + dr);
       logplan.remove(dr);
     }
   }
@@ -288,7 +314,9 @@ public class DetailRequestLP
   {
     // First, check to see if we are already waiting for this object
     UnaryPredicate pred = qr.getQueryPredicate();
+
     if (outstandingRequests.containsValue(pred)) {
+      Logging.defaultLogger().debug("Outstanding QueryRequestAssignment");
       return;
     }
 
@@ -296,7 +324,7 @@ public class DetailRequestLP
 
     // create an QueryRequestAssignment directive
     QueryRequestAssignment qra = getGLMFactory().newQueryRequestAssignment(qr);
-    //System.out.println("DetailRequestLP: sending QueryRequestAssignment to " + qra.getDestination());
+    Logging.defaultLogger().debug("Sending QueryRequestAssignment to " + qra.getDestination());
     // Give the directive to the logplan for tranmission
     logplan.sendDirective(qra);
   }
@@ -313,12 +341,23 @@ public class DetailRequestLP
     QueryRequest request = (QueryRequest) ta.getQueryRequest();
     UnaryPredicate pred = request.getQueryPredicate();
     ArrayList collection;
-    //System.out.println("QueryPredicate: " + pred);
+    Logging.defaultLogger().debug("QueryPredicate: " + pred);
     try {
       Enumeration e = logplan.searchLogPlan(pred);
       collection = new ArrayList(7);
       while(e.hasMoreElements()) {
-	collection.add(e.nextElement());
+        Object next = e.nextElement();
+
+        if (next instanceof Transferable) {
+          // Clone so we don't end up with cross cluster refs to the same object
+          next = ((Transferable) next).clone();
+        } else {
+          Logging.defaultLogger().warn(next + " does not implement Transferable." +
+                                     " Fullfillment of the QueryRequest may result \n" +
+                                     " in cross agent references to the same object.");
+
+        }
+	collection.add(next);
       }
       
       QueryReplyAssignment dra = getGLMFactory().newQueryReplyAssignment(collection,
@@ -327,8 +366,9 @@ public class DetailRequestLP
                                                                          cluster.getClusterIdentifier(),
                                                                          request.getRequestingCluster());
 
-      //System.out.println("DetailRequestLP:  QueryReplyAssignment " + dra);
-      //System.out.println("QueryReplyAssignment Pred: " + dra.getRequestPredicate());
+      Logging.defaultLogger().debug("QueryReplyAssignment " + dra);
+      Logging.defaultLogger().debug("QueryReplyAssignment Pred: " + dra.getRequestPredicate());
+      Logging.defaultLogger().debug("QueryReplyAssignment requestor: " + request.getRequestingCluster());
       logplan.sendDirective(dra);
     } catch (RuntimeException excep) {
       excep.printStackTrace();
@@ -344,8 +384,8 @@ public class DetailRequestLP
     Collection replyCollection = reply.getQueryResponse();
     final UnaryPredicate replyPredicate = reply.getRequestPredicate();
     if ((replyCollection == null) || replyCollection.isEmpty()) {
-      //System.out.println("DetailRequestLP: query on remote cluster returned no values " +
-      //			 replyPredicate);
+      Logging.defaultLogger().debug("Query on remote cluster returned no values " +
+      			 replyPredicate);
       cleanup(replyPredicate);
       return;
     }
@@ -359,7 +399,7 @@ public class DetailRequestLP
         localCollection.add(localEnum.nextElement());
       }
     }
-
+    
     for (Iterator it = replyCollection.iterator(); it.hasNext();) {
       Object obj = it.next();
       if (obj instanceof UniqueObject) {
@@ -369,12 +409,18 @@ public class DetailRequestLP
         if (localObj != null) {
           // Only publish change if object is really different
           if (!localObj.equals(obj)) {
-            //System.out.println("DetailRequestLP: publish changing existing obj " + obj);
-            // changes probably not filled in
-            logplan.change(localObj, changes);
+            if (obj instanceof Transferable) { 
+              ((Transferable) localObj).setAll((Transferable) obj);
+            } else {
+              Logging.defaultLogger().warn(localObj + " does not implement Transferable." +     
+                                         " Changes will not be visible.");
+            }
+            logplan.change(obj, changes);
+          } else {
+            Logging.defaultLogger().debug(" not publish changing existing obj " + obj);
           }
         } else {
-          //System.out.println("DetailRequestLP: publishing QueryReply " + reply + obj);
+          Logging.defaultLogger().debug("Publishing QueryReply " + reply + obj);
           logplan.add(obj);
         }
       } else {
@@ -413,11 +459,11 @@ public class DetailRequestLP
 	  QueryRequest dr = (QueryRequest) o;
 	  UnaryPredicate pred = dr.getQueryPredicate();
 	  if (pred == null) {
-	    //System.out.println("Why the hell is this null? " + pred);
+            Logging.defaultLogger().error("Predicate is null for " + dr);
 	    return false;
 	  }
 	  if (cleanupPred == null) {
-	    //System.out.println("Why the hell is replyPred null?");
+            Logging.defaultLogger().error("cleanup() called with a null predicate.");
 	    return false;
 	  }
 	  if (pred.equals(cleanupPred))
@@ -429,7 +475,7 @@ public class DetailRequestLP
 
     while ( requests.hasMoreElements()) {
       QueryRequest qr = (QueryRequest) requests.nextElement();
-      //System.out.println("Removing QueryRequest from logplan: " + qr);
+      Logging.defaultLogger().debug("Removing QueryRequest from logplan: " + qr);
       logplan.remove(qr);
     }
   }
