@@ -157,7 +157,7 @@ public class SimpleAddRescindPlugin extends CommonUtilPlugin {
 	    if (rep!=null){
 		//debug(DEBUG, FILENAME, fw,"ManagerPlugin:allocateChangedTasks ........" + received);
 		receivedTask= (int)t.getPreferredValue(AspectType._ASPECT_COUNT);
-		assert(expectedTask, receivedTask);
+		affert(expectedTask, receivedTask);
 		printTheChange();
 		debug(DEBUG, t.getVerb() + "=>expectedTask:received::" + expectedTask + ":"+ receivedTask);
 		waitFor(BURST_TIME);
@@ -227,7 +227,9 @@ public class SimpleAddRescindPlugin extends CommonUtilPlugin {
 	count++;
     }
 
-    protected void assert( int expectedTask, int receivedTask){
+  // renamed to "affert" from "assert".  Better option would be to use the real jdk1.4 assert
+  // functionality once we've got a full set of complient compilers.
+    protected void affert( int expectedTask, int receivedTask){
 	    if (expectedTask != receivedTask){
 		System.out.println("ERROR!!!!! expectedTask is different from receivedTask");
 		

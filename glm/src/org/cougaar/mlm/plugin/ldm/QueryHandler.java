@@ -39,15 +39,13 @@ public abstract class QueryHandler {
   public QueryHandler() {}
 	
   protected LDMSQLPlugin myLDMPlugin;
-  protected LDMQueryPlugin myQueryLDMPlugin;
-  protected boolean LDMQueryType = false;
   protected ClusterIdentifier myClusterIdentifier;
   protected ClusterServesPlugin myComponent;
   protected RootFactory ldmf;
   protected Properties myParameters;
   protected BlackboardService subscriber;
   protected LDMServesPlugin ldm;
-	
+
   protected void initialize( LDMSQLPlugin ldmplugin,
                              ClusterIdentifier cid,
                              ClusterServesPlugin comp,
@@ -62,23 +60,6 @@ public abstract class QueryHandler {
     myParameters = params;
     subscriber = sub;
   }
-
-  protected void initializeQH( LDMQueryPlugin ldmplugin,
-                               ClusterIdentifier cid,
-                               ClusterServesPlugin comp,
-                               RootFactory aldmf,
-                               Properties params,
-                               BlackboardService sub) {
-    myQueryLDMPlugin = ldmplugin;
-    ldm = comp.getLDM();
-    myClusterIdentifier = cid;
-    myComponent = comp;
-    ldmf = aldmf;
-    myParameters = params;
-    subscriber = sub;
-    LDMQueryType = true;
-  }
-
 	
   protected LDMServesPlugin getLDM() {
     return ldm;

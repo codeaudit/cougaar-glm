@@ -102,12 +102,7 @@ public class SQLAssetPrototypeProvider
       
       System.err.println("Created PrototypeAsset for "+typeid+" = "+pr);
 
-	  // MML
-	  if (myLDMPlugin != null)
-         myLDMPlugin.fillProperties(pr);
-	  else 
-	     myQueryLDMPlugin.fillProperties(pr);
-      
+      myLDMPlugin.fillProperties(pr);
 
       return pr;
     } catch (Exception ee) {

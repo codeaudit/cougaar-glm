@@ -1,3 +1,13 @@
+2002-02-20  Michael Thome  <mthome@bbn.com>
+
+	* Removed LDMQueryPlugin
+	Dropped in favor of LDMSQLPlugin.
+
+	* Removed LDMConnectionDriver, LDMConnectionPool, LDMConnection.java
+	Dropping stale implementation - Much better implementation in
+	org.cougaar.util.DBConnectionPool.
+	
+
 2001-10-24  Jim Winston <jwinston@bbn.com>
 	* org/cougaar/domain/mlm/plugin/assessor/ReadinessAssessorPlugin.java
 	plugin to assess readiness based on ratio of qty requested over qty supplied

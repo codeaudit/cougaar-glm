@@ -73,48 +73,8 @@ public abstract class PeriodicQuery extends QueryHandler {
   {
     startQuery();                 // let the query have some state
 	
-
-    if (LDMQueryType)
-      {	
-        int count = 1;
-        String dbName = getParameter("DB_NAME" + count);
-        String queryString = getQueryString("query" + count);
-	  	  
-	  	  
-        System.out.println("I am about to execute the Query " +queryString);
-        System.out.println("For Database " + dbName);	  
-	        
-        boolean success = myQueryLDMPlugin.executeQuery(queryString, this, dbName);
-	  	  
-        if (!success)
-          {	 
-            System.out.println("THE CONNECTION DID NOT WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");		  
-            count++;
-            queryString = getQueryString("query" + count);
-            dbName = getParameter("DB_NAME" + count);	
-            while ((queryString != null) && (!success))
-              {
-                success = myQueryLDMPlugin.executeQuery(queryString, this, dbName);
-                count++;
-                dbName = getParameter("DB_NAME" + count);	
-                queryString = getQueryString("query" + count);
-			
-                System.out.println("The query String for query" +count+ " is "+ queryString);	
-
-              }// while loop
-          } // if statement
-	  
-        if (!success)
-          { 
-            // Send an alert 
-          }
-      }// LDMType = Query	 
-    // It is the LDMSQLPlugin       
-    else
-      {
-        String q = getQuery();		
-        myLDMPlugin.executeSQL(q, this);
-      }// LDMSQLPlugin		 
+    String q = getQuery();		
+    myLDMPlugin.executeSQL(q, this);
 	  
     endQuery();                   // tell the query it is done.
   }
