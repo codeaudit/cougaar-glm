@@ -78,33 +78,6 @@ public class ConnectionHelper {
     this(clusterURL, PSP_package+"/"+PSP_id);
   }
 
-  /**
-    Connects to the specified PSP at the specified cluster,
-    where cluster is specified by URL (host and port).
-    */
-
-  public ConnectionHelper(String clusterURL, PSPConnectionInfo info,
-                          boolean isApplet)
-      throws MalformedURLException, IOException
-    {
-        this(clusterURL, info, isApplet, "");
-    }
-
-  public ConnectionHelper(String clusterURL, PSPConnectionInfo info,
-                          boolean isApplet, String suffix)
-    throws MalformedURLException, IOException {
-    this.clusterURL = clusterURL;
-    if (isApplet) {
-      url = new URL(clusterURL + "/" + info.getPSPId() + suffix);
-    } else {
-      url = new URL(clusterURL + info.getPSPPackage() + "/" + info.getPSPId() + suffix);
-    }
-    System.out.println("url=" + url);
-    connection = url.openConnection();
-    connection.setDoInput(true);
-    connection.setDoOutput(true);
-  }
-
   public void setConnection(String completeURLString) throws Exception {
       if( connection != null ) {
           new RuntimeException("ConnectionHelper.connection already set!");
