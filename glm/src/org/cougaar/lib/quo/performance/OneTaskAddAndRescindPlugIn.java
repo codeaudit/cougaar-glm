@@ -31,9 +31,7 @@ import java.util.*;
 import java.io.*;
 
 /**
- * This COUGAAR PlugIn creates and publishes "CODE" tasks and if allocationResult is a success
- * it keeps producing more task
- * It also reads the PlugIn arguments and may alter MessageSize or slurp CPU
+ * Adds a task and then immediately removes it
  */
 public class OneTaskAddAndRescindPlugIn extends CommonUtilPlugIn {
 
