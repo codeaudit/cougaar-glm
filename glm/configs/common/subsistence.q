@@ -1,4 +1,4 @@
-Database = jdbc:oracle:thin:@${tops.database}
+Database=jdbc:oracle:thin:@${org.cougaar.database}
 Driver = oracle.jdbc.driver.OracleDriver
 Username = ${blackjack.database.user}
 Password = ${blackjack.database.password}
