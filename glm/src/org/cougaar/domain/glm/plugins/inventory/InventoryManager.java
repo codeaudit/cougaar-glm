@@ -338,6 +338,11 @@ public abstract class InventoryManager extends InventoryProcessor {
      * the end insures that the final segment is processed. */
     for (int day = today + 1; day <= switchoverDay; day++) {
       Scalar current = (day < switchoverDay) ? invpg.getProjected(day) : null;
+
+      if (previous == null) {
+        break;
+      } 
+
       if (!previous.equals(current)) {
 	double value = convertScalarToDouble(previous);
 	if (!Double.isNaN(value) && value > 0.0) {
@@ -577,7 +582,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	refill_qty=java.lang.Math.ceil(refill_qty);
       }
       if(prev_refill != null) {
-	return orderRefillWithPrevious(inventory, day, invpg, refill_qty);
+        return orderRefillWithPrevious(inventory, day, invpg, refill_qty);
       } else {
 	return orderNewRefill(inventory, day, invpg, refill_qty);
       }
@@ -685,7 +690,9 @@ public abstract class InventoryManager extends InventoryProcessor {
       invpg.addDueIn(refill_task);
       return true;
     case REFILL_REPLACE_TASK:
-      if (!failed) refill_qty += prev_qty;
+      if (!failed)  {
+        refill_qty += prev_qty;
+      }
       plugin_.publishRemoveFromExpansion(refill_task);
       return orderNewRefill(inventory, day, invpg, refill_qty);
     case REFILL_ADD_TASK:
@@ -920,8 +927,9 @@ public abstract class InventoryManager extends InventoryProcessor {
     while (inventories.hasNext()) {
       inventory = (Inventory)inventories.next();
       invpg = (InventoryPG)inventory.getInventoryPG();
-      // 	    invpg.printInventoryLevels(inventory, clusterId_);
+      // invpg.printInventoryLevels(inventory, clusterId_);
       invpg.updateContentSchedule(inventory);
+
       // detailed Inventory Schedule for demo purposes only
       Boolean detailed = (Boolean)inventoryPlugIn_.getParam("Detailed");
       if ((detailed != null) && detailed.booleanValue()) {

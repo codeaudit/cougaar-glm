@@ -225,5 +225,10 @@ public class GeneralInventoryManager extends InventoryManager {
   protected void setupSubscriptions() {
 	
     refillAllocs_ = subscribe(new RefillAllocPredicate(supplyType_, myOrgName_));
+	
+    if (plugin_.didRehydrate()) {
+      updateInventoryPolicy(Collections.enumeration(inventoryPolicySubscription_.getCollection()));
+    }
+
   }
 }

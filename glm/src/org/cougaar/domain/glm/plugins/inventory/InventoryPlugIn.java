@@ -77,7 +77,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 	recordCustomer(taskConsumerName(task));
     }
 
-    private String taskConsumerName(Task task){
+   private String taskConsumerName(Task task){
 	PrepositionalPhrase pp = task.getPrepositionalPhrase(Constants.Preposition.FOR);
 	if (pp == null) {
 	return "unknown consumer";
@@ -697,6 +697,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 // 	    GLMDebug.DEBUG("InventoryPlugIn", clusterId_, "collected info for inventory item:"+
 // 			      item+" capacity:"+capacity+" level:"+level +" erq:"+erq+" min reorder:"+ min_reorder);
 	    double[] levels = {capacity,level,erq,min_reorder};
+            
 	    inventoryInitHash_.put(item, new InventoryItemInfo(levels, reportBaseDate, reportStepKind));
 	    entries++;
 	}
