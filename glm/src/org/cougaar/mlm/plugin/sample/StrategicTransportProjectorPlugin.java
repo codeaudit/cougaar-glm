@@ -744,25 +744,25 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * Debug printer
    */
   protected final void printDebug(String s) {
-    logger.debug (getBindingSite().getAgentIdentifier() + " - " + s);
+    logger.debug (getAgentIdentifier() + " - " + s);
   }
 
   /** 
    * Info printer
    */
   protected final void printInfo(String s) {
-    logger.info (getBindingSite().getAgentIdentifier() + " - " + s);
+    logger.info (getAgentIdentifier() + " - " + s);
   }
 
   /** 
    * Warn printer
    */
   protected final void printWarn(String s) {
-    logger.warn (getBindingSite().getAgentIdentifier() + " - " + s);
+    logger.warn (getAgentIdentifier() + " - " + s);
   }
 
   protected final void printError(String s) {
-    logger.error (getBindingSite().getAgentIdentifier() + " - " + s);
+    logger.error (getAgentIdentifier() + " - " + s);
   }
 
   protected void setDefaults(Enumeration eParams) {
