@@ -13,7 +13,7 @@ MYCLASSES=org.cougaar.core.society.Node
 if [ "$OS"=="Linux" ]; then
   MYPROPERTIES="-green"
 fi
-MYPROPERTIES="$MYPROPERTIES $MYDOMAINS  -Dalp.system.path=$ALP3RDPARTY -Dalp.install.path=$ALP_INSTALL_PATH"
+MYPROPERTIES="$MYPROPERTIES $MYDOMAINS  -Dorg.cougaar.system.path=$ALP3RDPARTY -Dorg.cougaar.install.path=$ALP_INSTALL_PATH"
 MYPROPERTIES="$MYPROPERTIES -Duser.timezone=GMT -Dalp.useBootstrapper=true"
 OS=`uname`
 
