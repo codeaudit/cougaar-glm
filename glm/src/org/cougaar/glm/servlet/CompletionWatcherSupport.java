@@ -4,6 +4,7 @@ import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.BlackboardService;
+import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.NamingService;
 import org.cougaar.core.service.SchedulerService;
@@ -22,15 +23,16 @@ public class CompletionWatcherSupport extends BlackboardServletSupport {
   public CompletionWatcherSupport(
       String path,
       ClusterIdentifier agentId,
-      BlackboardService blackboard,
+      BlackboardQueryService blackboardQuery,
       NamingService ns,
       LoggingService logger,
+      BlackboardService blackboard,
       ConfigFinder configFinder,
       RootFactory ldmf,
       LDMServesPlugin ldm,
       SchedulerService scheduler,
       AlarmService alarm) {
-    super (path, agentId, blackboard, ns, logger, configFinder, ldmf, ldm, scheduler);
+    super (path, agentId, blackboardQuery, ns, logger, blackboard, configFinder, ldmf, ldm, scheduler);
     this.alarm = alarm;
   }
 

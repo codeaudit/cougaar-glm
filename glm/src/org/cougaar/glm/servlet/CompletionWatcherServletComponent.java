@@ -25,6 +25,7 @@ import javax.servlet.Servlet;
 
 import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.core.service.BlackboardService;
+import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.NamingService;
 import org.cougaar.core.plugin.LDMService;
 import org.cougaar.core.plugin.PluginBindingSite;
@@ -58,9 +59,10 @@ public class CompletionWatcherServletComponent extends BlackboardServletComponen
       new CompletionWatcherSupport (
         path,
         agentId,
-        blackboard,
+        blackboardQuery,
         ns,
 	log,
+        getBlackboardService(),
 	getConfigFinder(),
 	getLDMService().getFactory(),
 	getLDMService().getLDM(),
