@@ -45,6 +45,7 @@ public class InventoryShortfallChartDataModel extends
   public static final String CONFIRMED_DUE_IN_SHORTFALL_LABEL = "Failed Restock Shortfall Qty";
   public static final String UNCONFIRMED_DUE_IN_SHORTFALL_LABEL = "Restock Shortfall Qty";
   public static final String PROJECTED_DUE_OUT_SHORTFALL_LABEL = "Projected Requisition Shortfall Qty"; 
+  public static final String PROJECTED_DUE_IN_SHORTFALL_LABEL = "Projected Consumption Shortfall Qty"; 
 
   public InventoryShortfallChartDataModel(InventoryChartDataModel actual,
                                           InventoryChartDataModel requested) {
@@ -85,7 +86,9 @@ public class InventoryShortfallChartDataModel extends
     int requestedDueInScheduleSeries = -1;
     int requestedDueOutScheduleSeries = -1;
     int projectedDueOutScheduleSeries = -1;
+    int projectedDueInScheduleSeries = -1;
     int requestedProjectedDueOutScheduleSeries = -1;
+    int requestedProjectedDueInScheduleSeries = -1;
 
     String[] actualLabels = 
       ((LabelledChartDataModel)actual).getSeriesLabels();
@@ -102,6 +105,8 @@ public class InventoryShortfallChartDataModel extends
       else if (actualLabels[i].equals(InventoryChartDataModel.ACTUAL_PROJECTED_DUE_OUT_SHIPPED_LABEL) ||
                actualLabels[i].equals(InventoryChartDataModel.ACTUAL_PROJECTED_DUE_OUT_CONSUMED_LABEL))
 	  projectedDueOutScheduleSeries = i;
+      else if (actualLabels[i].equals(InventoryChartDataModel.ACTUAL_PROJECTED_DUE_IN_LABEL))
+	  projectedDueInScheduleSeries = i;
       else
 	    System.out.println("InventoryShortfallChartDataModel ERROR actualLabel not recognized <"+
 			       actualLabels[i]+">");
@@ -113,6 +118,8 @@ public class InventoryShortfallChartDataModel extends
         requestedDueOutScheduleSeries = i;
       else if (requestedLabels[i].equals(InventoryChartDataModel.REQUESTED_PROJECTED_DUE_OUT_LABEL))
         requestedProjectedDueOutScheduleSeries = i;
+      else if (requestedLabels[i].equals(InventoryChartDataModel.REQUESTED_PROJECTED_DUE_IN_LABEL))
+        requestedProjectedDueInScheduleSeries = i;
       else
 	  System.out.println("InventoryShortfallChartDataModel ERROR requestedLabel not recognized <"+
 			     requestedLabels[i]+">");
@@ -176,12 +183,21 @@ public class InventoryShortfallChartDataModel extends
 	nSeries++;
     }
 
-    double[][] proj_req_values = calculateShortfallValues(projectedDueOutScheduleSeries, 
+    double[][] proj_req_out_values = calculateShortfallValues(projectedDueOutScheduleSeries, 
 							  requestedProjectedDueOutScheduleSeries);
-    if ((proj_req_values[0] != null) && (proj_req_values[0].length > 0)) {
+    if ((proj_req_out_values[0] != null) && (proj_req_out_values[0].length > 0)) {
 	seriesLabels[nSeries] = PROJECTED_DUE_OUT_SHORTFALL_LABEL;
-	xvalues[nSeries] = proj_req_values[0];
-	yvalues[nSeries] = proj_req_values[1];
+	xvalues[nSeries] = proj_req_out_values[0];
+	yvalues[nSeries] = proj_req_out_values[1];
+	nSeries++;
+    }
+
+    double[][] proj_req_in_values = calculateShortfallValues(projectedDueInScheduleSeries, 
+							     requestedProjectedDueInScheduleSeries);
+    if ((proj_req_in_values[0] != null) && (proj_req_in_values[0].length > 0)) {
+	seriesLabels[nSeries] = PROJECTED_DUE_IN_SHORTFALL_LABEL;
+	xvalues[nSeries] = proj_req_in_values[0];
+	yvalues[nSeries] = proj_req_in_values[1];
 	nSeries++;
     }
 

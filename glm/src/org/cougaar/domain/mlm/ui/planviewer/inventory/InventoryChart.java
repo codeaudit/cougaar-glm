@@ -25,6 +25,7 @@ import java.awt.event.ComponentEvent;
 import java.util.*;
 import javax.swing.*;
 
+import org.cougaar.domain.mlm.ui.data.UIInventoryImpl;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.domain.mlm.ui.data.UIQuantityScheduleElement;
@@ -39,6 +40,8 @@ public class InventoryChart extends JPanel implements JCPickListener{
     static final String INVENTORY_LEGEND = "Inventory";
     static final String REQUESTED_INVENTORY_LEGEND = "Requested";
     static final String ACTUAL_INVENTORY_LEGEND = "Actual";
+    static final String REQUESTED_SUPPLY_LEGEND = REQUESTED_INVENTORY_LEGEND + " ";
+    static final String ACTUAL_SUPPLY_LEGEND = ACTUAL_INVENTORY_LEGEND + " ";
     static final String SHORTFALL_LEGEND = "Shortfall";
     static final String TOTAL_CAPACITY_LEGEND = "Total Capacity";
     static final String ALLOCATED_LEGEND = "Allocated";
@@ -261,6 +264,8 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    initializeActualCapacityChart(title, inventory);
 	} else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
 	    initializeTotalInventoryChart(title, inventory);
+	} else if (scheduleType.equals(UIInventoryImpl.NO_INVENTORY_SCHEDULE_JUST_CONSUME)) {
+	    initializeConsumeOnlyChart(title, inventory);
 	} else
 	    System.out.println("Unconfirmed schedule type: " + scheduleType);
 
@@ -385,6 +390,8 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    initializeActualCapacityChart(myTitle, myInventory);
 	} else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
 	    initializeTotalInventoryChart(myTitle, myInventory);
+	} else if (scheduleType.equals(UIInventoryImpl.NO_INVENTORY_SCHEDULE_JUST_CONSUME)) {
+	    initializeConsumeOnlyChart(myTitle, myInventory);
 	} else
 	    System.out.println("Unconfirmed schedule type: " + scheduleType);
 
@@ -525,29 +532,49 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	icv.setOutlineColor(colorTable.get(UISimpleNamedSchedule.ON_HAND));
 
 	// Requested
-	// MWD Remove
-	//scheduleTypes = new Vector(3);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_IN);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_OUT);
-	//scheduleTypes.addElement(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT);
-	InventoryChartDataModel requested = createInventoryDataModel(inventory, 
-								     REQUESTED_INVENTORY_LEGEND);
+	InventoryChartDataModel requested = 
+	    createInventoryDataModel(inventory, 
+				     REQUESTED_INVENTORY_LEGEND);
 	addView(chart, JCChart.BAR, requested);
 
 	// Actual
-	// MWD Remove
-	//scheduleTypes = new Vector(3);
-	//scheduleTypes.add(UISimpleNamedSchedule.DUE_IN);
-	//scheduleTypes.add(UISimpleNamedSchedule.DUE_OUT);
-	//scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_OUT);
-	InventoryChartDataModel actual = createInventoryDataModel(inventory, 
-								  ACTUAL_INVENTORY_LEGEND);
+	InventoryChartDataModel actual = 
+	    createInventoryDataModel(inventory, 
+				     ACTUAL_INVENTORY_LEGEND);
 	addView(chart, JCChart.BAR, actual);
 
+	computeAndInitializeShortfall(inventory,actual,requested);
+    }
+
+    private void initializeConsumeOnlyChart(String title, UISimpleInventory inventory) {
+    	// Title and chart
+	title = "Consumption of " + inventory.getAssetName() + " at " + title;
+	setChartTitle(title);
+
+	equalizeInventorySchedule(inventory);
+
+	// Requested
+	InventoryChartDataModel requested = 
+	    createInventoryDataModel(inventory, 
+				     REQUESTED_SUPPLY_LEGEND);
+	addView(chart, JCChart.BAR, requested);
+
+	// Actual
+	InventoryChartDataModel actual = 
+	    createInventoryDataModel(inventory, 
+				     ACTUAL_SUPPLY_LEGEND);
+	addView(chart, JCChart.BAR, actual);
+
+	computeAndInitializeShortfall(inventory,actual,requested);
+
+    }
+
+    private void computeAndInitializeShortfall(UISimpleInventory inventory,
+					       InventoryChartDataModel actual,
+					       InventoryChartDataModel requested) {
+
+	// unconfirmed
 	// do not add to chart separatly - only used to calc shortfall
-	// MWD Remove
-	//scheduleTypes = new Vector(1);
-	//scheduleTypes.add(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN);
 	InventoryChartDataModel unconfirmed = createInventoryDataModel(inventory,								  UNCONFIRMED_LEGEND);
 
 	// Shortfalls
@@ -591,6 +618,10 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	     series.getStyle().setLineWidth(2);
 	 } else if (lbl.equals(InventoryShortfallChartDataModel.PROJECTED_DUE_OUT_SHORTFALL_LABEL)) {
 	     setSeriesColor(series, new Color(255,51,0));
+	     series.getStyle().setSymbolSize(0);
+	     series.getStyle().setLineWidth(2);
+	 } else if (lbl.equals(InventoryShortfallChartDataModel.PROJECTED_DUE_IN_SHORTFALL_LABEL)) {
+	     setSeriesColor(series, new Color(40,245,245));
 	     series.getStyle().setSymbolSize(0);
 	     series.getStyle().setLineWidth(2);
 	 } else {
@@ -681,6 +712,14 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    scheduleTypes.add(UISimpleNamedSchedule.DUE_OUT);
 	    scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_OUT);
 	}
+	else if(legendTitle.equals(REQUESTED_SUPPLY_LEGEND)) {
+	    scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_IN);
+	    scheduleTypes.addElement(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN);
+	}
+	else if(legendTitle.equals(ACTUAL_SUPPLY_LEGEND)) {
+	    scheduleTypes.add(UISimpleNamedSchedule.DUE_IN);
+	    scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_IN);
+	}
 	else if(legendTitle.equals(SHORTFALL_LEGEND)) {
 	}
 	else if(legendTitle.equals(TOTAL_CAPACITY_LEGEND)) {
@@ -751,7 +790,8 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    extractSchedulesFromInventory(scheduleNames,inventory);
 
 	boolean inventoryFlag = 
-	    inventory.getScheduleType().equals(PlanScheduleType.TOTAL_INVENTORY);
+	    (inventory.getScheduleType().equals(PlanScheduleType.TOTAL_INVENTORY) ||
+	     inventory.getScheduleType().equals(UIInventoryImpl.NO_INVENTORY_SCHEDULE_JUST_CONSUME));
 	Vector onHandSchedule = extractOnHandSchedule(inventory);
 
 	return new InventoryChartDataModel(inventoryFlag,
@@ -998,19 +1038,23 @@ public class InventoryChart extends JPanel implements JCPickListener{
     public void resetChart() {
 	chart.reset();
 	resetAlpNow();
-	/*** MWD SetMin has bad ramifications for toggling
-	if(displayCDay) 
-{	    java.util.List viewList = chart.getDataView();
-	    for (int i = 0; i < viewList.size(); i++) {
-		ChartDataView chartDataView = (ChartDataView)viewList.get(i);
-		
-		// use time axis for x axis
-		JCAxis xaxis = chartDataView.getXAxis();
-		xaxis.setMin(CDAY_MIN);
-	    }
+
+	java.util.List viewList = chart.getDataView();
+	for (int i = 0; i < viewList.size(); i++) {
+	    ChartDataView chartDataView = (ChartDataView)viewList.get(i);
+	    
+	    /*** MWD SetMin has bad ramifications for toggling
+		 // use time axis for x axis
+		 JCAxis xaxis = chartDataView.getXAxis();
+		 if(displayCDay) 
+		 xaxis.setMin(CDAY_MIN);
+	    ***/
+	    
+	    JCAxis yaxis = chartDataView.getYAxis();
+	    yaxis.setMin(0);
 	}
-	**/
     }
+
 
     public void setDisplayCDays(boolean useCDays) {
 	if(useCDays != displayCDay) {
@@ -1019,6 +1063,10 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    resetAxes();
 	    
 	    //reinitializeAndUpdate();
+
+	    /*** MWD Took out and now again have reinitializeAndUpdate() -
+		 below kinda flukey with new JChart software
+	    **/ 
 
 	    java.util.List viewList = chart.getDataView();
 	    for (int i = 0; i < viewList.size(); i++) {
@@ -1039,7 +1087,6 @@ public class InventoryChart extends JPanel implements JCPickListener{
 		else
 		    System.out.println("View with Null Data Source");
 	    }
-
 
 	    resetChart();
 	}

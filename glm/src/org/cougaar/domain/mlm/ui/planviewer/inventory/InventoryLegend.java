@@ -42,6 +42,8 @@ public class InventoryLegend extends JPanel {
     final static String DEMAND_TITLE="Demand";
     final static String ACTUAL_DEMAND_TITLE="   Actual ";
     final static String PROJECTED_DEMAND_TITLE="   Projected ";
+    final static String ACTUAL_SUPPLY_TITLE=ACTUAL_DEMAND_TITLE;
+    final static String PROJECTED_SUPPLY_TITLE=PROJECTED_DEMAND_TITLE;
 
     final static String RECEIVED_LABEL="Received";
     final static String REQUESTED_LABEL="Requested ";
@@ -81,7 +83,10 @@ public class InventoryLegend extends JPanel {
 	    ChartDataView chartDataView=(ChartDataView)i.next();
 	    String name = chartDataView.getName();
 	    if(name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND) ||
-	       (name.equals(InventoryChart.ACTUAL_INVENTORY_LEGEND))) {
+	       (name.equals(InventoryChart.ACTUAL_INVENTORY_LEGEND)) ||
+	       (name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) ||
+	       (name.equals(InventoryChart.ACTUAL_SUPPLY_LEGEND))) {
+
 		addDemandSupplyDataView(chartDataView);
 	    }
 	    else {
@@ -107,16 +112,20 @@ public class InventoryLegend extends JPanel {
 	JLabel label;
 	SeriesToggleButton button;
 	JLabel demandValue=null;
+	JLabel supplyValue=null;
 	int j=0;
 	boolean madeDemandLabel=false;
+	boolean madeSupplyLabel=false;
 	boolean skippedDemandLabel=false;
+	boolean skippedSupplyLabel=false;
 
 	ChartDataViewSeries series;
 
 	int gridX=-1;
 	int titleY=SUPPLY_TITLE_GRIDY;
 
-	if(name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND))
+	if((name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND)) ||
+	   (name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)))
 	    gridX=REQUESTED_GRIDX;
 	else
 	    gridX=ACTUAL_GRIDX;
@@ -155,10 +164,12 @@ public class InventoryLegend extends JPanel {
 	    String seriesName = series.getLabel();
 	    String labelName="";
 
-	    if(name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND)) {
+	    if((name.equals(InventoryChart.REQUESTED_INVENTORY_LEGEND)) ||
+	       (name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND))) {
 		
 		//Setup the left hand titles
 		if(seriesName.equals(InventoryChartDataModel.REQUESTED_DUE_IN_LABEL) ||
+		   seriesName.equals(InventoryChartDataModel.REQUESTED_PROJECTED_DUE_IN_LABEL) ||
 		   seriesName.equals(InventoryChartDataModel.UNCONFIRMED_DUE_IN_LABEL)) { 
 		    component = createLabel(SUPPLY_TITLE);
 		    demandSupplyPanel.add(component, 
@@ -167,7 +178,20 @@ public class InventoryLegend extends JPanel {
 							GridBagConstraints.NONE, 
 							insets, 0, 0));	
 
-		    if(!madeDemandLabel) {
+		    //Not just supply (consumer, no inventory) and haven't put up demand title
+		    if(name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) {
+			if(supplyValue == null) {
+			    supplyValue = createLabel(EMPTY_LABEL);
+			    demandSupplyPanel.add(supplyValue, 
+						  new GridBagConstraints(TITLES_GRIDX + 1,
+									 titleY-1,
+									 1, 1, 0.0, 0.0,
+									 GridBagConstraints.WEST, 
+									 GridBagConstraints.NONE, 
+									 insets, 0, 0));
+			}
+		    }
+		    else if (!madeDemandLabel){
 			component = createLabel(DEMAND_TITLE);
 			demandSupplyPanel.add(component, 
 					      new GridBagConstraints(TITLES_GRIDX, 
@@ -186,6 +210,21 @@ public class InventoryLegend extends JPanel {
 								     insets, 0, 0));
 			madeDemandLabel=true;
 			titleY++;
+		    }		    
+		    
+		    if(name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) {
+			if(seriesName.equals(InventoryChartDataModel.REQUESTED_DUE_IN_LABEL)){
+			    component = createLabel(ACTUAL_SUPPLY_TITLE);
+			}
+			else {
+			    component = createLabel(PROJECTED_SUPPLY_TITLE);
+			}
+			demandSupplyPanel.add(component, 
+					      new GridBagConstraints(TITLES_GRIDX, titleY++, 
+								     1, 1, 0.0, 0.0,
+								     GridBagConstraints.WEST, 
+								     GridBagConstraints.NONE, 
+								     insets, 0, 0));
 		    }
 		}
 		else {
@@ -222,6 +261,10 @@ public class InventoryLegend extends JPanel {
 			(seriesName.equals(InventoryChartDataModel.ACTUAL_PROJECTED_DUE_OUT_CONSUMED_LABEL))){
 		    labelName = CONSUMED_LABEL;
 		}
+		else if (seriesName.equals(InventoryChartDataModel.ACTUAL_PROJECTED_DUE_IN_LABEL)) {
+		    labelName = REQUESTED_LABEL;
+		    
+		}
 		else {
 		    labelName = RECEIVED_LABEL;
 		}    
@@ -236,6 +279,17 @@ public class InventoryLegend extends JPanel {
 	    
 	    button = new SeriesToggleButton(labelName,iconWidth,
 					    j,series);
+
+	    // Skip over Demand label
+	    if(!skippedSupplyLabel) {
+		//System.out.println("Skipping Supply for " + name + " series: " + seriesName);
+		if((name.equals(InventoryChart.REQUESTED_SUPPLY_LEGEND)) ||
+		   (name.equals(InventoryChart.ACTUAL_SUPPLY_LEGEND))){
+		    y++;
+		}
+		skippedSupplyLabel=true;
+	    }
+
 	    
 	    demandSupplyPanel.add(button, 
 				  new GridBagConstraints(gridX, y++, 1, 1, 0.0, 0.0,

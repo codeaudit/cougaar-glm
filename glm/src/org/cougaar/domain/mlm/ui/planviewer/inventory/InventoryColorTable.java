@@ -42,6 +42,10 @@ public class InventoryColorTable {
 		   new Color(120, 225, 120)); // light green
     colorTable.put(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT, 
                    new Color(255, 210, 120));     // light orange
+    colorTable.put(UISimpleNamedSchedule.PROJECTED_DUE_IN, 
+                   new Color(0, 100, 100));     //light blue - green 
+    colorTable.put(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN, 
+                   new Color(100,220,220));     // light blue-green
     
     //    colorTable.put(UISimpleNamedSchedule.TOTAL, 
     //             new Color(0, 153, 0));     // forest green

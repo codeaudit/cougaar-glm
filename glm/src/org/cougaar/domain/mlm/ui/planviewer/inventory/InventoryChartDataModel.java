@@ -44,6 +44,9 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
     final static String REQUESTED_DUE_OUT_LABEL="Requisition Qty";
     final static String REQUESTED_PROJECTED_DUE_OUT_LABEL="Projected Req Qty";
 
+    final static String ACTUAL_PROJECTED_DUE_IN_LABEL="Projected Usage Qty";
+    final static String REQUESTED_PROJECTED_DUE_IN_LABEL="Projected Req Usage Qty";
+
 
   boolean isInventory; // true if isInventory, false if capacity
   String assetName;
@@ -60,7 +63,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
   String legendTitle = "";
   static final int LABOR_HOURS_PER_DAY = 8;
   static final int LABOR_HOURS_ADDL = 2;
-  double ammoFactor = 1;
+  double ammoFactor = 1.0;
   Vector referenceOnHandSchedule;
 
   long baseCDayTime;
@@ -252,6 +255,13 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
        if (referenceOnHandSchedule == null) {
 	 xvalues[i][j] = endDay;
 	 yvalues[i][j] = s.getQuantity() * ammoFactor;
+	 /***
+	 System.out.println("InventoryChartDataModel::setInventoryValues: J is " + j +
+			    " Qty is " + s.getQuantity() + " ammoFactor is " + ammoFactor +
+			    "result is " + yvalues[i][j]);
+	 */		    
+			    
+			  
        } else {
 	 if (endDay < minDay || endDay > maxDay)
 	   System.out.println("WARNING: ignoring due-in or due-out schedule time that is before or after on-hand schedule times, day: " + endDay);
@@ -300,7 +310,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
 	    long endTime = s.getEndTime();
 	    int endDay = (int)((endTime - baseTime) / MILLIS_IN_DAY);
 	    if(currElement == null) {
-		currElement = s;
+		currElement = (UIQuantityScheduleElement)s.clone();
 	        currEndDay = endDay;
 	    }
 	    else {
@@ -310,7 +320,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
 		    currEndDay=endDay;
 		}
 		else {
-		    // System.out.println("InventoryChartDataModel::daily bucket Same Day!!");
+		    //   System.out.println("InventoryChartDataModel::daily bucket Same Day(" + endDay + ")!!");
 		    currElement.setQuantity((currElement.getQuantity() + s.getQuantity()));
 		}
 	    }
@@ -331,7 +341,8 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
     if (valuesSet)
       return;
     valuesSet = true;
-    //    printSchedules();
+
+    //printSchedules();
 
     if (isInventory)
       setInventoryValues();
@@ -535,6 +546,11 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
       return REQUESTED_DUE_OUT_LABEL;
     else if (scheduleName.equals(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT))
       return REQUESTED_PROJECTED_DUE_OUT_LABEL;
+    else if (scheduleName.equals(UISimpleNamedSchedule.PROJECTED_DUE_IN))
+      return ACTUAL_PROJECTED_DUE_IN_LABEL;
+    else if (scheduleName.equals(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_IN))
+      return REQUESTED_PROJECTED_DUE_IN_LABEL;
+   
     return scheduleName;
   }
 
