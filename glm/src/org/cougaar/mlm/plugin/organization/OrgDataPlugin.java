@@ -225,7 +225,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
     if (myOpConInfoRelaySubscription.hasChanged()) {
       if (myLogger.isInfoEnabled()) {
-        myLogger.info(getAgentIdentifier() + " myOpConInfoRelaySubscription has changed!");
+        myLogger.info("myOpConInfoRelaySubscription has changed!");
       }
       Collection changedOpConInfoRelays =
         myOpConInfoRelaySubscription.getChangedCollection();
@@ -280,10 +280,9 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 	  covered = true;
 	} else {
 	  if (myLogger.isInfoEnabled()) {
-	    myLogger.info(getAgentIdentifier() + 
-			    ": opconInfo - " + opconInfo + 
-			    " does not match overlapping RFD - " +
-			    existingRFDInfo.getTask());
+	    myLogger.info("opconInfo - " + opconInfo + 
+			  " does not match overlapping RFD - " +
+			  existingRFDInfo.getTask());
 	  }
 	  
 	  // Need to make a new rfd for this timespan
@@ -331,8 +330,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 					  opconInfo.getEndTime()); 
 	    addedRFDInfos.add(new RFDInfo(rfdTask));
 	    if (myLogger.isInfoEnabled()) {
-	      myLogger.info(getAgentIdentifier() + 
-			    ": New is:" + rfdTask);
+	      myLogger.info("New is:" + rfdTask);
 	    }
 	  }
     }
@@ -340,8 +338,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     }
 
     if (myLogger.isInfoEnabled())
-      myLogger.info(getAgentIdentifier() + 
-		    " processPotentialChangedOpCons: adding  " + 
+      myLogger.info("processPotentialChangedOpCons: adding  " + 
 		    addedRFDInfos.size() + " RFDs , removing " +
 		    removedRFDInfos.size() + " RFDs.");
 
@@ -351,7 +348,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
       getBlackboardService().publishRemove(rfd);
 
       if (myLogger.isInfoEnabled())
-	myLogger.info(getAgentIdentifier() + "- Removing RFD: " + rfd);
+	myLogger.info("Removing RFD: " + rfd);
     }
     
     
@@ -360,7 +357,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
       getBlackboardService().publishAdd(rfd);
 
       if (myLogger.isInfoEnabled())
-	myLogger.info(getAgentIdentifier() + "- Adding RFD: " + rfd);
+	myLogger.info("Adding RFD: " + rfd);
     }
   }
 
@@ -373,7 +370,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 			  start, end);
 
     if (myLogger.isInfoEnabled()) {
-      myLogger.info(getAgentIdentifier() + ": added relationship " +
+      myLogger.info("added relationship " +
 		    " other asset typeid = " + typeId + 
 		    ", itemId = " + itemId +
 		    ", clusterId = " + otherClusterId +
@@ -384,7 +381,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
     if (roleName.equals(Constants.Role.ADMINISTRATIVESUBORDINATE.toString())) {
       if (myLogger.isInfoEnabled()) {
-	myLogger.info(getAgentIdentifier() + ": adding OPCON relationship ");
+	myLogger.info("adding OPCON relationship ");
       }
     
 
@@ -396,8 +393,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
   private Task createOpConRFD(Asset opCon, long startTime, long endTime) {
     if (myLogger.isInfoEnabled()) {
-      myLogger.info(getAgentIdentifier() + 
-		    " creating an RFD from " + myAgentAddr + 
+      myLogger.info("creating an RFD from " + myAgentAddr + 
 		    " to "  + opCon);
     }
     
@@ -423,8 +419,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 			 null,
 			 null);
     if (myLogger.isInfoEnabled()) {
-      myLogger.info(getAgentIdentifier() + 
-		    " just created an OpConInfoRelay: " + 
+      myLogger.info("just created an OpConInfoRelay: " + 
 		    opconRelay.toString()
 		    + " from " + myAgentAddr + " to "  + targetAddr);
     }
@@ -450,14 +445,14 @@ public class OrgDataPlugin extends AssetDataPlugin  {
       ArrayList response = (ArrayList) relay.getResponse();
 
       if (myLogger.isInfoEnabled()) {
-	myLogger.info(getAgentIdentifier() + " OpConInfoRelay content = " + content +
-		       " response = " + response);
+	myLogger.info("OpConInfoRelay content = " + content +
+		      " response = " + response);
       }      
 
       if ((response == null) || 
 	  (response.size() < 2)) {
 	if (myLogger.isDebugEnabled()) {
-	  myLogger.debug(getAgentIdentifier() + " ignoring invalid response.");
+	  myLogger.debug("ignoring invalid response.");
 	}
       } else {
 	String opConItemId = (String)response.get(0);
@@ -465,8 +460,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
 	if (relayMap.containsKey(opConItemId)) {
 	  if (myLogger.isInfoEnabled()) {
-	    myLogger.info(getAgentIdentifier() + 
-			  ": ignoring OpConInfoRelay " + relay +
+	    myLogger.info("ignoring OpConInfoRelay " + relay +
 			  " already added required RFDs.");
 	  }
 	} else {
@@ -511,7 +505,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 	      report(relationship);
 	      
 	      if (myLogger.isInfoEnabled()) {
-		myLogger.info(getAgentIdentifier() + " published RFD to " +
+		myLogger.info(" published RFD to " +
 			      maTarget + " for " + 
 			      new Date(opconInfo.getStartTime()) + " to " +
 			      new Date(opconInfo.getEndTime()));
@@ -522,8 +516,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 	  }
 
 	  if ((!usedRelay) && (myLogger.isInfoEnabled())) {
-	    myLogger.info(getAgentIdentifier() + 
-			  ": ignoring OpConInfoRelay " + relay + 
+	    myLogger.info("ignoring OpConInfoRelay " + relay + 
 			  " required RFDs already exist.");
 	  }
 	}
@@ -590,7 +583,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 	relationshipSchedule.getMatchingRelationships(Constants.Role.ADMINISTRATIVESUPERIOR);
       
       if (relationships.size() != 1) {
-	myLogger.error(getAgentIdentifier() + ": getAdConRelationship - " +
+	myLogger.error("getAdConRelationship - " +
 		       " found multiple administrative superiors " +
 		       relationships + " choice is random.");
       }      
@@ -706,15 +699,13 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     Organization adCon = null;
 
     if (adConRelationship == null) {
-      myLogger.error(getAgentIdentifier() + 
-		     ": buildOpConInfos - no AdConRelationship.");
+      myLogger.error("buildOpConInfos - no AdConRelationship.");
     } else {
       adCon = 
         (Organization) getSelfOrg().getRelationshipSchedule().getOther(adConRelationship);
     
       if (myLogger.isDebugEnabled()) {
-	myLogger.debug(getAgentIdentifier() +
-		       ": adConRelationship = " + adConRelationship);
+	myLogger.debug("adConRelationship = " + adConRelationship);
       }
     }
     String adconName = 
@@ -787,7 +778,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     }
     
     if (myLogger.isDebugEnabled()) {
-      myLogger.debug(getAgentIdentifier() + ": buildOpConInfos returning  " + 
+      myLogger.debug("buildOpConInfos returning  " + 
 		     opconInfos);
     }
 
