@@ -194,13 +194,15 @@ public class CompletionWatcherWorker extends ServletWorker {
   protected void getUsageImage (HttpServletResponse response) throws IOException, ServletException {
     InputStream fin;
     String fileName = USAGE_IMAGE;
-    try {
-      fin = this.support.getConfigFinder().open(fileName);
-    } catch (IOException ioe) {
+    
+    fin = getClass().getResource(fileName).openStream ();
+
+    if (fin == null) {
       response.sendError(
 			 HttpServletResponse.SC_NOT_FOUND, 
 			 "Unable to open file \""+fileName+"\"");
-      return;
+      support.getLog().error (".getUsageImage - Tried to find image " + fileName + " but couldn't." + 
+			      " Should be in this directory...");
     }
 
     String contentType = guessContentType(fileName, fin);
