@@ -794,10 +794,10 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
           } catch (Exception e) {
             printError("Invalid number for "+sParam);
           }
-        } else if (name.equalsIgnoreCase("OffsetDays")) {
+        } else if (name.equalsIgnoreCase("OffsetDays") || name.equalsIgnoreCase("OffsetDay")) {
 	  offsetDays = Integer.parseInt(val);
 	} else if (name.equalsIgnoreCase("OriginFile")) {
-	    if (!val.equalsIgnoreCase("HOME")) {
+	    if (!val.equalsIgnoreCase("HOME") && !val.equalsIgnoreCase("NONE")) {
 	      originFile = val;
 	    }
 	} else {
