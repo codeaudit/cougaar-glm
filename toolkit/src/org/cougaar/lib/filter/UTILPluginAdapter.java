@@ -655,6 +655,10 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
 
   /** @return cluster name and plugin name */
   public String getName () { 
+    if (myClusterName == null) {
+      myName = null;
+      myClusterName = ((PluginBindingSite)getBindingSite()).getAgentIdentifier().getAddress();
+    }
     if (myName == null)
       myName = getClusterName () + "/" + getClassName ();
     return myName;
