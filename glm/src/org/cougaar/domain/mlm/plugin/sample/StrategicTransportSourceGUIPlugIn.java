@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Calendar;
@@ -37,9 +37,9 @@ import org.cougaar.domain.planning.ldm.RootFactory;
 
 import org.cougaar.domain.planning.ldm.asset.AbstractAsset;
 import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
-import org.cougaar.domain.glm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.NewTask;

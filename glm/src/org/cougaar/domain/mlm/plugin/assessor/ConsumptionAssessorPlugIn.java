@@ -26,10 +26,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Inventory;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.policy.ACRPolicy;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Inventory;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.policy.ACRPolicy;
 import org.cougaar.domain.glm.plugins.TaskUtils;
 import org.cougaar.domain.glm.plugins.TimeUtils;
 

@@ -19,9 +19,9 @@ import org.cougaar.util.ShortDateFormat;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.XMLObjectFactory;
 
-import org.cougaar.domain.glm.oplan.Oplan;
-import org.cougaar.domain.glm.oplan.OrgActivity;
-import org.cougaar.domain.glm.oplan.TimeSpan;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
+import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
 
 import org.w3c.dom.Element;
 

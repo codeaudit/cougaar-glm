@@ -25,11 +25,11 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.policy.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.policy.*;
 import org.cougaar.domain.mlm.ui.data.UIInventoryImpl;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;

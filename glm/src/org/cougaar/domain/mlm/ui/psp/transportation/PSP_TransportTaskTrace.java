@@ -22,9 +22,9 @@ import org.cougaar.core.society.UID;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.*;
 
 /**
@@ -830,7 +830,7 @@ public class PSP_TransportTaskTrace extends PSP_BaseAdapter implements UseDirect
          // TRANSPORTATION MISSION TASK, ALLOCATED TO PHYSICAL ASSET
          // -- GRAB ITINERARY.
          //
-         if( all.getAsset() instanceof org.cougaar.domain.glm.asset.PhysicalAsset )
+         if( all.getAsset() instanceof org.cougaar.domain.glm.ldm.asset.PhysicalAsset )
          {
               annote += "->getAsset(PhysicalAsset)";
 

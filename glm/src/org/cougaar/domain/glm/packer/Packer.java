@@ -15,8 +15,8 @@ import org.cougaar.domain.planning.ldm.plan.Verb;
 import org.cougaar.util.Sortings;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Ammunition;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Ammunition;
 
 /**
  * Packer - handles packing supply requests

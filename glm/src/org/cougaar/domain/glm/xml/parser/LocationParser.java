@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/LocationParser.java,v 1.1 2000-12-15 20:18:03 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/xml/parser/Attic/LocationParser.java,v 1.2 2000-12-20 18:18:39 mthome Exp $
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -16,9 +16,9 @@ import org.w3c.dom.NodeList;
 import org.cougaar.domain.planning.ldm.LDMServesPlugIn;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
-import org.cougaar.domain.glm.ALPFactory;
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.plan.NewGeolocLocation;
+import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 
 /**
  * Copyright (c) 1999 BBN Technologies 

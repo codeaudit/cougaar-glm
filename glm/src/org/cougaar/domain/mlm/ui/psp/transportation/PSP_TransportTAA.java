@@ -25,10 +25,10 @@ import org.cougaar.util.*;
 
 import com.ibm.xml.parsers.*;
 
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.oplan.Oplan;
-import org.cougaar.domain.glm.oplan.OrgActivity;
-import org.cougaar.domain.glm.oplan.TimeSpan;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
+import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.*;
 
 import org.w3c.dom.*;

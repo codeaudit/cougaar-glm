@@ -57,29 +57,29 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.EmptyEnumeration;
 
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.ALPFactory;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.ALPFactory;
 
-import org.cougaar.domain.glm.asset.AssignedPG;
-import org.cougaar.domain.glm.asset.AssignedPGImpl;
-import org.cougaar.domain.glm.asset.NewAssignedPG;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.OrganizationAdapter;
-import org.cougaar.domain.glm.asset.NewLocationSchedulePG;
-import org.cougaar.domain.glm.asset.LocationSchedulePG;
-import org.cougaar.domain.glm.asset.LocationSchedulePGImpl;
+import org.cougaar.domain.glm.ldm.asset.AssignedPG;
+import org.cougaar.domain.glm.ldm.asset.AssignedPGImpl;
+import org.cougaar.domain.glm.ldm.asset.NewAssignedPG;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.OrganizationAdapter;
+import org.cougaar.domain.glm.ldm.asset.NewLocationSchedulePG;
+import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
+import org.cougaar.domain.glm.ldm.asset.LocationSchedulePGImpl;
 
-import org.cougaar.domain.glm.plan.ALPRelationship;
+import org.cougaar.domain.glm.ldm.plan.ALPRelationship;
 
 // ADDED BY TOPS
-import org.cougaar.domain.glm.asset.Facility;
-import org.cougaar.domain.glm.asset.NewAssignmentPG;
-import org.cougaar.domain.glm.asset.NewPositionPG;
-import org.cougaar.domain.glm.asset.PositionPGImpl;
-import org.cougaar.domain.glm.asset.TransportationNode;
+import org.cougaar.domain.glm.ldm.asset.Facility;
+import org.cougaar.domain.glm.ldm.asset.NewAssignmentPG;
+import org.cougaar.domain.glm.ldm.asset.NewPositionPG;
+import org.cougaar.domain.glm.ldm.asset.PositionPGImpl;
+import org.cougaar.domain.glm.ldm.asset.TransportationNode;
 
-import org.cougaar.domain.glm.plan.NewGeolocLocation;
-import org.cougaar.domain.glm.plan.NewPosition;
+import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.NewPosition;
 
 // END ADDED BY TOPS
 
@@ -890,10 +890,10 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
   static {
     // initialize packages:
     packages = new ArrayList();
-    packages.add("org.cougaar.domain.glm.asset");
-    packages.add("org.cougaar.domain.glm.plan");
-    packages.add("org.cougaar.domain.glm.oplan");
-    packages.add("org.cougaar.domain.glm.policy");
+    packages.add("org.cougaar.domain.glm.ldm.asset");
+    packages.add("org.cougaar.domain.glm.ldm.plan");
+    packages.add("org.cougaar.domain.glm.ldm.oplan");
+    packages.add("org.cougaar.domain.glm.ldm.policy");
 
 
     packages.add("org.cougaar.domain.planning.ldm.measure");

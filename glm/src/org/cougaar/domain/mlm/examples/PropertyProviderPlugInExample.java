@@ -18,10 +18,10 @@ import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.*;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 /** This plugin knows how to fill Widget prototypes
  * with physical attribute data.

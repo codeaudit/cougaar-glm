@@ -14,7 +14,7 @@ import java.util.Date;
 
 import org.cougaar.domain.planning.ldm.plan.Verb;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 public class UIItineraryElement implements org.cougaar.util.SelfPrinter, java.io.Serializable {
 

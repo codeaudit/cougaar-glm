@@ -3,7 +3,7 @@ package org.cougaar.domain.glm.execution.eg;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.core.society.UID;
 import java.io.IOException;
-import org.cougaar.domain.glm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
 import org.cougaar.domain.glm.execution.common.*;
 
 public class TimedTaskEventReport extends Timed {

@@ -12,7 +12,7 @@ package org.cougaar.domain.glm.plugin;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;

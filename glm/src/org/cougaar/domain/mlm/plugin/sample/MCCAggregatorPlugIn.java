@@ -11,14 +11,14 @@
 package org.cougaar.domain.mlm.plugin.sample;
 
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.core.plugin.SimplePlugIn;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.domain.planning.ldm.plan.Preposition;
 import org.cougaar.domain.planning.ldm.plan.AspectType;

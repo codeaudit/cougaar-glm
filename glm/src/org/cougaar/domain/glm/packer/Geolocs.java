@@ -7,9 +7,9 @@ package org.cougaar.domain.glm.packer;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 
-import org.cougaar.domain.glm.ALPFactory;
-import org.cougaar.domain.glm.plan.NewGeolocLocation;
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 
 /**

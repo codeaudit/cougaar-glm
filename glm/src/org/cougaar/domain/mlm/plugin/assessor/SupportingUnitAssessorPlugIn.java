@@ -33,16 +33,16 @@ import org.cougaar.domain.planning.ldm.plan.Role;
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.plugin.PlugInAdapter;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 /**
  * The SupportingUnitAssessorPlugIn monitors organization assets and generates
  * an Report if one is added/modified/deleted.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version $Id: SupportingUnitAssessorPlugIn.java,v 1.1 2000-12-15 20:17:46 mthome Exp $ */
+ * @version $Id: SupportingUnitAssessorPlugIn.java,v 1.2 2000-12-20 18:18:40 mthome Exp $ */
 
 public class SupportingUnitAssessorPlugIn extends SimplePlugIn {
 

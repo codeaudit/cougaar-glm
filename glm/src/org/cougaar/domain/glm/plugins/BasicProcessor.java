@@ -40,12 +40,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.plan.ObjectScheduleElement;
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
-import org.cougaar.domain.glm.plan.AlpineAspectType;
-import org.cougaar.domain.glm.plan.PlanScheduleElementType;
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.plan.ObjectScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.plan.PlanScheduleElementType;
+import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 

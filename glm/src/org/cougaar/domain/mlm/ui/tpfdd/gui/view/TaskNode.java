@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskNode.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskNode.java,v 1.2 2000-12-20 18:18:47 mthome Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
 
 import org.w3c.dom.Element;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 import org.cougaar.domain.mlm.ui.tpfdd.util.Debug;
 import org.cougaar.domain.mlm.ui.tpfdd.util.BeanInfoProvider;

@@ -26,9 +26,9 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AssetGroup;
 import org.cougaar.core.cluster.ClusterIdentifier;
 
-import org.cougaar.domain.glm.ALPFactory;
-import org.cougaar.domain.glm.plan.QueryRequest;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.plan.QueryRequest;
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 import org.cougaar.lib.util.UTILAsset;
 

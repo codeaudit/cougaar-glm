@@ -13,7 +13,7 @@ package org.cougaar.domain.mlm.plugin.ldm;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.plan.NewScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.Schedule;
-import org.cougaar.domain.glm.plan.NewQuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;

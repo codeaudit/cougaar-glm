@@ -40,26 +40,26 @@ import org.cougaar.domain.planning.ldm.plan.Task;
 
 import org.cougaar.util.TimeSpan;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.ALPAsset;
-import org.cougaar.domain.glm.asset.Ammunition;
-import org.cougaar.domain.glm.asset.CargoShip;
-import org.cougaar.domain.glm.asset.Consumable;
-import org.cougaar.domain.glm.asset.Container;
-import org.cougaar.domain.glm.asset.Convoy;
-import org.cougaar.domain.glm.asset.GroundVehiclePG;
-import org.cougaar.domain.glm.asset.MovabilityPG;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.Person;
-import org.cougaar.domain.glm.asset.PhysicalPG;
-import org.cougaar.domain.glm.asset.PositionPG;
-import org.cougaar.domain.glm.asset.Repairable;
-import org.cougaar.domain.glm.asset.TransportationNode;
-import org.cougaar.domain.glm.asset.TransportationRoute;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.asset.Ammunition;
+import org.cougaar.domain.glm.ldm.asset.CargoShip;
+import org.cougaar.domain.glm.ldm.asset.Consumable;
+import org.cougaar.domain.glm.ldm.asset.Container;
+import org.cougaar.domain.glm.ldm.asset.Convoy;
+import org.cougaar.domain.glm.ldm.asset.GroundVehiclePG;
+import org.cougaar.domain.glm.ldm.asset.MovabilityPG;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Person;
+import org.cougaar.domain.glm.ldm.asset.PhysicalPG;
+import org.cougaar.domain.glm.ldm.asset.PositionPG;
+import org.cougaar.domain.glm.ldm.asset.Repairable;
+import org.cougaar.domain.glm.ldm.asset.TransportationNode;
+import org.cougaar.domain.glm.ldm.asset.TransportationRoute;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.plan.NewQuantityScheduleElement;
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
 
 import org.cougaar.domain.glm.GLMConst;
 import org.cougaar.domain.glm.util.GLMPreference;
@@ -91,7 +91,7 @@ public class GLMAsset extends UTILAsset {
     try{
       NewTypeIdentificationPG p1 = null;
 
-      convoy = (Convoy) root.createAsset(Class.forName ("org.cougaar.domain.glm.asset.Convoy"));
+      convoy = (Convoy) root.createAsset(Class.forName ("org.cougaar.domain.glm.ldm.asset.Convoy"));
       p1 = (NewTypeIdentificationPG)convoy.getTypeIdentificationPG();
       p1.setTypeIdentification("TOPS_CONVOY");
       p1.setNomenclature("Convoy");
@@ -320,7 +320,7 @@ public static boolean isPallet(Asset asset) {
 	return isPallet(((AggregateAsset)asset).getAsset());
     } 
     
-    if ((asset instanceof Container) || (asset instanceof org.cougaar.domain.glm.asset.Package)){
+    if ((asset instanceof Container) || (asset instanceof org.cougaar.domain.glm.ldm.asset.Package)){
       TypeIdentificationPG typeofasset = null;
       typeofasset = asset.getTypeIdentificationPG();
       if (typeofasset == null) {
@@ -349,10 +349,10 @@ public static boolean isPallet(Asset asset) {
    *
    * works with an aggregate asset too.
    *
-   * Something is ammo it's an instance of org.cougaar.domain.glm.asset.Ammunition OR
+   * Something is ammo it's an instance of org.cougaar.domain.glm.ldm.asset.Ammunition OR
    * The type identification PG's nomenclature is Ammunition
    *
-   * @see org.cougaar.domain.glm.asset.Ammunition
+   * @see org.cougaar.domain.glm.ldm.asset.Ammunition
    * @param asset the asset to check
    * @return boolean
    */

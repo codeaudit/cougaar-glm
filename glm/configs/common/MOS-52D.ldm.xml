@@ -14,7 +14,7 @@
 -->
 
 <prototype name="MOS-52D">
-  <object class="org.cougaar.domain.glm.asset.MilitaryPerson">
+  <object class="org.cougaar.domain.glm.ldm.asset.MilitaryPerson">
 
       <field name="TypeIdentificationPG" type="object">
         <value>
@@ -31,10 +31,10 @@
 
       <field name="PersonPG" type="object">
         <value>
-          <object class="org.cougaar.domain.glm.asset.NewPersonPG">
+          <object class="org.cougaar.domain.glm.ldm.asset.NewPersonPG">
             <field name="Skills" type="java.util.ArrayList">
               <value> 
-                <object class="org.cougaar.domain.glm.plan.Skill">
+                <object class="org.cougaar.domain.glm.ldm.plan.Skill">
                   <field name="Skill" type="String">
                     <value> MOS/52D </value>
                   </field>

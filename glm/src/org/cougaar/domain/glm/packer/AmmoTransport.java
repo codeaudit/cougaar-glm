@@ -18,18 +18,18 @@ import org.cougaar.domain.planning.ldm.plan.Priority;
 // Assets, etc.
 import org.cougaar.domain.planning.ldm.asset.Asset;
 
-import org.cougaar.domain.glm.asset.ALPAsset;
-import org.cougaar.domain.glm.asset.Container;
-import org.cougaar.domain.glm.asset.PropertyGroupFactory;
+import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.asset.Container;
+import org.cougaar.domain.glm.ldm.asset.PropertyGroupFactory;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.plan.GeolocLocationImpl;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl;
 
 
 // properties
-import org.cougaar.domain.glm.asset.NewMovabilityPG;
+import org.cougaar.domain.glm.ldm.asset.NewMovabilityPG;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
 // utils
 import java.util.Vector;

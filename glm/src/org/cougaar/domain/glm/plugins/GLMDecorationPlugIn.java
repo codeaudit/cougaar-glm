@@ -31,8 +31,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import org.cougaar.domain.glm.debug.GLMDebug;
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 
 /**
  * Defines common functions described in SimplePlugIn.

@@ -40,8 +40,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 import org.cougaar.domain.glm.callback.GLMOrganizationCallback;
 import org.cougaar.domain.glm.callback.GLMOrganizationListener;

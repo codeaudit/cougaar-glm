@@ -28,15 +28,15 @@ import org.cougaar.util.UnaryPredicate;
 import java.io.*;
 import java.lang.*;
 import java.util.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.oplan.Oplan;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.ALPFactory;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.ALPFactory;
 import org.cougaar.domain.glm.plugins.*;
 import org.cougaar.domain.glm.debug.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.asset.ProjectionWeight;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.asset.ProjectionWeight;
 
 /** Allocate SUPPLY tasks to local inventory (if there is any) or to 
  *  the closest supplier.

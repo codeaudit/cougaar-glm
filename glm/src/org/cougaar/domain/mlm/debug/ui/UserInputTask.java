@@ -12,7 +12,7 @@
 package org.cougaar.domain.mlm.debug.ui;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
-import org.cougaar.domain.glm.plan.Capability;
+import org.cougaar.domain.glm.ldm.plan.Capability;
 import org.cougaar.domain.planning.ldm.plan.ClusterObjectFactory;
 import org.cougaar.domain.planning.ldm.plan.NewPlanElement;
 import org.cougaar.domain.planning.ldm.plan.NewPrepositionalPhrase;

@@ -35,12 +35,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Inventory;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.PhysicalPG;
-import org.cougaar.domain.glm.asset.ScheduledContentPG;
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Inventory;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.PhysicalPG;
+import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 /** Provide methods to supply 'keys' uniquely describing published objects. */

@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin.organization;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.core.cluster.ClusterIdentifier;
 
 import org.cougaar.core.cluster.Subscriber;
@@ -33,9 +33,9 @@ import org.cougaar.domain.planning.ldm.plan.Expansion;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Plan;
 import org.cougaar.domain.planning.ldm.plan.AllocationResult;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.plugin.util.PlugInHelper;

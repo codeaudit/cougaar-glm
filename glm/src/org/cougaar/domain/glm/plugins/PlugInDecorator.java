@@ -19,7 +19,7 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.domain.glm.plugins;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 /** Associates proper BasicProcessor with a given PlugIn. */
 public abstract class PlugInDecorator {

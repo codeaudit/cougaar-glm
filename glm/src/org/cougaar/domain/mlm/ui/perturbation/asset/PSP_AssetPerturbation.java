@@ -31,11 +31,11 @@ import org.cougaar.core.society.UID;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.policy.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.policy.*;
 
 /**
  * PSP_AssetPerturbation - PSP for retrieving info messages

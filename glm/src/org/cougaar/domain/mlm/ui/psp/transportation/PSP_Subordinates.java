@@ -33,8 +33,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 public class PSP_Subordinates extends PSP_BaseAdapter
                        implements PlanServiceProvider, UISubscriber

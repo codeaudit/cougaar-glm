@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMAllocate.java,v 1.1 2000-12-15 20:18:03 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMAllocate.java,v 1.2 2000-12-20 18:18:38 mthome Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -31,7 +31,7 @@ import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
 import org.cougaar.domain.planning.ldm.plan.Task;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
 import org.cougaar.lib.filter.UTILPlugIn;
 

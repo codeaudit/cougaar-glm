@@ -323,12 +323,12 @@ public class GSScheduler {
     prop1.setQualifiedAircraftType ("C-17");
     prop1.setAircraftPosition ("Pilot");
     asset1.setAirForcePersonPG (prop1);
-    org.cougaar.domain.glm.asset.NewWaterSelfPropulsionPG prop4 =
+    org.cougaar.domain.glm.ldm.asset.NewWaterSelfPropulsionPG prop4 =
       org.cougaar.domain.planning.ldm.asset.PropertyGroupFactory.newWaterSelfPropulsionPG();
     prop4.setCruiseSpeed (org.cougaar.domain.planning.ldm.measure.Speed.newMetersPerSecond (3150.0));
     asset1.setWaterSelfPropulsionPG (prop4);
     Asset asset2 = new Asset();
-    org.cougaar.domain.glm.asset.NewAirVehiclePG prop2 =
+    org.cougaar.domain.glm.ldm.asset.NewAirVehiclePG prop2 =
       org.cougaar.domain.planning.ldm.asset.PropertyGroupFactory.newAirVehiclePG();
     prop2.setVehicleType ("C-17");
     asset2.setAirVehiclePG (prop2);
@@ -350,8 +350,8 @@ public class GSScheduler {
     org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl pp3 =
       new org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl();
     pp3.setPreposition ("From");
-    org.cougaar.domain.glm.plan.GeolocLocationImpl gl1 =
-      new org.cougaar.domain.glm.plan.GeolocLocationImpl();
+    org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl gl1 =
+      new org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl();
     gl1.setLatitude (org.cougaar.domain.planning.ldm.measure.Latitude.newLatitude (0.0));
     gl1.setLongitude (org.cougaar.domain.planning.ldm.measure.Longitude.newLongitude (0.0));
     gl1.setGeolocCode ("aaa");
@@ -360,8 +360,8 @@ public class GSScheduler {
     org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl pp4 =
       new org.cougaar.domain.planning.ldm.plan.PrepositionalPhraseImpl();
     pp4.setPreposition ("To");
-    org.cougaar.domain.glm.plan.GeolocLocationImpl gl2 =
-      new org.cougaar.domain.glm.plan.GeolocLocationImpl();
+    org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl gl2 =
+      new org.cougaar.domain.glm.ldm.plan.GeolocLocationImpl();
     gl2.setLatitude (org.cougaar.domain.planning.ldm.measure.Latitude.newLatitude (10.0));
     gl2.setLongitude (org.cougaar.domain.planning.ldm.measure.Longitude.newLongitude (10.0));
     gl2.setGeolocCode ("bbb");

@@ -31,9 +31,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.plan.AlpineAspectType;
-import org.cougaar.domain.glm.asset.SupplyClassPG;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.asset.SupplyClassPG;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 /** Provides convenience methods. */

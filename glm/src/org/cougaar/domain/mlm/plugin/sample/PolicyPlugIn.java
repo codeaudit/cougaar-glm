@@ -10,11 +10,11 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.policy.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.policy.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -33,7 +33,7 @@ import org.cougaar.domain.planning.ldm.policy.*;
 import org.cougaar.domain.planning.ldm.plan.Preposition;
 import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.plugin.PlugInAdapter;
 import org.cougaar.util.UnaryPredicate;

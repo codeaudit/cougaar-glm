@@ -10,19 +10,19 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.policy.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.policy.*;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AbstractAsset;
-import org.cougaar.domain.glm.asset.CargoVehicle;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.CargoVehicle;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
@@ -33,7 +33,7 @@ import org.cougaar.domain.planning.ldm.plan.Workflow;
 import org.cougaar.domain.planning.ldm.plan.Disposition;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
-import org.cougaar.domain.glm.plan.Capability;
+import org.cougaar.domain.glm.ldm.plan.Capability;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.Preference;
 import org.cougaar.domain.planning.ldm.plan.AllocationResult;
@@ -41,7 +41,7 @@ import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.domain.planning.ldm.plan.Preposition;
 import org.cougaar.domain.planning.ldm.plan.RoleSchedule;
 import org.cougaar.domain.planning.ldm.plan.Schedule;
-import org.cougaar.domain.glm.plan.NewGeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.AspectScorePoint;
 import org.cougaar.domain.planning.ldm.plan.AspectValue;

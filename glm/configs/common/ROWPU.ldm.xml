@@ -13,7 +13,7 @@
 
 
 <prototype name="ROWPU">
-    <object class="org.cougaar.domain.glm.asset.BulkWater">
+    <object class="org.cougaar.domain.glm.ldm.asset.BulkWater">
 
       <field name="TypeIdentificationPG" type="object">
         <value>
@@ -30,7 +30,7 @@
 
       <field name="SupplyPG" type="object">
         <value>
-          <object class="org.cougaar.domain.glm.asset.NewWaterSupplyPG">
+          <object class="org.cougaar.domain.glm.ldm.asset.NewWaterSupplyPG">
             <field name="IssueVolumePerDay" type="object">
               <value>
                 <object class="org.cougaar.domain.planning.ldm.measure.Volume">

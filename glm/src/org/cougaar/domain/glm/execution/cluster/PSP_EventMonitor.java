@@ -22,10 +22,10 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Inventory;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Inventory;
 import org.cougaar.domain.glm.execution.common.*;
-import org.cougaar.domain.glm.asset.InventoryPG;
+import org.cougaar.domain.glm.ldm.asset.InventoryPG;
 
 /**
  * Receives reports from the EventGenerator and incorporates them into the logplan

@@ -14,11 +14,11 @@ import java.util.*;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.plan.Transferable;
-import org.cougaar.domain.glm.oplan.Oplan;
-import org.cougaar.domain.glm.oplan.OplanContributor;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.OplanContributor;
 import org.cougaar.domain.planning.ldm.plan.TransferableTransfer;
 import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.util.UnaryPredicate;
 
@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
  * PropagationPlugIn propagates Transferables based on xml file
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.1 2000-12-15 20:17:46 mthome Exp $
+ * @version $Id: PropagationPlugIn.java,v 1.2 2000-12-20 18:18:41 mthome Exp $
  */
 
 public class PropagationPlugIn extends SimplePlugIn

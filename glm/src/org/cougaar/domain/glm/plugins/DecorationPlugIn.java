@@ -31,7 +31,7 @@ import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.domain.glm.debug.GLMDebug;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 import java.util.Enumeration;
 import java.util.Hashtable;

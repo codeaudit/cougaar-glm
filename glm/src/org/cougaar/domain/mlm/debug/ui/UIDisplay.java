@@ -42,7 +42,7 @@ import java.util.Vector;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.domain.planning.ldm.plan.Plan;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.core.plugin.PlugInDelegate;
 

@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/gss/Attic/GLMTravelTime.java,v 1.1 2000-12-15 20:18:00 mthome Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/gss/Attic/GLMTravelTime.java,v 1.2 2000-12-20 18:18:09 mthome Exp $
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -15,7 +15,7 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.measure.Distance;
 import org.cougaar.domain.planning.ldm.measure.Speed;
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.util.GLMMeasure;
 
 import org.cougaar.lib.gss.GSAssetAccessor;

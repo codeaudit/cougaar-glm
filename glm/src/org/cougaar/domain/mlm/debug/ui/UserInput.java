@@ -43,8 +43,8 @@ import java.util.Enumeration;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.plan.Capability;
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.plan.Capability;
+import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.planning.ldm.plan.ClusterObjectFactory;
 import org.cougaar.domain.planning.ldm.plan.Plan;
 import org.cougaar.domain.planning.ldm.plan.Preposition;

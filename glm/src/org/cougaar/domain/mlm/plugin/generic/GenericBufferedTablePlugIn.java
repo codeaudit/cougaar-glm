@@ -11,8 +11,8 @@
 
 package org.cougaar.domain.mlm.plugin.generic;
 
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
 
 import java.awt.Color;
 import java.awt.GridLayout;

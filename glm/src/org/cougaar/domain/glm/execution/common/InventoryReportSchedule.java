@@ -1,7 +1,7 @@
 package org.cougaar.domain.glm.execution.common;
 
 import java.io.Serializable;
-import org.cougaar.domain.glm.asset.ReportSchedulePG;
+import org.cougaar.domain.glm.ldm.asset.ReportSchedulePG;
 import java.io.IOException;
 
 public class InventoryReportSchedule extends ReportSchedule implements EGObject {

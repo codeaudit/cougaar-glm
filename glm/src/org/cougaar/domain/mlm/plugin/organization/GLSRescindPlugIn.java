@@ -33,9 +33,9 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.*;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.mlm.plugin.RandomButtonPusher;
 import org.cougaar.domain.mlm.plugin.UICoordinator;
 

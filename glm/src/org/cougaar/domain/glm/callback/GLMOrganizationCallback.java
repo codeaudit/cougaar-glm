@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/callback/Attic/GLMOrganizationCallback.java,v 1.1 2000-12-15 20:17:58 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/callback/Attic/GLMOrganizationCallback.java,v 1.2 2000-12-20 18:18:08 mthome Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -13,7 +13,7 @@ package org.cougaar.domain.glm.callback;
 
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 import java.util.Enumeration;
 

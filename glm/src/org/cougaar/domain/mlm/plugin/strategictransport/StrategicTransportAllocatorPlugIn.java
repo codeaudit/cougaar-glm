@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin.strategictransport;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.NewPlanElement;
@@ -19,7 +19,7 @@ import org.cougaar.domain.planning.ldm.plan.Allocation;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.Verb;
-import org.cougaar.domain.glm.plan.Capability;
+import org.cougaar.domain.glm.ldm.plan.Capability;
 import org.cougaar.domain.planning.ldm.plan.Role;
 import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
@@ -39,7 +39,7 @@ import org.cougaar.domain.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.util.*;
 import java.util.*;
 import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 
 import org.cougaar.core.cluster.Subscription;

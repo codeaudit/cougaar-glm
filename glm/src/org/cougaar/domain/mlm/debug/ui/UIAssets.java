@@ -27,7 +27,7 @@ import org.cougaar.core.cluster.ClusterIdentifier;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
-import org.cougaar.domain.glm.asset.PhysicalAsset;
+import org.cougaar.domain.glm.ldm.asset.PhysicalAsset;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 

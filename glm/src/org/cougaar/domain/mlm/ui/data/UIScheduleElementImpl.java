@@ -14,9 +14,9 @@ import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.ItineraryElement;
 import org.cougaar.domain.planning.ldm.plan.LocationScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.LocationRangeScheduleElement;
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
-import org.cougaar.domain.glm.plan.QuantityRangeScheduleElement;
-import org.cougaar.domain.glm.plan.RateScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityRangeScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.RateScheduleElement;
 
 public class UIScheduleElementImpl implements UIScheduleElement {
   ScheduleElement scheduleElement;

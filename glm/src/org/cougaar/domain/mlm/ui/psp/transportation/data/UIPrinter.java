@@ -18,9 +18,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.plan.Position;
-import org.cougaar.domain.glm.plan.NamedPosition;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.Position;
+import org.cougaar.domain.glm.ldm.plan.NamedPosition;
 
 /**
  * @see AbstractPrinter

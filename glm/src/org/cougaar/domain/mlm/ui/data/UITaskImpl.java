@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.ui.data;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
 import java.util.Date;
 import java.util.Enumeration;

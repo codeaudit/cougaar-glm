@@ -1,7 +1,7 @@
 package org.cougaar.domain.glm.execution.eg;
 
 import java.util.List;
-import org.cougaar.domain.glm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
 
 public class TaskEventFilterGUI extends FilterGUI {
   public TaskEventFilterGUI(EventGenerator anEventGenerator) {

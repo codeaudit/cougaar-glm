@@ -53,11 +53,11 @@ import org.cougaar.util.Enumerator;
 import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
-import org.cougaar.domain.glm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 
 import org.cougaar.domain.mlm.plugin.RandomButtonPusher;
 import org.cougaar.domain.mlm.plugin.UICoordinator;
@@ -67,7 +67,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * with the OPLAN object.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIInitPlugIn.java,v 1.1 2000-12-15 20:17:45 mthome Exp $
+ * @version      $Id: GLSGUIInitPlugIn.java,v 1.2 2000-12-20 18:18:42 mthome Exp $
  *
  */
 

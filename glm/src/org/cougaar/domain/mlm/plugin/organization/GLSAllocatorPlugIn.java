@@ -57,9 +57,9 @@ import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.plan.Capability;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.plan.Capability;
 
 public class GLSAllocatorPlugIn extends SimplePlugIn {
 	

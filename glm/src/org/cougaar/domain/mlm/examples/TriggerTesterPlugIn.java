@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.examples;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -34,7 +34,7 @@ import org.cougaar.domain.planning.ldm.plan.Allocation;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Role;
 import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.planning.ldm.trigger.*;
 import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.core.plugin.SimplePlugIn;
@@ -49,7 +49,7 @@ import org.cougaar.util.UnaryPredicate;
  * for certain planelements and marks them as stale.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: TriggerTesterPlugIn.java,v 1.1 2000-12-15 20:17:44 mthome Exp $
+ * @version      $Id: TriggerTesterPlugIn.java,v 1.2 2000-12-20 18:18:40 mthome Exp $
  */
 
 public class TriggerTesterPlugIn extends SimplePlugIn

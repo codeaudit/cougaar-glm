@@ -34,12 +34,12 @@ import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
-import org.cougaar.domain.glm.asset.PhysicalAsset;
-import org.cougaar.domain.glm.asset.AmmunitionPG;
+import org.cougaar.domain.glm.ldm.asset.PhysicalAsset;
+import org.cougaar.domain.glm.ldm.asset.AmmunitionPG;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.domain.glm.asset.NewPhysicalPG;
-import org.cougaar.domain.glm.asset.PhysicalPG;
-import org.cougaar.domain.glm.asset.PhysicalPGImpl;
+import org.cougaar.domain.glm.ldm.asset.NewPhysicalPG;
+import org.cougaar.domain.glm.ldm.asset.PhysicalPG;
+import org.cougaar.domain.glm.ldm.asset.PhysicalPGImpl;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 
 import java.io.*;

@@ -13,11 +13,11 @@ package org.cougaar.domain.mlm.plugin.strategictransport;
 // Simple scheduler to generate multileg expansions for transporation tasks
 // To be used as a TOPS stub in conjunction with GSS for AIR, GROUND, SEA
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.plan.*;

@@ -10,11 +10,11 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 
 import org.cougaar.core.society.UID;
 import org.cougaar.domain.planning.ldm.asset.*;
@@ -569,7 +569,7 @@ public class LoadAllocatorPlugIn extends SimplePlugIn {
 
     Capacity c;
     try {
-      c =(org.cougaar.domain.glm.asset.Capacity) theLDMF.createAsset(Capacity.class);
+      c =(org.cougaar.domain.glm.ldm.asset.Capacity) theLDMF.createAsset(Capacity.class);
     } catch (Exception exc) {
       System.out.println(getCluster().getClusterIdentifier() + " LoadAllocator - problem creating a Capacity asset.");
       exc.printStackTrace();

@@ -10,12 +10,12 @@
 
 package org.cougaar.domain.mlm.ui.data;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.asset.Capacity;
-import org.cougaar.domain.glm.asset.Person;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.asset.Capacity;
+import org.cougaar.domain.glm.ldm.asset.Person;
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 import java.text.DateFormat;
 import java.util.*;
@@ -41,11 +41,11 @@ import org.cougaar.domain.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.domain.planning.ldm.plan.ScheduleUtilities;
 import org.cougaar.domain.planning.ldm.plan.Verb;
 
-import org.cougaar.domain.glm.asset.ScheduledContentPG;
-import org.cougaar.domain.glm.plan.LaborSchedule;
-import org.cougaar.domain.glm.plan.NewQuantityScheduleElement;
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.domain.glm.ldm.plan.LaborSchedule;
+import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.Constants;
 
 /** Composes inventory and capacity schedules from ALP log plan objects.
   Note that the getters return null if the schedule requested is null

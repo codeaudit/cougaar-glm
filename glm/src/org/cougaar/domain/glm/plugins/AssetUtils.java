@@ -34,9 +34,9 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.SupplyClassPG;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.SupplyClassPG;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 /** Provides convenience methods. */
@@ -48,7 +48,7 @@ public class AssetUtils {
     public static boolean isAssetOfType(Asset a, String type) {
 	Class cl;
 	try {
-	    cl = Class.forName("org.cougaar.domain.glm.asset."+type);
+	    cl = Class.forName("org.cougaar.domain.glm.ldm.asset."+type);
 	} catch ( ClassNotFoundException cnfe) {
 	    GLMDebug.ERROR("AssetUtils",null, "isAssetOfType: "+cnfe);
 	    return false;

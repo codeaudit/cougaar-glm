@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
 import java.util.*;
 
-import org.cougaar.domain.glm.asset.TransportationRoute;
+import org.cougaar.domain.glm.ldm.asset.TransportationRoute;
 
 /**
  * <code>UITaskItineraryElementOrg</code>. 

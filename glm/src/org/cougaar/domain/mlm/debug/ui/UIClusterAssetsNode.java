@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.debug.ui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Enumeration;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 import org.cougaar.core.cluster.IncrementalSubscription;

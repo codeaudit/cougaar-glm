@@ -14,8 +14,8 @@
 -->
 
 <prototype name="MOS-QM">
-  <!-- <object class="org.cougaar.domain.glm.asset.ALPAsset"> -->
-  <object class="org.cougaar.domain.glm.asset.Capacity"> 
+  <!-- <object class="org.cougaar.domain.glm.ldm.asset.ALPAsset"> -->
+  <object class="org.cougaar.domain.glm.ldm.asset.Capacity"> 
   <!-- <object class="org.cougaar.domain.planning.ldm.asset.Asset"> -->
 
       <field name="TypeIdentificationPG" type="object">
@@ -33,7 +33,7 @@
 
       <field name="SupplyPG" type="object">
         <value>
-          <object class="org.cougaar.domain.glm.asset.NewSupplyPG">
+          <object class="org.cougaar.domain.glm.ldm.asset.NewSupplyPG">
             <field name="Class1HandleMassPerDay" type="object">
               <value>
                 <object class="org.cougaar.domain.planning.ldm.measure.Mass">

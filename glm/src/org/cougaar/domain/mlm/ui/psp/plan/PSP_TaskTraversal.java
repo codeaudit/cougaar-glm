@@ -22,7 +22,7 @@ import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;
 import org.cougaar.core.society.UID;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 class ExternalRef
 {

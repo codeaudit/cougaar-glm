@@ -17,7 +17,7 @@ import java.util.*;
 
 import org.cougaar.domain.planning.ldm.plan.*;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.domain.mlm.ui.data.UISimpleSchedule;

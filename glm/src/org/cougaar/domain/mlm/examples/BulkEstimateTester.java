@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.examples;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -40,7 +40,7 @@ import org.cougaar.util.UnaryPredicate;
  * The bulkestimate tester
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: BulkEstimateTester.java,v 1.1 2000-12-15 20:17:44 mthome Exp $
+ * @version      $Id: BulkEstimateTester.java,v 1.2 2000-12-20 18:18:40 mthome Exp $
  */
 
 public class BulkEstimateTester extends SimplePlugIn

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMLocationScoringFunction.java,v 1.1 2000-12-15 20:18:03 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/glm/util/Attic/GLMLocationScoringFunction.java,v 1.2 2000-12-20 18:18:38 mthome Exp $ */
 /*
  * <copyright>
  *  Copyright 1997-2000 Defense Advanced Research Projects
@@ -19,8 +19,8 @@ import org.cougaar.domain.planning.ldm.plan.AspectScoreRange;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.AspectValue;
 import org.cougaar.domain.planning.ldm.plan.ScoringFunction;
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.plan.NewGeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 
 import org.cougaar.domain.planning.ldm.RootFactory;
 

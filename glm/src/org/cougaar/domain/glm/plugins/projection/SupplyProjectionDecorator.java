@@ -25,9 +25,9 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.asset.ClassVIIMajorEndItem;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.plan.Service;
+import org.cougaar.domain.glm.ldm.asset.ClassVIIMajorEndItem;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.plan.Service;
 import org.cougaar.domain.glm.plugins.PlugInDecorator;
 
 /** Associates proper SupplyProjector with a given SupplyProjectionPlugIn. 

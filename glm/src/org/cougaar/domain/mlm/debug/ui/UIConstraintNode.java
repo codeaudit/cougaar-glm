@@ -14,7 +14,7 @@ import org.cougaar.domain.planning.ldm.plan.Constraint;
 import org.cougaar.domain.planning.ldm.plan.ConstraintEvent;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
 import org.cougaar.domain.planning.ldm.plan.Task;
-import org.cougaar.domain.glm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
 
 /** A tree node for a Constraint.
   Overrides the UITreeNode loadChildren, toString and isLeaf

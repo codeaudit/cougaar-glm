@@ -14,10 +14,10 @@ import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
 
 import org.cougaar.domain.planning.ldm.plan.Location;
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.plan.IcaoLocation;
-import org.cougaar.domain.glm.plan.Position;
-import org.cougaar.domain.glm.plan.NamedPosition;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.IcaoLocation;
+import org.cougaar.domain.glm.ldm.plan.Position;
+import org.cougaar.domain.glm.ldm.plan.NamedPosition;
 
 /*
   Define a location object that is created from the XML returned by
@@ -41,10 +41,10 @@ public class UILocationImpl implements UILocation {
   public UILocationImpl(Location location) {
     this.location = location;
     try {
-      positionClass = Class.forName("org.cougaar.domain.glm.plan.Position");
-      namedPositionClass = Class.forName("org.cougaar.domain.glm.plan.NamedPosition");
-      geolocLocationClass = Class.forName("org.cougaar.domain.glm.plan.GeolocLocation");
-      icaoLocationClass = Class.forName("org.cougaar.domain.glm.plan.IcaoLocation");
+      positionClass = Class.forName("org.cougaar.domain.glm.ldm.plan.Position");
+      namedPositionClass = Class.forName("org.cougaar.domain.glm.ldm.plan.NamedPosition");
+      geolocLocationClass = Class.forName("org.cougaar.domain.glm.ldm.plan.GeolocLocation");
+      icaoLocationClass = Class.forName("org.cougaar.domain.glm.ldm.plan.IcaoLocation");
     } catch (Exception e) {
       System.out.println(e);
     }

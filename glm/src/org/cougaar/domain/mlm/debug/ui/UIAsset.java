@@ -13,16 +13,16 @@ package org.cougaar.domain.mlm.debug.ui;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
-import org.cougaar.domain.glm.plan.QuantityRangeScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityRangeScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.Schedule;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 
 import org.cougaar.domain.planning.ldm.asset.AbstractAsset;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.PhysicalAsset;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.PhysicalAsset;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 

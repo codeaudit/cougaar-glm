@@ -34,7 +34,7 @@ import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.domain.planning.ldm.measure.Mass;
 import org.cougaar.domain.planning.ldm.measure.Volume;
   
-import org.cougaar.domain.glm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 
 import org.cougaar.domain.planning.ldm.plan.Schedule;
 import org.cougaar.domain.planning.ldm.plan.RoleSchedule;

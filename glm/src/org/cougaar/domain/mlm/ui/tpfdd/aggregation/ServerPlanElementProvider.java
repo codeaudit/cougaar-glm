@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.1 2000-12-15 20:17:49 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/aggregation/Attic/ServerPlanElementProvider.java,v 1.2 2000-12-20 18:18:46 mthome Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Calendar;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 import org.cougaar.domain.mlm.ui.tpfdd.util.VectorHashtable;
 import org.cougaar.domain.mlm.ui.tpfdd.util.OutputHandler;

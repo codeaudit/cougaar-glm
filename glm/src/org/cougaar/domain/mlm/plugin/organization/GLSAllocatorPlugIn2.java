@@ -62,9 +62,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.plan.Capability;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.plan.Capability;
 
 /**
  * Handles GLS for subordinates tasks. We expand such tasks into

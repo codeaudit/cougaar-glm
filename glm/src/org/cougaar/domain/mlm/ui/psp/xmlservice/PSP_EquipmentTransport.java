@@ -23,8 +23,8 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.mlm.ui.data.UISupplyStatus;
 import org.cougaar.domain.mlm.ui.data.UIUnitStatus;
 

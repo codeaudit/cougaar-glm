@@ -19,10 +19,10 @@ import org.cougaar.core.cluster.Subscription;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.core.society.UID;
   
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.domain.planning.ldm.RootFactory;
   

@@ -11,7 +11,7 @@
 package org.cougaar.domain.mlm.plugin.generic;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.domain.planning.ldm.plan.Transferable;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import java.util.Vector;
 import java.util.Enumeration;
 
@@ -21,7 +21,7 @@ import java.util.Enumeration;
  * 
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: TransferablePredicate.java,v 1.1 2000-12-15 20:17:46 mthome Exp $
+ * @version $Id: TransferablePredicate.java,v 1.2 2000-12-20 18:18:41 mthome Exp $
  */
 
 public class TransferablePredicate implements UnaryPredicate {

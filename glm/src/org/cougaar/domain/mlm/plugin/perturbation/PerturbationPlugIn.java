@@ -17,7 +17,7 @@ package org.cougaar.domain.mlm.plugin.perturbation;
   import org.cougaar.domain.planning.ldm.asset.Asset;
   import org.cougaar.domain.planning.ldm.RootFactory;
   
-  import org.cougaar.domain.glm.oplan.Oplan;
+  import org.cougaar.domain.glm.ldm.oplan.Oplan;
   
   import org.cougaar.core.plugin.SimplifiedPlugIn;
   

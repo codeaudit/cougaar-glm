@@ -14,7 +14,7 @@ import java.lang.Math;
 import org.cougaar.domain.planning.ldm.measure.Distance;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
-import org.cougaar.domain.glm.plan.*;
+import org.cougaar.domain.glm.ldm.plan.*;
 
 /**
  * A class containing static methods for geographic computations, 
@@ -143,10 +143,10 @@ public class GeoUtils {
 		       DistanceBetweenPositions(BOS_LAT, BOS_LON, 
 						NY_LAT, NY_LON));
     Position BOSTON = 
-      new org.cougaar.domain.glm.plan.PositionImpl
+      new org.cougaar.domain.glm.ldm.plan.PositionImpl
       (Latitude.newLatitude(BOS_LAT), Longitude.newLongitude(BOS_LON));
     Position NEW_YORK = 
-      new org.cougaar.domain.glm.plan.PositionImpl
+      new org.cougaar.domain.glm.ldm.plan.PositionImpl
       (Latitude.newLatitude(NY_LAT), Longitude.newLongitude(NY_LON));
     Distance distance_between_BOS_and_NY = 
       DistanceBetweenPositions(BOSTON, NEW_YORK);

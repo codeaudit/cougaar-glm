@@ -39,10 +39,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.lang.Integer;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.ALPAsset;
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.util.GLMAsset;
 
 public class PSP_AssetPopulation extends PSP_BaseAdapter

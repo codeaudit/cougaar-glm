@@ -10,7 +10,7 @@
  
 package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 public class UIUnit implements  org.cougaar.util.SelfPrinter, java.io.Serializable
 {

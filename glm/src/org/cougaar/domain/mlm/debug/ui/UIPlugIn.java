@@ -21,8 +21,8 @@ import org.cougaar.domain.planning.ldm.plan.ClusterObjectFactory;
 import org.cougaar.domain.planning.ldm.plan.Plan;
 import org.cougaar.domain.planning.ldm.asset.AggregateAsset;
 import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.PhysicalAsset;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.PhysicalAsset;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 
 import java.util.Enumeration;

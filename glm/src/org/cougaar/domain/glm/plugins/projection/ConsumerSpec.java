@@ -32,11 +32,11 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.ALPFactory;
-import org.cougaar.domain.glm.plan.ObjectScheduleElement;
-import org.cougaar.domain.glm.plan.NewQuantityScheduleElement;
-import org.cougaar.domain.glm.plan.PlanScheduleElementType;
-import org.cougaar.domain.glm.plan.PlanScheduleType;
+import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.plan.ObjectScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.PlanScheduleElementType;
+import org.cougaar.domain.glm.ldm.plan.PlanScheduleType;
 import org.cougaar.domain.glm.debug.*;
 
 public abstract class ConsumerSpec implements Serializable {

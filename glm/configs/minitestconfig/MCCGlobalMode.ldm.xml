@@ -4,7 +4,7 @@
 
 <clusterassets>
   <prototype name="NSN/2320013189902">
-    <object class="org.cougaar.domain.glm.asset.Truck" 
+    <object class="org.cougaar.domain.glm.ldm.asset.Truck" 
       id="proto-001">
       <property class="org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG"
 	id="property-001">

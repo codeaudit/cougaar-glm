@@ -11,7 +11,7 @@
 package org.cougaar.domain.mlm.ui.data;
 
 import org.cougaar.util.TimeSpan;
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
 import java.io.Serializable;
 
 public class UIQuantityScheduleElement  implements TimeSpan, 

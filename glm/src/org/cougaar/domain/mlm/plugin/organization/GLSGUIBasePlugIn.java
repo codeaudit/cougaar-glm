@@ -27,9 +27,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.*;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.mlm.plugin.RandomButtonPusher;
 import org.cougaar.domain.mlm.plugin.UICoordinator;
 
@@ -41,7 +41,7 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * subclasses to allow labels to be updated.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIBasePlugIn.java,v 1.1 2000-12-15 20:17:45 mthome Exp $
+ * @version      $Id: GLSGUIBasePlugIn.java,v 1.2 2000-12-20 18:18:42 mthome Exp $
  * */
 
 public abstract class GLSGUIBasePlugIn extends SimplePlugIn {

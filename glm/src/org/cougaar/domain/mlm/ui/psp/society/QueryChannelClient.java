@@ -18,7 +18,7 @@ import org.cougaar.domain.planning.ldm.plan.Location;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 import org.cougaar.lib.planserver.*;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.*;
 
 public class QueryChannelClient {

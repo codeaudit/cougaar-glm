@@ -15,7 +15,7 @@ import java.util.Vector;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElement;
 import org.cougaar.domain.planning.ldm.plan.ScheduleElementType;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 
 public class UIItinerary implements org.cougaar.util.SelfPrinter, java.io.Serializable {

@@ -28,10 +28,10 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 import java.util.Enumeration;
 import java.util.Date;
@@ -56,10 +56,10 @@ import org.cougaar.core.cluster.IncrementalSubscription;
 
 import org.cougaar.domain.planning.ldm.RootFactory;
 
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.oplan.Oplan;
-import org.cougaar.domain.glm.oplan.OrgActivity;
-import org.cougaar.domain.glm.oplan.TimeSpan;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
+import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 

@@ -1,7 +1,7 @@
 package org.cougaar.domain.glm.execution.common;
 
 import java.util.GregorianCalendar;
-import org.cougaar.domain.glm.asset.ReportSchedulePG;
+import org.cougaar.domain.glm.ldm.asset.ReportSchedulePG;
 import java.io.IOException;
 
 public class ReportSchedule extends EGObjectBase implements EGObject {

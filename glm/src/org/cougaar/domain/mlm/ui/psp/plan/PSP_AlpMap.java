@@ -21,11 +21,11 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.policy.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.policy.*;
 
 public class PSP_AlpMap extends PSP_BaseAdapter 
         implements PlanServiceProvider, UISubscriber

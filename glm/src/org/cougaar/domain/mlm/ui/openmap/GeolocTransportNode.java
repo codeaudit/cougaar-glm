@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.ui.openmap;
 
 import com.bbn.openmap.util.quadtree.QuadTree;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.UITxNode;
 
 class GeolocTransportNode extends TransportNode {

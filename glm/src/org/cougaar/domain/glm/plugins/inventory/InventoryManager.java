@@ -17,10 +17,10 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.domain.glm.plugins.inventory;
 
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.BulkPOL;
-import org.cougaar.domain.glm.asset.ContainPG;
-import org.cougaar.domain.glm.asset.VolumetricInventory;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.BulkPOL;
+import org.cougaar.domain.glm.ldm.asset.ContainPG;
+import org.cougaar.domain.glm.ldm.asset.VolumetricInventory;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.asset.Asset;
@@ -29,14 +29,14 @@ import org.cougaar.domain.planning.ldm.measure.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 import java.lang.Math;
 import java.util.*;
-import org.cougaar.domain.glm.asset.Inventory;
-import org.cougaar.domain.glm.asset.Ammunition;
+import org.cougaar.domain.glm.ldm.asset.Inventory;
+import org.cougaar.domain.glm.ldm.asset.Ammunition;
 import org.cougaar.domain.glm.plugins.*;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.NewScheduledContentPG;
-import org.cougaar.domain.glm.asset.ScheduledContentPG;
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.asset.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.NewScheduledContentPG;
+import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.debug.*;
 
 public abstract class InventoryManager extends InventoryProcessor {

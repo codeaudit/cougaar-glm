@@ -19,11 +19,11 @@ import org.cougaar.domain.planning.ldm.policy.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.policy.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.policy.*;
 
 /**
   * This is a demonstration/proof-of-concept PSP which illustrates a number

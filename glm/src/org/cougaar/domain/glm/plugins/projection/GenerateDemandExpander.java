@@ -49,13 +49,13 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.domain.glm.ALPFactory;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.ScheduledContentPG;
-import org.cougaar.domain.glm.plan.ObjectScheduleElement;
-import org.cougaar.domain.glm.plan.PlanScheduleType;
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.domain.glm.ldm.plan.ObjectScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.PlanScheduleType;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
 
 import org.cougaar.domain.glm.plugins.AssetUtils;
 import org.cougaar.domain.glm.plugins.BasicProcessor;

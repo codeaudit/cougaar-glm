@@ -10,17 +10,17 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 
@@ -28,8 +28,8 @@ import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
-import org.cougaar.domain.glm.oplan.OrgActivity;
-import org.cougaar.domain.glm.oplan.TimeSpan;
+import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
+import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
 import org.cougaar.domain.planning.ldm.plan.*;
 
 import org.cougaar.core.plugin.SimplePlugIn;
@@ -1341,7 +1341,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
 
       // get FROM geographic location
       //   this is taken from the MilitaryOrgPG
-      org.cougaar.domain.glm.asset.MilitaryOrgPG milPG = org.getMilitaryOrgPG();
+      org.cougaar.domain.glm.ldm.asset.MilitaryOrgPG milPG = org.getMilitaryOrgPG();
       if (milPG != null) {
         GeolocLocation geoloc_location = 
           (GeolocLocation)milPG.getHomeLocation();
@@ -1350,14 +1350,14 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       }
       /*
       //   this is taken from the AssignmentPG
-      org.cougaar.domain.glm.asset.AssignmentPG orgAPG = org.getAssignmentPG();
+      org.cougaar.domain.glm.ldm.asset.AssignmentPG orgAPG = org.getAssignmentPG();
       if (orgAPG != null) {
-        org.cougaar.domain.glm.asset.Facility orgF = orgAPG.getHomeStation();
-        if (orgF instanceof org.cougaar.domain.glm.asset.TransportationNode) {
-          org.cougaar.domain.glm.asset.PositionPG orgPPG = 
-            ((org.cougaar.domain.glm.asset.TransportationNode)orgF).getPositionPG();
+        org.cougaar.domain.glm.ldm.asset.Facility orgF = orgAPG.getHomeStation();
+        if (orgF instanceof org.cougaar.domain.glm.ldm.asset.TransportationNode) {
+          org.cougaar.domain.glm.ldm.asset.PositionPG orgPPG = 
+            ((org.cougaar.domain.glm.ldm.asset.TransportationNode)orgF).getPositionPG();
           if (orgPPG != null) {
-            org.cougaar.domain.glm.plan.Position orgP = orgPPG.getPosition();
+            org.cougaar.domain.glm.ldm.plan.Position orgP = orgPPG.getPosition();
             if (orgP instanceof GeolocLocation)
               this.fromLoc = (GeolocLocation)orgP;
           } 

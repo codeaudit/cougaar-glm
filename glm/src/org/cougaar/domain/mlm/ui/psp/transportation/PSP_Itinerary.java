@@ -26,11 +26,11 @@ import org.cougaar.lib.planserver.*;
 import org.cougaar.util.AbstractPrinter;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.policy.*;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.policy.*;
 import org.cougaar.lib.util.UTILAsset;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.*;
 import org.cougaar.domain.glm.util.GLMAsset;
@@ -621,7 +621,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       (a instanceof ClassVAmmunition)?5:
       (a instanceof ClassVIPersonalDemandItem)?6:
       (a instanceof Container)?12:
-      (a instanceof org.cougaar.domain.glm.asset.Package)?13:
+      (a instanceof org.cougaar.domain.glm.ldm.asset.Package)?13:
       (a instanceof ClassVIIMajorEndItem)?7:
       (a instanceof ClassVIIIMedical)?8:
       (a instanceof ClassIXRepairPart)?9:
@@ -746,26 +746,26 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
       { // ground
         new Integer(UITaskItineraryElement.GROUND_MODE),
         new String[] {
-          "org.cougaar.domain.glm.asset.RailCar",
-          "org.cougaar.domain.glm.asset.SelfPropelledGroundWeapon",
-          "org.cougaar.domain.glm.asset.Trailer",
-          "org.cougaar.domain.glm.asset.Train",
-          "org.cougaar.domain.glm.asset.TrainEngine",
-          "org.cougaar.domain.glm.asset.Truck"
+          "org.cougaar.domain.glm.ldm.asset.RailCar",
+          "org.cougaar.domain.glm.ldm.asset.SelfPropelledGroundWeapon",
+          "org.cougaar.domain.glm.ldm.asset.Trailer",
+          "org.cougaar.domain.glm.ldm.asset.Train",
+          "org.cougaar.domain.glm.ldm.asset.TrainEngine",
+          "org.cougaar.domain.glm.ldm.asset.Truck"
         },
       },
       { // sea
         new Integer(UITaskItineraryElement.SEA_MODE),
         new String[] {
-          "org.cougaar.domain.glm.asset.CargoShip",
-          "org.cougaar.domain.glm.asset.FightingShip"
+          "org.cougaar.domain.glm.ldm.asset.CargoShip",
+          "org.cougaar.domain.glm.ldm.asset.FightingShip"
         },
       },
       { // air
         new Integer(UITaskItineraryElement.AIR_MODE),
         new String[] {
-          "org.cougaar.domain.glm.asset.CargoFixedWingAircraft",
-          "org.cougaar.domain.glm.asset.CargoRotaryWingAircraft"
+          "org.cougaar.domain.glm.ldm.asset.CargoFixedWingAircraft",
+          "org.cougaar.domain.glm.ldm.asset.CargoRotaryWingAircraft"
         },
       },
       { // none -- not descriptive enough
@@ -777,9 +777,9 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
         new Integer(-1),
         new String[] {
           "org.cougaar.domain.planning.ldm.asset.Asset",
-          "org.cougaar.domain.glm.asset.CargoVehicle",
-          "org.cougaar.domain.glm.asset.ClassVIIMajorEndItem",
-          "org.cougaar.domain.glm.asset.PhysicalAsset"
+          "org.cougaar.domain.glm.ldm.asset.CargoVehicle",
+          "org.cougaar.domain.glm.ldm.asset.ClassVIIMajorEndItem",
+          "org.cougaar.domain.glm.ldm.asset.PhysicalAsset"
         },
       }
     };

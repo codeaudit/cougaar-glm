@@ -28,9 +28,9 @@ import org.cougaar.util.AbstractPrinter;
 import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.plan.GeolocLocation;
-import org.cougaar.domain.glm.plan.Position;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.Position;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.*;
 
 /**

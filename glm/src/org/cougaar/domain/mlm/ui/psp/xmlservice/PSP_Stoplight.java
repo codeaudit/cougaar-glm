@@ -21,8 +21,8 @@ import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
 import org.cougaar.util.*;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.mlm.ui.data.UILateStatus;
 
 public class PSP_Stoplight extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber {

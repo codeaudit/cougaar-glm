@@ -32,10 +32,10 @@ import org.cougaar.util.TimeSpan;
 import java.text.NumberFormat;
 import java.util.*;
 
-import org.cougaar.domain.glm.ALPFactory;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.plan.*;
+import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.debug.*;
 import org.cougaar.domain.glm.plugins.*;
 
@@ -57,7 +57,7 @@ public class InventoryProcessor extends org.cougaar.domain.glm.plugins.BasicProc
     protected String                      GEOLOC = "ABC";
     public static NumberFormat demandFormat = NumberFormat.getInstance();
 
-    public InventoryProcessor(InventoryPlugIn plugin, org.cougaar.domain.glm.asset.Organization org, String type )
+    public InventoryProcessor(InventoryPlugIn plugin, org.cougaar.domain.glm.ldm.asset.Organization org, String type )
     {
 	super(plugin, org);
 	inventoryPlugIn_ = plugin;

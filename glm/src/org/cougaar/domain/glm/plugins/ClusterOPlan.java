@@ -2,9 +2,9 @@ package org.cougaar.domain.glm.plugins;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
 
-import org.cougaar.domain.glm.oplan.Oplan;
-import org.cougaar.domain.glm.oplan.OrgActivity;
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
+import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 import java.io.Serializable;

@@ -10,23 +10,23 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.*;
-import org.cougaar.domain.glm.plan.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.oplan.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.plan.*;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.oplan.*;
 
 import org.cougaar.domain.planning.ldm.RootFactory;
-import org.cougaar.domain.glm.plan.Capability;
+import org.cougaar.domain.glm.ldm.plan.Capability;
 import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.glm.plan.NewGeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.NewGeolocLocation;
 import org.cougaar.core.cluster.ClusterIdentifier;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AbstractAsset;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 
 import org.cougaar.core.plugin.SimplePlugIn;

@@ -16,7 +16,7 @@ import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.RootFactory;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.core.cluster.IncrementalSubscription;
 
 import org.cougaar.domain.glm.GLMPlugIn;

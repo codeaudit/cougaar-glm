@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.core.cluster.IncrementalSubscription;
 
 import org.cougaar.core.plugin.SimplePlugIn;
@@ -33,7 +33,7 @@ import org.cougaar.domain.planning.ldm.plan.Role;
 
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.AbstractAsset;
-import org.cougaar.domain.glm.asset.CargoVehicle;
+import org.cougaar.domain.glm.ldm.asset.CargoVehicle;
 
 import org.cougaar.domain.planning.ldm.trigger.TriggerAction;
 import org.cougaar.domain.planning.ldm.trigger.Trigger;

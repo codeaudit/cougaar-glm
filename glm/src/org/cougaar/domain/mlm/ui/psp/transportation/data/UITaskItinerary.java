@@ -13,7 +13,7 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 import org.cougaar.util.PrettyStringPrinter;
 import java.util.*;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 public class UITaskItinerary 
     extends UIItinerary

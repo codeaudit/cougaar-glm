@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.ui.data;
 
 import org.cougaar.domain.planning.ldm.plan.Constraint;
 import org.cougaar.domain.planning.ldm.plan.AspectType;
-import org.cougaar.domain.glm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
 
 /*
   The constraint object that is created from the XML returned by

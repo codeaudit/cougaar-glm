@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin.generic;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -21,7 +21,7 @@ import org.cougaar.domain.planning.ldm.plan.Preposition;
 import org.cougaar.domain.planning.ldm.plan.Expansion;
 import org.cougaar.domain.planning.ldm.plan.Workflow;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 
 import java.util.Enumeration;

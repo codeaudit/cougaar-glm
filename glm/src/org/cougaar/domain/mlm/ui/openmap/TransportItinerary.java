@@ -17,7 +17,7 @@ import com.bbn.openmap.omGraphics.OMLine2D;
 import com.bbn.openmap.util.Debug;
 import com.bbn.openmap.util.quadtree.QuadTree;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.UITaskItinerary;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.UITaskItineraryElement;
 

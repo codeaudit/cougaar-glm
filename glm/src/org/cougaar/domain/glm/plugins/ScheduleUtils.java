@@ -37,13 +37,13 @@ import org.cougaar.core.plugin.PlugInDelegate;
 
 import java.util.*;
 
-import org.cougaar.domain.glm.ALPFactory;
-import org.cougaar.domain.glm.asset.NewScheduledContentPG;
-import org.cougaar.domain.glm.asset.ScheduledContentPG;
-import org.cougaar.domain.glm.asset.PropertyGroupFactory;
-import org.cougaar.domain.glm.plan.NewQuantityScheduleElement;
-import org.cougaar.domain.glm.plan.QuantityScheduleElement;
-import org.cougaar.domain.glm.plan.PlanScheduleType;
+import org.cougaar.domain.glm.ldm.ALPFactory;
+import org.cougaar.domain.glm.ldm.asset.NewScheduledContentPG;
+import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
+import org.cougaar.domain.glm.ldm.asset.PropertyGroupFactory;
+import org.cougaar.domain.glm.ldm.plan.NewQuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.domain.glm.ldm.plan.PlanScheduleType;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
 /** Provide convenience methods for creating objects. */

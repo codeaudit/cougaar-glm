@@ -1,5 +1,5 @@
 <prototype name = "1730003905618">
-  <object class = "org.cougaar.domain.glm.asset.OtherMajorEndItem">
+  <object class = "org.cougaar.domain.glm.ldm.asset.OtherMajorEndItem">
     <field name="TypeIdentificationPG" type = "object">
       <value>
         <object class = "org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG">
@@ -17,7 +17,7 @@
     </field>
     <field name="PhysicalPG" type = "object">
       <value>
-        <object class = "org.cougaar.domain.glm.asset.NewPhysicalPG">
+        <object class = "org.cougaar.domain.glm.ldm.asset.NewPhysicalPG">
     <field name = "Length" type="object">
       <value>
         <object class="org.cougaar.domain.planning.ldm.measure.Distance">

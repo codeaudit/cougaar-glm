@@ -25,7 +25,7 @@ import org.cougaar.util.AbstractPrinter;
 import org.cougaar.util.EmptyEnumeration;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 /**
   * "Grab-bag" PSP to answer various "asset related" questions

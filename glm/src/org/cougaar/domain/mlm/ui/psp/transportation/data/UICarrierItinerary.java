@@ -12,7 +12,7 @@ package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
 import java.util.*;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 
 public class UICarrierItinerary extends UIItinerary
                               implements java.io.Serializable {

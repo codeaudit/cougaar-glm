@@ -12,8 +12,8 @@ import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
 import org.cougaar.domain.planning.ldm.plan.Preposition;
  
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.asset.Ammunition;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.Ammunition;
 
 /**
   * This UnaryPredicate is used to test whether Tasks should be

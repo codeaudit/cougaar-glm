@@ -19,7 +19,7 @@
   <!-- :::::::::::::::::::::::::C5::::::::::::::::::::::::::::::::::::::: -->
 
   <prototype name="C005B">
-    <object class="org.cougaar.domain.glm.asset.CargoFixedWingAircraft">
+    <object class="org.cougaar.domain.glm.ldm.asset.CargoFixedWingAircraft">
 
       <field name="TypeIdentificationPG" type="object">
         <value>
@@ -36,7 +36,7 @@
 
       <field name="ContainPG" type="object">
         <value>
-	  <object class="org.cougaar.domain.glm.asset.ContainPG">
+	  <object class="org.cougaar.domain.glm.ldm.asset.ContainPG">
 
 	    <field name="MaximumLength" type="object">
 	      <value>
@@ -138,7 +138,7 @@
 
       <field name="AirLiftPG" type="object">
         <value>
-	  <object class="org.cougaar.domain.glm.asset.AirLiftPG">
+	  <object class="org.cougaar.domain.glm.ldm.asset.AirLiftPG">
 
 	    <field name="MaximumPallets" type="int">
 	      <value>36 </value>
@@ -170,7 +170,7 @@
 
       <field name="AirVehiclePG" type="object">
         <value>
-	  <object class="org.cougaar.domain.glm.asset.AirVehiclePG">
+	  <object class="org.cougaar.domain.glm.ldm.asset.AirVehiclePG">
 
 	    <field name="QuickTurnaroundTime" type="object">
 	      <value>
@@ -198,7 +198,7 @@
 
       <field name="AirSelfPropulsionPG" type="object">
         <value>
-	  <object class="org.cougaar.domain.glm.asset.AirSelfPropulsionPG">
+	  <object class="org.cougaar.domain.glm.ldm.asset.AirSelfPropulsionPG">
 
 	    <field name="CruiseSpeed" type="object">
 	      <value>

@@ -43,8 +43,8 @@ import org.cougaar.core.society.UID;
 import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.domain.glm.asset.ALPAsset;
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.ALPAsset;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 
 /** Main class for the generic plugin.
   *    real work is done by processAddTask, processChangeTask, processRemoveTasks

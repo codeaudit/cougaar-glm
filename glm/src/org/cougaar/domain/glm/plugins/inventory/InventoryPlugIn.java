@@ -24,11 +24,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import org.cougaar.domain.glm.plugins.*;
-import org.cougaar.domain.glm.asset.*;
+import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.debug.*;
-import org.cougaar.domain.glm.asset.*;
-import org.cougaar.domain.glm.Constants;
-import org.cougaar.domain.glm.plan.Agency;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.plan.Agency;
 
 public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
 

@@ -3,10 +3,10 @@
 <!DOCTYPE Propagation SYSTEM "Forward.dtd" []>
 
 <Propagations>
-  <TransferablePropagation class="org.cougaar.domain.glm.policy.StockageLevelPolicy">
+  <TransferablePropagation class="org.cougaar.domain.glm.ldm.policy.StockageLevelPolicy">
 	<role> StrategicTransportationProvider </role>
   </TransferablePropagation>
-  <TransferablePropagation class="org.cougaar.domain.glm.oplan.Oplan">
+  <TransferablePropagation class="org.cougaar.domain.glm.ldm.oplan.Oplan">
 	<role> Subordinate </role> 
   </TransferablePropagation>
   <TransferablePropagation class="com.bbn.alpicis.data.IcisDemandProjectionPolicy">

@@ -13,7 +13,7 @@ package org.cougaar.domain.mlm.debug.ui;
 
 import java.util.Enumeration;
 
-import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 
 /** A tree node for a Cluster Asset.

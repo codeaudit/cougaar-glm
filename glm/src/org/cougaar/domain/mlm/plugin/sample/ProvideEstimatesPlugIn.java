@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin.sample;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.core.cluster.Subscriber;
 import org.cougaar.core.cluster.Subscription;
 import org.cougaar.core.cluster.IncrementalSubscription;

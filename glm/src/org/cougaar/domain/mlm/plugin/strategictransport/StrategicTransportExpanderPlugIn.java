@@ -10,7 +10,7 @@
 
 package org.cougaar.domain.mlm.plugin.strategictransport;
 
-import org.cougaar.domain.glm.Constants;
+import org.cougaar.domain.glm.ldm.Constants;
 
 import org.cougaar.util.StateModelException;
 import org.cougaar.core.cluster.ClusterIdentifier;
@@ -54,7 +54,7 @@ import org.cougaar.util.UnaryPredicate;
  * of Tasks through a Workflow.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: StrategicTransportExpanderPlugIn.java,v 1.1 2000-12-15 20:17:44 mthome Exp $
+ * @version      $Id: StrategicTransportExpanderPlugIn.java,v 1.2 2000-12-20 18:18:43 mthome Exp $
  *
  */
 

@@ -21,7 +21,7 @@ import com.bbn.openmap.proj.Projection;
 import com.bbn.openmap.util.Debug;
 import com.bbn.openmap.util.quadtree.QuadTree;
 
-import org.cougaar.domain.glm.plan.GeolocLocation;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
 import org.cougaar.domain.mlm.ui.psp.transportation.data.*;
 
 class TransportUnit extends OMGraphic
