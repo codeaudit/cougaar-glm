@@ -148,9 +148,9 @@ public class SupplyExpander extends InventoryProcessor {
 	}
 	super.update(); // set up dates
 	handleExpandableTasks(supplyTasks_.getAddedList());
-	handleExpandableTasks(supplyTasks_.getChangedList());
+//  	handleExpandableTasks(supplyTasks_.getChangedList());
 	handleExpandableTasks(projectionTasks_.getAddedList());
-	handleExpandableTasks(projectionTasks_.getChangedList());
+	updateProjectSupplyExpansion(projectionTasks_.getChangedList());
  	updateSupplyResults(supplyExpansionElements_.getAddedList());
 	updateSupplyResults(supplyExpansionElements_.getChangedList());
 	//
@@ -204,6 +204,26 @@ public class SupplyExpander extends InventoryProcessor {
 	}
 //  	printDebug("handleExpandableTasks() <"+supplyType_+"> expanded "+
 //  		   tasksExpanded+" tasks.");
+    }
+
+    protected void updateProjectSupplyExpansion(Enumeration tasks) {
+	Task supplyTask;
+	Inventory inv = null;
+	Asset proto;
+	while (tasks.hasMoreElements()) {
+	    supplyTask = (Task)tasks.nextElement();
+	    proto = (Asset)supplyTask.getDirectObject();
+	    inv = inventoryPlugIn_.findOrMakeInventory(supplyType_, proto);
+	    if (inv != null) {
+		PlanElement pe = supplyTask.getPlanElement();
+		if (pe instanceof Expansion) {
+		    printDebug("updateExpandableTasks(), ProjectWithdraw REPLAN, ProjectSupply task changed "+
+			       TaskUtils.taskDesc(supplyTask));
+		    publishRemoveExpansion((Expansion)pe);
+		    expandSupplyTask(supplyTask);
+		}
+	    }
+	}
     }
 
     // updates allocation results on the expansion of supply
