@@ -552,10 +552,10 @@ public abstract class InventoryBG implements PGDelegate {
 	}
 	
 	DueOut d = new DueOut(task, filled);
-   	GLMDebug.DEBUG("addDueOutProjection()", "start="+start+"("+TimeUtils.dateString(start_time)+")"+
-   	", end="+end+" ("+TimeUtils.dateString(end_time)+") Task:"+TaskUtils.taskDesc(task));	
+//     	GLMDebug.DEBUG("addDueOutProjection()", "start="+start+"("+TimeUtils.dateString(start_time)+")"+
+//     	", end="+end+" ("+TimeUtils.dateString(end_time)+") Task:"+TaskUtils.taskDesc(task));	
         for (int day = start; day < end; day++) {
- 	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
+//   	    GLMDebug.DEBUG("InventoryBG", "addProjection(), Adding dueout on day "+day);
 	    Vector v = (Vector) dueOut_.get(day);
 	    v.add(d);
 	}
