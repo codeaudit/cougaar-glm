@@ -84,7 +84,7 @@ import java.io.*;
  * servlets in this plugin to publish the oplan and gls tasks
  *
  **/
-public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
+public class GLSInitServlet extends LDMSQLPlugin {
 
   public static final String SENDOPLAN = "sendoplan";
   public static final String UPDATEOPLAN = "updateoplan";
@@ -103,14 +103,13 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       this.command = command;
     }
   }
-
   private IncrementalSubscription oplanSubscription;
 
   private IncrementalSubscription glsSubscription;
 
-  private IncrementalSubscription stateSubscription;
-
   private IncrementalSubscription myorgassets;
+
+  private IncrementalSubscription stateSubscription;
 
   private IncrementalSubscription requestSubscription;
 
@@ -118,16 +117,8 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
   private Organization selfOrgAsset = null;
 
   private ArrayList contributors;
-  
-  private ArrayList oplans = new ArrayList();
-  private HashMap locations = new HashMap();
 
   private static final String forRoot = "ForRoot".intern();
-
-  // Additions/Modifications/Deletions which have not yet been published
-  private HashSet newObjects = new HashSet();
-  private HashSet modifiedObjects = new HashSet();
-  private HashSet removedObjects = new HashSet();
 
   // tells reply servlet when to push info
   private Object monitor = new Object();
@@ -138,6 +129,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 		
   private static class MyPrivateState implements java.io.Serializable {
     boolean oplanExists = false;
+    boolean oplanCouponExists = false;
     boolean unpublishedChanges = false;
     boolean errorOccurred = false;
     int taskNumber = 0;
@@ -148,13 +140,6 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
   private static UnaryPredicate oplanPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
       return (o instanceof Oplan);
-    }
-  };
-  
-
-  private static UnaryPredicate orgAssetPred = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return (o instanceof Organization);
     }
   };
 
@@ -183,34 +168,12 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       return (o instanceof Request);
     }
   };
-  
-  private static class OrgActivityPredicate implements UnaryPredicate {
-    private Oplan myOplan= null;
-    private String myOrgId = "";
 
-    public void setOplan(Oplan oplan) {
-      myOplan = oplan;
-    }
-
-    public void setOrgId(String orgId) {
-      myOrgId = orgId;
-    }
-
+  private static UnaryPredicate orgAssetPred = new UnaryPredicate() {
     public boolean execute(Object o) {
-      if ((myOplan == null) ||
-          (myOrgId.equals(""))) {
-        return false;
-      }
-    
-      return ((o instanceof OrgActivity) &&
-              (((OrgActivity) o).getOrgID().equals(myOrgId)) &&
-              (((OrgActivity) o).getOplanUID().equals(myOplan.getUID())));
+      return (o instanceof Organization);
     }
-  }   
-
-  private static OrgActivityPredicate orgActivityPredicate = 
-    new OrgActivityPredicate();
-
+  };
 
   private ServletService servletService;
   /** Sets the servlet service. Called by introspection on start
@@ -218,6 +181,45 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
   public void setServletService(ServletService ss) {
     servletService = ss;
   }
+
+
+  /*
+   * Creates a subscription.
+   */
+  protected void setupSubscriptions() 
+  {
+    initProperties();
+    
+    getBlackboardService().getSubscriber().setShouldBePersisted(false);
+
+    oplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(oplanPredicate);
+    stateSubscription = (IncrementalSubscription) getBlackboardService().subscribe(statePredicate);
+    glsSubscription = (IncrementalSubscription) getBlackboardService().subscribe(glsPredicate);
+    myorgassets = (IncrementalSubscription) subscribe(orgAssetPred);
+    requestSubscription = (IncrementalSubscription) subscribe(requestPredicate);
+
+//     //contributors = new ArrayList(13);
+//     // refill contributors Collection on rehydrate
+//     processOplanAdds(oplanSubscription.getCollection());
+
+    if (getBlackboardService().didRehydrate()) {
+      checkForPrivateState(stateSubscription.elements());
+    } else {
+      getBlackboardService().publishAdd(new MyPrivateState());
+    }
+
+    // register with servlet service
+    try {
+      servletService.register("/glsinit", new GLSServlet());
+      servletService.register("/glsreply", new GLSReplyServlet());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("GLSInitServlet: " + PUBLISH_ON_SELF_ORG + " = " + 
+                       globalParameters.get(PUBLISH_ON_SELF_ORG));
+  }	   		 
+
 
   /**
    * Executes Plugin functionality.
@@ -235,25 +237,27 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 
       if ((selfOrgAsset != null) &&
           (Boolean.valueOf((String) globalParameters.get(PUBLISH_ON_SELF_ORG)).booleanValue())) {
-        publishOplanAndGLS();
-      }
-    }
-
-    if (oplanSubscription.hasChanged()) {
-      Collection adds = oplanSubscription.getAddedCollection();
-      if (adds != null) {
-	processOplanAdds(adds);
-      }
-      Collection changes = oplanSubscription.getChangedCollection();
-      if (changes != null) {
-	processChanges(changes);
-      }
-      Collection deletes = oplanSubscription.getRemovedCollection();
-      if (deletes !=null) {
-	processOplanDeletes(deletes);
+          publishOplanAndGLS();
+        }
       }
 
-      doNotify = true;
+   if (oplanSubscription.hasChanged()) {
+//       Collection adds = oplanSubscription.getAddedCollection();
+//       if (adds != null) {
+//         System.out.println("GLSInitServlet: calling processOplanAdds opSubs changed.");
+// 	processOplanAdds(adds);
+//       }
+//       Collection changes = oplanSubscription.getChangedCollection();
+//       if (changes != null) {
+//         System.out.println("GLSInitServlet: oplanSubscription has changed.");
+// 	processChanges(changes);
+//       }
+//       Collection deletes = oplanSubscription.getRemovedCollection();
+//       if (deletes !=null) {
+// 	processOplanDeletes(deletes);
+//       }
+
+     doNotify = true;
     }
 
     if (glsSubscription.hasChanged()) {
@@ -264,23 +268,24 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       processRequests(requestSubscription.getAddedCollection());
     }
 
-    for (Iterator it = contributors.iterator(); it.hasNext();) {
-      IncrementalSubscription is = (IncrementalSubscription) it.next();
+//     //ContributorPredicate subscription - NEEDED???
+//     for (Iterator it = contributors.iterator(); it.hasNext();) {
+//       IncrementalSubscription is = (IncrementalSubscription) it.next();
       
-      // we don't care about adds, just deletes and changes
-      if (is.hasChanged()) {
-	Collection changes = is.getChangedCollection();
-	if (changes != null) {
-	  processChanges(changes);
-	}
+//       // we don't care about adds, just deletes and changes
+//       if (is.hasChanged()) {
+// 	Collection changes = is.getChangedCollection();
+// 	if (changes != null) {
+// 	  processChanges(changes);
+// 	}
 
-	// Deletes of OplanContributors are treated as changes to the Oplan
-	changes = is.getRemovedCollection();
-	if (changes != null) {
-	  processChanges(changes);
-	}	
-      }
-    }
+// 	// Deletes of OplanContributors are treated as changes to the Oplan
+// 	changes = is.getRemovedCollection();
+// 	if (changes != null) {
+// 	  processChanges(changes);
+// 	}	
+//       }
+//     }
 
     // update gui, if needed
     if (doNotify) {
@@ -288,15 +293,14 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 	monitor.notifyAll();
       }
     }
-
   }
 
   private void processRequests(Collection newRequests) {
     for (Iterator i = newRequests.iterator(); i.hasNext(); ) {
       Request request = (Request) i.next();
       if (request.command.equals("sendoplan")) {
-        publishOplanObjects();
-        publishOplanPostProcessing();
+        publishOplanCoupon();
+        myPrivateState.unpublishedChanges=false;
       } else if (request.command.equals("publishgls")) {
 	publishAllRootGLS();
       }
@@ -319,159 +323,6 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
       return null;
     }
   }
-
-  public Oplan getOplan(String oplanID) {
-
-    synchronized (oplans) {
-      for (Iterator iterator = oplans.iterator();
-           iterator.hasNext();) {
-        Oplan oplan = (Oplan) iterator.next();
-        if ((oplan.getOplanId().equals(oplanID))){
-          return oplan;
-        }
-      }
-      return null;
-    }
-  }
-
-
-  public void updateOplanInfo(Oplan update) {
-    synchronized (oplans) {
-      String oplanID = update.getOplanId();
-      Oplan oplan = getOplan(oplanID);
-      
-      if (oplan == null) {
-        oplan = addOplan(oplanID);
-      }
-      
-      oplan.setOperationName(update.getOperationName());
-      oplan.setPriority(update.getPriority());
-      oplan.setCday(update.getCday());
-      oplan.setEndDay(update.getEndDay());
-
-      boolean found = false;
-      if (oplanSubscription != null) {
-        Collection published = oplanSubscription.getCollection();
-        for (Iterator iterator = published.iterator();
-             iterator.hasNext();) {
-          if (((Oplan) iterator.next()).getOplanId().equals(oplanID)) {
-            found = true;
-            break;
-          }
-        }
-      }
-
-      if (found) {
-        modifiedObjects.add(oplan);
-
-        if (myPrivateState != null) {
-          myPrivateState.unpublishedChanges = true;
-        }
-      } else {
-        newObjects.add(oplan);
-      }
-    }
-  }
-
-  // Replace org activies for Org.
-  public void updateOrgActivities(Oplan update,
-                                  String orgId,
-                                  Collection orgActivities) {
-
-    synchronized (oplans) {
-      String oplanID = update.getOplanId();
-      Oplan oplan = getOplan(oplanID);
-      
-      if (oplan == null) {
-        System.err.println("GLSInitServlet.updateOrgActivities(): can't find" +
-                           " referenced Oplan " + oplanID);
-        return;
-      }
-      
-      // Execute a query to get all existing org activities associated with
-      // the oplan
-      orgActivityPredicate.setOplan(oplan);
-      orgActivityPredicate.setOrgId(orgId);
-      Collection existingOrgActivities = getBlackboardService().query(orgActivityPredicate);
-      for (Iterator iterator = existingOrgActivities.iterator();
-           iterator.hasNext();) {
-        OrgActivity orgActivity = (OrgActivity) iterator.next();
-        
-        if (orgActivity.getOrgID().equals(orgId)) {
-          removedObjects.add(orgActivity);
-        }
-      }
-
-      for (Iterator iterator = orgActivities.iterator();
-           iterator.hasNext();) {
-        OrgActivity orgActivity = (OrgActivity) iterator.next();
-        newObjects.add(orgActivity);
-      }
-
-      if (myPrivateState != null) {
-        myPrivateState.unpublishedChanges = true;
-      }
-    }
-  }
-
-  // Used by query handlers to get location info
-  public NamedPosition getLocation(String locCode) {
-    return (NamedPosition) locations.get(locCode);
-  }
-
-  // Used by query handlers to update location info
-  public void updateLocation(GeolocLocation location) {
-    String locName = location.getGeolocCode();
-    locations.put(locName, location);
-  }
-
-  /*
-   * Creates a subscription.
-   */
-  protected void setupSubscriptions() 
-  {	
-    super.setupSubscriptions();
-    
-    getBlackboardService().getSubscriber().setShouldBePersisted(false);
-    oplanSubscription = (IncrementalSubscription) getBlackboardService().subscribe(oplanPredicate);
-    stateSubscription = (IncrementalSubscription) getBlackboardService().subscribe(statePredicate);
-
-    glsSubscription = (IncrementalSubscription) getBlackboardService().subscribe(glsPredicate);
-
-    myorgassets = (IncrementalSubscription) subscribe(orgAssetPred);
-    requestSubscription = (IncrementalSubscription) subscribe(requestPredicate);
-
-    contributors = new ArrayList(13);
-    // refill contributors Collection on rehydrate
-    processOplanAdds(oplanSubscription.getCollection());
-
-    if (getBlackboardService().didRehydrate()) {
-      checkForPrivateState(stateSubscription.elements());
-    } else {
-      getBlackboardService().publishAdd(new MyPrivateState());
-    }
-
-    // register with servlet service
-    try {
-      servletService.register("/glsinit", new GLSServlet());
-      servletService.register("/glsreply", new GLSReplyServlet());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    System.out.println("GLSInitServlet: " + PUBLISH_ON_SELF_ORG + " = " + 
-                       globalParameters.get(PUBLISH_ON_SELF_ORG));
-  }	   		 
-
-  protected void initProperties() {
-    // default package for QueryHandler
-    super.initProperties();
-    String exptid = System.getProperty("org.cougaar.experiment.id");
-    
-    if (exptid != null) {
-      globalParameters.put("exptid", exptid);
-    }
-  }
   
 
   private void handleMyOrgAssets(Enumeration e) {
@@ -485,28 +336,6 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     }
   }
 
-  private Oplan addOplan(String oplanID) {
-    Oplan oplan;
-
-    synchronized (oplans) {
-      oplan = getOplan(oplanID);
-      
-      if (oplan != null) {
-        System.err.println("GLSInitServlet.addOplan(): " + oplanID + 
-                           " already exists.");
-        return oplan;
-      } else {
-        oplan =  new Oplan();
-
-	getUIDServer().registerUniqueObject(oplan);
-        oplan.setOwner(getMessageAddress());
-        oplan.setOplanId(oplanID);
-        oplans.add(oplan);
-      }
-    } // end syncronization on oplans
-    return oplan;
-  }
-
   private void checkForPrivateState(Enumeration e) {
     if (myPrivateState == null) {
       while(e.hasMoreElements()) {
@@ -515,114 +344,106 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     }
   }
 
-  private void publishOplanObjects() {
-    for (Iterator iterator = newObjects.iterator();
-         iterator.hasNext();) {
-      Object object = iterator.next();
-      getBlackboardService().publishAdd(object);
+  private void publishOplanCoupon() {
+    grokArguments();
+    OplanCoupon ow = new OplanCoupon(getMessageAddress());
+    ow.setOplanQueryFile(queryFile);
+    String oplanID = parseOplanID(queryFile);
+    ow.setOplanID(oplanID);
+    
+    getUIDServer().registerUniqueObject(ow);
+    getBlackboardService().publishAdd(ow);
 
-      if (object instanceof Oplan) {
-        OplanCoupon ow = new OplanCoupon(((Oplan) object).getUID(), 
-                                         getMessageAddress());
-        getUIDServer().registerUniqueObject(ow);
-        getBlackboardService().publishAdd(ow);
-
-        myPrivateState.oplanExists = true;
-      }
-    }
-
-    for (Iterator iterator = modifiedObjects.iterator();
-         iterator.hasNext();) {
-      Object object = iterator.next();
-      getBlackboardService().publishChange(object);
-    }
-
-    for (Iterator iterator = removedObjects.iterator();
-         iterator.hasNext();) {
-      Object object = iterator.next();
-      getBlackboardService().publishRemove(object);
-    }
-
-    getBlackboardService().publishChange(myPrivateState);
+    myPrivateState.oplanCouponExists = true;
+    getBlackboardService().publishChange(myPrivateState);    
   }
   
-  private void publishOplanPostProcessing() {
-    newObjects.clear();
-    modifiedObjects.clear();
-    removedObjects.clear();
-
-    myPrivateState.unpublishedChanges = false;
+  private String parseOplanID(String queryFile) {
+    String oplanId = null;
+    int dot = queryFile.indexOf('.');
+    oplanId = queryFile.substring(0,dot);
+    
+    return oplanId;
   }
-  
+
   private void publishOplan() {
-	// Need to make separate add/remove/modify lists
-	getBlackboardService().openTransaction();
-	publishOplanObjects();
-	getBlackboardService().closeTransactionDontReset();
-	publishOplanPostProcessing();
+    // Need to make separate add/remove/modify lists
+    getBlackboardService().openTransaction();
+    publishOplanCoupon();
+    getBlackboardService().closeTransactionDontReset();
+    myPrivateState.unpublishedChanges=false;
   }
 
-  private void refreshOplan() {
-    for (Enumeration e = queries.elements(); e.hasMoreElements();) {
-      SQLOplanQueryHandler qh = (SQLOplanQueryHandler) e.nextElement();
-      qh.update();
-    }
-  }
-
-  private void processOplanAdds(Collection adds) {
-    for (Iterator it = adds.iterator(); it.hasNext();) {
-      Oplan oplan = (Oplan) it.next();
-      
-      IncrementalSubscription is = (IncrementalSubscription) 
-	getBlackboardService().subscribe(new ContributorPredicate(oplan.getUID()));
-      contributors.add(is);
-    }
-  }
-
-  private void processChanges(Collection changes) {
-    HashSet changedOplans = new HashSet();
-
-    for (Iterator iterator = changes.iterator(); iterator.hasNext();) {
-      UID oplanUID = null;
-      Object o = iterator.next();
-      if (o instanceof Oplan) {
-	oplanUID = ((Oplan) o).getUID();
-      } else if (o instanceof OplanContributor) {
-	oplanUID = ((OplanContributor) o).getOplanUID();
-      } else continue;
-      
-      changedOplans.add(oplanUID);
-    } 
-
+  private void refreshOplan( ){
+    //Need to publish change to oplan coupon which will cause each agent
+    //  to go back to db and compare new info with their current info.
+    openTransaction();
+    String oplanID = parseOplanID(queryFile);
     // Publish once for each changed oplan
-    for (Iterator iterator = changedOplans.iterator(); iterator.hasNext();) {
-      Collection coupons = 
-        getBlackboardService().query(new CouponPredicate((UID) iterator.next()));
-      for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
-	System.out.println("GLSInitServlet: publishChanging OplanCoupon");
-	getBlackboardService().publishChange(couponIt.next());
-      }
+    Collection coupons = getBlackboardService().query(new CouponPredicate(oplanID));
+    for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
+      //System.out.println("GLSInitServlet: publishChanging OplanCoupon");
+      getBlackboardService().publishChange(couponIt.next());
     }
+    closeTransactionDontReset();
   }
 
-  private void processOplanDeletes(Collection deletes) {
-    for (Iterator it = deletes.iterator(); it.hasNext();) {
-      Oplan oplan = (Oplan) it.next();
-      Collection coupons = getBlackboardService().query(new CouponPredicate(oplan.getUID()));
-      for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
-	getBlackboardService().publishRemove(couponIt.next());
-      }
-    }
-  }
+//   private void processOplanAdds(Collection adds) {
+//     for (Iterator it = adds.iterator(); it.hasNext();) {
+//       Oplan oplan = (Oplan) it.next();
+      
+//       IncrementalSubscription is = (IncrementalSubscription) 
+//       getBlackboardService().subscribe(new ContributorPredicate(oplan.getUID()));
+//       contributors.add(is);
+//     }
+//   }
+
+//   private void processChanges(Collection changes) {
+//     HashSet changedOplans = new HashSet();
+
+//     for (Iterator iterator = changes.iterator(); iterator.hasNext();) {
+//       UID oplanUID = null;
+//       String oplanID = null;
+//       Object o = iterator.next();
+//       if (o instanceof Oplan) {
+// 	oplanUID = ((Oplan) o).getUID();
+//       } else if (o instanceof OplanContributor) {
+// 	oplanUID = ((OplanContributor) o).getOplanUID();
+//       } else continue;  //jumps to next iteration
+      
+//       changedOplans.add(oplanUID);
+//     } 
+
+//     // Publish once for each changed oplan
+//     for (Iterator iterator = changedOplans.iterator(); iterator.hasNext();) {
+//       Collection coupons = 
+//         getBlackboardService().query(new CouponPredicate((UID) iterator.next()));
+//       for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
+// 	System.out.println("GLSInitServlet: publishChanging OplanCoupon");
+// 	getBlackboardService().publishChange(couponIt.next());
+//       }
+//     }
+//   }
+
+//   private void processOplanDeletes(Collection deletes) {
+//     for (Iterator it = deletes.iterator(); it.hasNext();) {
+//       Oplan oplan = (Oplan) it.next();
+//       Collection coupons = getBlackboardService().query(new CouponPredicate(oplan.getOplanId()));
+//       for (Iterator couponIt = coupons.iterator(); couponIt.hasNext();) {
+// 	getBlackboardService().publishRemove(couponIt.next());
+//       }
+//     }
+//   }
+
 
   private class CouponPredicate implements UnaryPredicate {
-    UID _oplanUID;
-    public CouponPredicate(UID oplanUID) {
-      _oplanUID = oplanUID;
+    String _oplanID;
+    public CouponPredicate(String oplanID) {
+      _oplanID = oplanID;
     }
     public boolean execute(Object o) {
       if (o instanceof OplanCoupon) {
-	if (((OplanCoupon ) o).getOplanUID().equals(_oplanUID)) {
+	if (((OplanCoupon ) o).getOplanID().equals(_oplanID)) {
 	  return true;
 	}
       }
@@ -736,7 +557,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     try {
       UID oplanUID = oplan.getUID();
       ContextOfUIDs context = new ContextOfUIDs(oplanUID);
-      System.out.println("GLSGUIInitPlugin: Setting context to: " + oplanUID);
+      System.out.println("GLSInitPlugin: Setting context to: " + oplanUID);
       task.setContext(context);
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -746,10 +567,13 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
     System.out.println("\n" + formatDate(System.currentTimeMillis()) + " Send Task: " + task);
   }
 
+  /**FIXME**/
   private void publishOplanAndGLS() {
-    publishOplanObjects();
+    publishOplanCoupon();
+
+    //May not actually have the oplan at this point
     
-    for (Iterator iterator = newObjects.iterator();
+    for (Iterator iterator = oplanSubscription.iterator();
          iterator.hasNext();) {
       Object object = iterator.next();
 
@@ -757,10 +581,8 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
         doPublishRootGLS((Oplan) object);
       }
     }
+    myPrivateState.unpublishedChanges=false;
 
-    publishOplanPostProcessing();
-
-    System.out.println("Published from oplan and gls from updateOrgActivies");
   }
   
   protected static DateFormat logTimeFormat =
@@ -775,7 +597,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
       String command = request.getParameter("command");
-      //System.out.println("GLSServlet got request " + command);
+      //System.out.println("GLSServlet got request command is" + command);
       response.setContentType("text/html");
       try {
 	PrintWriter out = response.getWriter();
@@ -787,6 +609,7 @@ public class GLSInitServlet extends LDMSQLPlugin implements SQLOplanBase{
 	publishOplan();
       }
       if (command.equals(UPDATEOPLAN)) {
+        // publish a change to the OplanCoupon
 	refreshOplan();
       }
       if (command.equals(PUBLISHGLS)) {
