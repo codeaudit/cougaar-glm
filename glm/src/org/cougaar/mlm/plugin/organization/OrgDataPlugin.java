@@ -430,6 +430,7 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 					    content.getStartTime(),
 					    content.getEndTime());
 	report(relationship);
+	publishRemove(relay);
       }
     }
   }
