@@ -767,13 +767,16 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
    * Debug printer which only prints if DEBUG boolean is true.
    */
   protected final void printDebug(String s) {
-    System.out.println(
-        StringUtility.prefixLines(debugPrefix, s));
+    if (logger.isDebugEnabled())
+      logger.debug (getBindingSite().getAgentIdentifier() + " - " + s);
+    //    System.out.println(
+    //        StringUtility.prefixLines(debugPrefix, s));
   }
 
   protected final void printError(String s) {
-    System.out.println(
-        StringUtility.prefixLines(errorPrefix, s));
+    logger.error (getBindingSite().getAgentIdentifier() + " - " + s);
+    //    System.out.println(
+    //        StringUtility.prefixLines(errorPrefix, s));
   }
 
   protected void setDefaults(Enumeration eParams) {
@@ -1294,8 +1297,17 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
       }
       // check dates
       if (!beginDate.before(newEndEarliestDate)) {
-        printError("Refuse to adjust task End Date to before Start Date: "+
-                   beginDate);
+        printError(".updateFailedTaskPreferences - Found failed task " + t.getUID() + 
+		   "\nTried to move the end date preference back and reissue, but couldn't " +
+		   "\nSince refusing to adjust task End Date to before Start Date: "+
+                   beginDate +"\nCurrent end date preferences :\n" +
+		   "Early " + oldEndEarliestDate +
+		   "Best  " + oldEndEarliestDate +
+		   "Late  " + oldEndLatestDate +
+		   "\nAttempted (adjusting back " + adjustDurationDays + " days) end dates :\n" +
+		   "Early " + newEndEarliestDate +
+		   "Best  " + newEndEarliestDate +
+		   "Late  " + newEndLatestDate);
         return false;
       }
       if ((earliestDate != null) &&
