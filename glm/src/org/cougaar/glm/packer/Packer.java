@@ -82,6 +82,10 @@ public abstract class Packer extends GenericPlugin {
   public abstract AggregationClosure getAggregationClosure(ArrayList tasks);
 
 
+  public int getTaskQuantityUnit() {
+    return Sizer.TONS;
+  }
+
   /**
    * processNewTasks - handle new ammo supply tasks
    * Called within GenericPlugin.execute.
@@ -108,7 +112,8 @@ public abstract class Packer extends GenericPlugin {
         }
         ADD_TASKS++;
 
-	double taskWeight = Sizer.getTaskMass(task).getShortTons();
+	double taskWeight = 
+	  Sizer.getTaskMass(task, getTaskQuantityUnit()).getShortTons();
         ADD_TONS += taskWeight;
 	tonsReceived += taskWeight;
         tasks.add(task);
@@ -119,8 +124,8 @@ public abstract class Packer extends GenericPlugin {
       return;
     }
 
-    if (getLoggingService().isInfoEnabled()) {
-      getLoggingService().info("Packer - number of added SUPPLY tasks: " + 
+    if (getLoggingService().isDebugEnabled()) {
+      getLoggingService().debug("Packer - number of added SUPPLY tasks: " + 
                                ADD_TASKS +
                                ", aggregated quantity from added SUPPLY tasks: " + 
                                ADD_TONS + " tons.");
@@ -266,7 +271,7 @@ public abstract class Packer extends GenericPlugin {
       AggregationClosure ac = getAggregationClosure(packList);
 
       // now we set the double wheel going...
-      Sizer sz = new Sizer(packList, this);
+      Sizer sz = new Sizer(packList, this, getTaskQuantityUnit());
       
       if (getLoggingService().isDebugEnabled()) {
         getLoggingService().debug("Packer: about to build the filler in doPacking.");
@@ -298,8 +303,12 @@ public abstract class Packer extends GenericPlugin {
     Enumeration changedPEs = planElements.getChangedList();
     while (changedPEs.hasMoreElements()) {
       PlanElement pe = (PlanElement)changedPEs.nextElement();
-      
-      if (PluginHelper.updatePlanElement(pe)) {
+
+      // Only update the plan element if this is a change to the reported
+      // result.
+      if (PluginHelper.checkChangeReports(planElements.getChangeReports(pe), 
+					  PlanElement.ReportedResultChangeReport.class) &&
+	  PluginHelper.updatePlanElement(pe)) {
         boolean needToCorrectQuantity = false;
         
         AllocationResult estimatedAR = pe.getEstimatedResult();
@@ -312,7 +321,7 @@ public abstract class Packer extends GenericPlugin {
 	// Couldn't see that this was in fact necessary so leaving it out for the moment
 	// Gordon Vidaver 08/23/02
 
-	//	boolean foundQuantity = false;
+	boolean foundQuantity = false;
         for (int i = 0; i < aspectValues.length; i++) {
           if (aspectValues[i].getAspectType() == AspectType.QUANTITY) {
             if (aspectValues[i].getValue() != prefValue) {
@@ -320,19 +329,17 @@ public abstract class Packer extends GenericPlugin {
               aspectValues[i].setValue(prefValue); 
               needToCorrectQuantity = true;
             }
-	    //   foundQuantity = true;
+	    foundQuantity = true;
             break;
           }
         }
 
-	/*
 	if (!foundQuantity) {
 	  AspectValue [] copy = new AspectValue [aspectValues.length+1];
 	  System.arraycopy(aspectValues,0,copy,0,aspectValues.length);
 	  copy[aspectValues.length] = new AspectValue (AspectType.QUANTITY, prefValue);
 	  aspectValues=copy;
 	}
-	*/
 
         if (needToCorrectQuantity) {
 	  if (getLoggingService().isDebugEnabled()) {
@@ -346,7 +353,6 @@ public abstract class Packer extends GenericPlugin {
 
           pe.setEstimatedResult(correctedAR);          
         }
-        
         
         publishChange(pe);
       }

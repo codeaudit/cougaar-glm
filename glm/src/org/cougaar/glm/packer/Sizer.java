@@ -38,6 +38,15 @@ class Sizer {
   static public final String TRUE = "True";
 
   /**
+   * Unit for task quantity preference
+   */
+  static public final int TONS = 0;
+  static public final int EACHES = 1;
+  static public final int MIN_UNIT = 0;
+  static public final int MAX_UNIT = 1;
+  
+  
+  /**
     * How much of the quantity remains in the current task
     */
   private double _remainder;
@@ -61,10 +70,22 @@ class Sizer {
 
   private GenericPlugin _gp;
 
-  Sizer(ArrayList _packus, GenericPlugin gp) {
+  private int _quantityType;
+
+  Sizer(ArrayList _packus, GenericPlugin gp, int quantityType) {
     _tasks = new ArrayList(_packus);
     _gp = gp;
     _remainder = 0.0;
+
+    if ((quantityType < MIN_UNIT) ||
+	(quantityType > MAX_UNIT)) {
+      _gp.getLoggingService().error("Sizer: invalid quantity unit specified - " +
+				  quantityType + 
+				  " - assuming TONS.");
+      _quantityType = TONS;
+    } else {
+      _quantityType = quantityType;
+    }
   }
 
   /**
@@ -80,7 +101,7 @@ class Sizer {
     // to see if the _curTask has anything left in it...
     if (_remainder == 0.0) {
       if ((_curTask = getNextTask()) != null) {
-	Mass taskMass = getTaskMass(_curTask);
+	Mass taskMass = getTaskMass(_curTask, _quantityType);
 	_remainder = taskMass.getShortTons();
 
 	if (_expansionQueue != null) {
@@ -203,24 +224,36 @@ class Sizer {
     _gp.createExpansion(subtasks.iterator(), expandme);
   }
 
-  public static Mass getTaskMass(Task task) {
-    GLMAsset assetToBePacked = (GLMAsset) task.getDirectObject();
-    if (assetToBePacked.hasPhysicalPG()) {
-      Mass massPerEach = assetToBePacked.getPhysicalPG().getMass();
-      double taskWeight = task.getPreferredValue(AspectType.QUANTITY) *
-	massPerEach.getShortTons();
-      if (Logging.defaultLogger().isDebugEnabled()) {
-	Logging.defaultLogger().debug("Sizer.getTaskMass: Quantity: " + 
-				      task.getPreferredValue(AspectType.QUANTITY) + 
-				      " * massPerEach: " + massPerEach.getShortTons() +
-				      " = " + taskWeight + " short tons");
+  /**
+   * Compute the mass associated with the task
+   *
+   */
+  public static Mass getTaskMass(Task task, int quantityUnit) {
+    switch (quantityUnit) {
+    case (EACHES):
+      GLMAsset assetToBePacked = (GLMAsset) task.getDirectObject();
+      if (assetToBePacked.hasPhysicalPG()) {
+	Mass massPerEach = assetToBePacked.getPhysicalPG().getMass();
+	double taskWeight = task.getPreferredValue(AspectType.QUANTITY) *
+	  massPerEach.getShortTons();
 	return new Mass(taskWeight, Mass.SHORT_TONS);
+      } else {
+	Logging.defaultLogger().warn("Sizer.getTaskMass: asset - " + 
+				     assetToBePacked + 
+				     " - does not have a PhysicalPG. " +
+				     "Assuming QUANTITY preference is in stort tons.");
+	return new Mass(task.getPreferredValue(AspectType.QUANTITY), 
+			Mass.SHORT_TONS);
       }
-    } else {
-      Logging.defaultLogger().warn("Sizer.getTaskMass: asset - " + 
-				   assetToBePacked + 
-				   " - does not have a PhysicalPG. " +
-				   "Assuming QUANTITY preference is in stort tons.");
+
+    case (TONS):
+      return new Mass(task.getPreferredValue(AspectType.QUANTITY), 
+		      Mass.SHORT_TONS);
+
+    default:
+      Logging.defaultLogger().error("Sizer: invalid quantity unit specified - " +
+				    quantityUnit + 
+				    " - assuming TONS.");
       return new Mass(task.getPreferredValue(AspectType.QUANTITY), 
 		      Mass.SHORT_TONS);
     }
