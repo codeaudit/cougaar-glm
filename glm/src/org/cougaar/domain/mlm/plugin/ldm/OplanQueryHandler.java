@@ -70,8 +70,6 @@ public class OplanQueryHandler  extends SQLOplanQueryHandler {
     oplan.setOperationName(myOperationName);
     oplan.setPriority(myPriority);
     oplan.setCday(myCday);
-
-    System.out.println(99);
   }
 }
 

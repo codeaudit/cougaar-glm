@@ -128,9 +128,6 @@ public class SQLOplanPlugIn extends LDMSQLPlugIn {
           return oplan;
         }
       }
-      
-      System.err.println("SQLOplanPlugIn.getOplan(): unable to find " + 
-                         oplanID);
       return null;
     }
   }
