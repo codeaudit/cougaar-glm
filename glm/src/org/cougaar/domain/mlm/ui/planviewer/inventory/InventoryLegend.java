@@ -38,10 +38,10 @@ public class InventoryLegend extends JPanel {
     final static int ACTUAL_DEMAND_TITLE_GRIDY=3;
     final static int PROJECTED_DEMAND_TITLE_GRIDY=4;
 
-    final static String SUPPLY_TITLE="Resupply  ";
-    final static String DEMAND_TITLE="Demand ";
-    final static String ACTUAL_DEMAND_TITLE="  Actual  ";
-    final static String PROJECTED_DEMAND_TITLE="  Projected  ";
+    final static String SUPPLY_TITLE="Resupply";
+    final static String DEMAND_TITLE="Demand";
+    final static String ACTUAL_DEMAND_TITLE="   Actual ";
+    final static String PROJECTED_DEMAND_TITLE="   Projected ";
 
     final static String RECEIVED_LABEL="Received";
     final static String REQUESTED_LABEL="Requested ";

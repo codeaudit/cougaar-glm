@@ -8,6 +8,7 @@
  * </copyright>
  */
  
+
 package org.cougaar.domain.mlm.ui.planviewer.inventory;
 
 import java.util.*;
@@ -29,10 +30,7 @@ import org.cougaar.domain.mlm.ui.data.*;
  */
 
 
-public class InventoryChartDataModel extends ChartDataSupport 
-    implements ChartDataModel, 
-	       LabelledChartDataModel,
-               ChartDataManageable {
+public class InventoryChartDataModel extends InventoryBaseChartDataModel{
 
     final static String UNCONFIRMED_DUE_IN_LABEL="Qty May Receive";
     final static String ACTUAL_DUE_IN_LABEL="Qty Received";
@@ -549,6 +547,23 @@ public class InventoryChartDataModel extends ChartDataSupport
       useCDay = useCDays;
       valuesSet=false;
       setValues();
+      fireChartDataEvent(ChartDataEvent.RELOAD,
+			 0,0);
+  }
+
+  public void resetInventory(UISimpleInventory inventory) {
+      Vector scheduleNames = InventoryChart.getScheduleTypesForLegend(legendTitle);
+      
+      schedules = 
+	  InventoryChart.extractSchedulesFromInventory(scheduleNames,
+						       inventory);
+      referenceOnHandSchedule=
+	  InventoryChart.extractOnHandSchedule(inventory);
+
+      valuesSet=false;
+      setValues();
+      fireChartDataEvent(ChartDataEvent.RELOAD,
+			 0,0);
   }
 
   protected void initZeroYVal(int len) {
@@ -558,7 +573,5 @@ public class InventoryChartDataModel extends ChartDataSupport
       }
   }
 
-  public ChartDataManager getChartDataManager() { return (ChartDataManager)this; }
-	
 }
 

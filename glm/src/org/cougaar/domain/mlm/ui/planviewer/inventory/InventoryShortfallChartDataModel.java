@@ -17,6 +17,8 @@ import org.cougaar.domain.planning.ldm.plan.ScheduleType;
 import com.klg.jclass.chart.ChartDataModel;
 import com.klg.jclass.chart.LabelledChartDataModel;
 
+import com.klg.jclass.chart.ChartDataEvent;
+
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.domain.mlm.ui.data.UISimpleSchedule;
@@ -26,7 +28,8 @@ import org.cougaar.domain.mlm.ui.data.UISimpleSchedule;
  * interfaces for JClass displays.
  */
 
-public class InventoryShortfallChartDataModel implements ChartDataModel, LabelledChartDataModel {
+public class InventoryShortfallChartDataModel extends
+    InventoryBaseChartDataModel{
   // chart values and labels
   double xvalues[][];
   double yvalues[][];
@@ -338,7 +341,16 @@ public class InventoryShortfallChartDataModel implements ChartDataModel, Labelle
       */
       valuesSet=false;
       setValues();
+      fireChartDataEvent(ChartDataEvent.RELOAD,
+			 0,0);
   }
+
+    public void resetInventory(UISimpleInventory inventory) {
+	valuesSet=false;
+	setValues();
+	fireChartDataEvent(ChartDataEvent.RELOAD,
+			   0,0);
+    }
 
 }
 

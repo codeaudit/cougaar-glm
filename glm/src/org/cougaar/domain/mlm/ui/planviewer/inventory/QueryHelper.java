@@ -8,6 +8,7 @@
  * </copyright>
  */
  
+
 package org.cougaar.domain.mlm.ui.planviewer.inventory;
 
 import java.awt.*;
@@ -24,6 +25,9 @@ import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleSchedule;
 import org.cougaar.domain.mlm.ui.planviewer.ConnectionHelper;
 import org.cougaar.domain.mlm.ui.planviewer.XMLClientConfiguration;
+
+import org.cougaar.util.ThemeFactory;
+
 
 public class QueryHelper implements ActionListener,
 				    ItemListener,
@@ -44,7 +48,7 @@ public class QueryHelper implements ActionListener,
   String assetName;
   boolean doDisplayTable;
   boolean isApplet;
-  JFrame frame;
+  public JFrame frame;
 
   InventoryExecutionTimeStatusHandler timeStatusHandler;
 
@@ -82,6 +86,7 @@ public class QueryHelper implements ActionListener,
     createFrame(assetName);
     displayChart();
   }
+
 
   // sets up a window for the inventory chart
 
@@ -266,7 +271,13 @@ public class QueryHelper implements ActionListener,
       panel.add(saveButton);
     }
 
-    panel.add(createButton(UPDATE, true));
+    boolean enableUpdate = true;
+    if((clusterURL == null) || (PSP_id == null)) {
+	enableUpdate = false;
+    }
+    JButton updateButton = createButton(UPDATE,enableUpdate);
+
+    panel.add(updateButton);
     JButton resetButton = createButton(RESET, true);
     resetButton.setToolTipText("Hold and drag over chart to zoom in.\n Click here to reset to original view.");
     panel.add(resetButton);
@@ -345,6 +356,17 @@ public class QueryHelper implements ActionListener,
 	}
     }
 
+    public static void main(String args[]) {
+	ThemeFactory.establishMetalTheme();
+	InventoryQuery iq = 
+	    new InventoryQuery(InventoryChart.getMockInventory());
+	QueryHelper qh = new QueryHelper(iq);
+
+	qh.frame.addWindowListener(new WindowAdapter() {
+	    public void windowClosing(WindowEvent e) {
+		System.exit(0);
+	    }});
+    }
 }
 
 

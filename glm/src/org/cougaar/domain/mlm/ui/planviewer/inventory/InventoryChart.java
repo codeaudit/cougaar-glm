@@ -14,6 +14,8 @@ import org.cougaar.domain.planning.ldm.plan.ScheduleType;
 import org.cougaar.util.ThemeFactory;
 
 import com.klg.jclass.chart.*;
+//451K uncomment MWD 
+//import com.klg.jclass.util.legend.*;
 import com.klg.jclass.chart.data.JCDefaultDataSource;
 import com.klg.jclass.util.swing.JCExitFrame;
 
@@ -38,6 +40,9 @@ public class InventoryChart extends JPanel implements JCPickListener{
     static final String REQUESTED_INVENTORY_LEGEND = "Requested";
     static final String ACTUAL_INVENTORY_LEGEND = "Actual";
     static final String SHORTFALL_LEGEND = "Shortfall";
+    static final String TOTAL_CAPACITY_LEGEND = "Total Capacity";
+    static final String ALLOCATED_LEGEND = "Allocated";
+    static final String UNCONFIRMED_LEGEND = "UnConfirmed";
     
     static final int CDAY_MIN=-5;
     Vector removeableViews = new Vector();
@@ -76,192 +81,156 @@ public class InventoryChart extends JPanel implements JCPickListener{
     */
 
     public InventoryChart() {
-	ChartDataView chartDataView;
-	ChartDataModel dm;
-	Random r = new Random();
-	int nPoints = 10;
-	int nSeries;
-	double x[][] = new double[1][nPoints];
-	double restockY[] = new double[nPoints];
-	double requisitionY[] = new double[nPoints];
-	double receivedY[] = new double[nPoints];
-	double shippedY[] = new double[nPoints];
-	double onHandY[] = new double[nPoints];
-	double shortfall = 0;
-	double[] receivedShortfallY = new double[nPoints];
-	double[] shippedShortfallY = new double[nPoints];
-	String[] series_names = new String[2];
-	int initialInventory = 25;
-	int minimumStockageLevel = 15;
-	int restockQuantity = 20;
-	double tmp;
+	this("Mock 3-FSB", getMockInventory() , null);
+    }
 
-	colorTable = new InventoryColorTable();
-	chart = new JCChart();
-	((JLabel)chart.getHeader()).setText("Inventory of Filters at 1-2-ARBN");
-	((JLabel)chart.getHeader()).setForeground(Color.black);
-	chart.setBorder(BorderFactory.createLoweredBevelBorder());
-	chart.getChartArea().setBorder(BorderFactory.createLoweredBevelBorder());
 
-	for (int i = 0; i < nPoints; i++)
-	    x[0][i] = i;
+    public static UISimpleInventory getMockInventory() {
 
-	receivedShortfallY[0] = restockY[0] - receivedY[0];
-	shippedShortfallY[0] = requisitionY[0] - shippedY[0];
-	onHandY[0] = initialInventory;
-	requisitionY[0] = 0;
-	shippedY[0] = 0;
-	receivedY[0] = 0;
-	restockY[0] = 0;
+	UISimpleInventory inventory = new UISimpleInventory();
 
-	for (int i = 1; i < nPoints; i++) {
-	    requisitionY[i] = r.nextInt(20);
-	    // if what we should ship is less than what we can ship, place an order
-	    if ((requisitionY[i] + shippedShortfallY[i-1]) >
-		(onHandY[i-1] - minimumStockageLevel))
-		restockY[i] = requisitionY[i] + shippedShortfallY[i-1];
-	    else
-		restockY[i] = 0;
-	    // receive some quantity less than what we order + what we're still owed
-	    receivedY[i] = 
-		r.nextInt((int)restockY[i] + (int)receivedShortfallY[i-1] + 1);
-	    // ship as much as we can
-	    shippedY[i] = Math.min(requisitionY[i] + shippedShortfallY[i-1],
-				   onHandY[i-1] + receivedY[i] - minimumStockageLevel);
-	    // received shortfall is what we asked for - what we got
-	    receivedShortfallY[i] = 
-		restockY[i] - receivedY[i] + receivedShortfallY[i-1];
-	    // shipped shortfall is what we were asked for - what we shipped
-	    shippedShortfallY[i] = 
-		requisitionY[i] - shippedY[i] + shippedShortfallY[i-1];
-	    onHandY[i] = onHandY[i-1] + receivedY[i] - shippedY[i];
+	Date now = new Date();
+	long nowTime = now.getTime();
+	final long aDayTime = 24*60*60*1000;
+	final int numDays = 32;
+	
+	final double DUE_OUT_QTY=150;
+	final double DUE_IN_QTY=750;
+	final double PROJ_DUE_OUT_QTY=75;    
+
+	final double PROJ_SHORTFALL_QTY=60;
+	final double DUE_IN_SHORTFALL_QTY=500;
+	final double DUE_OUT_SHORTFALL_QTY=50;
+
+	double dueOutQty=DUE_OUT_QTY;
+	double dueInQty=DUE_IN_QTY;
+	double projDueOutQty=PROJ_DUE_OUT_QTY;    
+
+	double projShortfallQty=PROJ_SHORTFALL_QTY;
+	double dueInShortfallQty=DUE_IN_SHORTFALL_QTY;
+	double dueOutShortfallQty=DUE_OUT_SHORTFALL_QTY;
+	
+	double currInventory = 800.0;
+	long currNow = nowTime+aDayTime;
+	long lastNow = nowTime;
+	long c0Time = nowTime + (5*aDayTime);
+
+	Vector onHand = new Vector(numDays);
+	Vector dueIns=new Vector(numDays);
+	Vector dueOuts=new Vector(numDays);
+	Vector projDueOuts= new Vector(numDays);
+	
+	Vector reqDueIns=new Vector(numDays);
+	Vector reqDueOuts=new Vector(numDays);
+	Vector reqProjDueOuts=new Vector(numDays);
+
+	Vector unconfirmedDueIns=dueOuts;
+
+	inventory.setAssetName("JP8 Fuel");
+	inventory.setScheduleType(ScheduleType.TOTAL_INVENTORY);
+	inventory.setProvider(true);
+	inventory.setBaseCDay(c0Time);
+
+	int dueInCtr=0;
+	
+	for(int i=0; i <= numDays ; i++) {
+
+	    boolean shortfallDay=((currNow >= (c0Time + (12 * aDayTime))) && 
+				  (currNow <= (c0Time + (22 * aDayTime))));
+
+	    projDueOutQty = PROJ_DUE_OUT_QTY;
+	    reqProjDueOuts.add(new UIQuantityScheduleElement(lastNow,
+							     currNow,
+							     projDueOutQty));
+
+
+	    if(shortfallDay) {
+		projDueOutQty = PROJ_SHORTFALL_QTY;
+	    }
+	    projDueOuts.add(new UIQuantityScheduleElement(lastNow,
+							  currNow,
+							  projDueOutQty));
+
+	    //currInventory=currInventory-projDueOutQty;
+	    
+	    if((currNow >= c0Time) && 
+	       ((i%2)==0)){
+		dueOutQty = DUE_OUT_QTY;
+
+		reqDueOuts.add(new UIQuantityScheduleElement(lastNow,
+							     currNow,
+							     dueOutQty));
+		if(shortfallDay) {
+		    dueOutQty = DUE_OUT_SHORTFALL_QTY;
+		}
+		dueOuts.add(new UIQuantityScheduleElement(lastNow,
+							  currNow,
+							  dueOutQty));
+		currInventory=currInventory-dueOutQty;
+	    } else {
+		reqDueOuts.add(new UIQuantityScheduleElement(lastNow,
+							     currNow,
+							     0));
+		dueOuts.add(new UIQuantityScheduleElement(lastNow,
+							  currNow,
+							  0));
+	    }
+	    
+	    if((currNow >= c0Time) && 
+	       ((i%10)==0)){
+		dueInQty = DUE_IN_QTY;
+		reqDueIns.add(new UIQuantityScheduleElement(lastNow,
+							    currNow,
+							    dueInQty));
+		if(shortfallDay) {
+		    dueInQty = DUE_IN_SHORTFALL_QTY;
+		}
+
+		dueIns.add(new UIQuantityScheduleElement(lastNow,
+							 currNow,
+							 dueInQty));
+		currInventory+=dueInQty;
+
+		dueInCtr++;
+	    } else {
+		reqDueIns.add(new UIQuantityScheduleElement(lastNow,
+							    currNow,
+							    0));
+		dueIns.add(new UIQuantityScheduleElement(lastNow,
+							 currNow,
+							 0));
+	    }
+	    
+	    lastNow = currNow;
+	    currNow+=aDayTime;
+	    
+	    onHand.add(new UIQuantityScheduleElement(lastNow,
+						     currNow,
+						     currInventory));
+	    
+
+	    
+	    
 	}
+	
 
-	double[][] y;
-	// plot shortfalls
-	chartDataView = new ChartDataView();
-	chart.setDataView(0, chartDataView);
-	nSeries = 2;
-	y = new double[nSeries][];
-	y[0] = receivedShortfallY;
-	y[1] = shippedShortfallY;
-	series_names[0] = "Restock Shortfall Qty";
-	series_names[1] = "Requisition Shortfall Qty";
-	dm = new JCDefaultDataSource(x, y, null, series_names, SHORTFALL_LEGEND);
-	chartDataView.setDataSource(dm);
-	setSeriesColor(chartDataView.getSeries(0),
-		       colorTable.get(UISimpleNamedSchedule.REQUESTED_DUE_IN));
-	chartDataView.getSeries(0).getStyle().setSymbolShape(JCSymbolStyle.DOT);
-	//     chartDataView.getSeries(0).getStyle().setLinePattern(JCLineStyle.SHORT_DASH);
-	setSeriesColor(chartDataView.getSeries(1), new Color(255, 0, 0));  // Bright Red
-	setSeriesColor(chartDataView.getSeries(1),
-		       colorTable.get(UISimpleNamedSchedule.REQUESTED_DUE_OUT));
-	chartDataView.getSeries(1).getStyle().setSymbolShape(JCSymbolStyle.BOX);
-	setSeriesColor(chartDataView.getSeries(2),
-		       colorTable.get(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT));
-	chartDataView.getSeries(2).getStyle().setSymbolShape(JCSymbolStyle.BOX);
-	//     chartDataView.getSeries(1).getStyle().setLinePattern(JCLineStyle.SHORT_DASH);
-	dataViews.put(chartDataView, dm);
+	inventory.addNamedSchedule(UISimpleNamedSchedule.ON_HAND,onHand);
+	inventory.addNamedSchedule(UISimpleNamedSchedule.DUE_IN,dueIns);
+	inventory.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_IN,reqDueIns);
+	
+	inventory.addNamedSchedule(UISimpleNamedSchedule.DUE_OUT,dueOuts);
+	inventory.addNamedSchedule(UISimpleNamedSchedule.REQUESTED_DUE_OUT,reqDueOuts);
 
+	inventory.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_DUE_OUT,
+				   projDueOuts);
+	inventory.addNamedSchedule(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT,
+				   reqProjDueOuts);
 
-	// plot restock orders we make (requested due in) and 
-	// requisitions received (requested due out)
-	//    chartDataView = new ChartDataView();
-	//    chart.setDataView(1, chartDataView);
-	//    chartDataView.setChartType(JCChart.BAR);
-	//    nSeries = 2;
-	//    double y[][] = new double[nSeries][];
-	//    y[0] = restockY;
-	//    y[1] = requisitionY;
-	//    series_names[0] = "Restock Order Quantity";
-	//    series_names[1] = "Requisition Quantity";
-	//    dm = new JCDefaultDataSource(x, y, null, series_names, REQUESTED_INVENTORY_LEGEND);
-	//    chartDataView.setDataSource(dm);
-	//    setSeriesColor(chartDataView.getSeries(0),
-	//             colorTable.get(UISimpleNamedSchedule.REQUESTED_DUE_IN));
-	//    setSeriesColor(chartDataView.getSeries(1),
-	//             colorTable.get(UISimpleNamedSchedule.REQUESTED_DUE_OUT));
-	//    dataViews.put(chartDataView, dm);
+	// MWD Uncomment to get Unconfirmed into the mix.
+	//	inventory.addNamedSchedule(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN,unconfirmedDueIns);
 
-	// plot quantity received (due in) and quantity shipped (due out)
-	chartDataView = new ChartDataView();
-	chart.setDataView(1, chartDataView);
-	chartDataView.setChartType(JCChart.BAR);
-	nSeries = 2;
-	y = new double[nSeries][];
-	y[0] = receivedY;
-	y[1] = shippedY;
-	series_names[0] = "Quantity Received";
-	series_names[1] = "Quantity Shipped";
-	dm = new JCDefaultDataSource(x, y, null, series_names, ACTUAL_INVENTORY_LEGEND);
-	chartDataView.setDataSource(dm);
-	setSeriesColor(chartDataView.getSeries(0),
-		       colorTable.get(UISimpleNamedSchedule.DUE_IN));
-	setSeriesColor(chartDataView.getSeries(1),
-		       colorTable.get(UISimpleNamedSchedule.DUE_OUT));
-	setSeriesColor(chartDataView.getSeries(2),
-		       colorTable.get(UISimpleNamedSchedule.PROJECTED_DUE_OUT));
-	dataViews.put(chartDataView, dm);
-
-	// plot on hand (inventory)
-	chartDataView = new ChartDataView();
-	chart.setDataView(0, chartDataView);
-	chartDataView.setChartType(JCChart.BAR);
-	nSeries = 1;
-	y = new double[nSeries][];
-	y[0] = onHandY;
-	series_names[0] = "On Hand";
-	dm = new JCDefaultDataSource(x, y, null, series_names, INVENTORY_LEGEND);
-	chartDataView.setDataSource(dm);
-	((JCBarChartFormat)chartDataView.getChartFormat()).setClusterWidth(100);
-	chartDataView.setOutlineColor(colorTable.get(UISimpleNamedSchedule.ON_HAND));
-	setSeriesColor(chartDataView.getSeries(0),
-		       colorTable.get(UISimpleNamedSchedule.ON_HAND));
-	dataViews.put(chartDataView, dm);
-
-
-	customizeAxes(chart, "");
-
-	// allow user to zoom in on chart
-	chart.setTrigger(0, new EventTrigger(0, EventTrigger.ZOOM));
-
-	// allow interactive customization using left shift click
-	chart.setAllowUserChanges(true);
-	chart.setTrigger(1, new EventTrigger(Event.SHIFT_MASK,
-					     EventTrigger.CUSTOMIZE));
-
-	// allow user to display labels using right mouse click
-	chart.addPickListener(this);
-	chart.setTrigger(1, new EventTrigger(Event.META_MASK, EventTrigger.PICK));
-
-	// add chart to panel
-	setLayout(new GridBagLayout());
-	chart.getHeader().setVisible(true);
-	//     chart.getLegend().setForeground(Color.black);
-	//     chart.getLegend().setVisible(true);
-	//     chart.getLegend().setAnchor(JCLegend.SOUTH);
-	add(chart, new GridBagConstraints(gridx, gridy++, 1, 1, 1.0, 1.0,
-					  GridBagConstraints.CENTER, 
-					  GridBagConstraints.BOTH, 
-					  blankInsets, 0, 0));
-
-	// provide for point labels displayed beneath chart
-	pointLabel = new JLabel("    "); // to leave space in layout
-	add(pointLabel, new GridBagConstraints(gridx, gridy++, 1, 1, 1.0, 0.0,
-					       GridBagConstraints.CENTER, 
-					       GridBagConstraints.BOTH, 
-					       blankInsets, 0, 0));
-	/**
-	   Need to add legend panel last, as it accesses the chart data views
-	   to determine the legend labels.
-	*/
-
-	legend = new InventoryLegend(this,chart);
-	legendLocale = new GridBagConstraints(gridx, gridy++, 1, 1, 1.0, 0.0,
-				   GridBagConstraints.CENTER, 
-				   GridBagConstraints.BOTH, 
-				   blankInsets, 0, 0);
-	add(legend, legendLocale);
+	
+	return inventory;
 
     }
 
@@ -388,13 +357,16 @@ public class InventoryChart extends JPanel implements JCPickListener{
 
     public void reinitializeAndUpdate(String title, 
 				      UISimpleInventory inventory) {
+
 	myInventory = inventory;
 	myTitle = title;
+	equalizeInventorySchedule(myInventory);
 
 	reinitializeAndUpdate();
     }
 
     protected void reinitializeAndUpdate() {
+
 
 	String scheduleType = myInventory.getScheduleType();
 	Object[] viewsToRemove = removeableViews.toArray();
@@ -417,11 +389,32 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    setChartDataViewVisible(cdView.getName(),cdView.isVisible());
 	}
 
+
+	/**
+	 **  MWD Will this work?
+
+	java.util.List viewList = chart.getDataView();
+	for (int i = 0; i < viewList.size(); i++) {
+	    ChartDataView chartDataView = (ChartDataView)viewList.get(i);
+	    ChartDataModel dm = chartDataView.getDataSource();
+	    if(dm != null) {
+		if (dm instanceof InventoryBaseChartDataModel) {
+		    InventoryBaseChartDataModel baseDM = 
+			(InventoryBaseChartDataModel) dm;
+		    //System.out.println("Setting view " + baseDM.getDataSourceName() + " to display c days:" + useCDays);
+		    baseDM.resetInventory(myInventory);
+		}
+		else
+		    System.out.println("View with data model of type: " + dm.getClass().getName());
+	    }	
+	}
+
+	***
+	**/
+	
 	remove(legend);
 	legend = new InventoryLegend(this,chart);
 	add(legend, legendLocale);
-
-
 	
 	if(timeStatusHandler != null) {
 	    setAlpNow(timeStatusHandler.getLastDayRollover());
@@ -439,24 +432,27 @@ public class InventoryChart extends JPanel implements JCPickListener{
     private void initializeTotalCapacityChart(String title, UISimpleInventory inventory) {
 	title = "Capacity of " + inventory.getAssetName() + " at " + title;
 	setChartTitle(title);
-	Vector scheduleTypes = new Vector(2);
-	scheduleTypes.addElement(UISimpleNamedSchedule.TOTAL_LABOR);
-	scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+	//MWD Remove
+	//Vector scheduleTypes = new Vector(2);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.TOTAL_LABOR);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
 	addView(chart, JCChart.AREA,
-		createInventoryDataModel(scheduleTypes, inventory, ""));
+		createInventoryDataModel(inventory, TOTAL_CAPACITY_LEGEND));
     }
 
     private void initializeActualCapacityChart(String title, UISimpleInventory inventory) {
 	title = "Capacity of " + inventory.getAssetName() + " at " + title;
 	setChartTitle(title);
-	Vector scheduleTypes = new Vector(1);
-	scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
+	//MWD Remove
+	//Vector scheduleTypes = new Vector(1);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
 	addView(chart, JCChart.AREA,
-		createInventoryDataModel(scheduleTypes,inventory, ""));
-	scheduleTypes = new Vector(1);
-	scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+		createInventoryDataModel(inventory, INVENTORY_LEGEND));
+	//MWD Remove
+	//scheduleTypes = new Vector(1);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
 	addView(chart, JCChart.BAR, 
-		createInventoryDataModel(scheduleTypes, inventory, ""));
+		createInventoryDataModel(inventory, ALLOCATED_LEGEND));
     }
 
     // Fix up inventory by making sure if there is a requested schedule,
@@ -511,42 +507,42 @@ public class InventoryChart extends JPanel implements JCPickListener{
 
 	equalizeInventorySchedule(inventory);
 
+     
 	// On Hand
-	scheduleTypes = new Vector(1);
-	scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
-	InventoryChartDataModel chartDataModel = createInventoryDataModel(scheduleTypes,
-									  inventory, 
+	// MWD Remove
+	//scheduleTypes = new Vector(1);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
+	InventoryChartDataModel chartDataModel = createInventoryDataModel(inventory, 
 									  INVENTORY_LEGEND);
 	ChartDataView icv = addView(chart, JCChart.BAR, chartDataModel);
 	((JCBarChartFormat)icv.getChartFormat()).setClusterWidth(100);
 	icv.setOutlineColor(colorTable.get(UISimpleNamedSchedule.ON_HAND));
 
 	// Requested
-	scheduleTypes = new Vector(3);
-	scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_IN);
-	scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_OUT);
-	scheduleTypes.addElement(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT);
-	InventoryChartDataModel requested = createInventoryDataModel(scheduleTypes,
-								     inventory, 
+	// MWD Remove
+	//scheduleTypes = new Vector(3);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_IN);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_OUT);
+	//scheduleTypes.addElement(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT);
+	InventoryChartDataModel requested = createInventoryDataModel(inventory, 
 								     REQUESTED_INVENTORY_LEGEND);
 	addView(chart, JCChart.BAR, requested);
 
 	// Actual
-	scheduleTypes = new Vector(3);
-	scheduleTypes.add(UISimpleNamedSchedule.DUE_IN);
-	scheduleTypes.add(UISimpleNamedSchedule.DUE_OUT);
-	scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_OUT);
-	InventoryChartDataModel actual = createInventoryDataModel(scheduleTypes,
-								  inventory, 
+	// MWD Remove
+	//scheduleTypes = new Vector(3);
+	//scheduleTypes.add(UISimpleNamedSchedule.DUE_IN);
+	//scheduleTypes.add(UISimpleNamedSchedule.DUE_OUT);
+	//scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_OUT);
+	InventoryChartDataModel actual = createInventoryDataModel(inventory, 
 								  ACTUAL_INVENTORY_LEGEND);
 	addView(chart, JCChart.BAR, actual);
 
 	// do not add to chart separatly - only used to calc shortfall
-	scheduleTypes = new Vector(1);
-	scheduleTypes.add(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN);
-	InventoryChartDataModel unconfirmed = createInventoryDataModel(scheduleTypes,
-								  inventory, 
-								  "UnConfirmed");
+	// MWD Remove
+	//scheduleTypes = new Vector(1);
+	//scheduleTypes.add(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN);
+	InventoryChartDataModel unconfirmed = createInventoryDataModel(inventory,								  UNCONFIRMED_LEGEND);
 
 	// Shortfalls
 	ChartDataModel dm = 
@@ -648,6 +644,10 @@ public class InventoryChart extends JPanel implements JCPickListener{
 
 	for(int i=viewIndex-1; i>=0; i--) {
 	    ChartDataView iView = chart.getDataView(i);
+	    InventoryBaseChartDataModel baseDM = 
+			    (InventoryBaseChartDataModel) iView.getDataSource();
+	    System.out.println("Removing: " + baseDM.getDataSourceName() + 
+			       " at " + i);
 	    chart.removeDataView(i);
 	    dataViews.remove(iView);
 	    removeableViews.remove(iView);
@@ -660,13 +660,47 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	return (ChartDataModel) dataViews.get(view);
     }
 
+    public static Vector getScheduleTypesForLegend(String legendTitle) {
+	//MWD
+	Vector scheduleTypes = new Vector(3);
+	if(legendTitle.equals(INVENTORY_LEGEND)) {
+	    scheduleTypes.addElement(UISimpleNamedSchedule.ON_HAND);
+	}
+	else if(legendTitle.equals(REQUESTED_INVENTORY_LEGEND)) {
+	    scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_IN);
+	    scheduleTypes.addElement(UISimpleNamedSchedule.REQUESTED_DUE_OUT);
+	    scheduleTypes.addElement(UISimpleNamedSchedule.PROJECTED_REQUESTED_DUE_OUT);
+	}
+	else if(legendTitle.equals(ACTUAL_INVENTORY_LEGEND)) {
+	    scheduleTypes.add(UISimpleNamedSchedule.DUE_IN);
+	    scheduleTypes.add(UISimpleNamedSchedule.DUE_OUT);
+	    scheduleTypes.add(UISimpleNamedSchedule.PROJECTED_DUE_OUT);
+	}
+	else if(legendTitle.equals(SHORTFALL_LEGEND)) {
+	}
+	else if(legendTitle.equals(TOTAL_CAPACITY_LEGEND)) {
+	    scheduleTypes.addElement(UISimpleNamedSchedule.TOTAL_LABOR);
+	    scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+	}
+	else if(legendTitle.equals(ALLOCATED_LEGEND)) {
+	    scheduleTypes.addElement(UISimpleNamedSchedule.ALLOCATED);
+	}
+	else if(legendTitle.equals(UNCONFIRMED_LEGEND)) {
+	    scheduleTypes.add(UISimpleNamedSchedule.UNCONFIRMED_DUE_IN);
+	}
+	else {
+	    throw new RuntimeException("Unknown legend title");
+	}
 
-    private InventoryChartDataModel createInventoryDataModel(Vector scheduleNames,
-							     UISimpleInventory inventory,
-							     String legendTitle) {
-	// create a vector of schedules that are part of this model
-	Vector schedulesToPlot = new Vector(scheduleNames.size());
-	for (int i = 0; i < scheduleNames.size(); i++) {
+	return scheduleTypes;
+    }
+
+    public static Vector extractSchedulesFromInventory(Vector scheduleNames,
+						       UISimpleInventory inventory) {
+    
+      Vector schedulesToPlot = new Vector(scheduleNames.size());
+
+      for (int i = 0; i < scheduleNames.size(); i++) {
 	    String scheduleName = (String)scheduleNames.elementAt(i);
 	    UISimpleNamedSchedule s =
 		inventory.getNamedSchedule(scheduleName);
@@ -674,16 +708,47 @@ public class InventoryChart extends JPanel implements JCPickListener{
 	    if (s != null) 
 		schedulesToPlot.addElement(s);
 	}
+      
+      return schedulesToPlot;
+    }
 
-	boolean inventoryFlag = 
-	    inventory.getScheduleType().equals(ScheduleType.TOTAL_INVENTORY);
-	Vector onHandSchedule = null;
-	if (inventoryFlag) {
-	    UISimpleNamedSchedule tmp =
+    public static Vector extractOnHandSchedule(UISimpleInventory inventory) {
+
+      Vector onHandSchedule=null;
+
+      boolean inventoryFlag = 
+	  inventory.getScheduleType().equals(ScheduleType.TOTAL_INVENTORY);
+
+      if (inventoryFlag) {
+	  UISimpleNamedSchedule tmp =
 		inventory.getNamedSchedule(UISimpleNamedSchedule.ON_HAND);
 	    if (tmp != null)
 		onHandSchedule = tmp.getSchedule();
-	}
+      }
+
+      return onHandSchedule;
+    }
+	
+
+    private InventoryChartDataModel createInventoryDataModel(UISimpleInventory inventory,
+							     String legendTitle) {
+	Vector scheduleNames = getScheduleTypesForLegend(legendTitle);
+	return createInventoryDataModel(scheduleNames,inventory,legendTitle);
+    }
+
+    private InventoryChartDataModel 
+	createInventoryDataModel(Vector scheduleNames,
+				 UISimpleInventory inventory,
+				 String legendTitle) {
+
+	// create a vector of schedules that are part of this model
+	Vector schedulesToPlot = 
+	    extractSchedulesFromInventory(scheduleNames,inventory);
+
+	boolean inventoryFlag = 
+	    inventory.getScheduleType().equals(ScheduleType.TOTAL_INVENTORY);
+	Vector onHandSchedule = extractOnHandSchedule(inventory);
+
 	return new InventoryChartDataModel(inventoryFlag,
 					   inventory.getAssetName(),
 					   inventory.getUnitType(),
@@ -945,23 +1010,23 @@ public class InventoryChart extends JPanel implements JCPickListener{
     public void setDisplayCDays(boolean useCDays) {
 	if(useCDays != displayCDay) {
 	    displayCDay=useCDays;
-	    reinitializeAndUpdate();
 
-	    /**
-	     *
+	    resetAxes();
+	    
+	    //reinitializeAndUpdate();
+
 	    java.util.List viewList = chart.getDataView();
 	    for (int i = 0; i < viewList.size(); i++) {
 		ChartDataView chartDataView = (ChartDataView)viewList.get(i);
-		ChartDataModel dm = (ChartDataModel) dataViews.get(chartDataView);
+		//		ChartDataModel dm = (ChartDataModel) dataViews.get(chartDataView);
+		ChartDataModel dm = chartDataView.getDataSource();
 		if(dm != null) {
-		    if (dm instanceof InventoryChartDataModel) {
-			System.out.println("Setting view to display c days:" + useCDays);
-			((InventoryChartDataModel)dm).setDisplayCDays(useCDays);
-			chartDataView.setChanged(true,chartDataView.RECALC,true);
-		    }
-		    else if(dm instanceof InventoryShortfallChartDataModel) {
-			((InventoryShortfallChartDataModel)dm).setDisplayCDays(useCDays);
-			chartDataView.setChanged(true,chartDataView.RECALC,true);
+		    if (dm instanceof InventoryBaseChartDataModel) {
+			InventoryBaseChartDataModel baseDM = 
+			    (InventoryBaseChartDataModel) dm;
+			//System.out.println("Setting view " + baseDM.getDataSourceName() + " to display c days:" + useCDays);
+			baseDM.setDisplayCDays(useCDays);
+			//chartDataView.setChanged(true,chartDataView.BASIC_CHANGE_MASK,true);
 		    }
 		    else
 			System.out.println("View with data model of type: " + dm.getClass().getName());
@@ -969,12 +1034,9 @@ public class InventoryChart extends JPanel implements JCPickListener{
 		else
 		    System.out.println("View with Null Data Source");
 	    }
-	    */
 
-	    resetAxes();
-	    chart.reset();
 
-	    //legend.revalidate();
+	    resetChart();
 	}
     }
 

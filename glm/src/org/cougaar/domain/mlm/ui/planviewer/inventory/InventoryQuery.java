@@ -37,6 +37,7 @@ public class InventoryQuery implements Query {
 
   public InventoryQuery(UISimpleInventory inventory) {
     this.inventory = inventory;
+    this.assetName = inventory.getAssetName();
   }
 
   public String getQueryToSend() {
