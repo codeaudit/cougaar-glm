@@ -270,11 +270,33 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
 	logger.info(getAgentIdentifier() + " in setupSubs and now have a non empty GLS sub -- will get oplans");
       // It is very hard to process gls tasks incrementally because of
       // possible oplan removes, etc. In addition, there are
-      // relatively few (e.g. one) such tasks, so we simply reprocess
-      // all gls tasks whenever there are any changes
-      
-      requestOplans();
+      // relatively few (e.g. one) such tasks, so we simply process the most 
+      // recent gls task.
+
+      requestOplans(lastGLSTask());
     }
+  }
+
+  // Find the most recent gls task, (i.e. one with the highest number of 
+  // oplan stages.
+  private Task lastGLSTask() {
+    int maxStageNumber = -1;
+    Task lastGLSTask = null;
+
+    for (Iterator iterator = glsSubscription.iterator();
+	 iterator.hasNext();) {
+      Task task = (Task) iterator.next();
+      PrepositionalPhrase stagespp = 
+	task.getPrepositionalPhrase(FOR_OPLAN_STAGES);
+      SortedSet oplanStages = 
+	(SortedSet) stagespp.getIndirectObject();
+      OplanStage lastStage = (OplanStage) oplanStages.last();
+      if (lastStage.getNumber() > maxStageNumber) {
+	maxStageNumber = lastStage.getNumber();
+	lastGLSTask = task;
+      }
+    }
+    return lastGLSTask;
   }
 
   private void readLocations() {
@@ -369,131 +391,130 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
       // relatively few (e.g. one) such tasks, so we simply reprocess
       // all gls tasks whenever there are any changes
       
-      requestOplans();
+      requestOplans(lastGLSTask());
     } else if (logger.isInfoEnabled()) {
       logger.info(getAgentIdentifier() + ".execute not requesting oplans. " + ((glsSubscription != null) ? ("Have a glsSub. Not apparently changed. It has " + glsSubscription.size() + " GLS Tasks.") : "No glsSub. Have not yet apparently done processOrgAssets"));
     }
   }
 
-  private void requestOplans() {
+  private void requestOplans(Task glsTask) {
     dbp.put(AGENT_PARAMETER, orgId);
-    for (Iterator i = glsSubscription.iterator(); i.hasNext(); ) {
-      boolean oplanAdded = false; // Remember to publish it
-      boolean oplanChanged = false;
-      Task t = (Task) i.next();
-      ContextOfOplanIds cIds = (ContextOfOplanIds) t.getContext();
-      // There should always be exactly one oplan
-      String oplanId = (String) cIds.iterator().next();
-      PrepositionalPhrase c0pp = t.getPrepositionalPhrase(WITH_C0);
-      long c0_date = ((Long)(c0pp.getIndirectObject())).longValue();
-      cDay = new Date(c0_date);
-      myOplan = findOplan(oplanId);
-      dbp.put(OPLAN_ID_PARAMETER, oplanId);
-      if (myOplan == null) {
-	if (logger.isInfoEnabled())
-	  logger.info(getAgentIdentifier() + ".requestOplans: no Oplan on BBoard yet.");
-        try {
-          myOplan = (Oplan) oplanQueryHandler.readObject();
-	  if (myOplan == null) {
-	    logger.error(getAgentIdentifier() + " still has null Oplan for id " + oplanId + "! This agent wont have anything to do!");
-	    return;
-	  }
-          Number num = (Number) activeStagesQueryHandler.readObject();
-          int minRequiredStage;
-          if (num == null) {
-            minRequiredStage = 0;
-          } else {
-            minRequiredStage = num.intValue();
-          }
-          myOplan.setMinRequiredStage(minRequiredStage);
-          myOplan.setCday(cDay);
-          uidService.registerUniqueObject(myOplan);
-          myOplan.setOwner(getAgentIdentifier());
-          myOplan.setOplanId(oplanId);
-          oplans.add(myOplan);
-	  if (logger.isInfoEnabled())
-	    logger.info(getAgentIdentifier() + " publishing Oplan");
-          blackboard.publishAdd(myOplan);
-        } catch (Exception e) {
-          logger.error("Exception reading oplan" + oplanId, e);
+    
+    boolean oplanAdded = false; // Remember to publish it
+    boolean oplanChanged = false;
+    
+    ContextOfOplanIds cIds = (ContextOfOplanIds) glsTask.getContext();
+    // There should always be exactly one oplan
+    String oplanId = (String) cIds.iterator().next();
+    PrepositionalPhrase c0pp = glsTask.getPrepositionalPhrase(WITH_C0);
+    long c0_date = ((Long)(c0pp.getIndirectObject())).longValue();
+    cDay = new Date(c0_date);
+    myOplan = findOplan(oplanId);
+    dbp.put(OPLAN_ID_PARAMETER, oplanId);
+    if (myOplan == null) {
+      if (logger.isInfoEnabled())
+	logger.info(getAgentIdentifier() + ".requestOplans: no Oplan on BBoard yet.");
+      try {
+	myOplan = (Oplan) oplanQueryHandler.readObject();
+	if (myOplan == null) {
+	  logger.error(getAgentIdentifier() + " still has null Oplan for id " + oplanId + "! This agent wont have anything to do!");
 	  return;
-        }
+	}
+	Number num = (Number) activeStagesQueryHandler.readObject();
+	int minRequiredStage;
+	if (num == null) {
+	  minRequiredStage = 0;
+	} else {
+	  minRequiredStage = num.intValue();
+	}
+	myOplan.setMinRequiredStage(minRequiredStage);
+	myOplan.setCday(cDay);
+	uidService.registerUniqueObject(myOplan);
+	myOplan.setOwner(getAgentIdentifier());
+	myOplan.setOplanId(oplanId);
+	oplans.add(myOplan);
+	if (logger.isInfoEnabled())
+	  logger.info(getAgentIdentifier() + " publishing Oplan");
+	blackboard.publishAdd(myOplan);
+      } catch (Exception e) {
+	logger.error("Exception reading oplan" + oplanId, e);
+	return;
       }
+    }
 
-      currentActivities.clear();
-      addedActivities.clear();
-      changedActivities.clear();
-      removedActivities.clear();
+    currentActivities.clear();
+    addedActivities.clear();
+    changedActivities.clear();
+    removedActivities.clear();
 
-      orgActivityPredicate.setOplan(myOplan);
-      currentActivities.addAll(blackboard.query(orgActivityPredicate));
-
-      PrepositionalPhrase stagespp = t.getPrepositionalPhrase(FOR_OPLAN_STAGES);
-      SortedSet newStages = (SortedSet) stagespp.getIndirectObject();
-      if (logger.isInfoEnabled())
-	logger.info(getAgentIdentifier() + ".requestOplans: GLS task lists OplanStages size: " + newStages.size() + ". My currentStages has : " + currentStages.size());
-      boolean currentStagesChanged = false;
-      if (!newStages.containsAll(currentStages)) {
-        // Some stages have been removed, we start all over
-        for (Iterator j = currentActivities.iterator(); j.hasNext(); ) {
-          OrgActivity oa = (OrgActivity) j.next();
-          removedActivities.add(oa);
-          j.remove();
-        }
-        currentStages.clear();
-        currentStagesChanged = true;
+    orgActivityPredicate.setOplan(myOplan);
+    currentActivities.addAll(blackboard.query(orgActivityPredicate));
+    
+    PrepositionalPhrase stagespp = glsTask.getPrepositionalPhrase(FOR_OPLAN_STAGES);
+    SortedSet newStages = (SortedSet) stagespp.getIndirectObject();
+    if (logger.isInfoEnabled())
+      logger.info(getAgentIdentifier() + ".requestOplans: GLS task lists OplanStages size: " + newStages.size() + ". My currentStages has : " + currentStages.size());
+    boolean currentStagesChanged = false;
+    if (!newStages.containsAll(currentStages)) {
+      // Some stages have been removed, we start all over
+      for (Iterator j = currentActivities.iterator(); j.hasNext(); ) {
+	OrgActivity oa = (OrgActivity) j.next();
+	removedActivities.add(oa);
+	j.remove();
       }
-
-      if (logger.isInfoEnabled())
-	logger.info(getAgentIdentifier() + ".requestOplans: OrgActivities to remove: " + removedActivities.size());
-
-      SortedSet addedStages = new TreeSet(newStages);
-      addedStages.removeAll(currentStages); // Leaves only the added stages
-      for (Iterator j = addedStages.iterator(); j.hasNext(); ) {
-        OplanStage stage = (OplanStage) j.next();
-        dbp.put(OPLAN_STAGE_PARAMETER, String.valueOf(stage.getNumber()));
-        try {
-          Collection orgActivities = orgActivityQueryHandler.readCollection();
-          updateOrgActivities(myOplan, orgActivities);
+      currentStages.clear();
+      currentStagesChanged = true;
+    }
+    
+    if (logger.isInfoEnabled())
+      logger.info(getAgentIdentifier() + ".requestOplans: OrgActivities to remove: " + removedActivities.size());
+    
+    SortedSet addedStages = new TreeSet(newStages);
+    addedStages.removeAll(currentStages); // Leaves only the added stages
+    for (Iterator j = addedStages.iterator(); j.hasNext(); ) {
+      OplanStage stage = (OplanStage) j.next();
+      dbp.put(OPLAN_STAGE_PARAMETER, String.valueOf(stage.getNumber()));
+      try {
+	Collection orgActivities = orgActivityQueryHandler.readCollection();
+	updateOrgActivities(myOplan, orgActivities);
         } catch (Exception e) {
           logger.error("Error running org activity query", e);
         }
         currentStagesChanged |= currentStages.add(stage);
+    }
+    
+    if (currentStagesChanged) {
+      blackboard.publishChange(currentStages);
+      if (currentStages.isEmpty()) {
+	myOplan.setMaxActiveStage(-1); // No stages are active
+      } else {
+	OplanStage maxActiveStage = (OplanStage) newStages.last();
+	myOplan.setMaxActiveStage(maxActiveStage.getNumber());
       }
-
-      if (currentStagesChanged) {
-        blackboard.publishChange(currentStages);
-        if (currentStages.isEmpty()) {
-          myOplan.setMaxActiveStage(-1); // No stages are active
-        } else {
-          OplanStage maxActiveStage = (OplanStage) newStages.last();
-          myOplan.setMaxActiveStage(maxActiveStage.getNumber());
-        }
-        blackboard.publishChange(myOplan);
-      }
-
-      for (Iterator j = removedActivities.iterator(); j.hasNext(); ) {
-        OrgActivity oa = (OrgActivity) j.next();
-        blackboard.publishRemove(oa);
-      }
-
-      if (logger.isInfoEnabled())
-	logger.info(getAgentIdentifier() + ".requestOplans: OrgActivities to add: " + addedActivities.size());
-
-      for (Iterator j = addedActivities.iterator(); j.hasNext(); ) {
-        OrgActivity oa = (OrgActivity) j.next();
-        blackboard.publishAdd(oa);
-	  if (logger.isDebugEnabled())
-	    logger.debug("Adding OrgActivity: "+oa.getActivityType());
-      }
-
-      if (logger.isInfoEnabled())
-	logger.info(getAgentIdentifier() + ".requestOplans: OrgActivities to change: " + changedActivities.size());
-
-      for (Iterator j = changedActivities.iterator(); j.hasNext(); ) {
-        OrgActivity oa = (OrgActivity) j.next();
-        blackboard.publishChange(oa);
-      }
+      blackboard.publishChange(myOplan);
+    }
+    
+    for (Iterator j = removedActivities.iterator(); j.hasNext(); ) {
+      OrgActivity oa = (OrgActivity) j.next();
+      blackboard.publishRemove(oa);
+    }
+    
+    if (logger.isInfoEnabled())
+      logger.info(getAgentIdentifier() + ".requestOplans: OrgActivities to add: " + addedActivities.size());
+    
+    for (Iterator j = addedActivities.iterator(); j.hasNext(); ) {
+      OrgActivity oa = (OrgActivity) j.next();
+      blackboard.publishAdd(oa);
+      if (logger.isDebugEnabled())
+	logger.debug("Adding OrgActivity: "+oa.getActivityType());
+    }
+    
+    if (logger.isInfoEnabled())
+      logger.info(getAgentIdentifier() + ".requestOplans: OrgActivities to change: " + changedActivities.size());
+    
+    for (Iterator j = changedActivities.iterator(); j.hasNext(); ) {
+      OrgActivity oa = (OrgActivity) j.next();
+      blackboard.publishChange(oa);
     }
   }
 
