@@ -260,18 +260,21 @@ public class TaskUtils extends PlugInHelper {
 
     public static double getDailyQuantity(Task task) {
         if (isProjection(task)) {
-            Rate r = getRate(task);
-            if (r instanceof FlowRate) {
-                return ((FlowRate) r).getGallonsPerDay();
-            } else if (r instanceof CountRate) {
-                return ((CountRate) r).getEachesPerDay();
-            } else if (r instanceof MassTransferRate) {
-                return ((MassTransferRate) r).getShortTonsPerDay();
-            } else {
-                return Double.NaN;
-            }
+            return getDailyQuantity(getRate(task));
         } else {
             return getQuantity(task);
+        }
+    }
+
+    public static double getDailyQuantity(Rate r) {
+        if (r instanceof FlowRate) {
+            return ((FlowRate) r).getGallonsPerDay();
+        } else if (r instanceof CountRate) {
+            return ((CountRate) r).getEachesPerDay();
+        } else if (r instanceof MassTransferRate) {
+            return ((MassTransferRate) r).getShortTonsPerDay();
+        } else {
+            return Double.NaN;
         }
     }
 
