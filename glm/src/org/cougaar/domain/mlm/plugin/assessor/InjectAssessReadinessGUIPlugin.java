@@ -155,6 +155,12 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     return oplan.getCday().getTime();
   }
 
+  private long getOplanEndTime() {
+    // Yes, I know there can be more than one Oplan. I'll deal with it if I have time
+    Oplan oplan = (Oplan) oplanSubscription.iterator().next();
+    return oplan.getEndDay().getTime();
+  }
+    
   private UID getOplanUID() {
     // Yes, I know there can be more than one Oplan. I'll deal with it if I have time
     Oplan oplan = (Oplan) oplanSubscription.iterator().next();
@@ -210,6 +216,10 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     Vector prefs = new Vector(2);
     Preference p = rootFactory.newPreference(AspectType.START_TIME, 
 					     ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME, getOplanStartTime())));
+
+    prefs.add(p);
+    p = rootFactory.newPreference(AspectType.END_TIME, 
+					     ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME, getOplanEndTime())));
 
     prefs.add(p);
     p = rootFactory.newPreference(AspectType.INTERVAL,

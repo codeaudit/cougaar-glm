@@ -199,6 +199,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     long latest = Long.MIN_VALUE;
   
     earliest = Math.round(readinessTask.getPreferredValue(AspectType.START_TIME));
+    latest = Math.round(readinessTask.getPreferredValue(AspectType.END_TIME));
     rollupSpan = Math.round(readinessTask.getPreferredValue(AspectType.INTERVAL));
     System.out.println(debugStart +" got earliest date: " 
 		       +new Date(earliest).toString() +
@@ -216,14 +217,9 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       Object directObject = psTask.getDirectObject();
 
       // find the latest end times
-      long end = Math.round(psTask.getPreferredValue(AspectType.END_TIME));
-      if (end > latest) 
-	latest = end;
-
-      // temporarily restrict to BulkPOL
-      if (!(directObject instanceof BulkPOL)){
-	continue;
-      }
+//        long end = Math.round(psTask.getPreferredValue(AspectType.END_TIME));
+//        if (end > latest) 
+//  	latest = end;
 
       // Do we really want to bail here, or should we count this task against our readiness?
       if (psTask.getPlanElement() == null) 
@@ -245,22 +241,15 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       ArrayList results = (ArrayList) itemBuckets.get(directObject);
 
       if (results == null) {
-	System.out.println(debugStart + ": adding new bucket for " + directObject.getClass().getName());
+	System.out.println(debugStart + ": adding new bucket for " + directObject);
 	results = new ArrayList(13);
 	itemBuckets.put(directObject, results);
       }
 
-      // add the task's phased allocation result to the bucket
-      if (directObject instanceof BulkPOL) {
-	  
-	ArrayList al = splitResult(psTask.getPlanElement().getReportedResult(),
-				   psTask.getPreferredValue(AlpineAspectType.DEMANDRATE));
-	//System.out.println(debugStart + ": adding result to bucket " + al );
-	results.addAll(al);
-      } else {
-	//System.out.println(debugStart + ": ignoring non-BulkPOL result  ");   
-	//results.add(psTask.getPlanElement().getReportedResult());
-      }
+      ArrayList al = splitResult(psTask.getPlanElement().getReportedResult(),
+				 psTask.getPreferredValue(AlpineAspectType.DEMANDRATE));
+      //System.out.println(debugStart + ": adding result to bucket " + al );
+      results.addAll(al);
     }	
 
     if (pacingItems.size() > 0) {
@@ -300,7 +289,6 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  long day1 = lastEnd;
 	  long dayn = lastEnd + (MILLISPERDAY * rollupSpan);
 	  lastEnd = dayn;
-	  //ReadinessElement re = new ReadinessElement(day1, dayn);
 	  in.clear();
   	  for ( Iterator rseIt = bucket.iterator(); rseIt.hasNext(); ) {
   	    RateScheduleElement rse = (RateScheduleElement) rseIt.next();
@@ -411,6 +399,9 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  case AspectType.END_TIME :
 	    end = avs[i].longValue();
 	    break;
+	  case AspectType.POD :
+	    //ignore;
+	    break;
 	  case AlpineAspectType.DEMANDRATE : 
 	    rate = avs[i].getValue();
 	    break;
@@ -435,6 +426,8 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  schedule.add(rse);
 	}
       }
+    } else {
+      System.out.println(debugStart + ".splitResult() allocation result is not phased");
     }
     return schedule;
   }
@@ -454,6 +447,10 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       RateScheduleElement rse = (RateScheduleElement) rseIt.next();
       runningTotal += rse.readiness;
       weight++;
+    }
+    if (weight == 0) {
+      //System.out.println(debugStart + "average() - no elements in collection - nothing to average");
+      return 1.0;
     }
     return runningTotal/weight;
   }
