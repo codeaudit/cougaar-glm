@@ -23,10 +23,6 @@ package org.cougaar.glm.ldm.oplan;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.*;
-import org.cougaar.core.util.XMLizable;
-import org.cougaar.core.util.XMLize;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import java.io.Serializable;
 
 /**
@@ -38,7 +34,7 @@ import java.io.Serializable;
  * <p>
  */
 public class TimeSpan
-  implements XMLizable, Serializable, Cloneable, org.cougaar.util.TimeSpan
+  implements Serializable, Cloneable, org.cougaar.util.TimeSpan
 {
 
   private Date startDate;
@@ -120,13 +116,6 @@ public class TimeSpan
     TimeSpan ts = new TimeSpan(startDate, endDate);
     ts.cDate = cDate; // to be removed
     return ts;
-  }
-
-  /**
-   * XMLizable method for UI, other clients
-   */ 
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
   }
 
   /**

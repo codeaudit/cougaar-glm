@@ -22,8 +22,6 @@ package org.cougaar.glm.ldm.oplan;
 
 import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.core.util.OwnedUniqueObject;
-import org.cougaar.core.util.XMLizable;
-import org.cougaar.core.util.XMLize;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -31,12 +29,10 @@ import java.util.Enumeration;
 import java.util.Vector;
 import org.cougaar.glm.ldm.plan.GeolocLocation;
 import org.cougaar.glm.ldm.plan.NewGeolocLocation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class DFSP
   extends OwnedUniqueObject
-  implements XMLizable, Transferable, Cloneable
+  implements Transferable, Cloneable
 {
   private String name;
   private GeolocLocation geoLoc;
@@ -77,10 +73,6 @@ public class DFSP
     dfsp.setOwner(getOwner());
     dfsp.setGeoLoc((GeolocLocation)geoLoc.clone());	
     return dfsp;
-  }
-
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
   }
 
   //dummy PropertyChangeSupport for the Jess Interpreter.

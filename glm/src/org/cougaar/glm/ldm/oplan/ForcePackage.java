@@ -39,22 +39,18 @@ package org.cougaar.glm.ldm.oplan;
 import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.core.util.UID;
-import org.cougaar.core.util.XMLizable;
-import org.cougaar.core.util.XMLize;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Enumeration;
 import java.util.Vector;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * ForcePackage
  **/
 public class ForcePackage
   extends OwnedUniqueObject
-  implements OplanContributor, Transferable, XMLizable, Cloneable
+  implements OplanContributor, Transferable, Cloneable
 {
   private TimeSpan theTimeSpan;
   private String forcePackageID;
@@ -189,12 +185,6 @@ public class ForcePackage
     return false;
   }
 
-  // XMLizable method for UI, other clients
-  //
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
-  }
-    
   //dummy PropertyChangeSupport for the Jess Interpreter.
   protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 

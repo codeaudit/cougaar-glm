@@ -36,7 +36,7 @@ import java.util.List;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.util.XMLizable;
+import org.cougaar.planning.servlet.XMLize;
 
 import org.cougaar.mlm.ui.data.XMLUIPlanObject;
 import org.cougaar.mlm.ui.data.XMLUIPlanObjectConverter;
@@ -58,7 +58,6 @@ public class XMLPlanObjectProvider {
   protected ArrayList collection = new ArrayList();
   Document doc;
   Element root;
-  Class xmlPlanObjectClass;
   Class xmlUIPlanObjectClass;
   Vector requestedFields; // each is a class name followed by a dot separated list of field names
 
@@ -85,7 +84,6 @@ public class XMLPlanObjectProvider {
      // define these, which we'll use to create the XML
      // for the "base" of the plan object
      try {
-       xmlPlanObjectClass = XMLizable.class;
        xmlUIPlanObjectClass = XMLUIPlanObject.class;
      } catch (RuntimeException e) {
        System.out.println("Exception getting class for plan object: " + e);
@@ -111,20 +109,9 @@ public class XMLPlanObjectProvider {
   //
   // create XML for "base" plan object -- task, workflow, planelement or asset
   private void docAddPlanObject(Object obj) {
-    Element element = null;
-    // Test the getXML method on logplan object
-    if (xmlPlanObjectClass.isInstance(obj)) {
-      element = ((XMLizable)obj).getXML((Document)doc);
-      //      System.out.println("XMLifying object of class: " + obj.getClass());
-      root.appendChild(element);
-    } else if (xmlUIPlanObjectClass.isInstance(obj)) {
-      element = ((XMLUIPlanObject)obj).getXML((Document)doc, requestedFields);
-      //      System.out.println("XMLifying object of class: " + obj.getClass());
-      root.appendChild(element);
-    }
-    else {
-      System.out.println("Attempted to add plan object of unknown class:" + obj.getClass());
-    }
+    Element element = XMLize.getPlanObjectXML(obj, (Document)doc);
+    //      System.out.println("XMLifying object of class: " + obj.getClass());
+    root.appendChild(element);
   }
 
   public void printDocument() {

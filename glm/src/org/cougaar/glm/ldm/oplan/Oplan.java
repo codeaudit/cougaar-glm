@@ -50,10 +50,6 @@ import org.cougaar.planning.ldm.plan.Transferable;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.OwnedUniqueObject;
-import org.cougaar.core.util.XMLizable;
-import org.cougaar.core.util.XMLize;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -64,7 +60,7 @@ import java.io.Serializable;
  * Oplan
  **/
 public class Oplan extends OwnedUniqueObject
-  implements Transferable, XMLizable, Serializable, Cloneable, UniqueObject
+  implements Transferable, Serializable, Cloneable, UniqueObject
 {
     
   private String oplanID;
@@ -634,13 +630,6 @@ public class Oplan extends OwnedUniqueObject
     endDay = otherOplan.getEndDay();
     xmlfilename_ = otherOplan.getXMLFileName();
   }// setAll
-
-  // 
-  // XMLizable method for UI, other clients
-  //
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
-  }
 
   //dummy PropertyChangeSupport for the Jess Interpreter.
   protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);

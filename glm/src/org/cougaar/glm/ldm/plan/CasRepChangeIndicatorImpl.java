@@ -27,8 +27,6 @@ import org.cougaar.glm.ldm.plan.NewCasRep;
 
 import org.cougaar.core.util.UID;
 
-import org.cougaar.core.util.XMLizable;
-
 import java.lang.String;
 import java.util.Vector;
 import java.util.Date;
@@ -36,13 +34,8 @@ import java.io.*;
 import java.io.Serializable;
 import java.util.Enumeration;
 import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.core.util.XMLizable;
 import org.cougaar.planning.ldm.asset.*;
  
-import org.cougaar.core.util.XMLize;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeEvent;

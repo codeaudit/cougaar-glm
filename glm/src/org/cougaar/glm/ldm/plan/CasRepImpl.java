@@ -28,8 +28,6 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.util.OwnedUniqueObject;
 
-import org.cougaar.core.util.XMLizable;
-
 import java.lang.String;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -38,19 +36,14 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Date;
 import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.core.util.XMLizable;
 import org.cougaar.planning.ldm.asset.*;
  
-import org.cougaar.core.util.XMLize;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeEvent;
 
 public class CasRepImpl extends OwnedUniqueObject
-  implements CasRep, NewCasRep, Transferable,  XMLizable, UniqueObject
+  implements CasRep, NewCasRep, Transferable, UniqueObject
 {
   private UID uid;
   private String casRepNumber;
@@ -446,9 +439,6 @@ public class CasRepImpl extends OwnedUniqueObject
     return casRepNumber.substring(i + 1) + getNextVersion();
   }
 
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
-  }
   public boolean same(Transferable other) {
 
     return false;

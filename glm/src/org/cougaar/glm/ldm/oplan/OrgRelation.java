@@ -23,13 +23,9 @@ package org.cougaar.glm.ldm.oplan;
 import java.lang.*;
 
 import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.core.util.XMLizable;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.core.util.XMLize;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeEvent;
@@ -46,7 +42,7 @@ import java.io.Serializable;
  * Subordinate clusters should not modify (set) OrgRelation information.
  **/
 public class OrgRelation extends OwnedUniqueObject
-  implements OplanContributor, Transferable, XMLizable, UniqueObject, Serializable, Cloneable
+  implements OplanContributor, Transferable, UniqueObject, Serializable, Cloneable
 {
   private String role;
   private String relationType;
@@ -221,13 +217,6 @@ public class OrgRelation extends OwnedUniqueObject
         matches(getTimeSpan(), or.getTimeSpan());
     } else
       return false;
-  }
-
-  // 
-  // XMLizable method for UI, other clients
-  //
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
   }
 
   //dummy PropertyChangeSupport for the Jess Interpreter.

@@ -27,10 +27,6 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.Transferable;
-import org.cougaar.core.util.XMLize;
-import org.cougaar.core.util.XMLizable;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.io.Serializable;
 
@@ -38,7 +34,7 @@ import java.io.Serializable;
  * Redeem for one Oplan and accompanying OplanContributors
  */
 public class OplanCoupon extends OwnedUniqueObject
-  implements Transferable, UniqueObject, Serializable, Cloneable, XMLizable
+  implements Transferable, UniqueObject, Serializable, Cloneable
 {
 
   private UID _oplanUID;
@@ -107,11 +103,6 @@ public class OplanCoupon extends OwnedUniqueObject
     setUID(other.getUID());
     _oplanUID = other.getOplanUID();
     setOwner(other.getHomeClusterID());
-  }
-
-  // XMLizable method for UI, other clients
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
   }
 
 }

@@ -26,15 +26,9 @@ import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import org.cougaar.core.util.OwnedUniqueObject;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
-
-import org.cougaar.core.util.XMLizable;
-import org.cougaar.core.util.XMLize;
 
 import org.cougaar.planning.ldm.plan.Location;
 import org.cougaar.planning.ldm.plan.LocationScheduleElement;
@@ -57,7 +51,7 @@ import org.cougaar.glm.ldm.plan.NewGeolocLocation;
  * Subordinate clusters should not modify (set) OrgActivity information.
  **/
 public class OrgActivity extends OwnedUniqueObject
-  implements OplanContributor,  org.cougaar.util.TimeSpan, Transferable, XMLizable, UniqueObject, Serializable, Cloneable
+  implements OplanContributor,  org.cougaar.util.TimeSpan, Transferable, UniqueObject, Serializable, Cloneable
 {	
   private String activityName;
   private String activityType;
@@ -316,14 +310,6 @@ public class OrgActivity extends OwnedUniqueObject
     return oa;
   }//clone
   
-  // 
-  // XMLizable method for UI, other clients
-  //
-  public Element getXML(Document doc) {
-    return XMLize.getPlanObjectXML(this,doc);
-  }
-
-
   //dummy PropertyChangeSupport for the Jess Interpreter.
   protected transient PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
