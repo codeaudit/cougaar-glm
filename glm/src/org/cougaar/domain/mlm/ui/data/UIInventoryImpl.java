@@ -441,7 +441,8 @@ public class UIInventoryImpl {
     }
 
   private UIQuantityScheduleElement getScheduleFromAllocation(AllocationResult allocationResult, 
-							      boolean ignoreStartTime) {
+                                                              boolean useStartTime)
+  {
     long startTime = -1;
     long endTime = -1;
     double quantity = 0;
@@ -475,10 +476,10 @@ public class UIInventoryImpl {
     //		       " end time: " + endTime);
 
     // use end time only
-    if (ignoreStartTime)
-	return new UIQuantityScheduleElement(endTime-1,endTime, quantity);
+    if (useStartTime)
+	return new UIQuantityScheduleElement(startTime, startTime+1, quantity);
     else
-	return new UIQuantityScheduleElement(startTime, endTime, quantity);
+	return new UIQuantityScheduleElement(endTime-1, endTime, quantity);
   }
 
   /**
@@ -520,7 +521,7 @@ public class UIInventoryImpl {
 	  }
       } else if (allocation.getReportedResult().isSuccess()) {
 	  UIQuantityScheduleElement se = 
-	      getScheduleFromAllocation(allocation.getReportedResult(), true);
+	      getScheduleFromAllocation(allocation.getReportedResult(), false);
 	  if (se != null) {
 	      if (debug) {
 		  System.out.println("Adding due in schedule from allocation: " + 
@@ -716,20 +717,20 @@ public class UIInventoryImpl {
     /*  Get allocations to this.asset from the RoleSchedule.
      *  Create schedule where each element is based on an allocation result. */
   private Vector computeDueOutVector() {
-       return computeDueOutVectorWVerb(Constants.Verb.WITHDRAW);
+       return computeDueOutVectorWVerb(Constants.Verb.WITHDRAW, true);
   }
 
 
     /*  Get allocations to this.asset from the RoleSchedule.
      *  Create schedule where each element is based on an allocation result. */
   private Vector computeProjectedDueOutVector() {
-      return computeDueOutVectorWVerb(Constants.Verb.PROJECTWITHDRAW);
+      return computeDueOutVectorWVerb(Constants.Verb.PROJECTWITHDRAW, false);
   }
     
 
     /*  Get allocations to this.asset from the RoleSchedule.
      *  Create schedule where each element is based on an allocation result. */
-  private Vector computeDueOutVectorWVerb(String compareVerb) {
+  private Vector computeDueOutVectorWVerb(String compareVerb, boolean useStartTime) {
     RoleSchedule roleSchedule = asset.getRoleSchedule();
     if(debug) {System.out.println("UIInventoryImpl-Projected Due Outs:");}
     if (roleSchedule == null) {
@@ -744,7 +745,7 @@ public class UIInventoryImpl {
     Vector due_outs = new Vector();
     while (e.hasMoreElements()) {
       Allocation allocation = (Allocation)e.nextElement();
-      UIQuantityScheduleElement schedule = getScheduleFromAllocation(allocation.getEstimatedResult(), true);
+      UIQuantityScheduleElement schedule = getScheduleFromAllocation(allocation.getEstimatedResult(), useStartTime);
       if (schedule != null) {
 	  Verb dueOutTaskVerb= allocation.getTask().getVerb();
 	  if((dueOutTaskVerb.equals(compareVerb))) {
@@ -800,14 +801,14 @@ public class UIInventoryImpl {
   }
 
   private void setALPRequestedDueOutSchedule() {
-      ALPRequestedDueOutSchedule = computeRequestedDueOutScheduleWVerb(Constants.Verb.WITHDRAW);
+      ALPRequestedDueOutSchedule = computeRequestedDueOutScheduleWVerb(Constants.Verb.WITHDRAW, true);
   }
 
   private void setALPProjectedRequestedDueOutSchedule() {
-      ALPProjectedRequestedDueOutSchedule = computeRequestedDueOutScheduleWVerb(Constants.Verb.PROJECTWITHDRAW);
+      ALPProjectedRequestedDueOutSchedule = computeRequestedDueOutScheduleWVerb(Constants.Verb.PROJECTWITHDRAW, false);
   }
 
-  private Schedule computeRequestedDueOutScheduleWVerb(String compareVerb) {
+  private Schedule computeRequestedDueOutScheduleWVerb(String compareVerb, boolean useStartTime) {
     RoleSchedule roleSchedule = asset.getRoleSchedule();
     Schedule returnSchedule=null;
     if (roleSchedule == null) {
@@ -841,15 +842,20 @@ public class UIInventoryImpl {
       endTime = getPreferredTime(task, AspectType.END_TIME);
       double quantity = task.getPreferredValue(AspectType.QUANTITY);
       if (debug) System.out.println("Adding " + compareVerb + " requested due out task: " + task.getUID()+" "+quantity+" at "+new Date(startTime)+" to "+new Date(endTime));
-      // must have start time and quantity, but use end time only
+      // must have start time and quantity, but use specified start/end time
       if ((quantity != -1) && (startTime != -1)) { 
 	if (endTime == -1)
 	  endTime = startTime;
 	NewQuantityScheduleElement element = 
 	  ALPFactory.newQuantityScheduleElement();
 	element.setQuantity(quantity);
-	element.setStartTime(endTime-1);
-	element.setEndTime(endTime);
+        if (useStartTime) {
+          element.setStartTime(startTime);
+          element.setEndTime(startTime+1);
+        } else {
+          element.setStartTime(endTime-1);
+          element.setEndTime(endTime);
+        }
 	scheduleElements.addElement(element);
       }
     }
