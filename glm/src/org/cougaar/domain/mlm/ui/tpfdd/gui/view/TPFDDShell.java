@@ -730,8 +730,8 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	if ( clusterQuery == null ) {
 	    try {
 		if (debug) 
-		  System.out.println ("TPFDDShell.getclusterQuery - host is " + getclusterCache().getHost ());
-		clusterQuery = new ClusterQuery(provider, getclusterCache().getHost ());
+		  System.out.println ("TPFDDShell.getclusterQuery - demand host is " + getclusterCache().getDemandHost ());
+		clusterQuery = new ClusterQuery(provider, getclusterCache().getDemandHost ());
 		clusterQuery.addActionListener(this);
 	    }
 	    catch ( Exception e ) {
@@ -770,6 +770,7 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	if ( ccHost == null || ccHost.length() == 0 )
 	    ccHost = "localhost";
         String realHost = getclusterCache().clientGuiSetHost(ccHost);
+        String demandHost = getclusterCache().clientGuiSetDemandHost(ccHost);
         machineText.setText(realHost);
 	// true = cold (newly produced, purging old ones) producer
 	getclusterCache().getLogPlanProducer("Aggregation", true);
@@ -1058,7 +1059,8 @@ public class TPFDDShell extends JApplet implements ActionListener,
 	    resetView();
 
 
-	System.out.println("query is "+ query);
+	if (debug) 
+	  System.out.println("query is "+ query);
 	childProvider.request("Aggregation", PSPClientConfig.UIDataPSP_id, query);
 
     }

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/JTreeTable.java,v 1.3 2001-02-14 21:12:09 wseitz Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/JTreeTable.java,v 1.4 2001-02-20 21:41:48 gvidaver Exp $ */
 
 /*
    Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -296,7 +296,7 @@ public class JTreeTable extends JTable implements ActionListener, SwingUpdate
     {
 	if ( clusterQuery == null ) {
 	    try {
-		clusterQuery = new ClusterQuery(parentProvider, clusterCache.getHost ());
+		clusterQuery = new ClusterQuery(parentProvider, clusterCache.getDemandHost ());
 		clusterQuery.addActionListener(this);
 	    }
 	    catch ( Exception e ) {
