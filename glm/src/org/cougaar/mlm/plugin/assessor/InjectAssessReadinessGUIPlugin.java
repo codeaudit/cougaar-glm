@@ -38,6 +38,7 @@ import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.LDMService;
+import org.cougaar.core.plugin.PluginBindingSite;
 import org.cougaar.core.util.UID;
 
 import org.cougaar.planning.ldm.plan.AspectType;
@@ -168,7 +169,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   }
 
   private void createGUI() {
-    frame = new JFrame("InjectAssessReadinessGUIPlugin for " + getBindingSite().getAgentIdentifier());
+    frame = new JFrame("InjectAssessReadinessGUIPlugin for " + ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
     JPanel panel = new JPanel((LayoutManager) null);
     // Create the button
     arButton = new JButton("Publish AssessReadiness Task");
