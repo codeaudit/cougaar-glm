@@ -58,6 +58,7 @@ public class DetailRequestLP
   extends LogPlanLogicProvider
   implements EnvelopeLogicProvider, RestartLogicProvider, MessageLogicProvider
 {
+  private final ClusterIdentifier self;
   private transient GLMFactory _alpFactory=null;
   
   private transient HashMap outstandingRequests = new HashMap(7);
@@ -65,6 +66,7 @@ public class DetailRequestLP
   public DetailRequestLP(LogPlanServesLogicProvider logplan,
 			 ClusterServesLogicProvider cluster) {
     super(logplan,cluster);
+    self = cluster.getClusterIdentifier();
   }
 
   private GLMFactory getGLMFactory() {
@@ -132,7 +134,9 @@ public class DetailRequestLP
         if (o instanceof DetailRequest) {
           DetailRequest ir = (DetailRequest) o;
           ClusterIdentifier dest = ir.getSourceCluster();
-          return cid.equals(dest);
+          return 
+            RestartLogicProviderHelper.matchesRestart(
+                self, cid, dest);
         }
         return false;
       }
@@ -148,7 +152,9 @@ public class DetailRequestLP
         if (o instanceof QueryRequest) {
           QueryRequest ir = (QueryRequest) o;
           ClusterIdentifier dest = ir.getSourceCluster();
-          return cid.equals(dest);
+          return 
+            RestartLogicProviderHelper.matchesRestart(
+                self, cid, dest);
         }
         return false;
       }

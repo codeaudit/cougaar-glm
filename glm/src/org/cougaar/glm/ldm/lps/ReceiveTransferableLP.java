@@ -81,7 +81,7 @@ public class ReceiveTransferableLP extends LogPlanLogicProvider implements Messa
   private void processTransferableRescind(TransferableRescind tr, Collection changes) {
     final UID uid = tr.getTransferableUID();
     Transferable t = (Transferable) logplan.findUniqueObject(uid);
-    logplan.remove(t);
+    if (t != null) logplan.remove(t);
   }
 
   private void processTransferableVerification(TransferableVerification tv, Collection changes) {

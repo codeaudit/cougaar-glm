@@ -54,9 +54,12 @@ public class TransferableLP
   implements EnvelopeLogicProvider, RestartLogicProvider
 {
 
+  private final ClusterIdentifier self;
+
   public TransferableLP(LogPlanServesLogicProvider logplan,
 			ClusterServesLogicProvider cluster) {
     super(logplan,cluster);
+    self = cluster.getClusterIdentifier();
   }
 
 
@@ -95,8 +98,11 @@ public class TransferableLP
       public boolean execute(Object o) {
         if (o instanceof TransferableTransfer) {
           TransferableTransfer tt = (TransferableTransfer) o;
-          ClusterIdentifier dest = ((Organization)tt.getAsset()).getClusterIdentifier();
-          return cid.equals(dest);
+          ClusterIdentifier dest = 
+            ((Organization)tt.getAsset()).getClusterIdentifier();
+          return 
+            RestartLogicProviderHelper.matchesRestart(
+                self, cid, dest);
         }
         return false;
       }
@@ -104,13 +110,19 @@ public class TransferableLP
     Enumeration enum = logplan.searchBlackboard(pred);
     while (enum.hasMoreElements()) {
       TransferableTransfer tt = (TransferableTransfer) enum.nextElement();
-      processTransferableTransferAdded(tt, cid);
+      ClusterIdentifier dest = ((Organization)tt.getAsset()).getClusterIdentifier();
+      processTransferableTransferAdded(tt, dest);
     }
     pred = new UnaryPredicate() {
       public boolean execute(Object o) {
         if (o instanceof Transferable) {
           Transferable transferable = (Transferable) o;
-          return transferable.isFrom(cid);
+          // we can't use "isFrom(..)", since we'll later need the
+          // specific destination if we want to send a verification
+          ClusterIdentifier dest = transferable.getSource();
+          return 
+            RestartLogicProviderHelper.matchesRestart(
+                self, cid, dest);
         }
         return false;
       }
@@ -119,11 +131,10 @@ public class TransferableLP
       Transferable transferable = (Transferable) enum.nextElement();
       NewTransferableVerification nav = ldmf.newTransferableVerification(transferable);
       nav.setSource(cluster.getClusterIdentifier());
-      nav.setDestination(cid);
+      nav.setDestination(transferable.getSource());
       logplan.sendDirective(nav);
     }
   }
-    
 
   private void processTransferableTransferAdded(TransferableTransfer tt,
                                                 ClusterIdentifier dest)
