@@ -20,7 +20,7 @@
  */
 package org.cougaar.glm.ldm.oplan;
 
-public static class Phase implements Comparable {
+public static class Phase implements Comparable, java.io.Serializable {
   private int number;
   private String name;
 
