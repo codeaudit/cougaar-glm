@@ -200,7 +200,7 @@ public class InventoryChartDataModel extends InventoryBaseChartDataModel{
     // time base is set in InventoryChartBaseCalendar(below)
     // so all days have to be relative to that
     long baseTime = (useCDay) ? baseCDayTime : InventoryChartBaseCalendar.getBaseTime();
-    System.out.println("InventoryChartDataModel::UseCDay:" + useCDay + " Base Date is: " + new Date(baseTime)); 
+    //System.out.println("InventoryChartDataModel::UseCDay:" + useCDay + " Base Date is: " + new Date(baseTime)); 
     seriesLabels = new String[nSeries];
     scheduleNames = new String[nSeries];
 
