@@ -12,9 +12,7 @@
 
 package=org.cougaar.domain.glm.ldm.asset
 
-propertydefs = alpprops.def, \
-        org/cougaar/domain/planning/ldm/asset/properties.def
-
+propertydefs = alpprops.def
 
 ;; Basis for generating class definitions for Subclasses of Assets
 ;;
@@ -162,6 +160,7 @@ slots=ManagedAssetPG, \
 	AssignmentPG, \
 	ClusterPG, \
 	OrganizationPG, \
+        CommunityPG, \
         RelationshipPG
 
 [MilitaryOrganization Organization]

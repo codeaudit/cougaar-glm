@@ -10,9 +10,10 @@
 ; </copyright>
 ;
 
-
+includedefs=org/cougaar/domain/planning/ldm/asset/properties.def
 
 package=org.cougaar.domain.glm.ldm.asset
+
 import= org.cougaar.domain.glm.ldm.plan.*,\
 	org.cougaar.domain.glm.ldm.oplan.*,\
 	org.cougaar.domain.glm.ldm.policy.*,\
@@ -486,17 +487,14 @@ slots=FlowRate fuel_consumption_rate
 fuel_consumption_rate.doc=Average fuel consumption rate when engine is running
 
 [OrganizationPG]
+extends=EntityPG
 slots=Service service, \
-      Agency agency, \
-      Collection<Role> roles
+      Agency agency
 service.doc=one of the values of Service.
 agency.doc=the agency or other major organization the asset is \
 	  associated with.  For military Organizations, this is \
 	  the CINC at the top of their command structure, e.g. \
 	  USTC, CENTCOM.
-roles.doc=Collection of Roles the organization is capable of \
-          fulfilling.
-roles.init=ArrayList
 
 [MilitaryOrgPG]
 slots=String standard_name, \
