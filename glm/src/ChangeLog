@@ -1,4 +1,14 @@
-2000-01-05 Noelle Givler <ngivler@bbn.com>
+2001-01-11 Amy Fedyk <afedyk@bbn.com>
+	* org.cougaar.domain.glm.plugins.projection.GenerateSupplyDemandExpander
+	Removed dependency on OPlan for determining time phased location.
+	Made use of LocationSchedulePG on Organization.  This necessitates
+	that Plugins populate this PG on the Organization.
+	
+	* org.cougaar.domain.glm.plugins.inventory.SupplyExpander
+	Using LocationSchedulePG for FROM Prep in creation of Transport Tasks.
+	If LocationSchedulePG is not present on Organization, HomeLocation is used.
+	
+2001-01-05 Noelle Givler <ngivler@bbn.com>
 	* Several
 	Replaced use of Iterator over Schedules. Depending on the use, code
 	was converted to iterate over either a full copy of the Schedule - 
