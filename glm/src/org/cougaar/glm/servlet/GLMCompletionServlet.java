@@ -29,8 +29,7 @@ import org.cougaar.core.service.AlarmService;
 import org.cougaar.core.service.OperatingModeService;
 import org.cougaar.glm.plugin.completion.GLMCompletionCalculator;
 
-// FIXME import org.cougaar.planning.servlet.CompletionServlet;
-import org.cougaar.planning.servlet.NewCompletionServlet;
+import org.cougaar.planning.servlet.CompletionServlet;
 
 /**
  * A <code>Servlet</code> that generates a GLM-specific
@@ -43,7 +42,7 @@ import org.cougaar.planning.servlet.NewCompletionServlet;
  * </pre>
  */
 public class GLMCompletionServlet
-extends NewCompletionServlet   // FIXME extends CompletionServlet
+extends CompletionServlet
 {
 
   private static final long MILLIS_PER_DAY = 86400000L;
