@@ -146,10 +146,7 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	addPreviousRefills();
 	boolean allocatedInventories = inventoryPlugIn_.isSubscriptionChanged(inventoryAllocSubscription_);
 	// Execution requires this to be done whenever we run
-// 	if (allocatedInventories) {
-	    refillInventories();
-//    	    checkForOverflow();
-// 	}
+	refillInventories();
     }
 
     // Refill Inventories
@@ -239,107 +236,41 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	double refill_qty = goal_level - currentInventory;
 
 
-
-	// *** KLUDGE ********
-
-	// ** THIS IS A KLUDGE FOR SUBSISTENCE -- WITHOUT IT WE FAIL THE FIRST ORDER.
-	//    SHOULDN'T HAPPEN LIKE THAT -- FIX ASAP -- RUSTY AND AMY!!
-	refill_qty = refill_qty*1.3;
-	// *** KLUDGE ********
-
+	if(!invpg.getFillToCapacity()) {
+	    // ** THIS IS A KLUDGE FOR SUBSISTENCE -- WITHOUT IT WE FAIL THE FIRST ORDER.
+	    //    SHOULDN'T HAPPEN LIKE THAT -- FIX ASAP -- RUSTY AND AMY!!
+	    refill_qty = refill_qty*1.3;
+	    // *** KLUDGE ********
+	}
 
 
-//  	if (isBattalionLevel()){
-//  	    printLog("orderRefill day "+day+"("+TimeUtils.dateString(date)+") level: current= "+currentInventory+ " goal = "+ goal_level);
-//  	}
+	//  	if (isBattalionLevel()){
+	//  	    printLog("orderRefill day "+day+"("+TimeUtils.dateString(date)+") level: current= "+currentInventory+ " goal = "+ goal_level);
+	//  	}
 	if (refill_qty > 0 ) {
 	    Task task = null;	    
 	    Task prev_refill = invpg.getRefillOnDay(day);
 	    if(prev_refill!=null) {
-//   		printDebug(1,"orderRefill with previous on day: "+day+
-//  			   " current= "+currentInventory+ " goal_level = "+ goal_level);
-		Allocation alloc =(Allocation)prev_refill.getPlanElement();
-		AllocationResult report = null;
-		if(alloc!=null) {
-		    report = alloc.getReportedResult();
-		}
-		if (report!=null) {
-		    if (!report.isSuccess()){
-			printLog("Known failed refill: "+TaskUtils.taskDesc(prev_refill));
-			return null;
-		    } else {
-			// check if the refill came too late....
-			if (TaskUtils.getRefillTime(prev_refill) > TaskUtils.getEndTime(prev_refill)) {
- 			    printDebug(0,"previous refill succeeded too late: "+
-				       TaskUtils.taskDesc(prev_refill)+
-				       " to fill: " +refill_qty);
-			    if (TaskUtils.getQuantity(prev_refill) >= refill_qty) {
-				// the refill would have been enough 
-				printDebug(0,"NO REFILL!");
-				return null;
-			    } 
-			    // DLA SPECIFIC 
-// 			    else if (refilledByDLA(prev_refill)) {
-// 				printDebug(1,"NEW POLICY- DON'T MODIFY LATE DLA TASK -- NO REFILL!");
-// 				return null;
-// 			    }
-				
-			// else replacing the old qty with the new increased quantity
-			} else {
-			    // previous refill already added to inventory, need increase 
-			    // requested amount by the old plus the new 
-			    printDebug(0,"Previous refill already added to the inventory on the right date, still need more");
-			    refill_qty += TaskUtils.getQuantity(prev_refill);
-			}
-		    }
-		} else if (TaskUtils.getQuantity(prev_refill) >= refill_qty) {
- 		    printDebug(0,"NEW POLICY- DON'T LOWER PREVIOUS ORDER -- NO REFILL!");
-		    return null;
-		}
-
-		// Send orders for whole items, i.e. do not order 0.5 O-rings
-		if(refill_qty<1.0){
-		    return null;
-		} else {
-		    refill_qty=java.lang.Math.ceil(refill_qty);
-		    if (refill_qty == 0)
-			return null;
-		}
-//  		printDebug(1, "Refill Quantity is: "+refill_qty);
-		task = createRefillTask(inventory, refill_qty, TimeUtils.addNDays(invpg.getStartTime(), day));
-		// if prev_refill!= null, and we have no reported failure, then we
-		//  should modify this refill task
-
-		printLog("Replacing: "+TaskUtils.taskDesc(prev_refill)+" by: "+
-			 TaskUtils.taskDesc(task));
-		publishRemoveTask(prev_refill);
-		invpg.removeDueIn(prev_refill);
-		Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
-		plugin_.publishAddToExpansion(parentTask, task);
-		invpg.addDueIn(task);
+		return orderRefillWithPrevious(inventory, day, invpg,date,currentInventory,goal_level,refill_qty);
 	    } else {
-		if(refill_qty<1.0){
-		    return null;
-		} else {
+		if (invpg.getCapacity() instanceof Count) {
 		    refill_qty=java.lang.Math.ceil(refill_qty);
-		    if (refill_qty == 0)
-			return null;
 		}
 		task = createRefillTask(inventory, refill_qty,  TimeUtils.addNDays(invpg.getStartTime(), day));
-//  		printDebug(1,"GeneralInventoryManager, orderRefill(), day is "+day+"for "+TaskUtils.taskDesc(task));		
+		//  		printDebug(1,"GeneralInventoryManager, orderRefill(), day is "+day+"for "+TaskUtils.taskDesc(task));		
 
 		// FIX ME - sets to today??? check dates.
 		// 	task.setCommitmentDate(date);
-//      		printDebug(1,"orderRefill task:"+TaskUtils.taskDesc(task));
+		//      		printDebug(1,"orderRefill task:"+TaskUtils.taskDesc(task));
 		Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
 		plugin_.publishAddToExpansion(parentTask, task);
 		invpg.addDueIn(task);
 	    }
 	    //to see inventory 
-//  	if (isBattalionLevel()){
-//    	    printLog("Refill " //+ inventory.getUID() + " with= "
-//  		     + TaskUtils.taskDesc(task));
-//  	}
+	    //  	if (isBattalionLevel()){
+	    //    	    printLog("Refill " //+ inventory.getUID() + " with= "
+	    //  		     + TaskUtils.taskDesc(task));
+	    //  	}
 	    //   	    printLog("Refill: " + TaskUtils.taskDesc(task));
 	    return task;
 	} else {
@@ -347,6 +278,74 @@ public abstract class GeneralInventoryManager extends InventoryManager {
 	    return null;
 	}
     }
+
+    protected Task orderRefillWithPrevious(Inventory inventory, int day, InventoryPG invpg, Date date,
+					   double currentInventory, double goal_level,
+					   double refill_qty){
+
+	//   		printDebug(1,"orderRefill with previous on day: "+day+
+	//  			   " current= "+currentInventory+ " goal_level = "+ goal_level);
+	Task task = null;	    
+	Task prev_refill = invpg.getRefillOnDay(day);
+	Allocation alloc =(Allocation)prev_refill.getPlanElement();
+	AllocationResult report = null;
+
+	if(alloc!=null) {
+	    report = alloc.getReportedResult();
+	}
+	if (report!=null) {
+	    if (!report.isSuccess()){
+		printLog("Known failed refill: "+TaskUtils.taskDesc(prev_refill));
+		return null;
+	    } else {
+		// check if the refill came too late....
+		if (TaskUtils.getRefillTime(prev_refill) > TaskUtils.getEndTime(prev_refill)) {
+		    printDebug(0,"previous refill succeeded too late: "+
+			       TaskUtils.taskDesc(prev_refill)+
+			       " to fill: " +refill_qty);
+		    if (TaskUtils.getQuantity(prev_refill) >= refill_qty) {
+				// the refill would have been enough 
+			printDebug(0,"NO REFILL!");
+			return null;
+		    } 
+		} else {
+		    // previous refill already added to inventory, need increase 
+		    // requested amount by the old plus the new 
+		    printDebug(0,"Previous refill already added to the inventory on the right date, still need more");
+		    refill_qty += TaskUtils.getQuantity(prev_refill);
+		}
+	    }
+	} else if (TaskUtils.getQuantity(prev_refill) >= refill_qty) {
+	    printDebug(0,"NEW POLICY- DON'T LOWER PREVIOUS ORDER -- NO REFILL!");
+	    return null;
+	}
+
+	// Send orders for whole items, i.e. do not order 0.5 O-rings
+	if (invpg.getCapacity() instanceof Count) {
+	    if(refill_qty<1.0){
+		return null;
+	    } else {
+		refill_qty=java.lang.Math.ceil(refill_qty);
+		if (refill_qty == 0)
+		    return null;
+	    }
+	}
+	printDebug(1, "Refill Quantity is: "+refill_qty);
+	task = createRefillTask(inventory, refill_qty, TimeUtils.addNDays(invpg.getStartTime(), day));
+	// if prev_refill!= null, and we have no reported failure, then we
+	//  should modify this refill task
+
+	printLog("Replacing: "+TaskUtils.taskDesc(prev_refill)+" by: "+
+		 TaskUtils.taskDesc(task));
+	publishRemoveTask(prev_refill);
+	invpg.removeDueIn(prev_refill);
+	Task parentTask = inventoryPlugIn_.findOrMakeMILTask(inventory);
+	plugin_.publishAddToExpansion(parentTask, task);
+	invpg.addDueIn(task);
+	return task;
+    }
+
+
 
     protected int refillNeeded(Inventory inventory, int startDay) {
 	// 	printInventory(inventory,null);
