@@ -564,7 +564,10 @@ public class CompletionWatcherWorker extends ServletWorker {
       public synchronized void expire() {
         if (!expired) {
           expired = true;
-          support.getBlackboardService().signalClientActivity();
+          {
+            org.cougaar.core.service.BlackboardService bbs = support.getBlackboardService();
+            if (bbs != null) bbs.signalClientActivity();
+          }
         }
       }
       public boolean hasExpired() { return expired; }
