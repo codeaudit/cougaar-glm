@@ -23,6 +23,7 @@ package org.cougaar.mlm.plugin.ldm;
 
 
 import org.cougaar.planning.ldm.LDMPluginServesLDM;
+import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.util.StateModelException;
 import org.cougaar.util.DBConnectionPool;
 import org.cougaar.core.service.BlackboardService;
@@ -300,6 +301,13 @@ public class LDMSQLPlugin extends LDMEssentialPlugin //implements SQLService
       throw new RuntimeException("No QueryFile: "+e);
     }
   }
+
+    /**
+     * This method exposes the protected LDM in the plugin Adapter
+     * to the QueryHandler.  Had to name it differently than
+     * getLDM() because the plugin adapter version of getLDM() is final.
+     */
+  public LDMServesPlugin getLDMPlugin() { return super.getLDM(); }
 
   private String getDBType(String databaseVal) {
     int colonIndex1 = databaseVal.indexOf(':');

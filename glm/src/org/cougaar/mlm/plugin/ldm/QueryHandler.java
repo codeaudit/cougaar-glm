@@ -53,7 +53,7 @@ public abstract class QueryHandler {
                              Properties params,
                              BlackboardService sub) {
     myLDMPlugin = ldmplugin;
-    ldm = comp.getLDM();
+    ldm = ldmplugin.getLDMPlugin();
     myMessageAddress = cid;
     myComponent = comp;
     ldmf = aldmf;
