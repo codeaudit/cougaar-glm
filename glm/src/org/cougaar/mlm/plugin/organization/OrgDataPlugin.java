@@ -77,19 +77,13 @@ public class OrgDataPlugin extends AssetDataPlugin  {
   }
 
 
-  IncrementalSubscription oplans;
-  IncrementalSubscription orgActivities;
+  IncrementalSubscription myOplanSubscription;
+  IncrementalSubscription myOrgActivitySubscription;
   IncrementalSubscription myOpConInfoRelaySubscription;
-  IncrementalSubscription reportForDutySubscription;
+  IncrementalSubscription myRFDSubscription;
   private HashMap myOpSups = new HashMap();
 
   MessageAddress myAgentAddr;
-  MessageAddress target;
-
-  // Temporaries used during org activity reading
-  private TimeSpanSet currentRFDs = new TimeSpanSet();
-  private TimeSpanSet addedRFDInfos = new TimeSpanSet();
-  private TimeSpanSet removedRFDs = new TimeSpanSet();
 
   // report for duty tasks
   protected UnaryPredicate myRFDpredicate =  new UnaryPredicate() {
@@ -176,46 +170,31 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     // Set up before the subscriptions so predicates can reference.
     myAgentAddr  = getMessageAddress();
 
-    oplans = 
+    myOplanSubscription = 
       (IncrementalSubscription) getBlackboardService().subscribe(new OplanPredicate());
-    reportForDutySubscription = 
+    myRFDSubscription = 
       (IncrementalSubscription) getBlackboardService().subscribe(myRFDpredicate);
     myOpConInfoRelaySubscription = 
       (IncrementalSubscription) getBlackboardService().subscribe(myOpConInfoRelayPred);
   }
 
   public void execute() {
-    if (oplans.hasChanged()) {
-      Enumeration enum;
-      if (oplans.getAddedList().hasMoreElements()) {
-        enum = oplans.getAddedList();
-        while (enum.hasMoreElements()) {
-          Oplan oplan = (Oplan)enum.nextElement();
-          UID oplanUID = oplan.getUID();
-          if (orgActivities == null) {
-            orgActivities = (IncrementalSubscription)
-              getBlackboardService().subscribe(new OrgActivitiesPredicate(oplanUID));
-          }
-        }
+    if (myOplanSubscription.hasChanged()) {
+
+      for (Iterator iterator = myOplanSubscription.getAddedCollection().iterator();
+	   iterator.hasNext();) {
+	Oplan oplan = (Oplan)iterator.next();
+	UID oplanUID = oplan.getUID();
+	if (myOrgActivitySubscription == null) {
+	  myOrgActivitySubscription = (IncrementalSubscription)
+	    getBlackboardService().subscribe(new OrgActivitiesPredicate(oplanUID));
+	}
       }
     }
-    if (orgActivities != null && orgActivities.hasChanged()) {
-      processPotentialChangedOpCons();
 
-      for (Iterator j = removedRFDs.iterator(); j.hasNext(); ) {
-        Task rfd = (Task) j.next();
-        getBlackboardService().publishRemove(rfd);
-      }
-    
-      if (myLogger.isInfoEnabled())
-        myLogger.info(getAgentIdentifier() + " execute: RFDs to add: " + addedRFDInfos.size());
-      
-      for (Iterator j = addedRFDInfos.iterator(); j.hasNext(); ) {
-        Task rfd = ((RFDInfo)j.next()).getTask();
-        getBlackboardService().publishAdd(rfd);
-        if (myLogger.isInfoEnabled())
-          myLogger.info(getAgentIdentifier() +"- Adding RFD: "+rfd);
-      }
+    if ((myOrgActivitySubscription != null) && 
+	(myOrgActivitySubscription.hasChanged())) {
+      processPotentialChangedOpCons();
     }
 
     if (myOpConInfoRelaySubscription.hasChanged()) {
@@ -238,29 +217,29 @@ public class OrgDataPlugin extends AssetDataPlugin  {
   }
 
   protected void processPotentialChangedOpCons() {
-    currentRFDs.clear();
-    addedRFDInfos.clear();
-    removedRFDs.clear();
+    TimeSpanSet currentRFDs = new TimeSpanSet();
+    TimeSpanSet addedRFDInfos = new TimeSpanSet();
+    TimeSpanSet removedRFDs = new TimeSpanSet();
 
     TimeSpanSet[] tsSets = {currentRFDs, addedRFDInfos};
 
     // Go thru current set of RFD tasks and extract the start
     //  and end times as well as the operational superior
     // Make RFDInfo objects to be compared against
-    Collection myRFDs = getBlackboardService().query(myRFDpredicate);
-    for (Iterator it = myRFDs.iterator(); it.hasNext(); ) {
+    for (Iterator it = myRFDSubscription.iterator(); it.hasNext(); ) {
       Task rfdTask = (Task) it.next();
 
       RFDInfo rfdInfo = new RFDInfo(rfdTask);
       currentRFDs.add(rfdInfo);
-      //         if (myLogger.isInfoEnabled()) {
-      //           myLogger.info(getAgentIdentifier()+" from RFD opSup is: "+rfdInfo.getMyOpSuperior());
-      //           myLogger.info(getAgentIdentifier()+" startTime is: "+new Date(rfdInfo.getStartTime()) 
-      //                         +" and endTime is: "+new Date(rfdInfo.getEndTime()));
-      //         }
+      if (myLogger.isInfoEnabled()) {
+	myLogger.info(getAgentIdentifier()+" from RFD opSup is: " + 
+		      rfdInfo.getMyOpSuperior() + 
+		      " startTime is: " + new java.util.Date(rfdInfo.getStartTime()) 
+		      + " and endTime is: " + new java.util.Date(rfdInfo.getEndTime()));
+      }
     }
 
-    for (Iterator i = orgActivities.iterator(); i.hasNext(); ) {
+    for (Iterator i = myOrgActivitySubscription.iterator(); i.hasNext(); ) {
       OrgActivity oa = (OrgActivity) i.next();
 
       String adCon = oa.getAdCon();
@@ -284,7 +263,8 @@ public class OrgDataPlugin extends AssetDataPlugin  {
           RFDInfo existingRFD = (RFDInfo)j.next();
           if (!existingRFD.getMyOpSuperior().equals(opCon)) {
             if (myLogger.isInfoEnabled()) {
-              myLogger.info(getAgentIdentifier() +" OpCon from OrgActivity does not match overlapping RFD superior!");
+              myLogger.info(getAgentIdentifier() + 
+			    " OpCon from OrgActivity does not match overlapping RFD superior!");
             }
             //need to make a new rfd for this timspan
             tsSet.remove(existingRFD); // Don't know where it will end up,
@@ -305,7 +285,9 @@ public class OrgDataPlugin extends AssetDataPlugin  {
               // Need new RFD like the existingRFD
               NewTask newRFD = makeRFD(newTimeSpan, existingRFD.getTask());
               if (myLogger.isInfoEnabled()) {
-                myLogger.info(getAgentIdentifier() +" Beginning of old RFD still valid. New/Copied RFD is:" +newRFD);
+                myLogger.info(getAgentIdentifier() + 
+			      ": Beginning of old RFD still valid. New/Copied RFD is:" +
+			      newRFD);
               }
               addedRFDInfos.add(new RFDInfo(newRFD));
             }
@@ -318,7 +300,9 @@ public class OrgDataPlugin extends AssetDataPlugin  {
               // Need new RFD like the existingRFD
               NewTask aNewRFD = makeRFD(aNewTimeSpan, existingRFD.getTask());
               if (myLogger.isInfoEnabled()) {
-                myLogger.info(getAgentIdentifier() +" End of old RFD still valid. New/Copied RFD is: "+ aNewRFD);
+                myLogger.info(getAgentIdentifier() +
+			      "End of old RFD still valid. New/Copied RFD is: " + 
+			      aNewRFD);
               }
               addedRFDInfos.add(new RFDInfo(aNewRFD));
             }
@@ -329,25 +313,48 @@ public class OrgDataPlugin extends AssetDataPlugin  {
               }
             }
             //sending a relay to the opcon from the orgActivity
-            MessageAddress addr = MessageAddress.getMessageAddress(opCon);
-            target = addr;
+            MessageAddress targetAddr = MessageAddress.getMessageAddress(opCon);
         
             //extract the start and end time of the relationship from the OA timespan
             TimeSpan oaTimeSpan = new TimeSpan(oaStart, oaEnd);
         
             OpConInfoRelay opconRelay = new OpConInfoRelay(getUIDService().nextUID(),
                                                            myAgentAddr,
-                                                           target,
+                                                           targetAddr,
                                                            oaTimeSpan,
                                                            null);
             if (myLogger.isInfoEnabled()) {
-              myLogger.info(getAgentIdentifier()+" just created an OpConInfoRelay: "+opconRelay.toString()
-                            +" from " +myAgentAddr +" to " +target);
+              myLogger.info(getAgentIdentifier()+" just created an OpConInfoRelay: " + 
+			    opconRelay.toString()
+                            + " from " + myAgentAddr + " to "  + targetAddr);
             }
             getBlackboardService().publishAdd(opconRelay);
           }
         }
       }
+    }
+
+    if (myLogger.isInfoEnabled())
+      myLogger.info(getAgentIdentifier() + 
+		    " processPotentialChangedOpCons: adding  " + 
+		    addedRFDInfos.size() + " RFDs , removing " +
+		    removedRFDs.size() + " RFDs.");
+
+
+    for (Iterator j = removedRFDs.iterator(); j.hasNext(); ) {
+      Task rfd = (Task) j.next();
+      getBlackboardService().publishRemove(rfd);
+
+      if (myLogger.isInfoEnabled())
+	myLogger.info(getAgentIdentifier() + "- Removing RFD: " + rfd);
+    }
+    
+    
+    for (Iterator j = addedRFDInfos.iterator(); j.hasNext(); ) {
+      Task rfd = ((RFDInfo) j.next()).getTask();
+      getBlackboardService().publishAdd(rfd);
+      if (myLogger.isInfoEnabled())
+	myLogger.info(getAgentIdentifier() + "- Adding RFD: " + rfd);
     }
   }
 
@@ -369,41 +376,52 @@ public class OrgDataPlugin extends AssetDataPlugin  {
     }
     Collection roles = (Collection)pp.getIndirectObject();
      
-    NewTask newRFD = createReportTask(localClone, sendTo, roles, newTS.getStartTime(), newTS.getEndTime());
+    NewTask newRFD = createReportTask(localClone, sendTo, roles, newTS.getStartTime(), 
+				      newTS.getEndTime());
     return newRFD;
   }
 
 
   protected void createOperationalRFDs (Collection changedOpConInfoRelays) {
-      for (Iterator changes = changedOpConInfoRelays.iterator();
-           changes.hasNext();) {
-        OpConInfoRelay myRelay = (OpConInfoRelay) changes.next();
-        //We don't want to pick up changes that we ourselves put on this relay 
-        // i.e. when we are the target
-        //We only want to get the relay response here when we are the
-        // source.
-        TimeSpan myContent = (TimeSpan) myRelay.getContent();
-        ArrayList theResponse = (ArrayList) myRelay.getResponse();
-        String opConItemId = (String)theResponse.get(0);
-        String opConTypeId = (String)theResponse.get(1);
-        if (myLogger.isInfoEnabled()) {
-          myLogger.info(getAgentIdentifier() +" Response from relay is:" +theResponse);
-        }
-        MessageAddress maTarget = myRelay.getTarget();
-        String relTargetAddr = (String)maTarget.getAddress();
-        
-        Asset otherAsset =
-          getAsset(myAssetClassName, opConItemId, opConTypeId, relTargetAddr);
-        Relationship relationship = 
-          myPlanningFactory.newRelationship((Constants.Role.OPERATIONALSUBORDINATE),
-                                            (HasRelationships) myLocalAsset,
-                                            (HasRelationships) otherAsset,
-                                            myContent.getStartTime(),
-                                            myContent.getEndTime());
-        report(relationship);
-      }
-  }
+    for (Iterator changes = changedOpConInfoRelays.iterator();
+	 changes.hasNext();) {
+      OpConInfoRelay relay = (OpConInfoRelay) changes.next();
+      //We don't want to pick up changes that we ourselves put on this relay 
+      // i.e. when we are the target
+      //We only want to get the relay response here when we are the
+      // source.
+      TimeSpan content = (TimeSpan) relay.getContent();
+      ArrayList response = (ArrayList) relay.getResponse();
+      if (myLogger.isInfoEnabled()) {
+	myLogger.info(getAgentIdentifier() + " OpConInfoRelay content = " + content +
+		       " response = " + response);
+      }      
 
+      if ((response == null) || 
+	  (response.size() < 2)) {
+	if (myLogger.isDebugEnabled()) {
+	  myLogger.debug(getAgentIdentifier() + " ignoring invalid response.");
+	}
+      } else {
+	String opConItemId = (String)response.get(0);
+	String opConTypeId = (String)response.get(1);
+
+	MessageAddress maTarget = relay.getTarget();
+	String relTargetAddr = (String)maTarget.getAddress();
+	
+	Asset otherAsset =
+	  getAsset(myAssetClassName, opConItemId, opConTypeId, maTarget.getAddress());
+	Relationship relationship = 
+	  myPlanningFactory.newRelationship((Constants.Role.OPERATIONALSUBORDINATE),
+					    (HasRelationships) myLocalAsset,
+					    (HasRelationships) otherAsset,
+					    content.getStartTime(),
+					    content.getEndTime());
+	report(relationship);
+      }
+    }
+  }
+  
   protected void addRelationship(String typeId, String itemId,
                                  String otherClusterId, String roleName,
                                  long start, long end) {
@@ -472,3 +490,10 @@ public class OrgDataPlugin extends AssetDataPlugin  {
   }
 
 }
+
+
+
+
+
+
+

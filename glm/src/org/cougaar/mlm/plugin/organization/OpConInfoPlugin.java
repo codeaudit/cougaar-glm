@@ -38,9 +38,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class OpConInfoPlugin extends ComponentPlugin {
-  
-  String itemId;
-  String typeId;
   ArrayList idInfo = new ArrayList();
 
   private static UnaryPredicate selfOrgAssetPred = new UnaryPredicate() {
@@ -69,25 +66,18 @@ public class OpConInfoPlugin extends ComponentPlugin {
 
   public void setupSubscriptions () {
     String me = getAgentIdentifier().toString();
-    logger = LoggingServiceWithPrefix.add(logger, me + ": ");
+    logger = LoggingServiceWithPrefix.add(logger, getAgentIdentifier().toString() + ": ");
     mySelfOrgs = (IncrementalSubscription)getBlackboardService().subscribe(selfOrgAssetPred);
     myOpConInfoRelaySubscription = (IncrementalSubscription)getBlackboardService().subscribe(myOpConInfoRelayPred);
+
+    initIdInfo();
   }
 
   protected void execute() {
-    if (mySelfOrgs != null && mySelfOrgs.hasChanged()) {
-      Enumeration selfOrgEnum = mySelfOrgs.getAddedList();
-      if (selfOrgEnum.hasMoreElements()) {
-        Organization selfOrgAsset = (Organization) selfOrgEnum.nextElement();
-        itemId = selfOrgAsset.getItemIdentificationPG().getItemIdentification();
-        typeId = selfOrgAsset.getTypeIdentificationPG().getTypeIdentification();
-        if (logger.isDebugEnabled()) {
-          logger.debug("My itemId is " + itemId +" and my typeId is " +typeId);
-        }
-        idInfo.add(itemId);
-        idInfo.add(typeId);
-      }
+    if (mySelfOrgs.hasChanged()) {
+      initIdInfo();
     }
+
     if (myOpConInfoRelaySubscription.hasChanged()) {
       if (logger.isDebugEnabled()) {
         logger.debug(": myOpConInfoRelaySubscription has changed!");
@@ -106,4 +96,35 @@ public class OpConInfoPlugin extends ComponentPlugin {
       }
     }
   }
+  
+  protected void initIdInfo() {
+    // Check whether idInfo has already been initialized
+    if ((idInfo.size() == 2) &&
+	(idInfo.get(0) != null) &&
+	(idInfo.get(1) != null)) {
+      if (logger.isDebugEnabled()) {
+	logger.debug("initIdInfo(): idInfoMy is already initialized - " + 
+		     idInfo);
+      }
+      return;
+    }
+    
+    if (!mySelfOrgs.isEmpty()) {
+      Organization selfOrgAsset = (Organization) mySelfOrgs.iterator().next();
+      String itemId = selfOrgAsset.getItemIdentificationPG().getItemIdentification();
+      String typeId = selfOrgAsset.getTypeIdentificationPG().getTypeIdentification();
+      if (logger.isDebugEnabled()) {
+	logger.debug("My itemId is " + itemId +" and my typeId is " +typeId);
+      }
+      idInfo.add(0,itemId);
+      idInfo.add(1, typeId);
+    } else {
+      if (logger.isDebugEnabled()) {
+	logger.debug("initIdInfo(): can't initialize idInfo, self org subscription is empty.");
+      }
+    }
+  }
 }
+
+
+
