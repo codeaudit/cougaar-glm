@@ -20,6 +20,7 @@ import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.domain.planning.ldm.asset.NewTypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
+import org.cougaar.domain.planning.ldm.asset.PropertyGroup;
 
 import org.cougaar.domain.planning.ldm.measure.Area;
 import org.cougaar.domain.planning.ldm.measure.Distance;
@@ -518,7 +519,12 @@ public static boolean isPallet(Asset asset) {
 	      (i+1) + "_of_" + 
 	      count + "(" + 
 	      getLatestUID () + ")";
-	    retval.addElement(theFactory.createInstance (subobject, name));
+	    Asset particle = theFactory.createInstance (subobject, name);
+	    Enumeration otherProps = asset.getOtherProperties();
+	    while (otherProps.hasMoreElements()) {
+		particle.addOtherPropertyGroup((PropertyGroup)otherProps.nextElement());
+	    }
+	    retval.addElement(particle);
 	  }
 	else
 	  retval.addElement (asset);
@@ -1113,6 +1119,11 @@ public static boolean isPallet(Asset asset) {
     }         
     return false;
   }
+
+    public static String getUniqueTag(Asset a) {
+	return new String(a.getTypeIdentificationPG().getTypeIdentification()+
+			  a.getItemIdentificationPG().getItemIdentification());
+    }
 
 }
 
