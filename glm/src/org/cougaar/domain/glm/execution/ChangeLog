@@ -1,0 +1,76 @@
+2001-05-03  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* eg/ScheduleManager.java:
+	Add enableLog method.
+
+	* eg/TwentyFourBySevenPlugIn.java:
+	Change default value mechanism.
+	Use AnnotatedDouble where needed.
+
+	* eg/TripletFCPlugIn.java:
+	Use a special Document for textfields so that changes can be
+	continuously watched if needed. This fixes a problem with edits
+	having no effect.
+	Expect AnnotatedDouble for multipliers from subclasses and return
+	AnnotatedDouble.
+
+	* eg/TimedFailureConsumptionReport.java:
+	Set annotation on report.
+
+	* eg/Timed.java:
+	Add annotation field and getter/setter.
+
+	* eg/TaskEventReportManager.java:
+	Change table model to support logging.
+
+	* eg/POL2PlugIn.java:
+	Return AnnotatedDouble instead of double.
+
+	* eg/ManagerBase.java:
+	Change table model to support logging.
+	Implement log file writing. Writes tab-separated files of the
+	expired rows of the table.
+
+	* eg/InventoryScheduleManager.java: 
+	Change table model to support logging.
+
+	* eg/InventoryReportManager.java: 
+	Change table model to support logging.
+	Set annotation on reports.
+
+	* eg/FailureConsumptionSegment.java: 
+	Set annotation.
+
+	* eg/FailureConsumptionReportManager.java: 
+	Change table model to support logging.
+	Set annotation on reports.
+
+	* eg/FailureConsumptionRateManager.java:
+	Change table model to support logging.
+	Set annotation on reports.
+
+	* eg/FailureConsumptionPlugInItem.java:
+	Return AnnotateDouble for quantity.
+
+	* eg/FailureConsumptionDefaultPlugIn.java:
+	Return AnnotatedDouble instead of double.
+
+	* eg/EventGenerator.java:
+	Initialize logging at startup. All report managers have can have a
+	logging feature wherein the rows of their tables can be written to
+	a file when the are removed from the table.
+
+	* eg/EGDate.java:
+	Change format to not include day of week. Excel can't parse such
+	dates.
+
+	* eg/POLSpecialPlugIn.java: 
+	Return AnnotatedDouble instead of double.
+
+	* eg/DODICSpecialPlugIn.java:
+	Return AnnotatedDouble instead of double.
+
+	* eg/AnnotatedDouble.java:
+	New class for carrying an annotation along with a double value.
+	Used for passing back values with comments from a plugin.
+
