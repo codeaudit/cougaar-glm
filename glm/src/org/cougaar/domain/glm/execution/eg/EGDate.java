@@ -11,7 +11,7 @@ package org.cougaar.domain.glm.execution.eg;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.text.TimeZone;
+import java.util.TimeZone;
 
 /**
  * Extend java.util.Date to modify the toString method. Used as table
