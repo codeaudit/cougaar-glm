@@ -129,4 +129,47 @@ public class GeolocLocationImpl extends NamedPositionImpl
     gli.setLongitude(lon);
     return gli;
   }
+
+  public boolean equals(Object object) {
+    if (object == null) {
+      return false;
+    }
+
+    if (object == this) {
+      return true;
+    }
+
+    if (!(object instanceof GeolocLocation)) {
+      return false;
+    }
+
+    GeolocLocation other = (GeolocLocation)object;
+
+    return (matches(getGeolocCode(), other.getGeolocCode()) &&
+            matches(getInstallationTypeCode(), other.getInstallationTypeCode()) &&
+            matches(getCountryStateCode(), other.getCountryStateCode()) &&
+            matches(getCountryStateName(), other.getCountryStateName()) &&
+            matches(getIcaoCode(), other.getIcaoCode()) &&
+            matches(getName(), other.getName()) &&
+            matches(getLatitude(), other.getLatitude()) &&
+            matches(getLongitude(), other.getLongitude()));
+  }
+
+  private transient int _hc = 0;
+  public int hashCode()
+  {
+    if (_hc == 0) _hc = getName().hashCode();
+    return _hc;
+  }
+
+  private boolean matches(Object a, Object b) {
+    return (a==null)?(b==null):(a.equals(b));
+  }
+
 }
+
+
+
+
+
+
