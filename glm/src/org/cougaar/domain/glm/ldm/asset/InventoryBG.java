@@ -65,7 +65,6 @@ public abstract class InventoryBG implements PGDelegate {
     private boolean startTimeNeverSet = true;
     protected long firstDayOfDemand_;
     protected int demandAveragePeriod_ = 30;
-    protected double weightingFactor_;
     private ProjectionWeight weight_;
     // Stuff for execution below
     protected ArrayList report_history;
