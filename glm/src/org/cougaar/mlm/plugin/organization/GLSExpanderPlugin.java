@@ -39,6 +39,8 @@ import org.cougaar.core.component.ServiceRevokedEvent;
 import org.cougaar.core.component.ServiceRevokedListener;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.persist.PersistenceNotEnabledException;
+import org.cougaar.core.service.EventService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.glm.ldm.asset.Organization;
@@ -53,6 +55,7 @@ import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.TaskScoreTable;
@@ -60,8 +63,8 @@ import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.planning.service.LDMService;
+import org.cougaar.util.PropertyParser;
 import org.cougaar.util.UnaryPredicate;
-
 
 /**
  * The GLSExpanderPlugin will take the intial GetLogSupport task received by
@@ -72,6 +75,21 @@ import org.cougaar.util.UnaryPredicate;
  **/
 
 public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
+
+  protected EventService eventService;
+
+  /**
+   * RFE 3162: Set to true to force a persistence as soon as the agent
+   * has finished propogating Stage-1 GLS. Send a CougaarEvent announcing completion.
+   * This allows controllers to kill the agent as early as possible, without
+   * potentially causing logistics plugin problems on rehydration.
+   * Defaults to false - ie, do not force an early persist.
+   **/
+  private static final boolean persistEarly;
+  static {
+    persistEarly = PropertyParser.getBoolean("org.cougaar.mlm.plugin.organization.GLSExpanderPlugin.persistEarly", false);
+  }
+
   /** Subscription to hold collection of input tasks **/
   private IncrementalSubscription myGLSTasks;
   private IncrementalSubscription myRegisterServicesTasks;
@@ -110,6 +128,11 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
     String me = getAgentIdentifier().toString();
     logger = LoggingServiceWithPrefix.add(logger, me + ": ");
     
+    // get event service - for use with persistEarly work
+    eventService = (EventService)
+      getBindingSite().getServiceBroker().getService(
+          this, EventService.class, null);
+
     //System.out.println("setupSubscriptions: "+getAgentIdentifier());
     //get the LDM service to access the object factories from my bindingsite's servicebroker
     LDMService ldmService = null;
@@ -293,8 +316,92 @@ public class GLSExpanderPlugin extends ComponentPlugin implements GLSConstants {
     }
 
     if (myGLSExpansions.hasChanged()) {
+
       PluginHelper.updateAllocationResult(myGLSExpansions);
-    }
+
+      /////////////////
+      // Follows new logic to persist once GLS Stage-1 propogation
+      // Is complete, so any kill of this agent
+      // does not remove the GLS task on reconciliation
+
+      // I want to persist when the GLS FOR self_org Stage1
+      // has just gone confident
+      if (persistEarly) {
+	boolean s1Done = false;
+	Enumeration changedPEs = myGLSExpansions.getChangedList();
+	while ( changedPEs.hasMoreElements() ) {
+	  Expansion pe = (Expansion) changedPEs.nextElement();
+	  // Did this PE just change RepResult
+	  if (PluginHelper.checkChangeReports(myGLSExpansions.getChangeReports(pe), PlanElement.ReportedResultChangeReport.class)) {
+	    // Is the Est now 1?
+	    if (pe.getEstimatedResult() != null && pe.getEstimatedResult().getConfidenceRating() == 1.0) {
+	      if (logger.isDebugEnabled())
+		logger.debug("A GLS Expansion changed RepResult, now has conf 1: " + pe);
+	      Task task = pe.getTask();
+	      if (task == null) {
+		if (logger.isInfoEnabled())
+		  logger.info("Null task for GLSExpansion: " + pe);
+		continue;
+	      }
+	      // Now: is this task for self org and stage 1?
+	      SortedSet stages =
+		(SortedSet) task
+		.getPrepositionalPhrase(FOR_OPLAN_STAGES)
+		.getIndirectObject();
+	      if (stages == null || stages.isEmpty() || stages.size() != 2) {
+		// No good
+		if (logger.isDebugEnabled())
+		  logger.debug("OplanStages say this is not stage 1: " + stages);
+	      } else {
+		// FIXME: Do I need to confirm that the estresult
+		// used to be _not_ 1?
+		// FIXME: Is this the correct expansion? 
+		// Check that there is only the 1
+		// GLS task on my subscription
+		if (myGLSTasks.size() != 1) {
+		  if (logger.isDebugEnabled())
+		    logger.debug("I have more than the 1 GLS task?!?: " + myGLSTasks.size());
+		} else {
+		  if (logger.isDebugEnabled())
+		    logger.debug("The only GLS for self has 2 stages and just changed its reported result and has a conf of 1: " + task);
+		  s1Done = true;
+		  break;
+		}
+	      }
+	    }
+	  } // end checkChangeReports
+	} // end loop over changed PEs
+	
+	if (s1Done) {
+	  if (logger.isDebugEnabled())
+	    logger.debug("Stage1 GLS task Done propogating. Will persist.");
+	  persistEarly();
+	}
+      } // if persistEarly
+    } // if GLSExpansions changed
+  } // execute()
+  
+  private void persistEarly() {
+    try {
+      // Bug 3282: Persistence doesn't put in the correct reasons for blocking in SchedulableStatus
+      getBlackboardService().persistNow();
+      
+      // Now send a Cougaar event indicating the agent has sent GLS
+      // and has persisted them (so no danger it will be rescinded)
+      if (eventService != null &&
+	  eventService.isEventEnabled()) {
+	eventService.event(getAgentIdentifier() + " persisted after propogating GLS.");
+      } else {
+	logger.info(getAgentIdentifier() + " (no event service): persisted after propogating GLS.");
+      }
+    } catch (PersistenceNotEnabledException nope) {
+      if (eventService != null &&
+	  eventService.isEventEnabled()) {
+	eventService.event(getAgentIdentifier() + " finished propogating GLS (persistence not enabled).");
+      } else {
+	logger.info(getAgentIdentifier() + " (no event service): finished propogating GLS (persistence not enabled).");
+      }
+    } // try/catch block
   }
   
   private void processOrgAssets(Enumeration e) {
