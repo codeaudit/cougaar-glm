@@ -1127,7 +1127,7 @@ public class OrgTPRTDataPlugIn extends SimplePlugIn  {
   }
 
   private static HashMap classes;
-  private static final Collection packages;
+  protected static final Collection packages;
 
   static {
     // initialize packages:
