@@ -42,6 +42,7 @@ import org.cougaar.domain.planning.ldm.plan.AspectValue;
 import org.cougaar.domain.planning.ldm.plan.Expansion;
 import org.cougaar.domain.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
+import org.cougaar.domain.planning.ldm.plan.Preference;
 import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
@@ -60,7 +61,7 @@ import org.cougaar.domain.glm.plugins.TaskUtils;
 
 public class ReadinessAssessorPlugin extends ComponentPlugin {
 
-  private int rollupSpan = 10;
+  private long rollupSpan = 10;
 
   private IncrementalSubscription readinessTaskSub;
   private final UnaryPredicate readinessTaskPred = 
@@ -123,6 +124,12 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
       if (readinessTask == null)
 	return;
 
+      earliest = Math.round(readinessTask.getPreferredValue(AspectType.START_TIME));
+      rollupSpan = Math.round(readinessTask.getPreferredValue(AspectType.INTERVAL));
+      System.out.println("ReadinessAssessor got earliest date: " 
+			 +new Date(earliest).toString() +
+			 " and rollupSpan: " + rollupSpan);
+
       HashMap pacingItems = new HashMap(13);
 
       // Sort project supply tasks by Maintained Item and OfType
@@ -133,11 +140,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	// find the supply type of the task
 	Object directObject = psTask.getDirectObject();
 
-	// find the earliest and latest start and end times
-	long start = Math.round(psTask.getPreferredValue(AspectType.START_TIME));
-	if (start < earliest) 
-	  earliest = start;
-
+	// find the latest end times
 	long end = Math.round(psTask.getPreferredValue(AspectType.END_TIME));
 	if (end > latest) 
 	  latest = end;
@@ -398,11 +401,16 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     NewTask subtask = rootFactory.newTask();
     subtask.setParentTask(parent);
     subtask.setVerb(parent.getVerb());
+    subtask.setPreferences(parent.getPreferences());
+    subtask.setContext(parent.getContext());
     Vector preps = new Vector(2);
-    NewPrepositionalPhrase prep = rootFactory.newPrepositionalPhrase();
-    prep.setPreposition(Constants.Preposition.FOR);
-    prep.setIndirectObject(pacing);
-    preps.add(prep);
+    NewPrepositionalPhrase prep = null;
+    if (pacing !=null) {
+      prep = rootFactory.newPrepositionalPhrase();
+      prep.setPreposition(Constants.Preposition.FOR);
+      prep.setIndirectObject(pacing);
+      preps.add(prep);
+    }
     if (supplyType != null) {
       prep = rootFactory.newPrepositionalPhrase();
       prep.setPreposition(Constants.Preposition.WITH);
@@ -444,14 +452,14 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     PlanElement pe = task.getPlanElement();
     if (pe == null) {
       // must be an allocation, rather than a expansion
-      pe = rootFactory.createDisposition(task.getPlan(), //broken
+      pe = rootFactory.createDisposition(task.getPlan(), 
 					 task,
 					 ar);
       pe.setEstimatedResult(ar);
       blackboard.publishAdd(pe);
     } else {
-      pe.setEstimatedResult(ar);
-      blackboard.publishChange(pe);
+        pe.setEstimatedResult(ar);
+        blackboard.publishChange(pe);
     }
   }
 
