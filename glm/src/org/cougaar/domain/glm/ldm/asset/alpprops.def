@@ -125,6 +125,14 @@ Phase.doc=The time of the first report in the pattern. The actual first report w
 at the first opportunity according the to specified frequency.
 Jitter.doc=The randomization factor. The exact interpretation depends on the kind of pattern.
 
+[DetailedScheduledContentPG]
+doc=Represent daily perturbations to contents of Inventory asset. \
+Used to better support 24X7 demonstrations.
+;import=org.cougaar.domain.planning.ldm.plan.Schedule
+slots=Schedule schedule
+schedule.doc=a quantity-schedule showing how many/much of asset is \
+	       contained by this asset over time.
+
 [LiftPG]
 extends=CargoPG
 slots=Mass maximum_weight
@@ -733,6 +741,7 @@ invBG.delegate= int resetInventory(Inventory inventory, long today);\
 	DueOut getLowestPriorityDueOutBeforeDay(int end);\
         List updateDueOutAllocations();\
 	int updateContentSchedule(Inventory inventory);\
+	int updateDetailedContentSchedule(Inventory inventory);\
 	int clearContentSchedule(Inventory inventory);\
 	int updateInventoryLevelsSchedule(Inventory inventory);\
 	int clearInventoryLevelsSchedule(Inventory inventory);\
