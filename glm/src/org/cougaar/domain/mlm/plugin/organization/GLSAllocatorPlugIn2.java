@@ -203,7 +203,10 @@ public class GLSAllocatorPlugIn2 extends SimplePlugIn {
     NewWorkflow wf = theLDMF.newWorkflow();
     //wf.setIsPropagatingToSubtasks();
     wf.setParentTask(t);
-    augmentWorkflow(wf, esubs);
+    
+    // Add tasks to workflow but do not publish them. Done later in the call
+    // to PlugInHelper.publishAddExpansion();
+    augmentWorkflow(wf, esubs, false);
     // package up the workflow in an expansion
     AllocationResult estAR = null;
     if (!esubs.hasMoreElements()) {
@@ -216,12 +219,16 @@ public class GLSAllocatorPlugIn2 extends SimplePlugIn {
     allocateGLS(wf);
   }
 
-  private void augmentWorkflow(NewWorkflow wf, Enumeration esubs) {
+  private void augmentWorkflow(NewWorkflow wf, Enumeration esubs, 
+                               boolean publishInPlace) {
     while (esubs.hasMoreElements()) {
       Asset orga = (Asset) esubs.nextElement();
       NewTask newTask = createSubTask(wf.getParentTask(), orga);
       newTask.setWorkflow(wf);
       wf.addTask(newTask);
+      if (publishInPlace) {
+        publishAdd(newTask);
+      }
     }
   }
 
@@ -230,7 +237,10 @@ public class GLSAllocatorPlugIn2 extends SimplePlugIn {
   private synchronized void augmentExpansion(Expansion exp, Enumeration esubs) {
     if (esubs.hasMoreElements()) {
       NewWorkflow wf = (NewWorkflow) exp.getWorkflow();
-      augmentWorkflow(wf, esubs);
+
+      // Add tasks to workflow and publish new tasks
+      augmentWorkflow(wf, esubs, true);
+
       publishChange(wf);
       allocateGLS(wf);
     }
