@@ -624,7 +624,7 @@ public class GLSClient extends JPanel {
       }
       oplanButton.setEnabled(false);
       oplanLabel.setText("Oplan Published");
-      updateOplanButton.setEnabled(true);
+//       updateOplanButton.setEnabled(true);
       initButton.setEnabled(true);
       getRootPane().setDefaultButton(initButton); 
     }
