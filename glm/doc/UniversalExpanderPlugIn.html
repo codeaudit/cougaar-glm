@@ -18,6 +18,8 @@ and publish its expansions.
 <br>&nbsp;
 <p><a NAME="NewFeatures"></a><b><font size=+1>New Features</font></b>
 <br>Functionality changes post Cougaar 8.4:
+<br>PlugIn now follows the Cougaar Component Model and extends from the
+ComponentPlugin base class.
 <br>Addition of Flat flag which allows for a flat expansion or a tree expansion.
 <br>Additional fields to express more parameters of a task such as fields
 to build a direct object asset, fields which define the quantity preference,
@@ -26,7 +28,7 @@ the task to be broken into multiple shipments.
 <br>Ability to recurse more than 2 levels of expansion (1 non-leaf and
 1 leaf).&nbsp; The database can describe a potentially infinite number
 of expansion levels.
-<p>These changes are described in more detail below.<font size=+1></font>
+<p>These changes are described in more detail below.
 <p><a NAME="Parameters"></a><b><font size=+1>Plugin Parameters</font></b>
 <br>The possible plugin parameters fall under two categories:
 <br>1) Comma separated list of verbs that define what task or tasks the
@@ -52,7 +54,7 @@ user and password and the database table containing the expansion information.
 <br><i>generic.database.expander.database=machine.foo.com:dbport:dbsid</i>
 <br><i>generic.database.expander.user=dbusername</i>
 <br><i>generic.database.expander.password=dbpassword</i>
-<br><i>generic.database.expander.expansion_table=dbtable</i><b></b>
+<br><i>generic.database.expander.expansion_table=dbtable</i>
 <p><a NAME="Database"></a><b><font size=+1>Database Schema and Field Descriptions</font></b>
 <br>The database table defined in the cougaar.rc should be created with
 these guidelines:

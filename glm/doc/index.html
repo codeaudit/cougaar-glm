@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.72 [en] (WinNT; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.77 [en] (Windows NT 5.0; U) [Netscape]">
    <meta name="Template" content="C:\Program Files\Microsoft Office\Office\html.dot">
    <title>Release Notes</title>
 </head>
@@ -20,7 +20,7 @@
 <b><font size=+2>COUGAAR GLM 8.2</font></b></h2>
 </td>
 
-<td ALIGN=CENTER WIDTH="200"><a href="http://www.cougaar.org"><img SRC="cougaar-smalllogo.jpg" BORDER=0></a></td>
+<td ALIGN=CENTER WIDTH="200"><a href="http://www.cougaar.org"><img SRC="cougaar-smalllogo.jpg" BORDER=0 ></a></td>
 </tr>
 </table>
 
@@ -46,16 +46,32 @@
 <hr>
 <h2>
 <a NAME="overview"></a>Overview of this Release</h2>
-Build  8.2 is a new major release of COUGAAR.  The GLM (Generic Logistics Model) module has LDM and PlugIns with a logistics domain focus.  This is the first release
-where the release notes are documented seperately from the rest of
-Cougaar.   
-Essential differences between 7.2 and 8.2 include: 
+Build 8.6 is a point release along COUGAAR 8.0 and will be the final release
+under the ALP project.&nbsp; Future Cougaar releases will be under the
+Ultra*Log project. Notable GLM additions for this release include:
 <ul>
-<li> Streamlined Inventory Manager for better performance</li>
-<li> Reorganized Inventory Manager operations for better design and more accurate solutions</li>
-<li> Multiple bug fixes.</li>
+<li>
+Enhancements to the generic UniversalExpanderPlugIn which expands tasks
+according to sub-tasks defined in a database table. Enhancements include
+better ability to defined task parameters, ability to specify more than
+2 levels of expansion, and the ability to expand levels fully or expand
+them into a single flat workflow. For details please see <a href="UniversalExpanderPlugIn.html">UniversalExpanderPlugIn.html</a></li>
 </ul>
+Build 8.2 is a new major release of COUGAAR. The GLM (Generic Logistics
+Model) module has LDM and PlugIns with a logistics domain focus. This is
+the first release where the release notes are documented seperately from
+the rest of Cougaar. Essential differences between 7.2 and 8.2 include:&nbsp;
+<ul>
+<li>
+Streamlined Inventory Manager for better performance</li>
 
+<li>
+Reorganized Inventory Manager operations for better design and more accurate
+solutions</li>
+
+<li>
+Multiple bug fixes.</li>
+</ul>
 For additional details, please review the following documentation:
 <ul>
 <li>
@@ -66,7 +82,6 @@ glm Javadoc</li>
 
 <li>
 glm/src/Changelog</li>
-
 </ul>
 
 <h2>
@@ -82,7 +97,8 @@ General Development&nbsp;</h3>
 
 <h2>
 <a NAME="future"></a>Future Releases</h2>
-We anticipate that there may be further releases as we address system deficiencies and enhancement requests. Please watch the alp-plugin-developers email
+We anticipate that there may be further releases as we address system deficiencies
+and enhancement requests. Please watch the alp-plugin-developers email
 list and carefully read the latest PlugIn Developers Guide (PDG) and all
 release notes.&nbsp;
 <h2>
