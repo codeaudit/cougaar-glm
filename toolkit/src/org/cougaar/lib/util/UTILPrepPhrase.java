@@ -73,9 +73,8 @@ public class UTILPrepPhrase {
    * @return true if Task <code>t</code> has <code>prepName</code> on list of 
    *         its prepphrases.
    */
-
   public boolean hasPrepNamed (Task t,
-				      String prepName) {
+			       String prepName) {
     Enumeration prepphrases = t.getPrepositionalPhrases();
     return (getPrepNamed (prepphrases, prepName) != null);
   }
@@ -232,4 +231,3 @@ public class UTILPrepPhrase {
     return npp;
   }
 }
-

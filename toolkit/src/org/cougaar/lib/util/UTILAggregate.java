@@ -128,7 +128,13 @@ public class UTILAggregate {
 
       if (!isSuccess) {
 	logger.warn ("UTILAggregate.makeAggregation - making failed aggregation for " + parentTask);
-	expand.showPlanElement (parentTask);
+	int[] aspectTypes = new int[aspectValues.length];
+	double[] results = new double[aspectValues.length];
+	for (int j = 0; j < aspectValues.length; j++) {
+	  aspectTypes [j] = aspectValues[j].getAspectType ();
+	  results [j]     = aspectValues[j].getValue ();
+	}
+	expand.showPreferences (parentTask, aspectTypes, results);
       }
 	  
       //      if (logger.isDebugEnabled())
