@@ -205,6 +205,23 @@ public class ClusterCache
       host = host.trim();
     return host;
   }
+
+  public String guiSetDemandHost() {
+      if (noHostPrompt) {
+	  demandHost = defaultDemandHost;
+	  if (debug)
+	      System.out.println ("ClusterCache.guiSetDemandHost - no host prompt, demand host is " + demandHost);
+	  return demandHost;
+      }
+      
+      demandHost = (String)JOptionPane.showInputDialog(null,
+						       "Enter Any Demand Host Machine","Machine",
+						       JOptionPane.INFORMATION_MESSAGE,
+						       null, null, defaultDemandHost);
+      if ( demandHost != null )
+	  demandHost = demandHost.trim();
+      return demandHost;
+  }
     
   /**
    * Called by tpfdd client
