@@ -68,12 +68,20 @@ public class PSP_ALPInventory
   private UIInventoryImpl getInventoryFromLogPlan(Collection container) {
     UIInventoryImpl inventory = new UIInventoryImpl();
     Allocation lastAllocation=null;
-    for (Iterator i = container.iterator(); i.hasNext(); ) {
-      Object o = i.next();
+    Object o=null;
+    Iterator i=null;
+
+    //first set the asset
+    for (i = container.iterator(); i.hasNext(); ) {
+      o = i.next();
       if (o instanceof Asset) {
 	inventory.setAsset((Asset)o);
       }
-      else if (o instanceof Allocation) {
+    }
+    //next do the allocation
+    for (i = container.iterator(); i.hasNext(); ) {
+      o = i.next();
+      if (o instanceof Allocation) {
 	lastAllocation = (Allocation) o;
 	inventory.addDueInSchedule((Allocation)o);
 	inventory.addRequestedDueInSchedule((Allocation)o);
