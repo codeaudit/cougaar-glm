@@ -370,6 +370,21 @@ public abstract class InventoryBG implements PGDelegate {
       return (DueOut) list.get(ix);
     }
 
+    public List getWithdrawTasks() {
+      if (list == null) return null;
+      Iterator tasks = list.iterator();
+      ArrayList actualsList = new ArrayList();
+      Task t;
+      while (tasks.hasNext()) {
+	t = ((DueIO)tasks.next()).getTask();
+	if (t.getVerb().equals(Constants.Verb.WITHDRAW) &&
+	    (getWeightingFactor(t, imputedDay) > 0.0)) {
+	  actualsList.add(t);
+	}
+      }
+      return actualsList;
+    }
+
     protected void adjustTotals(Task t, double w) {
       double wf = getWeightingFactor(t, imputedDay) * w;
       if (t.getVerb().equals(Constants.Verb.WITHDRAW)) {
@@ -387,6 +402,21 @@ public abstract class InventoryBG implements PGDelegate {
 
     public DueIn get(int ix) {
       return (DueIn) list.get(ix);
+    }
+
+    public List getSupplyTasks() {
+      if (list == null) return null;
+      Iterator tasks = list.iterator();
+      ArrayList actualsList = new ArrayList();
+      Task t;
+      while (tasks.hasNext()) {
+	t = ((DueIO)tasks.next()).getTask();
+	if (t.getVerb().equals(Constants.Verb.SUPPLY) &&
+	    (getWeightingFactor(t, imputedDay) > 0.0)) {
+	  actualsList.add(t);
+	}
+      }
+      return actualsList;
     }
 
     protected void adjustTotals(Task t, double w) {
@@ -1084,8 +1114,8 @@ public abstract class InventoryBG implements PGDelegate {
 	  iae.printStackTrace();
 	  continue;
 	}
-	//  		if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), Start:"+TimeUtils.dateString(start)+
-	//  			       ", End:"+TimeUtils.dateString(end)+", Qty: "+level_[i]);
+//  		if(GLMDebug.printDebug()) GLMDebug.DEBUG("InventoryBG", "UpdateContentSchedule(), Start:"+TimeUtils.dateString(start)+
+//  			       ", End:"+TimeUtils.dateString(end)+", Qty: "+level_[i]);
 	new_elements.add(qse);
       }
     }
@@ -1167,16 +1197,124 @@ public abstract class InventoryBG implements PGDelegate {
   public int updateDetailedContentSchedule(Inventory inventory) {
     if (!isStartTimeSet)
       return -1;
+    if (level_ == null) {
+      determineInventoryLevels();
+    }
+    if (level_ == null) 
+      return -1;
+    System.out.println(">>>UpdateDetailedContentSchedule ");
+    int days = level_.length;
+    updateLevels(days - 1); // Be sure we have all the days computed.
+    Vector quantity_schedule_elements = new Vector();
+    for (int i = 0; i < days; i++) {
+      quantity_schedule_elements = createDailyScheduleElements(quantity_schedule_elements, i);
+    }
+    Schedule sched = GLMFactory.newQuantitySchedule(quantity_schedule_elements.elements(), PlanScheduleType.TOTAL_INVENTORY);
+    if (ScheduleUtils.isOffendingSchedule(sched)) {
+      GLMDebug.ERROR("InventoryBG", "UpdateContentSchedule(),  CREATED BAD SCHEDULE ");
+    }
     NewDetailedScheduledContentPG newDetailedPG =  
       org.cougaar.domain.glm.ldm.asset.PropertyGroupFactory.newDetailedScheduledContentPG();
-    long start = TimeUtils.addNDaysTime(getStartTime(), 0);
-    long end = TimeUtils.addNDaysTime(getStartTime(), 30);
-    Schedule sched = 
-      ScheduleUtils.buildSimpleQuantitySchedule(getDouble(myPG_.getInitialLevel()), start, end);
     newDetailedPG.setSchedule(sched);
     inventory.setPropertyGroup(newDetailedPG);
-    System.out.println("Update Detailed Content Schedule.");
+    printDetailedSchedule(sched);
     return 0;
+  }
+
+  private Vector createDailyScheduleElements(Vector quantity_schedule_elements, int day) {
+    long start = TimeUtils.addNDaysTime(getStartTime(), day);
+    long end = TimeUtils.addNDaysTime(getStartTime(), day+1);
+    double current_level;
+    if (day == 0) {
+      current_level = getDouble(myPG_.getInitialLevel());
+    } else {
+      current_level = level_[day-1];
+    }
+    ArrayList activityToday = new ArrayList();
+    double projectedDueIns = 0;
+    DueInList dil = null;
+    if (dueIns_.size() > day) {
+      dil = (DueInList)dueIns_.get(day);
+      if ((dil != null) && (dil.size() > 0)) {
+	activityToday.addAll(dil.getSupplyTasks());
+	projectedDueIns = dil.getProjectedTotal();
+      }
+    }
+    double projectedDueOuts = 0;
+    DueOutList dol = null;
+    if (dueOut_.size() > day) {
+      dol = (DueOutList)dueOut_.get(day);
+      if ((dol != null) && (dol.size() > 0)) {
+	activityToday.addAll(dol.getWithdrawTasks());
+	projectedDueOuts = dol.getProjectedTotal();
+      }
+    }
+	
+    current_level += projectedDueIns;
+    current_level -= projectedDueOuts;
+    quantity_schedule_elements.add(ScheduleUtils.buildQuantityScheduleElement(current_level, start, end));
+    
+    return accountForDailyTasks(quantity_schedule_elements, activityToday);
+   
+  }
+
+  private Vector accountForDailyTasks(Vector quantity_schedule_elements, ArrayList activityToday) {
+
+    if (!activityToday.isEmpty()) {
+      Task[] ordered_tasks = (Task[])activityToday.toArray(new Task[activityToday.size()]);
+      java.util.Arrays.sort(ordered_tasks, new Comparator() {
+	  public int compare(Object o1, Object o2) {
+	    long t1_end_time = TaskUtils.getEndTime((Task)o1);
+	    long t2_end_time = TaskUtils.getEndTime((Task)o2);
+	    long diff = t1_end_time - t2_end_time;
+	    if (diff < 0L) return -1;
+	    if (diff > 0L) return  1;
+	    return 0;
+	  }
+	});
+      long time;
+      int size = ordered_tasks.length;
+      for (int k=0; k < size; k++) 
+	System.out.println(">>>        "+TaskUtils.shortTaskDesc(ordered_tasks[k]));
+      for (int i=0; i < size; i++) {
+	time = TaskUtils.getEndTime(ordered_tasks[i]);
+	QuantityScheduleElement qse = 
+	  (QuantityScheduleElement)quantity_schedule_elements.get(quantity_schedule_elements.size()-1);
+	long previous_start = qse.getStartTime();
+	long previous_end = qse.getEndTime();
+	double level = qse.getQuantity();
+	if (time > previous_start) {
+	  quantity_schedule_elements.set(quantity_schedule_elements.size()-1,
+					 ScheduleUtils.buildQuantityScheduleElement(level, previous_start, time));
+	  if (ordered_tasks[i].getVerb().equals(Constants.Verb.SUPPLY)) 
+	    level += TaskUtils.getRefillQuantity(ordered_tasks[i]);
+	  else
+	    level -= TaskUtils.getWithdrawQuantity(ordered_tasks[i]);
+	  quantity_schedule_elements.add(ScheduleUtils.buildQuantityScheduleElement(level, time, previous_end));
+	} else { // time is equal to old start time
+	  if (ordered_tasks[i].getVerb().equals(Constants.Verb.SUPPLY)) 
+	    level += TaskUtils.getRefillQuantity(ordered_tasks[i]);
+	  else
+	    level -= TaskUtils.getWithdrawQuantity(ordered_tasks[i]);
+	  ((NewQuantityScheduleElement)qse).setQuantity(level);
+	}
+      }
+    }
+    return quantity_schedule_elements;
+  }
+
+  private void printDetailedSchedule(Schedule sched) {
+    Enumeration e = sched.getAllScheduleElements();
+    QuantityScheduleElement qse;
+    while (e.hasMoreElements()) {
+      qse = (QuantityScheduleElement)e.nextElement();
+      double qty = qse.getQuantity();
+      long start = qse.getStartTime();
+      long end = qse.getEndTime();
+      System.out.println("           Start: "+TimeUtils.dateString(start)+
+			 " End: "+TimeUtils.dateString(end)+
+			 " Quantity: "+qty);
+    }
   }
 
   public int clearContentSchedule(Inventory inventory) {
