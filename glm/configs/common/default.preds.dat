@@ -259,6 +259,20 @@ AssetGroups containing only MajorEndItems (VII)
       (not (empty))
       (all (is:ClassVIIMajorEndItem)))))
 **********************************************************************
+Organizations with a "Strat*" role
+// The OrgPG's "getRoles()" is a Collection of Roles, where we want 
+// at least one Role to exist with a name that starts with "Strat"
+
+(and
+  (is:Organization)
+  (getOrganizationPG
+    (getRoles
+      (exists
+        (and
+          (is:Role)
+          (getName
+            (startsWith "Strat")))))))
+**********************************************************************
 -- matching a complex Java predicate
 // The predicate language is obviously not complete:
 //    few conditional/loop constructs, no named variables,
