@@ -526,18 +526,46 @@ public class SupplyExpander extends InventoryProcessor {
 	AggregateAsset aggAsset = (AggregateAsset)ldmFactory_.createAggregate(part, quantity);
 
 	subtask.setParentTask( parent_task );
+
+	// START TIME & END TIME
+        long parent_end =  TaskUtils.getEndTime(parent_task);
+//  	long start = parent_end - MSEC_PER_DAY +  (MSEC_PER_MIN*5);
+//  	long end  = parent_end - (MSEC_PER_MIN*5);
+
+  	long start = parent_end - TRANSPORT_TIME;
+ 	long end  = parent_end;
+
+	Preference startPref = createTransportStartPref(start);
+    	subtask.addPreference(startPref);
+
+	Preference endPref = createTransportEndPref(end);
+	subtask.addPreference(endPref);
+
 	// Fill in preposition phrases.
 	Vector pps = new Vector();
 
 	// From
-	PrepositionalPhrase pp_to = parent_task.getPrepositionalPhrase(Constants.Preposition.TO);
+	
 	NewPrepositionalPhrase prep_phrase = ldmFactory_.newPrepositionalPhrase();
  	prep_phrase.setPreposition( Constants.Preposition.FROM );
-//  	prep_phrase.setIndirectObject(thisGeoloc_);
-	prep_phrase.setIndirectObject((GeolocLocation)pp_to.getIndirectObject());
+	Enumeration geolocs = AssetUtils.getGeolocLocationAtTime(myOrganization_, start);
+	GeolocLocation geoloc = null;
+	if (geolocs.hasMoreElements()) {
+	    geoloc = (GeolocLocation)geolocs.nextElement();
+	} else {
+	    try {
+//  		printDebug("SupplyExpander, Using HomeLocation for transport");
+		geoloc = (GeolocLocation)myOrganization_.getMilitaryOrgPG().getHomeLocation();
+	    } catch (NullPointerException npe) {
+		printError("SupplyExpander, Unable to find Location for Transport");
+	    }
+	}
+//  	printDebug("SupplyExpander, At "+TimeUtils.dateString(start)+ " the geoloc is "+geoloc);
+	prep_phrase.setIndirectObject(geoloc);
 	pps.addElement(prep_phrase);
 
 	// To
+	PrepositionalPhrase pp_to = parent_task.getPrepositionalPhrase(Constants.Preposition.TO);
 	if (pp_to != null) { 
 	    prep_phrase = ldmFactory_.newPrepositionalPhrase();
 	    prep_phrase.setPreposition( Constants.Preposition.TO );
@@ -584,20 +612,6 @@ public class SupplyExpander extends InventoryProcessor {
 	subtask.setPrepositionalPhrases( pps.elements() );
 	subtask.setVerb(TRANSPORTVERB);
 	subtask.setPlan( parent_task.getPlan() );
-
-	// START TIME & END TIME
-        long parent_end =  TaskUtils.getEndTime(parent_task);
-//  	long start = parent_end - MSEC_PER_DAY +  (MSEC_PER_MIN*5);
-//  	long end  = parent_end - (MSEC_PER_MIN*5);
-
-  	long start = parent_end - TRANSPORT_TIME;
- 	long end  = parent_end;
-
-	Preference startPref = createTransportStartPref(start);
-    	subtask.addPreference(startPref);
-
-	Preference endPref = createTransportEndPref(end);
-	subtask.addPreference(endPref);
 	
 	// 	PenaltyFunction trans_pf = 
 	// 	    ldmFactory_.newDesiredSchedule(allocated_date, sourced_date, late_date);
