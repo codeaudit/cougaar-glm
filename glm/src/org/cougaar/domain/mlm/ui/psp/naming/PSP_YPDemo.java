@@ -209,6 +209,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
                 }}
           );
 
+
           session.getQueryObject().setEntries(attributesMap);
         /**
         // WHERE THE AgentRole SEARCH ATTRIBUTES GET COMPILED into Session.
@@ -334,7 +335,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
     private void processSearchFromPOST( String post, PlanServiceContext psc,
                       QueryObject qObject, YPDemoSession session, PrintStream out)
     {
-       System.out.println("[PSP_YPDemo.processQueriesFromPOST()] Entered.");
+       System.out.println("[PSP_YPDemo.processSearchFromPOST()] Entered.");
        String decodedpost = URLDecoder.decode(post);
        System.out.println("DECODED POST="+  decodedpost);
 
@@ -370,10 +371,9 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
        }
 
        //---------------------------------------------
-       String tag3 = qObject.GET_ALL_NAMES;
+       String tag3 = qObject.GET_ALL;
        int ind3 = decodedpost.indexOf(tag3);
        if( ind3 > -1) {
-           //System.out.println("[processFormPOST] case: qObject.GET_ALL_NAMES");
            //qObject.allRoles=true;
            session.addHeader("List all JNDI directories and contents.");
            NamingService nservice = psc.getServerPlugInSupport().getNamingService();
@@ -464,6 +464,7 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
         //
         // START ROLE CHECK BOXES
         //
+        /**
         Object [] arr = qObject.getEntries().values().toArray();
         for(int i=0; i< arr.length; i++) {
             Object entry = arr[i];
@@ -472,6 +473,17 @@ public class PSP_YPDemo extends PSP_BaseAdapter implements PlanServiceProvider, 
             } else {
                  out.println("<input type=checkbox name=" + entry.toString() + " value=X checked><I>" + entry.toString() + "</I>,");
             }
+        }
+        **/
+        Set keys = qObject.getEntries().keySet();
+        Object [] keysArray = keys.toArray();
+        for(int i=0; i< keysArray.length; i++ ){
+             String name = (String)keysArray[i];
+             Vector v = (Vector)qObject.getEntries().get(name);
+             for(int j=0; j<v.size(); j++) {
+                 String attribute = (String)v.get(j);
+                  out.println("<input type=checkbox name={" + name + "::" + attribute + "} value=X checked><I>" + attribute + "</I>,");
+             }
         }
         //
         // END SROLE CHECK BOXES

@@ -37,18 +37,23 @@ import java.util.Vector;
 public class QueryObject {
      public  QueryObject() {
           Vector v = new Vector();
-          v.add(GET_ALL_NAMES);
-          myEntries.put(GET_ALL_NAMES, v);
+          v.add(GET_ALL);
+          myEntries.put(GET_ALL, v);
      }
 
-     public final static String GET_ALL_NAMES = "GET_ALL_NAMES";
-     public final static String GET_ALL_ATTRIBUTES = "GET_ALL_ATTRIBUTES";
+     public final static String GET_ALL = "GET_ALL";
 
      //public boolean allRoles = true;
      private Map myEntries = new Hashtable(); // Values = vectors of Attributes, Keys = Names
 
      public Map getEntries() { return myEntries; }
-     public void setEntries( Map entries) { myEntries = entries; }
+     public void setEntries( Map entries) {
+           // make sure Query Tag Entries included the "catch all" GET ALL!
+           Vector v = new Vector();
+           v.add(QueryObject.GET_ALL);
+           entries.put(QueryObject.GET_ALL,v);
+           myEntries = entries;
+    }
 
 }
 
