@@ -102,10 +102,17 @@ public class GetOplanPlugIn extends SimplePlugIn {
     // this cluster has the same name as the cluster. This assumption
     // is false on both counts.
     String orgID = getClusterIdentifier().toString();
-    OplanPredicate op = new OplanPredicate(oplanCoupon.getOplanUID(), orgID);
+    OplanPredicate oplanPred = 
+      new OplanPredicate(oplanCoupon.getOplanUID(), orgID);
+
+    // Used to find local objects which originate from the original query -
+    // used to reconcile results of the query with local objects.
+    OplanPredicate localPred = 
+      new OplanPredicate(oplanCoupon.getOplanUID(), orgID);
     QueryRequest qr;
     try {
-      qr = alpFactory.newQueryRequest(op,
+      qr = alpFactory.newQueryRequest(oplanPred,
+                                      localPred,
 				      oplanCoupon.getHomeClusterID(),
 				      getClusterIdentifier());
     } catch (RuntimeException e) {
