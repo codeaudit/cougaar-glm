@@ -21,6 +21,9 @@
  
 package org.cougaar.domain.mlm.ui.psp.transportation.data;
 
+/**
+ * Thrown by the PSP_Transport psps when a query is ill-formed.
+ */
 public class UITTException 
     extends UIString 
     implements org.cougaar.core.util.SelfPrinter, java.io.Serializable {
