@@ -618,8 +618,10 @@ public abstract class InventoryManager extends InventoryProcessor {
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.FOR, myOrgName_));
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.OFTYPE, supplyType_));
 	Asset resource = inventory.getInventoryPG().getResource();
-	StringBuffer inventoryID = new StringBuffer().append("Inventory:").append(resource.getTypeIdentificationPG().getTypeIdentification());
-	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inventoryID.toString()));
+	TypeIdentificationPG tip = ((Asset)resource).getTypeIdentificationPG();
+	MaintainedItem itemID = MaintainedItem.findOrMakeMaintainedItem("Inventory", tip.getTypeIdentification(), 
+									null, tip.getNomenclature());
+	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, itemID));
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.REFILL));
 
 	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
@@ -737,8 +739,10 @@ public abstract class InventoryManager extends InventoryProcessor {
 	}
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO, io));
 	Asset resource = inv.getInventoryPG().getResource();
-	StringBuffer inventoryID = new StringBuffer().append("Inventory:").append(resource.getTypeIdentificationPG().getTypeIdentification());
-	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inventoryID.toString()));
+	TypeIdentificationPG tip = ((Asset)resource).getTypeIdentificationPG();
+	MaintainedItem itemID = MaintainedItem.findOrMakeMaintainedItem("Inventory", tip.getTypeIdentification(), 
+									null, tip.getNomenclature());
+	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, itemID));
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.REFILL));
 
 	NewTask task =  (NewTask)buildTask(null, Constants.Verb.SUPPLY, 

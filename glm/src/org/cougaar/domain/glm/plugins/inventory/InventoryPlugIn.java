@@ -431,6 +431,7 @@ public abstract class InventoryPlugIn extends GLMDecorationPlugIn {
     }
 
     public synchronized Inventory findOrMakeInventory(String supplytype, String id) {
+	if (id == null) return null;
 	Asset resource = theLDMF.getPrototype(id);
 	if (resource == null) {
 	    GLMDebug.DEBUG("InventoryPlugIn", "<"+supplytype+"> createInventory fail to get prototype for "+id);

@@ -20,7 +20,7 @@
 package org.cougaar.domain.glm.plugins.projection;
 
 import org.cougaar.core.cluster.ClusterIdentifier;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.Rate;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.util.UnaryPredicate;
@@ -38,6 +38,7 @@ import org.cougaar.domain.glm.debug.GLMDebug;
 import org.cougaar.domain.glm.plugins.ClusterOPlan;
 import org.cougaar.domain.glm.plugins.GLMDecorationPlugIn;
 import org.cougaar.domain.glm.plugins.AssetUtils;
+import org.cougaar.domain.glm.plugins.MaintainedItem;
 import org.cougaar.domain.glm.plugins.TaskUtils;
 import org.cougaar.domain.glm.plugins.TimeUtils;
 
@@ -226,13 +227,21 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 	}  
 
 	if (consumer != null) {
-	    StringBuffer consumerID = new StringBuffer();
+	    MaintainedItem itemID;
 	    if (consumer instanceof Asset) {
-		consumerID.append("Asset:").append(((Asset)consumer).getTypeIdentificationPG().getTypeIdentification());
+		TypeIdentificationPG tip = ((Asset)consumer).getTypeIdentificationPG();
+		ItemIdentificationPG iip = ((Asset)consumer).getItemIdentificationPG();
+		if (iip != null) {
+		    itemID = MaintainedItem.findOrMakeMaintainedItem("Asset", tip.getTypeIdentification(),
+								     iip.getItemIdentification(), tip.getNomenclature());
+		} else {
+		    itemID = MaintainedItem.findOrMakeMaintainedItem("Asset", tip.getTypeIdentification(), 
+								     null, tip.getNomenclature());
+		}
 	    } else {
-		consumerID.append("Other:").append(consumer.toString());
+		itemID = MaintainedItem.findOrMakeMaintainedItem("Other", consumer.toString(), null, null);
 	    }
-	    pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, consumerID.toString()));
+	    pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, itemID));
 	}
 
 	return pp_vector;

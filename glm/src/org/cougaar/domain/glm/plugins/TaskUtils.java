@@ -147,7 +147,7 @@ public class TaskUtils extends PlugInHelper {
 		pp = task.getPrepositionalPhrase(Constants.Preposition.MAINTAINING);
 		if (pp != null) {
 		    try {
-			if (((String)pp.getIndirectObject()).startsWith("Inventory")) {
+			if (((MaintainedItem)pp.getIndirectObject()).getMaintainedItemType().equals("Inventory")) {
 			    return true;
 			} 
 		    } catch (ClassCastException exc) {

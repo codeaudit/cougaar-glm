@@ -112,11 +112,13 @@ public abstract class GeneralInventoryManager extends InventoryManager {
             Set changes = refillAllocs.getChangeReports(alloc);
             if (TaskUtils.checkChangeReports(changes, PlanElement.EstimatedResultChangeReport.class)) {
                 Task refill = alloc.getTask();
-		String inventoryID = (String)refill.getPrepositionalPhrase(Constants.Preposition.MAINTAINING).getIndirectObject();
-		int idx = inventoryID.indexOf(':');
-		inventoryID = inventoryID.substring(idx+1);
-                invSet.add(inventoryPlugIn_.findOrMakeInventory(supplyType_, inventoryID));
-                changed = true;
+		MaintainedItem inventoryID = 
+		    (MaintainedItem)refill.getPrepositionalPhrase(Constants.Preposition.MAINTAINING).getIndirectObject();
+		Inventory inv = inventoryPlugIn_.findOrMakeInventory(supplyType_, inventoryID.getTypeIdentification());
+		if (inv != null) {
+		    invSet.add(inv);
+		    changed = true;
+		}
             }
         }
 	return changed;
