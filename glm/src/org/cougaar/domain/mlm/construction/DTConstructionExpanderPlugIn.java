@@ -62,19 +62,27 @@ public class DTConstructionExpanderPlugIn extends SimplePlugIn {
       interestingTasks = (IncrementalSubscription)subscribe(tasksPredicate());
       myExpansions = (IncrementalSubscription)subscribe(expansionsPredicate());
       myOrgActivities = (IncrementalSubscription)subscribe(orgActsPred());
-     }
 
+      if (didRehydrate()) {
+        // Only need one
+        Object first =  myOrgActivities.first();
+        if (first != null) {
+          getCDay((OrgActivity) first);
+        }
+      }
+    }
+  
+    
    
     public void execute() 
     {
       	//System.out.println("DTConstructionExpanderPlugin.execute");
       
         if ( cday == null && myOrgActivities.hasChanged()) {
-          Enumeration eorgacts = myOrgActivities.getAddedList();
-          if (eorgacts.hasMoreElements()) {
-            // only need one
-            OrgActivity anOrgAct = (OrgActivity) eorgacts.nextElement();
-            getCDay(anOrgAct);
+          // Only need one
+          Object first =  myOrgActivities.first();
+          if (first != null) {
+            getCDay((OrgActivity) first);
           }
         }
             
