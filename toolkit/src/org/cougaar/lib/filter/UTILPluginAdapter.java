@@ -398,9 +398,9 @@ public class UTILPluginAdapter extends ComponentPlugin implements UTILPlugin, St
       }
     }
     else if (!cpe.getTask().getSource().equals(getAgentIdentifier())) {
-      error ("ERROR! " + getName() + 
-	     " : "     + cpe.getTask().getUID() + 
-	     " has a null reported allocation.");
+      info ("unexpected : " + getName() + 
+	    " : "     + cpe.getTask().getUID() + 
+	    " has a null reported allocation.");
     }
   }
   
