@@ -2,8 +2,8 @@ package org.cougaar.domain.mlm.ui.newtpfdd.producer;
 
 import java.sql.Connection;
 
-import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.Query;
-import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.QueryResponse;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.query.Query;
+import org.cougaar.domain.mlm.ui.newtpfdd.gui.view.query.QueryResponse;
 
 public class DataGrabberClient implements DataGrabber {
   Connection connection;
