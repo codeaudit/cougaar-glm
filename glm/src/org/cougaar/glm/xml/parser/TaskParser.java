@@ -1,4 +1,4 @@
-// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.4 2002-03-14 23:06:09 gvidaver Exp $
+// $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/glm/xml/parser/TaskParser.java,v 1.5 2002-04-01 22:41:46 gvidaver Exp $
 /*
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
@@ -49,12 +49,19 @@ import org.cougaar.lib.xml.parser.DirectObjectParser;
 import org.cougaar.lib.xml.parser.PreferencesParser;
 import org.cougaar.lib.xml.parser.VerbParser;
 import org.cougaar.glm.plugins.MaintainedItem;
+import org.cougaar.util.log.*;
 
 /**
- * Copyright (c) 1999 BBN Technologies 
+ * Copyright (c) 1999-2002 BBN Technologies 
  */
 public class TaskParser{
   private static String PREPO="PREPO";
+
+  private static Logger logger;
+  public static void setLogger (Logger log) { 
+    logger = log; 
+    DirectObjectParser.setLogger(log);
+  }
 
   public static Task getTask(LDMServesPlugin ldm,
 			     ClusterIdentifier clusterIdentifier, 
