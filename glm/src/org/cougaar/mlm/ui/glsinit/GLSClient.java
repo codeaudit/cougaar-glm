@@ -58,18 +58,23 @@ public class GLSClient extends JPanel {
 
   /** for feedback to user on whether root GLS was successful **/
   private JLabel initLabel = new JLabel ("0 GLS Tasks published ");
-  private JLabel oplanLabel = new JLabel("No Oplan published");
+  private JLabel oplanPubLabel = new JLabel("No Oplan Info retrieved");
 
   /** A button to push to kick things off **/
   private JButton initButton = new JButton("Send GLS root");
-  private JButton oplanButton = new JButton("Publish Oplan");
-  private JButton updateOplanButton = new JButton("Update Oplan");
+  private JButton oplanButton = new JButton("Get Oplan Info");
   private JButton rescindButton = new JButton("Rescind GLS root");
   private JButton connectButton = new JButton("Connect");
 
-  /** A combo box for selecting the Oplan **/
-  private JComboBox oplanCombo = new JComboBox();
+  /** A label for displaying the given Oplan **/
+  private JLabel oplanLabel = new JLabel();
+  
+  private String myOplanId;
 
+
+  /** A text field for setting the CDay **/
+  private JTextField cDayField = new JTextField(10); 
+  
   /** number of GLS tasks published **/
   private int numGLS = 0;
 
@@ -83,8 +88,8 @@ public class GLSClient extends JPanel {
   private static final String INIT_COMMAND = "publishgls";
   private static final String RESCIND_COMMAND = "rescindgls";
   private static final String OPLAN_COMMAND = "sendoplan";
-  private static final String UPDATE_OPLAN_COMMAND = "updateoplan";
   private static final String OPLAN_PARAM_NAME = "&oplanID=";
+  private static final String CDATE_PARAM_NAME = "&cDate=";
 
   private boolean stopping = false;
 
@@ -127,6 +132,7 @@ public class GLSClient extends JPanel {
     hostField.setText(host);
     portField.setText(port);
     agentField.setText(agent);
+    cDayField.setEditable(false);
     init(true);
   }
 
@@ -214,7 +220,6 @@ public class GLSClient extends JPanel {
   private void disableButtons() {
     initButton.setEnabled(false);
     oplanButton.setEnabled(false);
-    updateOplanButton.setEnabled(false);
     rescindButton.setEnabled(false);
     connectButton.setEnabled(false);
   }
@@ -316,38 +321,63 @@ public class GLSClient extends JPanel {
   }
 
   private void createOplanPanel() {
-    JPanel oplanPanel = new JPanel();
-    oplanPanel.setLayout(new BoxLayout(oplanPanel, BoxLayout.Y_AXIS));
-    oplanPanel.setBorder(BorderFactory.createTitledBorder("Oplan"));
     oplanButton.setFocusPainted(false);
     oplanButton.addActionListener(buttonListener);
     oplanButton.setActionCommand(OPLAN_COMMAND);
-    updateOplanButton.setFocusPainted(false);
-    updateOplanButton.addActionListener(buttonListener);
-    updateOplanButton.setActionCommand(UPDATE_OPLAN_COMMAND);
     
     // turn this off until connection is made (even though it'll work)
     oplanButton.setEnabled(false); 
-    // turn this off until an oplan shows up
-    updateOplanButton.setEnabled(false); 
 
-    JPanel buttons = new JPanel(new GridBagLayout());
+    JPanel opButtonPanel = new JPanel(new GridBagLayout());
     int x = 0;
     int y = 0;
-    buttons.add(oplanButton,
+    opButtonPanel.add(oplanPubLabel,
                 new GridBagConstraints(x, y++, 1, 1, 0.0, 0.0,
                                        GridBagConstraints.WEST,
                                        GridBagConstraints.HORIZONTAL,
                                        new Insets(5, 5, 5, 5),
                                        0, 0));
-    buttons.add(updateOplanButton,
-                new GridBagConstraints(x, y, 1, 1, 0.0, 0.0,
+    opButtonPanel.add(oplanButton,
+                new GridBagConstraints(x, y++, 1, 1, 0.0, 0.0,
                                        GridBagConstraints.WEST,
                                        GridBagConstraints.HORIZONTAL,
                                        new Insets(0, 5, 5, 5),
                                        0, 0));
-    oplanPanel.add(createXPanel(buttons, oplanLabel));
-    add(oplanPanel);
+
+    JPanel infoComboPanel = new JPanel(new GridBagLayout());
+    x = 0;
+    y = 0;
+    infoComboPanel.add(new JLabel("Oplan: "),
+                   new GridBagConstraints(x++, y, 1, 1, 0.0, 0.0,
+                                          GridBagConstraints.WEST,
+                                          GridBagConstraints.NONE,
+                                          new Insets(5, 5, 5, 5),
+                                          0, 0));
+    infoComboPanel.add(oplanLabel,
+                   new GridBagConstraints(x, y++, 1, 1, 1.0, 0.0,
+                                          GridBagConstraints.CENTER,
+                                          GridBagConstraints.HORIZONTAL,
+                                          new Insets(5, 5, 5, 5),
+                                          0, 0));
+   
+    x=0;
+    infoComboPanel.add(new JLabel("Set C0 Day"),
+                   new GridBagConstraints(x++, y, 1, 1, 0.0, 0.0,
+                                          GridBagConstraints.WEST,
+                                          GridBagConstraints.NONE,
+                                          new Insets(5, 5, 5, 5),
+                                          0, 0));
+ 
+    infoComboPanel.add(cDayField,
+                   new GridBagConstraints(x, y++, 1, 1, 1.0, 0.0,
+                                          GridBagConstraints.CENTER,
+                                          GridBagConstraints.HORIZONTAL,
+                                          new Insets(5, 5, 5, 5),
+                                          0, 0));
+
+    JPanel oplanInfoPanel = createXPanel(opButtonPanel, infoComboPanel);
+    oplanInfoPanel.setBorder(BorderFactory.createTitledBorder("Oplan"));
+    add(oplanInfoPanel);
   }
 
   private void createInitPanel() {
@@ -359,10 +389,6 @@ public class GLSClient extends JPanel {
     initButton.setActionCommand(INIT_COMMAND);
     rescindButton.addActionListener(buttonListener);
     rescindButton.setActionCommand(RESCIND_COMMAND);
-
-    JLabel oplanComboLabel = new JLabel("Select Oplan");
-    JPanel buttonPanel = createYPanel(initLabel, initButton);
-    buttonPanel.add(rescindButton);
     
     JPanel glsButtons = new JPanel(new GridBagLayout());
     int x = 0;
@@ -379,47 +405,28 @@ public class GLSClient extends JPanel {
                                           GridBagConstraints.HORIZONTAL,
                                           new Insets(0, 5, 5, 5),
                                           0, 0));
-    glsButtons.add(rescindButton,
+
+    JPanel rescindPanel = new JPanel(new GridBagLayout());
+    x = 0;
+    y = 0;
+    rescindPanel.add(rescindButton,
                    new GridBagConstraints(x, y, 1, 1, 0.0, 0.0,
                                           GridBagConstraints.WEST,
                                           GridBagConstraints.HORIZONTAL,
                                           new Insets(0, 5, 5, 5),
                                           0, 0));
-    JPanel comboPanel = new JPanel(new GridBagLayout());
-    x = 0;
-    y = 0;
-    comboPanel.add(oplanComboLabel,
-                   new GridBagConstraints(x, y++, 1, 1, 0.0, 0.0,
-                                          GridBagConstraints.CENTER,
-                                          GridBagConstraints.NONE,
-                                          new Insets(5, 5, 5, 5),
-                                          0, 0));
-    comboPanel.add(oplanCombo,
-                   new GridBagConstraints(x, y, 1, 1, 1.0, 0.0,
-                                          GridBagConstraints.CENTER,
-                                          GridBagConstraints.HORIZONTAL,
-                                          new Insets(5, 5, 5, 5),
-                                          0, 0));
-    JPanel glsPanel = createXPanel(glsButtons, comboPanel);
+
+
+    JPanel glsPanel = createXPanel(glsButtons, rescindPanel);
     glsPanel.setBorder(BorderFactory.createTitledBorder("GLS"));
     add(glsPanel);
   }
 
-  private boolean comboContains(String id) {
-    for (int i = 0, n = oplanCombo.getItemCount(); i < n; i++) {
-      OplanInfo current = (OplanInfo) oplanCombo.getItemAt(i);
-      if (current.getOplanId().equals(id)) {
-	return true;
-      }
-    }
-    return false;
-  }
-
   /**
    * Creates url of the form:
-   * protocol://hostname:port/$agentname/servlet/?command=commandname&oplanID=oplanid
+   * protocol://hostname:port/$agentname/servlet/?command=commandname&oplanID=oplanid&cDate=cdate
    */
-  private String getURLString(String servlet, String command, String oplanId) {
+  private String getURLString(String servlet, String command, String oplanId, String cDate) {
     StringBuffer urlString = new StringBuffer();
     if (agentURL != null)
       urlString.append(agentURL);
@@ -440,21 +447,26 @@ public class GLSClient extends JPanel {
       urlString.append(OPLAN_PARAM_NAME);
       urlString.append(oplanId);
     }
+    if (cDate != null) {
+      urlString.append(CDATE_PARAM_NAME);
+      urlString.append(cDate);
+    }
     return urlString.toString();
   }
 
   /**
    * Invoked when the user selects buttons:
-   * Publish Oplan, Update Oplan, Send GLS Root, Rescind GLS Root
+   * Publish Oplan, Send GLS Root, Rescind GLS Root
    * Sends appropriate command to agent.
    */
   private class ButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
       String command = ae.getActionCommand();
-      String oplanId = null;
-      if (command.equals(INIT_COMMAND) || command.equals(RESCIND_COMMAND))
-        oplanId = ((OplanInfo)oplanCombo.getSelectedItem()).getOplanId();
-      String urlString = getURLString(GLS_INIT_SERVLET, command, oplanId);
+      String c0Date = null;
+      if (command.equals(INIT_COMMAND) || command.equals(RESCIND_COMMAND)) {
+        c0Date = (String)cDayField.getText();
+      }
+      String urlString = getURLString(GLS_INIT_SERVLET, command, myOplanId, c0Date);
       URL url;
       URLConnection urlConnection;
       try {
@@ -499,7 +511,7 @@ public class GLSClient extends JPanel {
   private class ConnectionButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
       String urlString = getURLString(GLS_REPLY_SERVLET, 
-                                      CONNECT_COMMAND, null);
+                                      CONNECT_COMMAND, null, null);
       URLConnection urlConnection = null;
       try {
 	URL url = new URL(urlString);
@@ -563,8 +575,9 @@ public class GLSClient extends JPanel {
 
   	String inputLine;
   	while ((inputLine = in.readLine()) != null && !stopping) {
-	  if (inputLine.indexOf("oplan") > 0)
-            addOplan(inputLine);
+	  if (inputLine.indexOf("oplan") > 0) {
+            addOplanInfo(inputLine);
+          }          
 	  else if (inputLine.indexOf("GLS") > 0)
             updateGLSTasks(inputLine);
 	}
@@ -611,23 +624,29 @@ public class GLSClient extends JPanel {
     }
 
     /**
-     * Add OPlan read from the agent to the list of available oplans,
-     * and update the GUI.
+     * Add OPlan c0 date read from the agent to the display,
+     * and update the GUI for the oplan name.
      */
-    private void addOplan(String s) {
+    private void addOplanInfo(String s) {
       int nameIndex = s.indexOf("name=") + 5;
       int idIndex = s.indexOf("id=");
       String name = s.substring(nameIndex, idIndex).trim();
-      String id = s.substring(idIndex +3, s.length()-1);
-      if (!comboContains(id)) {
-        oplanCombo.addItem(new OplanInfo(name, id));
-      }
+      oplanLabel.setText(name);
+
+      myOplanId = s.substring(idIndex +3, idIndex + 8);
+
+      int dateIndex = s.indexOf("c0_date=") + 8;
+      String c0Date = s.substring(dateIndex, s.length()-1);
+      cDayField.setEditable(true);
+      cDayField.setText(c0Date);
+      
       oplanButton.setEnabled(false);
-      oplanLabel.setText("Oplan Published");
-//       updateOplanButton.setEnabled(true);
+      oplanPubLabel.setText("Oplan Info Retrieved");
       initButton.setEnabled(true);
       getRootPane().setDefaultButton(initButton); 
     }
+
+
 
     /**
      * Update information about GLS tasks from information
@@ -645,21 +664,6 @@ public class GLSClient extends JPanel {
 
   } // end LineReader class
 
-  private class OplanInfo {
-    private String oplanName;
-    private String oplanID;
-
-    public OplanInfo(String name, String id) {
-      oplanName = name;
-      oplanID = id;
-    }
-    public String toString() {
-      return oplanName;
-    }
-    public String getOplanId() {
-      return oplanID;
-    }
-  }
 
   /**
    * Create a GUI panel; enclose it in a frame, and display the frame.
