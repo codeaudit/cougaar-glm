@@ -1,3 +1,13 @@
+2001-06-06  Beth DePass  <bdepass@bbn.com>
+  * org/cougaar/domain/mlm/plugin/generic/UniversalExpanderPlugIn.java:
+  Now uses a parameter specified in cougaar.rc to define what the 
+  database expansion table is. For example:
+    generic.database.expander.expansion_table=constr_task_exp
+  Also added some comments and did some general cleanup.
+  
+  * doc/UniversalExpanderPlugIn.html:
+  New detailed README file for the UniversalExpanderPlugIn.
+
 2001-06-01  Amy Fedyk  <afedyk@bbn.com>
 
 	Changed MAINTAINING Prep Phrase on Supply and ProjectSupply tasks.
