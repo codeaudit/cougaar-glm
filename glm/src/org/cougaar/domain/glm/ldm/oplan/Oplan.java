@@ -27,8 +27,8 @@
 package org.cougaar.domain.glm.ldm.oplan;
 
 import java.util.Date;
-
 import java.util.Vector;
+import java.util.Iterator;
 import java.util.Enumeration;
 
 import org.cougaar.core.cluster.Subscriber;
@@ -60,6 +60,7 @@ public class Oplan extends OwnedUniqueObject
   private String opName;
   private String priority;
   private Date cDay;
+  private Date endDay;          // End day of oplan
   private String xmlfilename_ ;
   private double version = 1.0;
     
@@ -82,6 +83,10 @@ public class Oplan extends OwnedUniqueObject
   public static final String HIGH = "High";
   public static final String MEDIUM = "Medium";
   public static final String LOW = "Low";
+
+  // Default oplan duration
+  public static final long DEFAULT_OPLAN_DURATION = 180 * 86400000L;// 180 days
+  public static final long INFER_END_DAY_FUDGE    =  30 * 86400000L;// 30 days
 
   // Theater values
   public static final String SOUTH_WEST_ASIA = "SWA";
@@ -136,11 +141,26 @@ public class Oplan extends OwnedUniqueObject
                String priority, 
                Date cDay)
   {
+    this(uid, oplanID, opName, priority, cDay, null);
+  }
+
+  public Oplan(UID uid, 
+	       String oplanID,
+               String opName, 
+               String priority, 
+               Date cDay,
+               Date endDay)
+  {
     setUID(uid);
     this.oplanID = unique(oplanID);
     this.opName = unique(opName);
     this.priority = unique(priority);
     this.cDay = cDay;
+    if (endDay == null) {
+      this.endDay = getDefaultEndDay();
+    } else {
+      this.endDay = endDay;
+    }
   }//Oplan
 
   /**     
@@ -156,7 +176,18 @@ public class Oplan extends OwnedUniqueObject
                String priority, 
                Date cDay)
   {
-    this (uid, oplanID, opName, priority, cDay);
+    this(xmlfilename, uid, oplanID, opName, priority, cDay, null);
+  }
+                                                                     
+  public Oplan(String xmlfilename,
+               UID uid, 
+	       String oplanID,
+               String opName, 
+               String priority, 
+               Date cDay,
+               Date endDay)
+  {
+    this (uid, oplanID, opName, priority, cDay, endDay);
     setXMLFileName(xmlfilename);
   }//Oplan
   
@@ -438,6 +469,42 @@ public class Oplan extends OwnedUniqueObject
     this.cDay = cDay;	
   }// setCday
       
+  /**     
+   * Sets the end day of the oplan.  This should 
+   * not be called by any subordinate clusters. 
+   * @param endDay the endDay.  Should be in the format mm/dd/yyyy
+   */
+  public void setEndDay(Date endDay) 
+  {
+    this.endDay = endDay;	
+  }// setCday
+
+  /**
+   * Infer the end day from all the sub elements of the oplan
+   **/
+  public void inferEndDay() {
+    Vector[] collections = {pods, dfspVector, orgrels, orgacts, fps, policies};
+    long maxET = Long.MIN_VALUE;
+    for (int i = 0; i < collections.length; i++) {
+      for (Iterator j = collections[i].iterator(); j.hasNext(); ) {
+        Object e = j.next();
+        if (e instanceof OplanContributor) {
+          OplanContributor contrib = (OplanContributor) e;
+          TimeSpan span = contrib.getTimeSpan();
+          if (span != null) {
+            long et = span.getEndTime();
+            if (et != span.MAX_VALUE && et > maxET) maxET = et;
+          }
+        }
+      }
+    }
+    if (maxET != Long.MIN_VALUE) {
+      setEndDay(new Date(maxET + INFER_END_DAY_FUDGE));
+    } else {
+      setEndDay(getDefaultEndDay());
+    }
+  }
+
   public void incrementVersion()
   {
     version = version + 0.00001;
@@ -495,11 +562,24 @@ public class Oplan extends OwnedUniqueObject
   }// getCday
    		
   /**     
+   * Gets the current end day being used by the Oplan
+   * @return Date The current endDay
+   */			
+  public Date getEndDay() 
+  {
+    return (endDay);
+  }// getEndDay
+
+  private Date getDefaultEndDay() {
+    return new Date(cDay.getTime() + DEFAULT_OPLAN_DURATION);
+  }
+
+  /**     
    * Returns a copy of the Oplan.
    * @return Object A copy of the Oplan.  
    */    		
   public Object clone() {
-    Oplan newOplan = new Oplan(getUID(), oplanID, opName, priority, cDay);
+    Oplan newOplan = new Oplan(getUID(), oplanID, opName, priority, cDay, endDay);
     newOplan.setOwner(getOwner());
     newOplan.setTheaterID(theaterID);
     newOplan.setTerrainType(terrainType);
@@ -576,7 +656,8 @@ public class Oplan extends OwnedUniqueObject
       pods.addElement( en.nextElement() );
 
     priority = otherOplan.getPriority();
-    cDay = otherOplan.getCday();  
+    cDay = otherOplan.getCday();
+    endDay = otherOplan.getEndDay();
     xmlfilename_ = otherOplan.getXMLFileName();
   }// setAll
 
