@@ -268,7 +268,7 @@ public class JTreeTablePlus extends JTable implements ActionListener, SwingUpdat
     {
 	if ( clusterQuery == null ) {
 	    try {
-		clusterQuery = new ClusterQuery(parentProvider);
+		clusterQuery = new ClusterQuery(parentProvider, clusterCache.getHost ());
 		clusterQuery.addActionListener(this);
 	    }
 	    catch ( Exception e ) {

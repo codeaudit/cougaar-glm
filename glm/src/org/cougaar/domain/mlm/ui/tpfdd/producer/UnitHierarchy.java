@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/UnitHierarchy.java,v 1.2 2001-01-18 03:52:06 gvidaver Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/producer/Attic/UnitHierarchy.java,v 1.3 2001-01-20 02:08:43 gvidaver Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -68,7 +68,6 @@ public class UnitHierarchy implements TreeModel
     private Hashtable reverseDepthHash;    // String -> Vector (upward command chain)
     private JTree myTree; // obnoxious intrusive callback that lets us force-expand when queried
 
-  private boolean debug = true;
   private static String higherAuthority = "HigherAuthority";
   
   protected Map orgToSuperior = new HashMap ();
@@ -92,6 +91,8 @@ public class UnitHierarchy implements TreeModel
     System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.testClusters");
   private static boolean useHierarchyPSP = 
     "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.useHierarchyPSP"));
+  private static boolean debug = 
+    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.producer.UnitHierarchy.debug"));
   
     static final String[][] superiors = 
     { // { "Society", "HigherAuthority" },
@@ -194,17 +195,24 @@ public class UnitHierarchy implements TreeModel
       { "91-ENGBN", "ENGBDE-1CAVDIV" }
       };
 
-    public UnitHierarchy()
+    public UnitHierarchy(String host)
     {
-	  if (demandRootClusters != null && demandRootClusters.length () > 1)
-		getNames (demandRoots, demandRootClusters);
-
+	  if (demandRootClusters == null || demandRootClusters.length () < 1)
+		demandRootClusters = "FUTURE, IOC, XVIIICorps"; // AEF1, AEF2, AEF9, COMMARFORPAC, 
+	  if (debug)
+		System.out.println("UnitHierarchy.UnitHierarchy - host is " + host);
+	  
 	immedHash = new Hashtable();
 	reverseImmedHash = new Hashtable();
 	depthHash = new Hashtable();
 	reverseDepthHash = new Hashtable();
 	// set up all the immediate relationships (a contains b if a directly commands b)
 	if (useHierarchyPSP) {
+	  if (debug)
+		System.out.println("UnitHierarchy.UnitHierarchy - getting hierarchy from psp.");
+
+	  getNames (demandRoots, demandRootClusters);
+	  setHost (host);
 	  determineHierarchyFromPSP ();
 	  for ( Iterator iter = orgToSuperior.keySet().iterator (); iter.hasNext (); ) {
 		String org = (String) iter.next ();
@@ -417,7 +425,7 @@ public class UnitHierarchy implements TreeModel
 
     public static void main(String[] args)
     {
-	System.out.println(new UnitHierarchy());
+	System.out.println(new UnitHierarchy("localhost"));
     }
 
     // TreeModel Interface

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/UnitPanel.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/UnitPanel.java,v 1.2 2001-01-20 02:08:43 gvidaver Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -48,7 +48,8 @@ public class UnitPanel extends JPanel
     private TreeCellRenderer renderer;
     private String selectedCluster;
     private TreeSelectionListener parent;
-
+  protected String host;
+  
     public String getSelectedCluster()
     {
 	return selectedCluster;
@@ -58,7 +59,7 @@ public class UnitPanel extends JPanel
     {
 	if ( units == null ) {
 	    try {
-		units = new UnitHierarchy();
+		units = new UnitHierarchy(host);
 	    }
 	    catch ( RuntimeException e ) {
 		handleException(e);
@@ -125,10 +126,11 @@ public class UnitPanel extends JPanel
 	return renderer;
     }
 
-    public UnitPanel(TreeSelectionListener parent)
+    public UnitPanel(TreeSelectionListener parent, String host)
     {
 	super();
 	this.parent = parent;
+	this.host = host;
 	setName("unitPanel");
 	setLayout(new BorderLayout());
 	add(getscroll(), BorderLayout.CENTER);

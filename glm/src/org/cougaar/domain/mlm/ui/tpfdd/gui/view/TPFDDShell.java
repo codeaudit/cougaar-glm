@@ -93,6 +93,9 @@ public class TPFDDShell extends JApplet implements ActionListener,
     private JTabbedPane ivjtabbingPane = null;
     private JPanel ivjtilingPane = null;
 
+  private static boolean debug = 
+    "true".equals (System.getProperty ("org.cougaar.domain.mlm.ui.tpfdd.gui.view.TPFDDShell.debug"));
+  
 
   private JLabel machineText = null;
 
@@ -726,7 +729,9 @@ public class TPFDDShell extends JApplet implements ActionListener,
     {
 	if ( clusterQuery == null ) {
 	    try {
-		clusterQuery = new ClusterQuery(provider);
+		if (debug) 
+		  System.out.println ("TPFDDShell.getclusterQuery - host is " + getclusterCache().getHost ());
+		clusterQuery = new ClusterQuery(provider, getclusterCache().getHost ());
 		clusterQuery.addActionListener(this);
 	    }
 	    catch ( Exception e ) {

@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ClusterQuery.java,v 1.1 2000-12-15 20:17:48 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/ClusterQuery.java,v 1.2 2001-01-20 02:08:43 gvidaver Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -110,8 +110,9 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
     private Vector listeners;
 
     private PlanElementProvider provider;
-
-    public ClusterQuery(PlanElementProvider provider)
+  protected String host;
+  
+    public ClusterQuery(PlanElementProvider provider, String host)
     {
 	super();
 	this.provider = provider;
@@ -120,6 +121,7 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
 	setTitle("Structured Cluster Query");
 	setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	setBounds(25, 50, 600, 725);
+	this.host = host;
 	setContentPane(getQueryContentPane());
     }
 
@@ -827,6 +829,7 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
 	}
 	return ivjcarrierSelectorPanel;
     }
+
     /**
      * Return the unitPanel property value.
      * @return JLabel
@@ -836,7 +839,7 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
     public UnitPanel getunitPanel() {
 	if (ivjunitPanel == null) {
 	    try {
-		ivjunitPanel = new UnitPanel(this);
+		ivjunitPanel = new UnitPanel(this, host);
 		// user code begin {1}
 		// user code end
 	    } catch (RuntimeException ivjExc) {
@@ -1105,7 +1108,8 @@ public class ClusterQuery extends JDialog implements ActionListener, TreeSelecti
 	try {
 	    ClusterQuery aClusterQuery;
 	    Debug.setHandler(new Debug(new SimpleProducer("Debug Handler"), true));
-	    aClusterQuery = new ClusterQuery(new ClientPlanElementProvider(new ClusterCache(true), null, false, false));
+	    aClusterQuery = new ClusterQuery(new ClientPlanElementProvider(new ClusterCache(true), null, false, false), 
+										 "localhost");
 	    aClusterQuery.setVisible(true);
 	} catch ( Exception exception ) {
 	    System.err.println("Exception occurred in main() of Object");
