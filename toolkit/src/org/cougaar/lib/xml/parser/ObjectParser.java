@@ -77,17 +77,16 @@ public class ObjectParser{
       // first one fails, though.
       if (className.endsWith(PG_STRING)) {
 	// first assume that it is a property or capability
-	if(obj == null){
-	  try{
-	    // logger.debug ("object - " + className + " class " + Class.forName(className));
-	    obj = ldmFactory.createPropertyGroup(Class.forName(className));
-	    // logger.debug("** OBJECT PARSER CREATED : from create PG " + obj);
-	  }
-	  catch(Exception e){
-	    // logger.debug ("exception " + e);
-	    obj = null;
-	  }
+	try{
+	  // logger.debug ("object - " + className + " class " + Class.forName(className));
+	  obj = ldmFactory.createPropertyGroup(Class.forName(className));
+	  // logger.debug("** OBJECT PARSER CREATED : from create PG " + obj);
+	} catch(Exception e){
+	  if (logger.isInfoEnabled())
+	    logger.info ("Could not make PG with name ending in PG, exception " + e);
+	  obj = null;
 	}
+
 	//  logger.debug ("object - " + className);
 	// now try to see if it is an asset
 	if(obj == null){
@@ -96,18 +95,44 @@ public class ObjectParser{
 	    // logger.debug("** OBJECT PARSER CREATED create Asset: " + obj);
 	  }
 	  catch(Exception e){
+	    if (logger.isInfoEnabled())
+	      logger.info ("Could not make asset with className " + className);
 	    obj = null;
 	  }      
 	}	
       } else {
 	//  logger.debug ("object - " + className);
 	// First try to see if it is an asset
+
+	// now try the measure classes & Skill
+	if (className.startsWith("org.cougaar.planning.ldm.measure.") ||
+	    className.equals    ("org.cougaar.glm.ldm.plan.Skill")){
+	  try{
+	    obj = Class.forName(className);
+	    // logger.debug("**** OBJECT PARSER CREATED : measure " + obj);
+	  }
+	  catch(Exception e){
+	    if (logger.isInfoEnabled())
+	      logger.info ("Could not make measure class from " + className);
+	    obj = null;
+	  }
+	}
+
+	// try ldm plan classes
+	if (obj == null && (className.startsWith("org.cougaar.glm.ldm.plan."))) {
+	  obj = getGLMObject (ldm, className);
+	}
+
 	if(obj == null){
 	  try{
-	    obj = ldmFactory.createAsset(Class.forName(className));
+	    Class foundClass = Class.forName(className);
+	    if (!foundClass.isInterface())
+	      obj = ldmFactory.createAsset(foundClass);
 	    //logger.debug("** OBJECT PARSER CREATED create Asset: " + obj + ":" + ((Asset)obj).getUID());
 	  }
 	  catch(Exception e){
+	    if (logger.isInfoEnabled())
+	      logger.info ("Could not make asset with className " + className, e);
 	    obj = null;
 	  }      
 	}
@@ -120,13 +145,14 @@ public class ObjectParser{
 	    // logger.debug("** OBJECT PARSER CREATED : from create PG " + obj);
 	  }
 	  catch(Exception e){
-	    // logger.debug ("exception " + e);
+	    if (logger.isInfoEnabled())
+	      logger.info ("Could not make PG with className " + className);
 	    obj = null;
 	  }
 	}
       }
       
-      // now assume that it could be build by the cluster object factory
+      // now assume that it could be built by the cluster object factory
       // notice that the ldm factory extends the cof.
       if(obj == null){
 	try{
@@ -136,19 +162,10 @@ public class ObjectParser{
 	  // logger.debug("*** OBJECT PARSER CREATED : from factory " + obj);
 	}
 	catch(Exception e){
-	  try {
-	    if (obj == null) {
-	      Factory af = ldm.getFactory("glm");
-	      if (af != null) {
-		  String method_name = getMethodName(className);
-		  Method method = af.getClass().getMethod(method_name, null);
-		  obj = method.invoke(af, null);
-	      }
-	      //logger.debug("*** OBJECT PARSER CREATED : from GLMFactory " + obj);
-	    } 
-	  } catch (Exception e2) {
-	    obj = null;
-	  }
+	  if (logger.isInfoEnabled())
+	    logger.info ("Could not make object with className " + className + " by doing method.invoke.");
+	  if (obj == null)
+	    obj = getGLMObject (ldm, className);
 	}
       }
 
@@ -164,6 +181,8 @@ public class ObjectParser{
 	  // logger.debug("** OBJECT PARSER CREATED : from create PG 2 " + obj);
 	}
 	catch(Exception e){
+	  if (logger.isInfoEnabled())
+	    logger.info ("Could not make PG with className " + className + " after failing to do createPG");
 	  // logger.debug ("exception " + e);
 	  obj = null;
 	}
@@ -176,6 +195,8 @@ public class ObjectParser{
 	  // logger.debug("**** OBJECT PARSER CREATED : measure " + obj);
 	}
 	catch(Exception e){
+	  if (logger.isInfoEnabled())
+	    logger.info ("Could not make measure class from " + className);
 	  obj = null;
 	}
       }
@@ -206,6 +227,24 @@ public class ObjectParser{
     return obj;
   } 
 
+  protected Object getGLMObject (LDMServesPlugin ldm, String className) {
+    Object obj = null;
+    try {
+      Factory af = ldm.getFactory("glm");
+      if (af != null) {
+	String method_name = getMethodName(className);
+	Method method = af.getClass().getMethod(method_name, null);
+	obj = method.invoke(af, null);
+      }
+      //logger.debug("*** OBJECT PARSER CREATED : from GLMFactory " + obj);
+    } catch (Exception e2) {
+      if (logger.isInfoEnabled())
+	logger.info ("Could not make object with className " + className + " from glm factory", e2);
+      obj = null;
+    }
+    return obj;
+  }
+	
   /** 
    * try to get a method name that could be used in the 
    * cluster object factory.
