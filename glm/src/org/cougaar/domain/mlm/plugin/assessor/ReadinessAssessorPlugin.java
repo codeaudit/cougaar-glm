@@ -746,14 +746,14 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	    mergedPhased.addAll(ar.getPhasedAspectValueResults());
 	  } else {
 	    currentPhased = new ArrayList(ar.getPhasedAspectValueResults());
-	    merge(mergedPhased, currentPhased);
+	    mergeAdd(mergedPhased, currentPhased);
 	  }
 	}
 
         suc = suc && ar.isSuccess();
         rating += ar.getConfidenceRating();
       } // end of looping through all subtasks
-
+      averageResults(mergedPhased, tst.size());
       AspectValue[] acc = calcRollup(mergedPhased);
 
       rating /= count;
