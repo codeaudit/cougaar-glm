@@ -27,9 +27,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -295,8 +298,10 @@ public class ParamTable implements ParamMap {
   /** show the parameters in the map **/
   public String toString () {
     StringBuffer sb = new StringBuffer ();
-    for (Iterator i = paramTable.keySet().iterator ();
-         i.hasNext (); ) {
+	List keys = new ArrayList (paramTable.keySet());
+	Collections.sort (keys);
+	
+    for (Iterator i = keys.iterator (); i.hasNext (); ) {
       Object key = i.next ();
       sb.append ("" + key + "->" + paramTable.get(key) + "\n");
     }
