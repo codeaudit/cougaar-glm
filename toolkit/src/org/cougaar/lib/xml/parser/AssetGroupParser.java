@@ -17,6 +17,7 @@ import org.cougaar.domain.planning.ldm.asset.AssetGroup;
 
 import org.cougaar.lib.util.UTILAsset;
 
+import java.util.Date;
 import java.util.Vector;
 
 import org.w3c.dom.Node;
@@ -32,7 +33,14 @@ public class AssetGroupParser{
     try{
       NodeList  nlist    = node.getChildNodes();      
       int       nlength  = nlist.getLength();
-      String    id       = node.getAttributes().getNamedItem("id").getNodeValue();
+      Node      idNode   = node.getAttributes().getNamedItem("id");
+	  String id = null;
+	  
+	  if (idNode == null)
+		id = "" + new Date ().getTime ();
+	  else
+        id = idNode.getNodeValue();
+
       Vector    assets   = new Vector();
 
       for(int i = 0; i < nlength; i++){
