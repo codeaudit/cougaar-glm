@@ -97,8 +97,8 @@ public class GLMFactory implements org.cougaar.core.domain.Factory {
    *  factory.newRateSchedule
    *  @return LaborSchedule
    *  @see org.cougaar.glm.ldm.plan.LaborSchedule
-   *  @see org.cougaar.glm.ldm.plan.QuantityScheduleElements
-   *  @see org.cougaar.glm.ldm.plan.RateScheduleElements
+   *  @see org.cougaar.glm.ldm.plan.QuantityScheduleElement
+   *  @see org.cougaar.glm.ldm.plan.RateScheduleElement
    **/
 
   public static LaborSchedule newLaborSchedule(Schedule qtySchedule, Schedule rateSchedule) {

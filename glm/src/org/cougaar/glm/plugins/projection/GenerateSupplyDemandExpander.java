@@ -46,7 +46,7 @@ import org.cougaar.glm.plugins.TimeUtils;
 public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 
   /** 
-   * @see Class#ProjectionTasksPredicate
+   * @see #ProjectionTasksPredicate
    **/
   public GenerateSupplyDemandExpander(GLMDecorationPlugin pi, Organization org, Vector types) {
     super(pi, org, types, new ProjectionTasksPredicate(pi,org,types));

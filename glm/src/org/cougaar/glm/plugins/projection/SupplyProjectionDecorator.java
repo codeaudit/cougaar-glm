@@ -32,7 +32,8 @@ import org.cougaar.glm.plugins.PluginDecorator;
 
 /** Associates proper SupplyProjector with a given SupplyProjectionPlugin. 
  * @see SupplyProjectionPlugin
- * @see SupplyProjector **/
+ * @see GenerateSupplyDemandExpander
+ **/
 public class SupplyProjectionDecorator extends PluginDecorator {
     private static final String            CLASSNAME = "SupplyProjectionDecorator";
     // move to the plug in

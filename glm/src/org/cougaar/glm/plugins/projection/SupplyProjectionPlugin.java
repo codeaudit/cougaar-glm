@@ -29,7 +29,7 @@ import java.util.Vector;
  * with the proper arguments at run time
  * by the SupplyProjectionDecorator.
  * @see SupplyProjectionDecorator
- * @see SupplyProjector
+ * @see GenerateSupplyDemandExpander
  */
 public class SupplyProjectionPlugin extends GLMDecorationPlugin {
     private static String                  theater_ = "SWA";
