@@ -35,6 +35,10 @@ abstract public class EntryParameterEditor extends JDialog {
   protected JTextField myDefaultField;
   protected JTable myEntryTable;
   protected UIPolicyParameterInfo myPolicyInfo;
+  protected JButton myCommitButton;
+  protected JButton myCancelButton;
+
+  protected boolean myEditable = true;
 
   /**
    * Constructer - takes a PolicyTableModel
@@ -52,7 +56,23 @@ abstract public class EntryParameterEditor extends JDialog {
 
     pack();
   }
-  
+
+  protected boolean getEditable() {
+    return myEditable;
+  }
+
+  protected void setEditable(boolean editable) {
+    myEditable = editable;
+
+    if (myCommitButton != null) {
+      myCommitButton.setEnabled(editable);
+    }
+
+    if (myDefaultField != null) {
+      myDefaultField.setEditable(editable);
+    }
+  }
+
   /**
    * initDefaultEditors - set up default editors for parameters. 
    * Install editors for Integer and Double fields. Use JTable default for 
@@ -123,6 +143,7 @@ abstract public class EntryParameterEditor extends JDialog {
     defaultPanel.add(new JLabel("Default Value: "));
     
     myDefaultField = new JTextField((String)myPolicyInfo.getValue(), 15);
+    myDefaultField.setEditable(getEditable());
     defaultPanel.add(myDefaultField);
     getContentPane().add(defaultPanel);
 
@@ -145,19 +166,20 @@ abstract public class EntryParameterEditor extends JDialog {
     getContentPane().add(new JScrollPane(myEntryTable));
 
     JPanel buttonPanel = new JPanel();
-    JButton commitButton = new JButton("Commit");
-    commitButton.setActionCommand("Commit");
-    commitButton.addActionListener(new CommitListener());
-    buttonPanel.add(commitButton);
+    myCommitButton = new JButton("Commit");
+    myCommitButton.setActionCommand("Commit");
+    myCommitButton.addActionListener(new CommitListener());
+    myCommitButton.setEnabled(getEditable());
+    buttonPanel.add(myCommitButton);
 
-    JButton cancelButton = new JButton("Cancel");
-    cancelButton.addActionListener(new CancelListener());
-    buttonPanel.add(cancelButton);
+    myCancelButton = new JButton("Cancel");
+    myCancelButton.addActionListener(new CancelListener());
+    buttonPanel.add(myCancelButton);
     getContentPane().add(buttonPanel);
   }
 
   abstract protected DefaultTableModel initTableModel(UIPolicyParameterInfo policyInfo);
-
+  
   private class CommitListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       DefaultCellEditor cellEditor = 

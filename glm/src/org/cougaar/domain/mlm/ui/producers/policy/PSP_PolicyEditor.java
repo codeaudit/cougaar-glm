@@ -7,7 +7,7 @@
  *  COUGAAR licence agreement.
  * </copyright>
  */
- 
+
 package org.cougaar.domain.mlm.ui.producers.policy;
 
 import java.io.ByteArrayInputStream;
@@ -175,7 +175,7 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
     Vector policies = convertToUIPolicyInfos(ldmPolicies.elements());
 
     pr.printObject(policies);
-  }
+  }  
 
   public boolean returnsXML() {
     return true;
@@ -218,14 +218,14 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
       UIPolicyInfo policyInfo = 
         new UIPolicyInfo(ldmPolicy.getName(), 
                          ldmPolicy.getUID().toString());
-      System.out.println("Policy: " + ldmPolicy.getName());
+      //System.out.println("Policy: " + ldmPolicy.getName());
       RuleParameter []ldmParameters = ldmPolicy.getRuleParameters();
       
       for (int i = 0; i < ldmParameters.length; i++) {
         int type = convertToUIType(ldmParameters[i].ParameterType());
         
-        System.out.println("Parameter " + ldmParameters[i].getName() + " type " + 
-                           ldmParameters[i].ParameterType());
+        //System.out.println("Parameter " + ldmParameters[i].getName() + " type " + 
+        //                   ldmParameters[i].ParameterType());
 
         // Don't recognize the type so report error and move on to the 
         // next parameter
@@ -283,6 +283,22 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
                                                     longMax));
           break;
 
+        case UIPolicyParameterInfo.CLASS_TYPE:
+          ClassRuleParameter 
+            classParam = (ClassRuleParameter)ldmParameters[i];
+          policyInfo.add(new UIPolicyParameterInfo(classParam.getName(),
+                                                   type,
+                                                   ((Class) classParam.getValue()).getName()));
+          break;
+
+        case UIPolicyParameterInfo.PREDICATE_TYPE:
+          PredicateRuleParameter 
+            predicateParam = (PredicateRuleParameter)ldmParameters[i];
+          policyInfo.add(new UIPolicyParameterInfo(predicateParam.getName(),
+                                                   type,
+                                                   predicateParam.getValue().getClass()));
+          break;
+
         case UIPolicyParameterInfo.KEY_TYPE:
           KeyRuleParameter keyParam = (KeyRuleParameter)ldmParameters[i];
           List ldmKeys = Arrays.asList(keyParam.getKeys());
@@ -306,7 +322,21 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
                iterator.hasNext();) {
             RangeRuleParameterEntry entry = 
               (RangeRuleParameterEntry)iterator.next();
-            uiRangeEntries.add(new UIRangeEntryInfo(entry));
+            Object entryValue = entry.getValue();
+            if (entryValue instanceof String) {
+              // value was/is a String
+              uiRangeEntries.add(new UIStringRangeEntryInfo(entry));
+            } else {
+              if (entryValue instanceof SelfPrinter) {
+                uiRangeEntries.add(new UIRangeEntryInfo(entry));
+              } else {
+                // Convert to string because we don't know how to xmit otherwise
+                // Enclose in quotation marks so XML parser doesn't try to parse.
+                uiRangeEntries.add(new UIRangeEntryInfo("\"" + entryValue.toString() + "\"",
+                                                        entry.getMin(),
+                                                        entry.getMax()));
+              }
+            }
           }
           policyInfo.add(new UIRangeParameterInfo(rangeParam.getName(),
                                                   type,
@@ -369,11 +399,11 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
       break;
 
     case RuleParameter.PREDICATE_PARAMETER:
-      type = -1;                // These are not handled
+      type = UIPolicyParameterInfo.PREDICATE_TYPE;
       break;
     
     default:
-      System.out.println("PSP_PolicyEditor.convertToUIType - " +
+      System.err.println("PSP_PolicyEditor.convertToUIType - " +
                          "unrecognized type " + ldmType);
       type = -1;
     }
@@ -413,6 +443,10 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
       type = RuleParameter.KEY_PARAMETER;
       break;
 
+    case UIPolicyParameterInfo.PREDICATE_TYPE:
+      type = RuleParameter.PREDICATE_PARAMETER;
+      break;
+
     case UIPolicyParameterInfo.RANGE_TYPE:
       type = RuleParameter.RANGE_PARAMETER;
       break;
@@ -422,7 +456,7 @@ public class PSP_PolicyEditor extends PSP_BaseAdapter implements PlanServiceProv
       break;
     
     default:
-      System.out.println("PSP_PolicyEditor.convertToUIType - " +
+      System.err.println("PSP_PolicyEditor.convertToUIType - " +
                          "unrecognized type " + ldmType);
       type = -1;
     }

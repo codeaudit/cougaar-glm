@@ -20,17 +20,17 @@ import org.cougaar.core.util.SelfPrinter;
 
 public class UIRangeEntryInfo implements SelfPrinter, java.io.Serializable {
 
-  private String myValue = null;
+  private Object myValue = null;
   private int myMin = Integer.MIN_VALUE;
   private int myMax = Integer.MAX_VALUE;
-  
+
   public UIRangeEntryInfo(RangeRuleParameterEntry entry) {
     myValue = entry.getValue();
     myMin = entry.getRangeMin();
     myMax = entry.getRangeMax();
   }
 
-  public UIRangeEntryInfo(String value, int min, int max) {
+  public UIRangeEntryInfo(Object value, int min, int max) {
     myValue = value;
     myMin = min;
     myMax = max;
@@ -41,16 +41,16 @@ public class UIRangeEntryInfo implements SelfPrinter, java.io.Serializable {
 
 
   /**
-   * @return String - get the value
+   * @return Object - get the value
    */
-  public String getValue() {
+  public Object getValue() {
     return myValue;
   }
 
   /**
-   * @param String  - set the value
+   * @param Object  - set the value
    */
-  public void setValue(String value) {
+  public void setValue(Object value) {
     myValue = value;
   }
 

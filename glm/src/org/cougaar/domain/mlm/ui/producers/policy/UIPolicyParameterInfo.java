@@ -11,8 +11,12 @@
 package org.cougaar.domain.mlm.ui.producers.policy;
 
 import org.cougaar.domain.planning.ldm.policy.RuleParameter;
+
 import org.cougaar.core.util.AsciiPrinter;
 import org.cougaar.core.util.SelfPrinter;
+
+import org.cougaar.util.UnaryPredicate;
+
 
 public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable {
   //PSP_PolicyEditor responsible for conversion from RuleParameter types to
@@ -26,15 +30,17 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
   public static final int RANGE_TYPE = 6;
   public static final int KEY_TYPE = 7;
   public static final int LONG_TYPE = 8;
+  public static final int PREDICATE_TYPE = 9;
   
   // Remember to update if add/removing types
   private static final int MIN_TYPE = STRING_TYPE;
-  private static final int MAX_TYPE = LONG_TYPE; 
+  private static final int MAX_TYPE = PREDICATE_TYPE; 
   
 
   private String myName = null;
   private int myType = -1;
   private Object myValue = null;
+  private boolean myEditable = false;
 
   public static String convertToString(int type) {
 
@@ -65,6 +71,9 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
 
     case KEY_TYPE: 
       return "Key";
+
+    case PREDICATE_TYPE: 
+      return "UnaryPredicate";
     
     default:
       return "Invalid type";
@@ -72,9 +81,11 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
   }
 
   public UIPolicyParameterInfo(String name, int type, Object value) {
-    myName = name;
-    myType = type;
-    myValue = value;
+    setName(name);
+    setType(type);
+    setValue(value);
+
+    myEditable = defaultEditable();
   }
 
   public UIPolicyParameterInfo() {
@@ -219,6 +230,20 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
 
       break;
 
+    case PREDICATE_TYPE:
+      if (value instanceof UnaryPredicate) {
+        myValue = value.getClass();
+      } else {
+        try {
+          myValue = Class.forName(value.toString());
+        } catch (ClassNotFoundException cnfe) {
+          cnfe.printStackTrace();
+          success = false;
+        }
+      }
+
+      break;
+
     default:
       myValue = value;
       success = true;
@@ -233,9 +258,13 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
     }
   }
 
-  //Move to display code?
-  public boolean isEditable() {
-    return (myType != RuleParameter.CLASS_PARAMETER);
+
+  public boolean getEditable() {
+    return myEditable;
+  }
+
+  public void setEditable(boolean editable) {
+    myEditable = editable;
   }
 
   public String validDataInfo() {
@@ -247,16 +276,11 @@ public class UIPolicyParameterInfo implements SelfPrinter, java.io.Serializable 
     pr.print(myName, "Name");
     pr.print(myType, "Type");
     pr.print(myValue, "Value");
+    pr.print(myEditable, "Editable");
   }
 
+  protected boolean defaultEditable() {
+    return ((myType != CLASS_TYPE) &&
+            (myType != PREDICATE_TYPE));
+  }
 }
-
-
-
-
-
-
-
-
-
-

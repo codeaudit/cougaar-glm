@@ -117,6 +117,8 @@ public class PolicyProducer extends ThreadedALPProducer {
         
         String xmlString = new String(reply);
 
+        //System.out.println(xmlString);
+
         Element root = 
           XMLObjectFactory.readXMLRoot(new ByteArrayInputStream(reply));
 

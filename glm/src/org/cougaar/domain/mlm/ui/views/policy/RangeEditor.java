@@ -27,9 +27,9 @@ public class RangeEditor extends EntryParameterEditor {
   private static final int VALUE_COL = 0;
   private static final int MIN_COL = 1;
   private static final int MAX_COL = 2;
-
   private static final String []COLUMN_HEADERS = {"Value", "Min", "Max"};
 
+  
   public static void showEditor(JFrame frame, UIRangeParameterInfo paramInfo) {
     JDialog dialog = new RangeEditor(frame, paramInfo);
 
@@ -53,17 +53,27 @@ public class RangeEditor extends EntryParameterEditor {
     Object [][]dataArray = new Object[rangeEntries.size()][3];
     int row = 0;
 
+    setEditable(policyInfo.getEditable());
+
     for (Iterator iterator = rangeEntries.iterator();
          iterator.hasNext();
          row++) {
       UIRangeEntryInfo entry = (UIRangeEntryInfo)iterator.next();
+      /*
+      if (!(entry instanceof UIStringRangeEntryInfo)) {
+        setEditable(false);
+        }*/
       dataArray[row] = new Object[3];
       dataArray[row][VALUE_COL] = entry.getValue();
       dataArray[row][MIN_COL] = new Integer(entry.getMin());
       dataArray[row][MAX_COL] = new Integer(entry.getMax());
     }
-
+    
     return new DefaultTableModel(dataArray, COLUMN_HEADERS) {
+      public boolean isCellEditable(int cellRow, int cellColumn) {
+        return getEditable();
+      }
+
       public Class getColumnClass(int columnIndex) {
         switch (columnIndex) {
           case MIN_COL:
@@ -79,7 +89,18 @@ public class RangeEditor extends EntryParameterEditor {
   protected boolean updatePolicyInfo() {
     ArrayList rangeEntries = new ArrayList();
     for (int row = 0; row < myEntryTableModel.getRowCount(); row++) {
-      String value = (String)myEntryTableModel.getValueAt(row, VALUE_COL);
+      Object value = myEntryTableModel.getValueAt(row, VALUE_COL);
+      if (!(value instanceof String)) {
+        // Classic 'this should never happen' but if it does 
+        // don't let them try to commit again
+        setEditable(false);
+        JOptionPane.showMessageDialog(null,
+                                      "Error parsing value - " + value + 
+                                      " - can only accept Strings.",
+                                      "Input Error",
+                                      JOptionPane.ERROR_MESSAGE);
+        return false;
+      }
 
       Object minValue = myEntryTableModel.getValueAt(row, MIN_COL);
       int min;
@@ -122,7 +143,8 @@ public class RangeEditor extends EntryParameterEditor {
         return false;
       }
 
-      rangeEntries.add(new UIRangeEntryInfo(value, min, max));
+      // BOZO - Assumption is that I only edit if all range entries are UIStringRangeEntryInfo
+      rangeEntries.add(new UIStringRangeEntryInfo((String) value, min, max));
     }
 
     myPolicyInfo.setValue(myDefaultField.getText());

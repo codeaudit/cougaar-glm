@@ -10,12 +10,16 @@
  
 package org.cougaar.domain.mlm.ui.views.policy;
 
+import java.util.Iterator;
+
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import org.cougaar.domain.mlm.ui.producers.policy.UIBoundedParameterInfo;
 import org.cougaar.domain.mlm.ui.producers.policy.UIPolicyInfo;
 import org.cougaar.domain.mlm.ui.producers.policy.UIPolicyParameterInfo;
+import org.cougaar.domain.mlm.ui.producers.policy.UIRangeParameterInfo;
+import org.cougaar.domain.mlm.ui.producers.policy.UIStringRangeEntryInfo;
 
 public class PolicyTableModel extends AbstractTableModel {
   private final String[] myColumnNames = {"Parameter", "Value"};
@@ -28,6 +32,17 @@ public class PolicyTableModel extends AbstractTableModel {
   
   public void setPolicy(UIPolicyInfo policy) {
     myPolicy = policy;
+
+    if (myPolicy != null) {
+      // Set editable info on parameters
+      for (Iterator iterator = myPolicy.getParameters().iterator();
+           iterator.hasNext();) {
+        UIPolicyParameterInfo uiParameter = (UIPolicyParameterInfo) iterator.next();
+        
+        uiParameter.setEditable(isEditableParameter(uiParameter));
+      }
+    }
+
     fireTableChanged(new TableModelEvent(this));
   }
 
@@ -46,10 +61,14 @@ public class PolicyTableModel extends AbstractTableModel {
   
   // Only allow editing of value
   public boolean isCellEditable(int row, int column) {
-    if (column == 1)
-      return true;
-    else
+    UIPolicyParameterInfo parameter = 
+      (UIPolicyParameterInfo)myPolicy.getParameters().get(row); 
+
+    if (column == 1) {
+      return parameter.getEditable();
+    } else {
       return false;
+    }
   }
   
   public int getColumnCount() { return myColumnNames.length; }
@@ -83,8 +102,11 @@ public class PolicyTableModel extends AbstractTableModel {
   }
   
   public void setValueAt(Object value, int row, int column) {
-    // Only allowed to modify the value column
-    if (!isCellEditable(row, column)) {
+    UIPolicyParameterInfo  uiParameter = 
+      (UIPolicyParameterInfo)myPolicy.getParameters().get(row);
+
+    if (!(value.equals(uiParameter.getValue())) &&
+        !(isCellEditable(row, column))){
       ArrayIndexOutOfBoundsException e = 
         new ArrayIndexOutOfBoundsException("PolicyTableModel.setValueAt " +
                                            "- invalid column " +
@@ -99,6 +121,46 @@ public class PolicyTableModel extends AbstractTableModel {
       pp.setValue(value);
       fireTableChanged(new TableModelEvent(this, row, row, column));
     }
+  }
+
+  static public boolean isEditableParameter(UIPolicyParameterInfo uiParameter) {
+    boolean editable;
+
+    switch (uiParameter.getType()) {
+    case UIPolicyParameterInfo.STRING_TYPE:
+    case UIPolicyParameterInfo.INTEGER_TYPE:
+    case UIPolicyParameterInfo.DOUBLE_TYPE:
+    case UIPolicyParameterInfo.ENUMERATION_TYPE:
+    case UIPolicyParameterInfo.BOOLEAN_TYPE:
+    case UIPolicyParameterInfo.LONG_TYPE:
+    case UIPolicyParameterInfo.KEY_TYPE:
+      editable = true;
+      break;
+
+    case UIPolicyParameterInfo.CLASS_TYPE:
+    case UIPolicyParameterInfo.PREDICATE_TYPE:
+      editable = false;
+      break;
+      
+    case UIPolicyParameterInfo.RANGE_TYPE:        
+      editable = true;
+      
+      for (Iterator rangeIterator = ((UIRangeParameterInfo) uiParameter).getRangeEntries().iterator();
+           rangeIterator.hasNext();) {
+        if (!(rangeIterator.next() instanceof UIStringRangeEntryInfo)) {
+          editable = false;
+          break;
+        }
+      }
+      break;
+     
+    default:
+      System.err.println("PolicyTableModel.isEditableParameter(): unrecognized parameter type - " +
+                         uiParameter.getType());
+      editable = false;
+    }
+
+    return editable;
   }
 }
 

@@ -86,39 +86,63 @@ public class PolicyTable extends JTable {
     
     Object value = getValueAt(row, column);
     
-    if (value != null) {
-      UIPolicyParameterInfo paramInfo = 
-        (UIPolicyParameterInfo)myModel.getPolicy().getParameters().get(row);
+    UIPolicyParameterInfo paramInfo = 
+      (UIPolicyParameterInfo)myModel.getPolicy().getParameters().get(row);
+    
+    if (paramInfo.getType() == UIPolicyParameterInfo.ENUMERATION_TYPE) {
+      DefaultCellEditor enumerationEditor = 
+        (DefaultCellEditor)getDefaultEditor(paramInfo.getClass());
       
-      if (paramInfo.getType() == UIPolicyParameterInfo.ENUMERATION_TYPE) {
-        DefaultCellEditor enumerationEditor = 
-          (DefaultCellEditor)getDefaultEditor(paramInfo.getClass());
-        
-        JComboBox comboBox = (JComboBox)enumerationEditor.getComponent();
-        
-        ArrayList enums = 
-          ((UIEnumerationParameterInfo)paramInfo).getEnumeration();
-        comboBox.setModel(new DefaultComboBoxModel(enums.toArray()));
-        return enumerationEditor;
-      } else if (paramInfo.getType() == UIPolicyParameterInfo.RANGE_TYPE) {
-        DefaultCellEditor rangeEditor = 
-          (DefaultCellEditor)getDefaultEditor(paramInfo.getClass());
-
-        JButton button = (JButton)rangeEditor.getComponent();
-        button.setText("Default: " + paramInfo.getValue());
-        return rangeEditor;
-      } else if (paramInfo.getType() == UIPolicyParameterInfo.KEY_TYPE) {
-        DefaultCellEditor keyEditor = 
-          (DefaultCellEditor)getDefaultEditor(paramInfo.getClass());
-
-        JButton button = (JButton)keyEditor.getComponent();
-        button.setText("Default: " + paramInfo.getValue());
-        return keyEditor;
-      } else {
-        return getDefaultEditor(value.getClass());
-      }
-    } else {
+      JComboBox comboBox = (JComboBox)enumerationEditor.getComponent();
+      
+      ArrayList enums = 
+        ((UIEnumerationParameterInfo)paramInfo).getEnumeration();
+      comboBox.setModel(new DefaultComboBoxModel(enums.toArray()));
+      return enumerationEditor;
+    } else if (paramInfo.getType() == UIPolicyParameterInfo.RANGE_TYPE) {
+      DefaultCellEditor rangeEditor = 
+        (DefaultCellEditor)getDefaultEditor(paramInfo.getClass());
+      
+      JButton button = (JButton)rangeEditor.getComponent();
+      button.setText("Default: " + paramInfo.getValue());
+      return rangeEditor;
+    } else if (paramInfo.getType() == UIPolicyParameterInfo.KEY_TYPE) {
+      DefaultCellEditor keyEditor = 
+        (DefaultCellEditor)getDefaultEditor(paramInfo.getClass());
+      
+      JButton button = (JButton)keyEditor.getComponent();
+      button.setText("Default: " + paramInfo.getValue());
+      return keyEditor;
+    } else if (value != null) {
+      return getDefaultEditor(value.getClass());
+    }  else {
       return super.getCellEditor(row, column);
+    }
+  }
+
+    /**
+     * Returns true if the cell at <I>row</I> and <I>column</I>
+     * is editable.  Overwrite default implementation so that we can 
+     * invoke range/key editor even if the parameter is not
+     * editable. Range/Key editor are the only way to see
+     * all the components of a Range/Key parameter.
+     * the value of that cell.
+     *
+     * @param   row      the row whose value is to be looked up
+     * @param   column   the column whose value is to be looked up
+     * @return  true if the cell is editable.
+     */
+  public boolean isCellEditable(int row, int column) { 
+    UIPolicyParameterInfo paramInfo = 
+      (UIPolicyParameterInfo)myModel.getPolicy().getParameters().get(row);
+    
+    if ((paramInfo.getType() == UIPolicyParameterInfo.KEY_TYPE) || 
+        (paramInfo.getType() == UIPolicyParameterInfo.RANGE_TYPE)) { 
+      // Can only see the entries with the range/key editor.
+      // Rely on range/key editor to disable the ability to make changes.
+      return true;
+    } else {
+      return super.isCellEditable(row, column);
     }
   }
 
@@ -155,6 +179,19 @@ public class PolicyTable extends JTable {
         }
       };
     setDefaultEditor(Integer.class, integerEditor);
+
+    final LongField longField = new LongField(0, 5);
+    longField.setHorizontalAlignment(LongField.RIGHT);
+    
+    PolicyCellEditor longEditor = 
+      new PolicyCellEditor(longField) {
+        //Override DefaultCellEditor's getCellEditorValue method
+        //to return an Long, not a String:
+        public Object getCellEditorValue() {
+          return new Long(longField.getValue());
+        }
+      };
+    setDefaultEditor(Long.class, longEditor);
     
     final DoubleField doubleField = new DoubleField(0, 10, 
                                                     new DecimalFormat());
@@ -247,6 +284,7 @@ public class PolicyTable extends JTable {
     integerRenderer.setHorizontalAlignment(JLabel.RIGHT);
 
     setDefaultRenderer(Integer.class, integerRenderer);
+    setDefaultRenderer(Long.class, integerRenderer);
 
     DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {
       DecimalFormat myFormatter = new DecimalFormat();
@@ -310,6 +348,10 @@ public class PolicyTable extends JTable {
 
       case UIPolicyParameterInfo.INTEGER_TYPE:
         renderer = getDefaultRenderer(Integer.class);
+        break;
+
+      case UIPolicyParameterInfo.LONG_TYPE:
+        renderer = getDefaultRenderer(Long.class);
         break;
 
       case UIPolicyParameterInfo.DOUBLE_TYPE:

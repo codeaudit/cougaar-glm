@@ -24,7 +24,7 @@ public class UIRangeParameterInfo extends UIPolicyParameterInfo
   public UIRangeParameterInfo(String name, int type, Object value,
                               ArrayList rangeEntries) {
     super(name, type, value);
-    myRangeEntries = rangeEntries;
+    setRangeEntries(rangeEntries);
   }
 
   public UIRangeParameterInfo() {
@@ -32,14 +32,15 @@ public class UIRangeParameterInfo extends UIPolicyParameterInfo
 
 
   /**
-   * @return String - the name of the policy parameter
+   * @return ArrayList - All UIRangeEntryInfos
    */
   public ArrayList getRangeEntries() {
     return myRangeEntries;
   }
 
   /**
-   * @return String - the name of the policy parameter
+   * sets range entries
+   * @param rangeEntries - ArrayList of UIRangeEntryInfos
    */
   public void setRangeEntries(ArrayList rangeEntries) {
     myRangeEntries = rangeEntries;
@@ -59,14 +60,14 @@ public class UIRangeParameterInfo extends UIPolicyParameterInfo
   }
 
   /**
-   * Get parameter value (String) keyed by int
+   * Get parameter value keyed by int
    * If key fits into one of the defined ranges, return associated
-   * value, otherwise return default value (String).
-   * @returns Object parameter value (String). Note : could be null.
+   * value, otherwise return default value .
+   * @returns Object parameter value. Note : could be null.
    */
   public Object getValue(int key)
   {
-    String value = (String)getValue();
+    Object value = getValue();
     for(int i = 0; i < myRangeEntries.size(); i++) {
       UIRangeEntryInfo range = (UIRangeEntryInfo)myRangeEntries.get(i);
       if ((range.getMin() <= key) &&
@@ -84,12 +85,7 @@ public class UIRangeParameterInfo extends UIPolicyParameterInfo
    */
   public void setValue(Object value)
     throws UIParameterInfoIllegalValueException {
-
-    if (value instanceof String) {
-      super.setValue((String)value);
-    } else {
-      super.setValue(value.toString());
-    }
+    super.setValue(value);
   }
 
   public void printContent(AsciiPrinter pr) {
