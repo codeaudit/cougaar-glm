@@ -111,7 +111,7 @@ public class SQLFDMAggregateAssetCreator extends PeriodicQuery
 	proto.setTypeIdentificationPG(tip);
 	tip.setTypeIdentification("NSN/"+(String)data[NSN]);
 	tip.setNomenclature((String)data[TI_NM]);
-	tip.setAlternateTypeIdentification((String)data[TI_ID]);
+	tip.setAlternateTypeIdentification("LIN/"+(String)data[TI_ID]);
 
 	NewMovabilityPG movabilityPG = (NewMovabilityPG)ldmf.createPropertyGroup("MovabilityPG");
 	proto.setMovabilityPG(movabilityPG);
