@@ -81,7 +81,7 @@
 	   <pathelement location="${lib}/toolkit.jar" />
 	   <pathelement location="${sys}/xerces.jar" />
 	   <pathelement location="${sys}/fesi-111.jar" />
-	   <pathelement location="${sys}/jcchart451K.jar" />
+	   <pathelement location="${sys}/jcchart.jar" />
 	   <pathelement location="${sys}/servlet.jar" />
 	</path>
 
