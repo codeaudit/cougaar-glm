@@ -1,47 +1,24 @@
 * MB 9.0
 
-The Readiness Assessor was added in this release.   A PSP and GUI client from Clark Software.    The Readiness Assessor plugin determines readiness based on the ratio of quantity requested over quantity supplied.
+The Readiness Assessor was added in this release.   A PSP and GUI client from 
+Clark Software.    The Readiness Assessor plugin determines readiness based 
+on the ratio of quantity requested over quantity supplied.
 
-The UniversalAllocator was improved to be able to effect particular tasks based on regular expression matching.   If the plugin argument is a verb is followed by a slash, the remainder of the text up to a semicolon (or the end of the parameter) is interpreted as a glob-style matching pattern that is applied to the toString() of the task being matched. A match requires that both the verb and string must match in order for the task to be allocated.
+The UniversalAllocator was improved to be able to effect particular tasks based
+on regular expression matching.   If the plugin argument is a verb is followed
+by a slash, the remainder of the text up to a semicolon (or the end of the 
+parameter) is interpreted as a glob-style matching pattern that is applied to 
+the toString() of the task being matched. A match requires that both the verb
+and string must match in order for the task to be allocated.
 
-An Addition of OrgDataPlugInFile and OrgDataPlugInDB new DB and file versions of OrdDataPlugIn. 
+An Addition of OrgDataPlugInFile and OrgDataPlugInDB new DB and file versions
+of OrdDataPlugIn. 
 
 Integrated the usage of glm plugins into the csmart configuration database.
 
-In repackaging the domain part of most of the glm package names was removed and seen as unnecessary.   Conformed to new change not to references Plugins as PlugIns in all class names.
+In repackaging the domain part of most of the glm package names was removed and
+seen as unnecessary.   Conformed to new change not to references Plugins as 
+PlugIns in all class names.
 
 Fixed numerous bugs concerned with Rehydration, and Inventory Manager issues.
-
-
-* MB 8.2
-
-Improved performance of the Inventory Manager by reducing number of times
-it would run its cycle in response to a change in demand.   Now the Inventory
-Manager will wait and decide when its customers have presented most of their
-demand for the time being, before waking up, and starting its work cycle 
-to handle the accumulated demand.
-
-Within one of the inventory managers working cycles, enhancements were made 
-to work more efficiently and trim down the number of tasks and responding 
-results between clusters.
-
-Reorganization of the Inventory Manager, its subclasses, and supporting 
-classes for a cleaner design that generates better solutions.   Methods in 
-subclasses were made more generic and moved to higher point in the class 
-hierarchy to better isolate the points for overloading.   Better placement of
-state/data items within appropriate classes.  The algorithm performed in an 
-Inventory Managers work cycle was made smarter, more comprehensive, 
-and truer to the miltary model from where it was abstracted.
-
-Many bug fixes were made, not only functional, but some that will improve 
-memory usage and performance.
-
-* MB 7.2
-
-Introduction of the InventoryPolicy portion of the config that broken
-out on class of supply for and inventory manager, holds a number of 
-the decision making parameters used in and Inventory Manager. 
-Includes switchover day, goal level multiplier, days of demand on hand to have for reorder level,  how many days of demand to consider, capacity and other
-flags. 
-
 
