@@ -42,19 +42,25 @@ import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.lib.callback.UTILFilterCallback;
+import org.cougaar.lib.callback.UTILRehydrateReactor;
 import org.cougaar.lib.param.ParamMap;
 import org.cougaar.lib.param.Param;
 import org.cougaar.lib.util.UTILExpand;
 import org.cougaar.lib.util.UTILParamTable;
 import org.cougaar.lib.xml.parser.ParamParser;
 
+import java.io.Serializable;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
 
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.LDMService;
+import org.cougaar.core.plugin.PluginBindingSite;
 
 /**
  * Implementation of UTILPlugIn interface.
@@ -73,6 +79,9 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
    * setupFilters () is wrapped in an open/closeTransaction block.
    */
   protected final void setupSubscriptions() {
+	if (blackboard.didRehydrate ())
+	  justRehydrated ();
+	
     getEnvData();
     setInstanceVariables ();
 
@@ -97,7 +106,7 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
    */
   private void setInstanceVariables () {
     ldmf = getLDMService().getFactory();
-    myClusterName = getClusterIdentifier().getAddress();
+    myClusterName = ((PluginBindingSite)getBindingSite()).getAgentIdentifier().getAddress();
 	realityPlan = ldmf.getRealityPlan();
     mySubscriptions = new Vector ();
   }
@@ -215,7 +224,7 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
 	  myP = new Vector ();
 
     // create the parameter table
-    myParams = createParamTable (myP, getClusterIdentifier());
+    myParams = createParamTable (myP, ((PluginBindingSite)getBindingSite()).getAgentIdentifier());
 
     // set instance variables
     try{myExtraExtraOutput = myParams.getBooleanParam("ExtraExtraOutput");}
@@ -352,7 +361,7 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
 	blackboard.publishChange(cpe);
       }
     }
-    else if (!cpe.getTask().getSource ().equals (getClusterIdentifier())) {
+    else if (!cpe.getTask().getSource ().equals (((PluginBindingSite)getBindingSite()).getAgentIdentifier())) {
       System.out.println ("ERROR! " + getName () + 
                           " : "     + cpe.getTask ().getUID () + 
                           " has a null reported allocation.");
@@ -389,6 +398,15 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
     synchronized (mySubscriptions) {
       for (int i = 0; i < mySubscriptions.size ();  i++) {
         UTILFilterCallback cb = (UTILFilterCallback) mySubscriptions.elementAt (i);
+		if (blackboard.didRehydrate ()) {
+		  if (cb instanceof UTILRehydrateReactor) {
+			((UTILRehydrateReactor)cb).reactToRehydrate();
+			// don't react to a changed filter, since react to rehydrate should
+			// already deal with new items in the container
+			continue;
+		  }
+		}
+		
         if (cb.getSubscription ().hasChanged ()) {
           if (myExtraFilterOutput)
             System.out.println ("\tFilter# " + i + 
@@ -401,6 +419,84 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
     }
   }
 
+  /** 
+   * Automatic support for persistent state.
+   *
+   * Calls rehydrate if appropriate 
+   */
+  protected void justRehydrated () {
+	if (myExtraExtraOutput)
+	  System.out.println (getName () + ".justRehydrated.");
+
+	persistentState = findState ();
+	
+	// tell subclasses about rehydrated state
+	if (persistentState != null) {
+	  if (myExtraOutput || true)
+		System.out.println (getName () + ".justRehydrated - found state.");
+	  rehydrateState (persistentState.stuff);
+	}
+	else {
+	  if (myExtraOutput || true)
+		System.out.println (getName () + ".justRehydrated - no state found.");
+	}
+  }
+
+  /** 
+   * Call this method to add your state to what will be persisted 
+   *
+   * Call from inside of a transaction.
+   */
+  protected void registerPersistentState (Object obj) {
+	if (blackboard.didRehydrate ()) {
+	  System.out.println (getName () + ".registerPersistentState - just rehydrated, " + 
+						  "so ignoring register request for " + obj);
+	  return;
+	}
+	
+	if (persistentState == null) {
+	  persistentState = findState ();
+
+	  if (persistentState == null) {
+		persistentState = new PersistentState(getClassName ()+"_Persistent_State");
+		if (myExtraOutput || true)
+		  System.out.println (getName () + ".registerPersistentState - publishingState.");
+		publishAdd (persistentState);
+	  }
+	}
+
+	persistentState.stuff.add (obj);
+  }
+
+  /** anything you added with register, you will be informed about here upon rehydration */
+  protected void rehydrateState (List stuff) {
+	if (myExtraOutput || true)
+	  System.out.println (getName () + ".rehydrate - got " + stuff.size () + " persistent items.");
+  }
+  
+  protected PersistentState findState () {
+	Collection stuff = blackboard.query (new UnaryPredicate () {
+		public boolean execute (Object obj) {
+		  boolean myState = (obj instanceof PersistentState);
+		  if (!myState) return false;
+		  PersistentState state = (PersistentState)obj;
+		  boolean match = state.name.startsWith (getClassName());
+		  
+		  System.out.println (getName () + "findState - found state!  Comparing state name " +
+							  state.name + " with " + getClassName() + 
+							  ((match) ? " MATCH! " : " no match"));
+
+		  return match;
+		}
+	  }
+										 );
+
+	if (stuff.isEmpty ())
+	  return null;
+	else
+	  return (PersistentState) stuff.iterator().next();
+  }
+  
   /**
    * Replaces a task in a workflow with a copy of itself.
    *
@@ -477,6 +573,14 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
     return getClusterName () + "/" + getClassName (); 
   }
 
+  /** holds persistent state, labeled with name of plugin */
+  private static class PersistentState implements Serializable {
+	public PersistentState (String name) {	  this.name =name;	}
+	  
+	String name;
+	List stuff  = new ArrayList();
+  }
+  
   protected Vector mySubscriptions;
 
   protected RootFactory ldmf;
@@ -493,4 +597,5 @@ public class UTILPlugInAdapter extends ComponentPlugin implements UTILPlugIn {
   protected boolean showDebugOnFailure;
   protected boolean skipLowConfidence = true;
   protected double HIGH_CONFIDENCE = 0.99d;
+  protected PersistentState persistentState;
 }

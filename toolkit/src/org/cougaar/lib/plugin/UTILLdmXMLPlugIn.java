@@ -93,9 +93,14 @@ public class UTILLdmXMLPlugIn extends SimplePlugIn implements LDMPlugInServesLDM
   /**
    * Load the data from the file synchronously.
    * We'll not actually do anything later on.
+   *
+   * Does not create assets if being rehydrated.
    */
   protected void setupSubscriptions() {
-    createAssets();
+	// if we just rehydrated, all the assets created before persisting should already be
+	// in the logplan
+	if (!didRehydrate ())
+	  createAssets();
   }
 
   /** 

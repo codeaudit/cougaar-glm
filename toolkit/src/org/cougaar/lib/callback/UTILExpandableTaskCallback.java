@@ -27,6 +27,7 @@ import org.cougaar.util.UnaryPredicate;
 
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * For use with (threaded?) expanders.
@@ -34,7 +35,7 @@ import java.util.Enumeration;
  * Filters for tasks without workflows or plan elements.
  */
 
-public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter {
+public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter implements UTILRehydrateReactor {
   public UTILExpandableTaskCallback (UTILGenericListener listener) {
     super (listener);
   }
@@ -145,6 +146,27 @@ public class UTILExpandableTaskCallback extends UTILFilterCallbackAdapter {
       }
     }
   }
+
+  /** place where you can react to rehydration event */
+  public void reactToRehydrate () {
+    Collection contents = mySub.getCollection ();
+	
+	if (xdebug || xxdebug || true) 
+	  System.out.println ("UTILExpandableTaskCallback.reactToRehydrate - Notifying " + myListener + 
+						  " about " + contents.size () + " previously buffered tasks.");
+
+    for (Iterator iter = contents.iterator (); iter.hasNext ();) {
+      Task t = (Task) iter.next();
+	  
+      if (isWellFormed (t)) {
+		((UTILGenericListener) myListener).handleTask (t);
+		if (xxdebug) 
+		  System.out.println ("UTILExpandableTaskCallback.reactToRehydrate - Notifying " + myListener + 
+							  " about " + t.getUID());
+      }
+    }
+	synchronized (myListener) {  myListener.notify ();	}
+  }  
 
   /**
    * NOTE : duplicate in UTILWorkflowCallback -- should make common base class later!
