@@ -14,5 +14,7 @@ cost=select price from header where NSN = :nsns
 volume=select cube from header where NSN = :nsns
 weight=select weight from header where NSN = :nsns
 classIXData=select nomenclature, ui, price, cube, weight from header where NSN = :nsns 
+classIIIPackagedData=select nomenclature, ui, price, cube, weight from header where NSN = :nsns 
 classVData=select nomenclature, weight, ccc from ammo_characteristics where DODIC = :nsns
 ui=select ui from header where NSN = :nsns
+packagedPOLQuery=select PACKAGED_NSN from ARMY_PACKAGED_DCR_BY_OPTEMPO where PACKAGED_NSN = :nsns
