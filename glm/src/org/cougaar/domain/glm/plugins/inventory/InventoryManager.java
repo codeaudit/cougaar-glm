@@ -577,7 +577,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 			lowestPriorityDueOut = null;
 			// recalculate inventory levels
 			invpg.determineInventoryLevels();
-			day++;
+//  			day++; Redo the same day in case one dueout is not enough
 			printDebug("Inventory level after  failing allocation is "+
 				   TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(),day))+" : "+invpg.getLevel(day));
 		    }
