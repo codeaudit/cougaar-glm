@@ -18,7 +18,7 @@
         <RangeValue min="20"  max="49">
 	  <RuleParam name="Meals">
       	    <KeySet value="">
-	      <KeyValue key="Breakfast" value="NONE" />
+	      <KeyValue key="Breakfast" value="HDR" />
 	      <KeyValue key="Lunch" value="NONE" />
 	      <KeyValue key="Dinner" value="NONE" />
     	    </KeySet>
