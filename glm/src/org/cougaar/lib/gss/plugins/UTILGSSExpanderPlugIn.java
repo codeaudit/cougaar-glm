@@ -301,7 +301,7 @@ public abstract class UTILGSSExpanderPlugIn
 
 
     org.cougaar.lib.util.UTILExpand.handleTask(ldmf, 
-						    getDelegate(), 
+						    blackboard, 
 						    getName(),
 						    wantConfidence, 
 						    myExtraOutput,
