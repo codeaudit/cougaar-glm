@@ -41,11 +41,11 @@ public class InventoryShortfallChartDataModel extends
   InventoryChartDataModel unconfirmed = null;
     int maxSeries = 4;
 
-  public static final String DUE_OUT_SHORTFALL_LABEL = "Requisition Shortfall Qty";
-  public static final String CONFIRMED_DUE_IN_SHORTFALL_LABEL = "Failed Restock Shortfall Qty";
-  public static final String UNCONFIRMED_DUE_IN_SHORTFALL_LABEL = "Restock Shortfall Qty";
-  public static final String PROJECTED_DUE_OUT_SHORTFALL_LABEL = "Projected Requisition Shortfall Qty"; 
-  public static final String PROJECTED_DUE_IN_SHORTFALL_LABEL = "Projected Consumption Shortfall Qty"; 
+  public static final String DUE_OUT_SHORTFALL_LABEL = "Demand Shortfall";
+  public static final String CONFIRMED_DUE_IN_SHORTFALL_LABEL = "Failed Resupply Shortfall";
+  public static final String UNCONFIRMED_DUE_IN_SHORTFALL_LABEL = "Resupply Shortfall Qty";
+  public static final String PROJECTED_DUE_OUT_SHORTFALL_LABEL = "Projected Demand Shortfall"; 
+  public static final String PROJECTED_DUE_IN_SHORTFALL_LABEL = "Projected Resupply Shortfall"; 
 
   public InventoryShortfallChartDataModel(InventoryChartDataModel actual,
                                           InventoryChartDataModel requested) {
