@@ -506,12 +506,12 @@ public class UTILExpand {
   public Expansion makeExpansionWithConfidence(PlanningFactory ldmf, Workflow wf) {
     Task t = wf.getParentTask();
     Enumeration prefs;
-    synchronized (t) { prefs = t.getPreferences(); } // bug #2125
+    synchronized (t) { prefs = t.getPreferences(); } // bug #2125 (MIK: this is SO unlikely to help!)
     List aspect_values = new ArrayList();
 
     while(prefs.hasMoreElements()){
       Preference p = (Preference)prefs.nextElement();
-      aspect_values.add(AspectValue.newAspectValue(p.getAspectType(), pref.getPreferenceBestValue(p)));
+      aspect_values.add(pref.getPreferenceBestAspectValue(p));
     }
 
     AllocationResult ar = 

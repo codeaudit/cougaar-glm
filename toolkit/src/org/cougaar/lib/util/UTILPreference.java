@@ -296,6 +296,16 @@ public class UTILPreference {
   }
 
   /**
+   * Given a Preference get its best aspect value
+   * @param pref the preference to examine
+   * @return double best aspect value for the preference
+   */
+  public AspectValue getPreferenceBestAspectValue(Preference pref){
+    ScoringFunction sfunc = pref.getScoringFunction();
+    return sfunc.getBest().getAspectValue();
+  }
+
+  /**
    * Examine plan element for a reported aspect value
    *
    * Many times easier to use type specific variants -- like getReportedReadyAt
