@@ -107,8 +107,10 @@ public abstract class Packer extends GenericPlugin {
                                    " from " + task.getSource());
         }
         ADD_TASKS++;
-        ADD_TONS += task.getPreferredValue(AspectType.QUANTITY);
-        tonsReceived += task.getPreferredValue(AspectType.QUANTITY);
+
+	double taskWeight = Sizer.getTaskMass(task).getShortTons();
+        ADD_TONS += taskWeight;
+	tonsReceived += taskWeight;
         tasks.add(task);
       }
     }
@@ -126,6 +128,7 @@ public abstract class Packer extends GenericPlugin {
 
     double tonsPacked = doPacking(tasks, getSortFunction(), getPreferenceAggregator(),
 				  getAllocationResultDistributor());
+
 
     if ((tonsPacked > tonsReceived + 0.0001) || (tonsPacked < tonsReceived - 0.0001)) {
       if (getLoggingService().isErrorEnabled()) {

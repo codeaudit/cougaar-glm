@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.cougaar.util.log.Logging;
 
 import org.cougaar.planning.ldm.measure.Mass;
 import org.cougaar.planning.ldm.plan.Task;
@@ -79,21 +80,9 @@ class Sizer {
     // to see if the _curTask has anything left in it...
     if (_remainder == 0.0) {
       if ((_curTask = getNextTask()) != null) {
-	GLMAsset assetToBePacked = (GLMAsset) _curTask.getDirectObject();
-	if (assetToBePacked.hasPhysicalPG()) {
-	  Mass massPerEach = assetToBePacked.getPhysicalPG().getMass();
-	  _remainder = _curTask.getPreferredValue(AspectType.QUANTITY) *
-	    massPerEach.getShortTons();
-	  _gp.getLoggingService().debug("Quantity: " + _curTask.getPreferredValue(AspectType.QUANTITY) + 
-				      " * massPerEach: " + massPerEach.getShortTons() +
-				      " = " + _remainder + " short tons");
-	} else {
-	  _gp.getLoggingService().warn("Sizer.provide: asset - " + 
-					assetToBePacked + 
-					" - does not have a PhysicalPG. " +
-					"Assuming QUANTITY preference is in stort tons.");
-	  _remainder = _curTask.getPreferredValue(AspectType.QUANTITY);
-	}
+	Mass taskMass = getTaskMass(_curTask);
+	_remainder = taskMass.getShortTons();
+
 	if (_expansionQueue != null) {
 	  _gp.getLoggingService().error ("Sizer.provide : ERROR - Expansion queue is not null - we will drop tasks :");
 	  for (Iterator iter = _expansionQueue.iterator(); iter.hasNext(); )
@@ -213,5 +202,27 @@ class Sizer {
 
     _gp.createExpansion(subtasks.iterator(), expandme);
   }
-    
+
+  public static Mass getTaskMass(Task task) {
+    GLMAsset assetToBePacked = (GLMAsset) task.getDirectObject();
+    if (assetToBePacked.hasPhysicalPG()) {
+      Mass massPerEach = assetToBePacked.getPhysicalPG().getMass();
+      double taskWeight = task.getPreferredValue(AspectType.QUANTITY) *
+	massPerEach.getShortTons();
+      if (logging.defaultLogger().debugEnabled()) {
+	Logging.defaultLogger().debug("Sizer.getTaskMass: Quantity: " + 
+				      task.getPreferredValue(AspectType.QUANTITY) + 
+				      " * massPerEach: " + massPerEach.getShortTons() +
+				      " = " + taskWeight + " short tons");
+	return new Mass(taskWeight, Mass.SHORT_TONS);
+      }
+    } else {
+      Logging.defaultLogger().warn("Sizer.getTaskMass: asset - " + 
+				   assetToBePacked + 
+				   " - does not have a PhysicalPG. " +
+				   "Assuming QUANTITY preference is in stort tons.");
+      return new Mass(task.getPreferredValue(AspectType.QUANTITY), 
+		      Mass.SHORT_TONS);
+    }
+  }
 }
