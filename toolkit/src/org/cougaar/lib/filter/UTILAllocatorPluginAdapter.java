@@ -69,8 +69,10 @@ public abstract class UTILAllocatorPluginAdapter
   public void getEnvData () {
     super.getEnvData ();
 
-    try{delayBeforeAllocRemoval = myParams.getLongParam("delayBeforeAllocRemoval");}
-    catch(Exception e){delayBeforeAllocRemoval = 0;}
+    alloc = new UTILAllocate(logger);
+
+    //    try{delayBeforeAllocRemoval = myParams.getLongParam("delayBeforeAllocRemoval");}
+    //    catch(Exception e){delayBeforeAllocRemoval = 0;}
   }
 
   /**
@@ -160,7 +162,7 @@ public abstract class UTILAllocatorPluginAdapter
    */
   public void handleIllFormedTask (Task t) {
     reportIllFormedTask(t);
-    blackboard.publishAdd (UTILAllocate.makeFailedDisposition (null, ldmf, t));
+    blackboard.publishAdd (alloc.makeFailedDisposition (null, ldmf, t));
   }
 
   /**
@@ -435,6 +437,7 @@ public abstract class UTILAllocatorPluginAdapter
   protected UTILWorkflowCallback   myWorkflowCallback;
   protected UTILAssetCallback      myAssetCallback;
   protected UTILAllocationCallback myAllocCallback;
+  protected UTILAllocate alloc;
 
-  protected long delayBeforeAllocRemoval = 0; //millis
+  //  protected long delayBeforeAllocRemoval = 0; //millis
 }

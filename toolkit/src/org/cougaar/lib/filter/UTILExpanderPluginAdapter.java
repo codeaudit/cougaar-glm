@@ -63,7 +63,9 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
 
   public void localSetup () {
     super.localSetup ();
-    
+
+    expand = new UTILExpand (logger);
+
     try { wantConfidence = getMyParams().getBooleanParam ("SimpleExpanderWantConfidence"); }
     catch (Exception e) {}
   }
@@ -114,7 +116,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    */
   public void handleIllFormedTask (Task t) {
     reportIllFormedTask(t);
-    blackboard.publishAdd (UTILExpand.makeFailedExpansion (null, ldmf, t));
+    blackboard.publishAdd (expand.makeFailedExpansion (null, ldmf, t));
   }
 
   /**
@@ -175,7 +177,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
       error("\tFailed task : " + failed_e_task + 
 	    "\n\twith pe " + failed_e_task.getPlanElement ());
       error("\nPref-Aspect comparison : ");
-      UTILExpand.showPlanElement (failed_e_task);
+      expand.showPlanElement (failed_e_task);
     }
   }
 
@@ -196,6 +198,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   }
 
   /**
+   * <pre>
    * Implemented for UTILExpansionListener
    *
    * Does the plugin want to change the expansion?
@@ -206,6 +209,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
    *
    * Defaults to FALSE.
    *
+   * </pre>
    * @see org.cougaar.lib.util.UTILAllocate#scoreAgainstPreferences
    * @param expansion to check
    * @return true if plugin wants to change expansion
@@ -301,7 +305,7 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   public void processTasks (List tasks) {
     if (isInfoEnabled())
       info (getName () + 
-			  ".processTasks - processing " + tasks.size() + " tasks.");
+	    ".processTasks - processing " + tasks.size() + " tasks.");
     for (int i = 0; i < tasks.size (); i++)
       handleTask ((Task) tasks.get (i));
   }
@@ -320,11 +324,10 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
       debug (getName () + 
 	     ".handleTask : called on - " + t.getUID());
 
-    UTILExpand.handleTask(ldmf, 
+    expand.handleTask(ldmf, 
 			 getBlackboardService(), 
 			 getName(),
 			 wantConfidence, 
-			 isInfoEnabled(),
 			 t, 
 			 getSubtasks(t));
   }
@@ -353,4 +356,5 @@ public class UTILExpanderPluginAdapter extends UTILBufferingPluginAdapter
   }
 
   protected UTILExpandableTaskCallback myInputTaskCallback;
+  protected UTILExpand expand;
 }

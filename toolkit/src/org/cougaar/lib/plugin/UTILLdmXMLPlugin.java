@@ -98,7 +98,15 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
 
   // rely upon load-time introspection to set these services - 
   //   don't worry about revokation.
-  public final void setLoggingService(LoggingService bs) {  logger = bs; }
+  public final void setLoggingService(LoggingService bs) {  
+    logger = bs; 
+
+    paramParser = new ParamParser();
+    prototypeParser = new PrototypeParser(logger);
+    instanceParser = new InstanceParser(logger
+);
+    aggregateAssetParser = new AggregateAssetParser(logger);
+  }
 
   /**
    * Get the logging service, for subclass use.
@@ -115,12 +123,12 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
    */
   public Object getState() {
     if (logger.isDebugEnabled())
-	  logger.debug ("UTILLdmXMLPlugin.getState called ");
+      logger.debug ("UTILLdmXMLPlugin.getState called ");
 	
     if (originalAgentID == null)
-	return getClusterIdentifier().getAddress();
+      return getClusterIdentifier().getAddress();
     else 
-	return originalAgentID;
+      return originalAgentID;
   }
 
   /**
@@ -134,18 +142,18 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
    * @param o the state saved before
    */
   public void setState(Object o) {
-	if (logger.isDebugEnabled())
-	  logger.debug ("UTILLdmXMLPlugin.setState called ");
+    if (logger.isDebugEnabled())
+      logger.debug ("UTILLdmXMLPlugin.setState called ");
 
-      originalAgentID = (String) o;
+    originalAgentID = (String) o;
   }
 
   /** true iff originalAgentID is not null -- i.e. setState got called */
   protected boolean didSpawn () {
-	boolean val = (originalAgentID != null);
-	if (logger.isDebugEnabled())
-	  logger.debug ("UTILLdmXMLPlugin.didSpawn returns - " + val);
-	return val;
+    boolean val = (originalAgentID != null);
+    if (logger.isDebugEnabled())
+      logger.debug ("UTILLdmXMLPlugin.didSpawn returns - " + val);
+    return val;
   }
 
   /**
@@ -155,10 +163,10 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
    * Does not create assets if being rehydrated.
    */
   protected void setupSubscriptions() {
-	// if we just rehydrated, all the assets created before persisting should already be
-	// in the logplan
-	if (!didRehydrate () && !didSpawn())
-	  createAssets();
+    // if we just rehydrated, all the assets created before persisting should already be
+    // in the logplan
+    if (!didRehydrate () && !didSpawn())
+      createAssets();
   }
 
   /** 
@@ -207,57 +215,54 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
    * @return document that we can query for assets
    */
   protected Document getParsedDocument () {
-    //	  String debugParam = getStringParam ("debug");
-    //	  debug = (debugParam != null && "true".equals (debugParam));
+    String dfile = getFileName ();
+    DOMParser parser = new DOMParser();
+    InputStream inputStream = null;
+    try {
+      inputStream = ConfigFinder.getInstance().open(dfile);
+      if (logger.isDebugEnabled())
+	logger.debug ("UTILLdmXMLPlugin.getParsedDocument - Opened "+
+		      dfile + 
+		      " input stream " + inputStream);
 
-      String dfile = getFileName ();
-      DOMParser parser = new DOMParser();
-      InputStream inputStream = null;
-      try {
-	  inputStream = ConfigFinder.getInstance().open(dfile);
-	  if (logger.isDebugEnabled())
-	    logger.debug ("UTILLdmXMLPlugin.getParsedDocument - Opened "+
-				dfile + 
-				" input stream " + inputStream);
-
-	  if (showParserFeatures) {
-	    logger.debug ("UTILLdmXMLPlugin.getParsedDocument - parser features:");
-	    String []features = parser.getFeaturesRecognized();
-	    for (int i = 0; i < features.length; i++) {
-	      try {
-		logger.debug ("Feature " + i + " " + features[i] + " = " + parser.getFeature(features[i]));
-	      } catch (SAXNotRecognizedException saxnre) {
-		logger.debug ("Feature " + i + " " + features[i] + " = not recognized excep?");
-	      }
-	    }
+      if (showParserFeatures) {
+	logger.debug ("UTILLdmXMLPlugin.getParsedDocument - parser features:");
+	String []features = parser.getFeaturesRecognized();
+	for (int i = 0; i < features.length; i++) {
+	  try {
+	    logger.debug ("Feature " + i + " " + features[i] + " = " + parser.getFeature(features[i]));
+	  } catch (SAXNotRecognizedException saxnre) {
+	    logger.debug ("Feature " + i + " " + features[i] + " = not recognized excep?");
 	  }
-
-	  parser.setFeature("http://apache.org/xml/features/allow-java-encodings", true);
-
-	  // by default set to true, adds another node to tree that confuses getAssets below,
-	  // since it's not expecting a entity ref node
-	  parser.setFeature("http://apache.org/xml/features/dom/create-entity-ref-nodes", false);
-	  if (logger.isDebugEnabled())
-	    logger.debug ("UTILLdmXMLPlugin.getParsedDocument - setting parser create entity node to "+
-				parser.getCreateEntityReferenceNodes());
-	  parser.setEntityResolver (new UTILEntityResolver ());
-	  InputSource is = new InputSource (inputStream);
-	  is.setSystemId (dfile);
-	  parser.parse(is);
-      }
-      catch(SAXParseException saxe){
-	logger.error ("UTILLdmXMLPlugin.getParsedDocument - got SAX Parse exception in file " + 
-	       saxe.getSystemId () + " line " + saxe.getLineNumber () + " col " + saxe.getColumnNumber ()+"\n"+
-	       "Exception was :", saxe);
-      }
-      catch(Exception e){
-	if (inputStream == null) {
-	  logger.error ("UTILLdmXMLPlugin.getParsedDocument - could not find " + 
-		 dfile + ".  Please check config path.", e);
 	}
       }
 
-      return parser.getDocument();
+      parser.setFeature("http://apache.org/xml/features/allow-java-encodings", true);
+
+      // by default set to true, adds another node to tree that confuses getAssets below,
+      // since it's not expecting a entity ref node
+      parser.setFeature("http://apache.org/xml/features/dom/create-entity-ref-nodes", false);
+      if (logger.isDebugEnabled())
+	logger.debug ("UTILLdmXMLPlugin.getParsedDocument - setting parser create entity node to "+
+		      parser.getCreateEntityReferenceNodes());
+      parser.setEntityResolver (new UTILEntityResolver (logger));
+      InputSource is = new InputSource (inputStream);
+      is.setSystemId (dfile);
+      parser.parse(is);
+    }
+    catch(SAXParseException saxe){
+      logger.error ("UTILLdmXMLPlugin.getParsedDocument - got SAX Parse exception in file " + 
+		    saxe.getSystemId () + " line " + saxe.getLineNumber () + " col " + saxe.getColumnNumber ()+"\n"+
+		    "Exception was :", saxe);
+    }
+    catch(Exception e){
+      if (inputStream == null) {
+	logger.error ("UTILLdmXMLPlugin.getParsedDocument - could not find " + 
+		      dfile + ".  Please check config path.", e);
+      }
+    }
+
+    return parser.getDocument();
   }
 
   /**
@@ -275,11 +280,11 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
   protected String getFileName () {
     String dfile = getStringParam ("envDir");
     if (dfile == null)
-        dfile = "";
+      dfile = "";
 
-	String ldmFile = getStringParam ("ldmFile");
-	if (ldmFile == null)
-	  ldmFile = getClusterIdentifier().getAddress() + ".ldm.xml";
+    String ldmFile = getStringParam ("ldmFile");
+    if (ldmFile == null)
+      ldmFile = getClusterIdentifier().getAddress() + ".ldm.xml";
 	
     dfile = dfile + ldmFile;
     return dfile;
@@ -300,7 +305,7 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
     Enumeration ps = envParams.elements(); 
     while(ps.hasMoreElements() && (paramValue == null)){
       String envS = (String) ps.nextElement();
-      Param p = ParamParser.getParam(envS);
+      Param p = paramParser.getParam(envS);
       if (p != null) {
         String n = p.getName();
         try {
@@ -343,27 +348,27 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
 
 	  if(childname.equals("prototype")) {
             //logger.debug("Parsing Prototype");
-	    PrototypeParser.cachePrototype(getLDM(), child);
+	    prototypeParser.cachePrototype(getLDM(), child);
 	  }
 	  else if(childname.equals("instance")) {
             //logger.debug("Parsing Instance");
-	    List newassets = InstanceParser.getInstance(getLDM(), child);
+	    List newassets = instanceParser.getInstance(getLDM(), child);
 	    assets.addAll(newassets);
 	  }
 	  else if(childname.equals("AggregateAsset")) {
 	    // logger.debug("Parsing AggregateAsset.");
-	    AggregateAsset newasset = AggregateAssetParser.getAggregate(getLDM(), child);
+	    AggregateAsset newasset = aggregateAssetParser.getAggregate(getLDM(), child);
 	    assets.addElement(newasset);
 	  }
 	  /*
-	  else if(childname.equals("network")){
+	    else if(childname.equals("network")){
  	    Vector net_assets = NetworkParser.getTransportationNetwork(getLDM(), 
- 								       getClusterObjectFactory(), 
- 								       child);
+	    getClusterObjectFactory(), 
+	    child);
  	    for(int j = 0; j < net_assets.size(); j++){
- 	      assets.addElement(net_assets.elementAt(j));
+	    assets.addElement(net_assets.elementAt(j));
  	    }
- 	  }
+	    }
 	  */
 	}
 	else {
@@ -374,5 +379,10 @@ public class UTILLdmXMLPlugin extends SimplePlugin implements LDMPluginServesLDM
     }
     return assets.elements();
   }
+
+  ParamParser paramParser;
+  PrototypeParser prototypeParser;
+  InstanceParser instanceParser;
+  AggregateAssetParser aggregateAssetParser;
 }
 

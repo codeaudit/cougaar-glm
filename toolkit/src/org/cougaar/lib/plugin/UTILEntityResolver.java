@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2002 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -43,17 +43,15 @@ import org.cougaar.util.log.*;
  * </pre>
  */
 public class UTILEntityResolver implements EntityResolver {
-  private static Logger logger=LoggerFactory.getInstance().createLogger("UTILEntityResolver");
-  //  public static boolean debug = 
-  //	"true".equals (System.getProperty ("org.cougaar.lib.plugin.UTILEntityResolver.debug",
-  //									   "false"));
+
+  protected Logger logger;
+  public UTILEntityResolver (Logger logger) { this.logger = logger; }
 
   /** 
    * Set org.cougaar.lib.plugin.UTILEntityResolver.debug to true to see debug info. <p>
    * Will say what file is getting read in...
    **/
   public InputSource resolveEntity (String publicId, String systemId)	{
-
     URL url = null;
 
     try {
@@ -81,9 +79,3 @@ public class UTILEntityResolver implements EntityResolver {
     }
   }
 }
-
-
-
-
-
-

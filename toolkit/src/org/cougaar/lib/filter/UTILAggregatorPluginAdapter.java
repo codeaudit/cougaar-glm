@@ -107,6 +107,8 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   public void setupFilters () {
     super.setupFilters ();
 
+    aggregate = new UTILAggregate(logger);
+
     if (isInfoEnabled())
       info (getName () + " : Filtering for generic Assets...");
 
@@ -148,7 +150,7 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
    */
   public void handleIllFormedTask (Task t) {
     reportIllFormedTask(t);
-    publishAdd (UTILAggregate.makeFailedAggregation (null, ldmf, t));
+    publishAdd (aggregate.makeFailedAggregation (null, ldmf, t));
   }
 
   /**
@@ -309,4 +311,5 @@ extends UTILBufferingPluginAdapter implements UTILAggregatorPlugin {
   protected UTILWorkflowCallback    myWorkflowCallback;
   protected UTILAssetCallback       myAssetCallback;
   protected UTILAggregationCallback myAggCallback;
+  protected UTILAggregate aggregate;
 }

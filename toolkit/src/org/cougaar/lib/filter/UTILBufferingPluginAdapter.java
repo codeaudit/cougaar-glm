@@ -34,6 +34,7 @@ import org.cougaar.lib.util.UTILVerify;
 import java.util.List;
 
 /**
+ * <pre>
  * Example implementation of a plugin that buffers tasks 
  * until a certain threshold is reached.  processTasks is then called.
  * allocators, expanders, and aggregators should all be derived from 
@@ -48,11 +49,13 @@ import java.util.List;
  *  of the right type.
  * processTasks -- different for each plugin flavor
  *
+ * </pre>
  */
 public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   implements UTILBufferingPlugin {
 
   /**
+   * <pre>
    * Start up the task buffering thread.
    *
    * Note that localSetup is called AFTER setupFilters, so 
@@ -60,12 +63,16 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    *
    * IT IS CRUCIAL that this gets called with super () if this
    * is overridden!  Otherwise, plugin will be effectively dead. 
+   * </pre>
    */
   public void localSetup() {
     super.localSetup ();
 
     myThread = new Thread(getBufferingThread(), getName ());
     myThread.start ();
+
+    verify = new UTILVerify (logger);
+    prefHelper = new UTILPreference (logger);
   }
 
   /** 
@@ -76,10 +83,11 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    * @return boolean true if task is interesting
    */
   public boolean interestingTask(Task t) {
-    return true; //(t.getVerb().equals(Constants.Verb.TRANSPORT));
+    return true;
   }
 
   /** 
+   * <pre>
    * Examines task to see if task looks like what the plugin 
    * expects it to look like.
    *
@@ -93,6 +101,7 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
    * that feeds this plugins tasks, governing which tasks
    * are possible for this plugin to handle.
    *
+   * </pre>
    * @param t Task to check for consistency
    * @return true if task is OK
    */
@@ -101,35 +110,34 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
   }
 
   protected void reportIllFormedTask (Task t) {
-    if (!UTILVerify.isTaskTimingCorrect(t)) 
+    if (!verify.isTaskTimingCorrect(t)) 
       info (getName () + 
-			  ".reportIllFormedTask - task " + t + 
-			  " has " + UTILVerify.reportTimingError (t));  
-    else if (!UTILVerify.hasDirectObject (t)) {
+	    ".reportIllFormedTask - task " + t + 
+	    " has " + verify.reportTimingError (t));  
+    else if (!verify.hasDirectObject (t)) {
       info (getName () + 
-			  ".reportIllFormedTask - task " + t.getUID () + 
-			  " is missing direct object.");
+	    ".reportIllFormedTask - task " + t.getUID () + 
+	    " is missing direct object.");
     }
-    else if (!UTILVerify.hasStartPreference (t)) {
+    else if (!verify.hasStartPreference (t)) {
       info (getName () + 
-			  ".reportIllFormedTask - task " + t.getUID () + 
-			  " is start time preference.");
+	    ".reportIllFormedTask - task " + t.getUID () + 
+	    " is start time preference.");
     }
-    else if (!UTILVerify.hasEndPreference (t)) {
+    else if (!verify.hasEndPreference (t)) {
       info (getName () + 
-			  ".reportIllFormedTask - task " + t.getUID () + 
-			  " is end time preference.");
+	    ".reportIllFormedTask - task " + t.getUID () + 
+	    " is end time preference.");
     }
     else {
       info (getName () + 
-			  ".reportIllFormedTask - task " + t + 
-			  " was ill formed.  (start " + UTILPreference.getReadyAt(t) + 
-			  " e " + UTILPreference.getEarlyDate(t) + 
-			  " b " + UTILPreference.getBestDate(t) + 
-			  " l " + UTILPreference.getLateDate(t) + 
-			  ")");
+	    ".reportIllFormedTask - task " + t + 
+	    " was ill formed.  (start " + prefHelper.getReadyAt(t) + 
+	    " e " + prefHelper.getEarlyDate(t) + 
+	    " b " + prefHelper.getBestDate(t) + 
+	    " l " + prefHelper.getLateDate(t) + 
+	    ")");
     }
-
   }
 
   /**
@@ -206,4 +214,7 @@ public abstract class UTILBufferingPluginAdapter extends UTILPluginAdapter
 
   /** a reference to personal Thread to run the BufferingThread in **/
   private Thread myThread = null;
+
+  protected UTILVerify verify;
+  protected UTILPreference prefHelper;
 }
