@@ -78,11 +78,24 @@ import org.cougaar.domain.mlm.plugin.UICoordinator;
  * with the OPLAN object.
  *
  * @author       ALPINE <alpine-software@bbn.com>
- * @version      $Id: GLSGUIInitPlugIn.java,v 1.5 2001-08-22 20:27:40 mthome Exp $
+ * @version      $Id: GLSGUIInitPlugIn.java,v 1.6 2001-09-07 18:02:39 tomlinso Exp $
  *
  */
 
 public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
+  private static final String MIN_SLEEP_PROP =
+    "org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.minSleepTime";
+  private static final String MAX_SLEEP_PROP =
+    "org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.maxSleepTime";
+  private static final int MIN_SLEEP_DFLT = 60000;
+  private static final int MAX_SLEEP_DFLT = 180000;
+  private static final String ENABLED_PROP =
+    "org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.enabled";
+  private static final String ENABLED_DFLT = "false";
+  private static final String HIDDEN_PROP =
+    "org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.hidden";
+  private static final String HIDDEN_DFLT = "true";
+
   /** My private state **/
   private MyPrivateState myPrivateState;
 
@@ -90,12 +103,15 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
 
   private static class MyPrivateState extends RandomButtonPusher {
     int taskNumber = 0;
+    boolean hidden;
     MyPrivateState() {
-      super(Integer.getInteger("org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.minSleepTime", 60000).intValue(),
-            Integer.getInteger("org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.maxSleepTime", 180000).intValue(),
-            ((System.getProperty("org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.enabled") != null) ?
-             "true".equalsIgnoreCase(System.getProperty("org.cougaar.domain.mlm.plugin.organization.GLSGUIInitPlugIn.enabled")) :
-             false));
+      super(Integer.getInteger(MIN_SLEEP_PROP, MIN_SLEEP_DFLT).intValue(),
+            Integer.getInteger(MAX_SLEEP_PROP, MAX_SLEEP_DFLT).intValue(),
+            "true".equalsIgnoreCase(System.getProperty(ENABLED_PROP, ENABLED_DFLT)));
+      hidden = "true".equalsIgnoreCase(System.getProperty(HIDDEN_PROP, HIDDEN_DFLT));
+    }
+    public boolean isHidden() {
+      return hidden;
     }
   };
   
@@ -150,7 +166,9 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
   private void handlePrivateState(Enumeration e){
     if (myPrivateState == null && e.hasMoreElements()) {
       myPrivateState = (MyPrivateState) e.nextElement();
-      UICoordinator.layoutSecondRow(panel, myPrivateState.init("Random Send", getDelegate(), glsButton));
+      if (!myPrivateState.isHidden()) {
+        UICoordinator.layoutSecondRow(panel, myPrivateState.init("Random Send", getDelegate(), glsButton));
+      }
       checkButtonEnable();
     }
   }
