@@ -138,7 +138,9 @@ class Filler {
         }
         NewPhysicalPG loadedPhysicalPG = 
           PropertyGroupFactory.newPhysicalPG(defaultPhysicalPG);
-        Mass loadedMass = Mass.newMass(loadedQuantity, Mass.SHORT_TONS);
+        Mass loadedMass = Mass.newMass(loadedQuantity + 
+                                       defaultPhysicalPG.getMass().getShortTons(), 
+                                       Mass.SHORT_TONS);
         loadedPhysicalPG.setMass(loadedMass);
         loadedPhysicalPG.setTimeSpan((long) mpt.getPreferredValue(AspectType.START_TIME),
                                      (long) mpt.getPreferredValue(AspectType.END_TIME));
