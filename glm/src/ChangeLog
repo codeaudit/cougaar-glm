@@ -1,3 +1,24 @@
+2001-03-20  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/domain/glm/plugins/inventory/SupplyExpander.java:
+	Kludge to propagate AllocationResult changes to the supply
+	expansion. Ideally, this should be done by subscribing to the
+	supply expansions, but the structure of the DecoratorPlugIn makes
+	this difficult. Instead, we build on the kludge that the
+	ProjectWithdraw subtask is publishChanged when its Allocation
+	AllocationResult is changed.
+	
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java:
+	Do not advance the day after failing a dueout in case multiple
+	dueouts must be failed to maintain adequate inventory.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java:
+	Always call adjustForInadequateInventory in adjustWithdraws. It
+	has side effects that are necessary for producing a correct
+	ScheduleContent. Also, fix off-by-one error in end test for last
+	day in refillNeeded. The last planning day was never considered.
+	
+
 2001-03-14 Amy Fedyk <afedyk@bbn.com>
 	Changed expansion of ProjectWithdraws from ProjectSupply tasks to only expand into a single ProjectWithdraw 
 	which contains the demand rate info of the parent.  Handling of the daily withdraws is calculated in the InventoryBG.java
