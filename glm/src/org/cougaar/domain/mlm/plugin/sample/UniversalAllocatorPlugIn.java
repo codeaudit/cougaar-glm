@@ -161,38 +161,62 @@ public class UniversalAllocatorPlugIn extends SimplePlugIn {
     {
       //	System.out.println("In UniversalAllocatorPlugin.execute");
 
-        processTasks(allTasks.getAddedList());
-        processTasks(allTasks.getChangedList());
+        addTasks(allTasks.getAddedList());
+        changeTasks(allTasks.getChangedList());
+        removeTasks(allTasks.getRemovedList());
     }
 
-    private void processTasks(Enumeration e) {
+    private void addTasks(Enumeration e) {
+	while (e.hasMoreElements()) {
+            Task task = (Task)e.nextElement();
+
+            if (!isInterestingTask(task))
+                continue;
+            print("   add", task);
+            AllocationResult ar = computeAllocationResult(task);
+
+            // Allocate task to sink_asset
+            Allocation allocation = 
+                theLDMF.createAllocation(theLDMF.getRealityPlan(),
+                                         task,
+                                         sink_asset,
+                                         ar,
+                                         Role.BOGUS);
+            publishAdd(allocation);
+        }
+    }
+
+    private void changeTasks(Enumeration e) {
 	while (e.hasMoreElements()) {
             Task task = (Task)e.nextElement();
 
             if (!isInterestingTask(task))
                 continue;
 
+            print("change", task);
             AllocationResult ar = computeAllocationResult(task);
-
-            // Allocate task to sink_asset
-            Allocation allocation;
-            allocation = (Allocation) task.getPlanElement();
-            if (allocation == null) {
-                allocation = 
-                    theLDMF.createAllocation(theLDMF.getRealityPlan(),
-                                             task,
-                                             sink_asset,
-                                             ar,
-                                             Role.BOGUS);
-                publishAdd(allocation);
-            } else {
-                AllocationResult estAR = allocation.getEstimatedResult();
-                if (!ar.isEqual(estAR)) {
-                    allocation.setEstimatedResult(ar);
-                    publishChange(allocation);
-                }
+            Allocation allocation = (Allocation) task.getPlanElement();
+            AllocationResult estAR = allocation.getEstimatedResult();
+            if (!ar.isEqual(estAR)) {
+                allocation.setEstimatedResult(ar);
+                publishChange(allocation);
             }
         }
+    }
+
+    private void removeTasks(Enumeration e) {
+	while (e.hasMoreElements()) {
+            Task task = (Task)e.nextElement();
+
+            if (!isInterestingTask(task))
+                continue;
+
+            print("remove", task);
+        }
+    }
+
+    private void print(String m, Task task) {
+//          System.out.println("UA " + m + ": " + (TaskUtils.isProjection(task) ? TaskUtils.projectionDesc(task) : TaskUtils.taskDesc(task)));
     }
 
     /**
