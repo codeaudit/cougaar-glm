@@ -97,7 +97,9 @@ public class CompletionWatcherServlet extends ServletBase {
     super.setSimpleServletSupport(support);
   }
 
-  //  public static final String INPUT_FILE      = "inputFileName";
+  public static final String FIRST_INTERVAL  = "firstInterval";
+  public static final String SECOND_INTERVAL = "secondInterval";
+
   public static final boolean DEBUG = false;
   public static boolean VERBOSE = false;
 
@@ -118,73 +120,27 @@ public class CompletionWatcherServlet extends ServletBase {
     out.print(support.getPath());
     out.print("\">\n");
 
-    // ask what task file 
-    /*
-    out.print("<font size=+1>Inject tasks into agent <b>" + support.getAgentIdentifier() + "</b></font><p>\n");
+    out.print("<font size=+1>Wait for agent <b>" + support.getAgentIdentifier() + "</b> to complete.</font><p>\n");
 
     out.println ("<table>\n");
 
-    // ask what task file 
+    // get seconds to wait for initial quiet period
     out.println ("<tr><td>");
-    out.print("Input Task File");
+    out.print("First quiet period duration (in seconds)");
     out.print("</td><td>");
-    out.print("<INPUT TYPE=\"text\" NAME=\"" + INPUT_FILE + "\" SIZE=40>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + FIRST_INTERVAL + "\" "+
+	      "VALUE=\"10\">");
     out.println("</td></tr>");
 
-    // get number of batches to send 
-    out.println ("<tr><td>");
-    out.print("Number of batches");
-    out.print("</td><td>");
-    out.print("<INPUT TYPE=\"text\" NAME=\"" + NUM_BATCHES + "\" "+
-	      "VALUE=\"1\">");
-    out.println("</td></tr>");
-
-    // get number of tasks per batch
+    // get seconds to wait for initial quiet period
     out.print("<tr><td>");
-    out.print("Tasks per batch");
+    out.print("Second quiet period duration (in seconds)");
     out.print("</td><td>");
-    out.print("<INPUT TYPE=\"text\" NAME=\"" + TASKS_PER_BATCH + "\" "+
-	      "VALUE=\"1\">");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + SECOND_INTERVAL + "\" "+
+	      "VALUE=\"10\">");
     out.println("</td></tr>");
 
-    // get wait interval
-    out.println ("<tr><td>");
-    out.print("Wait interval between batches");
-    out.print("</td><td>");
-    out.print("<INPUT TYPE=\"text\" NAME=\"" + INTERVAL + "\" "+
-	      "VALUE=\"1000\">&nbsp;millis");
-    out.println("</td></tr>");
-
-    // choose whether to wait for batch completion, or not
-    out.println ("<tr><td>");
-    out.print("Wait for each batch to complete before sending more");
-    out.print("</td><td>");
-    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_BEFORE + "\" VALUE=\"true\">");
-    out.println("</td></tr>");
-
-    // choose whether to wait for being done, or not
-    out.println ("<tr><td>");
-    out.print("Wait for all tasks to complete before returning results");
-    out.print("</td><td>");
-    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_AFTER + "\" VALUE=\"true\">");
-    out.println("</td></tr>");
-
-    // choose whether to rescind tasks after injecting them
-    out.println ("<tr><td>");
-    out.print("Remove injected tasks after all complete");
-    out.print("</td><td>");
-    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + RESCIND_AFTER_COMPLETE + "\" VALUE=\"true\">");
-    out.println("</td></tr>");
-
-    // choose whether to use 100% confidence as completion test
-    out.println ("<tr><td>");
-    out.print("A task is complete when it has a 100% confident reported result. " +
-	      "<br>Otherwise waits only until plan element is attached.");
-    out.print("</td><td>");
-    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + USE_CONFIDENCE + "\" VALUE=\"true\">");
-    out.println("</td></tr>");
     out.println ("</table><p>");
-    */
 
     // choose data format - html, xml, or java objects 
     out.print("<center>Show results as "+

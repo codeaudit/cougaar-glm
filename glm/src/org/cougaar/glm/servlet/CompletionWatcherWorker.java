@@ -232,6 +232,11 @@ public class CompletionWatcherWorker extends ServletWorker {
     if (support.getLog().isDebugEnabled ())
       support.getLog().debug ("CompletionWatcherWorker.getSettings - name " + name + " value " + value);
 
+    if (eq (name, CompletionWatcherServlet.FIRST_INTERVAL))
+      firstInterval = Integer.parseInt(value);
+    else if (eq (name, CompletionWatcherServlet.SECOND_INTERVAL))
+      secondInterval = Integer.parseInt(value);
+
     /*
     if (eq (name, CompletionWatcherServlet.INPUT_FILE))
       inputFile = value;
