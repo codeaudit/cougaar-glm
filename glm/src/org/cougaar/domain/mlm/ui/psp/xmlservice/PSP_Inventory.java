@@ -32,6 +32,7 @@ import org.cougaar.domain.glm.ldm.oplan.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.ldm.policy.*;
 import org.cougaar.domain.mlm.ui.data.UIInventoryImpl;
+import org.cougaar.domain.mlm.ui.data.UIQuantityScheduleElement;
 import org.cougaar.domain.mlm.ui.data.UISimpleInventory;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedSchedule;
 import org.cougaar.domain.mlm.ui.data.UISimpleNamedScheduleNames;
@@ -131,10 +132,45 @@ public class PSP_Inventory
       inv.addNamedSchedule(TOTAL_LABOR, inventory.getLaborSchedule());
     } else if (scheduleType.equals(PlanScheduleType.ACTUAL_CAPACITY)) {
       inv.addNamedSchedule(ALLOCATED, inventory.getDueOutLaborSchedule());
-      inv.addNamedSchedule(ON_HAND,   inventory.getOnHandSchedule());
+      inv.addNamedSchedule(ON_HAND,   inventory.getOnHandDailySchedule());
     } else if (scheduleType.equals(PlanScheduleType.TOTAL_INVENTORY)) {
 
-      inv.addNamedSchedule(ON_HAND,                               inventory.getOnHandSchedule());
+      inv.addNamedSchedule(ON_HAND,                               inventory.getOnHandDailySchedule());
+      inv.addNamedSchedule(ON_HAND_DETAILED,                      inventory.getOnHandDetailedSchedule());
+
+
+      /*** MWD Remove
+       **  Generate a false detailed schedule
+       *
+
+      if(inventory.getOnHandDetailedSchedule() != null) {
+	  Vector lotsODetails = new Vector();
+	  int divElement=5;
+	  Vector onHand = inventory.getOnHandDailySchedule();
+	  for(int i=0; i < onHand.size() ; i++) {
+	      UIQuantityScheduleElement orig = (UIQuantityScheduleElement) onHand.elementAt(i);
+	      long  myStart = orig.getStartTime();
+	      long  myEnd = orig.getEndTime();
+ 	      divElement = (int) i%7;
+	      if(divElement==0) divElement=1;
+	      long  addTime = (long) (myEnd - myStart)/divElement;
+	      double  changeQty = 10;
+	      for (int j=0; j < divElement; j++) {
+		  changeQty = ((changeQty) * j);
+		  double elQty = orig.getQuantity() + changeQty;
+		  if(elQty != orig.getQuantity()) {
+		      System.out.println("Different! I'd say orig: " + orig.getQuantity() + " elQty: " + elQty);
+		  }
+		  lotsODetails.add(new UIQuantityScheduleElement(myStart, myStart + addTime, elQty));
+		  myStart+=addTime;
+	      }
+	  }
+	  inv.addNamedSchedule(ON_HAND_DETAILED,lotsODetails);
+      }
+      
+      **
+      ***/
+
       inv.addNamedSchedule(DUE_IN,                                inventory.getDueInSchedule());
       inv.addNamedSchedule(UNCONFIRMED_DUE_IN,                    inventory.getUnconfirmedDueInSchedule());
       inv.addNamedSchedule(REQUESTED_DUE_IN,                      inventory.getRequestedDueInSchedule());
@@ -170,6 +206,13 @@ public class PSP_Inventory
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN_MOCK_PERIOD, inventory.getProjectedRequestedMockDueInSchedule());
       inv.addNamedSchedule(PROJECTED_DUE_OUT_MOCK_PERIOD,          inventory.getProjectedMockDueOutSchedule());
       inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT_MOCK_PERIOD,inventory.getProjectedRequestedMockDueOutSchedule());
+
+      //inv.addNamedSchedule(ON_HAND_MOCK_PERIOD,                    inventory.getOnHandDailySchedule());
+      //inv.addNamedSchedule(PROJECTED_DUE_IN_MOCK_PERIOD,           inventory.getProjectedDueInSchedule());
+      //inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_IN_MOCK_PERIOD, inventory.getProjectedRequestedDueInSchedule());
+      //inv.addNamedSchedule(PROJECTED_DUE_OUT_MOCK_PERIOD,          inventory.getProjectedDueOutSchedule());
+      //inv.addNamedSchedule(PROJECTED_REQUESTED_DUE_OUT_MOCK_PERIOD,inventory.getProjectedRequestedDueOutSchedule());
+
       inv.addNamedSchedule(GOAL_LEVEL,              inventory.getGoalLevelSchedule());
       inv.addNamedSchedule(REORDER_LEVEL,           inventory.getReorderLevelSchedule());
       inv.addNamedSchedule(AVERAGE_DEMAND_LEVEL,    inventory.getAverageDemandSchedule());

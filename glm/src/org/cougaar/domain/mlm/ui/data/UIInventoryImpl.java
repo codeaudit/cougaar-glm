@@ -102,7 +102,8 @@ public class UIInventoryImpl {
   Vector dueOutLaborSchedule = null;
   Vector laborSchedule = null;
 
-  Vector onHandSchedule = null;
+  Vector onHandDailySchedule = null;
+  Vector onHandDetailedSchedule = null;
 
   Vector dueOutSchedule = null;
   Vector projectedDueOutSchedule = null;
@@ -158,10 +159,18 @@ public class UIInventoryImpl {
   public void setAsset(Asset asset) {
     this.asset = asset;
     
-    if((asset instanceof GLMAsset) &&
-       (((GLMAsset) asset).getScheduledContentPG() != null)){
-
-	Schedule s = ((GLMAsset)asset).getScheduledContentPG().getSchedule();
+    if(asset instanceof GLMAsset) {
+	Schedule s=null;
+	if((asset instanceof Inventory) &&
+	   (((Inventory) asset).getDetailedScheduledContentPG() != null)) {
+	    s = ((Inventory) asset).getDetailedScheduledContentPG().getSchedule();
+	    onHandDetailedSchedule = scheduleToNonOverlapVector(s);
+	    System.out.println("Got a detailed Inventory schedule!!!");
+	    s=null;
+	}
+	if(((GLMAsset)asset).getScheduledContentPG() != null) {
+	    s = ((GLMAsset)asset).getScheduledContentPG().getSchedule();
+	}
 	if (s != null) {
 	    if (s.getScheduleType().equals(PlanScheduleType.TOTAL_CAPACITY)) {
 		if (s instanceof LaborSchedule)
@@ -170,7 +179,7 @@ public class UIInventoryImpl {
 		    System.out.println("UIInventoryImpl WARNING: Expected labor schedule");	  
 		laborSchedule = scheduleToNonOverlapVector(s);
 	    } else
-		onHandSchedule = scheduleToNonOverlapVector(s);
+		onHandDailySchedule = scheduleToNonOverlapVector(s);
 	}
 	if (isLaborAsset(asset)){
 	    dueOutLaborSchedule = computeDueOutVector(false); // All non-inventory assets are active
@@ -210,7 +219,7 @@ public class UIInventoryImpl {
 
 //      /** total = onHand + dueOut
 //    private void setTotalSchedule() {
-//      Schedule onHandCSchedule = getCSchedule(onHandSchedule);
+//      Schedule onHandCSchedule = getCSchedule(onHandDailySchedule);
 //      Schedule dueOutCSchedule = getCSchedule(dueOutSchedule);
 //      Schedule total = ScheduleUtilities.addSchedules(onHandCSchedule,
 //                                                      dueOutCSchedule);
@@ -319,9 +328,18 @@ public class UIInventoryImpl {
      Get the schedule that indicates the on hand inventory for this asset.
      @return Vector - vector of UIQuantityScheduleElement
   */
-  public Vector getOnHandSchedule() {
-      return getSchedule(onHandSchedule);
+  public Vector getOnHandDailySchedule() {
+      return getSchedule(onHandDailySchedule);
   }
+
+  /**
+     Get the schedule that indicates the on hand inventory for this asset.
+     @return Vector - vector of UIQuantityScheduleElement
+  */
+  public Vector getOnHandDetailedSchedule() {
+      return getSchedule(onHandDetailedSchedule);
+  }
+
 
   /**
      Get the schedule that indicates the on hand inventory with jaggy ness 
@@ -522,6 +540,18 @@ public class UIInventoryImpl {
 	else return 0.0;
     }
 
+    protected static double extractFirstQtyInDay(Schedule s, long time) {
+	Collection col = s.getOverlappingScheduleElements(time,time + TimeUtils.MSEC_PER_DAY);
+	// Collection col = s.getOverlappingScheduleElements(time,s.getEndTime());
+	if(col.size() >= 1) {
+	    return ((QuantityScheduleElement) (col.toArray())[0]).getQuantity();
+	}
+	else
+	{
+	    throw new RuntimeException("Should be at least one Schedule element in schedule for " + new Date(time) + " but there are " + col.size());
+	}
+    }
+
     protected static double extractSingleQtyOnTime(Schedule s, long time) {
 	Collection col = s.getScheduleElementsWithTime(time);
 	if(col.size() == 1) {
@@ -552,7 +582,7 @@ public class UIInventoryImpl {
 
 
     protected void initializeMockSchedules() {
-	onHandMockSchedule = getCSchedule(onHandSchedule);
+	onHandMockSchedule = getCSchedule(onHandDailySchedule);
 	projectedMockDueInSchedule = getProjectedDueInSchedule();
 	projectedRequestedMockDueInSchedule = getProjectedRequestedDueInSchedule();
 	projectedMockDueOutSchedule = getProjectedDueOutSchedule();
@@ -563,7 +593,7 @@ public class UIInventoryImpl {
 
 	boolean theReturn = true;
 
-	if((onHandSchedule == null) ||
+	if((onHandDailySchedule == null) ||
 	   (reorderLevelSchedule == null || goalLevelSchedule == null) ||
 	   (projectedDueInSchedule == null) || 
 	   (projectedRequestedDueInSchedule == null) ||
@@ -593,8 +623,8 @@ public class UIInventoryImpl {
 	    if(projectedRequestedDueOutSchedule == null) {
 		System.out.println("WARNING:projectedRequestedDueOutSchedule");
 	    }
-	    if(onHandSchedule == null) {
-		System.out.println("WARNING:onHandSchedule");
+	    if(onHandDailySchedule == null) {
+		System.out.println("WARNING:onHandDailySchedule");
 		theReturn = false;
 	    }
 	}
@@ -609,7 +639,7 @@ public class UIInventoryImpl {
 	    return;
 	}
 
-	Schedule onHandAlpSched = getCSchedule(onHandSchedule);
+	Schedule onHandAlpSched = getCSchedule(onHandDailySchedule);
 	Schedule projReqDueOutAlpSched = getCSchedule(projectedRequestedDueOutSchedule);
 	Schedule projReqDueInAlpSched = getCSchedule(projectedRequestedDueInSchedule);
 	Schedule projDueInAlpSched = getCSchedule(projectedDueInSchedule);
@@ -647,8 +677,10 @@ public class UIInventoryImpl {
 						     onHandAlpSched.MIN_VALUE,
 						     switchOverDay));
 
+	
+
 	if(startTime != Schedule.MAX_VALUE)
-	    invQty = extractSingleQtyOnTime(onHandAlpSched,startTime);
+	    invQty = extractFirstQtyInDay(onHandAlpSched,startTime);
 
 	//	System.out.println("UIInventoryImpl:computeSimulatedProj:  startTime/switchOverDay is: " + new Date(startTime) + " and end day time is : " + new Date(endDayTime));
 
@@ -666,8 +698,8 @@ public class UIInventoryImpl {
 	    //take out due outs
 	    invQty = invQty - dueOutQty;
 
-	    double reorderLevel = extractSingleQtyOnTime(reorderLevelSchedule,endTime);
-	    double goalLevel = extractSingleQtyOnTime(goalLevelSchedule,endTime);
+	    double reorderLevel = extractFirstQtyInDay(reorderLevelSchedule,endTime);
+	    double goalLevel = extractFirstQtyInDay(goalLevelSchedule,endTime);
 
 	    double reqDueInQty = deriveMockDueInQty(projReqDueInAlpSched,startTime,endTime,
 						    invQty, reorderLevel, goalLevel);

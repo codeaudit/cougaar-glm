@@ -15,6 +15,7 @@ import java.util.Vector;
 
 public interface UISimpleNamedScheduleNames {
   public final static String ON_HAND = "On Hand";
+  public final static String ON_HAND_DETAILED = "On Hand Detailed";
   public final static String DUE_IN = "Due In";
   public final static String DUE_OUT = "Due Out";
   public final static String PROJECTED_DUE_OUT = "Projected Due Out";
