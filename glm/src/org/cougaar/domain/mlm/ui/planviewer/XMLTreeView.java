@@ -20,14 +20,16 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-import com.ibm.xml.parser.Parser;
-import com.ibm.xml.parser.Stderr;
-import com.ibm.xml.parser.TXDocument;
+import org.apache.xerces.parsers.DOMParser;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
+import org.xml.sax.InputSource;
+import org.w3c.dom.Document;
 
 public class XMLTreeView extends Frame implements ActionListener {
   public static String SAVE_COMMAND = "Save";
   byte[] buffer;
-  JTree jtree;
+  DOMTree dTree;
 
   public XMLTreeView(String title, byte[] buffer) {
     super(title);
@@ -40,18 +42,25 @@ public class XMLTreeView extends Frame implements ActionListener {
     //    });
 
     // parse input stream into tree
-    TreeNode root = null;
+    //TreeNode root = null;
+
+    dTree = new DOMTree();
+
+    dTree.setRowHeight(18);
+
+    Document root = null;
     try {
-      Parser p = new Parser("Log Plan");
-      p.setElementFactory(new XMLTreeFactory());
-      root = (TreeNode)p.readStream(new ByteArrayInputStream(buffer));
+      DOMParser p = new DOMParser();
+      p.parse(new InputSource(new ByteArrayInputStream(buffer)));
+      root = p.getDocument();
     } catch (Exception e) {
       e.printStackTrace();
     }
 
+    dTree.setDocument(root);
+
     //    getContentPane().add("Center", new JScrollPane(new JTree(root)));
-    jtree = new JTree(root);
-    add("Center", new JScrollPane(jtree));
+    add("Center", new JScrollPane(dTree));
     // add button to allow saving to file
     JButton saveButton = new JButton(SAVE_COMMAND);
     saveButton.setToolTipText("Save xml to a file.");
@@ -62,13 +71,25 @@ public class XMLTreeView extends Frame implements ActionListener {
     //    getContentPane().add("North", buttonPanel);
     add("North", buttonPanel);
     setSize(320, 480);
+
+    if(dTree != null) {
+      expandTree();
+    }
+  }
+
+  private void expandTree() {
+    int rows = 0;
+    for(int levels=0; levels <=4; levels++) {
+      rows = dTree.getRowCount();
+      for(int i=0; i < rows; i++) {
+	dTree.expandRow(i);
+      }
+    }
   }
 
   public void dispose() {
     removeAll();
     buffer = null;
-    jtree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
-    jtree.setSelectionModel(new DefaultTreeSelectionModel());
     super.dispose();
     System.gc();
   }
@@ -77,13 +98,14 @@ public class XMLTreeView extends Frame implements ActionListener {
   // parse input buffer and write to file
 
   private void writeDocumentToFile(String pathname) {
-    Parser parser = new Parser("LogPlan");
-    TXDocument doc = parser.readStream(new ByteArrayInputStream(buffer));
-    FileOutputStream fos = null;
     try {
-      fos = new FileOutputStream(pathname);
+      DOMParser parser = new DOMParser();
+      parser.parse(new InputSource(new ByteArrayInputStream(buffer)));
+      Document doc = parser.getDocument();
+      FileOutputStream fos = new FileOutputStream(pathname);
       PrintWriter pw = new PrintWriter(fos);
-      doc.printWithFormat(pw);
+      XMLSerializer serializer = new XMLSerializer(pw, new OutputFormat());
+      serializer.serialize(doc);
     } catch (Exception e) {
       System.out.println("Could not write to file:" + pathname + " exception: " + e);
     }
