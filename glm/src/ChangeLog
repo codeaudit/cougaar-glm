@@ -1,3 +1,9 @@
+2001-02-21  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* UniversalAllocator Fix Bug #152
+	Compose name from plugin parameters so that different instances of
+	the plugin will create and use distinct sink assets.
+
 2001-02-20  Ray Tomlinson  <RTomlinson@bbn.com>
 
 	* SubscriptionClient
