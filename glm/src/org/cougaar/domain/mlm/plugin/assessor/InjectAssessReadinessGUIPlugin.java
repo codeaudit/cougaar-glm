@@ -147,7 +147,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     if (subSize > 0)
       rescindButton.setEnabled(true);
     else
-      rescindButton.setEnabled(true);
+      rescindButton.setEnabled(false);
   }
 
   private void publishAssessReadiness() {

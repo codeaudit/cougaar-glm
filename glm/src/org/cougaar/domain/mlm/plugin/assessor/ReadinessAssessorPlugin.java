@@ -61,7 +61,6 @@ import org.cougaar.domain.glm.plugins.TaskUtils;
 public class ReadinessAssessorPlugin extends ComponentPlugin {
 
   private int rollupSpan = 10;
-  private static final int READINESS = AlpineAspectType.LAST_ALPINE_ASPECT +1;
 
   private IncrementalSubscription readinessTaskSub;
   private final UnaryPredicate readinessTaskPred = 
@@ -376,7 +375,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     values[0] = new AspectValue(AspectType.START_TIME, startTime);
     values[1] = new AspectValue(AspectType.END_TIME, endTime);
     // where do I put READINESS aspecttype?
-    values[2] = new AspectValue(READINESS, readiness);
+    values[2] = new AspectValue(AspectType.READINESS, readiness);
     return values;
   }
 
