@@ -30,23 +30,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.*;
 
+
+import org.cougaar.glm.*;
 import org.cougaar.glm.ldm.Constants;
-import org.cougaar.glm.ldm.*;import org.cougaar.glm.ldm.*;import org.cougaar.glm.*;
 import org.cougaar.glm.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.glm.ldm.oplan.*;
 
-import org.cougaar.core.mts.MessageAddress;
-
+import org.cougaar.core.blackboard.AnonymousChangeReport;
+import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.service.LoggingService;
 
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.planning.plugin.util.*;
-
-import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.TimeSpan;
@@ -155,50 +155,80 @@ public class GenericTablePlugin extends SimplePlugin {
     unsubscribe(organizationSub);
   }
 
-  public synchronized void execute() {
-//     if (organizationSub.hasChanged()) {
-//       AllocatorHelper.updateAllocationResult(organizationSub);
-//     }
+  /** rely upon load-time introspection to set these services - don't worry about revokation. */
+  public final void setLoggingService (LoggingService logger) { this.logger = logger; }
 
-    for (int i = 0; i < tasksSub.length; i++) {
-      if (!(tasksSub[i].hasChanged())) 
-        continue;
-      Enumeration eTasks = tasksSub[i].getAddedList();
-      if (!(eTasks.hasMoreElements()))
-        continue;
-      CommandInfo c = allCommands[i];
-      if (c.type_id == CommandInfo.TYPE_ALLOCATE) {
-        // allocate
-        Organization capableOrg = null;
-        do {
-          Task theTask = (Task) eTasks.nextElement();
-          if (theTask.getPlanElement() == null) {
-            if (capableOrg == null) {
-              capableOrg = 
-                findCapableOrganization((AllocateCommandInfo)c);
-              if (capableOrg == null) {
-                // no capable org found!
-                break;
-              }
-            }
-            doAllocation(capableOrg, theTask);
-          }
-        } while (eTasks.hasMoreElements());
-      } else if (c.type_id == CommandInfo.TYPE_EXPAND) {
-        // expand
-        TaskInfo[] toTasks = ((ExpandCommandInfo)c).expandTasks;
-        do {
-          Task theTask = (Task) eTasks.nextElement();
-          if (theTask.getPlanElement() == null) {
-            for (int j = 0; j < toTasks.length; j++) {
-              doExpansion(toTasks[j], theTask);
-            }
-          }
-        } while (eTasks.hasMoreElements());
-      } else {
-        // no other commands!
+  /**
+   * Everybody needs a logger
+   **/
+  protected LoggingService logger;
+
+
+  public synchronized void execute() {
+    if (organizationSub.hasChanged()) {
+      Organization selfOrg = null;
+
+      for (Iterator orgIter = organizationSub.getCollection().iterator(); 
+	   orgIter.hasNext(); ) {
+	Organization org = (Organization) orgIter.next();
+	if (org.isSelf()) {
+	  selfOrg = org;
+	  break;
+	}
+      }
+	
+      if (selfOrg != null) {
+	Collection changeReports = organizationSub.getChangeReports(selfOrg);
+	boolean checkUnallocated = false;
+	if ((changeReports != AnonymousChangeReport.SET) &&
+	    (changeReports != null)) {
+	  for (Iterator reportIterator = changeReports.iterator();
+	       reportIterator.hasNext();) {
+	    ChangeReport report = (ChangeReport) reportIterator.next();
+	    if (report instanceof RelationshipSchedule.RelationshipScheduleChangeReport) {
+	      checkUnallocated = true;
+	      break;
+	    }
+	  }
+	  
+	  if (checkUnallocated) {
+	    for (int i = 0; i < tasksSub.length; i++) {
+	      CommandInfo c = allCommands[i];
+	      if (c.type_id == CommandInfo.TYPE_ALLOCATE) {
+		allocate((AllocateCommandInfo) c, tasksSub[i]);
+	      }
+	    }
+	  }
+	}
       }
     }
+
+    for (int i = 0; i < tasksSub.length; i++) {
+      if (tasksSub[i].hasChanged()) {
+	CommandInfo c = allCommands[i];
+	if (c.type_id == CommandInfo.TYPE_ALLOCATE) {
+	  allocate((AllocateCommandInfo) c, tasksSub[i].getAddedCollection());
+	} else if (c.type_id == CommandInfo.TYPE_EXPAND) {
+	  // expand
+	  TaskInfo[] toTasks = ((ExpandCommandInfo)c).expandTasks;
+	  for (Iterator iterator = tasksSub[i].getAddedCollection().iterator();
+	       iterator.hasNext();) {
+	    Task task = (Task) iterator.next();
+	    if (task.getPlanElement() == null) {
+	      for (int j = 0; j < toTasks.length; j++) {
+		doExpansion(toTasks[j], task);
+	      }
+	    }
+	  }
+	} else {
+	  if (logger.isDebugEnabled()) {
+	    logger.debug("execute: unrecognized command type - " + c.type_id + 
+			 " - command ignored.");
+	  }
+	}
+      }
+    }
+      
 
     for (int i = 0; i < allocationsSub.length; i++) {
       if (allocationsSub[i].hasChanged()) {
@@ -275,28 +305,28 @@ public class GenericTablePlugin extends SimplePlugin {
    */
   protected boolean DEBUGisCapable(Organization org,
       String name, String[] roles) {
-    System.err.println("******************************************");
-    System.err.println("DEBUG GenericTablePlugin.isCapable for Exceptions!!!");
-    System.err.println("Cluster: "+getMessageAddress());
-    System.err.println("Arguments:");
-    System.err.println("  org: "+org);
+    logger.debug("******************************************");
+    logger.debug("DEBUG GenericTablePlugin.isCapable for Exceptions!!!");
+    logger.debug("Cluster: "+getMessageAddress());
+    logger.debug("Arguments:");
+    logger.debug("  org: "+org);
     if (name != null)
-      System.err.println("  name: "+name);
+      logger.debug("  name: "+name);
     if (roles != null)
-      System.err.println("  roles["+roles.length+"]: "+roles);
+      logger.debug("  roles["+roles.length+"]: "+roles);
     try {
       if (name != null) {
         // If name is specified, it alone qualifies!
-        System.err.println("check name:");
-        System.err.println("  org.getMessageAddress(): ");
-        System.err.println("    "+org.getMessageAddress());
-        System.err.println("  .getAddress(): ");
-        System.err.println("    "+
+        logger.debug("check name:");
+        logger.debug("  org.getMessageAddress(): ");
+        logger.debug("    "+org.getMessageAddress());
+        logger.debug("  .getAddress(): ");
+        logger.debug("    "+
           ((MessageAddress)org.getMessageAddress()).getAddress());
-        System.err.println("  .equals("+name+"): ");
+        logger.debug("  .equals("+name+"): ");
         String clustername = 
           ((MessageAddress)org.getMessageAddress()).getAddress();
-        System.err.println("    "+
+        logger.debug("    "+
            clustername.equals(name));
         return clustername.equals(name);
       }
@@ -307,7 +337,7 @@ public class GenericTablePlugin extends SimplePlugin {
         RelationshipSchedule schedule = org.getRelationshipSchedule();
         for (int i=0; i<roles.length; i++) {
           String findRole = roles[i];
-          System.err.println("  findRole["+i+
+          logger.debug("  findRole["+i+
               " of "+roles.length+"]: "+findRole);
 
           Collection orgCollection = 
@@ -318,18 +348,18 @@ public class GenericTablePlugin extends SimplePlugin {
             return false;
           }
 
-          System.err.println("Matching relationships: " + orgCollection);
+          logger.debug("Matching relationships: " + orgCollection);
         }
         // Good: Org has all the roles
       }
 
-      System.err.println(" NO ERRORS???");
-      System.err.println("******************************************");
+      logger.debug(" NO ERRORS???");
+      logger.debug("******************************************");
       return true;
     } catch (Exception e) {
-      System.err.println("**** PREVIOUS CAUSED EXCEPTION "+e+" ****");
+      logger.error("**** PREVIOUS CAUSED EXCEPTION "+e+" ****");
       e.printStackTrace();
-      System.err.println("******************************************");
+      logger.error("******************************************");
       return false;
     }
   }
@@ -607,6 +637,29 @@ public class GenericTablePlugin extends SimplePlugin {
         return false;
     }
     return true;
+  }
+
+  protected void allocate(AllocateCommandInfo commandInfo, Collection tasks) {
+    Organization capableOrg = null;
+    for (Iterator iterator = tasks.iterator();
+	 iterator.hasNext();) {
+      Task task = (Task) iterator.next();
+      if (task.getPlanElement() == null) {
+	if (capableOrg == null) {
+	  capableOrg = 
+	    findCapableOrganization(commandInfo);
+	  if (capableOrg == null) {
+	    // no capable org found!
+	    if (logger.isDebugEnabled()) {
+	      logger.debug("allocate: Unable to find provider for " + 
+			   commandInfo.allocateRoles);
+	    }
+	    break;
+	  }
+	}
+	doAllocation(capableOrg, task);
+      }		
+    }
   }
 
   protected static UnaryPredicate newOrganizationPred() {
