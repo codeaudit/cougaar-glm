@@ -30,22 +30,12 @@ import org.cougaar.planning.ldm.plan.Plan;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Preposition;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
-
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.Workflow;
 
-import org.cougaar.core.plugin.PluginDelegate;
 import org.cougaar.core.plugin.SimplePlugin;
 import org.cougaar.core.plugin.util.PluginHelper;
 
-import org.cougaar.core.util.UID;
-
-import org.cougaar.util.StateModelException;
 import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.glm.ldm.asset.GLMAsset;
-import org.cougaar.glm.ldm.asset.Organization;
 
 /** Main class for the generic plugin.
   *    real work is done by processAddTask, processChangeTask, processRemoveTasks
@@ -107,14 +97,14 @@ abstract public class GenericPlugin extends SimplePlugin  {
     try {
       cls = Class.forName(classname);
     } catch (Exception e) {
-      System.err.println("HTC GenericPlugin: Class " + classname + " not found.");
+      System.err.println("GenericPlugin: Class " + classname + " not found.");
       return null;
     }
     if (cls != null) {
       try {
         retval = cls.newInstance();
       } catch (Exception e) {
-        System.err.println("HTC GenericPlugin: Error creating instance of " + classname);
+        System.err.println("GenericPlugin: Error creating instance of " + classname);
         return null;
       }
     }
@@ -166,11 +156,9 @@ abstract public class GenericPlugin extends SimplePlugin  {
   }
 
   /** Creates <em>and publishes</em> aggregations for all of the tasks
-   * in the input argument.  Also records the UID of the aggregations
-   * in the ARTable.  For robustness, catches all errors we could
+   * in the input argument.  For robustness, catches all errors we could
    * foresee, prints error messages and returns a boolean indicating
    * success or failure.  
-   * @see htcar.ARTable
    */
   public boolean createAggregation(Iterator tasksToAgg, MPTask childTask, Plan plan,
                                    AllocationResultDistributor distributor) {
@@ -182,7 +170,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
     }
     
     if (DEBUG) {
-      System.out.println("HTC PACKER JAVA: Top of create Aggregation.");
+      System.out.println("GenericPlugin: Top of create Aggregation.");
     }
     
     // Create Composition
@@ -192,7 +180,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
     comp.setDistributor(distributor);
     
     if (DEBUG) {
-      System.out.println("HTC PACKER JAVA: Created comp.");
+      System.out.println("GenericPlugin: Created comp.");
     }
     
     Iterator taskIterator = parentTasks.iterator();
@@ -206,21 +194,21 @@ abstract public class GenericPlugin extends SimplePlugin  {
           plan = getFactory().getRealityPlan();
           
           if (plan == null ) {
-            System.err.println("HTC GenericPlugin: Unable to find plan for aggregation.");
+            System.err.println("GenericPlugin: Unable to find plan for aggregation.");
             return false;
           }
         }
       }
       
       if (DEBUG) {
-        System.out.println("HTC PACKER JAVA: Top of while loop.");
+        System.out.println("GenericPlugin: Top of while loop.");
       }
       
       Aggregation aggregation = 
         getFactory().createAggregation(plan, parentTask, comp, null);
       
       if (DEBUG) {
-        System.out.println("HTC PACKER JAVA: built the aggregation.");
+        System.out.println("GenericPlugin: built the aggregation.");
       }
       
       if (!publishAdd(aggregation)) {
@@ -237,7 +225,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
     }
 
     if (DEBUG) {
-      System.out.println("HTC PACKER JAVA: After the while loop.");
+      System.out.println("GenericPlugin: After the while loop.");
     }
     
     if (!publishAdd(comp)) {
@@ -261,61 +249,6 @@ abstract public class GenericPlugin extends SimplePlugin  {
 
 
 
-    /** This does the following:
-      * <UL>
-      * <li> gets all the tasks
-      * <li> filters them on the basis of taskPred
-      * <li> Use createAggregation to collect Tasks into Containers
-      * <li> do the preference aggregation dance
-      * </UL>
-      */
-  public boolean doAggregating(AggregationClosure ac, UnaryPredicate taskPred,
-			       String PrefAggName, String AllResDestribName){
-
-    AllocationResultDistributor ard;
-    PreferenceAggregator prefagg;
-
-    try {
-      ard = (AllocationResultDistributor)make_instance(AllResDestribName);
-      prefagg = (PreferenceAggregator)make_instance(PrefAggName);
-    } catch (java.lang.ClassCastException cce) {
-      System.err.println("HTC GenericPlugin:  While packing, got error attempting to instantiate a class argument.");
-      System.err.println("HTC GenericPlugin:  Error was:");
-      System.err.println(cce);
-      return false;
-    }
-
-    // get the list of matching tasks
-    Collection tasks = tasksForPred(taskPred);
-
-    Plan plan = null;
-    if (tasks.size() > 0) {
-      Iterator iterator = tasks.iterator();
-      plan = ((Task)iterator.next()).getPlan();
-    }
-    if (plan == null) {
-      plan = getFactory().getRealityPlan();
-    }
-
-    NewMPTask newtask = ac.newTask();
-    try {
-      ArrayList prefs = prefagg.aggregatePreferences(tasks.iterator(),
-                                                     getFactory());
-      // BOZO
-      newtask.setPreferences(new Vector(prefagg.aggregatePreferences(tasks.iterator(),
-                                                                     getFactory())).elements());
-
-    } catch (java.lang.Exception e) {
-      System.err.println("HTC GenericPlugin:  While aggregating preferences for:");
-      System.err.println("HTC GenericPlugin:  " + tasks);
-      System.err.println("HTC GenericPlugin:  Got the following error/exception:");
-      System.err.println(e);
-      return false;
-    }			     
-    boolean ret = createAggregation(tasks.iterator(), newtask, plan, ard);
-    return ret;
-  }
-
   /** Called from cycle when something has changed or the plugin was triggered. 
     */
   protected void execute() {
@@ -323,7 +256,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
     if (_myPlanElements != null) {
       updateAllocationResult(_myPlanElements);
     } else if (DEBUG) {
-      System.out.println("HTC GenericPlugin: _myPlanElements subscription is missing!");
+      System.out.println("GenericPlugin: _myPlanElements subscription is missing!");
     }
 
     processNewTasks( _allTasks.getAddedList());
@@ -386,7 +319,7 @@ abstract public class GenericPlugin extends SimplePlugin  {
    */
   protected void setupSubscriptions() {
     if (DEBUG) {
-      System.out.println("HTC GenericPlugin: setting up subscriptions for Packer.");
+      System.out.println("GenericPlugin: setting up subscriptions for Packer.");
 
 
       System.out.println("GenericPlugin.setupSubscriptions: didRehydrate() " + 
@@ -437,37 +370,6 @@ abstract public class GenericPlugin extends SimplePlugin  {
   public ClusterIdentifier getGPClusterIdentifier() {
     return getClusterIdentifier();
   }
-
-
-
-  /**
-    * This is a simple utility function that helps us avoid a lot of code
-    * repetition.  Invokes the nullary constructor for the class named by
-    * the argument and catches exceptions
-    * @return null if the class cannot be instantiated for one reason or
-    * other, and returns the instance, otherwise.
-    */
-  public static Object make_instance(String className)  {
-    Object ret = null;
-    Constructor method;
-    try {
-      Class targetClass = Class.forName(className);
-      // we always want the nullary constructor
-      Class[] args = new Class[]{};
-      method = targetClass.getConstructor(args);
-      ret = method.newInstance(args);
-    } catch (java.lang.ClassNotFoundException e) {
-      System.err.println("HTC GenericPlugin: ClassNotFoundException for " + className);
-    } catch (java.lang.NoSuchMethodException nsme) {
-      System.err.println("HTC GenericPlugin: Constructor method not found for " + className);
-    } catch (java.lang.Exception ie) {
-      System.err.println("HTC GenericPlugin:  Failed to make an instance of " + className);
-      System.err.println("HTC GenericPlugin:  Exception was:");
-      System.err.println(ie);
-    }
-    return ret;
-  }
-
 
   protected Collection tasksForPred(UnaryPredicate up) {
     return query(up);

@@ -22,25 +22,43 @@ package org.cougaar.glm.packer;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
-import org.cougaar.planning.ldm.plan.NewMPTask;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Plan;
-import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.PropertyGroupSchedule;
+import org.cougaar.planning.ldm.asset.TypeIdentificationPG;
+
+import org.cougaar.planning.ldm.measure.Mass;
+
+import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.NewMPTask;
+import org.cougaar.planning.ldm.plan.Plan;
+import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.ScoringFunction;
-import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
+import org.cougaar.planning.ldm.plan.Task;
+
+import org.cougaar.glm.ldm.Constants;
+
+import org.cougaar.glm.ldm.asset.GLMAsset;
+import org.cougaar.glm.ldm.asset.NewContentsPG;
+import org.cougaar.glm.ldm.asset.NewPhysicalPG;
+import org.cougaar.glm.ldm.asset.PhysicalPG;
+import org.cougaar.glm.ldm.asset.PropertyGroupFactory;
 
 class Filler {
+  private static final String UNKNOWN = "UNKNOWN";
   private Sizer _sz;
   
   private GenericPlugin _gp;
 
   /**
     * This is the generator for the Multi-parent tasks that
-    * are the "product" of the aggregation.
+    * are the "product" of the aggregation. Currently assumes that
+    * we're creating Transport tasks.
     */
   private AggregationClosure _ac;
 
@@ -75,36 +93,130 @@ class Filler {
       ArrayList agglist = new ArrayList();
       double amount = 0.0;
       while (_ac.getQuantity() - amount > 0.0) {
-	Task t = _sz.provide(_ac.getQuantity() - amount);
-	if (t == null ) {
-	  finished = true;
-	  break;
-	} else {
-	  // if we reach here, t is a Task that provides
-	  // some amount towards our overall amount
-	  double provided  = t.getPreferredValue(AspectType.QUANTITY);
-	  amount += provided;
-	  agglist.add(t);
-	}
+        Task t = _sz.provide(_ac.getQuantity() - amount);
+        if (t == null ) {
+          finished = true;
+          break;
+        }
+        
+        // if we reach here, t is a Task that provides
+        // some amount towards our overall amount
+        double provided  = t.getPreferredValue(AspectType.QUANTITY);
+        
+        if (!_ac.validTask(t)) {
+          System.err.println("Filler.execute: AggregationClosure rejected " +
+                             " task - " + t);
+          continue;
+        }
+        
+        amount += provided;
+        agglist.add(t);
       }
+      
       if (!agglist.isEmpty()) {
 	// now we do the aggregation
 	NewMPTask mpt = _ac.newTask();
-
+        
+        // Set ContentsPG on container
+        addContentsInfo((GLMAsset) mpt.getDirectObject(), agglist);
         
         //BOZO
 	mpt.setPreferences(new Vector(_pa.aggregatePreferences(agglist.iterator(),
                                                                _gp.getGPFactory())).
                            elements());
-        TRANSPORT_TONS += mpt.getPreferredValue(AspectType.QUANTITY);
+        double loadedQuantity = mpt.getPreferredValue(AspectType.QUANTITY);
+        TRANSPORT_TONS += loadedQuantity;
 	Plan plan = ((Task)agglist.get(0)).getPlan();
+        
+        // Add physicalPG info for loaded milvan 
+        PropertyGroupSchedule physicalPGSchedule = 
+          ((GLMAsset) mpt.getDirectObject()).getPhysicalPGSchedule();
+        PhysicalPG defaultPhysicalPG = 
+          (PhysicalPG) physicalPGSchedule.getDefault();
+        if (defaultPhysicalPG == null) {
+          System.err.println("Filler: milvan with a null default physicalPG");
+        }
+        NewPhysicalPG loadedPhysicalPG = 
+          PropertyGroupFactory.newPhysicalPG(defaultPhysicalPG);
+        Mass loadedMass = Mass.newMass(loadedQuantity, Mass.SHORT_TONS);
+        loadedPhysicalPG.setMass(loadedMass);
+        loadedPhysicalPG.setTimeSpan((long) mpt.getPreferredValue(AspectType.START_TIME),
+                                     (long) mpt.getPreferredValue(AspectType.END_TIME));
+        ((GLMAsset) mpt.getDirectObject()).setPhysicalPG(loadedPhysicalPG);
+
 	_gp.createAggregation(agglist.iterator(), mpt, plan, _ard);
       }
     }
-    System.out.println("Packer - current aggregated requested transport: " +
+    System.out.println("Packer  - current aggregated requested transport: " +
                        TRANSPORT_TONS + " tons.");
   }
 
+    
+  protected void addContentsInfo(GLMAsset container, ArrayList agglist) {
+    ArrayList typeIDs = new ArrayList();
+    ArrayList nomenclatures = new ArrayList();
+    ArrayList weights = new ArrayList();
+    ArrayList receivers = new ArrayList();
+
+    for (Iterator iterator = agglist.iterator();
+         iterator.hasNext();) {
+      Task task = (Task) iterator.next();
+      TypeIdentificationPG typeIdentificationPG = 
+        task.getDirectObject().getTypeIdentificationPG();
+      String typeID;
+      String nomenclature;
+      if (typeIdentificationPG != null) {
+        typeID = typeIdentificationPG.getTypeIdentification();
+        if ((typeID == null) || (typeID.equals(""))) {
+          typeID = UNKNOWN;
+        } 
+        
+        nomenclature = typeIdentificationPG.getNomenclature();
+        if ((nomenclature == null) || (nomenclature.equals(""))) {
+          nomenclature = UNKNOWN;
+        }
+      } else {
+        typeID = UNKNOWN;
+        nomenclature = UNKNOWN;
+      }
+      typeIDs.add(typeID);
+      nomenclatures.add(nomenclature);
+      
+      double quantity = task.getPreferredValue(AspectType.QUANTITY);
+      Mass mass = Mass.newMass(quantity, Mass.SHORT_TONS); 
+      weights.add(mass);
+      
+      Object receiver = 
+        task.getPrepositionalPhrase(Constants.Preposition.FOR);
+      String receiverID;
+        
+      // Add field with recipient
+      if ((receiver == null) || !(receiver instanceof Asset)) {
+        receiverID = UNKNOWN;
+      } else {
+        ItemIdentificationPG itemIdentificationPG = 
+          ((Asset) receiver).getItemIdentificationPG();
+        if ((itemIdentificationPG == null) ||
+            (itemIdentificationPG.getItemIdentification() == null) ||
+            (itemIdentificationPG.getItemIdentification().equals(""))) {
+          receiverID = UNKNOWN;
+        } else {
+          receiverID = itemIdentificationPG.getItemIdentification();
+        }
+      }
+      receivers.add(receiverID);
+    }
+    
+    // Contents
+    NewContentsPG contentsPG = 
+      PropertyGroupFactory.newContentsPG();
+    contentsPG.setNomenclatures(nomenclatures);
+    contentsPG.setTypeIdentifications(typeIDs);
+    contentsPG.setWeights(weights);
+    contentsPG.setReceivers(receivers);
+    container.setContentsPG(contentsPG);
+  }
+  
 }
 
 

@@ -59,12 +59,15 @@ public class AmmoPacker extends Packer {
   public AggregationClosure getAggregationClosure(ArrayList tasks) {
     // BOZO - source and destination should be taken from the tasks not
     // hardcoded.
-    AmmoTransport ac = new AmmoTransport(Geolocs.blueGrass(), 
-                                         Geolocs.asmara());
+    AmmoTransport ac = new AmmoTransport(tasks);
 
     ac.setGenericPlugin(this);
     
     return ac;
+  }
+
+  protected Collection groupByAggregationClosure(Collection tasks) {
+    return AmmoTransport.getTransportGroups(tasks);
   }
 }
 

@@ -10,6 +10,8 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 
 import org.cougaar.core.plugin.util.PluginHelper;
 
+import org.cougaar.planning.Constants;
+
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AllocationResultDistributor;
 import org.cougaar.planning.ldm.plan.AspectType;
@@ -113,8 +115,7 @@ public abstract class Packer extends GenericPlugin {
                        ", aggregated quantity from added SUPPLY tasks: " + 
                        ADD_TONS + " tons.");
 
-    doPacking(getAggregationClosure(tasks), tasks,
-              getSortFunction(), getPreferenceAggregator(),
+    doPacking(tasks, getSortFunction(), getPreferenceAggregator(),
               getAllocationResultDistributor());
   }
 
@@ -177,49 +178,45 @@ public abstract class Packer extends GenericPlugin {
     * @param ard AllocationResultDistributor to be used in distributing allocation results
     * for the transport task amount the initial supply tasks.    *
     */
-  protected boolean doPacking(AggregationClosure ac,
-                              ArrayList tasks,
-                              Comparator sortfun,
-                              PreferenceAggregator prefagg,
-                              AllocationResultDistributor ard) {
+  protected void doPacking(ArrayList tasks,
+                           Comparator sortfun,
+                           PreferenceAggregator prefagg,
+                           AllocationResultDistributor ard) {
     
-    // sort them, if appropriate
-    if (sortfun != null) {
-      tasks = (ArrayList)Sortings.sort(tasks, sortfun);
-    }
+    // Divide into 'pack together'  groups
+    Collection packGroups = groupByAggregationClosure(tasks);
+    
+    
+    for (Iterator iterator = packGroups.iterator(); iterator.hasNext();) {
+      ArrayList packList = (ArrayList) iterator.next(); 
+      // sort them, if appropriate
+      if (sortfun != null) {
+        packList = (ArrayList)Sortings.sort(packList, sortfun);
+      }
+      
+      if (DEBUG) {
+        System.out.println("Packer: about to build the sizer in doPacking.");
+      }
+      
+      AggregationClosure ac = getAggregationClosure(packList);
 
-    if (DEBUG) {
-      System.out.println("Packer: about to build the sizer in doPacking.");
-    }
-
-    // now we set the double wheel going...
-    Sizer sz = new Sizer(tasks, this);
-
-    if (DEBUG) {
-      System.out.println("Packer: about to build the filler in doPacking.");
-    }
-
-    Filler fil = new Filler(sz, this, ac, ard, prefagg);
-
-    if (DEBUG) {
-      System.out.println("Packer: about to run the wheelz in doPacking.");
-    }
-
-    boolean success;
-    try {
+      // now we set the double wheel going...
+      Sizer sz = new Sizer(packList, this);
+      
+      if (DEBUG) {
+        System.out.println("Packer: about to build the filler in doPacking.");
+      }
+      
+      
+      Filler fil = new Filler(sz, this, ac, ard, prefagg);
+      
+      if (DEBUG) {
+        System.out.println("Packer: about to run the wheelz in doPacking.");
+      }
+      
+      
       fil.execute();
-      success = true;
-    } catch (java.lang.Exception e) {
-      System.err.println("Packer: Failure in attempt to pack.");
-      System.err.println("Packer: Exception was:");
-      System.err.println(e);
-      e.printStackTrace();
-      success = false;
-    } finally {
     }
-	     
-    // indicate that the action succeeded.
-    return success;
   }
 
 
@@ -267,6 +264,8 @@ public abstract class Packer extends GenericPlugin {
       }
     }
   }
+
+    
 
   /**
    * SortByEndTime - sorts tasks by end date, earliest first
@@ -317,9 +316,8 @@ public abstract class Packer extends GenericPlugin {
     }
   }
 
-      
+  protected abstract Collection groupByAggregationClosure(Collection tasks);
 }
-
 
 
 

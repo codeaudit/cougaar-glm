@@ -56,6 +56,19 @@ public abstract class Geolocs {
     geoloc.setInstallationTypeCode("JAP");			
     return (GeolocLocation)geoloc;    
   }
+
+  public static GeolocLocation sanliurfa() {
+    NewGeolocLocation geoloc = GLMFactory.newGeolocLocation();
+    geoloc.setName("SANLIURFA");
+    geoloc.setCountryStateCode("TU");
+    geoloc.setCountryStateName("TURKEY");
+    geoloc.setGeolocCode("UWCP");
+    geoloc.setIcaoCode("UWCP");
+    geoloc.setLatitude(Latitude.newLatitude("37.0994"));
+    geoloc.setLongitude(Longitude.newLongitude("38.8550"));
+    geoloc.setInstallationTypeCode("AFD");			
+    return (GeolocLocation)geoloc;    
+  }
 }
 
 

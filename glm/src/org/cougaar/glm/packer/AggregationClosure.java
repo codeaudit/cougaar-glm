@@ -5,6 +5,7 @@
 package org.cougaar.glm.packer;
 
 import org.cougaar.planning.ldm.plan.NewMPTask;
+import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.core.domain.RootFactory;
 
 /**
@@ -50,9 +51,14 @@ public abstract class AggregationClosure {
   public abstract NewMPTask newTask();
 
   /**
-   * get Quantity - return the amount this container can hold
+   * getQuantity - return the amount this container can hold
    */
   public abstract double getQuantity();
+
+  /**
+   * return true if task is valid for this AggregationClosure.
+   */
+  public abstract boolean validTask(Task task);
 }
 
 
