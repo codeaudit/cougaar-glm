@@ -426,7 +426,10 @@ public class UIInventoryImpl {
 	    el = new UIQuantityScheduleElement(elementEndTime-1,elementEndTime, quantity);
         if (isInactive(projectTask, el) == isInactive) {
           schedule.add(el);
-        }
+	  if(debug) {
+	      System.out.println("UIInventoryImpl::getScheduleFromProjectionTask: adding element " + el + " inactive is " + isInactive + " for task: " + TaskUtils.taskDesc(projectTask));
+	  }
+	}
 	elementStartTime = elementEndTime + 1;
     }
     return schedule;
@@ -700,7 +703,7 @@ public class UIInventoryImpl {
      @return Vector - the schedule for this asset in this cluster
   */
   public Vector getInactiveProjectedDueInSchedule() {
-    return convertTimeSpanSet(inactiveProjectedDueInSchedule, "INACTIVE PROJECTED DUE IN");
+      return convertTimeSpanSet(inactiveProjectedDueInSchedule, "INACTIVE PROJECTED DUE IN");
   }
 
     public static Schedule makeNonOverlapping(TimeSpanSet inSchedule) {
@@ -867,6 +870,14 @@ public class UIInventoryImpl {
       int day = (int) (time / TimeUtils.MSEC_PER_DAY);
       int imputedDay = day - (day0 + today);
       double weight = invpg.getProjectionWeight().getProjectionWeight(task, imputedDay);
+
+      if(debug) {
+	  Date startDate = new Date(invpg.getStartTime());
+	  System.out.println("UIInventoryImpl::isInactive: Weight is " + weight);
+	  System.out.println("Start time is " + startDate + " today is (days from them) " + today + " and time of element is " + day + " hence imputed is: " + imputedDay);
+
+      }
+
       return weight < 0.5;
     }
     return false;
