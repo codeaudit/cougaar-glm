@@ -262,7 +262,7 @@ public class FieldParser{
 //    private static Method oldGetSetterMethod(Class objc, String name, Class argtype){
 //        return getSetterMethod(objc, name, argtype);
 //    }
-  static Hashtable seen_classes = new Hashtable();
+  Hashtable seen_classes = new Hashtable();
   /**
    * Wrapper arround the java.lang.Class functionality to allow to 
    * get a method on an object that is called with a superclass of its
