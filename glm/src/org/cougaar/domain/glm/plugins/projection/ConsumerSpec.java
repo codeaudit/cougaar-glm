@@ -75,11 +75,11 @@ public abstract class ConsumerSpec implements Serializable {
 
     private static final Double ONE = new Double(1.0);
 
-    protected Double getMultiplier(Asset consumed) {
+    public Double getMultiplier(Asset consumed) {
       return getMultiplier(consumed.getTypeIdentificationPG().getTypeIdentification());
     }
 
-    protected Double getMultiplier(String consumedId) {
+    public Double getMultiplier(String consumedId) {
         if (multipliers_ == null) return ONE;
         Double mult = (Double) multipliers_.get(consumedId);
         if (mult == null) return ONE;

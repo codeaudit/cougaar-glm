@@ -476,29 +476,43 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
     }
 
     protected void publishChangeProjection(Task parent_task, Asset resource, Enumeration new_tasks) {
-	if (!new_tasks.hasMoreElements()) {
-	    return;
-	}
+
 	// ownSubscription_ may contain both Supply and ProjectSupply tasks
 	if (publishedProjectionTable_.isEmpty()) {
 	    cachePublishedProjections();
 	}
-	Enumeration tasks_to_publish;
+	Enumeration tasks_to_publish = null;
 	Vector published_tasks = null;
 	published_tasks = (Vector)publishedProjectionTable_.get(resource.getTypeIdentificationPG().getTypeIdentification());
-	if (published_tasks == null) {
-	    tasks_to_publish = new_tasks;
-	} else {
+
+	if (!new_tasks.hasMoreElements() && (published_tasks == null)) {
+	    // No new tasks and no tasks from previous run.  nothing to do.
+	    return;
+	}
+	else if (new_tasks.hasMoreElements() && (published_tasks != null)) {
 	    Schedule published_schedule = newObjectSchedule(published_tasks.elements());
 	    Schedule newtask_schedule = newObjectSchedule(new_tasks);
 	    tasks_to_publish =  diffProjections(published_schedule, newtask_schedule);
 	}
-	Task task;
-	while (tasks_to_publish.hasMoreElements()) {
-	    task = (Task)tasks_to_publish.nextElement();
-	    plugin_.publishAddToExpansion(parent_task, task);
-//  	    printDebug("publishChangeProjection(), Publishing new Projections: "+
-//  		       TaskUtils.projectionDesc(task));
+	else if (new_tasks.hasMoreElements()) {
+	    tasks_to_publish = new_tasks;
+	} 
+	else {
+	    // Saw demand for asset in previous run but no demand in new run, remove old tasks
+	    Enumeration e = published_tasks.elements();
+	    while (e.hasMoreElements()) {
+		Task task = (Task)e.nextElement();
+		plugin_.publishRemoveFromExpansion(task);
+	    }
+	}
+	if (tasks_to_publish != null) {
+	    Task task;
+	    while (tasks_to_publish.hasMoreElements()) {
+		task = (Task)tasks_to_publish.nextElement();
+		plugin_.publishAddToExpansion(parent_task, task);
+//  	        printDebug("publishChangeProjection(), Publishing new Projections: "+
+//  		            TaskUtils.projectionDesc(task));
+	    }
 	}
 
     }
@@ -510,7 +524,7 @@ public abstract class GenerateDemandExpander extends BasicProcessor {
 	Vector v;
 	// create table of projection tasks hashed on DO Asset
 	while (e.hasMoreElements()) {
-	    task = (Task)e.nextElement();
+	    task = ((PlanElement)e.nextElement()).getTask();
 	    if (task.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
 		assetID = task.getDirectObject().getTypeIdentificationPG().getTypeIdentification();
 		v = (Vector)publishedProjectionTable_.get(assetID);

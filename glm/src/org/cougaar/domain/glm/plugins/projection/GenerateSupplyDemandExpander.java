@@ -71,7 +71,8 @@ public class GenerateSupplyDemandExpander extends GenerateDemandExpander {
 	public boolean execute(Object o) {
 	    if (o instanceof PlanElement) {
 		Task task = ((PlanElement)o).getTask();
-		if (task.getVerb().equals(Constants.Verb.SUPPLY)) {
+		if (task.getVerb().equals(Constants.Verb.SUPPLY) || 
+		    task.getVerb().equals(Constants.Verb.PROJECTSUPPLY)) {
 		    if (task.getParentTaskUID() != null) {
 			if (task.getSource().equals(clusterId_)) {
 			    if (!TaskUtils.isMyRefillTask(task, myOrgName_)) {
