@@ -1009,7 +1009,7 @@ public class PSP_Itinerary extends PSP_BaseAdapter implements PlanServiceProvide
 
       if (isDefinitelyNotDirect)
 	  leg.setIsDirectElement(false);
-      else if (ie.getRole() == Constants.Verb.Transport)
+      else if (ie.getRole() == Constants.Verb.Transit)
 	  leg.setIsDirectElement(false);
       else
 	  leg.setIsDirectElement(true);
