@@ -708,11 +708,13 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
     //  which means we can get it from the self org
 
     if (adSuperior == null) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("Missing the AdministrativeSuperior value needed for the OrgActivity!");
+      if (logger.isWarnEnabled()) {
+        logger.warn(getAgentIdentifier() + ": Missing the AdministrativeSuperior value needed for the OrgActivity!");
       }
+    } else {
+      orgActivity.setAdCon(adSuperior);
     }
-    orgActivity.setAdCon(adSuperior);
+
     //If no opCon value was read from the database,
     // set opCon to be same as adCon
     // This should mean that this is either the Initial Stage
@@ -720,9 +722,13 @@ public class OplanReaderPlugin extends ComponentPlugin implements GLSConstants {
     // be the same as adCon for the moement.
 
     if (opCon == null) {
-      orgActivity.setOpCon(adSuperior);
-      if (logger.isDebugEnabled()) {
-        logger.debug("Setting opCon value to adCon value because opCon from DB is null");
+      if (adSuperior != null) {
+	orgActivity.setOpCon(adSuperior);
+	if (logger.isDebugEnabled()) {
+	  logger.debug("Setting opCon value to adCon value because opCon from DB is null");
+	}
+      } else if (logger.isErrorEnabled()) {
+	logger.error(getAgentIdentifier() + ": No AdSuperior OR OpCon available!");
       }
     }
     else {

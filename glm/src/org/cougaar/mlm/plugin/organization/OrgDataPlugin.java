@@ -247,6 +247,18 @@ public class OrgDataPlugin extends AssetDataPlugin  {
       long oaStart = oa.getStartTime();
       long oaEnd = oa.getEndTime();
 
+      // Error checking inspired by bug 3790
+      if (opCon == null) {
+	if (myLogger.isErrorEnabled())
+	  myLogger.error(getAgentIdentifier() + " Null opCon from OrgActivity. AdCon: " + adCon + ", start: " + oaStart + ", ActivityType: " + oa.getActivityType() + " ActivityName: " + oa.getActivityName());
+	opCon = adCon;
+	if (adCon == null) {
+	  if (myLogger.isErrorEnabled())
+	    myLogger.error("Null AdCon too! Bad OrgActivity!");
+	  continue;
+	}
+      }
+
       //need to compare the opcon from the org activity to see if its different
       // from the OperationalSuperior in the ReportForDuty tasks for the
       // corresponding timespan of the OrgActivity.  If so...
