@@ -843,7 +843,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
         }
       }
       // create group
-      AssetGroup ag = new AssetGroup();
+      AssetGroup ag = (AssetGroup) theLDMF.createAsset(AssetGroup.class);
       try {
         NewTypeIdentificationPG typeIdPG = 
           (NewTypeIdentificationPG)theLDMF.createPropertyGroup(
