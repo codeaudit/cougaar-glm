@@ -880,7 +880,7 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
                 String endQuery = line.substring(equalsIndex);
                 String newLine = startQuery+endQuery;
                 parseQueryParameter(((pt==null)?globalParameters:pt),
-				    newLine);
+				    newLine, true);
               }
               else //skip if this query does not match this database type and is not a default query (WAN)
                 continue;
@@ -938,9 +938,19 @@ public class LDMQueryPlugIn extends LDMEssentialPlugIn
       String realVal = Parameters.replaceParameters(v); //WAN added
       dbType = getDBType(realVal);  //WAN added
     }
-    table.put(p,v);
+    if  (!table.containsKey(p))
+      table.put(p,v);
   }// parseQueryParameter
-
+  
+  // force the database specific query in 
+  private void parseQueryParameter(Properties table, String s, boolean dbSpecific) {
+    int i = s.indexOf('=');
+    String p = s.substring(0,i).trim();
+    String v = s.substring(i+1).trim();
+    if (dbSpecific) // if database specific, overwrite the default
+      table.put(p,v);
+  }
+  
   public void registerAsset( Asset anAsset )
   {
 
