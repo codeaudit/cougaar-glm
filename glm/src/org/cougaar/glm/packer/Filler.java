@@ -136,7 +136,6 @@ class Filler {
                                  TRANSPORT_TONS + " tons.");
   }
 
-    
   protected void addContentsInfo(GLMAsset container, ArrayList agglist) {
     ArrayList typeIDs = new ArrayList();
     ArrayList nomenclatures = new ArrayList();
@@ -176,7 +175,11 @@ class Filler {
       String receiverID;
         
       // Add field with recipient
-      if ((receiver == null) || !(receiver instanceof Asset)) {
+      if (receiver == null)
+        receiverID = UNKNOWN;
+      else if (receiver instanceof String) 
+	receiverID = (String) receiver;
+      else if (!(receiver instanceof Asset)) {
         receiverID = UNKNOWN;
       } else {
         ItemIdentificationPG itemIdentificationPG = 
