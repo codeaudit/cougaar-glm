@@ -199,7 +199,7 @@ public class SimpleAddRescindPlugin extends CommonUtilPlugin {
      */
     protected Task makeTask(Asset what, String verb) {
 	NewTask new_task = theLDMF.newTask();
-	new_task.setVerb(new Verb(verb));// Set the verb as given
+	new_task.setVerb(Verb.get(verb));// Set the verb as given
 	new_task.setPlan(theLDMF.getRealityPlan());// Set the reality plan for the task
 	new_task.setDirectObject(what);
 

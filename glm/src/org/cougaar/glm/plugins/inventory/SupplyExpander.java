@@ -183,10 +183,10 @@ public class SupplyExpander extends InventoryProcessor {
     
     public static final long                 TRANSPORT_TIME = 24 * MSEC_PER_HOUR; // second day
     public static final long                 LOAD_TIME      = 4 * MSEC_PER_HOUR; // 4 hours
-    public static final Verb                 WITHDRAWVERB = new Verb(Constants.Verb.WITHDRAW);
+    public static final Verb                 WITHDRAWVERB = Verb.get(Constants.Verb.WITHDRAW);
     public static final Verb                 PROJECTWITHDRAWVERB = Constants.Verb.ProjectWithdraw;
-    public static final Verb                 TRANSPORTVERB = new Verb(Constants.Verb.TRANSPORT);
-    public static final Verb                 LOADVERB = new Verb(Constants.Verb.LOAD);
+    public static final Verb                 TRANSPORTVERB = Verb.get(Constants.Verb.TRANSPORT);
+    public static final Verb                 LOADVERB = Verb.get(Constants.Verb.LOAD);
     private static AllocationResultAggregator projectionARA = new ProjectionARA();
     private static AllocationResultAggregator supplyARA = new SupplyARA();
     protected boolean addTransport; // Add load tasks when expanding supply tasks

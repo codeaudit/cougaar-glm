@@ -50,7 +50,7 @@ public class ManagerAllocatorPlugin extends  CommonUtilPlugin {
     protected  String VERB ;//= getParameterValue(getParameters(), "VERB");
     protected String DEPARTMENT="SoftwareDevelopment"; //defaults
 
-    // protected Verb verb = new Verb(VERB);
+    // protected Verb verb = Verb.get(VERB);
      /**
      * parsing the plugIn arguments and setting the values for CPUCONSUME and MESSAGESIZE
      */
