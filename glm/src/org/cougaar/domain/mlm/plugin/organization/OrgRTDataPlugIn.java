@@ -138,7 +138,7 @@ public class OrgRTDataPlugIn extends SimplePlugIn  {
 
   protected void setupSubscriptions() {
     aldmf = (GLMFactory)getFactory("glm");
-    getSubscriber().setShouldBePersisted(false);
+    getBlackboardService().setShouldBePersisted(false);
 
     if (!didRehydrate()) {
       processOrganizations();	// Objects should already exist after rehydration
