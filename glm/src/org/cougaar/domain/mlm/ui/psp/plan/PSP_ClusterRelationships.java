@@ -13,6 +13,7 @@ package org.cougaar.domain.mlm.ui.psp.plan;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.ConnectionException;
 import java.util.*;
 
 import org.cougaar.core.cluster.*;
@@ -289,13 +290,28 @@ public class PSP_ClusterRelationships extends PSP_BaseAdapter
             System.out.println(
               "[PSP_ClusterRelationships] child URL: " + myURL.toString());
           }
+
           URLConnection myConnection = myURL.openConnection();
-          if (DEBUG) {
-            System.out.println(
-              "opened query connection = "+ myConnection.toString());
+          InputStream is;
+          try {
+            is = myConnection.getInputStream();
+          } catch (ConnectionException ce) {
+            // too many connections?  sleep and try once more
+            try {
+              Thread.sleep(5000);
+            } catch (InterruptedException ie) {
+            }
+            try {
+              is = myConnection.getInputStream();
+            } catch (ConnectionException anotherCE) {
+              // give up!
+              throw new RuntimeException(
+                "Unable to contact host "+myURL+": "+
+                anotherCE);
+              anotherCE.printStackTrace();
+            }
           }
 
-          InputStream is = myConnection.getInputStream();
           BufferedInputStream bis = new BufferedInputStream(is);
           byte buf[] = new byte[512];
           int sz2;
