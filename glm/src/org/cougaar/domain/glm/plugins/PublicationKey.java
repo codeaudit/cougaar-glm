@@ -106,9 +106,9 @@ public class PublicationKey
     {
 	String key = getTaskKey(task);
 	double quantity = TaskUtils.getPreferenceBestValue(task, AspectType.QUANTITY);
-	if (quantity != Double.NaN) key +=" QTY:"+quantity;
+	if (!Double.isNaN(quantity)) key +=" QTY:"+quantity;
 	double end = TaskUtils.getPreferenceBestValue(task, AspectType.END_TIME);
-	if (end != Double.NaN) key += " END:" + TimeUtils.dateString(new Date((long) end));
+	if (!Double.isNaN(end)) key += " END:" + TimeUtils.dateString(new Date((long) end));
 	return key;
     }
 
@@ -177,14 +177,15 @@ public class PublicationKey
 	    key += " "+preposition+" "+description;
 	}
 		
-	double time =  TaskUtils.getPreferenceBestValue(task, AspectType.START_TIME);
-	if (time != Double.NaN) { 
-	    key += " START:" + TimeUtils.dateString(new Date((long) time));
-	} else {
-	    time =  TaskUtils.getPreferenceBestValue(task, AspectType.END_TIME);
-	    if (time != Double.NaN) {
-		key += " END:" + TimeUtils.dateString(new Date((long) time));
-	    }
+	try {
+            long time = TaskUtils.getStartTime(task);
+	    key += " START:" + TimeUtils.dateString(new Date(time));
+        } catch (RuntimeException re) {
+            try {
+                long time = TaskUtils.getEndTime(task);
+		key += " END:" + TimeUtils.dateString(new Date(time));
+	    } catch (RuntimeException re2) {
+            }
 	}
 	return key;
     }

@@ -202,7 +202,7 @@ public class PSP_ExecutionWatcher
           AllocationResult obsAR = pe.getObservedResult();
           if (obsAR != null) {
             double obsValue = TaskUtils.getARAspectValue(obsAR, aspectType);
-            if (obsValue != Double.NaN) {
+            if (!Double.isNaN(obsValue)) {
               continue;         // Already have observed value, don't send this again
             }
           }

@@ -234,7 +234,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 		//    		printDebug("generateProjections(), previous: "+previous+", current: "+current+", on day "+i);
 		if (!current.equals(previous)) {
 		    double value = convertScalarToDouble(previous);
-		    if ((value > 0) && (value != Double.NaN)) {
+		    if (!Double.isNaN(value) && value > 0.0) {
 			start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
 			// Period spans a single day
 			if (periodBegin == (i-1)) {
@@ -266,7 +266,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	}
 	if ((newCurrent) && (previous != null)) {
 	    double value = convertScalarToDouble(previous);
-	    if ((value > 0) && (value != Double.NaN)) {
+	    if (!Double.isNaN(value && value > 0.0) {
 		start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
 		// Period spans a single day
 		if (periodBegin == (days-1)) {
