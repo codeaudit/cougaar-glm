@@ -55,6 +55,12 @@ import org.xml.sax.InputSource;
 public class GLMTaskParser{
 
   /**
+   * No-arg constructor for when we make a parser using Class.newInstance.
+   * 
+   */
+  public GLMTaskParser() {}
+
+  /**
    * Constructor.  The constructor will parse the given xml file
    * and the tasks represented in that file will become the 
    * "associated task list" for this instance of the task parser.
@@ -66,9 +72,25 @@ public class GLMTaskParser{
 		       ConfigFinder configFinder,
 		       LDMServesPlugin ldmServesPlugin,
 		       Logger logger) {
+    init (pfile, ldmf, clusterIdentifier, configFinder, ldmServesPlugin, logger);
+  }
+
+  /**
+   * Parse the given xml file
+   * and the tasks represented in that file will become the 
+   * "associated task list" for this instance of the task parser.
+   * @param pfile the name of the parameter file.
+   * @param configFinder used to find the parameter file in the config path
+   */
+  public void init(String pfile, 
+              PlanningFactory ldmf, 
+              MessageAddress clusterIdentifier, 
+              ConfigFinder configFinder,
+              LDMServesPlugin ldmServesPlugin,
+              Logger logger) {
     try{
       this.logger = logger;
-      taskParser = new TaskParser (logger);
+      taskParser = makeTaskParser ();
       DOMParser parser = new DOMParser();
       parser.setFeature(
                  "http://apache.org/xml/features/allow-java-encodings", true);
@@ -90,6 +112,10 @@ public class GLMTaskParser{
     catch(Exception e){
       logger.error ("error", e);
     }
+  }
+
+  protected TaskParser makeTaskParser () { 
+    return new TaskParser (logger);
   }
 
   /**
