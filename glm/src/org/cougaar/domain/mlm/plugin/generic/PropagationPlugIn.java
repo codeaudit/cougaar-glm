@@ -36,24 +36,21 @@ import org.w3c.dom.NodeList;
 
 
 /**
- * PropagationPlugIn propagates Transferables based on xml file
+ * PropagationPlugIn propagates Transferables based on xml files in parameter list
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.2 2000-12-20 18:18:41 mthome Exp $
+ * @version $Id: PropagationPlugIn.java,v 1.3 2001-01-12 18:57:03 jwinston Exp $
  */
 
 public class PropagationPlugIn extends SimplePlugIn
 {
 
-  /** Subscription to hold collection of input tasks **/
 
   private Vector roles = new Vector();
   
   private IncrementalSubscription organizations;
 
-  private TransferableSubscriptions[] subscriptions;
-
-  private String xmlfilename;
+  private ArrayList subscriptionCollection;
 
   private static UnaryPredicate allOrganizationPred = new UnaryPredicate() {
     public boolean execute(Object o) { 
@@ -66,15 +63,19 @@ public class PropagationPlugIn extends SimplePlugIn
   };
 
   protected void setupSubscriptions() {
-    getParams();
     
     organizations = (IncrementalSubscription)subscribe(allOrganizationPred);
 
-    // read from XML. Fill in array of destination predicates
-    if (xmlfilename == null) 
-      return;
-
-    parseFile(xmlfilename);
+    subscriptionCollection = new ArrayList(13);
+    Vector pv = getParameters();
+    if ( (pv == null) || (pv.size() ==0) ) {
+      throw new RuntimeException( "PropagationPlugIn requires a parameter" );
+    } else {
+      for (Iterator pi = pv.iterator(); pi.hasNext();) {
+	String xmlfilename = (String) pi.next();
+	parseFile(xmlfilename);
+      }
+    }
   }
 
 
@@ -97,9 +98,11 @@ public class PropagationPlugIn extends SimplePlugIn
 
   public synchronized void execute() {
 
-    for (int i=0; i<subscriptions.length; i++) {
+    for ( Iterator subIt = subscriptionCollection.iterator(); subIt.hasNext(); ) {
+      TransferableSubscriptions currentSubscriptions = (TransferableSubscriptions)subIt.next();
+      
       UnaryPredicate 
-        destPred = subscriptions[i].getDestinationPredicate();
+        destPred = currentSubscriptions.getDestinationPredicate();
       ArrayList alreadySent = new ArrayList();
 
       if (organizations.hasChanged()) {
@@ -111,7 +114,7 @@ public class PropagationPlugIn extends SimplePlugIn
             
             // Transfer all existing transferables to a new destination
             for (Iterator transferables = 
-                   subscriptions[i].getTransferableSubscription().getCollection().iterator(); 
+                   currentSubscriptions.getTransferableSubscription().getCollection().iterator(); 
                  transferables.hasNext();) {
               transfer((Transferable)transferables.next(), org);
             }
@@ -130,7 +133,7 @@ public class PropagationPlugIn extends SimplePlugIn
             Organization org = (Organization)iterator.next();
             
             for (Iterator transferables = 
-                   subscriptions[i].getTransferableSubscription().getCollection().iterator(); 
+                   currentSubscriptions.getTransferableSubscription().getCollection().iterator(); 
                  transferables.hasNext();) {
               transfer((Transferable)transferables.next(), org);
             }
@@ -145,7 +148,7 @@ public class PropagationPlugIn extends SimplePlugIn
 
 
       IncrementalSubscription ts = 
-        subscriptions[i].getTransferableSubscription();
+        currentSubscriptions.getTransferableSubscription();
 
       if (ts.hasChanged()) {
         Collection destinations = 
@@ -185,23 +188,6 @@ public class PropagationPlugIn extends SimplePlugIn
     }
   }
 
-  /**
-   * Parse parameters passed to PlugIn
-   */
-  private void getParams() {
-    Vector pv = getParameters();
-    if ( (pv == null) || (pv.size() ==0) ) {
-      throw new RuntimeException( "PropagationPlugIn requires a parameter" );
-    } else {
-      try {
-	Enumeration ps = pv.elements();
-	xmlfilename = (String) ps.nextElement();
-      } catch( Exception e ) {
-	e.printStackTrace();
-      }
-    }
-  }
-
   private void parseFile(String xmlfilename) {
       Document doc;
       InputStream is;
@@ -218,8 +204,7 @@ public class PropagationPlugIn extends SimplePlugIn
       }
 
       Element root = doc.getDocumentElement();
-      Vector subscriptionVector = new Vector();
-      Hashtable transferableSubscriptions = new Hashtable();
+      Hashtable transferableSubscriptions = new Hashtable(13);
 
       if( root.getNodeName().equals( "Propagations" )){
 	NodeList nlist = root.getChildNodes();
@@ -262,15 +247,12 @@ public class PropagationPlugIn extends SimplePlugIn
                 }
 
                 TransferableSubscriptions fh = new TransferableSubscriptions(ts, dp);
-                subscriptionVector.add(fh);
+                subscriptionCollection.add(fh);
               }
 	    }
 	  }
 	}
       }
-
-      subscriptions = new TransferableSubscriptions[subscriptionVector.size()];
-      subscriptions = (TransferableSubscriptions[])subscriptionVector.toArray(subscriptions);
   }
 
 
