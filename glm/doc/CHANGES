@@ -1,0 +1,32 @@
+* MB 8.2
+
+Improved performance of the Inventory Manager by reducing number of times
+it would run its cycle in response to a change in demand.   Now the Inventory
+Manager will wait and decide when its customers have presented most of their
+demand for the time being, before waking up, and starting its work cycle 
+to handle the accumulated demand.
+
+Within one of the inventory managers working cycles, enhancements were made 
+to work more efficiently and trim down the number of tasks and responding 
+results between clusters.
+
+Reorganization of the Inventory Manager, its subclasses, and supporting 
+classes for a cleaner design that generates better solutions.   Methods in 
+subclasses were made more generic and moved to higher point in the class 
+hierarchy to better isolate the points for overloading.   Better placement of
+state/data items within appropriate classes.  The algorithm performed in an 
+Inventory Managers work cycle was made smarter, more comprehensive, 
+and truer to the miltary model from where it was abstracted.
+
+Many bug fixes were made, not only functional, but some that will improve 
+memory usage and performance.
+
+* MB 7.2
+
+Introduction of the InventoryPolicy portion of the config that broken
+out on class of supply for and inventory manager, holds a number of 
+the decision making parameters used in and Inventory Manager. 
+Includes switchover day, goal level multiplier, days of demand on hand to have for reorder level,  how many days of demand to consider, capacity and other
+flags. 
+
+
