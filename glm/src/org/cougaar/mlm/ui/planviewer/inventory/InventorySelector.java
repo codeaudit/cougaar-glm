@@ -65,7 +65,7 @@ public class InventorySelector implements ActionListener {
   boolean assetNameBoxInitted = false;
   Vector assetNames;
   String hostAndPort; // defaults to http://localhost:5555/
-  static final String PSP_id = "GLMINVENTORY.PSP";
+  static final String PSP_id = "inventory"; //"GLMINVENTORY.PSP";
   boolean isApplet;
   Container container;
   boolean doDisplayTable = false;
@@ -345,13 +345,13 @@ public class InventorySelector implements ActionListener {
 	queryStr = (ASSET_AND_CLASSTYPE + aClassType);
     }
 
-    System.out.println("Submitting: " + queryStr + " to: " + clusterURL +
+    //System.out.println("Submitting: " + queryStr + " to: " + clusterURL +
                        " for: " + PSP_id);
     InputStream is = null;
     try {
       ConnectionHelper connection = 
-        new ConnectionHelper(clusterURL,
-                             XMLClientConfiguration.PSP_package, PSP_id);
+        new ConnectionHelper(clusterURL, "inventory");
+                             //XMLClientConfiguration.PSP_package, PSP_id);
 
       connection.sendData(queryStr);
 
@@ -365,7 +365,7 @@ public class InventorySelector implements ActionListener {
       ObjectInputStream p = new ObjectInputStream(is);
       assetNames = (Vector)p.readObject();
     } catch (Exception e) {
-      displayErrorString("Object read exception: " + e.toString());
+      displayErrorString("Object read exception: " + "_2_" + e.toString());
     }
     Collections.sort(assetNames);
     return assetNames;
