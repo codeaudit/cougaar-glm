@@ -322,7 +322,9 @@ System.out.println("is post");
           // post 
           if (doPost(orgActivityArray, cDate,
                      postActivityType, postData)) {
+            psc.getServerPlugInSupport().openLogPlanTransaction();
             psc.getServerPlugInSupport().publishChangeForSubscriber(plan);
+            psc.getServerPlugInSupport().closeLogPlanTransaction();
             displayPostSuccess(out, URLname);
           } else {
             displayPostFailure(out, URLname);

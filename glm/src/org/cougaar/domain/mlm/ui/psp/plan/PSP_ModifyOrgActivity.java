@@ -155,6 +155,8 @@ public class PSP_ModifyOrgActivity
           } 
           Date origStartDate = timeSpan.getStartDate();
           Date origThruDate = timeSpan.getThruDate();
+          
+          psc.getServerPlugInSupport().openLogPlanTransaction();
           // modify
           moa.changeOrgActivity(orgAct, oplan);
           // fix other orgActs
@@ -162,6 +164,9 @@ public class PSP_ModifyOrgActivity
              origStartDate, origThruDate);
           // changed orgAct
           publishChange(psc, orgAct);
+
+          psc.getServerPlugInSupport().closeLogPlanTransaction();
+
           moa.setStatus(true, "Modified Org Activity");
         }
       }

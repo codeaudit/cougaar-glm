@@ -282,7 +282,9 @@ public class PSP_Closure extends PSP_BaseAdapter implements PlanServiceProvider,
 
       if( doPost(orgActivityArray,postData) == true)
       {
+        psc.getServerPluginSupport().openLogPlanTransaction();
         psc.getServerPluginSupport().publishChangeForSubscriber(plan);
+        psc.getServerPluginSupport().closeLogPlanTransaction();
         out.println("<html>");
         out.println("<head>");
         out.println("<title>Untitled Document</title>");
