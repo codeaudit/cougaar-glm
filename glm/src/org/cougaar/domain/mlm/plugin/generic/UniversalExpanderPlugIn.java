@@ -55,7 +55,7 @@ import java.sql.DriverManager;
   * how to expand the tasks it is interested in.
   * Please see glm/docs/UniversalExpanderPlugIn.html for database and argument details.
   * @author  ALPINE <alpine-software@bbn.com>
-  * @version $Id: UniversalExpanderPlugIn.java,v 1.7 2001-10-04 19:30:14 bdepass Exp $
+  * @version $Id: UniversalExpanderPlugIn.java,v 1.8 2001-10-05 21:07:41 bdepass Exp $
   **/
 
 public class UniversalExpanderPlugIn extends ComponentPlugin {
@@ -65,7 +65,7 @@ public class UniversalExpanderPlugIn extends ComponentPlugin {
   private DomainService domainService;
   private RootFactory theFactory;
   private ArrayList expansionVerbs = new ArrayList();
-  private boolean flat = true;
+  private boolean flat = false;
 
   public void load() {
     super.load();
