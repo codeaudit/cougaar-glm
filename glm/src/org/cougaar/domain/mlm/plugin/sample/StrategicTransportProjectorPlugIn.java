@@ -16,11 +16,13 @@ import java.util.Vector;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
-import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.*;
+import org.cougaar.domain.glm.ldm.*;
 import org.cougaar.domain.glm.ldm.plan.*;
 import org.cougaar.domain.glm.ldm.asset.*;
-import org.cougaar.domain.glm.ldm.oplan.*;
 
 import org.cougaar.core.cluster.IncrementalSubscription;
 
@@ -28,8 +30,10 @@ import org.cougaar.domain.planning.ldm.RootFactory;
 import org.cougaar.domain.planning.ldm.asset.*;
 import org.cougaar.domain.planning.ldm.measure.Latitude;
 import org.cougaar.domain.planning.ldm.measure.Longitude;
+import org.cougaar.domain.glm.ldm.oplan.Oplan;
 import org.cougaar.domain.glm.ldm.oplan.OrgActivity;
 import org.cougaar.domain.glm.ldm.oplan.TimeSpan;
+import org.cougaar.domain.glm.xml.parser.LocationParser;
 import org.cougaar.domain.planning.ldm.plan.*;
 
 import org.cougaar.core.plugin.SimplePlugIn;
@@ -41,6 +45,16 @@ import org.cougaar.util.StringUtility;
 import org.cougaar.core.society.UID;
 
 import org.cougaar.util.UnaryPredicate;
+
+import com.ibm.xml.parser.Parser;
+
+import org.xml.sax.InputSource;
+	
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.NamedNodeMap;
 
 /**
  * Class <code>StrategicTransportProjectorPlugIn</code> is a replacement
@@ -85,6 +99,17 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   /** List of determine requirements tasks waiting to be added **/
   protected TaskWaitingList waitingAddDetermineRequirementsTasks;
 
+  /** XML file containing description of GeolocLocation used for Task fromLocation **/
+  protected String originFile = null;
+
+  /** Number of days added to the Oplan C Day used for Task startDate **/
+  protected int offsetDays = 0;
+
+  /** GeolocLocation specified in XML file used for Task fromLocation  **/
+  protected GeolocLocation overrideFromLocation = null;
+
+  public final static long MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+
   /**
    * Subscribe.
    */
@@ -111,6 +136,10 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       subscribe(newFailedDRAllocPred());
   
     waitingAddDetermineRequirementsTasks = new TaskWaitingList();
+
+    if (originFile != null) {
+      overrideFromLocation = getGeoLoc(originFile);
+    }
   }        
 
   /**
@@ -296,8 +325,17 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     // We don't know how long this task will take, so we
     // use the default task adjustment duration!
     int adjustDurationDays = defaultAdjustDurationDays;
+    Collection oplanCol = query(new OplanByUIDPred(selfOrgAct.getOplanUID()));
+    // Should be exactly one oplan for an OrgActivity
+    Oplan oplan = (Oplan) oplanCol.iterator().next();
+    Date startDate = null;
+    // If OffsetDays was specified as an input parameter, use Oplan C Day + offset as 
+    // start date for the Task
+    if (offsetDays > 0) {
+      startDate = new Date(oplan.getCday().getTime() + (MILLIS_PER_DAY * offsetDays));
+    }
     DeployPlan newDP = 
-      new DeployPlan(selfOrg, selfOrgAct, adjustDurationDays);
+      new DeployPlan(selfOrg, selfOrgAct, adjustDurationDays, overrideFromLocation, startDate);
     if (DEBUG) {
       printDebug(newDP.toString());
     }
@@ -756,7 +794,13 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
           } catch (Exception e) {
             printError("Invalid number for "+sParam);
           }
-        } else {
+        } else if (name.equalsIgnoreCase("OffsetDays")) {
+	  offsetDays = Integer.parseInt(val);
+	} else if (name.equalsIgnoreCase("OriginFile")) {
+	    if (!val.equalsIgnoreCase("HOME")) {
+	      originFile = val;
+	    }
+	} else {
           printError("Unknown parameter: "+name+"="+val);
         }
       }
@@ -908,6 +952,13 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     }
     pp.setIndirectObject(strans);
     prepphrases.addElement(pp);
+
+    // Kludge - add "PREPO" prepositional phrase if we are using aren't using the Org's from loc
+    if (dp.addPrepoPreposition) {
+      pp = theLDMF.newPrepositionalPhrase();
+      pp.setPreposition("PREPO");
+      prepphrases.add(pp);
+    }
 
     // PREFERENCES
     Vector prefs = new Vector();
@@ -1273,6 +1324,26 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
   }
 
   /**
+   * Predicate to find a specific Oplan by UID
+   **/
+  protected static class OplanByUIDPred implements UnaryPredicate {
+    UID oplanUID;
+
+    OplanByUIDPred (UID uid) {
+      oplanUID = uid;
+    }
+    public boolean execute(Object o) {
+      if (o instanceof Oplan) {
+	if (oplanUID.equals(((Oplan)o).getUID())) {
+	  return true;
+	}
+      }
+      return false;
+    }
+  }
+    
+
+  /**
    * Utility classes
    */
 
@@ -1300,6 +1371,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
     public Date thruTime;
     public int thruRange = 1;
     public int adjustDurationDays;
+    public boolean addPrepoPreposition = false;
 
     /**
      * State info once detReqs tasks and asset changes take place.
@@ -1321,10 +1393,11 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
      * @param orgDeployAct OrgActivity of type "Deploy"
      * @param adjustDurationDays Time needed to do task
      */
-    public DeployPlan(
-        Organization org, 
-        OrgActivity orgAct, 
-        int adjustDurationDays) {
+    public DeployPlan(Organization org, 
+		      OrgActivity orgAct, 
+		      int adjustDurationDays,
+		      GeolocLocation overrideFromLocation,
+		      Date startDate) {
       if ((org == null) || 
           (orgAct == null)) {
         //if (DEBUG) {
@@ -1343,37 +1416,35 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       //   this is taken from the MilitaryOrgPG
       org.cougaar.domain.glm.ldm.asset.MilitaryOrgPG milPG = org.getMilitaryOrgPG();
       if (milPG != null) {
-        GeolocLocation geoloc_location = 
-          (GeolocLocation)milPG.getHomeLocation();
-        if (geoloc_location != null)
-          this.fromLoc = (GeolocLocation)milPG.getHomeLocation();
+	this.fromLoc = overrideFromLocation;
+	if (this.fromLoc == null) {
+	  this.fromLoc = (GeolocLocation)milPG.getHomeLocation();
+	  addPrepoPreposition = false;
+	} else
+	  addPrepoPreposition = true;
       }
-      /*
-      //   this is taken from the AssignmentPG
-      org.cougaar.domain.glm.ldm.asset.AssignmentPG orgAPG = org.getAssignmentPG();
-      if (orgAPG != null) {
-        org.cougaar.domain.glm.ldm.asset.Facility orgF = orgAPG.getHomeStation();
-        if (orgF instanceof org.cougaar.domain.glm.ldm.asset.TransportationNode) {
-          org.cougaar.domain.glm.ldm.asset.PositionPG orgPPG = 
-            ((org.cougaar.domain.glm.ldm.asset.TransportationNode)orgF).getPositionPG();
-          if (orgPPG != null) {
-            org.cougaar.domain.glm.ldm.plan.Position orgP = orgPPG.getPosition();
-            if (orgP instanceof GeolocLocation)
-              this.fromLoc = (GeolocLocation)orgP;
-          } 
-        }
-      }
-      */
-
       // get TO geographic location
       this.toLoc = orgAct.getGeoLoc();
       
       //  get organization activity information
+
       TimeSpan actTS = orgAct.getTimeSpan();
       if (actTS != null) {
         // do we want to fix dates to be after System time?
-        this.startTime = actTS.getStartDate();
+	// startDate will be null if OffsetDays days wasn't an command line parameter
         this.thruTime = actTS.getThruDate();
+
+	if (startDate == null) {
+	  // Use Deploy OrgActivity startDate instead
+	  this.startTime = actTS.getStartDate();
+	} else {
+	  // Use OrgActivity startDate if the oplan C day + offsetDays is later than
+	  // the Task thruDate.
+	  if (startDate.compareTo(this.thruTime) < 0)
+	    this.startTime = startDate;
+	  else
+	    this.startTime = actTS.getStartDate();
+	}
       }
   
       // get adjustment days
@@ -1547,7 +1618,7 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
         s += (l.time-now);
         s += "ms, ";
         if (l.task != null) {
-          s += l.task.getUID().getUID();
+          s += l.task.getUID().toString();
         }
         s += ")\n";
       }
@@ -1555,5 +1626,23 @@ public class StrategicTransportProjectorPlugIn extends SimplePlugIn {
       return s;
     }
   }
- 
+
+
+  public GeolocLocation getGeoLoc(String xmlfilename)  {
+    Document doc = null;
+    try {
+       doc = getCluster().getConfigFinder().parseXMLConfigFile(xmlfilename);
+      if (doc == null) {
+	printError(" XML Parser could not handle file " + xmlfilename);
+	return null;
+      }
+    } catch (java.io.IOException ioex) {
+      printError("geoloc xml error ");
+      ioex.printStackTrace();
+      return null;
+    }
+
+    Node node = doc.getDocumentElement();
+    return LocationParser.getLocation(getCluster().getLDM(), node);
+  }
 }
