@@ -160,6 +160,12 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.domain.mlm.ui.psp.transportation.PSP_Subordinates</Classname>
     <PSPName>alpine/demo/SUBORDINATES.PSP</PSPName>
   </element>
+  <!-- like subordinates psp, but shows each org's subordinates -->
+  <!-- e.g. http://alp-107.org.cougaar.isotic.org:5555/$TRANSCOM/alpine/demo/HIERARCHY.PSP?MODE=1 -->
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.domain.mlm.ui.psp.transportation.PSP_Hierarchy</Classname>
+    <PSPName>alpine/demo/HIERARCHY.PSP</PSPName>
+  </element>
   <!-- returns xml showing geoloc and types and total number of carrier assets e.g. planes for a given cluster -->
   <!-- e.g. http://alp-107.org.cougaar.isotic.org:5555/$McGuireWing/alpine/demo/ASSET_POPULATION.PSP -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
@@ -173,6 +179,7 @@ Additional PSPs loaded by PSP Launcher
 
 
 <!-- BEGIN SRA PSPs -->
+<!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.css.ui.PSP_MaintenanceDemand</Classname>
     <PSPName>alpine/demo/org/cougaar/domain/css/ui/MAINTDEMAND.PSP</PSPName>
@@ -193,6 +200,7 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.domain.css.ui.PSP_ReadinessUI</Classname>
     <PSPName>alpine/demo/org/cougaar/domain/css/ui/READINESSUI.PSP</PSPName>
   </element>
+-->
 <!-- END SRA PSPs -->
 
   <element type="org.cougaar.lib.planserver.NamedPSP">
