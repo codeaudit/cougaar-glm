@@ -26,8 +26,6 @@ import org.cougaar.core.util.AbstractPrinter;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.util.XMLObjectFactory;
 
-import com.ibm.xml.parsers.*;
-
 import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.ldm.*;import org.cougaar.domain.glm.*;
 import org.cougaar.domain.glm.ldm.asset.*;
 import org.cougaar.domain.glm.ldm.oplan.*;

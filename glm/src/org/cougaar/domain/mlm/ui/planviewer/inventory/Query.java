@@ -19,7 +19,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
-import com.ibm.xml.parser.Visitor;
 import com.klg.jclass.chart.ChartDataModel;
 import com.klg.jclass.chart.JCChart;
 

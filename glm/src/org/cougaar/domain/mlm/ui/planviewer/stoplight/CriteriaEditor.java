@@ -22,8 +22,6 @@ import javax.swing.*;
 import org.cougaar.core.util.*;
 import org.cougaar.util.*;
 
-import com.ibm.xml.parsers.*;
-
 import org.cougaar.domain.mlm.ui.data.UIUnitStatus;
 
 import org.w3c.dom.*;
