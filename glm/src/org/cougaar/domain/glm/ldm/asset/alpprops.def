@@ -1,0 +1,745 @@
+;!generate: org.cougaar.tools.build.PGWriter
+
+;
+; <copyright>
+;  Copyright 1997-2000 Defense Advanced Research Projects
+;  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+;  Raytheon Systems Company (RSC) Consortium).
+;  This software to be used only in accordance with the
+;  COUGAAR licence agreement.
+; </copyright>
+;
+
+package=org.cougaar.domain.glm.ldm.asset
+import= org.cougaar.domain.glm.ldm.plan.*,\
+	org.cougaar.domain.glm.ldm.oplan.*,\
+	org.cougaar.domain.glm.ldm.policy.*,\
+        org.cougaar.core.cluster.ClusterIdentifier,\
+	org.cougaar.domain.glm.execution.common.InventoryReport
+
+factoryExtends=org.cougaar.domain.planning.ldm.asset.PropertyGroupFactory
+
+[AmmunitionPropertyGroups]
+abstract=true
+
+[AmmunitionPG]
+extends=AmmunitionPropertyGroups
+;; Updated 980918 RWP from  slots=String DODIC, String lotID
+slots=String DODIC, \
+	String lotID, \
+	String DODAAC, \
+	long quantity_oh_serv, \
+	long quantity_oh_unserv
+DODIC.doc=A string of the form "A123"
+lotID.doc=An identifier for the manufacturers lot
+
+[AssetConsumptionRatePG]
+slots= AssetConsumptionRate AssetConsumptionRate(String assetType, \
+		Service service, \
+		String theater)
+
+[ExplosivePG]
+doc=No attributes yet
+extends=AmmunitionPropertyGroups
+
+[WarheadPG]
+doc=No attributes yet
+extends=AmmunitionPropertyGroups
+
+[FuelPG]
+slots=String special_handling, boolean aviation
+special_handling.doc=Specifies any special handling required
+aviation.doc=Specifies whether the fuel is aviation-grade
+
+[CargoPG]
+abstract=true
+slots=String cargo_restrictions, String permitted_cargo_category_codes
+cargo_restrictions.doc=Cargo types which cannot be handled
+permitted_cargo_category_codes.doc=cargo category codes which can be handled
+
+[ContainPG]
+extends=CargoPG
+slots=Distance maximum_length, \
+	Distance maximum_width, \
+	Distance maximum_height, \
+	Volume maximum_volume, \
+	Area maximum_footprint_area, \
+	Mass maximum_weight, \
+	long maximum_passengers, \
+	boolean refrigeration, \
+	Duration time_to_load, \
+	Duration time_to_unload, \
+	Duration time_to_refuel, \
+	long maximum_containers, \
+	boolean is_prepositioned
+is_prepositioned.doc="Is this designated as a prepositioned cargo asset?"
+	
+[ShipConfigurationPG]
+slots=int number_of_decks
+; probably should be a link to a set of Decks or somesuch.
+
+[DeckPG]
+extends=ContainPG
+slots=int level, \
+	String ship_id
+
+[ScheduledContentPG]
+doc=Represent the homogeneous contents of an asset over time, e.g. a \
+stockroom bin or a tank of fuel.
+;import=org.cougaar.domain.planning.ldm.plan.Schedule
+slots=Asset asset, \
+	Schedule schedule
+asset.doc=The prototypical Asset represented.
+schedule.doc=a quantity-schedule showing how many/much of asset is \
+	       contained by this asset over time.
+
+[ReportSchedulePG]
+doc=Specifies the schedule for periodically or other scheduled generation of reports. \
+Used by the EventGenerator to determine when to generate, for example, inventory reports.
+slots=  java.util.GregorianCalendar Base,\
+        int Step, \
+        int Jitter
+Pattern.doc=The kind of pattern for report generation. Usually PERIODIC.
+Period.doc=The (mean) interval between reports (in milliseconds).
+Phase.doc=The time of the first report in the pattern. The actual first report will occur \
+at the first opportunity according the to specified frequency.
+Jitter.doc=The randomization factor. The exact interpretation depends on the kind of pattern.
+
+[LiftPG]
+extends=CargoPG
+slots=Mass maximum_weight
+
+[AirLiftPG]
+extends=CargoPG
+slots=Volume maximum_bulk_volume, \
+	Mass maximum_bulk_weight, \
+	Volume maximum_oversize_volume, \
+	Mass maximum_oversize_weight, \
+	Volume maximum_outsize_volume, \
+	Mass maximum_outsize_weight, \
+	int maximum_pallets, \
+	Distance maximum_length, \
+	Distance maximum_width, \
+	Distance maximum_height
+maximum_length.doc=Maximum length of Cargo allowed
+maximum_width.doc=Maximum width of Cargo allowed
+maximum_height.doc=Maximum height of Cargo allowed
+
+[TowPG]
+extends=CargoPG
+slots=Mass maximum_weight
+
+[WaterPG]
+slots=boolean potable
+
+[FoodPG]
+slots=boolean perishable, \
+	boolean refrigeration_required, \
+	Duration shelf_life, \
+	String type
+;	Temperature maximum_temperature, Temperature minimum_temperature
+
+type.doc=Type of ration, e.g. MRE, Tray, Prepared
+
+[WeaponPG]
+;slots=Relation weapon_ammunition_relation_set
+;slots=String theCollectionOfDODICsUsed, String theCollectionOfDODICUseRate, double theDODICUseRate
+
+[MissileLauncherPG]
+;slots=Relation launcher_missile_relation_set
+;slots=String collection_of_missiles_used, String collection_of_missile_use_rate
+
+[FacilityPG]
+
+[EnvironmentalConditionPG]
+abstract=true
+slots=Speed wind_speed, \
+	Temperature temperature, \
+	double precipitation_rate, \
+	Heading wind_heading, \
+	Distance visibility, \
+	double barometric_pressure
+
+[AirConditionPG]
+extends=EnvironmentalConditionPG
+slots=Distance ceiling
+ceiling.doc=Altitude of the lowest clouds
+
+[LandConditionPG]
+extends=EnvironmentalConditionPG
+slots=double soil_moisture, \
+	Distance snow_depth
+
+[SeaConditionPG]
+extends=EnvironmentalConditionPG
+slots=double sea_state, \
+	Temperature surface_temperature
+
+[MilitaryPersonPG]
+slots=String ID_code, \
+	Service service, \
+	String Grade
+ID_code.doc=Unique identifier for a person within a military organization
+service.doc=Particular service within the military (e.g. Army, Navy, Coast Guard, etc.)
+Grade.doc=Military Grade, e.g. E3, O6, etc.
+
+[PersonPG]
+slots=String ID_code, \
+	String nationality, \
+	Collection<Skill> skills
+ID_code.doc=Unique identifier for a person within a country (e.g. SSN).
+nationality.doc=Country of citizenship.
+skills.doc=A set of skills that this person has.
+
+[PersonSustainmentPG]
+slots=double food_consumption_rate
+food_consumption_rate.doc=Should be replaced with a function of OpTempo
+
+[PhysicalAssetPropertyGroups]
+abstract=true
+
+[RepairabilityPG]
+extends=PhysicalAssetPropertyGroups
+;slots=Vector repaired_repairing_relation
+;slots=Vector repairing_items, Vector repairing_item_mean_time_to_fail, Vector repairing_item_mean_time_to_repair
+;repairing_item_mean_time_to_fail.doc depends on OpTempo
+
+[BulkSolidPG]
+extends=PhysicalAssetPropertyGroups
+slots=double bulk_density
+
+[LiquidPG]
+extends=PhysicalAssetPropertyGroups
+slots=double density, \
+	double viscosity, \
+	double volatility, \
+	double flammability
+
+[MovabilityPG]
+extends=PhysicalAssetPropertyGroups
+slots=boolean moveable, \
+	String cargo_category_code
+moveable.doc=The item is moveable
+cargo_category_code.doc=The Cargo Category Code for an asset
+
+[PackagePG]
+extends=PhysicalAssetPropertyGroups
+slots=long count_per_pack, \
+	String unit_of_issue, \
+	Distance pack_length, \
+	Distance pack_width, \
+	Distance pack_height, \
+	Area pack_footprint_area, \
+	Volume pack_volume, \
+	Mass pack_mass
+
+[PhysicalPG]
+extends=PhysicalAssetPropertyGroups
+slots=Distance length, \
+	Distance width, \
+	Distance height, \
+	Area footprint_area, \
+	Volume volume, \
+	Mass mass
+
+[ConditionPG]
+extends=PhysicalAssetPropertyGroups
+slots=String condition
+condition.doc=Usually a one-character condition code
+
+[RepairPartPropertyGroups]
+abstract=true
+;slots=Vector repaired_repairing_relation
+;slots=Vector repaired_items, Vector repairing_item_mean_time_to_fail, Vector ;repairing_item_mean_time_to_repair
+;repairing_item_mean_time_to_fail.doc depends on OpTempo
+slots=double fail_rate, \
+	String acquisition_advice_code, \
+	String supply_status_code, \
+	String item_category_code 
+fail_rate.doc=Double expressing failure rate for a MEI/repair part combination
+acquisition_advice_code.doc=One character code expressing the acquisition advice code for DLA
+supply_status_code.doc=One character code expressing the supply status code for DLA
+item_category_code.doc=One character code expressing the item category code for DLA
+
+[ConsumablePG]
+extends=RepairPartPropertyGroups
+
+[RepairablePG]
+extends=RepairPartPropertyGroups
+
+[TransportationLinkPropertyGroups]
+abstract=true
+slots=String link_name, \
+	Distance link_length
+;slots=String link_name, Vector points
+;points.doc=describes the detailed path of the link
+
+[RailLinkPG]
+extends=TransportationLinkPropertyGroups
+slots=long number_of_tracks, \
+	Distance track_gauge, \
+	double maximum_grade_D2O, \
+	double maximum_grade_O2D, \
+	Mass maximum_axle_weight, \
+	Distance maximum_car_height, \
+	Distance maximum_car_width, \
+	Distance maximum_car_length, \
+	Distance maximum_train_length, \
+	Speed maximum_train_speed
+
+[AirLinkPG]
+extends=TransportationLinkPropertyGroups
+slots=Speed prevailing_wind_speed, \
+	Heading prevailing_wind_direction
+
+[RoadLinkPG]
+extends=TransportationLinkPropertyGroups
+slots=int direction, \
+	boolean in_urban_area, \
+	int number_of_lanes, \
+	int maximum_height, \
+	int maximum_width, \	
+	int link_ID, \
+	int state_code, \
+	String route_1, \
+	String route_2, \
+	String median, \
+	String access_type, \
+	int truck_route, \
+	int functional_class, \
+	float maximum_convoy_speed, \
+	float convoy_travel_time, \
+	long number_of_bridges_under_HS20, \
+	Speed max_speed, \
+	Capacity max_capacity, \
+	Mass max_weight
+
+[SeaLinkPG]
+extends=TransportationLinkPropertyGroups
+slots=Speed prevailing_wind_speed, \
+	double prevailing_wind_direction, \
+	Speed prevailing_current_speed, \
+	double prevailing_current_direction
+
+[TransportationNodePropertyGroups]
+abstract=true
+
+[RepairDepotPG]
+extends=TransportationNodePropertyGroups
+slots=long number_of_repair_stations
+;slots=Vector supply_class, Vector repairable_items, long number_of_repair_stations
+
+[SupplyDepotPG]
+extends=TransportationNodePropertyGroups
+slots=double maximum_supply_rate, \
+	Volume maximum_storage_volume, \
+	Area maximum_storage_area
+;slots=Vector supply_class, double maximum_supply_rate, Volume maximum_storage_volume, Area maximum_storage_area
+
+[TruckTerminalPG]
+extends=TransportationNodePropertyGroups
+slots=long parking_lot_truck_capacity, \
+	long number_of_loading_docks
+
+[CargoFacilityPG]
+extends=TransportationNodePropertyGroups
+slots=Area covered_staging_area, \
+	Area open_staging_area, \
+	long throughput_containers_per_day, \
+	long throughput_pallets_per_day
+
+[RailTerminalPG]
+extends=TransportationNodePropertyGroups
+slots=long rail_yard_capacity, \
+	long number_of_container_cranes
+
+[AirportPG]
+extends=TransportationNodePropertyGroups
+slots=Distance maximum_runway_length, \
+	String runway_type, \
+	long maximum_on_ground, \
+	Area ramp_space, \
+	double maximum_flight_rate, \
+	MassTransferRate throughput
+
+[SeaportPG]
+extends=TransportationNodePropertyGroups
+slots=long number_of_RORO_berths, \
+	long number_of_container_berths, \
+	Distance pier_length, \
+ 	Distance pier_width, \
+ 	Distance pier_depth, \
+ 	Distance supported_turning_radius, \
+	Distance high_tide_draft, \
+	Distance low_tide_draft, \
+	long number_of_container_cranes
+
+[MidAirRefuelPG]
+extends=TransportationNodePropertyGroups
+slots=Distance distance_to_airbase, Duration time_to_refuel
+
+[VehiclePropertyGroups]
+slots=String vehicle_type, \
+	long crew_requirements
+vehicle_type.doc=Description of the type of vehicle
+crew_requirements.doc=The number of crew members required for normal operation of the vehicle
+
+[RailVehiclePG]
+extends=VehiclePropertyGroups
+slots=Distance gauge, \
+	Distance mean_distance_between_repairs
+mean_distance_between_repairs.doc=Used for estimating repair requirements
+
+[GroundVehiclePG]
+extends=VehiclePropertyGroups
+slots=String road_surface_requirements, \
+	Distance mean_distance_between_repairs
+road_surface_requirements.doc=Poorest road surface tolerable by the vehicle (unpaved, dirt, gravel, etc.)
+mean_distance_between_repairs.doc=Used for estimating repair requirements
+
+[AirVehiclePG]
+extends=VehiclePropertyGroups
+slots=Distance minimum_runway_length, \
+	boolean mid_air_refuelable, \
+	Duration quick_turnaround_time, \
+	Duration mean_time_to_repair, \
+	long mean_mission_legs_between_repairs, \
+	Duration mean_flight_time_between_repairs
+minimum_runway_length.doc=Minimum runway length required under standard temperature, pressure, etc.
+mid_air_refuelable.doc=Can the aircraft be refueled in mid-air
+quick_turnaround_time.doc=Time required for quick (minimum maintenance) turnaround
+mean_time_to_repair.doc=Mean time required for typical failures
+mean_mission_legs_between_repairs.doc=Used for estimating repair requirements based on mission legs
+mean_flight_time_between_repairs.doc=Used for estimating repair requirements based on flight time
+
+[WaterVehiclePG]
+extends=VehiclePropertyGroups
+slots=Distance minimum_draft, \
+	Distance maximum_draft, \
+ 	Distance length, \
+ 	Distance beam, \
+	String berth_requirements, \
+	Duration mean_engine_time_between_repairs
+minimum_draft.doc=The draft when unloaded
+maximum_draft.doc=The draft when fully loaded
+berth_requirements.doc=The type of berth required
+mean_engine_time_between_repairs.doc=Used for estimating repair requirements based on engine running time
+length.doc=The length of the SHIP
+beam.doc=The beam (width) of the SHIP
+
+[SelfPropulsionPropertyGroups]
+; if abstract is set (to anything), no source or factory methods are generated
+abstract=true
+slots=String engine_type, \
+	String fuel_type, \
+	Speed maximum_speed, \
+	Speed cruise_speed, \
+	Distance full_payload_range, \
+	Distance empty_payload_range
+full_payload_range.doc=How far can the vehicle go without refueling if itr is fully loaded
+empty_payload_range.doc=How far can the vehicle go without refueling if itr is fully loaded
+
+
+[GroundSelfPropulsionPG]
+extends=SelfPropulsionPropertyGroups
+slots=String traction_type, \
+	Volume fuel_consumption_per_mile
+traction_type.doc=Type of traction (wheeled, tracked, half-tracked)
+fuel_consumption_per_mile.doc=Average fuel consumption per mile (eg: gallons per mile)
+
+[AirSelfPropulsionPG]
+extends=SelfPropulsionPropertyGroups
+slots=Distance maximum_altitude, \
+	Distance cruise_altitude, \
+	FlowRate fuel_consumption_rate
+maximum_altitude.doc=Maximum altitude
+cruise_altitude.doc=Cruise altitude
+fuel_consumption_rate.doc=Average fuel consumption rate when in flight
+
+[RailSelfPropulsionPG]
+extends=SelfPropulsionPropertyGroups
+slots=Volume fuel_consumption_per_mile
+fuel_consumption_per_mile.doc=Average fuel consumption per mile
+
+[WaterSelfPropulsionPG]
+extends=SelfPropulsionPropertyGroups
+slots=FlowRate fuel_consumption_rate
+fuel_consumption_rate.doc=Average fuel consumption rate when engine is running
+
+[OrganizationPG]
+slots=Service service, \
+      Agency agency, \
+      Collection<Role> roles
+service.doc=one of the values of Service.
+agency.doc=the agency or other major organization the asset is \
+	  associated with.  For military Organizations, this is \
+	  the CINC at the top of their command structure, e.g. \
+	  USTC, CENTCOM.
+roles.doc=Collection of Roles the organization is capable of \
+          fulfilling.
+roles.init=ArrayList
+
+[MilitaryOrgPG]
+slots=String standard_name, \
+      String UIC, \
+      String UTC, \
+      String SRC, \
+      String echelon, \
+      String hierarchy_2525, \
+      boolean is_reserve, \
+      Location home_location
+UIC.doc=The UIC (Unit Identification Code) of the unit.
+UTC.doc=The Joint Unit Type Code, specifying the type of unit.
+SRC.doc=The Army SRC, specifying the type of Unit.
+echelon.doc=The numeric code specifying the echelon of the unit. \
+	08:Division, 07:Brigade, 06:Regiment, 05:Battalion, 04:Company. \
+	Codes are traditionally printed as two figures with a \
+	leading zero if necessary.
+hierarchy_2525.doc=The 2525A hierarchy designator, used to specify \
+    the symbol for the organization on a map.
+home_location.doc=Location of the Org when it is not deployed. \
+	Should match AssignedPG.homeStation if defined.
+
+[LocationSchedulePG]
+slots=Schedule schedule
+schedule.doc=A schedule of LocationScheduleElement elements.  The \
+  semantics of location and overlapping time ranges is not defined. \
+  Consumers of the schedule should probably synchronize on the schedule \
+  object in order to prevent comodification exceptions.
+
+
+;[OrganizationRelationPG]
+;import=org.cougaar.domain.planning.ldm.asset.Asset
+;extends=OrganizationPropertyGroups
+;slots=Asset parent_organization
+;;slots=Organization parent_organization, Vector subordinate_organization, Vector supporting_organization, Vector supported_organization
+
+[ManagedAssetPG]
+slots=long number_of_personnel
+;slots=Vector physical_asset, long number_of_personnel, Vector personnel
+
+[AssignedPG]
+slots= Collection<Role> roles
+roles.init=ArrayList
+roles.doc=Collection of Role the organization is \
+	capable of fulfilling
+
+[LiquidSupplyPG]
+slots=Volume store_volume_per_day, \
+	Volume distribute_volume_per_day, \
+	Volume issue_volume_per_day, \
+	Volume pump_volume_per_minute
+store_volume_per_day.doc=The maximum volume of liquid that can be \
+	stored per day
+distribute_volume_per_day.doc=The maximum volume of liquid that can \
+	be distributed per day
+issue_volume_per_day.doc=The maximum volume of liquid that can be \
+	issued per day
+pump_volume_per_minute.doc=The maximum volume of liquid  that can be \
+	pumped per minute
+
+[FuelSupplyPG]
+extends=LiquidSupplyPG
+slots=String fuel_types
+fuel_types.doc=Comma separated string of fuel types eg. "JP3, JP4"
+
+[WaterSupplyPG]
+extends=LiquidSupplyPG
+
+[SupplyPG]
+slots=Mass class_1_handle_mass_per_day, \
+	Mass class_2_handle_mass_per_day, \
+	Mass class_3p_handle_mass_per_day, \
+	Mass class_4b_handle_mass_per_day, \
+	Mass class_4_handle_mass_per_day, \
+	Mass class_5_transload_mass_per_day, \
+	Mass class_7_handle_mass_per_day, \
+	Mass class_9_handle_mass_per_day
+class_1_handle_mass_per_day.doc=The maximum mass of class 1 \
+	materiel that can be stored, issued and transloaded per day
+class_2_handle_mass_per_day.doc=The maximum mass of class 2 \
+	materiel that can be stored, issued and transloaded per day
+class_3p_handle_mass_per_day.doc=The maximum mass of class 3p \
+	materiel that can be stored, issued and transloaded per day
+class_4b_handle_mass_per_day.doc=The maximum mass of class 4b \
+	materiel that can be stored, issued and transloaded per day
+class_4_handle_mass_per_day.doc=The maximum mass of class 4 \
+	materiel that can be stored, issued and transloaded per day
+class_5_transload_mass_per_day.doc=The maximum mass of class 5 \
+	materiel that can be transloaded per day
+class_7_handle_mass_per_day.doc=The maximum mass of class 7 \
+	materiel that can be stored, issued and transloaded per day
+class_9_handle_mass_per_day.doc=The maximum mass of class 9 \
+	materiel that can be stored, issued and transloaded per day
+
+[MaintenancePG]
+slots=	long ASL_size, \
+	long REL_size, \
+	String level
+ASL_size.doc=Number of items permitted in the Authorized Stockage List
+REL_size.doc=Number of items permitted in the Repairable Exchange List
+level.doc=Either DS or GS.
+
+[SupportPG]
+
+[TransportationPG]
+slots=long container_count, \
+	Volume non_container_capacity, \
+	Volume water_capacity, \
+	Volume petroleum_capacity, \
+	Mass ammunition_capacity, \
+	long passenger_capacity
+container_count.doc=The maximum number of containers that can be \
+	transported at one time
+non_container_capacity.doc=The maximum mass of non-containerized \
+	cargo that can be transported at one time
+water_capacity.doc=The maximum volume of water that can be \
+	transported at one time
+petroleum_capacity.doc=The maximum volume of petroleum that can \
+	be transported at one time
+ammunition_capacity.doc=The maximum mass of ammunition that can \
+	be transported at one time
+passenger_capacity.doc=The maximum number of passengers that can \
+	be transported at one time
+
+[SeaTransportationPG]
+extends=TransportationPG
+
+[OffRoadTransportationPG]
+extends=TransportationPG
+
+[OnRoadTransportationPG]
+extends=TransportationPG
+
+[AirTransportationPG]
+extends=TransportationPG
+
+[RailTransportationPG]
+extends=TransportationPG
+
+[PositionPG]
+slots=Position position
+
+[AssignmentPG]
+slots=Facility home_station
+home_station.doc=Currently assigned Home Station, usually a \
+	TransportationNode
+
+[CostPG]
+slots=CostRate per_diem_cost, \
+ 	double break_out_cost
+ 
+[VolumetricStockagePG]
+doc=representation of Stockage parameters that are measured by volume
+slots=Volume reorder_level, \
+	Volume min_reorder_volume, \
+	Volume unobtainable
+reorder_level.doc=volume level at which you are allowed to reorder.
+min_reorder_volume.doc=minimum volume you can order.  Should be \
+	less than or equal to reorder level.
+unobtainable.doc=Quantity of materiel which cannot be used. E.g. fuel \
+	which cannot be pumped out of a tank.
+
+[CSSCapabilityPG]
+slots=Collection<CSSCapability> capabilities
+capabilities.doc=a set of CSS capabilities that this asset advertises.
+
+[MEIPG]
+slots= String breakCause, \
+      boolean operational
+
+[DetailKeyPG]
+doc=describes an object and where to find it for LightweightManifest
+slots=org.cougaar.core.society.UID detailObject, \
+	org.cougaar.core.cluster.ClusterIdentifier sourceCluster
+
+; For SRA
+[PersonnelReadinessPG]
+slots=int personnel_readiness
+personnel_readiness.doc=integer value that corresponds to the \
+	readiness rating
+
+; For SRA
+[TrainingReadinessPG]
+slots=int training_readiness
+training_readiness.doc=integer value that corresponds to the readiness \
+	rating 
+
+; For SRA
+[EquipmentOHReadinessPG]
+slots=int equipment_oh_readiness
+equipment_oh_readiness.doc=integer value that corresponds to the \
+	readiness rating
+
+; For SRA
+[EquipmentStatusReadinessPG]
+slots=int equipment_status_readiness
+equipment_status_readiness.doc=integer value that corresponds to the \
+readiness rating
+
+; for ANTS/GLM
+[InventoryPG]
+slots=Scalar capacity, \
+      Scalar initialLevel, \
+      Scalar reorderLevel, \
+      Scalar minReorder, \
+      Scalar unobtainable, \
+      boolean fillToCapacity, \
+      Asset resource
+delegates=InventoryBG invBG
+invBG.delegate= int resetInventory(Inventory inventory, long today);\
+	long getStartTime();\
+	int getToday();\
+	int getFirstPlanningDay();\
+	Scalar getLevel(long day);\
+	Scalar getLevel(int day);\
+	int withdrawFromInventory(Inventory inventory, ClusterIdentifier cluster);\
+	Scalar getNDaysDemand(int day, int days_of_demand);\
+	int addPreviousRefillsToInventory(Task maintainInv);\
+	int addDueIn(Task refillTask);\
+	int removeDueIn(Task refillTask);\
+	int getPlanningDays();\
+	int determineInventoryLevels();\
+	Task refillAlreadyFailedOnDay(int day);\
+	Task getRefillOnDay(int day);\
+	Scalar getProjected(int day);\
+	Date lastDemandTaskEnd(Inventory inventory);\
+	Vector getPreviouslyFailedDueOuts();\	
+	Integer getFirstOverflow(int day, ClusterIdentifier cluster); \
+	DueOut getLowestPriorityDueOutBeforeDay(int end);\
+	int updateContentSchedule(Inventory inventory);\
+	int clearContentSchedule(Inventory inventory);\
+	int printQuantityScheduleTimes(Schedule sched);\
+	int printInventoryLevels(Inventory inventory, ClusterIdentifier clusterID);\
+	PGDelegate copy(PropertyGroup pg);\
+	Enumeration getAllDueIns();\	
+	ProjectionWeight getProjectionWeight();\	
+	void addInventoryReport(InventoryReport anInventoryReport);
+reorder_level.doc=volume level at which you are allowed to reorder. 
+in_reorder.doc=minimum volume you can order. Should be \ 
+        less than or equal to reorder level. 
+unobtainable.doc=Quantity of materiel which cannot be used. E.g. fuel \ 
+        which cannot be pumped out of a tank. 
+fill_to_capacity.doc=specifies whether the inventory is filled to cpacity \ 
+        for refills. 
+initial_level.doc=Level of the inventory before any withdraws or deposits. 
+capacity.doc=maximum amount that can be contained or accommodated. 
+
+[SupplyClassPG]
+slots=String supplyClass, \
+      String supplyType
+supplyClass.doc=Description of the Class to which this item belongs. \
+	e.g. ClassISubsistence
+supplyType.doc=Specific type of item within the greater class. \
+	e.g. BulkWater
+
+
+;;
+;; examples
+;;
+
+;[SamplePG]
+;slots=Mass mass, \
+;	List<Role> roles, \
+;	int matrix(int x, int y)
+;weight.doc=The mass of my Asset
