@@ -7,12 +7,29 @@
    <title>UniversalExpanderPlugIn</title>
 </head>
 <body>
-<b><font size=+1>UniversalExpanderPlugIn</font></b>
+<b><font size=+2>UniversalExpanderPlugIn</font></b>
 <p>The UniversalExpanderPlugin gathers information from plugin arguments,
-the cougaar.rc file parameters and a database table in order to accomplish
-its expansions.
-<p>The possible plugin parameters fall under two categories:
-<br>1) Comma seperated list of verbs that define what task or tasks the
+the cougaar.rc file parameters and a database table in order to create
+and publish its expansions.
+<p><a href="#NewFeatures">New Features</a>
+<br><a href="#Parameters">Setting up the Plugin Parameters</a>
+<br><a href="#Database">Setting up the Database Expansion Table</a>
+<br><a href="#Examples">Usage Examples</a>
+<br>&nbsp;
+<p><a NAME="NewFeatures"></a><b><font size=+1>New Features</font></b>
+<br>Functionality changes post Cougaar 8.4:
+<br>Addition of Flat flag which allows for a flat expansion or a tree expansion.
+<br>Additional fields to express more parameters of a task such as fields
+to build a direct object asset, fields which define the quantity preference,
+fields which allow a simple string prepositionalphrase, fields which specify
+the task to be broken into multiple shipments.
+<br>Ability to recurse more than 2 levels of expansion (1 non-leaf and
+1 leaf).&nbsp; The database can describe a potentially infinite number
+of expansion levels.
+<p>These changes are described in more detail below.<font size=+1></font>
+<p><a NAME="Parameters"></a><b><font size=+1>Plugin Parameters</font></b>
+<br>The possible plugin parameters fall under two categories:
+<br>1) Comma separated list of verbs that define what task or tasks the
 plugin should expand.
 <br>2) flat=true or flat=false entry.&nbsp; This entry determines whether
 the expansion behavior of the plugin should be flat or tree like.&nbsp;
@@ -20,9 +37,9 @@ Flat expansions generate one workflow and corresponding expansion for each
 parent task received, no matter how many levels of expansion are defined
 in the table.&nbsp; The subtasks of this expansion will all be leaf tasks,
 denoted by the is_leaf_task field in the table. Tree expansions generate
-one workfow and corresponding expansion for each level of task expansion
+one workflow and corresponding expansion for each level of task expansion
 defined in the table.
-<p>The default for the flat parameter is true.
+<p>The default for the flat parameter is false.
 <br>For example your <i>cluster.ini </i>file should contain a line similar
 to the following:
 <p><i>plugin = org.cougaar.domain.mlm.plugin.generic.UniversalExpanderPlugIn(flat=true,
@@ -35,9 +52,9 @@ user and password and the database table containing the expansion information.
 <br><i>generic.database.expander.database=machine.foo.com:dbport:dbsid</i>
 <br><i>generic.database.expander.user=dbusername</i>
 <br><i>generic.database.expander.password=dbpassword</i>
-<br><i>generic.database.expander.expansion_table=dbtable</i>
-<br>&nbsp;
-<p>The database table defined in the cougaar.rc should be created with
+<br><i>generic.database.expander.expansion_table=dbtable</i><b></b>
+<p><a NAME="Database"></a><b><font size=+1>Database Schema and Field Descriptions</font></b>
+<br>The database table defined in the cougaar.rc should be created with
 these guidelines:
 <p>&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Null?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -104,15 +121,15 @@ property of the Asset.
 preference on the task.
 <br>-UNIT_OF_MEASURE should contain a string that represents the unit of
 measure for the quantity of the asset.
-<br>-SHIPMENTS should containt a number representing how many shipments
+<br>-SHIPMENTS should contain a number representing how many shipments
 this request (task) should be broken in to. This field defaults to 1.&nbsp;
 If the value of this field is greater than 1, a task for each shipment
-will be generated with the proper quantity (which will be a subsetof the
-total quantity.
+will be generated with the proper quantity (which will be a subset of the
+total quantity).
 <br>-PREPOSITION should contain a string that represents a Cougaar Preposition.&nbsp;
-If this fieldis null, the Plugin will assume this task does not specify
+If this field is null, the Plugin will assume this task does not specify
 a prepositional phrase and therefore ignore the phrase field.&nbsp; Note
-that thisPlugin iss written to carry previous prepositional phrases from
+that this Plugin is written to carry previous prepositional phrases from
 parent tasks.&nbsp; Therefor, if a prepositional phrase is specified in
 the database table, that phrase will be added to the collection of previously
 defined phrases carried from the parent task.
@@ -120,8 +137,10 @@ defined phrases carried from the parent task.
 that goes with the Preposition field value to create a Cougaar PrepositionalPhrase
 for the task.&nbsp; Note that at present this plugin simply makes this
 entry a string phrase.&nbsp; This could be extended in the future to create
-other objects.
-<p>For example, if the plugin is instantiated with an argument of Build_Short_Runway,
+other phrase objects.
+<br>&nbsp;
+<p><a NAME="Examples"></a><b><font size=+1>Examples</font></b>
+<br>For example, if the plugin is instantiated with an argument of Build_Short_Runway,
 when it receives a task containing this verb through its subscription it
 will find the following information in the database expansion table(note
 some fields have been left out of this example to make the example more
