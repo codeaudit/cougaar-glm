@@ -273,6 +273,7 @@ slots=long count_per_pack, \
 	Mass pack_mass
 
 [PhysicalPG]
+timephased=true
 extends=PhysicalAssetPropertyGroups
 slots=Distance length, \
 	Distance width, \
@@ -305,6 +306,13 @@ extends=RepairPartPropertyGroups
 
 [RepairablePG]
 extends=RepairPartPropertyGroups
+
+[ContentsPG]
+;timephased=true
+slots=Collection<String> type_identifications, \
+      Collection<String> nomenclatures, \
+      Collection<Mass> weights, \
+      Collection<String> receivers
 
 [TransportationLinkPropertyGroups]
 abstract=true
@@ -798,3 +806,8 @@ slots=GeolocLocation base
 ;	List<Role> roles, \
 ;	int matrix(int x, int y)
 ;weight.doc=The mass of my Asset
+
+
+
+
+
