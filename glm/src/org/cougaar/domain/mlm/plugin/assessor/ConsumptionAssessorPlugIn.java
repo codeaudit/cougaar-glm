@@ -182,40 +182,6 @@ public class ConsumptionAssessorPlugIn extends SimplePlugIn {
     }
   };
 
-    private static class Interval {
-        String name;
-        long factor;
-        public Interval(String name, long factor) {
-            this.name = name;
-            this.factor = factor;
-        }
-    }
-
-    private static Interval[] intervals = {
-        new Interval("seconds", 1000L),
-        new Interval("minutes", TimeUtils.MSEC_PER_MIN),
-        new Interval("hours", TimeUtils.MSEC_PER_HOUR),
-        new Interval("days", TimeUtils.MSEC_PER_DAY),
-        new Interval("weeks", TimeUtils.MSEC_PER_WEEK),
-    };
-
-    private static long parseInterval(String param) {
-        param = param.trim();
-        int spacePos = param.indexOf(' ');
-        long factor = 1L;
-        if (spacePos >= 0) {
-            String units = param.substring(spacePos + 1).toLowerCase();
-            param = param.substring(0, spacePos);
-            for (int i = 0; i < intervals.length; i++) {
-                if (intervals[i].name.startsWith(units)) {
-                    factor = intervals[i].factor;
-                    break;
-                }
-            }
-        }
-        return Long.parseLong(param) * factor;
-    }
-
   public void setupSubscriptions() {
     List params = getParameters();
     windowSize = parseInterval((String) params.get(WINDOW_SIZE_PARAM));
