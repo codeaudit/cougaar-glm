@@ -10,6 +10,7 @@
 package org.cougaar.domain.mlm.plugin.ldm;
 import java.sql.*;
 import java.util.*;
+import org.cougaar.util.*;
 
 public class LDMConnectionPool
 {
@@ -22,7 +23,6 @@ public class LDMConnectionPool
   private int minPoolSize;
   private int timeout;
   private int nTries;
-  private LDMConnectionReaper theReaper;
 
   /************************************************************************************
    *
@@ -52,9 +52,7 @@ public class LDMConnectionPool
     this.nTries = nTries;   
     minPoolSize = minSize;
     maxPoolSize = maxSize;
-    theReaper = new LDMConnectionReaper(this);
     connectionPool = new Vector(maxPoolSize);
-    theReaper.start();	  
 
   }// LDMConnectionPool
 
@@ -220,64 +218,3 @@ public class LDMConnectionPool
 
 
 }// LDMConnectionPool
-
-/***********************************************************************************
- *
- * Method: LDMConnectionReaper
- *
- * Description:	This class, when instantiated, serves as a thread to remove
- *				unused database connections.
- *
- * Raytheon Systems Company MML
- **********************************************************************************/
-class LDMConnectionReaper extends Thread 
-{
-  // References the actual database pool
-  private LDMConnectionPool connectionPool;
-
-    /*******************************************************************************
-	 *
-	 * Method: LDMConnectionReaper
-	 *
-	 * Description:		This method serves as the constructor for this class.
-	 *
-	 * Inputs:			The database pool it is associated with
-	 *
-	 * Outputs:			None
-	 *
-	 ********************************************************************************/
-  LDMConnectionReaper(LDMConnectionPool pool) 
-  {
-    this.connectionPool=pool;
-  }// LDMConnectionReaper
-    
-  /*******************************************************************************
-	 *
-	 * Method: run
-	 *
-	 * Description:		When the thread is started, this run method is invoked.
-	 *				    After every 10 seconds, the stale connections are removed.
-	 *
-	 * Inputs:			The database pool it is associated with
-	 *
-	 * Outputs:			None
-	 *
-	 ********************************************************************************/
-  public void run() 
-  {
-    // Loop and remove stale connections 
-    // after 10 seconds
-    while(true) 
-      {
-        try 
-          {
-            sleep(10000);
-          } catch( InterruptedException e) 
-            { }
-		   
-        // Remove all the stale connections
-        connectionPool.removeStaleConnections();
-      }// while loop
-  }// run
-	
-}// LDMConnectionReaper

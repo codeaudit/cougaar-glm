@@ -63,15 +63,6 @@ public abstract class SQLOplanQueryHandler extends QueryHandler {
     }
   }
   
-  protected void initializeQH(LDMQueryPlugIn ldmplugin,
-                              ClusterIdentifier cid,
-                              ClusterServesPlugIn comp,
-                              RootFactory aldmf,
-                              Properties params,
-                              Subscriber sub) {
-    throw new IllegalArgumentException("ldmplugin must be an SQLOplanPlugIn");
-  }
-
   protected void execute() {
     startQuery();                 // let the query have some state
 

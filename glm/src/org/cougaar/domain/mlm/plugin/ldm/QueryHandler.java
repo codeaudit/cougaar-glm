@@ -27,10 +27,8 @@ import java.util.Properties;
 public abstract class QueryHandler {
   public QueryHandler() {}
 	
-  // protected SQLService mySQLService;
-  //protected LDMService myLDMService;
-  protected LDMQueryPlugIn myQueryLDMPlugIn;
   protected LDMSQLPlugIn myLDMPlugIn;
+  protected LDMQueryPlugIn myQueryLDMPlugIn;
   protected boolean LDMQueryType = false;
   protected ClusterIdentifier myClusterIdentifier;
   protected ClusterServesPlugIn myComponent;
@@ -53,7 +51,7 @@ public abstract class QueryHandler {
     myParameters = params;
     subscriber = sub;
   }
-	
+
   protected void initializeQH( LDMQueryPlugIn ldmplugin,
                                ClusterIdentifier cid,
                                ClusterServesPlugIn comp,
@@ -69,6 +67,8 @@ public abstract class QueryHandler {
     subscriber = sub;
     LDMQueryType = true;
   }
+
+	
   protected LDMServesPlugIn getLDM() {
     return ldm;
   }
