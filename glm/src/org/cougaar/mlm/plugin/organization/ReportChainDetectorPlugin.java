@@ -107,7 +107,7 @@ public class ReportChainDetectorPlugin
 	if (roles == null)
 	  return false;
 	// This collection should contain "Subordinate"
-	return roles.contains(org.cougaar.glm.ldm.Constants.Role.SUBORDINATE);
+	return roles.contains(org.cougaar.glm.ldm.Constants.Role.ADMINISTRATIVESUBORDINATE);
       }
       return false;
     }
@@ -278,7 +278,7 @@ public class ReportChainDetectorPlugin
 
     // This next is true once the LP sends the RFD task
     Collection superiorRelationships = 
-      selfOrg.getRelationshipSchedule().getMatchingRelationships(org.cougaar.glm.ldm.Constants.Role.SUPERIOR); 
+      selfOrg.getRelationshipSchedule().getMatchingRelationships(org.cougaar.glm.ldm.Constants.Role.ADMINISTRATIVESUPERIOR); 
     if (superiorRelationships.size() == 0) {
       debug("No superior relationships");
       return false;
@@ -298,7 +298,7 @@ public class ReportChainDetectorPlugin
     }
 
     Collection subordinateRelationships = 
-      selfOrg.getRelationshipSchedule().getMatchingRelationships(org.cougaar.glm.ldm.Constants.Role.SUBORDINATE);
+      selfOrg.getRelationshipSchedule().getMatchingRelationships(org.cougaar.glm.ldm.Constants.Role.ADMINISTRATIVESUBORDINATE);
 
     // Return true iff
     //   a) my RelationshipSchedule has the expected number of subordinates
