@@ -1,3 +1,10 @@
+2002-03-21  Ray Tomlinson  <RTomlinson@bbn.com>
+
+	* org/cougaar/mlm/plugin/sample/AdaptiveUniversalAllocatorPlugin.java:
+	Test plugin for adaptivity engine. Same as
+	UniversalAllocatorPlugin, but wastes a varying amount of time per
+	task according to an OperatingMode.
+
 2002-03-04  Noelle Givler  <ngivler@bbn.com>
 
 	* alpprops.def 
