@@ -252,7 +252,6 @@ public class OrgDataPlugin extends AssetDataPlugin  {
 
     Collection opConInfoRelays = new ArrayList();
 
-    myLogger.shout("Creating timeSpanSet with OASub: " + myOrgActivitySubscription);
     NonOverlappingTimeSpanSet orgActivities = 
       new NonOverlappingTimeSpanSet(myOrgActivitySubscription);
     NonOverlappingTimeSpanSet opconInfos = 
