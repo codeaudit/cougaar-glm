@@ -1,17 +1,34 @@
 #!/bin/csh -f
 
-source $ALP_INSTALL_PATH/bin/setlibpath.csh
+if (! $?ALP3RDPARTY) then
+    setenv ALP3RDPARTY /opt/alp-jars
+endif
 
-set MYCLASSES="org.cougaar.domain.mlm.ui.planviewer.inventory.InventoryChartUI"
+set LIBPATHS=$ALP_INSTALL_PATH/lib/core.jar
+if ($?ALP_DEV_PATH) then
+    set LIBPATHS = "${ALP_DEV_PATH}:$LIBPATHS"
+endif
+
+set MYDOMAINS=""
+set MYPROPERTIES="$MYDOMAINS -Dorg.cougaar.system.path=$ALP3RDPARTY -Dorg.cougaar.install.path=$ALP_INSTALL_PATH -Duser.timezone=GMT"
+set MYMEMORY="-Xmx768m -Xms64m -Xmaxf0.9 -Xminf0.1 -Xoss128k"
 
 set osargs=""
 set os=`uname`
 if ("$os" == "Linux") then
-  set osargs="-green"
+    set osargs="-green"
+    limit stacksize 16m    #up from 8m
+    limit coredumpsize 0   #down from 1g
 endif
+
+set javaargs="$osargs $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS"
+
+set bt="org.cougaar.core.society.Bootstrapper"
+set cl="org.cougaar.domain.mlm.ui.planviewer.inventory.InventoryChartUI"
 
 if ($?ALP_DEV_PATH) then
-    echo java $osargs -classpath $LIBPATHS $MYCLASSES
+    echo java $javaargs $bt $cl $*
 endif
 
-java  $osargs -classpath $LIBPATHS $MYCLASSES $*
+exec java $javaargs $bt $cl $*
+
