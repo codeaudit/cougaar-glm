@@ -37,7 +37,6 @@ import org.cougaar.domain.planning.ldm.plan.NewConstraint;
 import org.cougaar.domain.planning.ldm.plan.NewPrepositionalPhrase;
 import org.cougaar.domain.planning.ldm.plan.NewTask;
 import org.cougaar.domain.planning.ldm.plan.NewWorkflow;
-import org.cougaar.domain.planning.ldm.plan.PEforCollections;
 import org.cougaar.domain.planning.ldm.plan.PlanElement;
 import org.cougaar.domain.planning.ldm.plan.Preference;
 import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
@@ -512,38 +511,21 @@ public class SupplyExpander extends InventoryProcessor {
      **/
     protected void handleExpansionChanges(Enumeration expansions) {
         AllocationResult ar;
-	//System.out.println(">>>>>>>^^^^^^<<<<<<<<<<new handleExpansionChanges");
         while (expansions.hasMoreElements()) {
             Expansion exp = (Expansion) expansions.nextElement();
             ar = exp.getReportedResult();
             if (ar != null && !ar.isSuccess()) {
                 NewWorkflow wf = (NewWorkflow) exp.getWorkflow();
-		boolean replan = false;
-		AllocationResult failedAR = null;
                 for (Enumeration tasks = wf.getTasks(); tasks.hasMoreElements(); ) {
                     Task subtask = (Task) tasks.nextElement();
                     PlanElement pe = subtask.getPlanElement();
                     if (pe != null) { // Null if being rescinded by customer
                         ar = pe.getEstimatedResult();
-                        if (!ar.isSuccess()) {
-			    failedAR=ar;
-			    continue;
-			}
+                        if (!ar.isSuccess()) continue;
                     }
                     wf.removeTask(subtask);
                     delegate_.publishRemove(subtask);
-		    replan=true;
                 }
-		if(replan){
-		    //System.out.println(">>>>>>>^^^^^^<<<<<<<<<<Replanning with failed withdrawal AR");
-		    printDebug(">>>>>>>^^^^^^<<<<<<<<<<Replanning with failed withdrawal AR");
-		    AllocationResult newAr = wf.aggregateAllocationResults();
-		    if (newAr != null) {  // if the aggregation is defined:
-			// set the result on the expansion
-			((PEforCollections) exp).setReceivedResult(newAr);
-		    }
-		    //delegate_.publishChange(failedAR);
-		}
             }
         }
     }
