@@ -104,6 +104,8 @@ public class GLMStimulatorServlet extends ServletBase {
   public static final String INTERVAL        = "interval";
   public static final String WAIT_BEFORE     = "waitBefore";
   public static final String WAIT_AFTER      = "waitAfter";
+  public static final String RESCIND_AFTER_COMPLETE = "rescindAfterComplete";
+  public static final String USE_CONFIDENCE  = "useConfidence";
   public static final boolean DEBUG = false;
   public static boolean VERBOSE = false;
 
@@ -124,27 +126,73 @@ public class GLMStimulatorServlet extends ServletBase {
     out.print(support.getPath());
     out.print("\">\n");
     // ask what task file 
-    out.print("<font size=+1>Inject tasks into agent <b>" + support.getAgentIdentifier() + "</b></font><p>\n"+
-	      "&nbsp;&nbsp;Input Task File <INPUT TYPE=\"text\" NAME=\"" + INPUT_FILE + "\" "+
-	      "SIZE=40><P>\n");
+    out.print("<font size=+1>Inject tasks into agent <b>" + support.getAgentIdentifier() + "</b></font><p>\n");
+
+    out.println ("<table>\n");
+
+    // ask what task file 
+    out.println ("<tr><td>");
+    out.print("Input Task File");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + INPUT_FILE + "\" SIZE=40>");
+    out.println("</td></tr>");
+
     // get number of batches to send 
-    out.print("&nbsp;&nbsp;Number of batches <INPUT TYPE=\"text\" NAME=\"" + NUM_BATCHES + "\" "+
-	      "VALUE=\"1\"><P>\n");
+    out.println ("<tr><td>");
+    out.print("Number of batches");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + NUM_BATCHES + "\" "+
+	      "VALUE=\"1\">");
+    out.println("</td></tr>");
+
     // get number of tasks per batch
-    out.print("&nbsp;&nbsp;Tasks per batch <INPUT TYPE=\"text\" NAME=\"" + TASKS_PER_BATCH + "\" "+
-	      "VALUE=\"1\"><P>\n");
-    // get periodicity 
-    out.print("&nbsp;&nbsp;Wait interval between batches<INPUT TYPE=\"text\" NAME=\"" + INTERVAL + "\" "+
-	      "VALUE=\"1000\">&nbsp;millis<P>\n");
+    out.print("<tr><td>");
+    out.print("Tasks per batch");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + TASKS_PER_BATCH + "\" "+
+	      "VALUE=\"1\">");
+    out.println("</td></tr>");
+
+    // get wait interval
+    out.println ("<tr><td>");
+    out.print("Wait interval between batches");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"text\" NAME=\"" + INTERVAL + "\" "+
+	      "VALUE=\"1000\">&nbsp;millis");
+    out.println("</td></tr>");
+
     // choose whether to wait for batch completion, or not
-    out.print("&nbsp;&nbsp;Wait for each batch to complete before sending more" + 
-	      "<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_BEFORE + "\" VALUE=\"true\"><br>\n");
+    out.println ("<tr><td>");
+    out.print("Wait for each batch to complete before sending more");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_BEFORE + "\" VALUE=\"true\">");
+    out.println("</td></tr>");
+
     // choose whether to wait for being done, or not
-    out.print("&nbsp;&nbsp;Wait for all tasks to complete before terminating" + 
-	      "<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_AFTER + "\" VALUE=\"true\"><br>\n" +
-	      "&nbsp;&nbsp;(A complete task has a plan element with a 100% confidence reported allocation result.)<p>\n");
+    out.println ("<tr><td>");
+    out.print("Wait for all tasks to complete before returning results");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + WAIT_AFTER + "\" VALUE=\"true\">");
+    out.println("</td></tr>");
+
+    // choose whether to rescind tasks after injecting them
+    out.println ("<tr><td>");
+    out.print("Remove injected tasks after all complete");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + RESCIND_AFTER_COMPLETE + "\" VALUE=\"true\">");
+    out.println("</td></tr>");
+
+    // choose whether to use 100% confidence as completion test
+    out.println ("<tr><td>");
+    out.print("A task is complete when it has a 100% confident reported result. " +
+	      "<br>Otherwise waits only until plan element is attached.");
+    out.print("</td><td>");
+    out.print("<INPUT TYPE=\"checkbox\" NAME=\"" + USE_CONFIDENCE + "\" VALUE=\"true\">");
+    out.println("</td></tr>");
+    out.println ("</table><p>");
+
     // choose data format - html, xml, or java objects 
-    out.print("&nbsp;&nbsp;Show results as "+
+    out.print("<center>Show results as "+
 	      "&nbsp;&nbsp;<INPUT TYPE=\"radio\" NAME=\"format\" "+
 	      "VALUE=\"html\" CHECKED>"+
 	      "&nbsp;html&nbsp;");
@@ -153,7 +201,7 @@ public class GLMStimulatorServlet extends ServletBase {
     out.print("<INPUT TYPE=\"radio\" NAME=\"format\" "+
 	      "VALUE=\"data\">"+
 	      "&nbsp;serialized Java objects<p>\n");
-    out.print("<INPUT TYPE=\"submit\" NAME=\"Inject\">\n"+
+    out.print("<INPUT TYPE=\"submit\" NAME=\"Inject\"></center>\n"+
 	      "</FORM></BODY></HTML>");
   }
 }

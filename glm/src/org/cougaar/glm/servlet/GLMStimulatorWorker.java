@@ -136,7 +136,6 @@ public class GLMStimulatorWorker
     }
 
     // returns an "XMLable" result.
-    // never returns
     XMLable result = getResult();
 
     if (result != null)
@@ -144,10 +143,16 @@ public class GLMStimulatorWorker
     if (waitBefore || waitAfter) {
       BlackboardService bb = this.support.getBlackboardService();
       bb.openTransaction();
-      for (Iterator i = rescindTasks.iterator(); i.hasNext(); ) {
-        bb.publishRemove(i.next());
-        i.remove();
+
+      if (rescindAfterComplete) {
+	for (Iterator i = rescindTasks.iterator(); i.hasNext(); ) {
+	  bb.publishRemove(i.next());
+	  i.remove();
+	}
       }
+
+      rescindTasks.clear();
+
       bb.unsubscribe(planElementSubscription);
       bb.closeTransaction();
     }
@@ -187,6 +192,10 @@ public class GLMStimulatorWorker
       waitBefore = eq (value, "true");
     } else if (eq (name, GLMStimulatorServlet.WAIT_AFTER)) {
       waitAfter = eq (value, "true");
+    } else if (eq (name, GLMStimulatorServlet.RESCIND_AFTER_COMPLETE)) {
+      rescindAfterComplete = eq (value, "true");
+    } else if (eq (name, GLMStimulatorServlet.USE_CONFIDENCE)) {
+      useConfidence = eq (value, "true");
     }
   }
 
@@ -236,9 +245,9 @@ public class GLMStimulatorWorker
    */
   protected XMLable getResult() {
     // Get name of XML data file
-    if (support.getConfigFinder().locateFile (inputFile) == null) {
+    if (inputFile == null || inputFile.equals("") || support.getConfigFinder().locateFile (inputFile) == null) {
       if (debug)
-        System.out.println("GLMStimulatorWorker Could not find the file " + inputFile);
+        System.out.println("GLMStimulatorWorker Could not find the file [" + inputFile + "]");
       return new Message (inputFile);
     }
 
@@ -459,6 +468,14 @@ public class GLMStimulatorWorker
         PlanElement pe = (PlanElement) o;
         Task task = pe.getTask();
         if (sentTasks.containsKey(task)) {
+	  if (useConfidence) {
+	    boolean hasReported = (pe.getReportedResult () != null);
+	    if (!hasReported)
+	      return false;
+	    boolean highConfidence = (pe.getReportedResult ().getConfidenceRating() >= UTILAllocate.HIGHEST_CONFIDENCE);
+	    if (!highConfidence)
+	      return false;
+	  }
           return true;          // Ignore confidence for now.
         }
       }
@@ -507,6 +524,12 @@ public class GLMStimulatorWorker
 
   /** when was the last batch sent */
   protected long nextSendTime;
+
+  /** use confidence to determine when task is complete */
+  protected boolean useConfidence;
+
+  /** remove the injected tasks after they have been completed */
+  protected boolean rescindAfterComplete;
 
   protected String inputFile = "                     ";
 
