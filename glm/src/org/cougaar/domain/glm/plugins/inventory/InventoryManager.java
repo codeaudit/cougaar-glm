@@ -520,10 +520,6 @@ public abstract class InventoryManager extends InventoryProcessor {
   protected void generateHandleDueIns() {
     printDebug("Step 3: generateHandleDueIns()");
     addPreviousRefills();
-    // Refilling of inventories is not done as part of
-    // adjustForInadequateInventory
-    //  	// Execution requires this to be done whenever we run
-    //  	refillInventories();
   }
 
   protected void addPreviousRefills() {
@@ -545,22 +541,6 @@ public abstract class InventoryManager extends InventoryProcessor {
     }
     printDebug(2,"end addDueIns(), number of refillTasks is "+total);
   }
-
-  // Integer number of days needed to get anything
-  // Change to policy!!!
-  public abstract int getOrderShipTime(); 
-  //      public long defaultRefillStartTime(long time, Inventory inv) {
-  //  	long default_start;
-  //  	int day = TimeUtils.getDaysBetween(startTime_, time);
-  //  	int start = day - getOrderShipTime();
-  //  	if (start > 0) {
-  //  	    time = TimeUtils.addNDays(startTime_, start);
-  //  	}
-  //  	else {
-  //  	    time = startTime_;
-  //  	}
-  //  	return time;
-  //      }
 
   public long defaultRefillEndTime(long time, Inventory inv) {
     if (time == startTime_) {
