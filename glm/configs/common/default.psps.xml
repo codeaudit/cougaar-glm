@@ -280,6 +280,10 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.domain.mlm.ui.psp.transit.PSP_DataGatherer</Classname>
     <PSPName>alpine/demo/DATA_GRABBER.PSP</PSPName>
   </element>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.domain.mlm.ui.psp.transit.PSP_Completion</Classname>
+    <PSPName>alpine/demo/COMPLETION.PSP</PSPName>
+  </element>
 <!-- END DataGatherer PSPs -->
 
 <!-- BEGIN UIFramework AggAgent PSPs -->
