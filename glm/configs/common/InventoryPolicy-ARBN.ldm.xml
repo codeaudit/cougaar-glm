@@ -2,6 +2,8 @@
 
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
 
+<!-- Inventory Policy for ARBN, et al: Consumer units -->
+
 <Policies>
 
  <Policy name="ClassISubsistenceInventoryPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
@@ -112,6 +114,5 @@
 	</Boolean>
     </RuleParam>
   </Policy>
-
 
 </Policies>

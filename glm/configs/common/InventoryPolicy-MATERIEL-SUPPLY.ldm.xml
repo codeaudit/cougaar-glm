@@ -2,6 +2,8 @@
 
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
 
+<!-- Inventory Policy for MATERIEL-SUPPLY, et al: Corps-Level Materiel Supply units -->
+
 <Policies>
 
  <Policy name="ClassISubsistenceInventoryPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
@@ -31,6 +33,41 @@
     </RuleParam>
     <RuleParam name="RefillSwitchoverDay">
         <Integer value="100" min="0" max="300">
+        </Integer>
+    </RuleParam>
+    <RuleParam name="TurnOffProjections">
+        <Boolean value="false">
+        </Boolean>
+    </RuleParam>
+  </Policy>
+
+ <Policy name="ClassVIIIMedicalOnHandPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
+    <RuleParam name="ResourceType">
+      	<String value ="ClassVIIIMedical">
+	</String>
+    </RuleParam>
+    <RuleParam name="DaysOnHand">
+	<Integer value="30" min="-1" max="90"> 
+	</Integer>
+    </RuleParam>
+    <RuleParam name="DaysForward">
+        <Integer value="30" min="0" max="30">
+	</Integer>
+    </RuleParam>
+    <RuleParam name="DaysBackward">
+        <Integer value="0" min="0" max="30">
+	</Integer>
+    </RuleParam>
+    <RuleParam name="GoalLevelMultiplier">
+        <Double value="2" min="1.0" max="30">
+	</Double>
+    </RuleParam>
+    <RuleParam name="WithdrawSwitchoverDay">
+        <Integer value="30" min="0" max="300">
+        </Integer>
+    </RuleParam>
+    <RuleParam name="RefillSwitchoverDay">
+        <Integer value="45" min="0" max="300">
         </Integer>
     </RuleParam>
     <RuleParam name="TurnOffProjections">
@@ -178,6 +215,5 @@
         </Boolean>
     </RuleParam>
   </Policy>
-
 
 </Policies>

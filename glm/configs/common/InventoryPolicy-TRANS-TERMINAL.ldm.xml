@@ -2,6 +2,8 @@
 
 <!DOCTYPE Policy SYSTEM "Policy.ldm.dtd" []>
 
+<!-- Inventory Policy for TRANS-TERMINAL, et al: Trandfer Terminal Supply units -->
+
 <Policies>
 
  <Policy name="ClassISubsistenceInventoryPolicy" type="org.cougaar.domain.glm.plugins.inventory.InventoryPolicy">
@@ -214,6 +216,5 @@
         </Boolean>
     </RuleParam>
   </Policy>
-
 
 </Policies>
