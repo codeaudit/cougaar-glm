@@ -289,7 +289,9 @@ public abstract class QueryLDMPlugIn extends LDMEssentialPlugIn {
 		releaseConnection(conn);
 		return null;
 	    } finally {
-		releaseConnection(conn);
+		if (conn != null) {
+		    releaseConnection(conn);
+		}
 	    }
 	} else {
 	    GLMDebug.ERROR(className_,"executeQuery fail to connect "+url_);
