@@ -1,3 +1,41 @@
+2001-06-01  Amy Fedyk  <afedyk@bbn.com>
+
+	Changed MAINTAINING Prep Phrase on Supply and ProjectSupply tasks.
+	The MAINTAINING PP now contains a representation of the Asset that
+	the tasks are supporting instead of the Asset itself. BUG #415
+
+	* org/cougaar/domain/glm/plugins/MaintainedItem.java:
+	New class for representing a Maintained item.  Does not
+	necessarily represent an Asset but the item often is an Asset.
+
+	* org/cougaar/domain/glm/plugins/projection/GenerateSupplyDemandExpander.java
+	Create Supply and ProjectSupply tasks with new MaintainedItem class instead
+	of the Asset.
+
+	* org/cougaar/domain/glm/plugins/inventory/GeneralInventoryManager.java
+	Uses new MaintainedItem class on refill tasks to determine which inventories
+	have changed.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryManager.java
+	When creating Supply and ProjectSupply refills, fill MAINTAINING Prep Phrase
+	with MaintainedItem class instead of the Inventory.
+
+	* org/cougaar/domain/glm/plugins/inventory/InventoryPlugIn.java
+	findOrMakeInventory() convenience method should now check for NULL inventory
+	IDs.
+
+	* org/cougaar/domain/glm/plugins/PublicationKey.java
+	Uses new MaintainedItem class instead of grabbing TypeID and ItemID from Asset.
+
+	* org/cougaar/domain/glm/plugins/TaskUtils.java
+	Uses MaintainedItem.MaintainedItemType to determine if a task is supporting an
+	Inventory.
+
+	* org/cougaar/domain/glm/execution/cluster/PSP_ExecutionWatcher.java
+	* org/cougaar/domain/mlm/plugin/assessor/ConsumptionAssessorPlugIn.java
+	Use new MaintainedItem instead of Asset from MAINTAINING Prep Phrase
+	
+	
 2001-05-18  Ray Tomlinson  <rtomlinson@bbn.com>
 
 	* org/cougaar/domain/glm/plugins/TaskUtils.java:
