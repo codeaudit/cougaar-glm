@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.ArrayList;
 
 
 import org.cougaar.core.cluster.ClusterIdentifier;
@@ -36,12 +37,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Generates XML for plan objects (Plan Elements, Tasks, Workflows, 
+ * Generates XML for plan objects (Plan Elements, Tasks, Workflows,
  * and Assets).  Used by the Plan Service Provider in the
  * cluster to generate the XML which will be returned to the ui.
  */
 
 public class XMLPlanObjectProvider implements XMLObjectProvider {
+  protected ArrayList collection = new ArrayList();
   TXDocument doc;
   Element root;
   Class xmlPlanObjectClass;
@@ -54,20 +56,29 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
     reset();
   }
 
+  public int size() {
+      return collection.size();
+  }
+
+  public ArrayList getCollection() {
+      return collection;
+  }
 
   public void  reset() {
-    doc = new TXDocument();
-    doc.setVersion("1.0");
-    root = doc.createElement("LogPlan");
-    doc.appendChild(root);
-    // define these, which we'll use to create the XML
-    // for the "base" of the plan object
-    try {
-      xmlPlanObjectClass = XMLizable.class;
-      xmlUIPlanObjectClass = XMLUIPlanObject.class;
-    } catch (RuntimeException e) {
-      System.out.println("Exception getting class for plan object: " + e);
-    }
+     collection = new ArrayList();
+     doc = new TXDocument();
+     doc.setVersion("1.0");
+     root = doc.createElement("LogPlan");
+     doc.appendChild(root);
+
+     // define these, which we'll use to create the XML
+     // for the "base" of the plan object
+     try {
+       xmlPlanObjectClass = XMLizable.class;
+       xmlUIPlanObjectClass = XMLUIPlanObject.class;
+     } catch (RuntimeException e) {
+       System.out.println("Exception getting class for plan object: " + e);
+     }
   }
 
 
@@ -82,10 +93,13 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
        addPlanObject(obj);
   }
 
+  public void addPlanObject(Object obj) {
+       collection.add(obj);
+  }
 
   //
   // create XML for "base" plan object -- task, workflow, planelement or asset
-  public void addPlanObject(Object obj) {
+  private void docAddPlanObject(Object obj) {
     Element element = null;
     // Test the getXML method on logplan object
     if (xmlPlanObjectClass.isInstance(obj)) {
@@ -103,12 +117,15 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
   }
 
   public void printDocument() {
+    /**
     try {
       PrintWriter out = new PrintWriter(System.out);
       doc.print(out);
     } catch (Exception e) {
       e.printStackTrace();
     }
+    **/
+    writeDocument(System.out);
   }
 
   public void writeDocumentToFile(String pathname) {
@@ -122,6 +139,11 @@ public class XMLPlanObjectProvider implements XMLObjectProvider {
   }
 
   public void writeDocument(OutputStream os) {
+  
+    for(int i=0; i< collection.size(); i++) {
+       this.docAddPlanObject(collection.get(i));
+    }
+
     try {
       PrintWriter pw = new PrintWriter(os);
       doc.print(pw);
