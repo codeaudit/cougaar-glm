@@ -47,10 +47,7 @@ import org.cougaar.mlm.ui.psp.transportation.data.*;
 /**
  * Reads Transportation Routes, Network, Links and Nodes from logplan
  * and writes back in AbstractPrinter formats.
- * <p>
- * @see this$QueryCode#getQueryCodes() for list of valid query codes
  */
-
 public class PSP_TransportLinksNodes
     extends PSP_BaseAdapter
     implements PlanServiceProvider, UISubscriber {
