@@ -219,7 +219,7 @@ public class GLSGUIInitPlugIn extends GLSGUIBasePlugIn {
 		closeTransaction(false);
 	}
 
-private void doPublishRootGLS(Organization me, Oplan oplan) {    openTransaction();
+private void doPublishRootGLS(Organization me, Oplan oplan) {    
     NewTask task = theLDMF.newTask();
     // ensure this is a root level task
     task.setPlan(theLDMF.getRealityPlan());
