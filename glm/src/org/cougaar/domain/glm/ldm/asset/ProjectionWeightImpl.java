@@ -21,6 +21,7 @@ import org.cougaar.domain.planning.ldm.plan.Task;
 import org.cougaar.domain.planning.ldm.plan.Verb;
 import org.cougaar.core.plugin.PlugInDelegate;
 import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.domain.planning.ldm.plan.PrepositionalPhrase;
 import java.io.Serializable;
 import org.cougaar.domain.glm.ldm.asset.Organization;
 import org.cougaar.domain.glm.ldm.Constants;
@@ -71,7 +72,9 @@ public class ProjectionWeightImpl implements ProjectionWeight, Serializable {
 		    weight = 0.0;
 		}
 	    } else if (task_verb.equals(Constants.Verb.PROJECTWITHDRAW)) {
-		if (day > wdrawSwitchOverDay_) {
+	        // Count ProjectSupply tasks if beyond the refill switchover day OR task came from Demand Projector
+	        PrepositionalPhrase pp =task.getPrepositionalPhrase(Constants.Preposition.REFILL);
+		if ((day > wdrawSwitchOverDay_) || (pp == null)) {
 		    weight = 1.0;
 		} else {
 		    weight = 0.0;
