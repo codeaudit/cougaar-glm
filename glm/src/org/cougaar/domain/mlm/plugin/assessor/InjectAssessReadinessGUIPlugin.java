@@ -38,6 +38,7 @@ import org.cougaar.util.UnaryPredicate;
 
 import org.cougaar.domain.mlm.plugin.UICoordinator;
 
+import org.cougaar.domain.glm.ldm.Constants;
 
 /**
  * Publishes an AssessReadiness task to the logplan every time the button is pressed.
@@ -52,6 +53,7 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   JLabel label;
 
   protected JButton arButton;
+  protected JButton rescindButton;
 
   protected RootFactory rootFactory;
 
@@ -61,8 +63,10 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     public boolean execute(Object o) {
       if (o instanceof Task) {
 	Task t = (Task)o;
-	if (t.getVerb().equals(Verb.getVerb("AssessReadiness"))) {
-	  return true;
+	if (t.getVerb().equals(Constants.Verb.AssessReadiness)) {
+	  if (!t.getPrepositionalPhrases().hasMoreElements()) {
+	    return true;
+	  }
 	}
       }
       return false;
@@ -112,11 +116,17 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
     // Create the button
     arButton = new JButton("Publish AssessReadiness Task");
     label = new JLabel("No AssessReadiness task have been published.");
-
     // Register a listener for the check box
     ARButtonListener myARListener = new ARButtonListener();
     arButton.addActionListener(myARListener);
     UICoordinator.layoutButtonAndLabel(panel, arButton, label);
+
+    rescindButton = new JButton("Rescind AssessReadiness Tasks");
+    rescindButton.setEnabled(false);
+    RescindButtonListener myRescindListener = new RescindButtonListener();
+    rescindButton.addActionListener(myRescindListener);
+    UICoordinator.layoutButton(panel, rescindButton);
+
     frame.setContentPane(panel);
     frame.pack();
     UICoordinator.setBounds(frame);
@@ -126,19 +136,43 @@ public class InjectAssessReadinessGUIPlugin extends ComponentPlugin
   /** An ActionListener that listens to the GLS buttons. */
   class ARButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
+      rescindAssessReadiness();
       publishAssessReadiness();
     }
   }
 
   private void updateLabel() {
-    label.setText(assessReadinessSubscription.size() +  " AssessReadiness tasks on blackboard");
+    int subSize = assessReadinessSubscription.size();
+    label.setText(subSize +  " AssessReadiness tasks on blackboard");
+    if (subSize > 0)
+      rescindButton.setEnabled(true);
+    else
+      rescindButton.setEnabled(true);
   }
 
   private void publishAssessReadiness() {
     blackboard.openTransaction();
     NewTask task = rootFactory.newTask();
-    task.setVerb(Verb.getVerb("AssessReadiness"));
+    task.setVerb(Constants.Verb.AssessReadiness);
     blackboard.publishAdd(task);
+    blackboard.closeTransaction(false);
+    updateLabel();
+  }
+
+
+  /** An ActionListener that listens to the Rescind button. */
+  class RescindButtonListener implements ActionListener {
+    public void actionPerformed(ActionEvent ae) {
+      rescindAssessReadiness();
+    }
+  }
+
+  private void rescindAssessReadiness() {
+    blackboard.openTransaction();
+    for (Iterator taskIt = assessReadinessSubscription.iterator(); taskIt.hasNext();) {
+      Task task = (Task) taskIt.next();
+      blackboard.publishRemove(task);
+    }
     blackboard.closeTransaction(false);
     updateLabel();
   }

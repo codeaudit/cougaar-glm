@@ -69,7 +69,7 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	public boolean execute(Object o) {
 	  if (o instanceof Task) {
 	    Task t = (Task) o;
-	    if (t.getVerb().equals(Verb.getVerb("AssessReadiness") /*Constants.Verb.AssessReadiness*/)) {
+	    if (t.getVerb().equals(Constants.Verb.AssessReadiness)) {
 	      if (!t.getPrepositionalPhrases().hasMoreElements()) {
 		return true;
 	      }
@@ -118,6 +118,8 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
     if (readinessTaskSub.hasChanged()) {
       // only do one per cycle
       Collection added  = readinessTaskSub.getAddedCollection();
+      if (added.size() < 1)
+	return;
       Task readinessTask = (Task)added.iterator().next();
       if (readinessTask == null)
 	return;
@@ -183,10 +185,13 @@ public class ReadinessAssessorPlugin extends ComponentPlugin {
 	  //results.add(psTask.getPlanElement().getReportedResult());
 	}
       }	
-      ArrayList results = calcResults(readinessTask, pacingItems, earliest, latest);
-      System.out.println("\n\nReadinessAssessor - cluster readiness");
-      printResults(results);
-      // set the allocation result of the toplevel task
+
+      if (pacingItems.size() > 0) {
+	ArrayList results = calcResults(readinessTask, pacingItems, earliest, latest);
+	System.out.println("\n\nReadinessAssessor - cluster readiness");
+	printResults(results);
+	// set the allocation result of the toplevel task
+      }
     }
   }
 
