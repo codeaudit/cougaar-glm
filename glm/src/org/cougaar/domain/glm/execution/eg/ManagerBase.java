@@ -277,13 +277,13 @@ public abstract class ManagerBase {
         for (Iterator reports = headSet.iterator(); reports.hasNext(); ) {
           Timed object = (Timed) reports.next();
           if (isAutoSend() || object.isEnabled()) {
-            removeFromSchedule(object);
             expiredReports.add(object);
           }
         }
         if (expiredReports.size() > 0) {
           for (Iterator reports = expiredReports.iterator(); reports.hasNext(); ) {
             Timed object = (Timed) reports.next();
+            removeFromSchedule(object); // Key may change invalidating sorted set.
             boolean didExpire = object.expired(newExecutionTime);
             if (!didExpire) {
               addToSchedule(object);
