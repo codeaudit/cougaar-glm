@@ -8,4 +8,13 @@
       <role name="StrategicTransportationProvider" />
     </allocate>
   </command>
+  <command>
+    <task verb="Transport">
+      <phrase oftype="TheaterTransportation" />
+    </task>
+    <allocate>
+      <relation type="Supporting" />
+      <role name="MaterielTransportProvider" />
+    </allocate>
+  </command>
 </commands>
