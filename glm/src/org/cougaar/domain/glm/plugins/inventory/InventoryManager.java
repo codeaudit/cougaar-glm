@@ -17,28 +17,31 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.domain.glm.plugins.inventory;
 
-import org.cougaar.domain.glm.ldm.asset.Organization;
+import java.util.*;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
+import org.cougaar.domain.glm.debug.*;
+import org.cougaar.domain.glm.ldm.Constants;
+import org.cougaar.domain.glm.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.asset.Ammunition;
 import org.cougaar.domain.glm.ldm.asset.BulkPOL;
 import org.cougaar.domain.glm.ldm.asset.ContainPG;
+import org.cougaar.domain.glm.ldm.asset.Inventory;
+import org.cougaar.domain.glm.ldm.asset.NewScheduledContentPG;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
 import org.cougaar.domain.glm.ldm.asset.VolumetricInventory;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.domain.glm.ldm.plan.AlpineAspectType;
+import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
+import org.cougaar.domain.glm.plugins.*;
+import org.cougaar.domain.planning.ldm.DeletionPlugIn;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.measure.*;
 import org.cougaar.domain.planning.ldm.plan.*;
-import java.lang.Math;
-import java.util.*;
-import org.cougaar.domain.glm.ldm.asset.Inventory;
-import org.cougaar.domain.glm.ldm.asset.Ammunition;
-import org.cougaar.domain.glm.plugins.*;
-import org.cougaar.domain.glm.ldm.Constants;
-import org.cougaar.domain.glm.ldm.asset.NewScheduledContentPG;
-import org.cougaar.domain.glm.ldm.asset.ScheduledContentPG;
-import org.cougaar.domain.glm.ldm.plan.GeolocLocation;
-import org.cougaar.domain.glm.ldm.asset.*;
-import org.cougaar.domain.glm.debug.*;
-import org.cougaar.domain.planning.ldm.DeletionPlugIn;
+import org.cougaar.util.TimeSpan;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.EmptyEnumeration;
 
 public abstract class InventoryManager extends InventoryProcessor {
 
@@ -46,8 +49,13 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected IncrementalSubscription modifiedInventorySubscription_ = null;
     /** Subscription to policies */
     protected IncrementalSubscription inventoryPolicySubscription_;
+    private Inventory selectedInventory = null;
+    private boolean forcePrintConcise = false;
 
-    public static final int               DONE = -1; 
+    public static final int DONE = -1; 
+    public static final double GOAL_LEVEL_BOOST_CAPACITY_FACTOR= 1.1;
+
+
 
     /**
      *   daysOnHand_    keep enough inventory on hand to cover N days of demand
@@ -55,12 +63,14 @@ public abstract class InventoryManager extends InventoryProcessor {
      *                  from this day.
      *   daysBackward_  When calculating average daily demand, look N days backward
      *                  from this day.
-     *   goalLevelMultiplier_     Multiplier for safety level which yields goal level
+     *   goalLevelMultiplier_     Multiplier for reorder level which yields goal level
      */
     protected int daysOnHand_ = 3;
     protected int daysForward_ = 15;
     protected int daysBackward_ = 15;
     protected double goalLevelMultiplier_ = 2.0;
+    protected double shortfall; // For debugging only
+    protected Set changedSet_;
 
     static class PolicyPredicate implements UnaryPredicate {
 	String type_;
@@ -111,7 +121,7 @@ public abstract class InventoryManager extends InventoryProcessor {
 	public boolean execute(Object o) {
 	    if (o instanceof Inventory) {
 		InventoryPG invpg = 
-		    (InventoryPG)((Inventory)o).searchForPropertyGroup(InventoryPG.class);
+		    (InventoryPG)((Inventory)o).getInventoryPG();
 		return ((invpg != null) && AssetUtils.isSupplyClassOfType(invpg.getResource(), type_));
 	    }
 	    return false;
@@ -126,14 +136,6 @@ public abstract class InventoryManager extends InventoryProcessor {
 	modifiedInventorySubscription_ = subscribe(new ModifiedInventoryPredicate(supplyType_));
 	inventoryPolicySubscription_ = subscribe(new PolicyPredicate(type));
 
-	// FSB and higher maintain more inventory
-	if(!isBattalionLevel()) {
-	    printDebug(2,"Cluster: "+clusterId_.toString()+" is not Battalion level.         	    daysOnHand_=6;");
-	    daysOnHand_=6;
-	} else {
-	    printDebug(2,"Cluster: "+clusterId_.toString()+" is Battalion level. 	    daysOnHand_=3;");
-	    daysOnHand_=3;
-	}
         checkDeletionPolicy();
     }
 
@@ -149,24 +151,58 @@ public abstract class InventoryManager extends InventoryProcessor {
 	// Skeleton algorithm (Template Method pattern)  (learned at JavaOne)
 	// Used by all concrete subclasses
 	super.update();
-	if (needUpdate()) {
+	// RJB keep track of inventories that need to be run, until you actually run them
+	changedSet_ = needUpdate(changedSet_);
+	Iterator changedInventories = changedSet_.iterator();
+//  	Set consumers = inventoryPlugIn_.getConsumers();
+//  	Iterator consumerIterator = consumers.iterator();
+//  	while (consumerIterator.hasNext()){
+//  	    System.out.println("#####"+consumerIterator.next()+" is a medical supply customer for "+clusterId_);
+//  	}
+
+	if (!changedSet_.isEmpty()) {
  	    printDebug(2,"\n\n\nBEGIN CYCLE___________________________________________\n");
-	    resetInventories();
 	    
 	    if (inventoryPlugIn_.getDetermineRequirementsTask() == null) {
 		// MWD - added a method to handle GLS Rescind cases,
 		//       override in DLAInventoryManager that reinitializes
 		//       input files as well as clearing inventory schedules
+		Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
+		changedSet_ = new HashSet();
+		while (inventories.hasMoreElements()) {
+		    changedSet_.add(inventories.nextElement());
+		}
+		System.out.println("#####"+clusterId_+" is running because (inventoryPlugIn_.getDetermineRequirementsTask() == null)"); 
+		resetInventories();
 		handleGLSRescind();
-	    }
-	    else {
+		// RJB now we have handled all inventories
+		changedSet_=null;
+	    } else if (inventoryPlugIn_.hasSeenAllConsumers()) {
+		resetInventories();
 		accountForWithdraws();
 		generateHandleDueIns();
+//              generateProjections();
  		adjustWithdraws();
-		checkForOverflow();
+//  		checkForOverflow();
+                updateWithdrawAllocations();
 		refreshInventorySchedule();
+		// RJB now we have handled all inventories
+		changedSet_=null;
 	    }
+ 	    printDebug(2,"\n\nEND CYCLE___________________________________________\n\n");
 	}
+    }
+
+    public void printConcise(String s) {
+        if (isPrintConcise()) GLMDebug.DEBUG(className_, clusterId_, s, GLMDebug.ERROR_LEVEL);
+    }
+
+    public boolean isPrintConcise() {
+        return forcePrintConcise || super.isPrintConcise();
+    }
+
+    protected void forcePrintConcise(boolean f) {
+        forcePrintConcise = f;
     }
 
     public static class IMDeletionPolicy extends DeletionPlugIn.DeletionPolicy {
@@ -224,18 +260,23 @@ public abstract class InventoryManager extends InventoryProcessor {
     //                                                        *
     // ********************************************************
 
-    protected abstract boolean needUpdate();
+    protected abstract Set needUpdate(Set inv);
 
     // Reset Inventories
 
     protected void resetInventories() {
 	Inventory inventory;
-	Enumeration list = inventoryPlugIn_.getInventoryBins(supplyType_);
+	Iterator list = changedSet_.iterator();
 	printDebug("STEP 1: RESETINVENTORIES(), Today: "+TimeUtils.dateString(startTime_));
-	while (list.hasMoreElements()) {
-	    inventory = (Inventory)list.nextElement();
+	while (list.hasNext()) {
+	    inventory = (Inventory)list.next();
 	    InventoryPG invpg = 
-		(InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+		(InventoryPG)inventory.getInventoryPG();
+            if (selectedInventory == null) {
+                if (invpg.getResource().getTypeIdentificationPG().getTypeIdentification().equals("NSN/8970014329943")) {
+                    selectedInventory = inventory;
+                }
+            }
 	    invpg.resetInventory(inventory, startTime_);
 	}
     }
@@ -248,19 +289,28 @@ public abstract class InventoryManager extends InventoryProcessor {
     // ********************************************************
 
     protected void accountForWithdraws() {
-// 	failedDueOuts_.clear();
 	printDebug("STEP 2: ACCOUNTFORWITHDRAWS()");
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
-	while (inventories.hasMoreElements()) {
-	    Inventory inventory = (Inventory)inventories.nextElement();
+	Iterator inventories = changedSet_.iterator();
+	while (inventories.hasNext()) {
+	    Inventory inventory = (Inventory)inventories.next();
 	    InventoryPG invpg = 
-		(InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+		(InventoryPG)inventory.getInventoryPG();
 	    invpg.withdrawFromInventory(inventory, clusterId_);
 	    invpg.determineInventoryLevels();
-	    Enumeration tasks = generateProjections(inventory);
-	    publishChangeProjection(inventory, tasks);
+	    computeThresholdSchedule(inventory);
 //  	    invpg.printInventoryLevels(inventory, clusterId_);
 	}
+    }
+
+    protected void computeThresholdSchedule(Inventory inventory) {
+	InventoryPG invpg = 
+		(InventoryPG)inventory.getInventoryPG();
+	invpg.computeThresholdSchedule(daysOnHand_,
+				       daysForward_,
+				       daysBackward_,
+				       getMinReorderLevel(inventory),
+				       getMaxReorderLevel(inventory),
+				       goalLevelMultiplier_);
     }
 
     /**
@@ -274,67 +324,217 @@ public abstract class InventoryManager extends InventoryProcessor {
      * the interval, the corresponding projected resupply task is not
      * generated.
      **/
-    protected Enumeration generateProjections(Inventory inventory) {
-//  	printDebug("STEP 2:  GenerateProjections() for "+AssetUtils.getAssetIdentifier(inventory));
+    protected void generateProjections() {
+	Iterator inventories = changedSet_.iterator();
+	while (inventories.hasNext()) {
+	    Inventory inventory = (Inventory)inventories.next();
+	    generateProjections(inventory);
+	}
+    }
+
+    protected void generateProjections(Inventory inventory) {
+  	printDebug("STEP 2:  GenerateProjections() for "+AssetUtils.getAssetIdentifier(inventory));
 	Vector projections = new Vector();
-	InventoryPG invpg = (InventoryPG) inventory.searchForPropertyGroup(InventoryPG.class);
+	InventoryPG invpg = (InventoryPG) inventory.getInventoryPG();
 	int days = invpg.getPlanningDays();
 	int today = invpg.getFirstPlanningDay();
 	int periodBegin = today;
-	Scalar previous = invpg.getProjected(today);
-//  	printDebug(0, "!!!!!!!!!!!!!!!!! first day of demand : "
-//                 + TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(),today))
-//                 + ", INV START: "+TimeUtils.dateString(invpg.getStartTime()));
+        int switchoverDay;
+        {
+            Task testTask = buildNewTask(null, Constants.Verb.PROJECTSUPPLY, null);
+            int imputedDay0 = invpg.getImputedDay(0);
+            for (switchoverDay = today; switchoverDay < days; switchoverDay++) {
+                double weight =
+                    invpg.getProjectionWeight()
+                    .getProjectionWeight(testTask, imputedDay0 + switchoverDay);
+                if (weight > 0.0) break; // found switchoverDay
+            }
+        }
+        double makeup = 0.0;
+	Scalar previous = invpg.getProjected(periodBegin);
+        double previousReorder = invpg.getReorderLevel(periodBegin);
+        double previousReorderDelta = 0.0;
         /* Loop from tomorrow to the day after the inventory planning
-         * window ends. The extra step at the end allow the final
-         * segment to be processed.
-         */
-	for (int day = today + 1; day <= days; day++) {
+         * window ends. The extra step at the end insures that the
+         * final segment is processed. */
+	for (int day = today + 1; previous != null; day++) {
             Scalar current = (day < days) ? invpg.getProjected(day) : null;
+            double currentReorder = (day < days) ? invpg.getReorderLevel(day) : 0.0;
+            double currentReorderDelta = currentReorder - previousReorder;
+            boolean delta = day >= switchoverDay && previousReorderDelta != currentReorderDelta;
+            if (delta) printConcise("delta=" + (previousReorderDelta - currentReorderDelta));
+            if (day == switchoverDay || !previous.equals(current) || delta) {
+                double value = convertScalarToDouble(previous);
+                if (!Double.isNaN(value) && (true || value > 0.0)) {
+                    long start = invpg.getStartOfDay(periodBegin);
+                    if (isPrintConcise()) {
+                        printConcise("genProj "
+                                     + TimeUtils.dateString(start)
+                                     + " .. "
+                                     + TimeUtils.dateString(invpg.getStartOfDay(day)));
+                    }
+                    // reorder accounts for the reorder level which the inventory attempts to maintain.
+                    // add the reorder 'demand' to projected demand.
+                    if (true) {
+                        SegmentInfo[] info = determineReorderProfile(periodBegin, day, inventory);
+                        int startDay = periodBegin;
+                        for (int i = 0; i < info.length; i++) {
+                            int nDays = info[i].getDays();
+                            long end = start + nDays * TimeUtils.MSEC_PER_DAY;
+                            double reorder = info[i].getSlope();
+                            double increment = makeup / nDays;
+                            if (false && value + reorder + increment <= 0.0) {
+                                increment = -(value + reorder);
+                                makeup -= increment * nDays;
+                                if (isPrintConcise()) {
+                                    printConcise("No refill projection."
+                                                 + " makeup=" + makeup
+                                                 + " reorder=" + reorder
+                                                 + " increment=" + increment
+                                                 + " value=" + value);
+                                }
+                            } else {
+                                makeup = 0.0;
+                                reorder += increment;
+                                if (isPrintConcise()) {
+                                    printConcise("Slope[" + i + "]="
+                                                 + reorder
+                                                 + " startLevel=" + info[i].startLevel
+                                                 + " endLevel=" + info[i].endLevel
+                                                 + " "
+                                                 + periodBegin
+                                                 + " .. "
+                                                 + day
+                                                 + " "
+                                                 + TimeUtils.dateString(start)
+                                                 + " to "
+                                                 + TimeUtils.dateString(end)
+                                                 );
+                                }
+                                Rate dailyRate = createIncrementedDailyRate(previous, reorder);
+                                if (dailyRate != null) {
+                                    Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
+                                    projections.add(t);
+                                    /* Remove existing projections */
+                                    for (int d = startDay, e = startDay + nDays; d < e; d++) {
+                                        if (d >= switchoverDay) invpg.removeRefillProjection(d);
+                                    }
+                                    invpg.addDueIn(t);
+                                }
+                            }
+                            startDay += nDays;
+                            start = end;
+                        }
+                    }
+                }
+                previous = current;
+                periodBegin = day;
+                previousReorderDelta = currentReorderDelta;
+	    }
+        }
+        publishChangeProjection(inventory, projections.elements());
+        invpg.determineInventoryLevels();
+    }
+
+    protected Vector generateInactiveProjections(Inventory inventory, int switchoverDay) {
+  	printDebug("STEP 2:  GenerateInactiveProjections() for "+AssetUtils.getAssetIdentifier(inventory));
+	Vector projections = new Vector();
+	InventoryPG invpg = inventory.getInventoryPG();
+	int today = invpg.getFirstPlanningDay();
+	int periodBegin = today;
+	Scalar previous = invpg.getProjected(periodBegin);
+        /* Loop from tomorrow to the switchover day. The extra step at
+         * the end insures that the final segment is processed. */
+	for (int day = today + 1; day <= switchoverDay; day++) {
+            Scalar current = (day < switchoverDay) ? invpg.getProjected(day) : null;
             if (!previous.equals(current)) {
                 double value = convertScalarToDouble(previous);
                 if (!Double.isNaN(value) && value > 0.0) {
-                    long start = TimeUtils.addNDays(invpg.getStartTime(), periodBegin);
-                    // reorder accounts for the reorder level which the inventory attempts to maintain.
-                    // add the reorder 'demand' to projected demand.
-                    ReorderIncrement si = determineReorderIncrement(periodBegin, day, inventory);
-                    int nDays;
-                    nDays = si.highestDay - periodBegin;
-                    if (nDays > 0) {
-                        long end = start + nDays * TimeUtils.MSEC_PER_DAY;
-                        double reorder = (si.highest - si.first) / nDays;
-			Rate dailyRate = createIncrementedDailyRate(previous, reorder);
-			if (dailyRate != null) {
-			    Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
-			    projections.add(t);
-			    invpg.addDueIn(t);
-			}
-			start = end;
-                    }
-                    nDays = day - si.highestDay;
-                    if (nDays > 0) {
-                        long end = start + nDays * TimeUtils.MSEC_PER_DAY;
-                        double reorder = (si.last - si.highest) / nDays;
-			Rate dailyRate = createIncrementedDailyRate(previous, reorder);
-			if (dailyRate != null) {
-			    Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
-			    projections.add(t);
-			    invpg.addDueIn(t);
-			}
-                    }
-//                      printDebug("generateProjections(), created Projection task. Start: "
-//                                 + TimeUtils.dateString(start)+", End: "
-//                                 + TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(), day))
-//                                 + ", Value: "+previous);
+                    long start = invpg.getStartOfDay(periodBegin);
+                    int nDays = day - periodBegin;
+                    long end = start + nDays * TimeUtils.MSEC_PER_DAY;
+                    Rate dailyRate = createDailyRate(previous);
+                    Task t = newProjectSupplyTask(inventory, start, end, dailyRate);
+                    projections.add(t);
                 }
+                previous = current;
                 periodBegin = day;
 	    }
-	    previous = current;
-	}
-	return projections.elements();
+        }
+        return projections;
     }
 
-    protected abstract double getReorderLevel(Inventory inventory, int day);
+    /**
+     * Reorder increment specifies an adjustment to duein preferences
+     * to keep the inventory level above the target level. Since each
+     * projection produces a piece of a piecewise-linear approximation
+     * to the needed level we need to find a series of straight lines
+     * that overbound the target level. Starting at the startDay, we
+     * find the next horizon day to delimit a segment. The horizon day
+     * is the day for which the slope of the line from the value on
+     * one day to the value on the other is maximum. Think of ranges
+     * of mountains in the distance. some peaks in the foreground will
+     * have others behind them that reach higher and higher until,
+     * finally, there is a peak that obscures all the peaks behind it.
+     * The peaks behind may be higher, but because of the point of
+     * view, they can't be seen. From the peak on the horizon day,
+     * find the next horizon day, and so on until the last day is
+     * reached.
+     **/
+    protected static class SegmentInfo {
+        int nDays;
+        int endDay;
+        double startLevel;
+        double endLevel;
+        SegmentInfo(int nDays, double startLevel, double endLevel) {
+            this.nDays = nDays;
+            this.startLevel = startLevel;
+            this.endLevel = endLevel;
+        }
+        public double getSlope() {
+            return (endLevel - startLevel) / nDays;
+        }
+        public int getDays() {
+            return nDays;
+        }
+    }
+
+    protected SegmentInfo[] determineReorderProfile(int startDay, int endDay, Inventory inventory) {
+        int e = endDay - startDay;
+        List segments = new ArrayList();
+        if (e == 0) return new SegmentInfo[0];
+
+	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
+        double[] level = new double[e + 1];
+        for (int i = 0; i <= e; i++) {
+//              level[i] = 0.5 * (invpg.getReorderLevel(i + startDay) + invpg.getGoalLevel(i + startDay));
+            level[i] = invpg.getReorderLevel(i + startDay - 1);
+        }
+        if (e == 1) return new SegmentInfo[] {new SegmentInfo(1, level[0], level[1])};
+        int i = 0;
+        double li = level[i];
+        while (true) {
+            int ip = i + 1;
+            double peakSlope = (level[ip] - li); // The bounding slope
+            for (int j = ip + 1; j <= e; j++) {
+                double lj = level[j];
+                double thisSlope = (lj - li) / (j - i);
+                double minLevel = (li + peakSlope * (j - i)) * 0.99;
+                if (lj > minLevel) {
+                    ip = j;     // Include in this segment
+                    if (thisSlope > peakSlope) {
+                        peakSlope = thisSlope;
+                    }
+                }
+            }
+            double lip = li + peakSlope * (ip - i);
+            segments.add(new SegmentInfo(ip - i, li, lip));
+            i = ip;
+            li = lip;
+            if (i == e) break;
+        }
+        return (SegmentInfo[]) segments.toArray(new SegmentInfo[segments.size()]);
+    }
 
     protected static class ReorderIncrement {
         public double first;
@@ -344,22 +544,25 @@ public abstract class InventoryManager extends InventoryProcessor {
     }
 
     protected ReorderIncrement determineReorderIncrement(int startDay, int endDay, Inventory inventory) {
-        double first = getReorderLevel(inventory, startDay);
+	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
+        double first = invpg.getGoalLevel(startDay);
+
+        ReorderIncrement si = new ReorderIncrement();
         double highest = first;
-        double last = getReorderLevel(inventory, endDay);
+        double last = invpg.getGoalLevel(endDay);
         int highestDay = startDay;
         for (int i = startDay + 1; i < endDay; i++) {
-	    double reorder = getReorderLevel(inventory, i);
+	    double reorder = invpg.getGoalLevel(i);
+	    
 	    if (reorder > highest){
 		highest = reorder;
 		highestDay = i;
 	    }
 	}
-        ReorderIncrement si = new ReorderIncrement();
-        si.first = first;
-        si.highest = highest;
+        si.first = first * 1.1;
+        si.highest = highest * 1.1;
         si.highestDay = highestDay;
-        si.last = last;
+        si.last = last * 1.1;
         return si;
     }
 
@@ -375,19 +578,26 @@ public abstract class InventoryManager extends InventoryProcessor {
 	return rate;
     }
 
+    private double ignoreSmallIncrement(double increment, double x) {
+        double t = x + increment;
+        double diff = (x - increment) / t;
+        if (diff < 0.0001 && diff > -0.0001) return x;
+        return x + increment;
+    }
+
     protected Rate createIncrementedDailyRate(Measure qty, double increment) {
 	Rate rate = null;
 	if (qty instanceof Volume) {
-	    double d = increment+((Volume)qty).getGallons();
-	    if (d < 0) return null;
+            double d = ignoreSmallIncrement(increment, ((Volume) qty).getGallons());
+	    if (d <= 0.0) return null;
 	    rate = FlowRate.newGallonsPerDay(d);
 	} else if (qty instanceof Count) {
-	    double d = increment+((Count)qty).getEaches();
-	    if (d < 0) return null;
+	    double d = ignoreSmallIncrement(increment, ((Count) qty).getEaches());
+	    if (d <= 0.0) return null;
 	    rate = CountRate.newEachesPerDay(d);
 	} else if (qty instanceof Mass) {
-	    double d = increment+((Mass)qty).getShortTons();
-	    if (d < 0) return null;
+	    double d = ignoreSmallIncrement(increment, ((Mass) qty).getShortTons());
+	    if (d <= 0.0) return null;
 	    rate = MassTransferRate.newShortTonsPerDay(d);
 	}
 	return rate;
@@ -398,15 +608,17 @@ public abstract class InventoryManager extends InventoryProcessor {
 	// Create start and end time preferences (strictly at)
 	ScoringFunction score;
 	Vector prefs = new Vector();
-	score = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.START_TIME, start));
+	score = ScoringFunction.createStrictlyAtValue(new TimeAspectValue(AspectType.START_TIME, start));
 	prefs.addElement(ldmFactory_.newPreference(AspectType.START_TIME, score));
-	score = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME, end));
+	score = ScoringFunction.createStrictlyAtValue(new TimeAspectValue(AspectType.END_TIME, end));
 	prefs.addElement(ldmFactory_.newPreference(AspectType.END_TIME, score));
 	Vector prep_phrases = new Vector();
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.FOR, myOrgName_));
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.OFTYPE, supplyType_));
 	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inventory));
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	prep_phrases.add(newPrepositionalPhrase(Constants.Preposition.REFILL));
+
+	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
 	NewTask t =  (NewTask)buildTask(parentTask, 
 					Constants.Verb.PROJECTSUPPLY, 
 					invpg.getResource(),
@@ -429,20 +641,25 @@ public abstract class InventoryManager extends InventoryProcessor {
     //                                                        *
     // ********************************************************
 
-
-    protected abstract void generateHandleDueIns();
-
+    protected void generateHandleDueIns() {
+    	printDebug("Step 3: generateHandleDueIns()");
+	addPreviousRefills();
+        // Refilling of inventories is not done as part of
+        // adjustForInadequateInventory
+//  	// Execution requires this to be done whenever we run
+//  	refillInventories();
+    }
 
     protected void addPreviousRefills() {
 
     	printDebug("      : addPreviousRefills()");
 	int total=0;
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
+	Iterator inventories = changedSet_.iterator();
 	Inventory inv;
 	InventoryPG invpg;
-	while (inventories.hasMoreElements()) {
-	    inv = (Inventory)inventories.nextElement();
-	    invpg = (InventoryPG)inv.searchForPropertyGroup(InventoryPG.class);
+	while (inventories.hasNext()) {
+	    inv = (Inventory)inventories.next();
+	    invpg = (InventoryPG)inv.getInventoryPG();
 	    // maintainInventory Task is the parent of all the refills for this inventory
 	    Task maintainInventory = inventoryPlugIn_.findOrMakeMILTask(inv);
 	    // should never be null but may want to add a check AHF
@@ -456,18 +673,18 @@ public abstract class InventoryManager extends InventoryProcessor {
     // Integer number of days needed to get anything
     // Change to policy!!!
     public abstract int getOrderShipTime(); 
-    public long defaultRefillStartTime(long time, Inventory inv) {
-	long default_start;
-	int day = TimeUtils.getDaysBetween(startTime_, time);
-	int start = day - getOrderShipTime();
-	if (start > 0) {
-	    time = TimeUtils.addNDays(startTime_, start);
-	}
-	else {
-	    time = startTime_;
-	}
-	return time;
-    }
+//      public long defaultRefillStartTime(long time, Inventory inv) {
+//  	long default_start;
+//  	int day = TimeUtils.getDaysBetween(startTime_, time);
+//  	int start = day - getOrderShipTime();
+//  	if (start > 0) {
+//  	    time = TimeUtils.addNDays(startTime_, start);
+//  	}
+//  	else {
+//  	    time = startTime_;
+//  	}
+//  	return time;
+//      }
 
     public long defaultRefillEndTime(long time, Inventory inv) {
 	if (time == startTime_) {
@@ -479,12 +696,13 @@ public abstract class InventoryManager extends InventoryProcessor {
     public Task createRefillTask(Inventory inv, double refill_qty, long time) {
 	Asset item = getInventoryAsset(inv);
 	// create request task
+	Vector prefs = new Vector();
 	Preference p_start, p_end,p_qty;
 
 	long end_time = defaultRefillEndTime(time,inv);
-	long start_time = defaultRefillStartTime(time,inv);
+//  	long start_time = defaultRefillStartTime(time,inv);
 
-	p_start = createDateAfterPreference(AspectType.START_TIME, start_time);
+//  	p_start = createDateAfterPreference(AspectType.START_TIME, start_time);
 	p_end = createDateBeforePreference(AspectType.END_TIME,end_time);
 
 	// AMY - SF need early (OPlan Start date), best (defaultRefillEndDate) and Late (Plan End date)
@@ -497,16 +715,8 @@ public abstract class InventoryManager extends InventoryProcessor {
 //  	    ScoringFunction endTimeSF = ScoringFunction.createVScoringFunction(earlyAV, bestAV, lateAV);
 //  	    p_end = ldmFactory_.newPreference(AspectType.END_TIME, endTimeSF);
 
-	AspectValue lowAV = new AspectValue(AspectType.QUANTITY, 0.01);
-	AspectValue bestAV = new AspectValue(AspectType.QUANTITY, refill_qty);
-	AspectValue highAV = new AspectValue(AspectType.QUANTITY, refill_qty+1.0);
-	ScoringFunction qtySF = ScoringFunction.createVScoringFunction(lowAV, bestAV, highAV);
-	p_qty = ldmFactory_.newPreference(AspectType.QUANTITY, qtySF);
-//  	p_qty = createQuantityPreference(AspectType.QUANTITY, refill_qty);
-
-	
-	Vector prefs = new Vector();
-	prefs.addElement(p_start);
+        p_qty = createRefillQuantityPreference(refill_qty);
+//  	prefs.addElement(p_start);
 	prefs.addElement(p_end);
 	prefs.addElement(p_qty);
 
@@ -515,14 +725,14 @@ public abstract class InventoryManager extends InventoryProcessor {
 	pp_vector.add(newPrepositionalPhrase(Constants.Preposition.OFTYPE, supplyType_));
 
 	Object io;
-	Enumeration geolocs = AssetUtils.getGeolocLocationAtTime(myOrganization_, start_time);
+	Enumeration geolocs = AssetUtils.getGeolocLocationAtTime(myOrganization_, end_time);
 	if (geolocs.hasMoreElements()) {
 	    io = (GeolocLocation)geolocs.nextElement();
 	} else {
 	    io = thisGeoloc_;
 	}
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.TO, io));
-
+	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.MAINTAINING, inv));
 	pp_vector.addElement(newPrepositionalPhrase(Constants.Preposition.REFILL));
 
 	NewTask task =  (NewTask)buildTask(null, Constants.Verb.SUPPLY, 
@@ -531,6 +741,14 @@ public abstract class InventoryManager extends InventoryProcessor {
 
     }
 
+    protected Preference createRefillQuantityPreference(double refill_qty) {
+        AspectValue lowAV = new AspectValue(AspectType.QUANTITY, 0.01);
+	AspectValue bestAV = new AspectValue(AspectType.QUANTITY, refill_qty);
+	AspectValue highAV = new AspectValue(AspectType.QUANTITY, refill_qty+1.0);
+	ScoringFunction qtySF = ScoringFunction.createVScoringFunction(lowAV, bestAV, highAV);
+	return  ldmFactory_.newPreference(AspectType.QUANTITY, qtySF);
+//  	return createQuantityPreference(AspectType.QUANTITY, refill_qty);
+    }
 
     // ********************************************************
     //                                                        *
@@ -542,100 +760,198 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected abstract void adjustWithdraws();
 
     protected void adjustForInadequateInventory() {
-	// GLK NEED TO FILL IN, POSSIBLY FROM GIM
-  	printLog("adjustForInadequateInventory()-----------------------------Inventory before failUnfillableDueOuts()");
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
-	Inventory inventory;
-	InventoryPG invpg;
+  	printLog("adjustForInadequateInventory()");
 	// For each inventory
-	while (inventories.hasMoreElements()) {
-	    inventory = (Inventory)inventories.nextElement();
-	    invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
-	    int day = invpg.getFirstPlanningDay();
-	    DueOut lowestPriorityDueOut = null;
-	    // Find lowest priority task to fail
-	    while ((day =refillNeeded(inventory,day)) != DONE) {
-		printDebug("Inventory level before failing allocation is "+
-			   TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(),day))+" : "+invpg.getLevel(day)+
-			   ", Reorder level :"+getReorderLevel(inventory, day));
-		lowestPriorityDueOut = invpg.getLowestPriorityDueOutBeforeDay(day);
-		// Is there another request to fail?
-		if (lowestPriorityDueOut != null) {
-		    // Fail Request
-		    Task task = lowestPriorityDueOut.getTask();
-		    printDebug("    ---->Failing due-out: "+TaskUtils.taskDesc(task)+"\n");
-		    
-		    // DEBUG PRINTOUT
-//  		    Enumeration dueIns = invpg.getAllDueIns();
-//  		    printInventory(inventory,dueIns,0);
-//  		    invpg.printInventoryLevels(inventory, clusterId_);
-
-		    PlanElement pe = task.getPlanElement();
-		    if (pe instanceof Allocation) {
-			failAlloc(inventory, (Allocation)pe);
-			lowestPriorityDueOut.setFilled(false);
-			lowestPriorityDueOut = null;
-			// recalculate inventory levels
-			invpg.determineInventoryLevels();
-//  			day++; Redo the same day in case one dueout is not enough
-			printDebug("Inventory level after  failing allocation is "+
-				   TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(),day))+" : "+invpg.getLevel(day));
-		    }
-		    else {
-			printError("adjustForInadequateInventory(),  PlanElement is not an Allocation to inventory!!!");
-		    }
-		}
-		else {
-		    printError("adjustForInadequateInventory(), Need to fail back but no requests found on day "+
-			       TimeUtils.dateString(TimeUtils.addNDays(invpg.getStartTime(),day)));
-		    day++;
-		}
-		printDebug(" ");
-	    }
-	}
+	Iterator inventories = changedSet_.iterator();
+	while (inventories.hasNext()) {
+            Inventory inventory = (Inventory) inventories.next();
+//              forcePrintConcise(inventory == selectedInventory);
+            adjustForInadequateInventory(inventory);
+//              forcePrintConcise(false);
+        }
     }
 
-    protected abstract int  refillNeeded(Inventory inventory, int startDay);
+    protected void adjustForInadequateInventory(Inventory inventory) {
+        InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
+        int firstDay = invpg.getFirstPlanningDay();
+        int days = invpg.getPlanningDays();
+        int switchoverDay = days;
+        {
+            Task testTask = buildNewTask(null, Constants.Verb.PROJECTSUPPLY, null);
+            int imputedDay0 = invpg.getImputedDay(0);
+            for (switchoverDay = 0; switchoverDay < days; switchoverDay++) {
+                double weight =
+                    invpg.getProjectionWeight()
+                    .getProjectionWeight(testTask, imputedDay0 + switchoverDay);
+                if (weight > 0.0) break; // found switchoverDay
+            }
+        }
+        Vector projections = generateInactiveProjections(inventory, switchoverDay);
+        for (int day = firstDay; day < switchoverDay; day++) {
+            if (checkFailedRefill(inventory, invpg, day)) { // Check and update any failed refills
+                invpg.determineInventoryLevels();
+            }
+        }
+        int refillDay = refillNeeded(inventory, firstDay);
+        int periodBegin = switchoverDay;
+        Rate currentRate = null;
+        double pendingDelta = 0.0;
+        for (int day = firstDay; day <= days; day++) {
+            Scalar projected = invpg.getProjected(day);
+            double projectedDemand = convertScalarToDouble(projected);
+            if (day < switchoverDay) {
+                if (day == refillDay) {
+                    // Try to do a refill
+                    if (orderRefill(inventory, day)) {
+                        invpg.determineInventoryLevels();
+                        // If the refill succeeded, then we are above
+                        // the reorder level so we advance to the next
+                        // day and loop.
+                        refillDay = refillNeeded(inventory, day + 1);
+                    } else {
+                        while (day == refillDay) {
+                            if (failDueOut(inventory, invpg, day)) {
+                                invpg.determineInventoryLevels();
+                                refillDay = refillNeeded(inventory, day);
+                            } else {
+                                // Can this happen? If it does, just go to the next day
+                                refillDay = refillNeeded(inventory, day + 1);
+                            }
+                        }
+                    }
+                }
+            } else {
+                Scalar nextProjection = invpg.getProjectedRefill(day);
+                Rate newRate = null;
+                double delta = 0.0;
+                if (day < days) {
+                    double target = 0.5 * (invpg.getReorderLevel(day) + invpg.getGoalLevel(day));
+                    if (false && isPrintConcise())
+                        printConcise("target(" + TimeUtils.dateString(invpg.convertDayToTime(day))
+                                     + ")=" + target);
+                    double qty = convertScalarToDouble(invpg.getLevel(day)) + pendingDelta;
+                    delta = target - qty;
+                    if (delta != 0.0 && Math.abs(delta) / (Math.abs(target) + Math.abs(qty)) < 0.0001) delta = 0.0;
+                    newRate = createIncrementedDailyRate(nextProjection, delta);
+                    if (newRate == null) delta = 0.0; // Can't do negative, cancel the delta
+                    if (false && isPrintConcise())
+                        printConcise("rate("
+                                     + TimeUtils.dateString(invpg.convertDayToTime(day))
+                                     + ")="
+                                     + newRate
+                                     + " delta="
+                                     + delta);
+                }
+                if (isSameRate(currentRate, newRate)) {
+                    pendingDelta += delta;
+                    continue;
+                }
+                for (int i = periodBegin; i < day; i++) {
+                    invpg.removeRefillProjection(i);
+                }
+                if (currentRate != null) { // Terminate the current rate
+                    long start = invpg.getStartOfDay(periodBegin);
+                    long end = invpg.getStartOfDay(day);
+                    Task t = newProjectSupplyTask(inventory, start, end, currentRate);
+                    projections.add(t);
+                    invpg.addDueIn(t);
+                }
+                currentRate = newRate;
+                periodBegin = day;
+                pendingDelta = delta;
+            }
+        }
+        publishChangeProjection(inventory, projections.elements());
+    }
 
+    private boolean isSameRate(Rate rate1, Rate rate2) {
+        if (rate1 == rate2) return true;
+        if (rate1 == null || rate2 == null) return false;
+        double val1 = rate1.getValue(rate1.getCommonUnit());
+        double val2 = rate2.getValue(rate2.getCommonUnit());
+        if (val1 == val2) return true;
+        double diff = (val1 - val2) / (val1 + val2);
+        return (diff < 0.0001 && diff > -0.0001);
+    }
 
-    public void failAlloc(Inventory inv, Allocation alloc) {
-	AllocationResult ar = alloc.getEstimatedResult();
-	Task task = alloc.getTask();
- 	Task parent = task.getWorkflow().getParentTask();
-// 	printLog("Failing allocation: "+alloc.getUID()+" for task:"+TaskUtils.taskDesc(task)+" that supports dueOut: "+TaskUtils.taskDesc(parent));
-//  	    publishRemoveAllocation(alloc);
-	ar = buildQuantityFailedAllocationResult(task);
-//  	    publishFailedAllocation(task, ar);	
-	publishAllocation(task, alloc.getAsset(), alloc.getRole(), ar);
+    protected boolean checkFailedRefill(Inventory inventory, InventoryPG invpg, int day) {
+        Task prev_refill = invpg.refillAlreadyFailedOnDay(day);
+        if (prev_refill != null) {
+            return orderRefill(inventory, day);
+        }
+        return false;
+    }
+
+    protected abstract boolean orderRefill(Inventory inventory, int day);
+
+    protected boolean failDueOut(Inventory inventory, InventoryPG invpg, int day) {
+        DueOut lowestPriorityDueOut = invpg.getLowestPriorityDueOutBeforeDay(day);
+        if (lowestPriorityDueOut == null) return false;
+//      printDebug("Inventory level before failing allocation is "+
+//                 TimeUtils.dateString(invpg.convertDayToTime(day)) + " : "+invpg.getLevel(day)+
+//                 ", Reorder level :"+invpg.getReorderLevel(day));
+        lowestPriorityDueOut.setFilled(false);
+        if (isPrintConcise()) {
+            if (lowestPriorityDueOut.getPreviouslyFilled() != false) {
+                Task task = lowestPriorityDueOut.getTask();
+                printConcise("adjustForInadequateInventory() shortfall="
+                             + shortfall
+                             + " on "
+                             + day
+                             + "="
+                             + TimeUtils.dateString(invpg.getStartOfDay(day))
+                             + " failed "
+                             + task.getUID()
+                             + " having "
+                             + TaskUtils.getDailyQuantity(task)
+                             + " on "
+                             + TimeUtils.dateString(invpg.convertDayToTime(lowestPriorityDueOut.getDay()))
+                             );
+            }
+        }
+//      printDebug("Inventory level after failing allocation is "
+//                 + TimeUtils.dateString(invpg.convertDayToTime(day))
+//                 + " : "+invpg.getLevel(day));
+        return true;
+    }
+
+    protected void updateWithdrawAllocations() {
+  	printLog("updateWithdrawAllocations()");
+	Iterator inventories = changedSet_.iterator();
+	while (inventories.hasNext()) {
+	    Inventory inventory = (Inventory)inventories.next();
+            InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
+            List changes = invpg.updateDueOutAllocations();
+            for (int i = 0, n = changes.size(); i < n; i++) {
+                PlanElement pe = (PlanElement) changes.get(i);
+                delegate_.publishChange(pe);
+            }
+        }
     }
     
-    protected AllocationResult buildQuantityFailedAllocationResult(Task task) {
-	Enumeration prefs = task.getPreferences();
-	Vector aspects = new Vector();
-
-	// do something really simple for now.
-	while (prefs.hasMoreElements()) {
-	    Preference pref = (Preference) prefs.nextElement();
-	    int type = pref.getAspectType();
-	    ScoringFunction sf = pref.getScoringFunction();
-	    AspectValue av;
-		// allocate as if you can do it at the "Best" point
-		double result_pref = pref.getScoringFunction().getBest().getValue();
-		if(type == AspectType.QUANTITY) {
-		    // this indicates we cannot supply anything!!
-		    result_pref= 0.0;
-		}
- 		av = new AspectValue(type,result_pref);
-		double myresult = sf.getScore(av);
-		aspects.addElement(av);
+    /**
+     * Computes the next day on which a refill is needed. This simply
+     * looks for the next day that the inventory drops below the
+     * reorder level. It is likely that this is overridden in a
+     * subclass. Indeed, GeneralInventoryManager _does_ override.
+     **/
+    protected int refillNeeded(Inventory inventory, int startDay) {
+	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
+	int days = invpg.getPlanningDays();
+	for (int day = startDay; day < days; day++) {
+            if (needRefill(inventory, day)) return day;
 	}
-
-	AspectValue[] aspectarray = new AspectValue[aspects.size()];
-	for (int i = 0; i < aspectarray.length; i++)
-	  aspectarray[i] =  (AspectValue)aspects.elementAt(i);
-        AllocationResult ar = ldmFactory_.newAVAllocationResult(1.0, false, aspectarray);
-	return ar;
+        return DONE;
     }
+
+    protected boolean needRefill(Inventory inventory, int day) {
+	InventoryPG invpg = inventory.getInventoryPG();
+        double qty = convertScalarToDouble(invpg.getLevel(day));
+        double level = invpg.getReorderLevel(day);
+        shortfall = level - qty;
+        return (shortfall > 0.0);
+    }
+
 
     // ********************************************************
     //                                                        *
@@ -646,18 +962,17 @@ public abstract class InventoryManager extends InventoryProcessor {
 
     // Check for overflow
     protected void checkForOverflow() {
-	Inventory inventory;
 	printDebug(1, "      :checkForOverflow(), START");
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
-	while (inventories.hasMoreElements()) {
-	  inventory = (Inventory)inventories.nextElement();
-	  checkInventoryForOverFlow(inventory);
-	 }
+	Iterator inventories = changedSet_.iterator();
+	while (inventories.hasNext()) {
+	    Inventory inventory = (Inventory)inventories.next();
+	    checkInventoryForOverFlow(inventory);
+	}
 	printDebug(1, "checkForOverflow(), END");
     }
 
     protected void checkInventoryForOverFlow(Inventory inventory) {
-	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	InventoryPG invpg = (InventoryPG)inventory.getInventoryPG();
 	if (!invpg.getFillToCapacity()) {
 	    // If no capacity restriction, done.
 	    return;
@@ -692,16 +1007,17 @@ public abstract class InventoryManager extends InventoryProcessor {
     // ********************************************************
 
     protected void refreshInventorySchedule() {
-	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
 	Inventory inventory;
 	InventoryPG invpg;
+	Iterator inventories = changedSet_.iterator();
 
 	printDebug("LAST STEP: REFRESHINVENTORYSCHEDULE()");
-	while (inventories.hasMoreElements()) {
-	    inventory = (Inventory)inventories.nextElement();
-	    invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	while (inventories.hasNext()) {
+	    inventory = (Inventory)inventories.next();
+	    invpg = (InventoryPG)inventory.getInventoryPG();
 // 	    invpg.printInventoryLevels(inventory, clusterId_);
 	    invpg.updateContentSchedule(inventory);
+	    invpg.updateInventoryLevelsSchedule(inventory);
 	}
     }
 
@@ -709,11 +1025,11 @@ public abstract class InventoryManager extends InventoryProcessor {
 	Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
 	Inventory inventory;
 	InventoryPG invpg;
-
+	printError("clearInventorySchedule() !!!!!!!! Should not be called.");
 	printDebug("LAST STEP: CLEARINVENTORYSCHEDULE()");
 	while (inventories.hasMoreElements()) {
 	    inventory = (Inventory)inventories.nextElement();
-	    invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	    invpg = (InventoryPG)inventory.getInventoryPG();
 	    invpg.clearContentSchedule(inventory);
 	}
     }
@@ -726,11 +1042,11 @@ public abstract class InventoryManager extends InventoryProcessor {
     protected void handleGLSRescind() {
         accountForWithdraws();
         addPreviousRefills();
-        Enumeration inventories = inventoryPlugIn_.getInventoryBins(supplyType_);
-	while (inventories.hasMoreElements()) {
-	    Inventory inventory = (Inventory)inventories.nextElement();
+	Iterator inventories = changedSet_.iterator();
+	while (inventories.hasNext()) {
+	    Inventory inventory = (Inventory)inventories.next();
 	    InventoryPG invpg = 
-		(InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+		(InventoryPG)inventory.getInventoryPG();
 	    invpg.determineInventoryLevels();
             invpg.updateContentSchedule(inventory);
 	}
@@ -746,10 +1062,6 @@ public abstract class InventoryManager extends InventoryProcessor {
     /** @return a double indicating the amount requests by the task (in terms of the standard unit of measure for the item) */
     protected double getAmountRequested(Task task) {
 	return TaskUtils.getPreference(task, AspectType.QUANTITY);
-    }
-
-    public boolean isBattalionLevel(){
-	return (clusterId_.toString().indexOf("BN")>0);
     }
 
     /** 
@@ -799,15 +1111,15 @@ public abstract class InventoryManager extends InventoryProcessor {
     void printInventoryBins(int priority) {
 	printDebug(priority,"printInventoryBins");
 
-	Enumeration bins = inventoryPlugIn_.getInventoryBins(supplyType_);
-	if(bins.hasMoreElements()){
+        Iterator bins = changedSet_.iterator();
+	if(bins.hasNext()){
 	    printDebug(priority,"\n\n***Status of inventory  after accounting for due-ins and due-outs: "+TimeUtils.dateString(getAlpTime()));
 	} else {
 	    printDebug(priority,"\n\n***FUNNY -- no inventory assets for "+myOrgName_);
 	}
-	while (bins.hasMoreElements()){
-	    Inventory bin = (Inventory)bins.nextElement();
-	    InventoryPG invpg = (InventoryPG)bin.searchForPropertyGroup(InventoryPG.class);
+	while (bins.hasNext()){
+	    Inventory bin = (Inventory)bins.next();
+	    InventoryPG invpg = (InventoryPG)bin.getInventoryPG();
 	    Enumeration dueIns = invpg.getAllDueIns();
 	    printInventory(bin,dueIns,priority);
 	    printDebug(priority,"\n_____________________________________________________________________________\n");
@@ -816,14 +1128,14 @@ public abstract class InventoryManager extends InventoryProcessor {
 
     private int printInventoryStatus() {
 
-	Enumeration inventory = inventoryPlugIn_.getInventoryBins(supplyType_);
-	if(inventory.hasMoreElements()){
+	Iterator inventory = changedSet_.iterator();
+	if(inventory.hasNext()){
 	    printDebug("\n\n\n**********Inventory status at the end of sourcing********");
 	}
 	int nItems = 0;
-	while (inventory.hasMoreElements()) {
+	while (inventory.hasNext()) {
 	    nItems = nItems+1;
-	    Inventory bin = (Inventory)inventory.nextElement();
+	    Inventory bin = (Inventory)inventory.next();
 	    ScheduledContentPG scp = bin.getScheduledContentPG();
 	    Schedule sched = scp.getSchedule();
 	    if (sched == null) {
@@ -844,6 +1156,22 @@ public abstract class InventoryManager extends InventoryProcessor {
 	    }
 	}
 	return nItems;
+    }
+
+    //Max at the capacity
+    protected double getMaxReorderLevel(Inventory inventory) { 
+	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	return convertScalarToDouble(invpg.getCapacity());
+    }
+
+    //Min at zero unless maintainAtCapacity inventory, then min is capacity.
+    protected double getMinReorderLevel(Inventory inventory) { 
+	double mrl = 0.0;
+	InventoryPG invpg = (InventoryPG)inventory.searchForPropertyGroup(InventoryPG.class);
+	if(invpg.getMaintainAtCapacity()) {
+	    mrl = convertScalarToDouble(invpg.getCapacity());
+	}
+	return mrl;
     }
 
     /** Update the current InventoryPolicy */
@@ -880,6 +1208,10 @@ public abstract class InventoryManager extends InventoryProcessor {
 		inventoryPlugIn_.setFillToCapacity(supplyType_, pol.getFillToCapacity());
 		changed = true;
 	    }
+	    if (pol.hasMaintainAtCapacityRule()) {
+		inventoryPlugIn_.setMaintainAtCapacity(supplyType_, pol.getMaintainAtCapacity());
+		changed = true;
+	    }
             if (pol.hasSwitchoverRule()) {
                 ProjectionWeight newWeight =
                     new ProjectionWeightImpl(pol.getWithdrawSwitchoverDay(),
@@ -898,5 +1230,3 @@ public abstract class InventoryManager extends InventoryProcessor {
     }
 
 }
-
-
