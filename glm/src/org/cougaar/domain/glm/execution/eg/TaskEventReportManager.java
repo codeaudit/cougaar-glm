@@ -138,7 +138,7 @@ public class TaskEventReportManager extends ManagerBase implements ScheduleManag
    * and identical, do nothing. If both groups are non-null and
    * different reassign all task events of one group to the other.
    **/
-  public void receiveConstraintElements(String source, ConstraintElement[] constraints) {
+  public synchronized void receiveConstraintElements(String source, ConstraintElement[] constraints) {
     for (int i = 0; i < constraints.length; i++) {
       ConstraintElement e = constraints[i];
       TimedTaskEventReport thisTTER = (TimedTaskEventReport) map.get(e.thisEventId);

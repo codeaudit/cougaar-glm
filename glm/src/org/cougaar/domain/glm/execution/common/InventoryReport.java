@@ -21,8 +21,9 @@
 package org.cougaar.domain.glm.execution.common;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class InventoryReport extends Report implements EGObject {
+public class InventoryReport extends Report implements Serializable, EGObject {
   public String theItemIdentification;
   public double theQuantity;
 
