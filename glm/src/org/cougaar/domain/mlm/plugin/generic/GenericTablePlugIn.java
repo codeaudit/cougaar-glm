@@ -40,11 +40,7 @@ import org.cougaar.core.society.MessageAddress;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.TimeSpan;
 
-import org.xml.sax.InputSource;
 import org.w3c.dom.*;
-
-import com.ibm.xml.parser.Parser;
-import com.ibm.xml.parsers.*;
 
 /**
  * For now this plugin only subscribes to tasks from an XMLFile. 

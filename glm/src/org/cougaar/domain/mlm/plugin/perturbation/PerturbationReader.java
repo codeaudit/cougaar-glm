@@ -20,10 +20,6 @@ import java.util.Hashtable;
 
 import org.cougaar.util.ConfigFinder;
 
-import com.ibm.xml.parser.Parser;
-
-import org.xml.sax.InputSource;
-	
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -49,8 +49,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.ibm.xml.parsers.DOMParser;
-  
 /**
  * The Perturbation class is a container for the 
  * perturbation data, as well as the methods needed

@@ -27,8 +27,6 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import com.ibm.xml.parser.Parser;
-import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,7 +36,7 @@ import org.w3c.dom.Text;
 
 /** XMLPolicyCreator - creates policies from xml file
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: XMLPolicyCreator.java,v 1.7 2001-04-05 19:27:52 mthome Exp $
+ * @version $Id: XMLPolicyCreator.java,v 1.8 2001-04-16 20:00:42 bkrisler Exp $
  **/
 
 public class XMLPolicyCreator {

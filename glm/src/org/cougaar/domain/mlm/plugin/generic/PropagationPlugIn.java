@@ -28,8 +28,6 @@ import java.io.*;
 
 import org.cougaar.util.Filters;
 
-import com.ibm.xml.parser.*;
-import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -40,7 +38,7 @@ import org.w3c.dom.NodeList;
  * PropagationPlugIn propagates Transferables based on xml files in parameter list
  *
  * @author  ALPINE <alpine-software@bbn.com>
- * @version $Id: PropagationPlugIn.java,v 1.8 2001-04-05 19:27:49 mthome Exp $
+ * @version $Id: PropagationPlugIn.java,v 1.9 2001-04-16 19:58:28 bkrisler Exp $
  */
 
 public class PropagationPlugIn extends SimplePlugIn
@@ -203,8 +201,7 @@ public class PropagationPlugIn extends SimplePlugIn
 
   private void parseFile(String xmlfilename) {
       Document doc;
-      InputStream is;
-      Parser parser;
+
       try {
         doc = getCluster().getConfigFinder().parseXMLConfigFile(xmlfilename);
 	if (doc == null) {

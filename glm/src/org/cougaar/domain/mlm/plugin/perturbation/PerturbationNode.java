@@ -22,17 +22,11 @@ package org.cougaar.domain.mlm.plugin.perturbation;
   import org.cougaar.util.ReusableThreadPool;
 
 
-  import com.ibm.xml.parser.Parser;
-
-  import org.xml.sax.InputSource;
-	
   import org.w3c.dom.Document;
   import org.w3c.dom.Element;
   import org.w3c.dom.Node;
   import org.w3c.dom.NodeList;
 
-  import com.ibm.xml.parsers.DOMParser;
-  
 /**
   * The PerturbationNode class encapsulates all of the information
   * the PerturbationScheduler needs in or to manage the scheduling 
