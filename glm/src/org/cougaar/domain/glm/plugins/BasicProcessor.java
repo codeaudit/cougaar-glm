@@ -462,7 +462,7 @@ public abstract class BasicProcessor {
 	// Rescind any tasks that were not accounted for
 	Enumeration e = published_schedule.getAllScheduleElements();
 	while (e.hasMoreElements()) {
-	    publishRemoveTask((Task)((ObjectScheduleElement)e.nextElement()).getObject());
+	    plugin_.publishRemoveFromExpansion((Task)((ObjectScheduleElement)e.nextElement()).getObject());
 	}
 	return add_tasks.elements();
     }
