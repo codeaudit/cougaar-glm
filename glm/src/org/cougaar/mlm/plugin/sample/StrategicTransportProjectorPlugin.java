@@ -650,7 +650,7 @@ public class StrategicTransportProjectorPlugin extends SimplePlugin {
     if (!newDP.isValid()) {
       if (newDP.fromLoc == null)
         printError("This Organization lacks a MilitaryPG HomeLocation!");
-      printError("The DeployPlan lacks needed information and is ignored!");
+      printError("The DeployPlan lacks needed information and is ignored: "+newDP);
       setDeployPlan(null);
     } else {
       DeployPlan oldDP = getDeployPlan();
