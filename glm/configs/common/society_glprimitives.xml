@@ -46,5 +46,14 @@
     <adapter>mil.darpa.log.alpine.blackjack.assessui.society.DueOutQueryAdapter</adapter>
   </glquery>
 
+  <!-- this is for querying a cluster about its list of dueouts -->
+  <glquery>
+    <keyname>QUERY_TARGETLEVEL</keyname>
+    <predicate>
+      <instanceof>org.cougaar.domain.planning.ldm.asset.Asset</instanceof>
+    </predicate>
+    <adapter>mil.darpa.log.alpine.blackjack.assessui.society.TargetLevelQueryAdapter</adapter>
+  </glquery>
+
 </xml>
 
