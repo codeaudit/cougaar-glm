@@ -27,6 +27,7 @@ import org.cougaar.domain.planning.ldm.asset.TypeIdentificationPG;
 import org.cougaar.domain.planning.ldm.measure.Rate;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.core.plugin.PlugInDelegate;
+import org.cougaar.core.plugin.util.AllocationResultHelper;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 
@@ -48,7 +49,6 @@ import org.cougaar.domain.glm.ldm.plan.PlanScheduleElementType;
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.debug.GLMDebug;
 
-
 /**
  * BasicProcessor supplies generic methods for connecting to the 'owner'
  * plugin and to record objects as they are published by this processor 
@@ -57,7 +57,7 @@ import org.cougaar.domain.glm.debug.GLMDebug;
  * @see PlugInDecorator
  */
 public abstract class BasicProcessor {
- 
+
     protected RootFactory ldmFactory_;
     /** 'hook' to plugin's methods */
     protected PlugInDelegate delegate_;
@@ -138,12 +138,7 @@ public abstract class BasicProcessor {
 	}
  	if (!TaskUtils.comparePreferences(new_task, prev_task)) {
 	    Enumeration ntPrefs = new_task.getPreferences();
-	    boolean hasPrefs = ntPrefs.hasMoreElements();
-
 	    ((NewTask)prev_task).setPreferences(ntPrefs);
-
-	    Enumeration prefs = new_task.getPreferences();
-
 	    return prev_task;
 	}
 	return null;
@@ -178,6 +173,14 @@ public abstract class BasicProcessor {
     /** wrapper for GLMDebug */
     public void printLog(String msg) {
 	GLMDebug.LOG(className_, clusterId_, msg);
+    }
+
+    public boolean isPrintConcise() {
+        return GLMDebug.printMessages(GLMDebug.CONCISE_LEVEL);
+    }
+
+    public void printConcise(String msg) {
+        GLMDebug.DEBUG(className_, clusterId_, msg, GLMDebug.CONCISE_LEVEL);
     }
   
     public long getAlpTime() {
@@ -368,7 +371,39 @@ public abstract class BasicProcessor {
 	    delegate_.publishChange(expansion);
 	}
     }
-
+    /**
+     * Reconcile an intended schedule of projections with the
+     * currently published schedule of projections so as to reuse as
+     * many of the existing projection tasks as possible.
+     *
+     * Generally as elements from the published schedule are used they
+     * are removed from the schedule. Tasks remaining in the schedule
+     * are rescinded.
+     *
+     * There are three regions of interest: before now, around now and
+     * after now. These are each handled separately. In the region
+     * before now, already published tasks are unconditionally
+     * retained and new tasks are unconditionally ignored.
+     *
+     * In the region around now, tasks may start before now and end
+     * after. If both a published task and a new task spanning now
+     * exist, then there are two cases: If the demand rates are the
+     * same, then the published task is changed to look like the new
+     * task (by changing its end time preference). The start time of
+     * the published task is unchanged. Think of the existing task
+     * ending now and the new task starting now and then splicing the
+     * two together into one task. If the rates are different, then
+     * the existing task must end when the new task starts. The
+     * current code accomplishes this by setting the end time
+     * preference of the existing task to the start time of the new.
+     * This is not exactly correct since we shouldn't change the past.
+     * The times of the tasks should be no less than now.
+     *
+     * In the region after now, we try to match up the tasks. When a
+     * match is possible, the existing task is changed if necessary
+     * (and republished) otherwise it is rescinded and the new task
+     * added.
+     **/
     protected Enumeration diffProjections(Schedule published_schedule, Schedule newtask_schedule) {
 	// Chedk for an empty schedule
 	if (newtask_schedule.isEmpty()) {
@@ -381,7 +416,8 @@ public abstract class BasicProcessor {
 	// These historical tasks should not be changed
 	long now = getAlpTime();
 	ObjectScheduleElement ose;
-	Iterator historical_tasks = published_schedule.getEncapsulatedScheduleElements(TimeSpan.MIN_VALUE, now).iterator();
+	Iterator historical_tasks =
+            published_schedule.getEncapsulatedScheduleElements(TimeSpan.MIN_VALUE, now).iterator();
 	while (historical_tasks.hasNext()) {
 	    ose = (ObjectScheduleElement)historical_tasks.next();
 	    ((NewSchedule)published_schedule).removeScheduleElement(ose);
@@ -409,21 +445,28 @@ public abstract class BasicProcessor {
 	    if (new_rate.equals(TaskUtils.getRate(published_task))) {
 		// check end times not the same
 		((NewTask)published_task).setPreference(new_task.getPreference(AspectType.END_TIME));
+                if (isPrintConcise()) printProjection("extend old end", published_task);
 		publishChangeTask(published_task);
-	    }
-	    else {
+	    } else {
 		// check to make sure start_time is not before now
 		// long that is the maximum of now and the start_time
-		ScoringFunction score = ScoringFunction.createStrictlyAtValue(new AspectValue(AspectType.END_TIME, 
-											      TaskUtils.getPreference(new_task, AspectType.START_TIME)));
-		((NewTask)published_task).setPreference(ldmFactory_.newPreference(AspectType.END_TIME, score));
+                long when = Math.max(now, TaskUtils.getStartTime(new_task));
+		setEndTimePreference((NewTask) published_task, when);
+                if (isPrintConcise()) printProjection("truncate old end 1", published_task);
 		publishChangeTask(published_task);
+                setStartTimePreference((NewTask) new_task, when);
+                if (isPrintConcise()) printProjection("truncate new start 1", new_task);
 		add_tasks.add(new_task);
 	    }
-	} 
-	else if (new_task != null) {
+	} else if (new_task != null) {
+            setStartTimePreference((NewTask) new_task, now);
+            if (isPrintConcise()) printProjection("truncate new start 2", new_task);
 	    add_tasks.add(new_task);
-	} 
+	} else if (published_task != null) {
+            setEndTimePreference((NewTask) published_task, now);
+            publishChangeTask(published_task);
+            if (isPrintConcise()) printProjection("truncate old end 2", published_task);
+        }
 
 	// Compare new tasks to previously scheduled tasks, if a published task is found that
 	// spans the new task's start time then adjust the published task (if needed) and publish
@@ -451,6 +494,7 @@ public abstract class BasicProcessor {
 		
 		published_task = changeTask(published_task, new_task);
 		if (published_task != null) {
+                    if (isPrintConcise()) printProjection("replace with", published_task);
 		    publishChangeTask(published_task);
 //  		    printDebug("publishChangeProjection(), Publishing changed Projections: "+
 //  			       TaskUtils.projectionDesc(new_task));
@@ -464,9 +508,40 @@ public abstract class BasicProcessor {
 	// Rescind any tasks that were not accounted for
 	Enumeration e = published_schedule.getAllScheduleElements();
 	while (e.hasMoreElements()) {
-	    plugin_.publishRemoveFromExpansion((Task)((ObjectScheduleElement)e.nextElement()).getObject());
+            Task task = (Task) ((ObjectScheduleElement) e.nextElement()).getObject();
+            if (isPrintConcise()) printProjection("remove", task);
+	    plugin_.publishRemoveFromExpansion(task);
 	}
+        if (isPrintConcise()) {
+            for (Enumeration enum = add_tasks.elements(); enum.hasMoreElements(); ) {
+                Task task = (Task) enum.nextElement();
+                printProjection("add", task);
+            }
+        }
 	return add_tasks.elements();
+    }
+
+    protected void setEndTimePreference(NewTask task, long end) {
+        AspectValue av = new TimeAspectValue(AspectType.END_TIME, end);
+        ScoringFunction score = ScoringFunction.createStrictlyAtValue(av);
+        task.setPreference(ldmFactory_.newPreference(AspectType.END_TIME, score));
+    }
+
+    protected void setStartTimePreference(NewTask task, long start) {
+        AspectValue av = new TimeAspectValue(AspectType.START_TIME, start);
+        ScoringFunction score = ScoringFunction.createStrictlyAtValue(av);
+        task.setPreference(ldmFactory_.newPreference(AspectType.START_TIME, score));
+    }
+
+    private void printProjection(String msg, Task task) {
+        printConcise("diffProjections() "
+                     + task.getUID()
+                     + " " + msg + " "
+                     + TaskUtils.getDailyQuantity(task)
+                     + " "
+                     + TimeUtils.dateString(TaskUtils.getStartTime(task))
+                     + " to "
+                     + TimeUtils.dateString(TaskUtils.getEndTime(task)));
     }
 
    public static Schedule newObjectSchedule(Enumeration tasks) {
@@ -893,33 +968,7 @@ public abstract class BasicProcessor {
     // If estimated result != reported result,
     // copy reported to estimated.
     public void updateAllocationResult(PlanElement pe) {
-	AllocationResult rep = pe.getReportedResult();
-	PlanElement sub_pe;
-	if (rep != null) {
-	    // compare entire 
-	    AllocationResult est = pe.getEstimatedResult();
-	    if ( (est == null) || (!rep.isEqual(est))) {
-		if ( false &&
-		     pe instanceof Expansion &&
-		     clusterId_.toString().equals("<FUTURE>")){
-		    printDebug(2,"Expansion result: "+arDesc(rep));
-		    Workflow wf = ((Expansion)pe).getWorkflow();
-		    Enumeration tasks = wf.getTasks();
-		    while (tasks.hasMoreElements()) {
-			Task task = (Task) tasks.nextElement();
-			sub_pe = task.getPlanElement();
-			if (sub_pe != null) {
-			    AllocationResult ar = sub_pe.getReportedResult();
-			    if (ar != null) {
-				printDebug(2,"Child task:"+TaskUtils.taskDesc(task)+arDesc(ar));
-			    }
-			}
-		    }
-		}
-		pe.setEstimatedResult(rep);
-		delegate_.publishChange(pe);
-	    }
-	}
+        if (TaskUtils.updatePlanElement(pe)) delegate_.publishChange(pe);
     }
 
     /** When the published sub-tasks of an expansion get the allocation result updated,
@@ -927,49 +976,9 @@ public abstract class BasicProcessor {
      *  Do not update the allocation result until all subtasks have been updated.
      **/
     protected void updateExpansionResult(Enumeration planelements) {
-	// check allocation results
-	Vector updated_tasks = new Vector();
-	PlanElement pe;
-	while (planelements.hasMoreElements()) {
-	    Task task = ((PlanElement)planelements.nextElement()).getTask();
-	    Workflow wf = task.getWorkflow();
-	    if (wf == null) {
-		printError("updateExpansionResult task has no workflow :"+TaskUtils.taskDesc(task));
-		continue;
-	    }
-	    Task parent_task  = wf.getParentTask();
-	    if (updated_tasks.contains(parent_task)) {
-		// already updated in this transaction
-		continue;
-	    }
-	    // 	    printDebug("ATTEMPT updateExpansionResult because of \n task:"+task);
-	    updated_tasks.addElement(parent_task);
-	    // Parent Expansion that needs to be updated now that one of 
-	    // it's subtasks has been changed
-	    pe = parent_task.getPlanElement();
-	    if (pe == null) {
-		// got removed from top down.
-		continue;
-	    }
-	    if (pe instanceof Expansion) {
-		// buildExpansionResult returns null if any of the subtasks do not
-		// have a reported or estimated result.
-		// Have to wait until all subtasks have results before
-		// create aggregated allocation result.
-		AllocationResult new_result = buildExpansionResult((Expansion)pe);
-		if (new_result != null) {
-		    AllocationResult est_result = pe.getEstimatedResult();
-		    if (est_result == null || !est_result.isEqual(new_result)) {
-			printDebug("UpdateExpansionResult Yippee full expansion alloc result for task "+parent_task);
-			pe.setEstimatedResult(new_result);
-			delegate_.publishChange(pe);
-		    }
-		}
-	    } else {
-		// Parent PE should always be expansion... otherwise bad predicate.
-		printError("UpdateExpansionResult pe not expansion? "+pe+"  \ntask:"+parent_task);
-	    }
-	}
+        while (planelements.hasMoreElements()) {
+            updateAllocationResult((PlanElement) planelements.nextElement());
+        }
     }
 
     protected void publishFailedDisposition(Task task, AllocationResult ar) {
@@ -997,9 +1006,15 @@ public abstract class BasicProcessor {
     }
 
     public String arDesc(AllocationResult ar) {
+	try{
 	return "(AR: "+ (long)ar.getValue(AspectType.QUANTITY) +"; "+
 	    TimeUtils.dateString((long)ar.getValue(AspectType.START_TIME))+","+
 	    TimeUtils.dateString((long)ar.getValue(AspectType.END_TIME))+")";
+	} catch (Exception e){
+	return "(AR: "+ ar +
+	    TimeUtils.dateString((long)ar.getValue(AspectType.START_TIME))+","+
+	    TimeUtils.dateString((long)ar.getValue(AspectType.END_TIME))+")";
+	}
     }
 
     // UTILITIES
@@ -1022,23 +1037,8 @@ public abstract class BasicProcessor {
     /** create an AllocationResult that assumes the 'best' possible result
      *  (taken from GLSAllocatorPlugIn) */
     public AllocationResult createEstimatedAllocationResult(Task t) {
-	Enumeration preferences = t.getPreferences();
-	if ( preferences == null || !preferences.hasMoreElements() ) {
-	    return null;
-	}
-	// do something really simple for now.
-	Vector aspects = new Vector();
-	while (preferences.hasMoreElements()) {
-	    Preference pref = (Preference) preferences.nextElement();
-	    int at = pref.getAspectType();
-	    ScoringFunction sf = pref.getScoringFunction();
-	    // allocate as if you can do it at the "Best" point
-	    aspects.addElement(new AspectValue(at, ((AspectScorePoint)sf.getBest()).getValue()));
-	}
-	AspectValue[] aspectarray = new AspectValue[aspects.size()];
-	for (int i = 0; i < aspectarray.length; i++)
-	  aspectarray[i] = (AspectValue) aspects.elementAt(i);
-	return ldmFactory_.newAVAllocationResult(1.0, true, aspectarray);
+        AllocationResultHelper helper = new AllocationResultHelper(t, null);
+        return helper.getAllocationResult(0.0, true);
     }
 
 
@@ -1067,7 +1067,7 @@ public abstract class BasicProcessor {
 	    newtask.setPrepositionalPhrases(input_task.getPrepositionalPhrases());
 	}
 	newtask.setDirectObject(direct_object);
-	newtask.setVerb(new Verb(output_verb));
+	newtask.setVerb(Verb.getVerb(output_verb));
 	return newtask;
     }
 

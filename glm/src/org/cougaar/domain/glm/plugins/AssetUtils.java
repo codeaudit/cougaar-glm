@@ -31,12 +31,7 @@ import org.cougaar.util.Enumerator;
 import org.cougaar.util.MutableTimeSpan;
 import org.cougaar.util.TimeSpan;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Vector;
+import java.util.*;
 
 import org.cougaar.domain.glm.ldm.Constants;
 import org.cougaar.domain.glm.ldm.asset.LocationSchedulePG;
@@ -48,17 +43,36 @@ import org.cougaar.domain.glm.debug.GLMDebug;
 /** Provides convenience methods. */
 public class AssetUtils {
 
+  /** Cache for isAssetOfType. Keys are Strings, values are either
+   * null (unknown), an Asset class (the type), or Object (== assetFail).
+   **/
+  private static final HashMap assetTypes  = new HashMap(89);
+  private static final Object assetFail = new Object();
+
     /**
      *  @param type java Class name (assumed to be in package org.cougaar.domain.planning.ldm.asset)
-     *  @return true if asset is and instance of type.*/
+     *  @return true if asset is and instance of type.
+     */
     public static boolean isAssetOfType(Asset a, String type) {
 	Class cl;
-	try {
-	    cl = Class.forName("org.cougaar.domain.glm.ldm.asset."+type);
-	} catch ( ClassNotFoundException cnfe) {
-	    GLMDebug.ERROR("AssetUtils",null, "isAssetOfType: "+cnfe);
-	    return false;
-	}
+        synchronized (assetTypes) {
+          Object at = assetTypes.get(type);
+          if (at == null) {
+            try {
+              cl = Class.forName("org.cougaar.domain.glm.ldm.asset."+type);
+              assetTypes.put(type,cl);
+            } catch ( ClassNotFoundException cnfe) {
+              assetTypes.put(type,assetFail);
+              GLMDebug.ERROR("AssetUtils",null, "isAssetOfType: "+cnfe);
+              return false;
+            }
+          } else if (at == assetFail) {
+            // failed before
+            return false;
+          } else {
+            cl = (Class) at;
+          }
+        }
 	return cl.isInstance(a);
     }
 
@@ -67,6 +81,9 @@ public class AssetUtils {
      *  @return true if Asset has SupplyClassPG and SupplyType equals type */
     public static boolean isSupplyClassOfType(Asset asset, String type) {
 	boolean result = false;
+	if (asset == null) {
+	    return false;
+	}
 	SupplyClassPG pg = (SupplyClassPG)asset.searchForPropertyGroup(SupplyClassPG.class);
 	if (pg != null) {
 	    result = type.equals(pg.getSupplyType());
@@ -114,6 +131,10 @@ public class AssetUtils {
 	// therefore look at all relationships.
 	Collection c  = rel_sched.getMatchingRelationships(role, support_org, new MutableTimeSpan());
 	return !c.isEmpty();
+    }
+
+    public static Enumeration getSupportingOrgs(Organization myOrg, Role role, long time) {
+        return getSupportingOrgs(myOrg, role, time, time);
     }
 
     public static Enumeration getSupportingOrgs(Organization myOrg, Role role, long start, long end) {
