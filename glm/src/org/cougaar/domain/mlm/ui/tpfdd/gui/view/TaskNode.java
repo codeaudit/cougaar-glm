@@ -1,4 +1,4 @@
-/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskNode.java,v 1.2 2000-12-20 18:18:47 mthome Exp $ */
+/* $Header: /opt/rep/cougaar/glm/glm/src/org/cougaar/domain/mlm/ui/tpfdd/gui/view/Attic/TaskNode.java,v 1.3 2001-02-14 21:16:56 wseitz Exp $ */
 
 /*
   Copyright (C) 1999-2000 Ascent Technology Inc. (Program).  All rights
@@ -574,14 +574,16 @@ public class TaskNode extends LogPlanObject implements ScheduleElement, Serializ
 	if ( leg.getStartEarliestDate() == null )
 	    Debug.out("TN:TN Note: null earliest start date for " + UUID);
 	else
-	    setMinStart(leg.getStartEarliestDate().getTime());
+	    setMinStart(leg.getStartDate().getTime());
+	    //	    setMinStart(leg.getStartEarliestDate().getTime());
 
 	// Debug.out("TN:TN{UIIE} start: " + getActualStart() + " end: " + getActualEnd());
 
-	long earliest = Math.min(getActualStart() != 0 ? 
-				 getActualStart() : TimeSpan.MAX_VALUE,
-				 getMinStart() != 0 ? 
-				 getMinStart() : TimeSpan.MAX_VALUE);
+// 	long earliest = Math.min(getActualStart() != 0 ? 
+// 				 getActualStart() : TimeSpan.MAX_VALUE,
+// 				 getMinStart() != 0 ? 
+// 				 getMinStart() : TimeSpan.MAX_VALUE);
+	long earliest = getActualStart() != 0 ? getActualStart() : getMinStart();
 	long latest = Math.max(getActualEnd(), getMinEnd());
 	
 	parent_.propagateStart(earliest);
