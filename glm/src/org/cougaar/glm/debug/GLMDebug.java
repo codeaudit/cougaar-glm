@@ -20,9 +20,14 @@
  * --------------------------------------------------------------------------*/
 package org.cougaar.glm.debug;
 
-import org.cougaar.core.mts.MessageAddress;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
-import java.io.*;
+import org.cougaar.core.mts.MessageAddress;
 
 
 /** 
@@ -76,9 +81,6 @@ public class GLMDebug {
 		} catch (FileNotFoundException fe) {
 		    System.err.println(fe.toString());
 		    fe.printStackTrace();
-		} catch (IOException ie) {
-		    System.err.println(ie.toString());
-		    ie.printStackTrace();
 		} catch (Exception ex) {
 		    System.err.println(ex.toString());
 		    ex.printStackTrace();

@@ -21,10 +21,11 @@
 
 package org.cougaar.mlm.ui.data;
 
-import org.cougaar.util.TimeSpan;
-import org.cougaar.glm.plugins.TimeUtils;
-import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
 import java.io.Serializable;
+
+import org.cougaar.glm.ldm.plan.QuantityScheduleElement;
+import org.cougaar.glm.plugins.TimeUtils;
+import org.cougaar.util.TimeSpan;
 
 public class UIQuantityScheduleElement  implements TimeSpan, 
 						   Cloneable,
