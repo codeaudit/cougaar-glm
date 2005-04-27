@@ -75,12 +75,16 @@ public abstract class NewQueryHandler {
     if (o instanceof String) {
       return (String) o;
     } else {
-      try {
-        return new String ((byte[]) o, "US-ASCII");
-      } catch (java.io.UnsupportedEncodingException e) {
-        SQLException sqle = new SQLException(e.getMessage());
-        sqle.initCause(e);
-        throw sqle;
+      if ( o == null)
+        return new String();
+      else {
+        try {
+          return new String ((byte[]) o, "US-ASCII");
+        } catch (java.io.UnsupportedEncodingException e) {
+          SQLException sqle = new SQLException(e.getMessage());
+          sqle.initCause(e);
+          throw sqle;
+        }
       }
     }
   }
