@@ -26,16 +26,7 @@
 
 package org.cougaar.mlm.plugin.organization;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.Collections;
-import java.util.TreeSet;
-import java.util.SortedSet;
+import java.util.*;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -115,6 +106,7 @@ public class GLSInitServlet extends ComponentPlugin
   public static final int LISTENING_TO_PROP_REG_SRVCS= 1;
   public static final int LISTENING_TO_PROP_FIND_PROV = 2;
   public static final int LISTENING_TO_GLS = 3;
+  private static final long DATE_ERROR = Long.MIN_VALUE;
 
   static NumberFormat confidenceFormat = NumberFormat.getPercentInstance();
 
@@ -544,7 +536,7 @@ public class GLSInitServlet extends ComponentPlugin
 
   }
   
-  private void readOplanTimeframe() 
+  private void readOplanTimeframe()
     throws SQLException, IOException {
 
     String oplan_opName;
@@ -624,9 +616,13 @@ public class GLSInitServlet extends ComponentPlugin
     }
 
     long start_time = currentTimeMillis();
+    long  initialTime = parseInitialTime();
+    if (initialTime != DATE_ERROR) {
+      start_time = initialTime;
+    }
     myPrivateState.opInfo = new OplanInfo(oplanId, 
-                                  oplan_opName, 
-                                  start_time, 
+                                  oplan_opName,
+                                  start_time,
                                   min_planning_offset, 
                                   start_offset, 
                                   end_offset,
@@ -639,7 +635,39 @@ public class GLSInitServlet extends ComponentPlugin
     
     blackboard.publishChange(myPrivateState);
     doNotify();
+  }
 
+  private long parseInitialTime() {
+    String propertyName = "org.cougaar.initTime";
+    long date = DATE_ERROR;
+    long time = DATE_ERROR;
+    String value = System.getProperty(propertyName);
+    if (value != null) {
+      try {
+        DateFormat f = (new SimpleDateFormat("MM/dd/yyy H:mm:ss"));
+        f.setTimeZone(TimeZone.getTimeZone("GMT"));
+        time = f.parse(value).getTime();
+        // get midnight of specified date
+        Calendar c = f.getCalendar();
+        c.setTimeInMillis(time);
+        c.set(Calendar.HOUR, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        date = c.getTimeInMillis();
+      } catch (ParseException e) {
+        // try with just the date
+        try {
+          DateFormat f = (new SimpleDateFormat("MM/dd/yyy"));
+          f.setTimeZone(TimeZone.getTimeZone("GMT"));
+          time = f.parse(value).getTime();
+        } catch (ParseException e1) {
+          if (logger.isDebugEnabled())
+            logger.debug("Failed to parse property " + propertyName + " as date+time or just time: " + value, e1);
+        }
+      }
+    }
+   return time;
   }
 
   private void insureDriverClass(String dbtype) throws SQLException, ClassNotFoundException {
