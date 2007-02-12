@@ -28,10 +28,6 @@
 
 package org.cougaar.glm.ldm.asset;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.util.Collection;
-
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.glm.ldm.Constants;
 import org.cougaar.planning.ldm.asset.ClusterPG;
@@ -39,6 +35,10 @@ import org.cougaar.planning.ldm.asset.NewRelationshipPG;
 import org.cougaar.planning.ldm.asset.RelationshipBG;
 import org.cougaar.planning.ldm.plan.HasRelationships;
 import org.cougaar.util.TimeSpan;
+
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.util.Collection;
 
 
 public abstract class OrganizationAdapter extends GLMAsset {
@@ -139,9 +139,9 @@ public abstract class OrganizationAdapter extends GLMAsset {
   }
 
   public void initRelationshipSchedule() {
-    NewRelationshipPG relationshipPG = 
-      (NewRelationshipPG) PropertyGroupFactory.newRelationshipPG();
-    relationshipPG.setRelationshipBG(new RelationshipBG(relationshipPG, (HasRelationships) this));
+    NewRelationshipPG relationshipPG = (NewRelationshipPG) PropertyGroupFactory.newRelationshipPG();
+    RelationshipBG bg = new RelationshipBG();
+    bg.init(relationshipPG, (HasRelationships) this);
     setRelationshipPG(relationshipPG);
   }
 }
