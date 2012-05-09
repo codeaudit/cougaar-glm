@@ -37,7 +37,7 @@ import org.cougaar.util.UnaryPredicate;
  *  ASI/B4  = SNIPER:             Army Enlisted: Additional Skill Identifier
  *  SQI/P   = PARACHUTIST:        Army Enlisted: Special Qualification IDentifier
  *  AOC/15A = AVIATION, GENERAL:  Army Commissioned Officer: AreaOfConcentration
- *  OSC/B2  = UH­60 PILOT:        Army Commissioned Officer: Officer Skill Codes
+ *  OSC/B2  = UH-60 PILOT:        Army Commissioned Officer: Officer Skill Codes
  **/
 
 public class Skill implements Serializable {
