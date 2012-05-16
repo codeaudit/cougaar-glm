@@ -137,7 +137,7 @@ public class UTILBufferingCallback extends UTILFilterCallbackAdapter {
    *
    * NOTE : The plugin will only look at *unplanned* tasks on rehydration.
    *        I don't think this will cause problems.
-   *        Fix for bug #3356: http://bugs.cougaar.org/show_bug.cgi?id=3356
+   *        Fix for bug #3356
    *
    * @see org.cougaar.lib.filter.UTILPluginAdapter#execute
    */
