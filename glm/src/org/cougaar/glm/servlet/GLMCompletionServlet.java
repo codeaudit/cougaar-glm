@@ -63,7 +63,7 @@ extends CompletionServlet
 
   public void unload() {
     if (alarmService != null) {
-      serviceBroker.releaseService(
+      releaseService(
           this, AlarmService.class, alarmService);
       alarmService = null;
     }
@@ -73,10 +73,10 @@ extends CompletionServlet
   protected boolean haveLevel2Mode() {
     if (level2Mode == null) {
       OperatingModeService oms = (OperatingModeService)
-        serviceBroker.getService(this, OperatingModeService.class, null);
+        getService(this, OperatingModeService.class, null);
       if (oms == null) return false;
       level2Mode = oms.getOperatingModeByName(LEVEL2);
-      serviceBroker.releaseService(this, OperatingModeService.class, oms);
+      releaseService(this, OperatingModeService.class, oms);
     }
     return level2Mode != null;
   }

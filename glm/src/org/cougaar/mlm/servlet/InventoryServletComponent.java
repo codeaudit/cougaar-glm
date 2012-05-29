@@ -51,12 +51,12 @@ public class InventoryServletComponent extends SimpleServletComponent {
 	InventoryServlet invServe = new InventoryServlet();
 	
 	AlarmService alarmService = (AlarmService)
-	    serviceBroker.getService(invServe,
+	    getService(invServe,
 				     AlarmService.class,
 				     null);
 	
 	LoggingService logService = (LoggingService)
-	    serviceBroker.getService(invServe,
+	    getService(invServe,
 				     LoggingService.class,
 				     null);
 	
