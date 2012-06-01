@@ -125,7 +125,6 @@ public class StrategicTransportSourceGUIPlugin extends SimplePlugin {
 
   /** Lazy Accessor that caches a reference to the ClusterObjectFactory,
    * provided I am in a state other than UNITIALIZED, UNLOADED, or LOADED.
-   * @return ClusterObjectFactory 
    */
 
   // Have to provide these on this plugin class, else the inner class
