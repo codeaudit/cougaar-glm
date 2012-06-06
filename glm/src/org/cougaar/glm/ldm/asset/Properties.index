@@ -1,0 +1,1166 @@
+- - - - - List of machine generated PropertyGroups - - - - -
+* AirConditionPG
+    Distance Ceiling;	//Altitude of the lowest clouds
+    Speed WindSpeed;
+    Temperature Temperature;
+    double PrecipitationRate;
+    Heading WindHeading;
+    Distance Visibility;
+    double BarometricPressure;
+* AirLiftPG
+    Volume MaximumBulkVolume;
+    Mass MaximumBulkWeight;
+    Volume MaximumOversizeVolume;
+    Mass MaximumOversizeWeight;
+    Volume MaximumOutsizeVolume;
+    Mass MaximumOutsizeWeight;
+    int MaximumPallets;
+    Distance MaximumLength;	//Maximum length of Cargo allowed
+    Distance MaximumWidth;	//Maximum width of Cargo allowed
+    Distance MaximumHeight;	//Maximum height of Cargo allowed
+    String CargoRestrictions;
+    String PermittedCargoCategoryCodes;
+* AirLinkPG
+    Speed PrevailingWindSpeed;
+    Heading PrevailingWindDirection;
+    String LinkName;
+    Distance LinkLength;
+* AirSelfPropulsionPG
+    Distance MaximumAltitude;	//Maximum altitude
+    Distance CruiseAltitude;	//Cruise altitude
+    FlowRate FuelConsumptionRate;	//Average fuel consumption rate when in flight
+    String EngineType;
+    String FuelType;
+    Speed MaximumSpeed;
+    Speed CruiseSpeed;
+    Distance FullPayloadRange;
+    Distance EmptyPayloadRange;
+* AirTransportationPG
+    long ContainerCount;
+    Volume NonContainerCapacity;
+    Volume WaterCapacity;
+    Volume PetroleumCapacity;
+    Mass AmmunitionCapacity;
+    long PassengerCapacity;
+* AirVehiclePG
+    Distance MinimumRunwayLength;	//Minimum runway length required under standard temperature, pressure, etc.
+    boolean MidAirRefuelable;	//Can the aircraft be refueled in mid-air
+    Duration QuickTurnaroundTime;	//Time required for quick (minimum maintenance) turnaround
+    Duration MeanTimeToRepair;	//Mean time required for typical failures
+    long MeanMissionLegsBetweenRepairs;	//Used for estimating repair requirements based on mission legs
+    Duration MeanFlightTimeBetweenRepairs;	//Used for estimating repair requirements based on flight time
+    String VehicleType;
+    long CrewRequirements;
+* AirportPG
+    Distance MaximumRunwayLength;
+    String RunwayType;
+    long MaximumOnGround;
+    Area RampSpace;
+    double MaximumFlightRate;
+    MassTransferRate Throughput;
+* AmmunitionPG
+    String DODIC;	//A string of the form "A123"
+    String LotID;	//An identifier for the manufacturers lot
+    String DODAAC;
+    long QuantityOhServ;
+    long QuantityOhUnserv;
+* AmmunitionPropertyGroups
+* AssetConsumptionRatePG
+    AssetConsumptionRate AssetConsumptionRate;
+* AssignedPG
+    Collection<Role> Roles;	//Collection of Role the organization is capable of fulfilling
+* AssignmentPG
+    Facility HomeStation;	//Currently assigned Home Station, usually a TransportationNode
+* BulkSolidPG
+    double BulkDensity;
+* CSSCapabilityPG
+    Collection<CSSCapability> Capabilities;	//a set of CSS capabilities that this asset advertises.
+* CargoFacilityPG
+    Area CoveredStagingArea;
+    Area OpenStagingArea;
+    long ThroughputContainersPerDay;
+    long ThroughputPalletsPerDay;
+* CargoPG
+    String CargoRestrictions;	//Cargo types which cannot be handled
+    String PermittedCargoCategoryCodes;	//cargo category codes which can be handled
+* ClusterPG
+An asset that is represented by a COUGAAR Agent
+    org.cougaar.core.mts.MessageAddress MessageAddress;	//The MessageAddress for addressing this asset.
+    Predictor Predictor;	//Predictor (if any) for the Agent
+* CommunityPG
+    Collection<String> Communities;	//Collection of community names to which the asset belongs at the specified time.
+* ConditionPG
+    String Condition;	//Usually a one-character condition code
+* ConsumablePG
+    double FailRate;
+    String AcquisitionAdviceCode;
+    String SupplyStatusCode;
+    String ItemCategoryCode;
+* ContainPG
+    Distance MaximumLength;
+    Distance MaximumWidth;
+    Distance MaximumHeight;
+    Volume MaximumVolume;
+    Area MaximumFootprintArea;
+    Mass MaximumWeight;
+    long MaximumPassengers;
+    boolean Refrigeration;
+    Duration TimeToLoad;
+    Duration TimeToUnload;
+    Duration TimeToRefuel;
+    long MaximumContainers;
+    boolean IsPrepositioned;	//"Is this designated as a prepositioned cargo asset?"
+    String CargoRestrictions;
+    String PermittedCargoCategoryCodes;
+* ContentsPG
+    Collection<String> TypeIdentifications;
+    Collection<String> Nomenclatures;
+    Collection<Mass> Weights;
+    Collection<String> Receivers;
+* CostPG
+    CostRate PerDiemCost;
+    double BreakOutCost;
+* DeckPG
+    int Level;
+    String ShipId;
+    Distance MaximumLength;
+    Distance MaximumWidth;
+    Distance MaximumHeight;
+    Volume MaximumVolume;
+    Area MaximumFootprintArea;
+    Mass MaximumWeight;
+    long MaximumPassengers;
+    boolean Refrigeration;
+    Duration TimeToLoad;
+    Duration TimeToUnload;
+    Duration TimeToRefuel;
+    long MaximumContainers;
+    boolean IsPrepositioned;
+    String CargoRestrictions;
+    String PermittedCargoCategoryCodes;
+* DetailKeyPG
+describes an object and where to find it for LightweightManifest
+    org.cougaar.core.util.UID DetailObject;
+    org.cougaar.core.mts.MessageAddress SourceCluster;
+* DetailedScheduledContentPG
+Represent daily perturbations to contents of Inventory asset. Used to better support 24X7 demonstrations.
+    Schedule Schedule;	//a quantity-schedule showing how many/much of asset is contained by this asset over time.
+* EntityPG
+    Collection<Role> Roles;	//Collection of Roles the organization is capable of fulfilling.
+* EnvironmentalConditionPG
+    Speed WindSpeed;
+    Temperature Temperature;
+    double PrecipitationRate;
+    Heading WindHeading;
+    Distance Visibility;
+    double BarometricPressure;
+* EquipmentOHReadinessPG
+    Map Readiness;	//Map of Integer values that correspond to the equipment on-hand rating.  Key for the first is the unit's permanent mission is String("2MTW") and subsequent ones are specific crises, String ("CAP1"), String ("CAP2"), etc.
+* EquipmentStatusReadinessPG
+    Map Readiness;	//Map of Integer values that correspond to the equipment condition rating.  Key for the first is the unit's permanent mission is String("2MTW") and subsequent ones are specific crises, String ("CAP1"), String ("CAP2"), etc.
+* ExplosivePG
+No attributes yet
+* FacilityPG
+* FoodPG
+    boolean Perishable;
+    boolean RefrigerationRequired;
+    Duration ShelfLife;
+    String Type;	//Type of ration, e.g. MRE, Tray, Prepared
+* ForUnitPG
+    String Unit;
+* FromBasePG
+    GeolocLocation Base;
+* FuelPG
+    String SpecialHandling;	//Specifies any special handling required
+    boolean Aviation;	//Specifies whether the fuel is aviation-grade
+* FuelSupplyPG
+    String FuelTypes;	//Comma separated string of fuel types eg. "JP3, JP4"
+    Volume StoreVolumePerDay;
+    Volume DistributeVolumePerDay;
+    Volume IssueVolumePerDay;
+    Volume PumpVolumePerMinute;
+* GroundSelfPropulsionPG
+    String TractionType;	//Type of traction (wheeled, tracked, half-tracked)
+    Volume FuelConsumptionPerMile;	//Average fuel consumption per mile (eg: gallons per mile)
+    String EngineType;
+    String FuelType;
+    Speed MaximumSpeed;
+    Speed CruiseSpeed;
+    Distance FullPayloadRange;
+    Distance EmptyPayloadRange;
+* GroundVehiclePG
+    String RoadSurfaceRequirements;	//Poorest road surface tolerable by the vehicle (unpaved, dirt, gravel, etc.)
+    Distance MeanDistanceBetweenRepairs;	//Used for estimating repair requirements
+    String VehicleType;
+    long CrewRequirements;
+* InventoryLevelsPG
+Represent the schedules of thresholds taken into account when making ordering decisions at the inventory manager.   How great is the demand of the next x days, when do we reorder, how much do we reorder.
+    Schedule AverageDemandSchedule;
+    Schedule ReorderLevelSchedule;	//The quantity-schedule showing the level which when stock levels fall below a replenish order will be placed.
+    Schedule GoalLevelSchedule;	//The quantity-schedule showing the level to which one ultimately wants to bring the inventory level to when reordering.
+* InventoryPG
+    Scalar Capacity;	//maximum amount that can be contained or accommodated.
+    Scalar InitialLevel;
+    Scalar ReorderLevel;
+    Scalar MinReorder;
+    Scalar Unobtainable;	//Quantity of materiel which cannot be used. E.g. fuel which cannot be pumped out of a tank.
+    boolean FillToCapacity;
+    boolean MaintainAtCapacity;
+    Asset Resource;
+* ItemIdentificationPG
+Identification of a unique, actual Asset, e.g. by VIN, SSN, etc.
+    String ItemIdentification;	//A String of the form "<type>/<id>", e.g. "SN/105G13F7YM0G"
+    String Nomenclature;	//A String describing the Asset in human-readable form.
+    String AlternateItemIdentification;	// Not to be used as MessageAddress.  Use ClusterPG.getMessageAddress() instead.
+* LandConditionPG
+    double SoilMoisture;
+    Distance SnowDepth;
+    Speed WindSpeed;
+    Temperature Temperature;
+    double PrecipitationRate;
+    Heading WindHeading;
+    Distance Visibility;
+    double BarometricPressure;
+* LiftPG
+    Mass MaximumWeight;
+    String CargoRestrictions;
+    String PermittedCargoCategoryCodes;
+* LiquidPG
+    double Density;
+    double Viscosity;
+    double Volatility;
+    double Flammability;
+* LiquidSupplyPG
+    Volume StoreVolumePerDay;	//The maximum volume of liquid that can be stored per day
+    Volume DistributeVolumePerDay;	//The maximum volume of liquid that can be distributed per day
+    Volume IssueVolumePerDay;	//The maximum volume of liquid that can be issued per day
+    Volume PumpVolumePerMinute;	//The maximum volume of liquid  that can be pumped per minute
+* LocationSchedulePG
+    Schedule Schedule;	//A schedule of LocationScheduleElement elements.  The semantics of location and overlapping time ranges is not defined. Consumers of the schedule should probably synchronize on the schedule object in order to prevent comodification exceptions.
+* MEIPG
+    String BreakCause;
+    boolean Operational;
+* MaintenancePG
+    long ASLSize;	//Number of items permitted in the Authorized Stockage List
+    long RELSize;	//Number of items permitted in the Repairable Exchange List
+    String Level;	//Either DS or GS.
+* ManagedAssetPG
+    long NumberOfPersonnel;
+* MidAirRefuelPG
+    Distance DistanceToAirbase;
+    Duration TimeToRefuel;
+* MilitaryOrgPG
+    String StandardName;
+    String UIC;	//The UIC (Unit Identification Code) of the unit.
+    String UTC;	//The Joint Unit Type Code, specifying the type of unit.
+    String SRC;	//The Army SRC, specifying the type of Unit.
+    String Echelon;	//The numeric code specifying the echelon of the unit. 08:Division, 07:Brigade, 06:Regiment, 05:Battalion, 04:Company. Codes are traditionally printed as two figures with a leading zero if necessary.
+    String RequestedEchelonOfSupport;	//The requested echelon of support for the unit.  Should map to MilitaryEchelon constants -
+    String Hierarchy2525;	//The 2525A hierarchy designator, used to specify the symbol for the organization on a map.
+    boolean IsReserve;
+    Location HomeLocation;	//Location of the Org when it is not deployed. Should match AssignedPG.homeStation if defined.
+* MilitaryPersonPG
+    String IDCode;	//Unique identifier for a person within a military organization
+    Service Service;	//Particular service within the military (e.g. Army, Navy, Coast Guard, etc.)
+    String Grade;	//Military Grade, e.g. E3, O6, etc.
+* MissileLauncherPG
+* MovabilityPG
+    boolean Moveable;	//The item is moveable
+    String CargoCategoryCode;	//The Cargo Category Code for an asset
+* OffRoadTransportationPG
+    long ContainerCount;
+    Volume NonContainerCapacity;
+    Volume WaterCapacity;
+    Volume PetroleumCapacity;
+    Mass AmmunitionCapacity;
+    long PassengerCapacity;
+* OnRoadTransportationPG
+    long ContainerCount;
+    Volume NonContainerCapacity;
+    Volume WaterCapacity;
+    Volume PetroleumCapacity;
+    Mass AmmunitionCapacity;
+    long PassengerCapacity;
+* OrganizationPG
+    Service Service;	//one of the values of Service.
+    Agency Agency;	//the agency or other major organization the asset is associated with.  For military Organizations, this is the CINC at the top of their command structure, e.g. USTC, CENTCOM.
+    Collection<Role> Roles;
+* PackagePG
+    long CountPerPack;
+    String UnitOfIssue;
+    Distance PackLength;
+    Distance PackWidth;
+    Distance PackHeight;
+    Area PackFootprintArea;
+    Volume PackVolume;
+    Mass PackMass;
+* PersonPG
+    String IDCode;	//Unique identifier for a person within a country (e.g. SSN).
+    String Nationality;	//Country of citizenship.
+    Collection<Skill> Skills;	//A set of skills that this person has.
+* PersonSustainmentPG
+    double FoodConsumptionRate;	//Should be replaced with a function of OpTempo
+* PersonnelReadinessPG
+    Map Readiness;	//Map of Integer values that correspond to the personnel rating.  Key for the first is the unit's permanent mission is String("2MTW") and subsequent ones are specific crises, String ("CAP1"), String ("CAP2"), etc.
+* PhysicalAssetPropertyGroups
+* PhysicalPG
+    Distance Length;
+    Distance Width;
+    Distance Height;
+    Area FootprintArea;
+    Volume Volume;
+    Mass Mass;
+* PositionPG
+    Position Position;
+* RailLinkPG
+    long NumberOfTracks;
+    Distance TrackGauge;
+    double MaximumGradeD2O;
+    double MaximumGradeO2D;
+    Mass MaximumAxleWeight;
+    Distance MaximumCarHeight;
+    Distance MaximumCarWidth;
+    Distance MaximumCarLength;
+    Distance MaximumTrainLength;
+    Speed MaximumTrainSpeed;
+    String LinkName;
+    Distance LinkLength;
+* RailSelfPropulsionPG
+    Volume FuelConsumptionPerMile;	//Average fuel consumption per mile
+    String EngineType;
+    String FuelType;
+    Speed MaximumSpeed;
+    Speed CruiseSpeed;
+    Distance FullPayloadRange;
+    Distance EmptyPayloadRange;
+* RailTerminalPG
+    long RailYardCapacity;
+    long NumberOfContainerCranes;
+* RailTransportationPG
+    long ContainerCount;
+    Volume NonContainerCapacity;
+    Volume WaterCapacity;
+    Volume PetroleumCapacity;
+    Mass AmmunitionCapacity;
+    long PassengerCapacity;
+* RailVehiclePG
+    Distance Gauge;
+    Distance MeanDistanceBetweenRepairs;	//Used for estimating repair requirements
+    String VehicleType;
+    long CrewRequirements;
+* RelationshipPG
+    org.cougaar.planning.ldm.plan.RelationshipSchedule RelationshipSchedule;	//a schedule of relationships for this asset.
+    boolean Local;
+* RepairDepotPG
+    long NumberOfRepairStations;
+* RepairPartPropertyGroups
+    double FailRate;	//Double expressing failure rate for a MEI/repair part combination
+    String AcquisitionAdviceCode;	//One character code expressing the acquisition advice code for DLA
+    String SupplyStatusCode;	//One character code expressing the supply status code for DLA
+    String ItemCategoryCode;	//One character code expressing the item category code for DLA
+* RepairabilityPG
+* RepairablePG
+    double FailRate;
+    String AcquisitionAdviceCode;
+    String SupplyStatusCode;
+    String ItemCategoryCode;
+* ReportSchedulePG
+Specifies the schedule for periodically or other scheduled generation of reports. Used by the EventGenerator to determine when to generate, for example, inventory reports.
+    java.util.GregorianCalendar Base;
+    int Step;
+    int Jitter;	//The randomization factor. The exact interpretation depends on the kind of pattern.
+* RoadLinkPG
+    int Direction;
+    boolean InUrbanArea;
+    int NumberOfLanes;
+    int MaximumHeight;
+    int MaximumWidth;
+    int LinkID;
+    int StateCode;
+    String Route1;
+    String Route2;
+    String Median;
+    String AccessType;
+    int TruckRoute;
+    int FunctionalClass;
+    float MaximumConvoySpeed;
+    float ConvoyTravelTime;
+    long NumberOfBridgesUnderHS20;
+    Speed MaxSpeed;
+    Capacity MaxCapacity;
+    Mass MaxWeight;
+    String LinkName;
+    Distance LinkLength;
+* ScheduledContentPG
+Represent the homogeneous contents of an asset over time, e.g. a stockroom bin or a tank of fuel.
+    Asset Asset;	//The prototypical Asset represented.
+    Schedule Schedule;	//a quantity-schedule showing how many/much of asset is contained by this asset over time.
+* SeaConditionPG
+    double SeaState;
+    Temperature SurfaceTemperature;
+    Speed WindSpeed;
+    Temperature Temperature;
+    double PrecipitationRate;
+    Heading WindHeading;
+    Distance Visibility;
+    double BarometricPressure;
+* SeaLinkPG
+    Speed PrevailingWindSpeed;
+    double PrevailingWindDirection;
+    Speed PrevailingCurrentSpeed;
+    double PrevailingCurrentDirection;
+    String LinkName;
+    Distance LinkLength;
+* SeaTransportationPG
+    long ContainerCount;
+    Volume NonContainerCapacity;
+    Volume WaterCapacity;
+    Volume PetroleumCapacity;
+    Mass AmmunitionCapacity;
+    long PassengerCapacity;
+* SeaportPG
+    long NumberOfROROBerths;
+    long NumberOfContainerBerths;
+    Distance PierLength;
+    Distance PierWidth;
+    Distance PierDepth;
+    Distance SupportedTurningRadius;
+    Distance HighTideDraft;
+    Distance LowTideDraft;
+    long NumberOfContainerCranes;
+* SelfPropulsionPropertyGroups
+    String EngineType;
+    String FuelType;
+    Speed MaximumSpeed;
+    Speed CruiseSpeed;
+    Distance FullPayloadRange;	//How far can the vehicle go without refueling if itr is fully loaded
+    Distance EmptyPayloadRange;	//How far can the vehicle go without refueling if itr is fully loaded
+* ShipConfigurationPG
+    int NumberOfDecks;
+* SupplyClassPG
+    String SupplyClass;	//Description of the Class to which this item belongs. e.g. ClassISubsistence
+    String SupplyType;	//Specific type of item within the greater class. e.g. BulkWater
+* SupplyDepotPG
+    double MaximumSupplyRate;
+    Volume MaximumStorageVolume;
+    Area MaximumStorageArea;
+* SupplyPG
+    Mass Class1HandleMassPerDay;	//The maximum mass of class 1 materiel that can be stored, issued and transloaded per day
+    Mass Class2HandleMassPerDay;	//The maximum mass of class 2 materiel that can be stored, issued and transloaded per day
+    Mass Class3pHandleMassPerDay;	//The maximum mass of class 3p materiel that can be stored, issued and transloaded per day
+    Mass Class4bHandleMassPerDay;	//The maximum mass of class 4b materiel that can be stored, issued and transloaded per day
+    Mass Class4HandleMassPerDay;	//The maximum mass of class 4 materiel that can be stored, issued and transloaded per day
+    Mass Class5TransloadMassPerDay;	//The maximum mass of class 5 materiel that can be transloaded per day
+    Mass Class7HandleMassPerDay;	//The maximum mass of class 7 materiel that can be stored, issued and transloaded per day
+    Mass Class9HandleMassPerDay;	//The maximum mass of class 9 materiel that can be stored, issued and transloaded per day
+* SupportPG
+* TowPG
+    Mass MaximumWeight;
+    String CargoRestrictions;
+    String PermittedCargoCategoryCodes;
+* TrainingReadinessPG
+    Map Readiness;	//Map of Integer values that correspond to the training rating.  Key for the first is the unit's permanent mission is String("2MTW") and subsequent ones are specific crises, String ("CAP1"), String ("CAP2"), etc.
+* TransportationLinkPropertyGroups
+    String LinkName;
+    Distance LinkLength;
+* TransportationNodePropertyGroups
+* TransportationPG
+    long ContainerCount;	//The maximum number of containers that can be transported at one time
+    Volume NonContainerCapacity;	//The maximum mass of non-containerized cargo that can be transported at one time
+    Volume WaterCapacity;	//The maximum volume of water that can be transported at one time
+    Volume PetroleumCapacity;	//The maximum volume of petroleum that can be transported at one time
+    Mass AmmunitionCapacity;	//The maximum mass of ammunition that can be transported at one time
+    long PassengerCapacity;	//The maximum number of passengers that can be transported at one time
+* TruckTerminalPG
+    long ParkingLotTruckCapacity;
+    long NumberOfLoadingDocks;
+* TypeIdentificationPG
+Identification of a type of Asset, e.g. by NSN, part number, etc.
+    String TypeIdentification;	//A String of the form "<type>/<id>", e.g. "NSN/0913801298439"
+    String Nomenclature;	//A human-readable description of this type.
+    String AlternateTypeIdentification;	//examples: "LIN/T13168", "DODIC/C786"
+* VehiclePropertyGroups
+    String VehicleType;	//Description of the type of vehicle
+    long CrewRequirements;	//The number of crew members required for normal operation of the vehicle
+* VolumetricStockagePG
+representation of Stockage parameters that are measured by volume
+    Volume ReorderLevel;	//volume level at which you are allowed to reorder.
+    Volume MinReorderVolume;	//minimum volume you can order.  Should be less than or equal to reorder level.
+    Volume Unobtainable;	//Quantity of materiel which cannot be used. E.g. fuel which cannot be pumped out of a tank.
+* WarheadPG
+No attributes yet
+* WaterPG
+    boolean Potable;
+* WaterSelfPropulsionPG
+    FlowRate FuelConsumptionRate;	//Average fuel consumption rate when engine is running
+    String EngineType;
+    String FuelType;
+    Speed MaximumSpeed;
+    Speed CruiseSpeed;
+    Distance FullPayloadRange;
+    Distance EmptyPayloadRange;
+* WaterSupplyPG
+    Volume StoreVolumePerDay;
+    Volume DistributeVolumePerDay;
+    Volume IssueVolumePerDay;
+    Volume PumpVolumePerMinute;
+* WaterVehiclePG
+    Distance MinimumDraft;	//The draft when unloaded
+    Distance MaximumDraft;	//The draft when fully loaded
+    Distance Length;	//The length of the SHIP
+    Distance Beam;	//The beam (width) of the SHIP
+    String BerthRequirements;	//The type of berth required
+    Duration MeanEngineTimeBetweenRepairs;	//Used for estimating repair requirements based on engine running time
+    String VehicleType;
+    long CrewRequirements;
+* WeaponPG
+* global
+- - - - - Permuted index of PropertyGroupSlots - - - - -
+* ASLSize
+    MaintenancePG
+* AssetConsumptionRate
+    AssetConsumptionRatePG
+* Base
+    ReportSchedulePG
+* DODAAC
+    AmmunitionPG
+* DODIC
+    AmmunitionPG
+* Grade
+    MilitaryPersonPG
+* IDCode
+    MilitaryPersonPG
+    PersonPG
+* Jitter
+    ReportSchedulePG
+* RELSize
+    MaintenancePG
+* SRC
+    MilitaryOrgPG
+* Step
+    ReportSchedulePG
+* UIC
+    MilitaryOrgPG
+* UTC
+    MilitaryOrgPG
+* AccessType
+    RoadLinkPG
+* AcquisitionAdviceCode
+    ConsumablePG
+    RepairPartPropertyGroups
+    RepairablePG
+* Agency
+    OrganizationPG
+* AlternateItemIdentification
+    ItemIdentificationPG
+* AlternateTypeIdentification
+    TypeIdentificationPG
+* AmmunitionCapacity
+    AirTransportationPG
+    OffRoadTransportationPG
+    OnRoadTransportationPG
+    RailTransportationPG
+    SeaTransportationPG
+    TransportationPG
+* Asset
+    ScheduledContentPG
+* AverageDemandSchedule
+    InventoryLevelsPG
+* Aviation
+    FuelPG
+* BarometricPressure
+    AirConditionPG
+    EnvironmentalConditionPG
+    LandConditionPG
+    SeaConditionPG
+* Base
+    FromBasePG
+* Beam
+    WaterVehiclePG
+* BerthRequirements
+    WaterVehiclePG
+* BreakCause
+    MEIPG
+* BreakOutCost
+    CostPG
+* BulkDensity
+    BulkSolidPG
+* Capabilities
+    CSSCapabilityPG
+* Capacity
+    InventoryPG
+* CargoCategoryCode
+    MovabilityPG
+* CargoRestrictions
+    AirLiftPG
+    CargoPG
+    ContainPG
+    DeckPG
+    LiftPG
+    TowPG
+* Ceiling
+    AirConditionPG
+* Class1HandleMassPerDay
+    SupplyPG
+* Class2HandleMassPerDay
+    SupplyPG
+* Class3pHandleMassPerDay
+    SupplyPG
+* Class4HandleMassPerDay
+    SupplyPG
+* Class4bHandleMassPerDay
+    SupplyPG
+* Class5TransloadMassPerDay
+    SupplyPG
+* Class7HandleMassPerDay
+    SupplyPG
+* Class9HandleMassPerDay
+    SupplyPG
+* Communities
+    CommunityPG
+* Condition
+    ConditionPG
+* ContainerCount
+    AirTransportationPG
+    OffRoadTransportationPG
+    OnRoadTransportationPG
+    RailTransportationPG
+    SeaTransportationPG
+    TransportationPG
+* ConvoyTravelTime
+    RoadLinkPG
+* CountPerPack
+    PackagePG
+* CoveredStagingArea
+    CargoFacilityPG
+* CrewRequirements
+    AirVehiclePG
+    GroundVehiclePG
+    RailVehiclePG
+    VehiclePropertyGroups
+    WaterVehiclePG
+* CruiseAltitude
+    AirSelfPropulsionPG
+* CruiseSpeed
+    AirSelfPropulsionPG
+    GroundSelfPropulsionPG
+    RailSelfPropulsionPG
+    SelfPropulsionPropertyGroups
+    WaterSelfPropulsionPG
+* Density
+    LiquidPG
+* DetailObject
+    DetailKeyPG
+* Direction
+    RoadLinkPG
+* DistanceToAirbase
+    MidAirRefuelPG
+* DistributeVolumePerDay
+    FuelSupplyPG
+    LiquidSupplyPG
+    WaterSupplyPG
+* Echelon
+    MilitaryOrgPG
+* EmptyPayloadRange
+    AirSelfPropulsionPG
+    GroundSelfPropulsionPG
+    RailSelfPropulsionPG
+    SelfPropulsionPropertyGroups
+    WaterSelfPropulsionPG
+* EngineType
+    AirSelfPropulsionPG
+    GroundSelfPropulsionPG
+    RailSelfPropulsionPG
+    SelfPropulsionPropertyGroups
+    WaterSelfPropulsionPG
+* FailRate
+    ConsumablePG
+    RepairPartPropertyGroups
+    RepairablePG
+* FillToCapacity
+    InventoryPG
+* Flammability
+    LiquidPG
+* FoodConsumptionRate
+    PersonSustainmentPG
+* FootprintArea
+    PhysicalPG
+* FuelConsumptionPerMile
+    GroundSelfPropulsionPG
+    RailSelfPropulsionPG
+* FuelConsumptionRate
+    AirSelfPropulsionPG
+    WaterSelfPropulsionPG
+* FuelType
+    AirSelfPropulsionPG
+    GroundSelfPropulsionPG
+    RailSelfPropulsionPG
+    SelfPropulsionPropertyGroups
+    WaterSelfPropulsionPG
+* FuelTypes
+    FuelSupplyPG
+* FullPayloadRange
+    AirSelfPropulsionPG
+    GroundSelfPropulsionPG
+    RailSelfPropulsionPG
+    SelfPropulsionPropertyGroups
+    WaterSelfPropulsionPG
+* FunctionalClass
+    RoadLinkPG
+* Gauge
+    RailVehiclePG
+* GoalLevelSchedule
+    InventoryLevelsPG
+* Height
+    PhysicalPG
+* Hierarchy2525
+    MilitaryOrgPG
+* HighTideDraft
+    SeaportPG
+* HomeLocation
+    MilitaryOrgPG
+* HomeStation
+    AssignmentPG
+* InUrbanArea
+    RoadLinkPG
+* InitialLevel
+    InventoryPG
+* IsPrepositioned
+    ContainPG
+    DeckPG
+* IsReserve
+    MilitaryOrgPG
+* IssueVolumePerDay
+    FuelSupplyPG
+    LiquidSupplyPG
+    WaterSupplyPG
+* ItemCategoryCode
+    ConsumablePG
+    RepairPartPropertyGroups
+    RepairablePG
+* ItemIdentification
+    ItemIdentificationPG
+* Length
+    PhysicalPG
+    WaterVehiclePG
+* Level
+    DeckPG
+    MaintenancePG
+* LinkID
+    RoadLinkPG
+* LinkLength
+    AirLinkPG
+    RailLinkPG
+    RoadLinkPG
+    SeaLinkPG
+    TransportationLinkPropertyGroups
+* LinkName
+    AirLinkPG
+    RailLinkPG
+    RoadLinkPG
+    SeaLinkPG
+    TransportationLinkPropertyGroups
+* Local
+    RelationshipPG
+* LotID
+    AmmunitionPG
+* LowTideDraft
+    SeaportPG
+* MaintainAtCapacity
+    InventoryPG
+* Mass
+    PhysicalPG
+* MaxCapacity
+    RoadLinkPG
+* MaxSpeed
+    RoadLinkPG
+* MaxWeight
+    RoadLinkPG
+* MaximumAltitude
+    AirSelfPropulsionPG
+* MaximumAxleWeight
+    RailLinkPG
+* MaximumBulkVolume
+    AirLiftPG
+* MaximumBulkWeight
+    AirLiftPG
+* MaximumCarHeight
+    RailLinkPG
+* MaximumCarLength
+    RailLinkPG
+* MaximumCarWidth
+    RailLinkPG
+* MaximumContainers
+    ContainPG
+    DeckPG
+* MaximumConvoySpeed
+    RoadLinkPG
+* MaximumDraft
+    WaterVehiclePG
+* MaximumFlightRate
+    AirportPG
+* MaximumFootprintArea
+    ContainPG
+    DeckPG
+* MaximumGradeD2O
+    RailLinkPG
+* MaximumGradeO2D
+    RailLinkPG
+* MaximumHeight
+    AirLiftPG
+    ContainPG
+    DeckPG
+    RoadLinkPG
+* MaximumLength
+    AirLiftPG
+    ContainPG
+    DeckPG
+* MaximumOnGround
+    AirportPG
+* MaximumOutsizeVolume
+    AirLiftPG
+* MaximumOutsizeWeight
+    AirLiftPG
+* MaximumOversizeVolume
+    AirLiftPG
+* MaximumOversizeWeight
+    AirLiftPG
+* MaximumPallets
+    AirLiftPG
+* MaximumPassengers
+    ContainPG
+    DeckPG
+* MaximumRunwayLength
+    AirportPG
+* MaximumSpeed
+    AirSelfPropulsionPG
+    GroundSelfPropulsionPG
+    RailSelfPropulsionPG
+    SelfPropulsionPropertyGroups
+    WaterSelfPropulsionPG
+* MaximumStorageArea
+    SupplyDepotPG
+* MaximumStorageVolume
+    SupplyDepotPG
+* MaximumSupplyRate
+    SupplyDepotPG
+* MaximumTrainLength
+    RailLinkPG
+* MaximumTrainSpeed
+    RailLinkPG
+* MaximumVolume
+    ContainPG
+    DeckPG
+* MaximumWeight
+    ContainPG
+    DeckPG
+    LiftPG
+    TowPG
+* MaximumWidth
+    AirLiftPG
+    ContainPG
+    DeckPG
+    RoadLinkPG
+* MeanDistanceBetweenRepairs
+    GroundVehiclePG
+    RailVehiclePG
+* MeanEngineTimeBetweenRepairs
+    WaterVehiclePG
+* MeanFlightTimeBetweenRepairs
+    AirVehiclePG
+* MeanMissionLegsBetweenRepairs
+    AirVehiclePG
+* MeanTimeToRepair
+    AirVehiclePG
+* Median
+    RoadLinkPG
+* MessageAddress
+    ClusterPG
+* MidAirRefuelable
+    AirVehiclePG
+* MinReorder
+    InventoryPG
+* MinReorderVolume
+    VolumetricStockagePG
+* MinimumDraft
+    WaterVehiclePG
+* MinimumRunwayLength
+    AirVehiclePG
+* Moveable
+    MovabilityPG
+* Nationality
+    PersonPG
+* Nomenclature
+    ItemIdentificationPG
+    TypeIdentificationPG
+* Nomenclatures
+    ContentsPG
+* NonContainerCapacity
+    AirTransportationPG
+    OffRoadTransportationPG
+    OnRoadTransportationPG
+    RailTransportationPG
+    SeaTransportationPG
+    TransportationPG
+* NumberOfROROBerths
+    SeaportPG
+* NumberOfBridgesUnderHS20
+    RoadLinkPG
+* NumberOfContainerBerths
+    SeaportPG
+* NumberOfContainerCranes
+    RailTerminalPG
+    SeaportPG
+* NumberOfDecks
+    ShipConfigurationPG
+* NumberOfLanes
+    RoadLinkPG
+* NumberOfLoadingDocks
+    TruckTerminalPG
+* NumberOfPersonnel
+    ManagedAssetPG
+* NumberOfRepairStations
+    RepairDepotPG
+* NumberOfTracks
+    RailLinkPG
+* OpenStagingArea
+    CargoFacilityPG
+* Operational
+    MEIPG
+* PackFootprintArea
+    PackagePG
+* PackHeight
+    PackagePG
+* PackLength
+    PackagePG
+* PackMass
+    PackagePG
+* PackVolume
+    PackagePG
+* PackWidth
+    PackagePG
+* ParkingLotTruckCapacity
+    TruckTerminalPG
+* PassengerCapacity
+    AirTransportationPG
+    OffRoadTransportationPG
+    OnRoadTransportationPG
+    RailTransportationPG
+    SeaTransportationPG
+    TransportationPG
+* PerDiemCost
+    CostPG
+* Perishable
+    FoodPG
+* PermittedCargoCategoryCodes
+    AirLiftPG
+    CargoPG
+    ContainPG
+    DeckPG
+    LiftPG
+    TowPG
+* PetroleumCapacity
+    AirTransportationPG
+    OffRoadTransportationPG
+    OnRoadTransportationPG
+    RailTransportationPG
+    SeaTransportationPG
+    TransportationPG
+* PierDepth
+    SeaportPG
+* PierLength
+    SeaportPG
+* PierWidth
+    SeaportPG
+* Position
+    PositionPG
+* Potable
+    WaterPG
+* PrecipitationRate
+    AirConditionPG
+    EnvironmentalConditionPG
+    LandConditionPG
+    SeaConditionPG
+* Predictor
+    ClusterPG
+* PrevailingCurrentDirection
+    SeaLinkPG
+* PrevailingCurrentSpeed
+    SeaLinkPG
+* PrevailingWindDirection
+    AirLinkPG
+    SeaLinkPG
+* PrevailingWindSpeed
+    AirLinkPG
+    SeaLinkPG
+* PumpVolumePerMinute
+    FuelSupplyPG
+    LiquidSupplyPG
+    WaterSupplyPG
+* QuantityOhServ
+    AmmunitionPG
+* QuantityOhUnserv
+    AmmunitionPG
+* QuickTurnaroundTime
+    AirVehiclePG
+* RailYardCapacity
+    RailTerminalPG
+* RampSpace
+    AirportPG
+* Readiness
+    EquipmentOHReadinessPG
+    EquipmentStatusReadinessPG
+    PersonnelReadinessPG
+    TrainingReadinessPG
+* Receivers
+    ContentsPG
+* Refrigeration
+    ContainPG
+    DeckPG
+* RefrigerationRequired
+    FoodPG
+* RelationshipSchedule
+    RelationshipPG
+* ReorderLevel
+    InventoryPG
+* ReorderLevel
+    VolumetricStockagePG
+* ReorderLevelSchedule
+    InventoryLevelsPG
+* RequestedEchelonOfSupport
+    MilitaryOrgPG
+* Resource
+    InventoryPG
+* RoadSurfaceRequirements
+    GroundVehiclePG
+* Roles
+    AssignedPG
+    EntityPG
+    OrganizationPG
+* Route1
+    RoadLinkPG
+* Route2
+    RoadLinkPG
+* RunwayType
+    AirportPG
+* Schedule
+    DetailedScheduledContentPG
+    LocationSchedulePG
+    ScheduledContentPG
+* SeaState
+    SeaConditionPG
+* Service
+    MilitaryPersonPG
+    OrganizationPG
+* ShelfLife
+    FoodPG
+* ShipId
+    DeckPG
+* Skills
+    PersonPG
+* SnowDepth
+    LandConditionPG
+* SoilMoisture
+    LandConditionPG
+* SourceCluster
+    DetailKeyPG
+* SpecialHandling
+    FuelPG
+* StandardName
+    MilitaryOrgPG
+* StateCode
+    RoadLinkPG
+* StoreVolumePerDay
+    FuelSupplyPG
+    LiquidSupplyPG
+    WaterSupplyPG
+* SupplyClass
+    SupplyClassPG
+* SupplyType
+    SupplyClassPG
+* SupplyStatusCode
+    ConsumablePG
+    RepairPartPropertyGroups
+    RepairablePG
+* SupportedTurningRadius
+    SeaportPG
+* SurfaceTemperature
+    SeaConditionPG
+* Temperature
+    AirConditionPG
+    EnvironmentalConditionPG
+    LandConditionPG
+    SeaConditionPG
+* Throughput
+    AirportPG
+* ThroughputContainersPerDay
+    CargoFacilityPG
+* ThroughputPalletsPerDay
+    CargoFacilityPG
+* TimeToLoad
+    ContainPG
+    DeckPG
+* TimeToRefuel
+    ContainPG
+    DeckPG
+    MidAirRefuelPG
+* TimeToUnload
+    ContainPG
+    DeckPG
+* TrackGauge
+    RailLinkPG
+* TractionType
+    GroundSelfPropulsionPG
+* TruckRoute
+    RoadLinkPG
+* Type
+    FoodPG
+* TypeIdentification
+    TypeIdentificationPG
+* TypeIdentifications
+    ContentsPG
+* Unit
+    ForUnitPG
+* UnitOfIssue
+    PackagePG
+* Unobtainable
+    InventoryPG
+    VolumetricStockagePG
+* VehicleType
+    AirVehiclePG
+    GroundVehiclePG
+    RailVehiclePG
+    VehiclePropertyGroups
+    WaterVehiclePG
+* Viscosity
+    LiquidPG
+* Visibility
+    AirConditionPG
+    EnvironmentalConditionPG
+    LandConditionPG
+    SeaConditionPG
+* Volatility
+    LiquidPG
+* Volume
+    PhysicalPG
+* WaterCapacity
+    AirTransportationPG
+    OffRoadTransportationPG
+    OnRoadTransportationPG
+    RailTransportationPG
+    SeaTransportationPG
+    TransportationPG
+* Weights
+    ContentsPG
+* Width
+    PhysicalPG
+* WindHeading
+    AirConditionPG
+    EnvironmentalConditionPG
+    LandConditionPG
+    SeaConditionPG
+* WindSpeed
+    AirConditionPG
+    EnvironmentalConditionPG
+    LandConditionPG
+    SeaConditionPG

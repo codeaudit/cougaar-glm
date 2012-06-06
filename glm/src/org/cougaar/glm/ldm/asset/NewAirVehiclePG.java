@@ -1,0 +1,56 @@
+/*
+ * <copyright>
+ *  
+ *  Copyright 1997-2012 Raytheon BBN Technologies
+ *  under partial sponsorship of the Defense Advanced Research Projects
+ *  Agency (DARPA).
+ * 
+ *  You can redistribute this software and/or modify it under the
+ *  terms of the Cougaar Open Source License as published on the
+ *  Cougaar Open Source Website (www.cougaar.org).
+ * 
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  
+ * </copyright>
+ */
+
+/* @generated Wed Jun 06 08:28:58 EDT 2012 from alpprops.def - DO NOT HAND EDIT */
+/** Additional methods for AirVehiclePG
+ * offering mutators (set methods) for the object's owner
+ **/
+
+package org.cougaar.glm.ldm.asset;
+
+import org.cougaar.planning.ldm.measure.*;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.planning.ldm.plan.*;
+import java.util.*;
+
+import  org.cougaar.glm.ldm.plan.*;
+import org.cougaar.glm.ldm.oplan.*;
+import org.cougaar.glm.ldm.policy.*;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.glm.execution.common.InventoryReport;
+
+
+
+public interface NewAirVehiclePG extends AirVehiclePG, NewPropertyGroup, org.cougaar.planning.ldm.dq.HasDataQuality {
+  void setMinimumRunwayLength(Distance minimum_runway_length);
+  void setMidAirRefuelable(boolean mid_air_refuelable);
+  void setQuickTurnaroundTime(Duration quick_turnaround_time);
+  void setMeanTimeToRepair(Duration mean_time_to_repair);
+  void setMeanMissionLegsBetweenRepairs(long mean_mission_legs_between_repairs);
+  void setMeanFlightTimeBetweenRepairs(Duration mean_flight_time_between_repairs);
+  void setVehicleType(String vehicle_type);
+  void setCrewRequirements(long crew_requirements);
+}
